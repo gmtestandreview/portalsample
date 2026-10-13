@@ -1,8 +1,8 @@
-import { useController } from 'react-hook-form';
 import { Form } from 'react-bootstrap';
 import SummaryDisplay from '../../SummaryDisplay';
 import type { RhfSelectInputProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { useRhfFieldA11y } from '../useRhfFieldA11y';
 
 /**
  * React Hook Form counterpart of `SelectInput`. It reads the form through
@@ -15,6 +15,7 @@ const RhfSelectInput = <T extends string | number = string>(
 ) => {
   const {
     label,
+    inlineHelp,
     options,
     defaultValue = '', // default props
     defaultDisplayText,
@@ -28,13 +29,14 @@ const RhfSelectInput = <T extends string | number = string>(
     addBlank,
   } = props;
 
-  const { field, fieldState, formState } = useController({ name });
-  const controlId = id || name;
-  const validationMessageId = `${controlId}-validation-msg`;
-  const errorMessage =
-    fieldState.isTouched || formState.isSubmitted
-      ? fieldState.error?.message
-      : undefined;
+  const {
+    field,
+    controlId,
+    helpId,
+    validationMessageId,
+    errorMessage,
+    describedBy,
+  } = useRhfFieldA11y({ name, id, inlineHelp });
 
   if (isSummary) {
     if (field.value === undefined || field.value === null || field.value === '')
@@ -62,12 +64,18 @@ const RhfSelectInput = <T extends string | number = string>(
   return (
     <Form.Group controlId={controlId} className='form-field-container'>
       <Form.Label>{label}</Form.Label>
+      {inlineHelp && (
+        <Form.Text as='p' id={helpId} className='contextual-help text-muted'>
+          {inlineHelp}
+        </Form.Text>
+      )}
       <div className={`d-grid gap-2 ${containerClassName}`}>
         <Form.Control
           as='select'
           {...omitUndefined({
             disabled,
-            'aria-describedby': errorMessage ? validationMessageId : undefined,
+            'aria-describedby': describedBy,
+            'aria-invalid': errorMessage ? true : undefined,
           })}
           className={`form-field form-select ${className}`}
           name={field.name}

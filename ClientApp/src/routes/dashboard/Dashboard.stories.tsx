@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { within, expect, userEvent, fn, waitFor } from 'storybook/test';
 import type { ComponentType } from 'react';
 import { useEffect } from 'react';
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import Dashboard from './index';
 import { DashboardTab } from '../../components/SearchFilter/types';
 import { withPortalProviders } from '../../storybook/storybookHarness';

@@ -106,6 +106,10 @@ const getRedirectionLocationOnError =
     return undefined;
   };
 
+export const summaryAndAcceptOwnHidingFields = {
+  associatedDispute: (x: SummaryAndAcceptStep) => x.associatedDisputes === 'No',
+};
+
 const summaryAndAcceptProps = (
   id: string,
   accounts: AccountInfo[],
@@ -120,8 +124,7 @@ const summaryAndAcceptProps = (
   location: '/summary-and-accept',
   title: 'Summary and accept',
   hidingFields: {
-    associatedDispute: (x: SummaryAndAcceptStep) =>
-      x.associatedDisputes === 'No',
+    ...summaryAndAcceptOwnHidingFields,
     reportRecipient: {
       rfqHide: (x: SummaryAndAcceptStep) =>
         x.reportRecipient?.organisationDifferent !== 'No',

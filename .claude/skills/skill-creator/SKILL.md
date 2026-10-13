@@ -28,6 +28,34 @@ This is a hybrid skill. Portable Agent Skills are the default target. Claude
 Code runtime configuration is an explicit local branch and must not be presented
 as universal Agent Skills behavior.
 
+## Evaluation modes
+
+Use `python -m scripts.run_pipeline check` for ordinary validation and testing.
+`check` is deterministic and promises zero Claude calls. Select `smoke` or
+`release` explicitly when activation or readiness evidence is required:
+
+```text
+python -m scripts.run_pipeline check
+python -m scripts.run_pipeline smoke --dry-run
+python -m scripts.run_pipeline release --dry-run
+python -m scripts.run_pipeline smoke --workspace PATH --model FULL_MODEL_ID
+python -m scripts.run_pipeline release --workspace PATH --model FULL_MODEL_ID
+```
+
+Model-backed description optimization is a separate live tuning workflow, not a
+pipeline mode. Budget exhaustion, deadlines, and Claude `429` responses produce
+partial or unavailable evidence, never a pass. A rerun with the same checkpoint
+may resume successful attempts, but checkpoint completion is not evidence
+completeness or readiness. Generated workspaces and checkpoints stay outside the
+deployable skill. Every applicable case remains visible, including `not_run`
+entries marked `NHR`; evidence-bearing identifiers are never abbreviated.
+
+User-visible summaries keep independent `execution_status`, `evidence_status`,
+`verdict`, `mode_ready`, and `release_ready` gates. Smoke may be mode-ready
+without being release-ready. Production readiness still requires the applicable
+release evidence. Static plan-review scores are planning signals, not observed
+pipeline reliability.
+
 ## Route the request
 
 - **Portable authoring, evaluation, benchmarking, packaging, or

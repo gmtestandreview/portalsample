@@ -24,10 +24,15 @@ import threading
 import time
 import uuid
 from collections.abc import Callable, Mapping, Sequence
-from concurrent.futures import Future, ProcessPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, Future, ProcessPoolExecutor, wait
 from dataclasses import dataclass
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Literal, TypedDict, cast
+
+try:
+    from scripts.eval_control import AttemptSpec, CachedResult, CheckpointStore, ClaudeCliError, EvaluationControl, validate_model_id
+except ModuleNotFoundError:
+    from eval_control import AttemptSpec, CachedResult, CheckpointStore, ClaudeCliError, EvaluationControl, validate_model_id
 
 if TYPE_CHECKING:
     from scripts.utils import parse_skill_md
@@ -332,7 +337,7 @@ def _result_event_decision(event: Mapping[str, object]) -> _EventDecision:
     status = event.get("api_error_status")
     message = event.get("result") or event.get("subtype") or "unknown error"
     prefix = f"claude CLI error {status}" if status else "claude CLI error"
-    raise RuntimeError(f"{prefix}: {message}")
+    raise ClaudeCliError(status if isinstance(status, int) else None, f"{prefix}: {message}")
 
 
 def _process_event(
@@ -415,13 +420,14 @@ def _validate_model(model: object) -> str | None:
     return model
 
 
-def _generated_skill_name(validated_name: str) -> str:
-    """Build a unique, valid temporary skill name within the 64-char contract."""
+def _generated_skill_name(validated_name: str, content_digest: str | None = None) -> str:
+    """Build a stable temporary skill name within the 64-char contract."""
     max_prefix = MAX_GENERATED_SKILL_NAME_LENGTH - GENERATED_SUFFIX_LENGTH
     prefix = validated_name[:max_prefix].rstrip("-")
     if not prefix:
         prefix = "eval"
-    return f"{prefix}-skill-{uuid.uuid4().hex[:8]}"
+    suffix = (content_digest or uuid.uuid4().hex)[:8]
+    return f"{prefix}-skill-{suffix}"
 
 
 def _yaml_double_quoted(value: str) -> str:
@@ -437,19 +443,22 @@ def _create_eval_project(
     """Create an isolated temporary Claude project containing one valid skill."""
     validated_name = _validate_skill_name(skill_name)
     validated_description = _validate_description(skill_description)
-    clean_name = _generated_skill_name(validated_name)
-    eval_project_root = Path(tempfile.mkdtemp(prefix="skill-activation-eval-"))
-    skill_dir = eval_project_root / ".claude" / "skills" / clean_name
-    skill_dir.mkdir(parents=True, exist_ok=False)
-
     skill_content = (
         "---\n"
-        f"name: {json.dumps(clean_name, ensure_ascii=False)}\n"
+        f"name: {json.dumps(validated_name, ensure_ascii=False)}\n"
         f"description: {_yaml_double_quoted(validated_description)}\n"
         "---\n\n"
         f"# {validated_name}\n\n"
         f"This skill handles: {validated_description}\n"
     )
+    # Keep the temporary directory name compatible with existing programmatic
+    # callers; the attempt identity is content-digest based in the parent
+    # controller and is the evidence-bearing stable identity.
+    clean_name = _generated_skill_name(validated_name)
+    eval_project_root = Path(tempfile.mkdtemp(prefix="skill-activation-eval-"))
+    skill_dir = eval_project_root / ".claude" / "skills" / clean_name
+    skill_dir.mkdir(parents=True, exist_ok=False)
+    skill_content = skill_content.replace(f"name: {json.dumps(validated_name, ensure_ascii=False)}", f"name: {json.dumps(clean_name, ensure_ascii=False)}", 1)
     (skill_dir / SKILL_FILENAME).write_text(skill_content, encoding="utf-8")
     return eval_project_root, clean_name
 
@@ -1008,6 +1017,7 @@ def run_eval(
     runs_per_query: int = 1,
     trigger_threshold: float = 0.5,
     model: str | None = None,
+    control: EvaluationControl | None = None,
 ) -> EvalOutput:
     """Run the full eval set and return deterministic, evidence-safe results."""
     _validate_run_eval_inputs(
@@ -1029,14 +1039,57 @@ def run_eval(
         [None] * runs_per_query for _ in items
     ]
 
-    max_workers = min(num_workers, len(items) * runs_per_query, MAX_POOL_WORKERS)
+    attempt_count = len(items) * runs_per_query
+    implicit_safe_default = control is None
+    if control is None:
+        control = EvaluationControl(
+            max_calls=min(6, attempt_count),
+            planned_calls=attempt_count,
+            checkpoint=None,
+            deadline_seconds=None,
+        )
+    entry = control.snapshot()
+    digest = __import__("hashlib").sha256(description.encode("utf-8")).hexdigest()
+    distractor_digest = __import__("hashlib").sha256(b"").hexdigest()
+    pending: list[tuple[_Attempt, AttemptSpec]] = []
+    for item_index, item in enumerate(items):
+        for run_index in range(runs_per_query):
+            pending.append((
+                _Attempt(item_index, run_index),
+                AttemptSpec(
+                    kind="activation:train",
+                    query=item["query"],
+                    run_index=run_index,
+                    skill_name=skill_name,
+                    skill_content_sha256=digest,
+                    model=model or "claude-configured",
+                    claude_version="unknown",
+                    distractor_sha256=distractor_digest,
+                ),
+            ))
+
+    max_workers = min(num_workers, len(pending), MAX_POOL_WORKERS)
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        future_to_attempt: dict[Future[bool], _Attempt] = {}
-        for item_index, item in enumerate(items):
-            for run_index in range(runs_per_query):
+        future_to_attempt: dict[Future[bool], tuple[_Attempt, AttemptSpec]] = {}
+        next_index = 0
+        circuit_seen = False
+
+        def submit_more() -> None:
+            nonlocal next_index
+            while next_index < len(pending) and len(future_to_attempt) < max_workers:
+                attempt, spec = pending[next_index]
+                next_index += 1
+                cached = control.consume_cached(spec, lambda cached_result: None if cached_result.outcome in {"trigger", "no_trigger"} else "invalid activation outcome")
+                if cached is not None:
+                    outcomes[attempt.item_index][attempt.run_index] = cached.outcome == "trigger"
+                    continue
+                if not control.reserve_call(spec):
+                    control.mark_skipped(len(pending) - next_index)
+                    next_index = len(pending)
+                    return
                 future = executor.submit(
                     run_single_query,
-                    item["query"],
+                    items[attempt.item_index]["query"],
                     skill_name,
                     description,
                     timeout,
@@ -1044,20 +1097,33 @@ def run_eval(
                     model,
                     claude_executable,
                 )
-                future_to_attempt[future] = _Attempt(item_index, run_index)
+                future_to_attempt[future] = (attempt, spec)
 
-        for future in as_completed(future_to_attempt):
-            attempt = future_to_attempt[future]
-            try:
-                outcomes[attempt.item_index][attempt.run_index] = future.result()
-            except (OSError, RuntimeError, subprocess.SubprocessError, ValueError) as exc:
-                message = _result_error_message(exc)
-                print(
-                    f"Warning: query execution failed "
-                    f"(item={attempt.item_index}, run={attempt.run_index + 1}): {message}",
-                    file=sys.stderr,
-                )
-                errors[attempt.item_index][attempt.run_index] = message
+        submit_more()
+        while future_to_attempt:
+            done, _ = wait(tuple(future_to_attempt), return_when=FIRST_COMPLETED)
+            for future in done:
+                attempt, spec = future_to_attempt.pop(future)
+                try:
+                    value = future.result()
+                    outcomes[attempt.item_index][attempt.run_index] = value
+                    control.record_success(spec, CachedResult("trigger" if value else "no_trigger"))
+                except (BaseException,) as exc:
+                    message = _result_error_message(exc)
+                    errors[attempt.item_index][attempt.run_index] = message
+                    control.record_error(spec, exc)
+                    if isinstance(exc, ClaudeCliError) and exc.status == 429:
+                        circuit_seen = True
+                if circuit_seen or control.circuit_open:
+                    for pending_future, (pending_attempt, pending_spec) in list(future_to_attempt.items()):
+                        if pending_future.cancel():
+                            future_to_attempt.pop(pending_future)
+                            control.cancel_reserved(pending_spec)
+                    if next_index < len(pending):
+                        control.mark_skipped(len(pending) - next_index)
+                        next_index = len(pending)
+                else:
+                    submit_more()
 
     results: list[dict[str, object]] = []
     threshold = float(trigger_threshold)
@@ -1096,15 +1162,33 @@ def run_eval(
                 "execution_errors": execution_errors,
                 "error_messages": error_messages,
                 "pass": did_pass,
+                "skipped_runs": 0,
             }
         )
 
     passed = sum(1 for result in results if result["pass"] is True)
     total = len(results)
+    final = control.snapshot()
+    execution = {
+        "status": "complete" if final.error_calls == entry.error_calls and final.skipped_calls == entry.skipped_calls else "partial",
+        "stop_reason": control.stop_reason,
+        "planned_calls": attempt_count,
+        "attempted_calls": final.attempted_calls - entry.attempted_calls,
+        "successful_calls": final.successful_calls - entry.successful_calls,
+        "error_calls": final.error_calls - entry.error_calls,
+        "resumed_calls": final.resumed_calls - entry.resumed_calls,
+        "skipped_calls": final.skipped_calls - entry.skipped_calls,
+    }
+    if execution["error_calls"] or execution["skipped_calls"]:
+        execution["status"] = "partial"
     return {
         "skill_name": skill_name,
         "description": description,
         "results": results,
+        "execution": execution,
+        "attempted_runs": execution["attempted_calls"],
+        "skipped_runs": execution["skipped_calls"],
+        "implicit_safe_default": implicit_safe_default,
         "summary": {
             "total": total,
             "passed": passed,
@@ -1159,7 +1243,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--num-workers",
         type=_positive_int,
-        default=10,
+        default=2,
         help="Number of parallel workers",
     )
     parser.add_argument(
@@ -1180,11 +1264,10 @@ def _build_parser() -> argparse.ArgumentParser:
         default=0.5,
         help="Trigger rate threshold",
     )
-    parser.add_argument(
-        "--model",
-        default=None,
-        help="Model to use for claude -p (default: user's configured model)",
-    )
+    parser.add_argument("--model", required=True, help="Full versioned Claude model identifier")
+    parser.add_argument("--max-model-calls", type=_positive_int, required=True, help="Hard cap on Claude calls")
+    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
+    parser.add_argument("--deadline-seconds", type=float, default=None, help="Start deadline for new calls")
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     return parser
 
@@ -1233,6 +1316,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             if override_description is not None
             else original_description
         )
+        model = validate_model_id(cast(str, args.model))
+        checkpoint_path = Path(cast(str, args.checkpoint)) if args.checkpoint else None
+        control = EvaluationControl(
+            max_calls=cast(int, args.max_model_calls),
+            planned_calls=len(cast(list[object], raw_eval_set)) * cast(int, args.runs_per_query)
+            if isinstance(raw_eval_set, list) else 0,
+            checkpoint=CheckpointStore(checkpoint_path) if checkpoint_path else None,
+            deadline_seconds=cast(float | None, args.deadline_seconds),
+        )
         output = run_eval(
             eval_set=raw_eval_set,
             skill_name=name,
@@ -1242,7 +1334,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             project_root=find_project_root(),
             runs_per_query=cast(int, args.runs_per_query),
             trigger_threshold=cast(float, args.trigger_threshold),
-            model=cast(str | None, args.model),
+            model=model,
+            control=control,
         )
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Error: {exc}", file=sys.stderr)

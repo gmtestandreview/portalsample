@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import {
   Example,
   Sections,
-} from '../../../ClientApp/src/components/GridLists/GridList.stories';
+} from '../../../ClientApp/src/components/AriaComponents/GridLists/GridList.stories';
 
 describe('GridList stories', () => {
   test('provides alt text for every image in the example story', () => {

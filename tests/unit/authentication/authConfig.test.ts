@@ -21,6 +21,7 @@ describe('auth configuration', () => {
       clientId: 'test-client-id',
       authority: 'https://example.test/authority',
       knownAuthorities: ['example.test'],
+      redirectUri: 'https://example.test/redirect',
       postLogoutRedirectUri: 'https://example.test/logout',
     });
   });
@@ -38,11 +39,17 @@ describe('auth configuration', () => {
     expect(tokenRequest).toEqual({ scopes });
   });
 
-  it('bounds MSAL silent renewal frame timeouts to 6000ms', async () => {
+  it('uses MSAL v5 bridge timeouts and popup navigation', async () => {
     const { configuration } = await import('@/authentication/authConfig');
 
-    expect(configuration.system?.iframeHashTimeout).toBe(6000);
-    expect(configuration.system?.loadFrameTimeout).toBe(6000);
+    expect(configuration.system?.popupBridgeTimeout).toBe(60000);
+    expect(configuration.system?.iframeBridgeTimeout).toBe(6000);
+    expect(configuration.system?.navigatePopups).toBe(true);
+    expect(configuration.system).not.toHaveProperty('windowHashTimeout');
+    expect(configuration.system).not.toHaveProperty('iframeHashTimeout');
+    expect(
+      configuration.auth.onRedirectNavigate?.('https://example.test/')
+    ).toBe(true);
   });
 
   it('does not log PII messages', async () => {

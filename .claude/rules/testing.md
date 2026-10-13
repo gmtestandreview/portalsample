@@ -63,7 +63,7 @@ test('description of expected behavior', () => {
 ```bash
 # JavaScript/TypeScript
 npm run test:coverage
-npx vitest run --coverage
+npx vitest run --configLoader runner --coverage
 
 # Python
 pytest --cov=app --cov-report=term-missing

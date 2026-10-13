@@ -77,6 +77,7 @@ vi.mock('@azure/msal-react', () => ({
     accounts: mocks.msalAccounts,
     instance: mocks.instance,
   }),
+  useAccount: (account: { homeAccountId: string }) => account,
 }));
 
 vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
@@ -242,6 +243,14 @@ vi.mock('../../../ClientApp/src/components/Inputs/DatePicker', () => ({
 }));
 
 vi.mock('../../../ClientApp/src/components/Inputs/AddressLookup', () => ({
+  default: ({ label, name }: { label: string; name: string }) => (
+    <div data-testid='address-lookup' data-name={name}>
+      {label}
+    </div>
+  ),
+}));
+
+vi.mock('../../../ClientApp/src/components/Inputs/RhfAddressLookup', () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid='address-lookup' data-name={name}>
       {label}

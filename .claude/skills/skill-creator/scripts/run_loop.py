@@ -16,6 +16,21 @@ import webbrowser
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, cast
 
+try:
+    from scripts.eval_control import (
+        CacheValidationError,
+        CheckpointStore,
+        EvaluationControl,
+        validate_model_id,
+    )
+except ModuleNotFoundError:
+    from eval_control import (
+        CacheValidationError,
+        CheckpointStore,
+        EvaluationControl,
+        validate_model_id,
+    )
+
 
 class EvalCase(TypedDict):
     """Fields consumed by this orchestration module."""
@@ -42,6 +57,7 @@ if TYPE_CHECKING:
         test_results: dict[str, object] | None = None,
         log_dir: Path | None = None,
         iteration: int | None = None,
+        control: EvaluationControl | None = None,
     ) -> str: ...
 
     def find_project_root() -> Path: ...
@@ -57,6 +73,7 @@ if TYPE_CHECKING:
         runs_per_query: int,
         trigger_threshold: float,
         model: str | None,
+        control: EvaluationControl | None = None,
     ) -> object: ...
 
     def parse_skill_md(skill_path: Path) -> tuple[str, str, str]: ...
@@ -337,6 +354,7 @@ def _evaluate_cases(
     runs_per_query: int,
     trigger_threshold: float,
     model: str | None,
+    control: EvaluationControl | None = None,
 ) -> tuple[list[dict[str, object]], EvalSummary, dict[str, object], float]:
     """Evaluate one fixed set and validate one-to-one result coverage."""
     start = time.perf_counter()
@@ -350,6 +368,7 @@ def _evaluate_cases(
         runs_per_query=runs_per_query,
         trigger_threshold=trigger_threshold,
         model=model,
+        control=control,
     )
     elapsed = time.perf_counter() - start
 
@@ -360,6 +379,8 @@ def _evaluate_cases(
         "results": result_list,
         "summary": summary,
     }
+    if isinstance(raw_output, dict) and "execution" in raw_output:
+        results["execution"] = raw_output["execution"]
     return result_list, summary, results, elapsed
 
 
@@ -453,12 +474,20 @@ def _report_holdout_stats(
 
 
 def _termination_reason(
-    *, train_summary: EvalSummary, iteration: int, max_iterations: int
+    *,
+    train_summary: EvalSummary,
+    iteration: int,
+    max_iterations: int,
+    best_passed: int | None = None,
+    no_improvement_count: int = 0,
+    patience: int = 1,
 ) -> str | None:
     if train_summary["failed"] == 0:
         return f"all_passed (iteration {iteration})"
     if iteration == max_iterations:
         return f"max_iterations ({max_iterations})"
+    if best_passed is not None and no_improvement_count >= patience:
+        return f"no_improvement (patience {patience})"
     return None
 
 
@@ -482,6 +511,7 @@ def _improve_current_description(
     log_dir: Path | None,
     iteration: int,
     verbose: bool,
+    control: EvaluationControl,
 ) -> str:
     if verbose:
         print("\nImproving description...", file=sys.stderr)
@@ -500,6 +530,7 @@ def _improve_current_description(
         model=model,
         log_dir=log_dir,
         iteration=iteration,
+        control=control,
     )
     improve_elapsed = time.perf_counter() - start
 
@@ -529,6 +560,7 @@ def _evaluate_frozen_holdout(
     trigger_threshold: float,
     model: str | None,
     verbose: bool,
+    control: EvaluationControl,
 ) -> None:
     """Evaluate the selected description on holdout exactly once."""
     if not test_set:
@@ -545,6 +577,7 @@ def _evaluate_frozen_holdout(
         runs_per_query=runs_per_query,
         trigger_threshold=trigger_threshold,
         model=model,
+        control=control,
     )
     _attach_holdout_result(best, result_list, summary)
     _report_holdout_stats(
@@ -564,6 +597,8 @@ def _build_loop_output(
     train_set: list[EvalCase],
     test_set: list[EvalCase],
     verbose: bool,
+    control: EvaluationControl,
+    call_plan: dict[str, int],
 ) -> dict[str, object]:
     best = _best_history_entry(history)
     best_score = (
@@ -576,6 +611,15 @@ def _build_loop_output(
         print(f"\nExit reason: {exit_reason}", file=sys.stderr)
         print(f"Best score: {best_score} (iteration {best['iteration']})", file=sys.stderr)
 
+    snapshot = control.snapshot()
+    execution_counts = {
+        "planned_calls": snapshot.planned_calls,
+        "attempted_calls": snapshot.attempted_calls,
+        "resumed_calls": snapshot.resumed_calls,
+        "successful_calls": snapshot.successful_calls,
+        "error_calls": snapshot.error_calls,
+        "skipped_calls": snapshot.skipped_calls,
+    }
     return {
         "exit_reason": exit_reason,
         "original_description": original_description,
@@ -591,7 +635,39 @@ def _build_loop_output(
         "train_size": len(train_set),
         "test_size": len(test_set),
         "history": history,
+        "execution": {
+            "status": "complete" if control.stop_reason is None else "partial",
+            "stop_reason": control.stop_reason,
+            **execution_counts,
+        },
+        "call_plan": call_plan,
     }
+
+
+def _normalise_description(value: str) -> str:
+    return " ".join(value.split()).casefold()
+
+
+def _call_plan(
+    *,
+    train_set: list[EvalCase],
+    test_set: list[EvalCase],
+    max_iterations: int,
+    runs_per_query: int,
+) -> dict[str, int]:
+    trigger_probes = (len(train_set) * max_iterations + len(test_set)) * runs_per_query
+    rewrite_calls = max(0, max_iterations - 1) * 2
+    return {
+        "max_trigger_probes": trigger_probes,
+        "max_rewrite_calls": rewrite_calls,
+        "worst_case_calls": trigger_probes + rewrite_calls,
+    }
+
+
+def _mark_unstarted(control: EvaluationControl) -> None:
+    remaining = control.planned_calls - control.resumed_calls - control.attempted_calls - control.skipped_calls
+    if remaining > 0:
+        control.mark_skipped(remaining)
 
 
 def run_loop(
@@ -608,6 +684,8 @@ def run_loop(
     verbose: bool,
     live_report_path: Path | None = None,
     log_dir: Path | None = None,
+    control: EvaluationControl | None = None,
+    patience: int = 1,
 ) -> dict[str, object]:
     """Run the eval + improvement loop."""
     _validate_options(
@@ -618,14 +696,41 @@ def run_loop(
         trigger_threshold=trigger_threshold,
         holdout=holdout,
     )
+    if patience < 1:
+        raise ValueError("patience must be at least 1")
     _validate_eval_set_identity(eval_set)
 
     project_root = find_project_root()
     name, original_description, content = parse_skill_md(skill_path)
     current_description = description_override or original_description
     train_set, test_set = _prepare_eval_sets(eval_set, holdout, verbose)
+    call_plan = _call_plan(
+        train_set=train_set,
+        test_set=test_set,
+        max_iterations=max_iterations,
+        runs_per_query=runs_per_query,
+    )
+    if control is None:
+        control = EvaluationControl(
+            max_calls=call_plan["worst_case_calls"],
+            planned_calls=call_plan["worst_case_calls"],
+            checkpoint=None,
+            deadline_seconds=None,
+        )
+    if verbose:
+        print(
+            "Worst-case call plan: "
+            f"{call_plan['max_trigger_probes']} trigger probes + "
+            f"{call_plan['max_rewrite_calls']} rewrite/shorten calls = "
+            f"{call_plan['worst_case_calls']} calls; a lower cap may stop partial.",
+            file=sys.stderr,
+        )
     history: list[dict[str, object]] = []
     exit_reason = "unknown"
+    seen_descriptions: set[str] = set()
+    best_passed: int | None = None
+    no_improvement_count = 0
+    partial = False
 
     for iteration in range(1, max_iterations + 1):
         if verbose:
@@ -641,6 +746,7 @@ def run_loop(
             runs_per_query=runs_per_query,
             trigger_threshold=trigger_threshold,
             model=model,
+            control=control,
         )
 
         history.append(
@@ -667,41 +773,72 @@ def run_loop(
             eval_elapsed=eval_elapsed,
         )
 
+        current_key = _normalise_description(current_description)
+        seen_descriptions.add(current_key)
+        if best_passed is None or train_summary["passed"] > best_passed:
+            best_passed = train_summary["passed"]
+            no_improvement_count = 0
+        else:
+            no_improvement_count += 1
+
+        execution = train_results.get("execution")
+        if isinstance(execution, dict) and execution.get("status") == "partial":
+            partial = True
+            exit_reason = f"partial ({execution.get('stop_reason') or 'activation unavailable'})"
+            break
+
         reason = _termination_reason(
             train_summary=train_summary,
             iteration=iteration,
             max_iterations=max_iterations,
+            best_passed=best_passed,
+            no_improvement_count=no_improvement_count,
+            patience=patience,
         )
         if reason is not None:
             exit_reason = reason
             _report_termination(reason, iteration, verbose)
             break
 
-        current_description = _improve_current_description(
-            skill_name=name,
-            skill_content=content,
-            current_description=current_description,
-            train_results=train_results,
-            history=history,
-            model=model,
-            log_dir=log_dir,
-            iteration=iteration,
-            verbose=verbose,
-        )
+        try:
+            proposed_description = _improve_current_description(
+                skill_name=name,
+                skill_content=content,
+                current_description=current_description,
+                train_results=train_results,
+                history=history,
+                model=model,
+                log_dir=log_dir,
+                iteration=iteration,
+                verbose=verbose,
+                control=control,
+            )
+        except (CacheValidationError, RuntimeError, ValueError) as exc:
+            partial = True
+            exit_reason = f"partial ({control.stop_reason or str(exc)})"
+            break
+        current_description = proposed_description
+        proposed_key = _normalise_description(current_description)
+        if proposed_key in seen_descriptions:
+            exit_reason = "duplicate_description"
+            break
 
     best = _best_history_entry(history)
-    _evaluate_frozen_holdout(
-        best=best,
-        test_set=test_set,
-        skill_name=name,
-        num_workers=num_workers,
-        timeout=timeout,
-        project_root=project_root,
-        runs_per_query=runs_per_query,
-        trigger_threshold=trigger_threshold,
-        model=model,
-        verbose=verbose,
-    )
+    if not partial and control.stop_reason not in {"rate_limited", "budget_exhausted", "deadline_exceeded"}:
+        _evaluate_frozen_holdout(
+            best=best,
+            test_set=test_set,
+            skill_name=name,
+            num_workers=num_workers,
+            timeout=timeout,
+            project_root=project_root,
+            runs_per_query=runs_per_query,
+            trigger_threshold=trigger_threshold,
+            model=model,
+            verbose=verbose,
+            control=control,
+        )
+    _mark_unstarted(control)
 
     return _build_loop_output(
         exit_reason=exit_reason,
@@ -712,6 +849,8 @@ def run_loop(
         train_set=train_set,
         test_set=test_set,
         verbose=verbose,
+        control=control,
+        call_plan=call_plan,
     )
 
 
@@ -720,7 +859,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--eval-set", required=True, help="Path to eval set JSON file")
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
     parser.add_argument("--description", default=None, help="Override starting description")
-    parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
+    parser.add_argument("--num-workers", type=int, default=2, help="Number of parallel workers")
     parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
     parser.add_argument("--max-iterations", type=int, default=5, help="Max improvement iterations")
     parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
@@ -733,7 +872,11 @@ def _build_parser() -> argparse.ArgumentParser:
         default=0.4,
         help="Fraction of eval set to hold out for testing (0 to disable)",
     )
-    parser.add_argument("--model", default=None, help="Model override")
+    parser.add_argument("--model", required=True, help="Explicit versioned Claude model ID")
+    parser.add_argument("--max-model-calls", type=int, required=True, help="Maximum live model calls")
+    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
+    parser.add_argument("--deadline-seconds", type=float, default=None, help="Stop after this many seconds")
+    parser.add_argument("--patience", type=int, default=1, help="Consecutive non-improving evaluations before stopping")
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     parser.add_argument(
         "--report",
@@ -766,6 +909,13 @@ def main() -> int:
             trigger_threshold=args.trigger_threshold,
             holdout=args.holdout,
         )
+        model = validate_model_id(args.model)
+        if args.max_model_calls <= 0:
+            raise ValueError("max_model_calls must be positive")
+        if args.deadline_seconds is not None and args.deadline_seconds <= 0:
+            raise ValueError("deadline_seconds must be positive")
+        if args.patience < 1:
+            raise ValueError("patience must be at least 1")
 
         name, _, _ = parse_skill_md(skill_path)
 
@@ -799,6 +949,20 @@ def main() -> int:
             results_dir = None
 
         log_dir = results_dir / "logs" if results_dir else None
+        train_set, test_set = _prepare_eval_sets(eval_set, args.holdout, False)
+        call_plan = _call_plan(
+            train_set=train_set,
+            test_set=test_set,
+            max_iterations=args.max_iterations,
+            runs_per_query=args.runs_per_query,
+        )
+        checkpoint = CheckpointStore(Path(args.checkpoint)) if args.checkpoint else None
+        control = EvaluationControl(
+            max_calls=args.max_model_calls,
+            planned_calls=call_plan["worst_case_calls"],
+            checkpoint=checkpoint,
+            deadline_seconds=args.deadline_seconds,
+        )
         output = run_loop(
             eval_set=eval_set,
             skill_path=skill_path,
@@ -809,10 +973,12 @@ def main() -> int:
             runs_per_query=args.runs_per_query,
             trigger_threshold=args.trigger_threshold,
             holdout=args.holdout,
-            model=args.model,
+            model=model,
             verbose=args.verbose,
             live_report_path=live_report_path,
             log_dir=log_dir,
+            control=control,
+            patience=args.patience,
         )
 
         json_output = json.dumps(output, indent=2, allow_nan=False)

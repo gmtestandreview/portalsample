@@ -22,7 +22,9 @@ function createNmiIcon(icon: string) {
       <i
         {...props}
         aria-hidden={props['aria-label'] ? undefined : true}
-        className={`nmi-react-aria-icon icon-${icon}${className ? ` ${className}` : ''}`}
+        className={['nmi-react-aria-icon', `icon-${icon}`, className]
+          .filter(Boolean)
+          .join(' ')}
         data-nmi-icon={icon}
         style={iconStyle}
       />

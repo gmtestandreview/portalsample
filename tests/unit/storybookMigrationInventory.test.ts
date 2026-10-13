@@ -74,7 +74,7 @@ describe('Storybook migration inventory', () => {
       .readdirSync(path.join(repoRoot, 'ClientApp', 'src', 'components'), {
         withFileTypes: true,
       })
-      .filter((entry) => entry.isDirectory())
+      .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
       .map((entry) => entry.name);
 
     componentDirectories.forEach((directory) => {

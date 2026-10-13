@@ -1,7 +1,0 @@
-@import '../AriaComponents/theme.css';
-@import '../AriaComponents/TextField.css';
-
-.react-aria-ColorField {
-  display: flex;
-  flex-direction: column;
-}

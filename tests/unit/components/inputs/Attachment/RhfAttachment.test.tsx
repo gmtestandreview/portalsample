@@ -688,6 +688,26 @@ describe('RhfAttachment', () => {
     expect(onDeleteFile).toHaveBeenCalledTimes(1);
   });
 
+  it('shows an error and keeps the saved category when a category update fails', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    renderAttachment([uploadedAttachment], { onCategoryUpdate });
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate'
+    );
+
+    expect(
+      await within(
+        screen.getByRole('list', { name: 'upload errors' })
+      ).findByText('Could not save the category for manual.pdf.')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+      'Manuals'
+    );
+  });
+
   it('keeps the remaining category when an earlier attachment is deleted', async () => {
     const user = userEvent.setup();
     const second = {
@@ -706,6 +726,185 @@ describe('RhfAttachment', () => {
     );
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
       'Certificate'
+    );
+  });
+
+  describe('category errors follow the document, not the row position', () => {
+    const CATEGORY_ERROR =
+      'Select a category that best describes this document.';
+    const uncategorised = (id: string, attachmentName: string) =>
+      ({
+        ...uploadedAttachment,
+        id,
+        attachmentName,
+        attachmentCategory: '',
+      }) satisfies AttachmentDto;
+    const rowOf = (fileName: string) =>
+      screen.getByText(fileName).closest('.attachment') as HTMLElement;
+    const touchCategory = async (
+      user: ReturnType<typeof userEvent.setup>,
+      fileName: string
+    ) => {
+      await user.click(
+        within(rowOf(fileName)).getByRole('combobox', { name: 'Category' })
+      );
+      await user.tab();
+    };
+    const deleteDocument = async (
+      user: ReturnType<typeof userEvent.setup>,
+      id: string,
+      fileName: string
+    ) => {
+      await user.click(screen.getByTestId(`cancel-button-${id}`));
+      await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+      await waitFor(() =>
+        expect(screen.queryByText(fileName)).not.toBeInTheDocument()
+      );
+    };
+
+    it('shows no error on an untouched row that moves up after a touched row is deleted', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+      ]);
+
+      await touchCategory(user, 'first.pdf');
+      expect(
+        within(rowOf('first.pdf')).getByText(CATEGORY_ERROR)
+      ).toBeInTheDocument();
+      expect(
+        within(rowOf('second.pdf')).queryByText(CATEGORY_ERROR)
+      ).not.toBeInTheDocument();
+
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
+    });
+
+    it('shows no stale error on a different document that replaces a touched one on re-upload', async () => {
+      const user = userEvent.setup();
+      const onUploadFiles = vi
+        .fn()
+        .mockResolvedValue([uncategorised('doc-2', 'second.pdf')]);
+      renderAttachment([uncategorised('doc-1', 'first.pdf')], {
+        onUploadFiles,
+      });
+
+      await touchCategory(user, 'first.pdf');
+      expect(screen.getByText(CATEGORY_ERROR)).toBeInTheDocument();
+
+      await user.upload(
+        screen.getByTestId('drag-upload-supporting-documents'),
+        file('second.pdf', 10)
+      );
+
+      await waitFor(() =>
+        expect(screen.getByText('second.pdf')).toBeInTheDocument()
+      );
+      expect(screen.queryByText('first.pdf')).not.toBeInTheDocument();
+      expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
+    });
+
+    it('keeps the error on a touched row that moves up, and not on the row behind it', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+        uncategorised('doc-3', 'third.pdf'),
+      ]);
+
+      await touchCategory(user, 'second.pdf');
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      expect(
+        within(rowOf('second.pdf')).getByText(CATEGORY_ERROR)
+      ).toBeInTheDocument();
+      expect(
+        within(rowOf('third.pdf')).queryByText(CATEGORY_ERROR)
+      ).not.toBeInTheDocument();
+    });
+
+    it('still shows the error on every category-less row after a submit attempt', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+        uncategorised('doc-3', 'third.pdf'),
+      ]);
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      await act(async () => {
+        await formMethods?.handleSubmit(() => undefined)();
+      });
+
+      expect(screen.getAllByText(CATEGORY_ERROR)).toHaveLength(2);
+    });
+  });
+
+  it('reverts the right document when an earlier row is deleted mid-save', async () => {
+    const user = userEvent.setup();
+    const second = {
+      ...uploadedAttachment,
+      id: 'doc-2',
+      attachmentName: 'second.pdf',
+      attachmentCategory: 'Certificate',
+    } satisfies AttachmentDto;
+    let rejectSave: () => void = () => {};
+    const savePromise = new Promise<void>((_, reject) => {
+      rejectSave = () => reject(new Error('offline'));
+    });
+    const onCategoryUpdate = vi.fn().mockReturnValue(savePromise);
+    renderAttachment([uploadedAttachment, second], { onCategoryUpdate });
+
+    const secondRow = screen.getByText('second.pdf').closest('.attachment')!;
+    await user.selectOptions(
+      within(secondRow as HTMLElement).getByRole('combobox', {
+        name: 'Category',
+      }),
+      'Other'
+    );
+    await user.click(screen.getByTestId('cancel-button-doc-1'));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+    await waitFor(() =>
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument()
+    );
+    await act(async () => {
+      rejectSave();
+      await savePromise.catch(() => {});
+    });
+
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+        'Certificate'
+      )
+    );
+    const values = JSON.parse(
+      screen.getByTestId('values').textContent ?? '{}'
+    ) as { attachments: AttachmentDto[] };
+    expect(values.attachments).toHaveLength(1);
+    expect(values.attachments[0]).toMatchObject({
+      id: 'doc-2',
+      attachmentCategory: 'Certificate',
+    });
+  });
+
+  it('lists the same category-save failure once when it repeats', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    renderAttachment([uploadedAttachment], { onCategoryUpdate });
+    const select = screen.getByRole('combobox', { name: 'Category' });
+
+    await user.selectOptions(select, 'Certificate');
+    await user.selectOptions(select, 'Other');
+
+    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(
+        within(
+          screen.getByRole('list', { name: 'upload errors' })
+        ).getAllByText('Could not save the category for manual.pdf.')
+      ).toHaveLength(1)
     );
   });
 });

@@ -1,5 +1,3 @@
-import { useController } from 'react-hook-form';
-import type { FieldValues, UseControllerProps } from 'react-hook-form';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -7,8 +5,8 @@ import type { RhfRadioButtonGroupProps, RhfRadioOption } from './types';
 import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
-
-type Rules = UseControllerProps<FieldValues>['rules'];
+import { useRhfFieldA11y } from '../useRhfFieldA11y';
+import type { RhfRules } from '../useRhfFieldA11y';
 
 /**
  * React Hook Form counterpart of `RadioButtonGroup`. It reads the form through
@@ -17,7 +15,7 @@ type Rules = UseControllerProps<FieldValues>['rules'];
  * updated by the group itself, with the option's typed value.
  */
 const RhfRadioButtonGroup = <T,>(
-  props: Readonly<RhfRadioButtonGroupProps<T> & { rules?: Rules }>
+  props: Readonly<RhfRadioButtonGroupProps<T> & { rules?: RhfRules }>
 ) => {
   const {
     displayHorizontally,
@@ -35,16 +33,14 @@ const RhfRadioButtonGroup = <T,>(
     rules,
   } = props;
 
-  const { field, fieldState, formState } = useController({
-    name,
-    ...omitUndefined({ rules }),
-  });
-  const baseId = id || name;
-  const helpId = inlineHelp ? `help-${baseId}` : undefined;
-  const validationMessageId = `${baseId}-validation-msg`;
-  const showError =
-    (fieldState.isTouched || formState.isSubmitted) &&
-    fieldState.error?.message;
+  const {
+    field,
+    controlId: baseId,
+    helpId,
+    validationMessageId,
+    errorMessage,
+    describedBy,
+  } = useRhfFieldA11y({ name, id, inlineHelp, rules });
 
   if (isSummary) {
     if (!field.value) return null;
@@ -111,7 +107,9 @@ const RhfRadioButtonGroup = <T,>(
   return (
     <fieldset
       data-testid={`fs-${baseId}`}
-      aria-describedby={showError ? validationMessageId : helpId}
+      role='radiogroup'
+      aria-describedby={describedBy}
+      aria-invalid={errorMessage ? true : undefined}
     >
       <legend id={baseId}>{legend}</legend>
       <Form.Group
@@ -142,13 +140,13 @@ const RhfRadioButtonGroup = <T,>(
             <div key={option.id}>{renderOption(option, index)}</div>
           ))
         )}
-        {showError ? (
+        {errorMessage ? (
           <Form.Control.Feedback
             type='invalid'
             id={validationMessageId}
             className='form-validation-message'
           >
-            {fieldState.error?.message}
+            {errorMessage}
           </Form.Control.Feedback>
         ) : null}
       </Form.Group>

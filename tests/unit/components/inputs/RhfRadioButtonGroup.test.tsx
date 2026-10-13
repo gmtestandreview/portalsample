@@ -32,6 +32,34 @@ const Harness = ({
   );
 };
 
+interface SubmittableProps {
+  inlineHelp?: string | undefined;
+  required?: boolean;
+}
+
+/** Group inside a submittable form, so tests can trigger validation. */
+const Submittable = ({
+  inlineHelp,
+  required = true,
+}: Readonly<SubmittableProps>) => {
+  const methods = useForm<Values>({ defaultValues: { status: '' } });
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(() => undefined)}>
+        <RhfRadioButtonGroup
+          name='status'
+          id='q-status'
+          legend='Status'
+          options={options}
+          {...(inlineHelp ? { inlineHelp } : {})}
+          {...(required ? { rules: { required: 'Choose a status' } } : {})}
+        />
+        <button type='submit'>submit</button>
+      </form>
+    </FormProvider>
+  );
+};
+
 describe('RhfRadioButtonGroup', () => {
   it('checks the option matching the form value', () => {
     render(
@@ -100,26 +128,6 @@ describe('RhfRadioButtonGroup', () => {
 
     expect(screen.getByLabelText('All')).toBeDisabled();
     expect(screen.getByLabelText('Open')).toBeDisabled();
-  });
-
-  it('links the help text to the fieldset for assistive technology', () => {
-    render(
-      <Harness>
-        <RhfRadioButtonGroup
-          name='status'
-          id='q-status'
-          legend='Status'
-          inlineHelp='Pick one'
-          options={options}
-        />
-      </Harness>
-    );
-
-    expect(screen.getByText('Pick one')).toHaveAttribute('id', 'help-q-status');
-    expect(screen.getByTestId('fs-q-status')).toHaveAttribute(
-      'aria-describedby',
-      'help-q-status'
-    );
   });
 
   it('shows the validation message only after the group has been touched', async () => {
@@ -287,32 +295,65 @@ describe('RhfRadioButtonGroup', () => {
     expect(screen.getByLabelText('Open')).not.toBeChecked();
   });
 
-  it('shows the validation message after a submit attempt without touching the group', async () => {
-    const Submittable = () => {
-      const methods = useForm<Values>({ defaultValues: { status: '' } });
-      return (
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(() => undefined)}>
-            <RhfRadioButtonGroup
-              name='status'
-              id='q-status'
-              legend='Status'
-              options={options}
-              rules={{ required: 'Choose a status' }}
-            />
-            <button type='submit'>submit</button>
-          </form>
-        </FormProvider>
-      );
-    };
-    render(<Submittable />);
+  it.each([
+    {
+      case: 'help only',
+      inlineHelp: 'Pick one',
+      required: false,
+      describedByBefore: 'help-q-status',
+      describedByAfter: 'help-q-status',
+      invalidAfter: null,
+    },
+    {
+      case: 'error only',
+      inlineHelp: undefined,
+      required: true,
+      describedByBefore: null,
+      describedByAfter: 'q-status-validation-msg',
+      invalidAfter: 'true',
+    },
+    {
+      case: 'help and error',
+      inlineHelp: 'Pick one',
+      required: true,
+      describedByBefore: 'help-q-status',
+      describedByAfter: 'help-q-status q-status-validation-msg',
+      invalidAfter: 'true',
+    },
+  ])(
+    'describes the radiogroup by $case ids and flags the group (not the radios) invalid only on error',
+    async ({
+      inlineHelp,
+      required,
+      describedByBefore,
+      describedByAfter,
+      invalidAfter,
+    }) => {
+      render(<Submittable inlineHelp={inlineHelp} required={required} />);
+      const group = screen.getByRole('radiogroup', { name: 'Status' });
+      const radios = screen.getAllByRole('radio');
+      expect(group).toBe(screen.getByTestId('fs-q-status'));
+      expect(group.tagName).toBe('FIELDSET');
+      expect(group.getAttribute('aria-describedby')).toBe(describedByBefore);
+      expect(group.getAttribute('aria-invalid')).toBeNull();
+      if (inlineHelp) {
+        expect(screen.getByText(inlineHelp)).toHaveAttribute(
+          'id',
+          'help-q-status'
+        );
+      }
 
-    await userEvent.click(screen.getByText('submit'));
+      await userEvent.click(screen.getByText('submit'));
 
-    expect(await screen.findByText('Choose a status')).toBeInTheDocument();
-    expect(screen.getByTestId('fs-q-status')).toHaveAttribute(
-      'aria-describedby',
-      'q-status-validation-msg'
-    );
-  });
+      if (required) {
+        expect(await screen.findByText('Choose a status')).toBeInTheDocument();
+      }
+      expect(group.getAttribute('aria-describedby')).toBe(describedByAfter);
+      expect(group.getAttribute('aria-invalid')).toBe(invalidAfter);
+      radios.forEach((radio) => {
+        expect(radio).not.toHaveAttribute('aria-describedby');
+        expect(radio).not.toHaveAttribute('aria-invalid');
+      });
+    }
+  );
 });

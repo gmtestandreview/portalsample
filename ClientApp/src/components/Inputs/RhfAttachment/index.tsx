@@ -87,6 +87,12 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const addErrors = (messages: string[]) =>
     setErrors((newErrors) => [...newErrors, ...messages]);
 
+  // Repeated failures for one document would otherwise list the same line twice.
+  const onCategoryError = (message: string) =>
+    setErrors((current) =>
+      current.includes(message) ? current : [...current, message]
+    );
+
   const clearFileInput = () => {
     if (inputRef.current) {
       inputRef.current.value = '';
@@ -177,6 +183,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           key={attachmentKey}
           attachment={attachment}
           {...omitUndefined({ onCategoryUpdate })}
+          onCategoryError={onCategoryError}
           name={name}
           index={i}
           canRemove={!isSummary && !attachment.documentLocked}

@@ -10,23 +10,15 @@ import type {
   ReportRecipientStep,
 } from '../../api/web-api-client';
 import { prefixedPropertyOf } from '../../utils';
-import HidableField from '../../components/forms/HidableField';
 import AddressLookup from '../../components/Inputs/AddressLookup';
 import { useAccountState } from '../../authentication/hooks';
 import { getFormattedAddress } from '../common/helperFunctions';
-import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
+import ReportRecipientFormikBridge from './reportRecipientFormikBridge';
 import AppLogger from '../../instrumentation/AppLogger';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 
 const getName = prefixedPropertyOf<ReportRecipientStep>('reportRecipient');
-
-function getNameForUse(
-  name: keyof ReportRecipientStep,
-  isSummary: boolean | undefined
-): string {
-  return isSummary ? getName(name) : name;
-}
 
 const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   const { isSummary, id } = props;
@@ -118,64 +110,22 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
         </Alert>
       )}
       {!isSummary && (
-        <Row className='mb-4'>
-          <h2>Report recipient organisation</h2>
-          <TextInput
-            label='Organisation name for report'
-            name={getNameForUse('organisationName', isSummary)}
-            isSummary={isSummary}
-          />
-          <RadioButtonGroup
-            legend='Organisation address for report'
-            name={getNameForUse('reportAddressType', isSummary)}
-            id='q-reportAddressType'
-            isSummary={isSummary}
-            containerClassName='mb-3'
-            options={[
-              {
-                label: 'Business street address',
-                value: 'BusinessAddress',
-                descriptor: getFormattedAddress(streetAddress),
-                id: 'returnAddressType-BusinessAddress',
-              },
-              {
-                label: 'Business postal address',
-                value: 'PostalAddress',
-                descriptor: getFormattedAddress(postalAddress),
-                id: 'returnAddressType-PostalAddress',
-              },
-              {
-                label: 'Other',
-                value: 'Other',
-                id: 'returnAddressType-Other',
-              },
-            ]}
-          />
-          <HidableField name='businessStreetAddress'>
-            <div className='px-5'>
-              <AddressLookup
-                name={getNameForUse('businessStreetAddress', isSummary)}
-                label='Business street address'
-                maxResults={10}
-                key='businessStreetAddress'
-                placeholder='Start typing the business street address'
-                isSummary={isSummary}
-              />
-            </div>
-          </HidableField>
-        </Row>
+        <ReportRecipientFormikBridge
+          streetAddress={streetAddress}
+          postalAddress={postalAddress}
+        />
       )}
       {isSummary && (
         <Row className='mb-4'>
           <h2 className='h3 my-3'>Report recipient organisation</h2>
           <TextInput
             label='Organisation name for report'
-            name={getNameForUse('organisationName', isSummary)}
+            name={getName('organisationName')}
             isSummary={isSummary}
           />
           {reportRecipientStep?.reportAddressType === 'Other' && (
             <AddressLookup
-              name={getNameForUse('businessStreetAddress', isSummary)}
+              name={getName('businessStreetAddress')}
               label='Organisation address for report'
               maxResults={10}
               key='businessStreetAddress'

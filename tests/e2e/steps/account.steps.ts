@@ -21,7 +21,7 @@ Given(
     });
     await installMockAuthentication(page, scenarioState);
     await installMockApi(page, scenarioState);
-    await page.goto('/create-account');
+    await page.goto('/create-account', { waitUntil: 'domcontentloaded' });
     await waitForAppReady(page);
   }
 );

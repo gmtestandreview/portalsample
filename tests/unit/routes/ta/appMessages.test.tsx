@@ -172,7 +172,9 @@ const renderRoute = async (
   return result;
 };
 
-describe('application messages', () => {
+// The first routed render is sensitive to full-suite V8 instrumentation; keep
+// the integration contract from cascading after a slow initial render.
+describe('application messages', { timeout: 15_000 }, () => {
   beforeEach(async () => {
     await import('../../../../ClientApp/src/api/web-api-client');
 

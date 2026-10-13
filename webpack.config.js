@@ -19,6 +19,9 @@ const sassCompatibilityOptions = {
   silenceDeprecations: sassDeprecationsToSilence,
 };
 
+const redirectBridgeContentSecurityPolicy =
+  "default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'";
+
 // ---------------------------------------------------------------------------
 // Development env vars — these are injected into index.html at build time so
 // the bundle reads them from window.* (see ClientApp/src/env.ts).
@@ -38,7 +41,8 @@ const devEnvVars = {
   REACT_APP_B2C_USER_IMPERSONATION_SCOPE:
     process.env.REACT_APP_B2C_USER_IMPERSONATION_SCOPE || 'openid',
   REACT_APP_B2C_REDIRECT_URL:
-    process.env.REACT_APP_B2C_REDIRECT_URL || 'http://localhost:3000',
+    process.env.REACT_APP_B2C_REDIRECT_URL ||
+    'http://localhost:3000/redirect.html',
   EXTERNAL_REDIRECT_URL:
     process.env.EXTERNAL_REDIRECT_URL || 'http://localhost:3000',
   REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY:
@@ -52,11 +56,14 @@ module.exports = function webpackConfig(env, argv) {
   const isProd = argv.mode === 'production';
 
   return {
-    entry: './ClientApp/src/index.tsx',
+    entry: {
+      main: './ClientApp/src/index.tsx',
+      redirect: './ClientApp/src/authentication/redirectBridge.ts',
+    },
 
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: isProd ? 'js/[name].[contenthash:8].js' : 'js/bundle.js',
+      filename: isProd ? 'js/[name].[contenthash:8].js' : 'js/[name].js',
       publicPath: '/',
       clean: true,
     },
@@ -142,6 +149,7 @@ module.exports = function webpackConfig(env, argv) {
 
     plugins: [
       new HtmlWebpackPlugin({
+        chunks: ['main'],
         template: './index.html',
         templateParameters: devEnvVars,
         // minimizer-webpack-plugin@5.9.0 passes an unsupported `as` option to
@@ -162,6 +170,16 @@ module.exports = function webpackConfig(env, argv) {
               minifyJS: false,
             }
           : false,
+      }),
+
+      new HtmlWebpackPlugin({
+        chunks: ['redirect'],
+        filename: 'redirect.html',
+        inject: 'body',
+        minify: false,
+        publicPath: './',
+        template: './redirect.html',
+        templateParameters: {},
       }),
 
       new CopyPlugin({
@@ -201,6 +219,29 @@ module.exports = function webpackConfig(env, argv) {
       static: {
         directory: path.resolve(__dirname, 'ClientApp/public'),
       },
+      setupMiddlewares: (middlewares, server) => {
+        if (!server) {
+          throw new Error('webpack-dev-server is required for bridge headers');
+        }
+
+        middlewares.unshift({
+          name: 'msal-redirect-bridge-policy',
+          middleware: (request, response, next) => {
+            const requestPath = request.url?.split(/[?#]/u, 1)[0];
+            if (requestPath === '/redirect.html') {
+              response.setHeader('Cache-Control', 'no-store');
+              response.setHeader(
+                'Content-Security-Policy',
+                redirectBridgeContentSecurityPolicy
+              );
+              response.removeHeader('Cross-Origin-Opener-Policy');
+            }
+            next();
+          },
+        });
+
+        return middlewares;
+      },
     },
 
     devtool: isProd ? 'source-map' : 'cheap-module-source-map',
@@ -210,12 +251,12 @@ module.exports = function webpackConfig(env, argv) {
     optimization: {
       splitChunks: isProd
         ? {
-            chunks: 'all',
+            chunks: (chunk) => chunk.name !== 'redirect',
             cacheGroups: {
               vendor: {
                 test: /[\\/]node_modules[\\/]/,
                 name: 'vendors',
-                chunks: 'all',
+                chunks: (chunk) => chunk.name !== 'redirect',
               },
             },
           }

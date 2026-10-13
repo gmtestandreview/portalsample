@@ -82,6 +82,30 @@ These rules apply across all artifacts.
    constraints; cross-file and derived invariants listed below require
    application-level checks.
 
+## Checkpoint and pipeline evidence
+
+Evaluation checkpoints are append-only JSONL execution evidence. Each record
+retains the complete attempt identity, including query/case ID, model and
+version, skill/content digests, attempt kind, run index, and harness version.
+Only an active `success` record is reusable; error records are never cache hits,
+and an invalidation record removes the prior success from the active set.
+
+The result may contain a scalar `value`, structured `payload`, and an ordered
+artifact manifest of workspace-relative paths with SHA-256 digests. Behavioral
+cache hits must verify every artifact exists beneath the workspace and matches
+its digest before reuse. A path escape, missing file, or digest mismatch forces
+regeneration under a new permit.
+
+Keep planned, attempted, completed-success, error, resumed, and skipped calls
+distinct. The accounting invariant is:
+`planned_calls = attempted_calls + resumed_calls + skipped_calls`.
+
+Pipeline summaries expose `execution_status` (`complete`, `short_circuited`,
+`partial`, or `not_run`), `evidence_status` (`complete` or `incomplete`),
+`verdict` (`pass`, `fail`, `unavailable`, or `not_applicable`), `mode_ready`,
+and `release_ready`. Every applicable case appears once. A `not_run` case carries
+`evidence_code: "NHR"` and a reason; it must not disappear from the summary.
+
 ## Schema catalog
 
 | Persisted artifact               | Canonical schema                    | Producer             | Primary consumers         |

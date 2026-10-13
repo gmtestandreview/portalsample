@@ -326,4 +326,15 @@ describe('coverage remapping cohort', () => {
   it('keeps the coverage provider aligned with the Vitest cohort', () => {
     expect(installedVersions('@vitest/coverage-v8')).toEqual(['4.1.11']);
   });
+
+  it('holds the Storybook test cohort on Vitest 4 pending dedicated Vitest 5 validation', () => {
+    const vitestVersion = exactDevDependency('vitest');
+
+    expect(vitestVersion).toMatch(/^4\./);
+    expect(exactDevDependency('@vitest/browser')).toBe(vitestVersion);
+    expect(exactDevDependency('@vitest/browser-playwright')).toBe(
+      vitestVersion
+    );
+    expect(exactDevDependency('@vitest/coverage-v8')).toBe(vitestVersion);
+  });
 });

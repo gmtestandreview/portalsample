@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { useController } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 import type { AttachmentDto } from '../../../api/web-api-client';
 import { formatBytes } from '../../../utils';
 import ConfirmationModal from '../../modals/ConfirmationModal';
@@ -18,6 +18,8 @@ interface RhfAttachmentItemProps {
   isSummary: boolean;
   onRemoveItem?: (attachment: AttachmentDto) => Promise<void>;
   onCategoryUpdate?: (docId: string, category: string) => Promise<void>;
+  /** Called with a user-facing message when saving a category fails. */
+  onCategoryError?: (message: string) => void;
 }
 
 const CATEGORY_OPTIONS: SelectInputOption<string>[] = [
@@ -38,12 +40,32 @@ const RhfAttachmentItem = ({
   name,
   index,
   onCategoryUpdate,
+  onCategoryError,
 }: Readonly<RhfAttachmentItemProps>) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const categoryName = `${name}.${index}.attachmentCategory`;
-  const { field, fieldState, formState } = useController({
+  const { field, formState } = useController({
     name: categoryName,
   });
+  // RHF keys touched state by field path, so it would stay with the row index
+  // when an earlier row is deleted. Local state stays with this row's key.
+  const [categoryTouched, setCategoryTouched] = useState<boolean>(false);
+  const { getValues, setValue } = useFormContext();
+  const initialCategory: unknown = field.value;
+  // What the server holds, and which save is newest, so a failed save only
+  // undoes itself and only while it is still the latest one.
+  const lastSavedCategory = useRef<string | undefined>(
+    typeof initialCategory === 'string' ? initialCategory : undefined
+  );
+  const latestSaveToken = useRef(0);
+  const lastSavedToken = useRef(0);
+  const isMounted = useRef(true);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   const closeModal = () => setDeleteDialogOpen(false);
   const showModal = () => setDeleteDialogOpen(true);
   const { documentBytes } = attachment;
@@ -60,12 +82,50 @@ const RhfAttachmentItem = ({
   );
   // A submit attempt does not touch fields in RHF, so it counts as touched here.
   const showCategoryError =
-    !field.value && (fieldState.isTouched || formState.isSubmitted);
+    !field.value && (categoryTouched || formState.isSubmitted);
+
+  // The index can change while a save is in flight (an earlier row deleted),
+  // so find this document again instead of trusting the captured path.
+  const revertCategory = (token: number) => {
+    if (!isMounted.current || token !== latestSaveToken.current) return;
+    const list: unknown = getValues(name);
+    if (!Array.isArray(list)) return;
+    const currentIndex = (list as AttachmentDto[]).findIndex(
+      (item) => item.id === attachment.id
+    );
+    if (currentIndex < 0) return;
+    setValue(
+      `${name}.${currentIndex}.attachmentCategory`,
+      lastSavedCategory.current,
+      { shouldDirty: true }
+    );
+  };
+
+  const saveCategory = async (
+    update: NonNullable<typeof onCategoryUpdate>,
+    docId: string,
+    category: string
+  ) => {
+    latestSaveToken.current += 1;
+    const token = latestSaveToken.current;
+    try {
+      await update(docId, category);
+      if (token > lastSavedToken.current) {
+        lastSavedToken.current = token;
+        lastSavedCategory.current = category;
+      }
+    } catch {
+      // The error is left out of the message: it can carry tokens or PII.
+      revertCategory(token);
+      onCategoryError?.(
+        `Could not save the category for ${attachment.attachmentName}.`
+      );
+    }
+  };
 
   const onCategoryChange = (category: string) => {
-    field.onBlur();
     if (onCategoryUpdate && attachment.id) {
-      void onCategoryUpdate(attachment.id, category);
+      void saveCategory(onCategoryUpdate, attachment.id, category);
     }
   };
 
@@ -92,7 +152,12 @@ const RhfAttachmentItem = ({
             </span>
           </div>
         </div>
-        <div className='ms-3' style={{ width: '260px' }}>
+        {/* Blur bubbles from the select, so tabbing past it also counts as touched. */}
+        <div
+          className='ms-3'
+          style={{ width: '260px' }}
+          onBlur={() => setCategoryTouched(true)}
+        >
           <RhfSelectInput<string>
             id={categoryName}
             key={categoryName}

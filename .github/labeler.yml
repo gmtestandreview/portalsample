@@ -1,3 +1,6 @@
+# This file must exist on the base branch because label.yml uses
+# pull_request_target and the action resolves its configuration there.
+
 dependencies:
   - changed-files:
       - any-glob-to-any-file:

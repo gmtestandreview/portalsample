@@ -25,7 +25,7 @@ Browser load
 window.* env injection  (server-side template sets REACT_APP_B2C_CLIENTID etc.)
   ↓
 ClientApp/src/index.tsx
-  ├─ await PublicClientApplication.createPublicClientApplication(configuration)   ← line 16, top-level await
+  ├─ await createStandardPublicClientApplication(configuration)   ← line 16, top-level await
   ├─ TrustedTypes.createTrustedTypePolicy()   ← DOMPurify CSP guard, before render
   └─ createRoot(rootElement).render(
        <StrictMode>                           ← OUTERMOST: dev checks cover MSAL + account providers

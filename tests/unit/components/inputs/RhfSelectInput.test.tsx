@@ -242,6 +242,19 @@ describe('RhfSelectInput', () => {
       'aria-describedby',
       'category-validation-msg'
     );
+    expect(select).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('has no aria-describedby or aria-invalid while the field is valid', () => {
+    render(
+      <Harness>
+        <RhfSelectInput name='category' label='Category' options={options} />
+      </Harness>
+    );
+
+    const select = screen.getByRole('combobox', { name: 'Category' });
+    expect(select).not.toHaveAttribute('aria-describedby');
+    expect(select).not.toHaveAttribute('aria-invalid');
   });
 
   it('shows the validation message once the field has been touched', async () => {
@@ -259,6 +272,48 @@ describe('RhfSelectInput', () => {
     });
 
     expect(screen.getByText('Select a category')).toBeInTheDocument();
+  });
+
+  it('renders inline help and links it to the select', () => {
+    render(
+      <Harness>
+        <RhfSelectInput
+          name='category'
+          label='Category'
+          options={options}
+          inlineHelp='Pick the closest match'
+        />
+      </Harness>
+    );
+
+    const help = screen.getByText('Pick the closest match');
+    expect(help).toHaveAttribute('id', 'help-category');
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
+      'aria-describedby',
+      'help-category'
+    );
+  });
+
+  it('describes the select by both the help and the validation message', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfSelectInput
+          name='category'
+          label='Category'
+          options={options}
+          inlineHelp='Pick the closest match'
+        />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
+      'aria-describedby',
+      'help-category category-validation-msg'
+    );
   });
 
   it('renders a summary line for the selected option', () => {

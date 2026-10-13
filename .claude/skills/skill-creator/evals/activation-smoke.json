@@ -1,0 +1,22 @@
+[
+  {
+    "id": "smoke-create-skill",
+    "query": "Create a new Agent Skill for triaging application logs, with a SKILL.md and only the supporting resources it actually needs.",
+    "should_trigger": true
+  },
+  {
+    "id": "smoke-organize-skill",
+    "query": "Organize these scripts, references, and assets around the existing SKILL.md without losing unique domain guidance.",
+    "should_trigger": true
+  },
+  {
+    "id": "smoke-python-wheel",
+    "query": "Package this Python project as a wheel and publish it to PyPI.",
+    "should_trigger": false
+  },
+  {
+    "id": "smoke-browser-extension",
+    "query": "Optimize the activation conditions for my browser extension's content script.",
+    "should_trigger": false
+  }
+]

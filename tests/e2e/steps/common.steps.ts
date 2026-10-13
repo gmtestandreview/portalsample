@@ -57,7 +57,7 @@ Given(
     scenarioState.email = email;
     await installMockAuthentication(page, scenarioState);
     await installMockApi(page, scenarioState);
-    await page.goto('/dashboard');
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await waitForAppReady(page);
   }
 );
