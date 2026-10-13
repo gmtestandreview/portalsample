@@ -252,6 +252,7 @@ jobs:
 ```
 
 **Use reusable workflow:**
+
 ```yaml
 jobs:
   call-test:

@@ -802,7 +802,7 @@ Fix:
 
 Severity: Medium (can be High in cloud/VPC environments)
 
-- Note: For small stand alone projects this is less important. It is most important when deploying into an LAN or with other services listening on the same server.
+* Note: For small stand alone projects this is less important. It is most important when deploying into an LAN or with other services listening on the same server.
 
 Required:
 

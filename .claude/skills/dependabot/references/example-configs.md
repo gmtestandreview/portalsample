@@ -6,7 +6,6 @@ Before using an example, replace only values supported by repository evidence or
 
 ---
 
-
 ## Contents
 
 - [Basic Single Ecosystem](#1-basic-single-ecosystem)

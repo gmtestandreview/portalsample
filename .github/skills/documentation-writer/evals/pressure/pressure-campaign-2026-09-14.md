@@ -7,6 +7,7 @@ Date: 2026-09-14
 This campaign is an executed **static pressure adjudication** against the current `SKILL.md` decision rules. It is not a clean RED/GREEN behavioral agent campaign: no isolated subagent runner is available to execute the same prompts with and without the candidate skill. Therefore these color statuses describe instruction robustness, while formal behavioral RED/GREEN remains `NHR`.
 
 Color meanings:
+
 - **GREEN** — governing instruction maps directly to one defensible action; no static loophole found.
 - **AMBER** — useful guidance exists, but two or more defensible actions remain under pressure.
 - **RED** — instructions materially conflict with the expected behavior or create a direct failure.

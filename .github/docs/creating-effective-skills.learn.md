@@ -30,6 +30,7 @@ Skills are folders containing a `SKILL.md` file and optional bundled assets. The
 - **Asset references**: Links to bundled templates, scripts, schemas, and reference documents
 
 **Key advantages over the older prompt file format**:
+
 - Skills support extended frontmatter for **agent discovery**—agents can find and invoke skills automatically, while prompts required manual slash-command invocation
 - Skills can **bundle additional files** (reference docs, templates, scripts) alongside their instructions, giving the AI richer context
 - Skills are **more normalised across coding agent systems** via the open [Agent Skills specification](https://agentskills.io/home)
@@ -38,11 +39,13 @@ Skills are folders containing a `SKILL.md` file and optional bundled assets. The
 ### How Skills Differ from Other Customizations
 
 **Skills vs Instructions**:
+
 - Skills are invoked explicitly (by agents or users); instructions apply automatically
 - Skills drive specific tasks with bundled resources; instructions provide ongoing context
 - Use skills for workflows you trigger on demand; use instructions for standards that always apply
 
 **Skills vs Agents**:
+
 - Skills are task-focused capabilities; agents are specialized personas
 - Skills work with standard Copilot tools and bundle their own assets; agents may require MCP servers or custom integrations
 - Use skills for repeatable tasks; use agents for complex multi-step workflows that need persistent state
@@ -79,6 +82,7 @@ Use this skill when you need to create or expand test coverage for existing code
 ```
 
 **Why This Works**:
+
 - Clear `name` field provides the slash-command identifier
 - Rich `description` tells agents when to invoke this skill
 - Structured instructions provide specific, actionable guidance
@@ -117,11 +121,13 @@ The YAML frontmatter controls how Copilot discovers and executes your skill.
 ### Required Fields
 
 **name**: Kebab-case identifier matching the folder name
+
 ```yaml
 name: generate-tests
 ```
 
 **description**: Brief summary of what the skill does and when to use it (10–1024 characters, wrapped in single quotes)
+
 ```yaml
 description: 'Generate comprehensive unit tests for a component, covering happy path, edge cases, and error conditions'
 ```
@@ -200,6 +206,7 @@ This skill packages schema documentation, starter templates, and utility scripts
 ### Structure Your Skills
 
 **1. Start with clear objectives**:
+
 ```markdown
 # skill-name
 
@@ -207,6 +214,7 @@ Your goal is to [specific task] for [specific target].
 ```
 
 **2. Add "When to Use" guidance** (helps agent discovery):
+
 ```markdown
 ## When to Use This Skill
 
@@ -217,6 +225,7 @@ Use this skill when:
 ```
 
 **3. Define requirements explicitly**:
+
 ```markdown
 ## Requirements
 
@@ -226,6 +235,7 @@ Use this skill when:
 ```
 
 **4. Reference bundled assets**:
+
 ```markdown
 ## References
 
@@ -234,6 +244,7 @@ Use this skill when:
 ```
 
 **5. Provide examples**:
+
 ```markdown
 ### Good Example
 [Show desired output]
@@ -256,18 +267,22 @@ Use this skill when:
 ### Writing Style Guidelines
 
 **Use imperative mood**:
+
 - ✅ "Generate unit tests for the selected function"
 - ❌ "You should generate some tests"
 
 **Be specific about requirements**:
+
 - ✅ "Use Jest with React Testing Library"
 - ❌ "Use whatever testing framework"
 
 **Provide guardrails**:
+
 - ✅ "Do not modify existing test files; create new ones"
 - ❌ "Update tests as needed"
 
 **Structure complex skills**:
+
 ```markdown
 ## Step 1: Analysis
 [Analyze requirements]
@@ -348,6 +363,7 @@ Use [scripts/parse-test-output.sh](scripts/parse-test-output.sh) to extract stru
 **Q: How do I invoke a skill?**
 
 A: Skills can be invoked in several ways:
+
 - **Slash command**: Type the skill name anywhere in your message (e.g., `/generate-tests fix the failing tests`). Since v1.0.44, slash commands can appear mid-input — you don't have to start with them.
 - **Multiple skills in one message**: You can invoke multiple skills in a single message (e.g., `/generate-tests and then /conventional-commit`). Both skills will be executed in sequence.
 - **Agent discovery**: Agents can also discover and invoke skills automatically based on the skill's `description` and the user's intent — no slash command required.
@@ -399,6 +415,7 @@ Now that you understand effective skills, you can:
 - **Decision Framework**: Choosing the Right Customization _(coming soon)_ — When to use skills vs other types
 
 **Suggested Reading Order**:
+
 1. This article (creating effective skills)
 2. [Building Custom Agents](../building-custom-agents/) — More sophisticated workflows
 3. Choosing the Right Customization _(coming soon)_ — Decision guidance

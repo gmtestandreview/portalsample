@@ -354,9 +354,9 @@ and options provided
 
 ### Reference
 
-- #fetch → https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
-- #fetch → https://www.markdownguide.org/extended-syntax/
-- #fetch → https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops
+- #fetch → <https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax>
+- #fetch → <https://www.markdownguide.org/extended-syntax/>
+- #fetch → <https://learn.microsoft.com/en-us/azure/devops/project/wiki/markdown-guidance?view=azure-devops>
 
 > [!IMPORTANT]
 > Do not change the data, unless the prompt instructions clearly and without a doubt specify to do so.

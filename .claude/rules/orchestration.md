@@ -3,6 +3,7 @@
 ## Lead Orchestrator Authority
 
 The Lead Orchestrator (`orchestrator` agent) has final authority over:
+
 - Which agents and skills are active in this workspace
 - Task dispatch decisions based on ROUTING.md
 - Veto Buffer management
@@ -10,6 +11,7 @@ The Lead Orchestrator (`orchestrator` agent) has final authority over:
 ## INIT Protocol (Mandatory on New Projects)
 
 Before doing any work in a new project:
+
 1. Run `/orchestrate init`
 2. The orchestrator reads `INIT.md` and prunes irrelevant agents and skills
 3. The orchestrator writes `.agent-sync/TEAM.md` (active roster) and `.agent-sync/ROUTING.md`
@@ -20,6 +22,7 @@ If `INIT.md` does not exist: instruct the user to fill out `INIT_TEMPLATE.md` fi
 ## State Machine Protocol
 
 The orchestrator operates as a stateless machine. Every invocation must:
+
 1. Read `.agent-sync/DAILY.md` before any action
 2. Read `TASKS.md` for backlog
 3. Read `git log --oneline -10` for repo state
@@ -35,6 +38,7 @@ The orchestrator operates as a stateless machine. Every invocation must:
 
 The Veto Buffer (`DAILY.md` Section 3) captures autonomous decisions that could have
 been made differently. Rules:
+
 - Every ambiguous architectural decision gets a Veto Buffer entry
 - Format: context, choice made, branch it's isolated on, action options
 - Only the human resolves Veto Buffer items — the orchestrator never resolves them
@@ -90,6 +94,7 @@ Git worktrees isolate physical file changes. File Claims resolve *logical* colli
 ## Parallel Dispatch (Performance Rule)
 
 ALWAYS dispatch independent tasks in parallel. Never dispatch sequentially when:
+
 - Tasks operate on different files/subsystems
 - Tasks have no shared state
 - Tasks have no `depends_on` relationship
@@ -98,6 +103,7 @@ ALWAYS dispatch independent tasks in parallel. Never dispatch sequentially when:
 
 Route tasks based on `.agent-sync/ROUTING.md` (generated during init).
 Default routing when ROUTING.md is absent:
+
 - Code quality → `code-reviewer`
 - Security concerns → `security-reviewer`
 - Build failures → `build-error-resolver`

@@ -16,6 +16,7 @@ For each bug under review, run exactly two rounds. Each round uses a fresh sub-a
 ### Round 1: "Does this strike you as a real bug?"
 
 Provide the sub-agent with:
+
 - The bug writeup (or BUGS.md entry if no writeup yet)
 - The actual source code at the cited file:line (read it fresh — do not trust the writeup's code snippet)
 - All comments within 10 lines above and below the cited location
@@ -28,6 +29,7 @@ Prompt the sub-agent:
 > **Before analyzing anything, apply common sense.** Step back from the details and ask yourself: if you showed this code and this bug report to a senior developer who has never seen either before, would they say "yes, that's a bug" — or would they say "that's obviously not a bug"? If the answer is obviously not a bug, say so immediately and explain why. Do not rationalize your way past a common-sense answer. The goal of this review is to catch findings where pattern-matching overrode judgment.
 >
 > Then consider:
+>
 > - Is the developer aware of this behavior? (Look for comments, TODO markers, design decision notes, WHY annotations, OODA references.)
 > - Is this a documented limitation or intentional trade-off? (Check if other code paths handle this differently by design, not by accident.)
 > - Would the project maintainer respond "that's not a bug, that's how it works" or "that's a known limitation we documented"?
@@ -71,7 +73,7 @@ Write the verdict and both rounds' reasoning to `quality/challenge/BUG-NNN-chall
 During a playbook run, automatically apply the challenge gate to any bug matching one or more of these patterns. These patterns are where false positives concentrate:
 
 | Pattern | Why it triggers | Example |
-|---------|----------------|---------|
+| --------- | ---------------- | --------- |
 | **Security-class finding** (credential leak, auth bypass, injection) | Severity calibration auto-escalates these; the model is incentivized to defend them | BUG-041: "hardcoded JWT secret" that was a development placeholder |
 | **Code contains design-decision comments at the cited location** | WHY comments, OODA references, TODO-with-explanation, or design decision docs within 10 lines of the cited code suggest the developer made a conscious choice | BUG-007/008: `// WHY-OODA81: Batch upload uses "default" workspace` |
 | **The "expected behavior" has no spec basis** | Bug's spec_basis field says "code inconsistency" rather than citing a spec document, or the requirement was invented by the auditor (Tier 3 / REQ-NNN created during the run) | BUG-041: REQ-019 was created by the auditor, not derived from project docs |
@@ -93,6 +95,7 @@ When invoked standalone (not during a playbook run), the challenge gate:
 5. If the verdict is REJECTED, suggests removing the bug from BUGS.md and tdd-results.json
 
 Example prompt for standalone use:
+
 ```
 Read the quality playbook skill at .github/skills/SKILL.md and .github/skills/references/challenge_gate.md.
 Run the challenge gate on BUG-042 using the writeup at quality/writeups/BUG-042.md

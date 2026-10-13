@@ -132,9 +132,11 @@ For AI-assisted creation using the supplied Claude Code generation approach, rea
 7. Write the system prompt with responsibilities, process, quality standards, output expectations, and relevant edge cases.
 8. Save or return `agents/<agent-name>.md` as requested.
 9. When Bash and the bundled script are available, run:
+
    ```bash
    bash scripts/validate-agent.sh "agents/<agent-name>.md"
    ```
+
 10. If deterministic validation fails, fix the reported issue and rerun it.
 11. When the target environment can expose agent invocation, test realistic positive, applicable proactive/implicit, and near-miss scenarios. Verify the agent is actually invoked rather than inferring activation from the final answer.
 12. Test the system prompt on a typical task, its output contract, and relevant edge cases when execution is available.

@@ -59,10 +59,12 @@ For each group (starting with highest impact):
 
    - Run subset of tests for this group
    - Use pytest markers or file patterns:
+
      ```bash
      uv run pytest tests/path/to/test_file.py -v
      uv run pytest -k "pattern" -v
      ```
+
    - Ensure group passes before moving on
 
 4. **Move to next group**

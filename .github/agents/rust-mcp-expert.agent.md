@@ -399,6 +399,7 @@ Advise on performance:
    ```
 
 4. **Batch operations:**
+
    ```rust
    async fn batch_process(&self, items: Vec<Item>) -> Vec<Result<(), Error>> {
        use futures::future::join_all;

@@ -32,7 +32,7 @@ for f in docs/**/*.drawio; do python scripts/validate-drawio.py "$f"; done
 **Checks performed**
 
 | Check | Description |
-|-------|-------------|
+| ------- | ------------- |
 | Root cells | Verifies id="0" and id="1" cells are present in every diagram page |
 | Unique IDs | All `mxCell` id values are unique within a diagram |
 | Edge connectivity | Every edge has valid `source` and `target` attributes pointing to existing cells |
@@ -60,7 +60,7 @@ python scripts/add-shape.py <diagram.drawio> <label> <x> <y> [options]
 **Arguments**
 
 | Argument | Required | Description |
-|----------|----------|-------------|
+| ---------- | ---------- | ------------- |
 | `diagram` | Yes | Path to the `.drawio` file |
 | `label` | Yes | Text label for the new shape |
 | `x` | Yes | X coordinate (pixels from top-left) |
@@ -69,7 +69,7 @@ python scripts/add-shape.py <diagram.drawio> <label> <x> <y> [options]
 **Options**
 
 | Option | Default | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `--width` | `120` | Shape width in pixels |
 | `--height` | `60` | Shape height in pixels |
 | `--style` | `"rounded=1;whiteSpace=wrap;html=1;"` | draw.io style string |
@@ -94,6 +94,7 @@ python scripts/add-shape.py docs/architecture.drawio "Service X" 600 200 --dry-r
 **Output**
 
 Prints the new cell id on success:
+
 ```
 Added shape id="auto_abc123" to page 0 of docs/flowchart.drawio
 ```

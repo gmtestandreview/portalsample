@@ -63,12 +63,15 @@ Do not claim reliability from a single run.
 ## Patterns
 
 ### Statistical Test Evaluation
+
 Run repeated trials and analyze outcome distributions.
 
 ### Behavioral Contract Testing
+
 Define observable invariants and test whether agent behavior satisfies them.
 
 ### Adversarial Testing
+
 Include realistic attempts to expose brittle assumptions, unsafe shortcuts, or boundary failures.
 
 ## Anti-Patterns

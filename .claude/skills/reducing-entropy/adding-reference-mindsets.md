@@ -49,7 +49,7 @@ Before adding a mindset:
 Ideas that would make strong mindsets:
 
 | Concept | Core Insight |
-|---------|--------------|
+| --------- | -------------- |
 | `worse-is-better` | Shipping a simple thing beats perfecting a complex one |
 | `essential-vs-accidental` | Most complexity is accidental and can be eliminated |
 | `locality-of-behavior` | Code should be understandable without jumping around |
@@ -60,18 +60,22 @@ Ideas that would make strong mindsets:
 ## What NOT to Add
 
 **Technology-specific advice** → Belongs in project docs or tech-specific skills
-- "React components should..." 
+
+- "React components should..."
 - "In Rust, prefer..."
 
 **Process/workflow rules** → Belongs in skills, not mindsets
+
 - "Always run tests before..."
 - "Use TDD when..."
 
 **Vague platitudes** → If there's no actionable insight, skip it
+
 - "Write clean code"
 - "Think before you code"
 
 **Anything requiring context** → Mindsets should be universal
+
 - "In microservices architectures..."
 - "When working with legacy code..."
 

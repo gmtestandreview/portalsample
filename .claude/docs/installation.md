@@ -104,9 +104,11 @@ Codex CLI, Cursor, OpenCode, and GitHub Copilot each read their hooks and manife
 To enable a platform's plugin:
 
 - **GitHub Copilot** has a native install command:
+
   ```bash
   copilot plugin install RBraga01/a-team:.copilot-plugin
   ```
+
 - **Codex CLI, Cursor, and OpenCode** don't currently have an equivalent one-line install — copy `.codex-plugin/`, `.cursor-plugin/`, or `.opencode/` into your project root manually from a clone of the repo.
 
 ---

@@ -9,6 +9,7 @@ This skill delivers a guided, interactive tour of the `context-matic` MCP server
 phase in order. Stop after each interaction point and wait for the user's reply before continuing.
 
 > **Agent conduct rules — follow throughout the entire skill:**
+>
 > - **Never narrate the skill structure.** Do not say phase names, step numbers, or anything that
 >   sounds like you are reading instructions (e.g., "In Phase 1 I will…", "Step 1a:", "As per the
 >   skill…"). Deliver the tour as a natural conversation.
@@ -33,6 +34,7 @@ based on the following facts:
 
 After explaining the problem the server solves, walk through each of the four tools as if
 introducing them to someone using the server for the first time. For each tool, explain:
+
 - **What it is** — give it a memorable one-line description
 - **When you would use it** — a concrete, relatable scenario
 - **What it gives back** — the kind of output the user will see
@@ -40,7 +42,7 @@ introducing them to someone using the server for the first time. For each tool, 
 Use the following facts as your source, but say it conversationally — do not present a raw table:
 
 > | Tool | What it does | When to use it | What you get back |
-> |---|---|---|---|
+> | --- | --- | --- | --- |
 > | `fetch_api` | Returns an exact match for an API `key`/identifier and language, or lists all APIs for a given language. The `key` is the machine-readable identifier returned by `fetch_api` (for example, `paypal`), not the human-readable display name (for example, "PayPal Server SDK"). | "What APIs can I use?" / Starting a new project / "Do you have the PayPal SDK?" | A named list of available APIs with short descriptions (full catalog), or one exact API match when you provide its identifier/key and language |
 > | `ask` | Answers integration questions with version-accurate guidance and code samples | "How do I authenticate?", "Show me the quickstart", "What's the right way to do X?" | Step-by-step guidance and runnable code samples grounded in the actual SDK version |
 > | `model_search` | Looks up an SDK model/object definition and its typed properties | "What fields does an Order have?", "Is this property required?" | The model's name, description, and a full typed property list (required vs. optional, nested types) |
@@ -50,7 +52,6 @@ End this section by telling the user that you'll demonstrate the four core disco
 integration tools live during the tour, starting with `fetch_api` right now. Make it clear that
 this tour is focused on those core ContextMatic server tools rather than every possible helper the
 broader workflow might use.
-
 
 ---
 
@@ -111,12 +112,14 @@ subsequent tool calls. Also note the API's name for use in explanatory text.
 Before calling, say something like: *"Great choice — let me get an overview of [API name] for you."*
 
 Call **`ask`** with:
+
 - `key` = chosen API's key
 - `language` = detected language
 - `query` = `"Give me a high-level overview of this API: what it does, what the main controllers or
   modules are, how authentication works, and what the first step to start using it is."`
 
 Present the response conversationally. Highlight:
+
 - What the API can do (use cases)
 - How authentication works (credentials, OAuth flows, etc.)
 - The main SDK controllers or namespaces
@@ -137,6 +140,7 @@ Ask the user:
 Before calling, say something like: *"On it — let me look that up."* or *"Sure, let me pull up the quickstart."*
 
 Call **`ask`** with:
+
 - `key` = chosen API's key
 - `language` = detected language
 - `query` = the user's stated goal, or `"Show me a complete integration quickstart: install the
@@ -157,16 +161,18 @@ Tell the user:
 Before calling, say something like: *"Let me search for the `[model name]` model so you can see what the result looks like."*
 
 Pick a **representative model** from the chosen API (examples below) and call **`model_search`** with:
+
 - `key` = the previously chosen API key (for example, `paypal` or `spotify`)
 - `language` = the detected project language
 - `query` = the representative model name you picked
 
 | API key | Good demo query |
-|---|---|
+| --- | --- |
 | `paypal` | `Order` |
 | `spotify` | `TrackObject` |
 
 Display the result, pointing out:
+
 - The exact model name and its description
 - A few interesting typed properties (highlight optional vs. required)
 - Any nested model references (e.g., `PurchaseUnit[] | undefined`)
@@ -196,10 +202,11 @@ Pick a **representative endpoint** for the chosen API and call **`endpoint_searc
 For example:
 
 | API key (`key`) | Endpoint name (`query`) | Example `language` |
-|---|---|---|
+| --- | --- | --- |
 | `paypal` | `createOrder` | user's project language |
-| `spotify` | `getTrack`   | user's project language |
+| `spotify` | `getTrack` | user's project language |
 Display the result, pointing out:
+
 - The method name and description
 - The request parameters and their types
 - The response type
@@ -223,42 +230,51 @@ a formatted menu:
 ### What you can do with this MCP
 
 **Quickstart: your first API call**
+
 ```
 /integrate-context-matic Set up the Spotify TypeScript SDK and fetch my top 5 tracks.
 Show me the complete client initialization and the API call.
 ```
+
 ```
 /integrate-context-matic How do I authenticate with the Twilio API and send an SMS?
 Give me the full PHP setup including the SDK client and the send call.
 ```
+
 ```
 /integrate-context-matic Walk me through initializing the Slack API client in a Python script and posting a message to a channel.
 ```
 
 **Framework-specific integration**
+
 ```
 /integrate-context-matic I'm building a Next.js app. Integrate the Google Maps Places API
 to search for nearby restaurants and display them on a page. Use the TypeScript SDK.
 ```
+
 ```
 /integrate-context-matic I'm using Laravel. Show me how to send a Twilio SMS when a user
 registers. Include the PHP SDK setup, client initialization, and the controller code.
 ```
+
 ```
 /integrate-context-matic I have an ASP.NET Core app. Add Twilio webhook handling so I can receive delivery status callbacks when an SMS is sent.
 ```
 
 **Chaining tools for full integrations**
+
 ```
 /integrate-context-matic I want to add real-time order shipping notifications to my
 Next.js store. Use Twilio to send an SMS when the order status changes to "shipped". Show me
 the full integration: SDK setup, the correct endpoint and its parameters, and the TypeScript code.
 ```
+
 ```
 /integrate-context-matic I need to post a Slack message every time a Spotify track changes
 in my playlist monitoring app. Walk me through integrating both APIs in TypeScript — start by
 discovering what's available, then show me the auth setup and the exact API calls.
 ```
+
 ```
 /integrate-context-matic In my ASP.NET Core app, I want to geocode user addresses using
 Google Maps and cache the results. Look up the geocode endpoint and response model, then
@@ -266,10 +282,12 @@ generate the C# code including error handling.
 ```
 
 **Debugging and error handling**
+
 ```
 /integrate-context-matic My Spotify API call is returning 401. What OAuth flow should I
 be using and how does the TypeScript SDK handle token refresh automatically?
 ```
+
 ```
 /integrate-context-matic My Slack message posts are failing intermittently with rate limit
 errors. How does the Python SDK expose rate limit information and what's the recommended retry

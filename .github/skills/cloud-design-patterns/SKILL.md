@@ -31,7 +31,7 @@ These misconceptions can result in flawed workload designs. Design patterns don'
 ## References
 
 | Reference | When to load |
-|---|---|
+| --- | --- |
 | [Reliability & Resilience Patterns](references/reliability-resilience.md) | Ambassador, Bulkhead, Circuit Breaker, Compensating Transaction, Retry, Health Endpoint Monitoring, Leader Election, Saga, Sequential Convoy |
 | [Performance Patterns](references/performance.md) | Async Request-Reply, Cache-Aside, CQRS, Index Table, Materialized View, Priority Queue, Queue-Based Load Leveling, Rate Limiting, Sharding, Throttling |
 | [Messaging & Integration Patterns](references/messaging-integration.md) | Choreography, Claim Check, Competing Consumers, Messaging Bridge, Pipes and Filters, Publisher-Subscriber, Scheduler Agent Supervisor |
@@ -47,7 +47,7 @@ These misconceptions can result in flawed workload designs. Design patterns don'
 ## Pattern Categories at a Glance
 
 | Category | Patterns | Focus |
-|---|---|---|
+| --- | --- | --- |
 | Reliability & Resilience | 9 patterns | Fault tolerance, self-healing, graceful degradation |
 | Performance | 10 patterns | Caching, scaling, load management, data optimization |
 | Messaging & Integration | 7 patterns | Decoupling, event-driven communication, workflow coordination |

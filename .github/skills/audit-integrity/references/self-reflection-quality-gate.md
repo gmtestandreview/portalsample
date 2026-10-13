@@ -20,27 +20,27 @@ After completing analysis, internally score the output across domain-relevant ca
 
 ## Domain-Specific Extensions
 
-### Multi-tool Pipeline — add:
+### Multi-tool Pipeline — add
 
 | **Deduplication** | Are cross-tool duplicates properly merged with corroboration notes? | ≥ 8 |
 
-### Code Quality (SonarQube-style) — adapt Completeness to:
+### Code Quality (SonarQube-style) — adapt Completeness to
 
 | **Completeness** | Were all issue types (Bugs, Vulnerabilities, Hotspots, Smells, Duplication) evaluated? | ≥ 8 |
 
-### SAST/SCA — adapt Coverage to:
+### SAST/SCA — adapt Coverage to
 
 | **Coverage** | Were all entry points taint-traced and all dependency manifests audited? | ≥ 8 |
 
-### STRIDE Threat Modeling — adapt Completeness to:
+### STRIDE Threat Modeling — adapt Completeness to
 
 | **Completeness** | Were all six STRIDE categories evaluated for every trust boundary and data flow? | ≥ 8 |
 
-### STRIDE-LM — adapt Completeness and Coverage to:
+### STRIDE-LM — adapt Completeness and Coverage to
 
 | **Completeness** | Were all seven STRIDE-LM categories evaluated for every asset and trust boundary? | ≥ 8 |
 | **Coverage** | Were all lateral movement paths, trust boundaries, and post-exploitation chains assessed? | ≥ 8 |
 
-### Code Review — adapt Coverage to:
+### Code Review — adapt Coverage to
 
 | **Coverage** | Were all entry points, trust boundaries, and data flows traced from source to sink? | ≥ 8 |

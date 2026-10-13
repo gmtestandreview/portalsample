@@ -35,6 +35,7 @@ Master advanced prompt engineering techniques to maximize LLM performance, relia
 ## Core Capabilities
 
 ### 1. Few-Shot Learning
+
 - Example selection strategies (semantic similarity, diversity sampling)
 - Balancing example count with context window constraints
 - Constructing effective demonstrations with input-output pairs
@@ -42,6 +43,7 @@ Master advanced prompt engineering techniques to maximize LLM performance, relia
 - Handling edge cases through strategic example selection
 
 ### 2. Chain-of-Thought Prompting
+
 - Step-by-step reasoning elicitation
 - Zero-shot CoT with "Let's think step by step"
 - Few-shot CoT with reasoning traces
@@ -49,6 +51,7 @@ Master advanced prompt engineering techniques to maximize LLM performance, relia
 - Verification and validation steps
 
 ### 3. Prompt Optimization
+
 - Iterative refinement workflows
 - A/B testing prompt variations
 - Measuring prompt performance metrics (accuracy, consistency, latency)
@@ -56,6 +59,7 @@ Master advanced prompt engineering techniques to maximize LLM performance, relia
 - Handling edge cases and failure modes
 
 ### 4. Template Systems
+
 - Variable interpolation and formatting
 - Conditional prompt sections
 - Multi-turn conversation templates
@@ -63,6 +67,7 @@ Master advanced prompt engineering techniques to maximize LLM performance, relia
 - Modular prompt components
 
 ### 5. System Prompt Design
+
 - Setting model behavior and constraints
 - Defining output formats and structure
 - Establishing role and expertise
@@ -99,6 +104,7 @@ prompt = template.render(
 ## Key Patterns
 
 ### Progressive Disclosure
+
 Start with simple prompts, add complexity only when needed:
 
 1. **Level 1**: Direct instruction
@@ -114,12 +120,15 @@ Start with simple prompts, add complexity only when needed:
    - Include 2-3 example summaries with input-output pairs
 
 ### Instruction Hierarchy
+
 ```
 [System Context] → [Task Instruction] → [Examples] → [Input Data] → [Output Format]
 ```
 
 ### Error Recovery
+
 Build prompts that gracefully handle failures:
+
 - Include fallback instructions
 - Request confidence scores
 - Ask for alternative interpretations when uncertain
@@ -146,6 +155,7 @@ Build prompts that gracefully handle failures:
 ## Integration Patterns
 
 ### With RAG Systems
+
 ```python
 # Combine retrieved context with prompt engineering
 prompt = f"""Given the following context:
@@ -159,6 +169,7 @@ Provide a detailed answer based solely on the context above. If the context does
 ```
 
 ### With Validation
+
 ```python
 # Add self-verification step
 prompt = f"""{main_task_prompt}
@@ -175,12 +186,14 @@ If verification fails, revise your response."""
 ## Performance Optimization
 
 ### Token Efficiency
+
 - Remove redundant words and phrases
 - Use abbreviations consistently after first definition
 - Consolidate similar instructions
 - Move stable content to system prompts
 
 ### Latency Reduction
+
 - Minimize prompt length without sacrificing quality
 - Use streaming for long-form outputs
 - Cache common prompt prefixes
@@ -200,6 +213,7 @@ If verification fails, revise your response."""
 ## Success Metrics
 
 Track these KPIs for your prompts:
+
 - **Accuracy**: Correctness of outputs
 - **Consistency**: Reproducibility across similar inputs
 - **Latency**: Response time (P50, P95, P99)

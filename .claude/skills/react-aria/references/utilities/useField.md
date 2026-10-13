@@ -59,25 +59,25 @@ function ContactPicker(props) {
 ### AriaFieldProps
 
 | Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `aria-describedby` | `string | undefined` | — | Identifies the element (or elements) that describes the object. |
-| `aria-details` | `string | undefined` | — | Identifies the element (or elements) that provide a detailed, extended description for the object. |
-| `aria-label` | `string | undefined` | — | Defines a string value that labels the current element. |
-| `aria-labelledby` | `string | undefined` | — | Identifies the element (or elements) that labels the current element. |
+| ------ | ------ | --------- | ------------- |
+| `aria-describedby` | `string \| undefined` | — | Identifies the element (or elements) that describes the object. |
+| `aria-details` | `string \| undefined` | — | Identifies the element (or elements) that provide a detailed, extended description for the object. |
+| `aria-label` | `string \| undefined` | — | Defines a string value that labels the current element. |
+| `aria-labelledby` | `string \| undefined` | — | Identifies the element (or elements) that labels the current element. |
 | `description` | `ReactNode` | — | A description for the field. Provides a hint such as specific requirements for what to choose. |
-| `errorMessage` | `((v: ValidationResult) => ReactNode) | ReactNode` | — | An error message for the field. |
-| `id` | `string | undefined` | — | The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id). |
-| `isInvalid` | `boolean | undefined` | — | Whether the input value is invalid. |
+| `errorMessage` | `((v: ValidationResult) => ReactNode) \| ReactNode` | — | An error message for the field. |
+| `id` | `string \| undefined` | — | The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id). |
+| `isInvalid` | `boolean \| undefined` | — | Whether the input value is invalid. |
 | `label` | `ReactNode` | — | The content to display as the label. |
-| `labelElementType` | `ElementType | undefined` | 'label' | The HTML element used to render the label, e.g. 'label', or 'span'. |
-| `validate` | `((value: any) => true | undefined) | ValidationError | null | undefined` | — | A function that returns an error message if a given value is invalid. Validation errors are displayed to the user when the form is submitted if `validationBehavior="native"`. For realtime validation, use the `isInvalid` prop instead. |
-| `validationBehavior` | `"aria" | "native" | undefined` | 'aria' | Whether to use native HTML form validation to prevent form submission when the value is missing or invalid, or mark the field as required or invalid via ARIA. |
+| `labelElementType` | `ElementType \| undefined` | 'label' | The HTML element used to render the label, e.g. 'label', or 'span'. |
+| `validate` | `((value: any) => true \| undefined) \| ValidationError \| null \| undefined` | — | A function that returns an error message if a given value is invalid. Validation errors are displayed to the user when the form is submitted if `validationBehavior="native"`. For realtime validation, use the `isInvalid` prop instead. |
+| `validationBehavior` | `"aria" \| "native" \| undefined` | 'aria' | Whether to use native HTML form validation to prevent form submission when the value is missing or invalid, or mark the field as required or invalid via ARIA. |
 
 ### FieldAria
 
 | Name | Type | Description |
-|------|------|-------------|
+| ------ | ------ | ------------- |
 | `descriptionProps` \* | `DOMAttributes<FocusableElement>` | Props for the description element, if any. |
 | `errorMessageProps` \* | `DOMAttributes<FocusableElement>` | Props for the error message element, if any. |
 | `fieldProps` \* | `AriaLabelingProps & DOMProps` | Props to apply to the field container element being labeled. |
-| `labelProps` \* | `DOMAttributes<FocusableElement> | LabelHTMLAttributes<HTMLLabelElement>` | Props to apply to the label container element. |
+| `labelProps` \* | `DOMAttributes<FocusableElement> \| LabelHTMLAttributes<HTMLLabelElement>` | Props to apply to the label container element. |

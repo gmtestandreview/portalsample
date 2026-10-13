@@ -5,6 +5,7 @@
 **User Request:** "Research the benefits of morning exercise and write a summary"
 
 ### Loop 1: Create Plan
+
 ```bash
 Write task_plan.md
 ```
@@ -31,6 +32,7 @@ Create a research summary on the benefits of morning exercise.
 ```
 
 ### Loop 2: Research
+
 ```bash
 Read task_plan.md           # Refresh goals
 WebSearch "morning exercise benefits"
@@ -39,6 +41,7 @@ Edit task_plan.md           # Mark Phase 2 complete
 ```
 
 ### Loop 3: Synthesize
+
 ```bash
 Read task_plan.md           # Refresh goals
 Read notes.md               # Get findings
@@ -47,6 +50,7 @@ Edit task_plan.md           # Mark Phase 3 complete
 ```
 
 ### Loop 4: Deliver
+
 ```bash
 Read task_plan.md           # Verify complete
 Deliver morning_exercise_summary.md
@@ -59,6 +63,7 @@ Deliver morning_exercise_summary.md
 **User Request:** "Fix the login bug in the authentication module"
 
 ### task_plan.md
+
 ```markdown
 # Task Plan: Fix Login Bug
 
@@ -98,6 +103,7 @@ Identify and fix the bug preventing successful login.
 ### The 3-File Pattern in Action
 
 **task_plan.md:**
+
 ```markdown
 # Task Plan: Dark Mode Toggle
 
@@ -121,6 +127,7 @@ Add functional dark mode toggle to settings.
 ```
 
 **notes.md:**
+
 ```markdown
 # Notes: Dark Mode Implementation
 
@@ -142,6 +149,7 @@ Add functional dark mode toggle to settings.
 ```
 
 **dark_mode_implementation.md:** (deliverable)
+
 ```markdown
 # Dark Mode Implementation
 
@@ -163,6 +171,7 @@ File: src/hooks/useTheme.ts
 When something fails, DON'T hide it:
 
 ### Before (Wrong)
+
 ```
 Action: Read config.json
 Error: File not found
@@ -171,6 +180,7 @@ Action: Read config.json  # Another retry
 ```
 
 ### After (Correct)
+
 ```
 Action: Read config.json
 Error: File not found

@@ -4,7 +4,6 @@ Financial Scenario Analyzer - Model different business scenarios and their finan
 """
 
 import json
-from typing import Dict, List, Tuple
 import math
 
 class FinancialScenarioAnalyzer:
@@ -21,7 +20,7 @@ class FinancialScenarioAnalyzer:
             's_curve': lambda base, rate, period: base * (2 / (1 + math.exp(-rate * period)))
         }
     
-    def analyze_scenarios(self, base_case: Dict, scenarios: List[Dict]) -> Dict:
+    def analyze_scenarios(self, base_case: dict, scenarios: list[dict]) -> dict:
         """Analyze multiple financial scenarios"""
         results = {
             'base_case_summary': self._summarize_financials(base_case),
@@ -55,7 +54,7 @@ class FinancialScenarioAnalyzer:
         
         return results
     
-    def _summarize_financials(self, financials: Dict) -> Dict:
+    def _summarize_financials(self, financials: dict) -> dict:
         """Summarize key financial metrics"""
         revenue = financials.get('revenue', 0)
         cogs = financials.get('cogs', 0)
@@ -87,7 +86,7 @@ class FinancialScenarioAnalyzer:
             return float('inf')
         return cash / burn_rate
     
-    def _analyze_scenario(self, base_case: Dict, scenario: Dict) -> Dict:
+    def _analyze_scenario(self, base_case: dict, scenario: dict) -> dict:
         """Analyze a single scenario"""
         name = scenario.get('name', 'Unnamed Scenario')
         probability = scenario.get('probability', 0.5)
@@ -124,7 +123,7 @@ class FinancialScenarioAnalyzer:
             'key_assumptions': scenario.get('assumptions', [])
         }
     
-    def _apply_scenario_changes(self, base_case: Dict, scenario: Dict) -> Dict:
+    def _apply_scenario_changes(self, base_case: dict, scenario: dict) -> dict:
         """Apply scenario changes to base case"""
         result = base_case.copy()
         changes = scenario.get('changes', {})
@@ -143,7 +142,7 @@ class FinancialScenarioAnalyzer:
         
         return result
     
-    def _project_year(self, current_state: Dict, scenario: Dict, year: int) -> Dict:
+    def _project_year(self, current_state: dict, scenario: dict, year: int) -> dict:
         """Project financials for a specific year"""
         growth_model = scenario.get('growth_model', 'exponential')
         growth_rate = scenario.get('growth_rate', 0.3)
@@ -181,14 +180,14 @@ class FinancialScenarioAnalyzer:
             'cumulative_cash_flow': current_state.get('cumulative_cash_flow', 0) + free_cash_flow
         }
     
-    def _calculate_npv(self, cash_flows: List[float], discount_rate: float) -> float:
+    def _calculate_npv(self, cash_flows: list[float], discount_rate: float) -> float:
         """Calculate Net Present Value"""
         npv = 0
         for i, cf in enumerate(cash_flows):
             npv += cf / math.pow(1 + discount_rate, i + 1)
         return npv
     
-    def _calculate_irr(self, cash_flows: List[float], initial_investment: float) -> float:
+    def _calculate_irr(self, cash_flows: list[float], initial_investment: float) -> float:
         """Calculate Internal Rate of Return (simplified)"""
         if not cash_flows or initial_investment == 0:
             return 0
@@ -201,7 +200,7 @@ class FinancialScenarioAnalyzer:
             return math.pow(total_return / initial_investment, 1/years) - 1
         return 0
     
-    def _find_break_even(self, projections: List[Dict]) -> int:
+    def _find_break_even(self, projections: list[dict]) -> int:
         """Find break-even month"""
         months = 0
         for projection in projections:
@@ -217,7 +216,7 @@ class FinancialScenarioAnalyzer:
                     return int(months - 12 + months_to_breakeven)
         return -1  # Not reached
     
-    def _calculate_total_return(self, projections: List[Dict], base_case: Dict) -> float:
+    def _calculate_total_return(self, projections: list[dict], base_case: dict) -> float:
         """Calculate total return multiple"""
         initial = base_case.get('valuation', 1000000)
         
@@ -227,7 +226,7 @@ class FinancialScenarioAnalyzer:
         
         return (final_valuation / initial) if initial > 0 else 0
     
-    def _perform_sensitivity_analysis(self, base_case: Dict, scenarios: List[Dict]) -> Dict:
+    def _perform_sensitivity_analysis(self, base_case: dict, scenarios: list[dict]) -> dict:
         """Perform sensitivity analysis on key variables"""
         sensitivity = {}
         
@@ -242,7 +241,7 @@ class FinancialScenarioAnalyzer:
         
         return sensitivity
     
-    def _calculate_variable_impact(self, base_case: Dict, variable: str, change: float) -> float:
+    def _calculate_variable_impact(self, base_case: dict, variable: str, change: float) -> float:
         """Calculate impact of variable change on valuation"""
         # Simplified impact calculation
         impacts = {
@@ -256,7 +255,7 @@ class FinancialScenarioAnalyzer:
         
         return base_value * (1 + change * impact_multiplier)
     
-    def _calculate_risk_adjusted_returns(self, scenarios: List[Dict]) -> Dict:
+    def _calculate_risk_adjusted_returns(self, scenarios: list[dict]) -> dict:
         """Calculate risk-adjusted returns"""
         expected_value = 0
         best_case = None
@@ -291,7 +290,7 @@ class FinancialScenarioAnalyzer:
             'sharpe_ratio': (expected_value / std_dev) if std_dev > 0 else 0
         }
     
-    def _generate_recommendation(self, scenarios: List[Dict], risk_adjusted: Dict) -> Dict:
+    def _generate_recommendation(self, scenarios: list[dict], risk_adjusted: dict) -> dict:
         """Generate recommendation based on analysis"""
         recommendation = {
             'recommended_scenario': '',
@@ -335,7 +334,7 @@ class FinancialScenarioAnalyzer:
         
         return recommendation
 
-def analyze_financial_scenarios(base_case: Dict, scenarios: List[Dict]) -> str:
+def analyze_financial_scenarios(base_case: dict, scenarios: list[dict]) -> str:
     """Main function to analyze financial scenarios"""
     analyzer = FinancialScenarioAnalyzer()
     results = analyzer.analyze_scenarios(base_case, scenarios)

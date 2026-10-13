@@ -22,7 +22,7 @@ If `output.docx` is omitted, it defaults to `<input-basename>.docx` in the curre
 ## Skill Folder Contents
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `SKILL.md` | This instruction file |
 | `scripts/md-to-docx.mjs` | Node.js Markdown-to-Word converter |
 | `scripts/package.json` | Dependencies (`docx`, `marked`) |
@@ -30,7 +30,7 @@ If `output.docx` is omitted, it defaults to `<input-basename>.docx` in the curre
 ## Prerequisites
 
 | Requirement | Version | Notes |
-|-------------|---------|-------|
+| ------------- | --------- | ------- |
 | **Node.js** | 18+ | Required runtime |
 | **`docx`** | 9+ | Pure JS Word document generator |
 | **`marked`** | 15+ | Markdown parser |

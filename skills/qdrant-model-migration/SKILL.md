@@ -9,7 +9,6 @@ Vectors from different models are incompatible. You cannot mix old and new embed
 
 - Understand collection aliases before choosing a strategy [Collection aliases](https://skills.qdrant.tech/md/documentation/manage-data/collections/?s=collection-aliases)
 
-
 ## Can I Avoid Re-embedding?
 
 Use when: looking for shortcuts before committing to full migration.
@@ -17,7 +16,6 @@ Use when: looking for shortcuts before committing to full migration.
 You MUST re-embed if: changing model provider (OpenAI to Cohere), changing architecture (CLIP to BGE), incompatible dimension counts across different models, or adding sparse vectors to dense-only collection.
 
 You CAN avoid re-embedding if: using Matryoshka models (use `dimensions` parameter to output lower-dimensional embeddings, learn linear transformation from sample data, some recall loss, good for 100M+ datasets). Or changing quantization (binary to scalar): Qdrant re-quantizes automatically. [Quantization](https://skills.qdrant.tech/md/documentation/manage-data/quantization/)
-
 
 ## Need Zero Downtime
 
@@ -38,7 +36,6 @@ Use when: production must stay available. Recommended for model replacement at s
 - Verify search quality, then delete the old collection
 
 Careful, the alias swap only redirects queries. Payloads must be re-uploaded separately.
-
 
 ## Need Both Models Live (Side-by-Side)
 
@@ -61,7 +58,6 @@ Co-locating large multi-vectors (especially ColBERT) with dense vectors degrades
 
 If you anticipate future model migrations, define both vector fields upfront at collection creation.
 
-
 ## Dense to Hybrid Search Migration
 
 Use when: adding sparse/BM25 vectors to an existing dense-only collection. Most common migration pattern.
@@ -76,7 +72,6 @@ If the collection already uses named dense vectors and is on v1.18+, add the spa
 
 Sparse vectors at chunk level have different TF-IDF characteristics than document level. Test retrieval quality after migration, especially for non-English text without stop-word removal.
 
-
 ## Re-embedding Is Too Slow
 
 Use when: dataset is large and re-embedding is the bottleneck.
@@ -88,7 +83,6 @@ Use when: dataset is large and re-embedding is the bottleneck.
 - For Qdrant Cloud inference, switching models is a config change, not a pipeline change [Inference docs](https://skills.qdrant.tech/md/documentation/inference/)
 
 For 400GB+ datasets, expect days. For small datasets (<25MB), re-indexing from source is faster than using the migration tool.
-
 
 ## What NOT to Do
 

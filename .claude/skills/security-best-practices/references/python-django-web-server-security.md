@@ -247,6 +247,7 @@ Severity: High (Critical for auth-enabled apps)
 NOTE: Only enforce this if TLS is enabled, as it will break non-TLS applications
 
 If using TLS:
+
 * MUST set:
 
   * `CSRF_COOKIE_SECURE = True` ([Django Project][1])
@@ -641,7 +642,7 @@ NOTE:
 
 ### DJANGO-CSP-001: Deploy a Content Security Policy (CSP) as defense-in-depth
 
-Severity: Medium (High for apps rendering untrusted content) 
+Severity: Medium (High for apps rendering untrusted content)
 
 NOTE: It is most important to set the CSP's script-src. All other directives are not as important and can generally be excluded for the ease of development.
 

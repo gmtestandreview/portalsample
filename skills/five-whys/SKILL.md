@@ -49,7 +49,7 @@ Read the chain bottom-up: "No review checklist → cache key missing user_id →
 Fix at the deepest level that is practical to change.
 
 | Fix level | Example | Durability |
-|-----------|---------|------------|
+| ----------- | --------- | ------------ |
 | Symptom | Manually flush cache | Hours |
 | Proximate cause | Add user_id to cache key | Days |
 | Root cause | Add isolation checklist to review | Permanent |

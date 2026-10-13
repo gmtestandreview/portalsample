@@ -20,8 +20,8 @@ The agent combines:
 - Prompt: `.github/prompts/educational-code-commenting.prompt.md`
 - Skill: `.github/skills/add-educational-comments/SKILL.md`
 - Instructions:
-   - `.github/instructions/educational-code-commenting-agent.instructions.md`
-   - `.github/instructions/self-explanatory-code-commenting.instructions.md`
+  - `.github/instructions/educational-code-commenting-agent.instructions.md`
+  - `.github/instructions/self-explanatory-code-commenting.instructions.md`
 - Agent config: `.github/agents/educational-code-commenting-agent/agent-config.json`
 
 ## Primary Activation

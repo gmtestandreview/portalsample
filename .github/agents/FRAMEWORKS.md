@@ -22,7 +22,7 @@ Logical framework-based grouping for agent discovery.
 
 - `expert-nextjs-developer.agent.md`
 
-## .NET / C#
+## .NET / C #
 
 - `expert-dotnet-software-engineer.agent.md`
 - `csharp-expert.agent.md`

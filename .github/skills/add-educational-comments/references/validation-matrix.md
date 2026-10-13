@@ -15,7 +15,7 @@ Never run commands that deploy, mutate databases, contact production systems, re
 ## File-Type Checks
 
 | File Type | Preferred Check |
-|---|---|
+| --- | --- |
 | Python | `python -m py_compile <file>` after preserving shebang/encoding cookie placement. |
 | JavaScript | `node --check <file>` for plain JS when applicable; otherwise use existing parser/linter command. |
 | TypeScript | Existing `tsc --noEmit` or project typecheck command when safe. |

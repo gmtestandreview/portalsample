@@ -18,7 +18,7 @@
 ```
 
 | Component | Required | Description |
-|-----------|----------|-------------|
+| ----------- | ---------- | ------------- |
 | `- [ ]` | Yes | Checkbox (unchecked) |
 | `**Title**` | Yes | Task title in bold |
 | `priority:N` | No | Priority 1-10 (default: 5, lower = higher) |

@@ -26,6 +26,7 @@ The simple solution might be unfamiliar. It might require thinking. But it doesn
 Complexity comes from braiding together concepts that should be separate. Every time we couple things, we create complexity. Every coupling is a future debugging session.
 
 Simple means:
+
 - One role
 - One task  
 - One concept

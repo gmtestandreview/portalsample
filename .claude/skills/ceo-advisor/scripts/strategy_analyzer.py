@@ -4,7 +4,6 @@ Strategic Planning Analyzer - Comprehensive business strategy assessment tool
 """
 
 import json
-from typing import Dict, List, Tuple
 from datetime import datetime, timedelta
 import math
 
@@ -46,7 +45,7 @@ class StrategyAnalyzer:
             'ansoff_matrix': ['market_penetration', 'market_development', 'product_development', 'diversification']
         }
     
-    def analyze_strategic_position(self, company_data: Dict) -> Dict:
+    def analyze_strategic_position(self, company_data: dict) -> dict:
         """Comprehensive strategic analysis"""
         results = {
             'timestamp': datetime.now().isoformat(),
@@ -104,7 +103,7 @@ class StrategyAnalyzer:
         
         return results
     
-    def _analyze_pillar(self, pillar_data: Dict, factors: List) -> float:
+    def _analyze_pillar(self, pillar_data: dict, factors: list) -> float:
         """Analyze a strategic pillar"""
         if not pillar_data:
             return 50.0
@@ -120,7 +119,7 @@ class StrategyAnalyzer:
         
         return (total_score / count) if count > 0 else 50.0
     
-    def _get_pillar_details(self, pillar_data: Dict, factors: List) -> List[Dict]:
+    def _get_pillar_details(self, pillar_data: dict, factors: list) -> list[dict]:
         """Get detailed factor analysis"""
         details = []
         
@@ -147,7 +146,7 @@ class StrategyAnalyzer:
         else:
             return 'Critical'
     
-    def _apply_frameworks(self, company_data: Dict) -> Dict:
+    def _apply_frameworks(self, company_data: dict) -> dict:
         """Apply strategic frameworks"""
         frameworks = {}
         
@@ -193,7 +192,7 @@ class StrategyAnalyzer:
         
         return frameworks
     
-    def _calculate_industry_attractiveness(self, forces: Dict) -> float:
+    def _calculate_industry_attractiveness(self, forces: dict) -> float:
         """Calculate industry attractiveness from Porter's forces"""
         # Lower forces = more attractive industry
         rivalry = 100 - forces.get('rivalry', 50)
@@ -205,7 +204,7 @@ class StrategyAnalyzer:
         avg = (rivalry + supplier + buyer + substitutes + new_entrants) / 5
         return round(avg, 1)
     
-    def _analyze_portfolio(self, products: List) -> Dict:
+    def _analyze_portfolio(self, products: list) -> dict:
         """Analyze product portfolio using BCG matrix"""
         portfolio = {
             'stars': [],
@@ -229,7 +228,7 @@ class StrategyAnalyzer:
         
         return portfolio
     
-    def _generate_strategic_options(self, pillar_analysis: Dict, context: Dict) -> List[Dict]:
+    def _generate_strategic_options(self, pillar_analysis: dict, context: dict) -> list[dict]:
         """Generate strategic options based on analysis"""
         options = []
         
@@ -301,7 +300,7 @@ class StrategyAnalyzer:
         
         return options[:5]  # Top 5 strategic options
     
-    def _assess_strategic_risks(self, company_data: Dict, strategic_options: List) -> Dict:
+    def _assess_strategic_risks(self, company_data: dict, strategic_options: list) -> dict:
         """Assess strategic risks"""
         risks = {
             'execution_risk': self._calculate_execution_risk(company_data),
@@ -344,7 +343,7 @@ class StrategyAnalyzer:
         
         return risks
     
-    def _calculate_execution_risk(self, data: Dict) -> float:
+    def _calculate_execution_risk(self, data: dict) -> float:
         """Calculate execution risk"""
         org_capability = data.get('organizational_capability', {})
         
@@ -357,7 +356,7 @@ class StrategyAnalyzer:
         
         return sum(factors) / len(factors)
     
-    def _calculate_market_risk(self, data: Dict) -> float:
+    def _calculate_market_risk(self, data: dict) -> float:
         """Calculate market risk"""
         market = data.get('market_position', {})
         
@@ -369,7 +368,7 @@ class StrategyAnalyzer:
         
         return sum(factors) / len(factors)
     
-    def _calculate_financial_risk(self, data: Dict) -> float:
+    def _calculate_financial_risk(self, data: dict) -> float:
         """Calculate financial risk"""
         financial = data.get('financial_health', {})
         
@@ -382,13 +381,13 @@ class StrategyAnalyzer:
         
         return sum(factors) / len(factors)
     
-    def _calculate_competitive_risk(self, data: Dict) -> float:
+    def _calculate_competitive_risk(self, data: dict) -> float:
         """Calculate competitive risk"""
         forces = data.get('competitive_forces', {})
         
         return (forces.get('rivalry', 50) + forces.get('new_entrants', 50)) / 2
     
-    def _create_strategic_roadmap(self, options: List, timeline_months: int) -> Dict:
+    def _create_strategic_roadmap(self, options: list, timeline_months: int) -> dict:
         """Create implementation roadmap"""
         roadmap = {
             'phases': [],
@@ -466,7 +465,7 @@ class StrategyAnalyzer:
         
         return roadmap
     
-    def _generate_recommendations(self, results: Dict) -> List[str]:
+    def _generate_recommendations(self, results: dict) -> list[str]:
         """Generate strategic recommendations"""
         recommendations = []
         
@@ -505,7 +504,7 @@ class StrategyAnalyzer:
         
         return recommendations
 
-def analyze_strategy(company_data: Dict) -> str:
+def analyze_strategy(company_data: dict) -> str:
     """Main function to analyze strategy"""
     analyzer = StrategyAnalyzer()
     results = analyzer.analyze_strategic_position(company_data)

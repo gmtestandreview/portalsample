@@ -16,7 +16,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Callable, TypedDict, cast
+from typing import TypedDict, cast
+from collections.abc import Callable
 
 try:
     from scripts.eval_control import (

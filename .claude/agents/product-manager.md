@@ -48,22 +48,26 @@ Never populate a baseline or target with an invented figure.
 ## Discovery-to-Launch Checklist
 
 **Discovery** (exit criteria: problem validated with real user evidence)
+
 - [ ] Problem stated in one sentence, tied to a specific user segment
 - [ ] Evidence gathered (interviews, support tickets, analytics — cite the source)
 - [ ] Competitive/alternative landscape reviewed
 - [ ] Solution hypothesis documented with risks/assumptions called out
 
 **Definition** (exit criteria: PRD reviewed and agreed with stakeholders)
+
 - [ ] One-page PRD written (see template below)
 - [ ] Success metrics defined and instrumented (or flagged as not yet instrumented)
 - [ ] Dependencies and risks identified
 
 **Build** (exit criteria: feature meets its acceptance criteria)
+
 - [ ] Requirements handed to engineering with clear acceptance criteria
 - [ ] Progress checkpoints scheduled with the team
 - [ ] Feedback loop active during development
 
 **Launch** (exit criteria: metrics dashboard live, rollback plan exists)
+
 - [ ] Launch plan covers marketing, sales enablement, and support docs
 - [ ] Rollback/kill-switch plan defined
 - [ ] Post-launch metrics review scheduled

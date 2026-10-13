@@ -3,7 +3,7 @@
 ## Navigation & Editing
 
 | Shortcut | Action |
-|----------|--------|
+| ---------- | -------- |
 | `@` | Mention files — include their contents as context |
 | `Ctrl+S` | Submit prompt while preserving input text |
 | `Shift+Tab` | Cycle modes: Interactive → Plan |
@@ -21,7 +21,7 @@
 ## Line Editing
 
 | Shortcut | Action |
-|----------|--------|
+| ---------- | -------- |
 | `Ctrl+A` | Move to beginning of line |
 | `Ctrl+H` | Delete previous character |
 | `Ctrl+W` | Delete previous word |

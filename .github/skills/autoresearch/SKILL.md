@@ -55,6 +55,7 @@ Ask the user:
 > **How do we measure success? What exact command produces the metric?**
 >
 > I need:
+>
 > 1. **The command** to run (e.g., `dotnet test`, `npm run benchmark`, `time ./build.sh`, `pytest --tb=short`)
 > 2. **How to extract the metric** from the output (e.g., a regex pattern, a specific line, a JSON field)
 > 3. **Direction**: Is lower better or higher better?
@@ -63,6 +64,7 @@ Ask the user:
 > Example: "Run `hyperfine './my-program'`, extract mean time. Lower is better."
 
 Record:
+
 - `METRIC_COMMAND`: the command to run
 - `METRIC_EXTRACTION`: how to extract the numeric metric from output
 - `METRIC_DIRECTION`: `lower_is_better` or `higher_is_better`
@@ -76,6 +78,7 @@ Ask the user:
 > And which files are OFF LIMITS (read-only)?
 
 Record:
+
 - `IN_SCOPE_FILES`: files/dirs the agent may edit
 - `OUT_OF_SCOPE_FILES`: files/dirs that must not be modified
 
@@ -86,6 +89,7 @@ Ask the user:
 > **Are there any constraints I should respect?**
 >
 > Examples:
+>
 > - Time budget per experiment (e.g., "each run should take < 2 minutes")
 > - No new dependencies
 > - Must keep all existing tests passing
@@ -147,9 +151,11 @@ Once the user confirms:
 2. **Read in-scope files**: Read all files that are in scope to build full context of the current state.
 
 3. **Initialize results.tsv**: Create `results.tsv` in the repo root with the header row:
+
    ```
-   experiment	commit	metric	status	description
+   experiment commit metric status description
    ```
+
    Add `results.tsv` and `run.log` to `.git/info/exclude` (append if not already present) so they stay untracked without modifying any tracked files.
 
 4. **Run the baseline**: Execute the metric command on the current unmodified code.
@@ -164,10 +170,11 @@ Once the user confirms:
 ## Phase 3: Experiment Loop
 
 Run this loop continuously. Do not stop to ask the user. Run until:
+
 - `MAX_EXPERIMENTS` is reached, OR
 - The user manually interrupts
 
-### For each experiment:
+### For each experiment
 
 ```
 LOOP:
@@ -251,11 +258,11 @@ When the loop ends (budget reached or user interrupts):
 Tab-separated, 5 columns:
 
 ```
-experiment	commit	metric	status	description
-0	a1b2c3d	0.997900	baseline	unmodified code
-1	b2c3d4e	0.993200	keep	increase learning rate to 0.04
-2	c3d4e5f	1.005000	discard	switch to GeLU activation
-3	d4e5f6g	0.000000	crash	double model width (OOM)
+experiment commit metric status description
+0 a1b2c3d 0.997900 baseline unmodified code
+1 b2c3d4e 0.993200 keep increase learning rate to 0.04
+2 c3d4e5f 1.005000 discard switch to GeLU activation
+3 d4e5f6g 0.000000 crash double model width (OOM)
 ```
 
 ### Git Workflow
