@@ -98,31 +98,39 @@ const WizardRoutedStep = (
     kind: 'none',
   });
 
-  const loadData = useCallback(async () => {
-    setErrorState({ kind: 'none' });
-    try {
-      abortSignal();
-      const currentStep = await loadStepValues(controllerRef.current?.signal);
-      const values = nullOrUndefinedToEmpty(currentStep.stepValues);
-      setStepState({ values });
-    } catch (error) {
-      const err = error as Error;
-      AppLogger.error('Could not load data for form step.', err);
-      const loadServerError = error as ProblemDetails;
-      AppLogger.trace(
-        'Could not load data for form step.',
-        SeverityLevel.Error,
-        { problemDetails: loadServerError, err }
-      );
-      setErrorState(
-        resolveErrorState(error, getRedirectionLocationOnError, ErrorType.Load)
-      );
-      AppLogger.error('Failed to Load step values', err);
-    } finally {
-      setIsLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadStepValues]);
+  const loadData = useCallback(
+    async (options?: { keepErrorState?: boolean }) => {
+      if (!options?.keepErrorState) {
+        setErrorState({ kind: 'none' });
+      }
+      try {
+        abortSignal();
+        const currentStep = await loadStepValues(controllerRef.current?.signal);
+        const values = nullOrUndefinedToEmpty(currentStep.stepValues);
+        setStepState({ values });
+      } catch (error) {
+        const err = error as Error;
+        AppLogger.error('Could not load data for form step.', err);
+        const loadServerError = error as ProblemDetails;
+        AppLogger.trace(
+          'Could not load data for form step.',
+          SeverityLevel.Error,
+          { problemDetails: loadServerError, err }
+        );
+        setErrorState(
+          resolveErrorState(
+            error,
+            getRedirectionLocationOnError,
+            ErrorType.Load
+          )
+        );
+        AppLogger.error('Failed to Load step values', err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadStepValues] // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   useEffect(() => {
     void loadData();
@@ -130,7 +138,9 @@ const WizardRoutedStep = (
 
   useEffect(() => {
     if (errorState.kind === 'concurrency') {
-      void loadData();
+      // Reload the saved values but keep the conflict banner, so the user is
+      // told why their edits were replaced.
+      void loadData({ keepErrorState: true });
     }
   }, [errorState.kind, loadData]);
 

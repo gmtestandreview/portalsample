@@ -141,7 +141,7 @@ describe('Formik wizard shell characterisation', () => {
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
 
-  it('replaces dirty edits with server values after a 409 and shows no conflict message', async () => {
+  it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {
     const user = userEvent.setup();
     let loads = 0;
     const loadStepValues = vi.fn(async () => {
@@ -162,9 +162,11 @@ describe('Formik wizard shell characterisation', () => {
         'from server'
       )
     );
-    // The retry clears the concurrency state straight away, so the
-    // "Another person has already saved this page" banner never stays up.
-    expect(screen.queryByTestId('form-error-summary')).toBeNull();
+    // Decision D-1: the banner stays up so the user knows why their edits
+    // were replaced (Formik cleared it immediately).
+    expect(screen.getByTestId('form-error-summary').textContent).toContain(
+      'Another person has already saved this page'
+    );
   });
 
   it('save and exit skips hard validation and navigates to the exit location', async () => {
