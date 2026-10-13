@@ -32,3 +32,22 @@ Feature: Recover from portal workflow failures
     When the user cancels leaving the form
     Then the RFQ instrument step remains displayed
     And the manufacturer remains "Unsaved Manufacturer"
+
+  Scenario: Quote acceptance save failure keeps the user on the step
+    Given the user is viewing quotation "RFQ-2024-000892"
+    When the user follows "Proceed with quote"
+    And saving the quote report recipient step will fail with status 503
+    And the user clicks "Save and next"
+    Then a save error is displayed
+    And the quote acceptance step "Report recipient" is displayed
+
+  Scenario: Type-approval save failure keeps the user on the step
+    Given the user is on the pattern/type approval dashboard
+    When the applicant starts a new pattern/type approval application
+    And the applicant begins the application
+    And the applicant confirms the organisation and contact details
+    And the applicant chooses the new-certificate application option
+    And saving the type-approval application details step will fail with status 503
+    And the user clicks "Save and exit"
+    Then a save error is displayed
+    And the type-approval step "Application details" is displayed
