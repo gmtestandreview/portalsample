@@ -209,6 +209,20 @@ describe('RfqInstrumentSummary', () => {
     );
   });
 
+  it('shows the No measurement and No instrument selections by name', async () => {
+    const container = await renderLoaded(
+      instrumentValues({
+        measurementCategory: 'cat-none',
+        instrumentOrArtefactType: 'type-none',
+      })
+    );
+
+    expect(container).toHaveTextContent('No measurement category available');
+    expect(container).toHaveTextContent(
+      'No instrument/artefact type available'
+    );
+  });
+
   it('hides the serial number when the answer is No, and shows it when the answer is Yes', async () => {
     const hidden = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: 'SN-STALE' })

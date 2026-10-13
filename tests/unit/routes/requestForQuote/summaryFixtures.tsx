@@ -1,6 +1,3 @@
-import { render } from '@testing-library/react';
-import { Formik } from 'formik';
-import { MemoryRouter } from 'react-router';
 import type { Mock } from 'vitest';
 import {
   CRMLookupTypes,
@@ -12,18 +9,13 @@ import type {
   LookupResponse,
   RequestForQuoteSummary,
 } from '../../../../ClientApp/src/api/web-api-client';
-import InstrumentAndRequest from '../../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest';
-import OrganisationAndContact from '../../../../ClientApp/src/routes/requestForQuote/organisationAndContact';
 import requestForQuoteSummaryProps from '../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummaryProps';
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
 
 /**
- * Parity baseline for the request-for-quote summary.
- *
- * `renderFormikSummary` renders the real Formik-backed summary branches exactly as
- * `requestForQuoteSummary.tsx` mounts them. A form-free twin is later compared against its output.
- * The test file that uses it must register the `@azure/msal-react` mock and a `LookupClient` mock
- * itself (`vi.mock` is hoisted per file), then call `mockSummaryLookups` on the `getLookup` mock.
+ * Shared fixtures for the form-free request-for-quote summary tests. A test file that renders the
+ * instrument summary must register the `@azure/msal-react` mock and a `LookupClient` mock itself
+ * (`vi.mock` is hoisted per file), then call `mockSummaryLookups` on the `getLookup` mock.
  */
 
 /** The hiding rules the real summary step ships, not a copy of them. */
@@ -205,70 +197,3 @@ export const summaryFixtures: readonly SummaryFixture[] = [
     },
   },
 ];
-
-/**
- * Render both summary branches inside the Formik context the wizard provides, wait for the lookup
- * effect to settle, and return the render result so callers can query or compare its markup.
- */
-export const renderFormikSummary = async (
-  fixture: Pick<SummaryFixture, 'values'>
-) => {
-  const result = render(
-    <MemoryRouter>
-      <Formik
-        initialValues={fixture.values}
-        initialStatus={{ hidden: summaryHidden }}
-        onSubmit={() => undefined}
-      >
-        <>
-          <OrganisationAndContact isSummary name='organisationAndContact' />
-          <InstrumentAndRequest isSummary name='instrumentAndRequest' />
-        </>
-      </Formik>
-    </MemoryRouter>
-  );
-  await result.findByText('Request details');
-  return result;
-};
-
-/**
- * Render only the organisation and contact summary branch in its Formik context. It needs no
- * lookups, so there is nothing to wait for.
- */
-export const renderFormikOrganisation = (
-  fixture: Pick<SummaryFixture, 'values'>
-) =>
-  render(
-    <MemoryRouter>
-      <Formik
-        initialValues={fixture.values}
-        initialStatus={{ hidden: summaryHidden }}
-        onSubmit={() => undefined}
-      >
-        <OrganisationAndContact isSummary name='organisationAndContact' />
-      </Formik>
-    </MemoryRouter>
-  );
-
-/**
- * Render only the instrument and request summary branch in its Formik context and wait for its
- * lookups to load. The caller registers the `LookupClient` and MSAL mocks, as for
- * `renderFormikSummary`.
- */
-export const renderFormikInstrument = async (
-  fixture: Pick<SummaryFixture, 'values'>
-) => {
-  const result = render(
-    <MemoryRouter>
-      <Formik
-        initialValues={fixture.values}
-        initialStatus={{ hidden: summaryHidden }}
-        onSubmit={() => undefined}
-      >
-        <InstrumentAndRequest isSummary name='instrumentAndRequest' />
-      </Formik>
-    </MemoryRouter>
-  );
-  await result.findByText('Request details');
-  return result;
-};

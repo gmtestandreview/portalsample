@@ -583,6 +583,23 @@ describe('workflow step components', () => {
     );
   });
 
+  it('disables the branch selector until the branch answer is No', async () => {
+    mocks.formikValues['isCorrectBranchOrLocation'] = undefined;
+    const OrganisationAndContact = (
+      await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
+    ).default;
+
+    renderRoute(
+      '/request-for-quote/RFQ-1/organisation-and-contact',
+      <OrganisationAndContact name='' />,
+      '/request-for-quote/:id/*'
+    );
+
+    expect(
+      screen.getByTestId('open-manage-branch-division-button')
+    ).toBeDisabled();
+  });
+
   it('opens the branch selector with an empty request id when the route id is omitted', async () => {
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
@@ -685,64 +702,6 @@ describe('workflow step components', () => {
     );
     expect(
       screen.getByTestId('select-instrumentOrArtefactType')
-    ).toBeInTheDocument();
-  });
-
-  it('renders all artefact lookup options in request summary mode', async () => {
-    mocks.formikValues = {};
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='instrumentAndRequest' isSummary />,
-      '/request-for-quote/:id/*'
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
-    );
-    expect(
-      screen.getByTestId('select-instrumentAndRequest.instrumentOrArtefactType')
-    ).toHaveAttribute('data-readonly', 'false');
-  });
-
-  it('normalises sparse lookup ids and summary artefact options', async () => {
-    mocks.formikValues = {};
-    mocks.getLookup.mockReset();
-    mocks.getLookup
-      .mockResolvedValueOnce([
-        { id: undefined, label: 'Mass' },
-        { id: 'no-measurement', label: 'No measurement' },
-      ])
-      .mockResolvedValueOnce([
-        { id: undefined, parentId: undefined, label: undefined },
-        {
-          id: 'no-instrument',
-          parentId: 'no-measurement',
-          label: 'No instrument',
-        },
-      ]);
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='instrumentAndRequest' isSummary />,
-      '/request-for-quote/:id/*'
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
-    );
-    expect(
-      screen.getByTestId('select-instrumentAndRequest.instrumentOrArtefactType')
     ).toBeInTheDocument();
   });
 

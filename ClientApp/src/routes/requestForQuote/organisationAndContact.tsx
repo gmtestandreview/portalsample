@@ -22,10 +22,8 @@ const GetFieldValueString = ({ fieldName }: { fieldName: string }) => {
 };
 
 const OrganisationAndContact = (
-  props: Readonly<OrganisationAndContactProps>
+  _props: Readonly<OrganisationAndContactProps>
 ) => {
-  const { isSummary, name } = props;
-  const isEditable = !isSummary;
   const { values } = useFormikContext<any>();
   const [sourceReferenceField] = useField('sourceReferenceId');
   const modalDispatch = useModalDispatch();
@@ -33,12 +31,8 @@ const OrganisationAndContact = (
   const { id } = useParams();
   const rFQId = id || '';
 
-  function getName(localName: string) {
-    return name ? `${name}.${localName}` : localName;
-  }
-
   const isCorrectBranchOrLocation =
-    getIn(values, getName('isCorrectBranchOrLocation')) ?? '';
+    getIn(values, 'isCorrectBranchOrLocation') ?? '';
 
   const onShowBranchSelectorClick = (
     e: React.MouseEvent<HTMLElement, MouseEvent>
@@ -49,11 +43,11 @@ const OrganisationAndContact = (
 
   const renderMyContactDetails = () => (
     <>
-      <GetFieldValue fieldName={getName('currentContact.title')} />{' '}
-      <GetFieldValue fieldName={getName('currentContact.firstName')} />{' '}
-      <GetFieldValue fieldName={getName('currentContact.lastName')} />
+      <GetFieldValue fieldName='currentContact.title' />{' '}
+      <GetFieldValue fieldName='currentContact.firstName' />{' '}
+      <GetFieldValue fieldName='currentContact.lastName' />
       <br />
-      <GetFieldValue fieldName={getName('currentContact.email')} />
+      <GetFieldValue fieldName='currentContact.email' />
       <br />
     </>
   );
@@ -114,74 +108,64 @@ const OrganisationAndContact = (
 
   return (
     <>
-      {isSummary ? null : (
-        <Alert
-          variant='info'
-          data-testid='info-summary'
-          role='status'
-          aria-live='polite'
-          className='d-flex mb-4'
-        >
-          <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
-            <div className='bgCircle mb-3 me-3'>
-              <i className='icon-info' aria-hidden='true' />
-            </div>
+      <Alert
+        variant='info'
+        data-testid='info-summary'
+        role='status'
+        aria-live='polite'
+        className='d-flex mb-4'
+      >
+        <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
+          <div className='bgCircle mb-3 me-3'>
+            <i className='icon-info' aria-hidden='true' />
           </div>
-          <div>
-            <p className='mb-0'>
-              <strong>Important information</strong>
-            </p>
+        </div>
+        <div>
+          <p className='mb-0'>
+            <strong>Important information</strong>
+          </p>
+          <p>
+            The Entity, Business, Branch and/or location name can be used to
+            help you group your NMI Service portal requests for simplified
+            management. Ensure you are using the correct branch/location.
+          </p>
+          {!!sourceReferenceField.value && (
             <p>
-              The Entity, Business, Branch and/or location name can be used to
-              help you group your NMI Service portal requests for simplified
-              management. Ensure you are using the correct branch/location.
+              This &quot;Recalibration Request&quot; is prefilled based on the
+              previous original quote request. Please review and update if any
+              changes are required prior to submitting the new request.
             </p>
-            {!!sourceReferenceField.value && (
-              <p>
-                This &quot;Recalibration Request&quot; is prefilled based on the
-                previous original quote request. Please review and update if any
-                changes are required prior to submitting the new request.
-              </p>
-            )}
-          </div>
-        </Alert>
-      )}
+          )}
+        </div>
+      </Alert>
 
       <Row className='mb-4'>
-        <h2 id='orgDetails' className={isSummary ? 'h3 my-3' : 'mb-0'}>
-          Organisation
-          {isSummary ? '' : ' details'}
+        <h2 id='orgDetails' className='mb-0'>
+          Organisation details
         </h2>
       </Row>
       <Row className='mb-4'>
-        <h2
-          className={isSummary ? 'h3 mb-0' : 'h2 text-body mb-0'}
-          aria-describedby='orgABN'
-        >
-          {isEditable && (
-            <span className='d-block mb-1 fs-5 fw-normal'>
-              {'Currently managing '}
-            </span>
-          )}
+        <h2 className='h2 text-body mb-0' aria-describedby='orgABN'>
+          <span className='d-block mb-1 fs-5 fw-normal'>
+            {'Currently managing '}
+          </span>
           <span className='d-block text-break'>
             {formatTradingBranchFromStrings(
               GetFieldValueString({
-                fieldName: getName('businessOrTradingName'),
+                fieldName: 'businessOrTradingName',
               }),
               GetFieldValueString({
-                fieldName: getName('branchOrLocationName'),
+                fieldName: 'branchOrLocationName',
               })
             )}
           </span>
           <span className='d-block text-break'>
-            <GetFieldValue fieldName={getName('name')} />
+            <GetFieldValue fieldName='name' />
           </span>
           <span id='orgABN' className='d-inline-block me-3 fs-5 fw-normal'>
             {'ABN: '}
             <PatternFormat
-              value={
-                GetFieldValue({ fieldName: getName('abn') }).props?.children
-              }
+              value={GetFieldValue({ fieldName: 'abn' }).props?.children}
               displayType='text'
               format='## ### ### ###'
               aria-hidden='true'
@@ -190,71 +174,65 @@ const OrganisationAndContact = (
             />
           </span>
           <span className='visually-hidden'>
-            {GetFieldValue({ fieldName: getName('abn') })
+            {GetFieldValue({ fieldName: 'abn' })
               .props?.children?.split('')
               .join(' ')}
           </span>
         </h2>
       </Row>
-      {isEditable &&
-        Number.parseInt(
-          GetFieldValueString({ fieldName: getName('organisationCount') }),
-          10
-        ) > 1 && (
-          <Row className='mb-4'>
-            <RadioButtonGroup
-              legend='Are you creating this request for the correct branch or location above?'
-              name={getName('isCorrectBranchOrLocation')}
-              id='q-isCorrectBranchOrLocation'
-              containerClassName='mb-1'
-              inlineHelp={renderHelpIsCorrectBranchOrLocation()}
-              isSummary={isSummary}
-              options={[
-                {
-                  label: 'Yes, this is the correct branch/location',
-                  descriptor: '',
-                  value: 'Yes',
-                  id: 'isCorrectBranchOrLocation-Yes',
-                },
-                {
-                  label:
-                    'No, update this request to use a different branch/location.',
-                  descriptor: (
-                    <span className='body-mini-text' aria-hidden='true'>
-                      {renderHelpBranch()}
-                    </span>
-                  ),
-                  value: 'No',
-                  id: 'isCorrectBranchOrLocation-No',
-                },
-              ]}
-            />
-            <div className='mb-4 px-5'>
-              <Button
-                variant='link'
-                data-testid='open-manage-branch-division-button'
-                role='button'
-                onClick={onShowBranchSelectorClick}
-                className='ms-2'
-                disabled={isCorrectBranchOrLocation !== 'No'}
-              >
-                Change branch/location
-              </Button>
-            </div>
-          </Row>
-        )}
+      {Number.parseInt(
+        GetFieldValueString({ fieldName: 'organisationCount' }),
+        10
+      ) > 1 && (
+        <Row className='mb-4'>
+          <RadioButtonGroup
+            legend='Are you creating this request for the correct branch or location above?'
+            name='isCorrectBranchOrLocation'
+            id='q-isCorrectBranchOrLocation'
+            containerClassName='mb-1'
+            inlineHelp={renderHelpIsCorrectBranchOrLocation()}
+            options={[
+              {
+                label: 'Yes, this is the correct branch/location',
+                descriptor: '',
+                value: 'Yes',
+                id: 'isCorrectBranchOrLocation-Yes',
+              },
+              {
+                label:
+                  'No, update this request to use a different branch/location.',
+                descriptor: (
+                  <span className='body-mini-text' aria-hidden='true'>
+                    {renderHelpBranch()}
+                  </span>
+                ),
+                value: 'No',
+                id: 'isCorrectBranchOrLocation-No',
+              },
+            ]}
+          />
+          <div className='mb-4 px-5'>
+            <Button
+              variant='link'
+              data-testid='open-manage-branch-division-button'
+              role='button'
+              onClick={onShowBranchSelectorClick}
+              className='ms-2'
+              disabled={isCorrectBranchOrLocation !== 'No'}
+            >
+              Change branch/location
+            </Button>
+          </div>
+        </Row>
+      )}
       <Row className='mb-4'>
-        <h2 className={isSummary ? 'h3 my-3' : ''}>
-          Contact
-          {isSummary ? '' : ' information'}
-        </h2>
+        <h2 className=''>Contact information</h2>
         <RadioButtonGroup
           legend='Who is the main contact person for this request?'
-          name={getName('isPrincipalContact')}
+          name='isPrincipalContact'
           id='q-isPrincipalContact'
           inlineHelpTitle="What's this?"
           inlineHelp={renderHelpContact()}
-          isSummary={isSummary}
           options={[
             {
               label: 'Use my contact details',
@@ -283,12 +261,8 @@ const OrganisationAndContact = (
             },
           ]}
         />
-        <HidableField name={getName('principalContactHide')}>
-          <ContactDetailsInput
-            key='contact'
-            name={getName('contact')}
-            isSummary={isSummary}
-          />
+        <HidableField name='principalContactHide'>
+          <ContactDetailsInput key='contact' name='contact' />
         </HidableField>
       </Row>
     </>

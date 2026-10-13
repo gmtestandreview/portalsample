@@ -18,7 +18,6 @@ import type { SelectInputOption } from '../../components/Inputs/SelectInput/type
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
 import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import { prefixedPropertyOf } from '../../utils';
 import NumberInput from '../../components/Inputs/NumberInput';
 import TextInput from '../../components/Inputs/TextInput';
 import AppLogger from '../../instrumentation/AppLogger';
@@ -45,13 +44,7 @@ const measurementReportInlineHelp = (
   </div>
 );
 
-const getName = prefixedPropertyOf<InstrumentAndRequestStep>(
-  'instrumentAndRequest'
-);
-
-const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
-  const { isSummary } = props;
-  const isEditable = !isSummary;
+const InstrumentAndRequest = (_props: Readonly<InstrumentAndRequestProps>) => {
   const { accounts, instance } = useMsal();
   const isLoadingMeasurementCategories = useRef(false);
   const [measurementCategories, setMeasurementCategories] =
@@ -78,10 +71,6 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           options.push({ displayText: l.label ?? '', value: l.id ?? '' });
         }
       });
-    } else if (isSummary) {
-      forEach(values, (l) => {
-        options.push({ displayText: l.label ?? '', value: l.id ?? '' });
-      });
     }
     const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
     noInstrumentId.current = lastId;
@@ -107,10 +96,9 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           setMeasurementCategories(sorted);
           setArtefactTypes(artefactTypeResult);
           if (
-            (artefactTypeResult !== undefined &&
-              context.getFieldMeta('measurementCategory').initialValue !==
-                undefined) ||
-            isSummary
+            artefactTypeResult !== undefined &&
+            context.getFieldMeta('measurementCategory').initialValue !==
+              undefined
           ) {
             setArtefactTypesSelected(
               getArtefactTypes(
@@ -120,7 +108,6 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
               )
             );
             if (
-              isEditable &&
               (context.getFieldMeta('measurementCategory')
                 .initialValue as string) === noMeasurementId.current
             ) {
@@ -156,10 +143,6 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
     return options;
   };
 
-  function getNameForUse(name: keyof InstrumentAndRequestStep): string {
-    return isSummary ? getName(name) : name;
-  }
-
   const onMeasurementCategoryChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -189,44 +172,39 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
     </BlockUISpinner>
   ) : (
     <>
-      {isSummary ? null : (
-        <Alert
-          variant='info'
-          data-testid='info-summary'
-          role='status'
-          aria-live='polite'
-          className='d-flex mb-4'
-        >
-          <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
-            <div className='bgCircle mb-3 me-3'>
-              <i className='icon-info' aria-hidden='true' />
-            </div>
+      <Alert
+        variant='info'
+        data-testid='info-summary'
+        role='status'
+        aria-live='polite'
+        className='d-flex mb-4'
+      >
+        <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>
+          <div className='bgCircle mb-3 me-3'>
+            <i className='icon-info' aria-hidden='true' />
           </div>
-          <div>
-            <p className='mb-0'>
-              <strong>Important information</strong>
-            </p>
-            <p className='mb-0'>
-              Please provide as much information as possible including the
-              instrument/artefact&apos;s
-            </p>
-            <p className='mb-0'>
-              Serial, Manufacturer and Model to increase accuracy and reduce
-              delays in
-            </p>
-            <p className='mb-0'>processing your request.</p>
-          </div>
-        </Alert>
-      )}
-      <Row className={isSummary ? '' : 'mb-4'}>
-        <h2 className={isSummary ? 'h3 my-3' : ''}>
-          Instrument/artefact details
-        </h2>
+        </div>
+        <div>
+          <p className='mb-0'>
+            <strong>Important information</strong>
+          </p>
+          <p className='mb-0'>
+            Please provide as much information as possible including the
+            instrument/artefact&apos;s
+          </p>
+          <p className='mb-0'>
+            Serial, Manufacturer and Model to increase accuracy and reduce
+            delays in
+          </p>
+          <p className='mb-0'>processing your request.</p>
+        </div>
+      </Alert>
+      <Row className='mb-4'>
+        <h2 className=''>Instrument/artefact details</h2>
         <RadioButtonGroup
           legend='Does this instrument/artefact have a serial number available?'
-          name={getNameForUse('hasSerialNumber')}
+          name='hasSerialNumber'
           id='q-hasSerialNumber'
-          isSummary={isSummary}
           options={[
             {
               label: 'Yes',
@@ -241,27 +219,21 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           ]}
         />
         <HidableField name='serialNumber'>
-          <TextInput
-            label='Serial number'
-            name={getNameForUse('serialNumber')}
-            isSummary={isSummary}
-          />
+          <TextInput label='Serial number' name='serialNumber' />
         </HidableField>
         <TextInput
           label='Manufacturer'
-          name={getNameForUse('manufacturer')}
+          name='manufacturer'
           inlineHelp='If the Manufacturer is known please enter it below, if unknown please enter "n/a" for not applicable.'
-          isSummary={isSummary}
         />
         <TextInput
           label='Model'
-          name={getNameForUse('model')}
+          name='model'
           inlineHelp='If the Model is known please enter it below, if unknown please enter "n/a" for not applicable.'
-          isSummary={isSummary}
         />
         <TextAreaInput
           label='Description (optional)'
-          name={getNameForUse('description')}
+          name='description'
           inlineHelp={
             <>
               <span>
@@ -291,19 +263,17 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           }
           rows={2}
           maxCharacters={400}
-          isSummary={isSummary}
         />
         <NumberInput
           label='Number of items'
-          name={getNameForUse('numberOfItems')}
+          name='numberOfItems'
           containerClassName='col-md-6'
           allowNegative={false}
           decimalScale={0}
           inlineHelp='If a set of items. e.g. set of weights'
-          isSummary={isSummary}
         />
         <SelectInput<string>
-          name={getNameForUse('measurementCategory')}
+          name='measurementCategory'
           label='Measurement category'
           inlineHelp={
             <>
@@ -316,11 +286,10 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           }
           options={getMeasurementCategories()}
           onChange={onMeasurementCategoryChange}
-          isSummary={isSummary}
           addBlank
         />
         <SelectInput<string>
-          name={getNameForUse('instrumentOrArtefactType')}
+          name='instrumentOrArtefactType'
           label='Instrument/artefact type'
           inlineHelp={
             <>
@@ -332,23 +301,21 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
             </>
           }
           options={artefactTypesSelected}
-          isSummary={isSummary}
           readOnly={isInstrumentOrArtefactTypeDisabled}
           addBlank
         />
       </Row>
       <Row className='mb-4'>
-        <h2 className={isSummary ? 'h3 my-3' : ''}>Request details</h2>
+        <h2 className=''>Request details</h2>
         <TextInput
           label='Previous NMI Quote or Report number (optional)'
-          name={getNameForUse('previousQuoteOrReportNumber')}
+          name='previousQuoteOrReportNumber'
           inlineHelp='If available please provide any previous NMI Quote or Report Number e.g. Q230123, RN230123'
-          isSummary={isSummary}
         />
         <TextAreaInput
           label='Testing/calibration requirements'
-          name={getNameForUse('testingAndCalibrationRequirements')}
-          data-pii={getNameForUse('testingAndCalibrationRequirements')}
+          name='testingAndCalibrationRequirements'
+          data-pii='testingAndCalibrationRequirements'
           inlineHelp={
             <>
               <span>
@@ -383,15 +350,13 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           }
           rows={4}
           maxCharacters={2000}
-          isSummary={isSummary}
         />
         <DatePicker
-          name={getNameForUse('preferredInstrumentOrArtefactAvailabilityDate')}
+          name='preferredInstrumentOrArtefactAvailabilityDate'
           calendarButtonTitle='Prefered date for testing/calibration'
           label='Preferred Instrument/artefact availability date (optional)'
           containerClassName='col-md-12'
           id='q-preferredInstrumentOrArtefactAvailabilityDate'
-          isSummary={isSummary}
           // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
           minDate={new Date()}
           inlineHelp={
@@ -413,16 +378,11 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
           }
         />
         <RadioButtonGroup
-          legend={
-            isSummary
-              ? 'Measurement report/certificate required'
-              : 'Measurement report/certificate required (additional fees may apply)'
-          }
-          name={getNameForUse('measurementReportAndCertificateRequired')}
+          legend='Measurement report/certificate required (additional fees may apply)'
+          name='measurementReportAndCertificateRequired'
           id='q-measurementReportAndCertificateRequired'
           inlineHelp={measurementReportInlineHelp}
           inlineHelpTitle="What's this?"
-          isSummary={isSummary}
           options={[
             {
               label: 'Measurement report only',
