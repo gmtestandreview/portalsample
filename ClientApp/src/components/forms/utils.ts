@@ -1,3 +1,4 @@
+import { removeEmptyKeys } from '../../utils';
 import { getIn, isObject, setIn } from './formPath';
 import {
   entriesIn,
@@ -126,3 +127,12 @@ export const validateForm =
     }
     return errors;
   };
+
+/**
+ * The payload the wizard sends: hidden fields stripped, then empty values
+ * dropped. Shared by the form shells so both submit the same shape.
+ */
+export const normalizeSubmitValues = <T extends FormValues>(
+  values: T,
+  hidden: Hideable<Partial<T>, Partial<T>>
+): T => removeEmptyKeys(removeHidden(values, values, hidden));
