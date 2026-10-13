@@ -283,11 +283,30 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
 - **Parity policy (2026-10-14).** Keep parity by default, but the original is
   not a gold standard. Where review, design logic and best practice support an
   improvement, take the improvement and record it here with its test.
-- **D-1 (Q5, approved).** The RHF shell shows the conflict banner after a 409
-  ("Another person has already saved this page...") and keeps it visible after
-  the reload replaces the form values. Deliberate deviation from Formik.
-- **D-2 (Q2, approved).** Parity for now: `shouldFocusError: false`, focus stays
-  on the Next button. The accessibility gap (summary never receives focus) is
-  fixed separately, after the shell migration, not inside it.
+- **D-1 (Q5, approved, applied in the Formik shell: `90bad447`).** After a 409
+  the form still reloads server values, and the conflict banner ("Another person
+  has already saved this page...") now stays visible. The RHF shell must match
+  this improved behaviour.
+- **D-2 (Q2, approved, applied in the Formik shell: `c214c17f`).** After an
+  invalid submit the error summary receives focus and scrolls into view, once
+  per failed attempt. The RHF shell therefore sets `shouldFocusError: false` and
+  reuses the same summary behaviour. Previously focus stayed on the Next button.
 - **D-3 (Q1, approved earlier).** Submit mode lives outside form values; the
   sticky `saveAndExit` flag disappears.
+- **Applied before migration.** Both improvements land in the Formik shell
+  first, with characterisation tests updated, so the dual-run suite compares the
+  RHF shell against the improved behaviour rather than the old quirks.
+
+## Characterisation and e2e coverage added in S0 so far
+
+- Unit: `WizardRoutedStep.characterization.test.tsx` (focus, 409 reload,
+  save-and-exit, sticky flag) and `WizardForm.characterization.test.tsx` (step
+  reset, Back prompt, Enter key, unsaved prompt).
+- E2E: accept-quote validation, save-and-exit and Back; type-approval
+  validation, save-and-exit, Back and unsaved dialog; required contact details.
+  Correction to the earlier audit: contact create was already exercised by the
+  create-account scenario, so the new scenario covers its validation instead.
+- Still open: identical-shape consecutive steps leak values (only reachable if
+  two steps share the same initial values), Q1 characterisation is pinned but
+  its fix lands with the RHF shell, and accept-quote and TA failure scenarios in
+  `workflow-errors.feature`.
