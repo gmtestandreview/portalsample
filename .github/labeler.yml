@@ -1,0 +1,29 @@
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - package.json
+          - package-lock.json
+          - vendor/**
+
+github_actions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+
+javascript:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ClientApp/src/**/*.js
+          - ClientApp/src/**/*.jsx
+          - ClientApp/src/**/*.ts
+          - ClientApp/src/**/*.tsx
+          - tests/**/*.js
+          - tests/**/*.jsx
+          - tests/**/*.ts
+          - tests/**/*.tsx
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - docs/**

@@ -40,9 +40,7 @@ const preview = definePreview({
     addonTest(),
     ...(globalThis.navigator?.serviceWorker === undefined
       ? []
-      : [
-          addonMsw(getStorybookWorker),
-        ]),
+      : [addonMsw(getStorybookWorker)]),
   ],
 
   tags: ['autodocs'],
