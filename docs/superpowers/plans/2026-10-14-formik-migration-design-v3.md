@@ -334,5 +334,26 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
   arrives, even if deep-equal. Formik skipped the reset when equal, which let
   edits leak between consecutive steps with identical shapes. Treat as an
   improvement; no flow depends on the leak.
-- Not yet covered by the contract suite: the S0 characterisation tests still run
-  only against the Formik shell. S2.x adds the shared parameterised suite.
+- S2.x closes the gap below: the shared suite now runs on both shells.
+
+## S2.x delivered: shell-neutral controls and the shared contract suite
+
+- `ErrorSummary` picks an RHF adapter under `RhfForm` (`useIsRhfShell`).
+  `flattenRhfErrors` reads each error's `message` only and never visits `ref`.
+  Both adapters share one focus hook (summary takes focus once per failed
+  submit; no field focus, per `shouldFocusError: false`).
+- `SaveAndExitButton` and `SubmitFormButton` dispatch by shell. The RHF versions
+  call `submit('saveAndExit' | 'next')`; nothing is written to the values.
+  Presentation is shared in `IntentButton`.
+- `RouteLeavingGuard` no longer uses Formik: it takes `onProceed`.
+  `UnsavedChangesPrompt` holds the rule; `UnsavedFormPrompt` (Formik) and
+  `RhfUnsavedFormPrompt` adapt it. RHF `clearErrors()` on confirm does not change
+  resolver-derived `isValid`; harmless because confirming leaves the step.
+- `FormBannerSlot` is the banner extracted from `FormikForm`.
+- `shellContract.test.tsx` runs summary, focus, save/submit, prompt and banner
+  cases with `describe.each` over both shells.
+- **D-6 (proposed).** The RHF summary is derived from live errors once
+  `submitCount > 0`; Formik's kept a state snapshot that could go stale after a
+  reset. A caller-supplied banner must be a valid element (Formik threw via
+  `Children.only` otherwise).
+

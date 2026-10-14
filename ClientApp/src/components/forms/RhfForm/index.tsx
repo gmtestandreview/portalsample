@@ -33,6 +33,10 @@ export const useRhfFormApi = (): RhfFormApi => {
   return api;
 };
 
+/** True under `RhfForm`. Shell-neutral controls use it to pick their adapter. */
+export const useIsRhfShell = (): boolean =>
+  useContext(RhfFormApiContext) !== null;
+
 export interface RhfFormProps<T extends FormValues> {
   initialValues: T;
   validateSoft?: ValidationSchema | undefined;
