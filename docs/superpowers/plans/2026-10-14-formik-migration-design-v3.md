@@ -347,8 +347,9 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
   Presentation is shared in `IntentButton`.
 - `RouteLeavingGuard` no longer uses Formik: it takes `onProceed`.
   `UnsavedChangesPrompt` holds the rule; `UnsavedFormPrompt` (Formik) and
-  `RhfUnsavedFormPrompt` adapt it. RHF `clearErrors()` on confirm does not change
-  resolver-derived `isValid`; harmless because confirming leaves the step.
+  `RhfUnsavedFormPrompt` adapt it. RHF `clearErrors()` on confirm does not
+  change resolver-derived `isValid`; harmless because confirming leaves the
+  step.
 - `FormBannerSlot` is the banner extracted from `FormikForm`.
 - `shellContract.test.tsx` runs summary, focus, save/submit, prompt and banner
   cases with `describe.each` over both shells.
@@ -356,4 +357,3 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
   `submitCount > 0`; Formik's kept a state snapshot that could go stale after a
   reset. A caller-supplied banner must be a valid element (Formik threw via
   `Children.only` otherwise).
-
