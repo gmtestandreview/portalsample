@@ -23,6 +23,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 SETTINGS = ROOT / ".claude" / "settings.json"
 GUARD = ROOT / "scripts" / "pre_tool_use.py"
+WRAPPER = ROOT / "scripts" / "pre_tool_use_wrapper.cjs"
 
 
 class ToolCall(TypedDict):
@@ -47,8 +48,9 @@ def wrapper_command() -> str:
 
 
 def project(folder: Path, guard_source: str | None) -> None:
+    (folder / "scripts").mkdir()
+    shutil.copyfile(WRAPPER, folder / "scripts" / WRAPPER.name)
     if guard_source is not None:
-        (folder / "scripts").mkdir()
         (folder / "scripts" / "pre_tool_use.py").write_text(guard_source, encoding="utf-8")
 
 

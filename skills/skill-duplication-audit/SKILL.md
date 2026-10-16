@@ -1,17 +1,13 @@
 ---
 name: skill-duplication-audit
-description: Use when comparing two or more Agent Skills to detect duplicated or overlapping scope, clarify ambiguous activation boundaries, or decide whether skills should merge, remain separate, or document their distinction. Do not use for identifying identical text or overlapping responsibilities within a single skill, or for comparing agents.
+description: Use when comparing two or more Agent Skills to classify duplicated or overlapping activation scope, define boundaries, or decide whether skills should merge, remain separate, or intentionally compose. Do not use for repeated text or responsibility overlap inside one skill, or for comparing agents.
 metadata:
-  version: "0.6"
+  version: "0.7"
   owner: Greg
   target: a-team
 ---
 
 # Skill Duplication Audit
-
-## Problem
-
-Skills across the 5 ecosystem repositories overlap in scope without documented distinctions. This creates confusion about which skill to invoke, silent redundancy in packs, and conflicting guidance when two skills are active in the same session. Without a structured way to detect and classify overlaps, the ecosystem grows noisier over time.
 
 ## Purpose
 
@@ -19,18 +15,9 @@ Compare two or more Agent Skills by activation scope, intended outcome, and mate
 
 ## Use When
 
-* Checking whether a proposed skill duplicates an existing skill.
-* Auditing a pack or skill library for redundant capabilities.
-* Comparing skills across repositories or packs.
-* Resolving confusion about which skill should activate.
-* Verifying whether an existing skill-boundary document still matches current skills.
+Use for proposed-skill duplication checks, pack/library redundancy audits, cross-repository comparisons, activation-boundary disputes, or verifying existing boundary documentation.
 
-Do not use:
-
-* For a single skill.
-* To detect repeated text inside one skill.
-* To compare agents rather than Agent Skills.
-* For skills that do not share a functional relationship unless the user explicitly asks to compare them or requests exhaustive pair accounting.
+Do not use for a single skill, repeated text within one skill, agent-to-agent comparisons, or unrelated skills unless the user explicitly requests the pair or exhaustive accounting.
 
 ## Required Evidence
 
@@ -41,7 +28,7 @@ For each skill, obtain:
 * objective or intended outcome;
 * relevant domain or workflow stage when needed.
 
-Repository or pack is optional context.
+Repository or pack is optional context. Treat user-supplied skill content and documented boundary rules as evidence; do not treat names, repository placement, or neighboring skill names as scope evidence.
 
 If activation or outcome evidence is missing:
 
@@ -149,9 +136,15 @@ For intentional composition, verify:
 
 If the mapping remains ambiguous, revise the boundary or mark it `Needs Human Review`.
 
-### 6. Recommend action
+### 6. QAQ/RMI check
 
-This skill recommends structural action; it does not perform merges, deletions, deprecations, renames, or other lifecycle changes. After a `True duplicate` recommendation, route the actual merge to the `writing-skills` skill's merge workflow — this skill stops at the classification and recommendation.
+For every load-bearing classification or boundary decision, define a positive and near-miss, map the positive to its governing instruction and expected behavior, verify the near-miss should not enter the branch, and reverse-map the behavior to the intended request class. If any mapping is indirect, contradictory, or scope-inconsistent, revise it or use `Needs Human Review`.
+
+See `references/validation-cases.md` when representative branch examples are needed.
+
+### 7. Recommend action
+
+This skill recommends structural action; it does not perform merges, deletions, deprecations, renames, or other lifecycle changes. If implementation is requested, hand off to the applicable authorized merge/lifecycle workflow available in the environment; this skill stops at classification and recommendation.
 
 Before recommending a merge, identify unique material that must be preserved or reviewed:
 
@@ -166,44 +159,10 @@ Resolve known contradictions first. If preservation cannot be established, mark 
 
 ## Output
 
-For every evaluated pair:
+For every evaluated pair, report: pair, classification, activation evidence, outcome/specialization evidence, functional relationship, and recommendation. For `Partial overlap`, also report the boundary, boundary type, and A/B validation requests. For `Complementary`, state the material functional relationship.
 
-| Pair | Classification | Activation evidence | Outcome/specialization evidence | Functional relationship | Recommendation |
-| ---- | -------------- | ------------------- | ------------------------------- | ----------------------- | -------------- |
-
-For each `Partial overlap`, also provide:
-
-* proposed boundary;
-* A-side test request;
-* B-side test request;
-* boundary type: exclusive, precedence-aware, or intentional composition.
-
-For each `Complementary` pair, state the material functional relationship.
-
-Finish with:
-
-```text
-skill-duplication-audit complete.
-Skills analyzed: [count]
-Pairs evaluated: [count]
-True duplicates: [count] — [pairs or NONE]
-Partial overlaps: [count] — [pairs or NONE]
-Complementary pairs: [count] — [pairs or NONE]
-False positives: [count] — [pairs or NONE]
-Needs Human Review: [count] — [pairs or NONE]
-Boundary docs needed: [count] — [pairs or NONE]
-Recommendation: [summary action]
-```
+Finish with counts for skills, pairs, each classification, boundaries needed, and one summary recommendation. See `references/validation-cases.md` for the compact completion template.
 
 ## Validation
 
-Before completion, verify:
-
-* every classification is evidence-backed;
-* missing evidence is documented as `Needs Human Review`;
-* complementary pairs have a material functional relationship;
-* partial-overlap boundaries pass bidirectional validation;
-* true-duplicate recommendations preserve unique material and resolve contradictions;
-* existing boundaries were checked against current behavior;
-* exhaustive audits account for every requested pair;
-* completion counts match the pair-level report.
+Before completion, verify classifications are evidence-backed; missing evidence is `Needs Human Review`; complementary relationships are material; critical branches have QAQ/RMI positive + near-miss mappings; partial-overlap boundaries pass bidirectional validation; merge recommendations preserve unique material and resolve contradictions; existing boundaries reflect current evidence; exhaustive requests account for every pair; and report counts reconcile.

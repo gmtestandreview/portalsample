@@ -251,6 +251,11 @@ def test_guard_behaviour(label: str, expected: int, tool: str, payload: dict[str
 
 
 DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
+    ("Bash", f"env -C other {_RM_RF} dist", BLOCK),
+    ("Bash", f"env --chdir=other {_RM_RF} dist", BLOCK),
+    ("Bash", f"env -Cother {_RM_RF} dist", BLOCK),
+    ("Bash", f"sudo -D other {_RM_RF} dist", BLOCK),
+    ("Bash", f"sudo --chdir=other {_RM_RF} dist", BLOCK),
     ("Bash", f"bash -ce '{_RM_RF} /'", BLOCK),
     ("Bash", f'eval "{_RM_RF} /"', BLOCK),
     ("PowerShell", f'iex "Remove-Item {_RECURSE_FORCE} ."', BLOCK),

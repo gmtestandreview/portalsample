@@ -8,7 +8,7 @@
 
 A Team is a **portable multi-agent infrastructure** for AI coding assistants. It works with any model — Claude, GPT-4o, Gemini, or others — through any supported platform. It turns a single general-purpose model into a coordinated team of specialists — each with a defined role, tool access, and quality gate — that enforces the same engineering standards on every project it's deployed to.
 
-```
+```text
 Without A Team                        With A Team
 ─────────────────────────────────     ─────────────────────────────────────
 One model                             17 specialist agents (pruned for this repo)
@@ -220,7 +220,7 @@ After init: `.agent-sync/TEAM.md` lists what's active. Everything else is pruned
 
 ## What Got Pruned (this repo: NMI Customer Portal — TypeScript/React SPA)
 
-```
+```text
 Active after /orchestrate init          Pruned
 ─────────────────────────────────       ──────────────────────────────────
 orchestrator                            chief-of-staff
