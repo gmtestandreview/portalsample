@@ -5,8 +5,11 @@
 Date: 2026-10-14 (Australia/Sydney). Branch:
 `feat/formik-to-react-hooks-migration`. Audit baseline: `5bc51af1`; final
 planning checkout: `15f82afa87f3fcf33ac50f99d27431329361f08a`; base branch:
-`main`. Status: sequential reviews complete; independent plan review approved
-97/100; awaiting user plan approval. Implementation has not started.
+`main`. Revised 2026-10-15 at `234dd9ad8b617c5bc3786c106e20c1278c7bc524`.
+Status: pressure-review recommendations applied to planning contracts on
+2026-10-15 at `9a8575b240c31d779fb79fd3ccebe78b94e149bb`. The earlier 99/100
+review is historical; current pressure retest and reassessment are recorded in
+the scorecard and retest report. Implementation has not started.
 
 ## Goal and confirmed premise
 
@@ -125,11 +128,11 @@ stories use deterministic local fixtures and existing API contracts.
 
 ## Alternatives and selected approach
 
-| Approach                                                                           | Coverage                                                    | Effort estimate                                                            | Risk and tradeoff                                            |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| A: metadata wording and runner fix only                                            | Fixes immediate defects; leaves unrepresented route shells  | Human 1-2 days / agent 2-4 hours                                           | Lowest diff, insufficient for the requested coverage outcome |
-| B: evidence manifest plus targeted stories, retaining sufficient indirect examples | All scoped renderable modules have verifiable evidence      | Human 7-12 days / agent 2-4 days of active work; upstream waiting separate | Selected; avoids duplicate stories while closing real gaps   |
-| C: colocated stories everywhere                                                    | Easy folder counting but duplicates family/provider stories | Human 1-2 weeks / agent 2-3 days                                           | Rejected by the user's premise choice; ID and fixture churn  |
+| Approach                                                                           | Coverage                                                    | Effort estimate                                                                        | Risk and tradeoff                                            |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| A: metadata wording and runner fix only                                            | Fixes immediate defects; leaves unrepresented route shells  | Human 1-2 days / agent 2-4 hours                                                       | Lowest diff, insufficient for the requested coverage outcome |
+| B: evidence manifest plus targeted stories, retaining sufficient indirect examples | All scoped renderable modules have verifiable evidence      | Human 9-17 engineer-days / agent 3-6 active days; upstream/maintainer waiting separate | Selected; avoids duplicate stories while closing real gaps   |
+| C: colocated stories everywhere                                                    | Easy folder counting but duplicates family/provider stories | Human 1-2 weeks / agent 2-3 days                                                       | Rejected by the user's premise choice; ID and fixture churn  |
 
 Mode: SELECTIVE EXPANSION, following autoplan. Accept the recursive evidence
 gate within this task's scope. Defer broader UI redesign, full runtime error
@@ -142,13 +145,22 @@ T2 creates `ClientApp/src/storybook/coverageManifest.json`,
 `tests/unit/storybook/moduleCoverage.test.ts`; modifies `coverageDrift.test.ts`
 and `verify-storybook-docs.mjs`. The manifest owns classifications and evidence,
 the script owns recursive discovery/validation, tests own counterexamples, and
-the docs verifier integrates build/index checks.
+the docs verifier integrates build/index checks. The pressure revision also
+creates tests/unit/storybook/inputFreeze.test.ts (denial/restoration and stale
+receipts) and tests/unit/storybook/producerIdentity.test.ts (producer/native
+binding joins). Patches and installer files are read-only hash/provenance
+inputs, not new edit targets. T1 owns launcher identity; T2 owns pure
+validation. T8 creates scripts/storybook-closure.mjs and
+tests/unit/storybook/closureOrchestration.test.ts for the explicit freeze/gate
+launcher; the existing task-scoped mjs lint config includes that launcher too.
 
 T1 modifies `playwright.storybook.config.ts` for the isolated diagnostic URL
 contract and may modify `vitest.config.ts`, `vitest.storybook.config.ts`,
 `vitest.storybook.runtime.ts`, or `.storybook/main.ts` **only as supported by a
-reproduced startup failure**. Extend `tests/unit/config/vitestTopology.test.ts`,
-`storybookVitestContract.test.ts`, `storybookRuntimePolicy.test.ts`,
+reproduced startup failure**, except for the explicitly scoped owned-child
+identity diagnostic in T1b below. Extend
+`tests/unit/config/vitestTopology.test.ts`, `storybookVitestContract.test.ts`,
+`storybookRuntimePolicy.test.ts`,
 `tests/e2e/features/storybook/integrations/mcp.feature`, and
 `tests/e2e/steps/storybook.steps.ts` for the verified defect. `package.json`,
 lockfile, root postinstall, or local patch automation are conditional
@@ -224,303 +236,1100 @@ T8 updates `ClientApp/src/storybook/CoverageMatrix.docs.mdx`,
 Storybook steps. Preserve source names `Seperator`, `RangeCalander`, `ToolTip`,
 and `numberfield`; renaming folders is not required.
 
+## Revision contract — 2026-10-15
+
+This update addresses the eight-package devil's-advocate assessment, retaining
+T1–T8 and decisions D1–D26. The active packages, file table, shared contracts
+and terminal report are authoritative, including the pressure revision below;
+earlier CEO/design/engineering/DX narratives describe the 2026-10-14 review
+history, not new test results. Scope is the Storybook remediation plan and its
+companion test/task/score artifacts, not unrelated project plans.
+
+Planning checkout: `234dd9ad8b617c5bc3786c106e20c1278c7bc524` (RHF form-shell
+core and S2.0 notes now committed). `package-lock.json` remains user-owned and
+dirty. Rebaseline recursive exports and generated IDs before executing; the
+historical 258 TSX candidates are not a current denominator. TokenSave reported
+a roughly 16-hour-old graph; source reads and current filesystem/commit checks
+are used without refreshing the index.
+
+### Pressure revision traceability — 2026-10-15
+
+All seven Red Team recommendations are incorporated below. Retest evidence is in
+[Storybook pressure retest](2026-10-15-storybook-pressure-retest.md). This is
+plan remediation, not implementation or a passing Storybook suite.
+
+| ID  | Pressure finding                                    | Package and acceptance                                                                      |
+| --- | --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| RT1 | Applied dependency patch bytes omitted              | T2/T8 hash all patches; changed/added/deleted patch invalidates evidence                    |
+| RT2 | Early gates precede generated source edits          | T8 preparation first; freeze before every qualifying gate; reject pre-freeze results        |
+| RT3 | Renderable records can have no required states      | T2 reject empty/all-unsupported states; require a meaningful baseline claim                 |
+| RT4 | Shared harness rolled back before consumers         | T6/T7 revert dependent consumers first or the group atomically                              |
+| RT5 | Worker readiness does not cover eager requests      | T6 delayed/rejected startup and import/loader negatives use inert transports                |
+| RT6 | Concurrent Docs stories share handler ownership     | T3/T5/T6 frame-local handlers; overlapping conflicting-response cleanup tests               |
+| RT7 | Producer identity/freeze insufficiently operational | T1/T2/T8 owned process/install identity, native endpoint binding, write-denied input freeze |
+
+### Ownership and atomic execution rule
+
+The integration owner owns server lifecycle, shared harness, input freeze,
+generated inventories and serial closure. Component/route authors own one named
+source/export/state claim at a time; the component maintainer approves an absent
+API contract; a reviewer checks assertion sufficiency. These are
+responsibilities assigned before execution, not invented named people.
+
+Each atomic slice follows: approved Gherkin where required -> intended failing
+fixture/play -> minimal implementation -> same focused passing test -> impacted
+regression -> reviewable diff. A RED caused only by missing infrastructure does
+not prove a behavior test. Capture only owned files in a targeted commit when
+execution is authorized; no commit or code implementation occurs in this
+plan-update turn.
+
+For every story edit, fetch current MCP story-writing instructions, discover
+IDs, run focused `test-run` with a11y, call stories-changed and include new
+stories in the final review. No undocumented prop is inferred from source,
+sibling APIs or naming. A blocked API/runner lane stays pending; independent
+static/docs work can proceed, but cannot earn verified completion.
+
+### Shared evidence and receipt contract
+
+A claim is canonical source declaration/export + applicable state + exact story
+file/export/resolved ID + observable outcome + assertion locator + reviewed
+sufficiency rationale. Pure re-exports alias the declaration rather than
+duplicate it; ambiguous .ts/.tsx exports enter an unresolved bucket. An import
+edge identifies a candidate, not a rendered-state or behavior pass.
+
+Manifest schema v1 is a JSON object with `schemaVersion: 1` and `records`. Every
+record has `source`, `export`, `classification`
+(direct/consumer/forwarding/nonvisual), `owner`, `reason`, `docsOwnerId`,
+`states`, and `review`. docsOwnerId is a nonempty generated ID for renderables
+and null only for justified nonvisual records. A state has `name`,
+`applicability` (required/not-supported), `outcome`, `storyFile`, `storyExport`,
+`storyId`, `assertionFile`, `assertionExport`, `assertionMarker`, and
+`rationale`; not-supported states require a specific reason instead of
+story/assertion fields. `review` has reviewer, rationale and
+reviewedSourceDigest. Nonvisual records require a reason and have no required UI
+states; forwarding records identify the actual consumer and the narrow
+equivalence condition. Missing/duplicate/unknown fields and unresolved records
+fail; do not execute application modules.
+
+Every renderable direct/consumer/forwarding record must contain at least one
+required baseline rendered-state claim with a meaningful observable semantic or
+behavioral outcome and all story/assertion references. Empty states,
+all-not-supported states, blank outcomes and smoke-only baselines fail
+EVIDENCE_MISSING. A sufficient existing consumer qualifies; no colocated Default
+story is required. Only reviewed nonvisual records may have zero required UI
+states. Additional applicable states remain required; not-supported is an
+individual approved API limitation, never a blanket waiver. Test all three
+renderable classifications, static semantics, valid indirect baselines and
+improper nonvisual reclassification as well as the two zero-state
+counterexamples.
+
+Receipt files under `reports/storybook-coverage/` contain locally generated
+receiptId, JSON-RPC request ID, request/response timestamps, checkout commit,
+inputDigest, installed versions, requested IDs, executed IDs, component/a11y
+statuses, errors, verdict and applicable claim keys. Add freezeId, producerId,
+producerIdentityDigest, patchFiles (normalized path plus SHA-256), gate name,
+gate start/end input digests and whether the gate started after the freeze.
+receiptId is client-owned; do not assume an upstream public runId. Validate
+`structuredContent.status === 'completed'`, `result.componentTestStatuses`,
+`result.a11yStatuses`, counts and `unhandledErrors` against the installed 10.6.1
+schema. Per-status storyId is the execution join key; `result.storyIds`,
+startedAt and finishedAt are optional. Installed passing status is
+`status-value:success`; errors, unknown, cancelled, no-stories, skipped, missing
+or duplicate required results fail. Check a11y success per required ID, not
+merely the requested boolean. Missing structured data or evidence is a contract
+failure, never silently parsed into a pass.
+
+Maintain independent verdicts: structural validity, reviewed rendered-state
+sufficiency, executed assertions/a11y, and acceptable product behavior. A
+passing characterization of an indefinite spinner remains a known defect; it
+cannot be reported as required error recovery.
+
+### Complete input freshness without a second dependency engine
+
+Include all files beneath `ClientApp/src`, `ClientApp/public`,
+`ClientApp/media`, `.storybook`, `scripts`, `tests` and `patches`. Include
+existing root files matched by the literal globs `*.config.*`, `vitest*.*`,
+`tsconfig*.json`, `.prettierrc*`, `.env` and `.env.*`, plus existing
+package.json, package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock,
+bun.lock, bun.lockb, .npmrc, .nvmrc and .prettierignore. Missing optional root
+files are allowed; an existing unreadable input fails. Apply the repository
+secret-scanning protocol before reading any input; a reported credential blocks
+the run rather than exposing or silently excluding it.
+
+Styles, validationSchemas, authentication, utilities, storage, App.tsx,
+fixtures, generated API contracts and static assets are therefore included.
+Generated/vendor inputs are hash-only, not edit targets. Reject symlinks in the
+selected input set as SOURCE_UNRESOLVED until an explicitly reviewed,
+in-checkout input mapping exists; never follow an external target or recurse a
+cycle.
+
+The digest algorithm is an implementation contract, not “canonical” by
+convention:
+
+1. Enumerate relative paths, convert backslashes to '/', remove redundant './',
+   normalize Unicode to NFC, and reject absolute paths, '..', empty components
+   and normalization/case-fold collisions. Preserve actual filename case; sort
+   normalized paths by UTF-8 byte order with Buffer.compare, never locale order.
+2. Read file bytes verbatim. Different source line endings are different inputs;
+   receipts are not portable between different-byte checkouts.
+3. For `ClientApp/src/storybook/coverageManifest.json` **replace its raw-byte
+   contribution** with canonical JSON bytes. Reject duplicate JSON keys and
+   non-JSON values. Recursively sort object keys by ECMAScript UTF-16 code-unit
+   order; preserve array order; encode strings/numbers/booleans/null with
+   JSON.stringify and no extra whitespace, UTF-8. Omit only
+   `records[i].review.reviewedSourceDigest`; similarly named fields anywhere
+   else are not omitted.
+4. Initialize SHA-256 with UTF-8 `storybook-coverage-input-v1\0`. For every
+   sorted file, append unsigned 64-bit big-endian path-byte length, UTF-8 path
+   bytes, unsigned 64-bit big-endian content-byte length and content bytes
+   (canonical manifest bytes for that one file). Length framing prevents
+   different path/content boundaries from colliding.
+5. Receipt/report/build/cache/.git/node_modules outputs are outside the source
+   input roots. Record Node/browser/Storybook/Vitest/MSW versions and
+   install/patch provenance separately, including applied patch paths/SHA-256
+   and the installer script digest. All files beneath patches participate in
+   inputDigest, including unapplied files. Reject missing configured patches or
+   NMI_PATCH_ROOT outside the owned checkout; any approved in-checkout alternate
+   mapping must be hashed explicitly. Closure qualifies only from a reproducible
+   isolated install of the reviewed lockfile using the existing install/patch
+   workflow; arbitrary local dependency mutations disqualify it. Never
+   install/reset/stash the user's checkout for this purpose.
+
+Negative fixtures cover root playwright.storybook.config.ts and
+webpack.config.js changes, every
+source/SCSS/validator/auth/storage/asset/provider/config family, patch-only
+changes/additions/deletions and install-provenance mismatches, manifest
+state/rationale changes and normalized-path/collision cases. Positive fixtures
+show JSON object-key reordering does not change canonical manifest digest, array
+order does change it, receipt writes/reviewedSourceDigest refresh alone do not
+change it, and length-framed pairs such as path='ab'/content='c' versus
+path='a'/content='bc' produce different framed inputs.
+
+Generate inventory facts before freezing inputs. Hash before/after every closure
+gate; a change voids that and later receipts. Results remain outside hashed MDX.
+Mechanical freshness is not semantic sufficiency: integration signoff reviews
+the changed-input list, explicitly retains unaffected rationale and re-reviews
+affected/uncertain claims. Full-catalogue execution remains serial.
+
+Full/docs generated indexes have their own canonical-JSON SHA-256 fingerprints,
+separate from source inputDigest. Freeze the full index at
+`reports/storybook-coverage/frozen-full-index.json`; execution receipts/signoff
+include fullIndexDigest and derive eligibility exclusively from that file.
+Freeze docs output at `reports/storybook-coverage/frozen-docs-index.json` for
+documentation comparisons. Do not let a later docs build replace executable
+membership.
+
+### Producer identity and enforced freeze — RT7
+
+T1 owns producer evidence; T2 validates its joins. Use an owned isolated
+integration checkout and reproducible install, never the user's working checkout
+for permission changes. A producer record outside hashed inputs has producerId,
+canonical checkout path, commit, inputDigest, patchFiles/installer digest,
+installed versions, resolved server/MCP URL, server PID/start time/cwd/launch
+arguments, expected Vitest configuration and native MCP binding. These stable
+fields form producerIdentityDigest; child PID/start time/cwd are deliberately
+excluded because a cold child does not exist before the triggering request. All
+qualifying receipts/signoff join on producerId, freezeId, producerIdentityDigest
+and inputDigest.
+
+Each MCP execution receipt additionally records childEpoch (observed child PID
+plus OS creation time), observed cwd/configuration, parent-process chain and
+request ordinal/start/end timestamps. Before a cold request, verify no existing
+runner child for the owned producer; do not prewarm it to obtain child identity.
+Send the native request, observe the newly launched child using owned runner
+diagnostics/process records, then validate and attach child provenance before
+the completed response can qualify. Warm requests may reuse the same epoch. A
+restart between requests creates a new recorded epoch under the same stable
+producer/freeze; a restart during an in-flight request invalidates that receipt
+and stops closure. Serial request ordinals and observation windows provide the
+local join, not an assumed upstream runId. Missing/ambiguous child provenance,
+wrong cwd/configuration, PID reuse without matching creation time or an
+unobserved restart fails. Extend producerIdentity.test.ts and
+mcpExecutionReceipt.test.ts for cold-before-child, warm reuse, between-request
+restart, in-flight restart and missing provenance.
+
+Capture facts from owned launcher records and runner diagnostics. On Windows,
+Get-NetTCPConnection identifies port-owner PIDs and Get-CimInstance supplies
+process creation/command-line information. Cwd comes from the launch record and
+child diagnostics, not a nonexistent Win32_Process cwd property. PID reuse or
+unavailable child/install provenance fails. A resident instance qualifies only
+if independently established identity matches; otherwise use an owned instance.
+Confirm codex mcp get my-storybook-mcp-server reports that same URL. A 6007 BDD
+request cannot qualify a native connector still bound to 6006. Reconnect through
+supported client configuration only with necessary authority, rediscover tools,
+and block native closure if binding cannot be established. No public identity
+endpoint or upstream runId is invented.
+
+Enforce immutable selected inputs throughout closure; boundary hashes alone
+cannot detect A-to-B-to-A changes. On the owned Windows integration copy,
+precreate writable reports/build/cache/.features-gen directories, save ACLs
+outside input roots, and apply write-denial ACLs with Get-Acl/Set-Acl only to
+resolved owned paths. Deny selected file write/append/attribute/delete rights
+and directory creation/child-deletion rights within input discovery roots;
+protect optional root-file discovery against additions too. Keep output paths
+writable and retain ACL-restoration rights. At the checkout root deny new files
+that could match optional configuration discovery, not output-directory
+creation; precreated output directories may be removed/recreated by existing
+build scripts. Selected input roots remain protected against directory
+replacement/deletion. Verify this distinction with the real clean/build commands
+during the owned-copy freeze integration test. The Windows read-only attribute
+is not sufficient. Verify overwrite, append, create, delete and rename attempts
+in representative owned input fixtures are denied, report/cache writes succeed,
+and read/hash still work. Precreate these fixtures before final preparation and
+remove them before the final input freeze; perform denial probes on the real
+selected paths through reversible attempts that must fail, never modify source.
+
+The freeze record has freezeId, acquisition time, inputDigest, protected
+path/discovery-root list, ACL-backup location and denial-probe results. Register
+finally cleanup before ACL changes; restore exact saved ACLs on success,
+failure/cancellation only in the owned checkout. If the filesystem cannot
+enforce the contract, new authority is required, or a gate must mutate selected
+inputs, stop closure and repair the workflow; never downgrade to boundary
+hashes. Use an injected adapter for unit fixtures and a controlled owned-copy
+integration test for actual denial/restoration. Reject writable/new optional
+inputs, A-to-B-to-A mutation, wrong cwd/install/patch digest, PID reuse, wrong
+native URL and missing identity. Proposed pure helpers validateProducerIdentity
+and validateFreezeRecord in scripts/storybook-coverage.mjs accept explicit
+records; process/ACL IO remains in guarded CLI/launcher code, never test-import
+side effects.
+
+### Closure launcher interface and lifecycle — RT7
+
+T8 creates scripts/storybook-closure.mjs, a guarded Node ESM entry with no
+import-time IO, and tests/unit/storybook/closureOrchestration.test.ts. Export
+runClosure(options, adapters) where options are { checkout, url, serverMode,
+receipts, mcpTimeoutMs }; checkout/receipts resolve to the owned integration
+copy, serverMode is managed/external as in T1 and mcpTimeoutMs is a positive
+finite integer (default 3600000). Inject filesystem, process/ACL, clock and
+receipt-observation adapters for unit tests; production adapters use existing
+Node and Windows tools, no new dependency or framework. Reuse T1's validated
+resolveStorybookTestTarget and T2's pure validators rather than duplicating
+them.
+
+After preparation, invoke from the owned integration checkout:
+`node scripts/storybook-closure.mjs --checkout . --url http://localhost:6007 --server-mode managed --receipts reports/storybook-coverage --mcp-timeout-ms 3600000`.
+The command resolves its absolute targets and refuses the user's original
+working checkout or receipt paths inside selected inputs. Managed mode launches
+the owned server using T1's command; external mode requires proven ownership and
+identity, never an arbitrary resident process. Native binding is checked before
+qualifying MCP calls, not inferred from the launch URL.
+
+runClosure registers cleanup, acquires/tests the ACL freeze, establishes stable
+producer identity and runs qualifying gates 1–5 with start/end digest checks. It
+writes awaiting-mcp.json outside inputs and waits, with the bounded timeout and
+progress output, for the agent/operator to call the existing native MCP test-run
+tool serially and save raw/normalized receipts. It never shells out to MCP or
+substitutes package tests for native calls. The operator's mcp-complete.json
+names receipt files; this is a handoff signal, not evidence. The launcher
+validates exact-ID/a11y results, stable identity/freeze and per-request child
+provenance before continuing with gate6 BDD, gate7 docs and gate8 closure. For
+gate6, spawn Storybook BDD with a child-only environment copied from the
+launcher, overriding STORYBOOK_TEST_URL with the resolved baseURL and
+STORYBOOK_TEST_SERVER_MODE=external because the launcher owns the running
+server. Do not mutate the parent's environment or let Playwright start a second
+server. Before any subsequent scenario labeled cold, confirm no in-flight
+request, stop only the proven owned runner child, wait for its PID/port to
+disappear and record the reset; then let the scenario's request create a new
+child epoch. Never reset an unowned child or relabel a warm run cold. Add
+environment, ownership/reset and cancellation fixtures to
+closureOrchestration.test.ts and the MCP execution BDD steps; inability to
+obtain a clean cold state blocks it. Unsupported native binding, failed/missing
+receipts, timeout or cancellation fails closed and restores ACLs/cleans only
+owned processes in finally.
+
+Store gate receipts, awaiting-mcp.json, mcp-complete.json and lifecycle evidence
+under the explicitly selected reports/storybook-coverage path. Every handoff
+file includes freezeId/producerId; reject stale signals from a previous session,
+out-of-root paths or duplicate receipt names. Unit tests drive fake adapters
+through successful cold/warm lifecycle, all-gate ordering, bad handoff, failure,
+timeout and cancellation. The owned-copy integration test covers real ACL
+denial/restoration and clean/build output recreation. A readiness/runbook
+instruction without this entry point cannot qualify as orchestration evidence.
+
+### CLI, lint and acceptance-set contract
+
+The proposed `scripts/storybook-coverage.mjs` exports the following proposed
+pure functions for unit tests: validateManifest, discoverSourceExports,
+validateSourceClaims, validateReferences, computeInputDigest,
+normalizeMcpReceipt, deriveExecutableStorySet, validateClosure,
+validateProducerIdentity, validateFreezeRecord and generateInventory. Each
+accepts explicit input objects (filesystem root/data/index/receipt inputs as
+applicable) rather than reading global state; CLI parsing/IO is isolated behind
+a guarded entry. It provides three explicit modes:
+
+- `--mode source`: inventory/schema/source-export/assertion-reference/review
+  checks, no live server or generated index required.
+- `--mode references --index storybook-static/index.json`: source checks plus
+  generated story/docs links and owner checks.
+- `--mode closure --index reports/storybook-coverage/frozen-full-index.json --docs-index reports/storybook-coverage/frozen-docs-index.json --receipts reports/storybook-coverage`:
+  references plus current exact-ID/a11y receipts, input freeze and integration
+  signoff.
+
+Exit 0 means all obligations of the selected mode passed; exit 1 names failures
+by stable codes SOURCE_UNRESOLVED, EVIDENCE_MISSING, REFERENCE_MISSING,
+INPUT_STALE, EXECUTION_INCOMPLETE or KNOWN_DEFECT_REQUIRED. Exit 2 is invalid
+invocation/unreadable input. Source mode success is never displayed as closure
+success. `--write-inventory` is permitted only with references mode; replace
+only generated regions bracketed by
+`<!-- storybook-coverage:generated:start -->` /
+`<!-- storybook-coverage:generated:end -->` in the three inventory MDX files.
+Refuse absent/duplicate markers; no receipt IDs or run timestamps enter those
+regions.
+
+Capture baseline index IDs before metadata edits. Compute executable expected
+IDs from index entries of type story and effective inherited tags plus installed
+storybookTest include/exclude/skip policy. Docs entries are not tests. Keep
+skipped/excluded and deliberate non-test stories in a separate audited list with
+reasons; any required claim lacking an executed story still blocks closure. Do
+not treat skipped counts as passes or weaken tags to make counts agree.
+
+Root npm lint does not select the proposed .mjs validator. Create a task-scoped
+`scripts/storybook-coverage-eslint.config.mjs` importing existing
+`eslint.config.mjs`, `@eslint/js` and `globals`; retain all existing config and
+add js.configs.recommended plus Node ESM globals only for coverage validator,
+docs verifier and closure launcher mjs scripts. No root ESLint/package/CI policy
+edit is needed. Run
+`npx eslint --config scripts/storybook-coverage-eslint.config.mjs scripts/storybook-coverage.mjs scripts/verify-storybook-docs.mjs scripts/storybook-closure.mjs --max-warnings=0`.
+Test positive ESM and a no-undef negative using ESLint.lintText in the proposed
+`tests/unit/config/storybookCoverageLint.test.ts`. Do not add ignores or disable
+rules.
+
 ## T1: Restore reliable MCP story execution
 
-Priority P1. Dependencies: none. Human 0.5-2 days / agent 2-6 hours; upstream
-defect may increase elapsed time.
+Purpose: trustworthy MCP execution. Objective: identify the actual child failure
+without disturbing other processes. Goal: exact-ID, current-input component/a11y
+results on cold, warm and repeated runs.
 
-1. Add/approve an acceptance scenario in the existing MCP BDD feature and
-   URL-contract unit tests before implementation. Initialize, list tools and
-   discover the advertised test-tool schema; request SearchBox and
-   ProgressFileList with a11y enabled. Exact requested story-ID set must equal
-   the returned executed set: reject missing/duplicate/unexpected IDs, stale run
-   identity, zero tests, absent a11y execution or a generic tool error.
-2. Establish isolation before running the new execution baseline. Verify free
-   port 6007 and the configured runner port 47005, and record owned process IDs;
-   do not stop the user's 6006 server or any unrelated runner. Start an owned
-   diagnostic server with
-   `node --max-old-space-size=8192 ./node_modules/storybook/dist/bin/dispatcher.js dev -p 6007 --no-open`.
-   If the runner port is occupied, defer execution until its owner releases it
-   rather than changing global ownership.
-3. `playwright.storybook.config.ts` hard-codes 6006: add `STORYBOOK_TEST_URL`
-   defaulting to that URL, derive baseURL/webServer URL and MCP endpoint
-   consistently, and test the default/override contract. Against the owned
-   server run `npm run test:e2e:storybook -- --grep "MCP" --workers=1` with
-   `$env:STORYBOOK_TEST_URL='http://localhost:6007'`, restoring the previous
-   environment value afterward. Expected RED is the observed startup error, not
-   a URL/config parse error. Capture nested FATAL_ERROR, stderr, executable,
-   cwd, loader, readiness and versions without tokens; distinguish startup
-   failures from assertion/a11y failures.
-4. Compare fresh and resident behavior. Verify `VITEST_STORYBOOK` selects the
-   existing direct config; verify the configLoader path and project name
-   expected by addon-vitest. Compare 30-second startup budget with measured init
-   readiness. Check Chromium installation and fixed-port conflicts. Restart only
-   owned diagnostic children after each experiment.
-5. If the fresh instance succeeds with existing configuration, the correction is
-   lifecycle/runbook and test coverage; do not edit config. If it fails, fix the
-   demonstrated repository-owned integration defect and first add its regression
-   to the existing config-contract test. Do not increase timeouts or remove a11y
-   as a substitute for diagnosis.
-6. If the failing code is upstream-only, record package/version, minimal
-   reproduction, and a supported upstream fix path. Preserve a failing
-   acceptance gate until the integrated solution is verified; do not edit
-   installed bundles.
-7. Pass criteria: cold single-story, warm focused pair, full catalogue, then
-   repeat single-story MCP run all succeed on the isolated instance; requested
-   and returned executed ID sets match for every run, using the current
-   generated executable catalogue and explicit documented non-executable
-   exclusions for the full set; no disconnected orchestrator, leftover owned
-   worker, unhandled rejection, or zero-test false pass. The shell suite remains
-   corroborating evidence only.
+Priority P1; no package prerequisite. Estimate: human 0.5–2 days / agent 2–6
+active hours; upstream waiting is separate. Diagnostic discovery is executable
+now; a dependency/API/policy-sensitive repair requires a supported
+evidence-backed addendum, not a guessed patch.
+
+### Atomic slices and files
+
+- T1a — Create `.storybook/storybook-test-target.ts` and
+  `tests/unit/config/storybookEndpoint.test.ts`; modify
+  `playwright.storybook.config.ts` and `tests/e2e/steps/storybook.steps.ts`.
+  Export proposed resolveStorybookTestTarget({ url, serverMode, ci }) returning
+  { baseURL, mcpURL, command, webServer }; default URL stays
+  http://localhost:6006. Accept only http loopback hosts, valid ports, and no
+  credentials/query/hash/subpath. Derive baseURL, MCP URL and
+  `node --max-old-space-size=8192 ./node_modules/storybook/dist/bin/dispatcher.js dev --host HOST -p PORT --no-open`
+  from the same validated target; HOST/PORT are validated resolver outputs, not
+  string-built user input.
+- T1b — Extend `tests/e2e/features/storybook/integrations/mcp.feature` and the
+  same steps; create `tests/unit/storybook/mcpExecutionReceipt.test.ts` and
+  `tests/unit/storybook/producerIdentity.test.ts` for structured-response
+  fixtures and a proposed pure receipt normalizer exported by
+  `scripts/storybook-coverage.mjs` after T2a. Until that helper lands, the
+  integration scenario can assert raw structured fields; no dependency cycle is
+  required.
+- T1c — Capture startup cause; conditionally modify only reproduced responsible
+  surfaces among `vitest.config.ts`, `vitest.storybook.config.ts`,
+  `vitest.storybook.runtime.ts`, `.storybook/main.ts`. First extend
+  corresponding `tests/unit/config/vitestTopology.test.ts`,
+  `storybookVitestContract.test.ts` or `storybookRuntimePolicy.test.ts`.
+  Existing VITEST_STORYBOOK direct config and init/standalone bridge are
+  diagnostic inputs, not assumed fixes.
+
+T1b child observation uses the existing configureVitest hook in
+vitest.storybook.runtime.ts, confirmed in the current source. Add an opt-in
+closure-only diagnostic there and tests in
+tests/unit/config/storybookRuntimePolicy.test.ts: when the launcher supplies
+STORYBOOK_CLOSURE_RECEIPTS and STORYBOOK_CLOSURE_FREEZE_ID, write a redacted
+child record (process.pid/ppid/cwd, project identity, resolved configuration
+evidence and freezeId) into the validated owned receipt directory. With either
+env value absent, do no diagnostic IO. Refuse paths inside source inputs or
+outside the owned receipt root, and never serialize arbitrary environment
+variables. The launcher supplements OS creation time/parent-chain observations
+and joins the record to the serial request window. Preserve existing coverage
+exclusion and init/standalone behavior; diagnostic-only changes do not guess a
+runner fix.
+
+### Test-first steps and lifecycle
+
+1. Add endpoint fixtures for default 6006, override 6007, invalid/nonlocal URLs,
+   server modes and CI true/false. RED must expose wrong
+   command/endpoint/lifecycle derivation. Managed mode lets Playwright start its
+   own server on the resolved port; external mode omits webServer entirely,
+   including in CI, because the integration owner starts/stops that instance.
+   The default 6006 managed reuse behavior stays unchanged; reused-instance
+   receipts require matching checkout/input identity.
+2. Implement the resolver and replace **all** STORYBOOK_BASE absolute URL uses
+   in the common steps with the resolved baseURL; browser, request client, MCP
+   and failure links must agree. Set storybookTest.storybookUrl to the same
+   target when diagnostic URLs are used; it is a debug/check URL, not the
+   mechanism selecting child execution.
+3. Verify ownership/free ports before executing: 6007 and configured
+   runner 47005. If occupied by another owner, wait/report; never kill it. For
+   diagnostic external mode, start the exact 6007 command above as a hidden
+   owned process, record its PID/cwd, and clean only its descendants in finally.
+4. Dedicated focused MCP Gherkin scenario timeout is 180 seconds, API request
+   timeout 150 seconds; server readiness is separately bounded at 120 seconds.
+   Keep the child's 30-second startup budget unchanged while diagnosing. The
+   full catalogue is a separate T8 MCP run, not inside this focused BDD timeout.
+5. Initialize session, send initialized notification, tools/list and tools/call
+   using the advertised schema. Match JSON-RPC IDs, parse complete SSE events or
+   JSON content according to Content-Type, and reject protocol
+   error/isError/cancelled/absent structuredContent. Do not assume the first SSE
+   data event is the final matching response. Save redacted stderr/nested
+   FATAL_ERROR, cwd, loader, versions and timing.
+6. First focused pair is the MCP-discovered SearchBox TypeAndSubmit and
+   ProgressFileList CancelInvokesCallback. Compare requested IDs to successful
+   per-ID component and a11y statuses under the shared receipt contract.
+   Negative fixtures include one-of-two returned, duplicate status, unknown ID,
+   no-stories, missing a11y, cancellation, unhandledErrors, absent optional
+   timestamps, and absent public runId.
+7. Implement/test RT7 producer identity in producerIdentity.test.ts and common
+   MCP steps: same-ID/different-source, missing child provenance, PID reuse and
+   wrong native URL must fail. Establish stable producer identity after the
+   final freeze before qualifying requests; attach child provenance only after
+   the cold request creates it and before accepting its result. Preserve the
+   user-owned 6006 server; an alternate owned instance requires supported native
+   connector binding, not only an env URL.
+8. Compare fresh and resident lifecycle, selected config/project, Chromium and
+   fixed ports. If fresh config succeeds, land only
+   lifecycle/runbook/regression. If a repository defect is reproduced, change
+   that layer with a failing/passing test. Upstream-only failure remains an
+   explicit blocker with reproduction and supported fix path.
+
+### Commands, expected result and exit
+
+Run
+`npm run test:unit -- tests/unit/config/storybookEndpoint.test.ts tests/unit/storybook/mcpExecutionReceipt.test.ts tests/unit/storybook/producerIdentity.test.ts`
+after their dependencies exist. Expect intended negatives first, then all
+fixtures passing. Run focused diagnostic BDD with environment restoration:
+
+```powershell
+$auditPriorUrl = $env:STORYBOOK_TEST_URL
+$auditPriorMode = $env:STORYBOOK_TEST_SERVER_MODE
+try {
+  $env:STORYBOOK_TEST_URL = 'http://localhost:6007'
+  $env:STORYBOOK_TEST_SERVER_MODE = 'external'
+  npm run test:e2e:storybook -- --grep 'MCP execution' --workers=1
+  if ($LASTEXITCODE -ne 0) { throw 'Focused MCP execution gate failed' }
+} finally {
+  $env:STORYBOOK_TEST_URL = $auditPriorUrl
+  $env:STORYBOOK_TEST_SERVER_MODE = $auditPriorMode
+}
+```
+
+External server readiness/ownership is established before this command; its
+process cleanup surrounds the whole experiment. Pass requires cold single ->
+warm pair -> repeat single exact-ID/a11y evidence, then T8 full catalogue. Roll
+back only owned target/config slices if regressions appear. No runner success or
+root cause is claimed during planning.
 
 ## T2: Replace family-name completion with recursive evidence
 
-Priority P1. Depends on T1 for live assertions; static negative tests can be
-written first. Human 1 day / agent 2-4 hours.
+Purpose: trustworthy recursive coverage accounting. Objective: classify
+source/export/state claims without treating imports as behavior. Goal: no
+unexplained renderable exports, invalid references or stale execution evidence.
 
-Manifest records use repository-relative source path, exported symbol,
-classification (`direct`, `consumer`, `forwarding`, `nonvisual`), story source
-plus named export, generated docs owner, and concise behavior assertion
-evidence. Forwarding/nonvisual entries require a specific reason and the source
-condition that would make the decision stale. Each claim identifies state,
-observable outcome, named story/export, assertion location and reviewer. Keep
-separate verdicts for required behavior verified, current behavior
-characterized, and known defect. Store execution receipts separately with
-commit, relevant working-tree/source digest, package versions, story ID, result
-and timestamp; source/story/provider/fixture changes invalidate the affected
-review and receipt. The integration owner must reassess invalidated claims
-before closure. Paths and exports are checked using the TypeScript compiler API;
-IDs come from generated index or MCP, never naming guesses.
+Priority P1. T2a/source tests can run alongside T1 diagnosis; live closure
+depends on T1. Estimate: human 2–3 days / agent 6–10 active hours. Inventory
+population/review is included, upstream waiting excluded.
 
-Implement `scripts/storybook-coverage.mjs` as importable validation functions
-with a CLI entry. Traverse only handwritten components/routes to inventory
-candidates and exports, normalizing POSIX/Windows paths. Reuse Storybook's
-component graph/manifests for dependency relationships; do not build a general
-alias/barrel/cycle resolution engine. Inventory TSX candidates recursively, then
-classify **exported renderable symbols**; contexts, types, utilities and
-containers are accounted for explicitly. Do not equate JSX extension or an
-import with rendered coverage. Do not execute application modules during static
-analysis.
+### Atomic slices and files
 
-Write negative fixtures in `moduleCoverage.test.ts` first: new component in an
-existing folder; new nested route; two renderable exports in one file; missing
-story export; graph match without reviewed behavior evidence; invalid/removed
-docs owner; existing Storybook alias/index/barrel/cycle matches; path separator
-mismatch; stale exclusion; nonvisual module; deleted source; forwarding wrapper
-gains logic; changed source/provider digest invalidates evidence. Run
-`npm run test:unit -- tests/unit/storybook/moduleCoverage.test.ts`; expected RED
-is the specific missing validator/coverage behavior. Implement the validator,
-then expect all counterexamples and positive examples to pass.
+- T2a — Create `ClientApp/src/storybook/coverageManifest.json`,
+  `scripts/storybook-coverage.mjs`,
+  `tests/unit/storybook/moduleCoverage.test.ts`. Implement the shared schema and
+  three CLI modes as pure functions plus a guarded CLI entry; importing the
+  module in tests must not run it or import app modules.
+- T2b — Add the shared complete-input hasher, claim/reference validation and
+  receipt normalizer and RT7 validators to the same module; create
+  `tests/unit/storybook/evidenceFreshness.test.ts`,
+  `tests/unit/storybook/inputFreeze.test.ts` and use T1b's producerIdentity and
+  `mcpExecutionReceipt.test.ts`.
+- T2c — Modify `tests/unit/storybook/coverageDrift.test.ts` and
+  `scripts/verify-storybook-docs.mjs`; retain useful family checks but remove
+  literal Complete as proof. Generated metadata is read once per build, not
+  rebuilt per record.
+- T2d — Create `scripts/storybook-coverage-eslint.config.mjs` and
+  `tests/unit/config/storybookCoverageLint.test.ts` under the shared code-only
+  lint contract. No changes to package.json, eslint.config.mjs, AGENTS or CI
+  workflows are authorized.
 
-Seed the manifest with all 258 historical TSX candidates, then recompute the
-full current .ts/.tsx export inventory; do not limit the denominator to that
-historical sample or the 23 unmatched subset. The detached evidence snapshot is
-seed evidence, not the gate's denominator. Consumer entries require reviewed
-observable assertions, including conditional rendering states. Keep
-invalid/incomplete entries as failures while later tasks supply evidence.
-Replace `coverageDrift.test.ts` literal Complete checks with recursive contract
-validation. Keep any useful family documentation checks separately. Integrate
-generated index/docs-owner checks into `scripts/verify-storybook-docs.mjs`;
-preserve current docgen exception validation and stale-exception checks.
-Completion: no unclassified exported renderables, no nonexistent story/docs
-references, no unexplained exemptions. Report direct, consumer, forwarding,
-excluded and uncovered separately; report routes/BDD and test coverage
-separately.
+### Test-first steps
+
+1. Define schema/exits/claim keys and temp-directory fixtures first. Unit
+   fixtures may synthesize index/receipts; synthetic data never qualifies as
+   real execution evidence.
+2. Inventory all handwritten .ts/.tsx files under components/routes excluding
+   stories/tests/declarations/generated/vendor surfaces; inspect named/default
+   exports, aliases/re-exports and memo/HOC wrappers with TypeScript's existing
+   compiler API. Canonical identity is declaration-relative path plus export;
+   ambiguous/unclassifiable entries fail unresolved. Avoid a general import
+   resolver; MCP graph only suggests consumers.
+3. Reject new nested modules, two renderable exports, deleted source/story/docs
+   owners, path/case conflicts, duplicate claims, absent assertion
+   export/marker, empty inventory, empty/all-unsupported renderable states,
+   smoke-only baseline, invalid nonvisual reasons and a forwarding wrapper
+   gaining behavior. A graph-matched conditional branch lacking reviewed
+   observable evidence stays unverified even if another story passes.
+4. Implement complete freshness and before/after input checks from the shared
+   contract; test changed SCSS,
+   validation/auth/storage/helper/asset/provider/config/manifest and
+   receipt-write idempotence, patch-only mutation/add/delete, producer/install
+   mismatch and enforced-freeze cases. Every qualifying gate must start after
+   freeze and retain the same identity/digests; pre-freeze results fail
+   INPUT_STALE even if they passed. Integration signoff identifies reviewed
+   changed inputs; the checker verifies signoff identity, not the truth of a
+   human judgment.
+5. Populate all current candidates, including newly committed RhfForm-related
+   exports. Keep failed/unreviewed rows visible. Direct, consumer, forwarding,
+   nonvisual, unresolved, represented-state and verified-state counts are
+   separate; source mode must not label them all verified.
+6. Build/index checks validate real docs owner headings and explicit legacy IDs.
+   Add generated MDX region tests for refusal on missing/duplicate markers and
+   preservation of handwritten content.
+7. Wire source validation into the existing unit drift test, reference
+   validation into the existing docs verifier, and closure validation into T8.
+   Missing generated index is an explicit references-mode input failure, never
+   an empty success.
+
+### Commands, expected result and exit
+
+`npm run test:unit -- tests/unit/storybook/moduleCoverage.test.ts tests/unit/storybook/evidenceFreshness.test.ts tests/unit/storybook/mcpExecutionReceipt.test.ts tests/unit/storybook/producerIdentity.test.ts tests/unit/storybook/inputFreeze.test.ts tests/unit/config/storybookCoverageLint.test.ts`
+must show targeted RED then all fixtures pass.
+`node scripts/storybook-coverage.mjs --mode source` initially fails
+EVIDENCE_MISSING for genuine gaps and ultimately exits 0 only when
+classified/reviewed source obligations pass. Run the dedicated mjs lint command
+from the shared contract.
+
+Pass: schema, recursive inventory, negatives, complete freshness and lint
+verified; runtime/documentation claims remain pending until T1/T3–T8 supply real
+evidence. Rollback is scoped to owned validator/tests; never reinstate a
+misleading 100% claim as the fallback.
 
 ## T3: Repair documentation ownership and verify formatting
 
-Priority P2. Depends on T1 and T2. Human 1 day / agent 2-4 hours.
+Purpose: APIs describe the rendered owner. Objective: fix container/peer
+ownership, Guard presentation and version attribution without changing
+application behavior. Goal: correct API discovery, appropriate controls and
+preserved IDs.
 
-- AutoSuggest: preserve `components-inputs-autosuggest--loading`. Add explicit
-  container-level description and `subcomponents: { AutoSuggestContainer }`
-  metadata using the official multi-component pattern. Explain that its
-  controlled loading example demonstrates the inner container, not the
-  asynchronous getOptions contract. Bind editable args to the rendered component
-  where compatible; avoid duplicate hardcoded args. If MCP still exposes only
-  the parent API, create `AutoSuggestContainer.stories.tsx` for the container
-  and retain the old Loading export as a documented compatibility example.
-- AcceptQuote: keep the existing family title/export names/IDs. Add
-  `subcomponents` for PaymentDetails, DeliveryAndReturn, QuotationSummary and
-  SummaryAndAccept, plus family/individual-story descriptions identifying each
-  API owner. Preserve existing fixture handlers and settled-state waits. Add
-  component-specific docs only if manifest/MCP cannot expose these APIs through
-  supported subcomponents.
-- Guard: compare source types, generated manifest data, browser-rendered
-  Controls/ArgTypes, and MCP text. BDD must assert type and default-value
-  **cells**, rather than attempting to compile MCP prose as TypeScript. Preserve
-  the default text and runtime behavior. If only MCP serializes invalid-looking
-  pseudo-TypeScript, document it as an upstream presentation defect with a
-  minimal sample and source links; do not rewrite the component to accommodate
-  the serializer.
-- Version: describe project guidance as Storybook 10.6.1/current installed line,
-  remove stale 10.5.10 investigation claims where they no longer represent
-  current inspection, and label historical findings as historical. The upstream
-  writing-tool Storybook 9 heading gets an upstream remediation record, not a
-  false edit in project MDX. Dependency upgrade/patch is chosen only after T1's
-  version-supported evidence.
-- Regression first: extend existing docs BDD for container API, all AcceptQuote
-  step owners, valid default cells, unchanged legacy IDs and resolving docs
-  links. Run the failing scenarios, implement metadata/docs, then rerun.
+Priority P2. Requires T2 schema/index baseline; runtime/docs browser
+verification requires T1, but metadata inspection/authoring may proceed
+provisionally. Estimate: human 0.5–1 day / agent 2–4 active hours.
+
+### Atomic slices, tests and edits
+
+- T3a AutoSuggest — Modify
+  `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx`. Keep
+  components-inputs-autosuggest--loading; label AutoSuggestContainer explicitly
+  and add its documented subcomponent API. Disable parent-only controls in that
+  compatibility story; never wire getOptions or other parent args onto a
+  different container API. Verify actual control edits affect the rendered owner
+  before claiming controllability. If standalone controls/API ownership are
+  required or MCP/generated docs omit the API, create
+  `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.stories.tsx`
+  while retaining the legacy Loading example.
+- T3b AcceptQuote — Modify
+  `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx`; describe the five
+  entries as peer workflow steps rather than children of ReportRecipient.
+  Subcomponent metadata is a docs-grouping mechanism, not a promise of
+  independent peer controls. Preserve all titles/exports/IDs; expose each API in
+  rendered Docs and MCP. If discovery fails, create
+  `ClientApp/src/routes/acceptQuote/AcceptQuoteStepApis.docs.mdx` as the
+  explicit peer reference, with supported API tables and links to unchanged
+  named stories.
+- T3c Guard — Compare MCP prose, generated metadata and rendered type/default
+  cells. Keep `ClientApp/src/components/RouteLeavingGuard/index.tsx` and
+  `types.ts` read-only diagnostic inputs unless a real source defect is
+  reproduced. Add supported per-story/argType presentation only in existing
+  Guard stories or explicit MDX if needed; an MCP-only serializer defect gets a
+  versioned reproduction, not a source-type rewrite.
+- T3d Version/runbook — Modify `.storybook/component-docs-guide.mdx`; state
+  installed 10.6.1/current-line provenance and label historical investigations.
+  The Storybook 9 heading is upstream instructions; record correction ownership
+  and reproduction without claiming that project wording changes repair that
+  tool output.
+
+Before each slice extend `tests/unit/storybook/storybookDocsConfig.test.ts`,
+`tests/e2e/features/storybook/autodocs-documentation.feature` and
+`tests/e2e/steps/storybook.steps.ts` for the relevant failing
+owner/control/default/ID behavior. Do not couple four unrelated corrections into
+one unreviewable change. Storybook subcomponents have inferred argTypes and no
+independent child controls; the documented constraints are acceptance
+requirements. Request-producing Docs examples also follow T6b's frame-isolation
+contract. Label noninteractive iframe Docs controls honestly and verify actual
+controllability in single-story Canvas instead.
+
+### Commands, expected result and exit
+
+`npm run test:unit -- tests/unit/storybook/storybookDocsConfig.test.ts`, then
+`npm run test:e2e:storybook -- --grep 'Documentation ownership' --workers=1`
+after adding/approving scenarios with that title. Expect wrong/missing API owner
+or controls behavior first, then all five step APIs plus container/Guard checks
+pass. Requery MCP docs and run focused affected stories with a11y. Compare all
+affected baseline IDs/content and require zero unintended removals.
+
+Pass: correct owner/API and truthful controls in both interfaces, unchanged
+runtime defaults and stable links. Upstream-only presentation/wording issues are
+explicitly outstanding external defects, not fabricated local fixes; they do not
+waive the MCP execution gate. Rollback preserves legacy exports.
 
 ## T4: Add stories for genuinely unrepresented shared components
 
-Priority P2. Depends on T1-T3. Human 1-2 days / agent 3-6 hours.
+Purpose: meaningful examples for the seven identified implementations.
+Objective: obtain documented supported contracts and then author independently
+testable examples. Goal: component API and applicable behavior/semantics are
+discoverable and verified, not merely seven files.
 
-Create the seven exact story files listed above. Use existing evaluation title
-hierarchy and global Autodocs. Before using design-system props, query MCP docs.
-If MCP lacks the component contract, obtain an approved API documentation
-contract and publish/requery it before story authoring; do not infer
-undocumented props from source types or a similarly named component.
+Priority P2. T4a can proceed after T2 schema; story use requires approved
+documented contracts, T3 ownership conventions and T1 focused execution.
+Estimate: human 1–2 days / agent 4–8 active hours, excluding maintainer waiting.
 
-Acceptance cases:
+### T4a — Documentation bootstrap before prop use
 
-- AriaButton: its own implementation, keyboard activation, pending accessible
-  progress label, disabled nonactivation, supported visual variants. Do not
-  treat sibling Button stories as coverage of this separate implementation.
-- Link: keyboard navigation, destination, disabled state and external-link
-  policy only where supported.
-- SegmentedControl and SegmentedControlItem: selected/unselected state, keyboard
-  selection, callback payload, disabled item, long labels.
-- Sheet: trigger/open/close, dialog name, focus containment and focus return.
-  Inspect the current children-only composition before choosing the story
-  harness; a passing example must not depend on overlay props that Sheet does
-  not forward. If tests expose a product defect, preserve the reproduction and
-  record a separate narrowly scoped fix proposal.
-- AlertMessage: supported tones, live region semantics, title/body visibility.
-- PageHeader: title alone, descriptive/eyebrow content, actions and long-content
-  wrapping.
-- StatusPill: supported tones and readable text, including long content.
+The component maintainer, coordinated by the integration owner,
+supplies/approves the absent supported API contract; story authors do not infer
+it from source types. Create `.storybook/undocumented-component-contracts.mdx`
+as an unattached reference with exact import/export identity, approved API
+table, supported composition, inherited-prop scope and approval provenance for
+AriaButton, Link, SegmentedControl/Item, Sheet, AlertMessage, PageHeader and
+StatusPill. No guessed props or guessed stories are rendered in this bootstrap
+document. Publish via existing dev-server MDX discovery, obtain its real
+docs-list ID, and query docs-show before using any listed prop. If approval is
+absent, that component lane stays pending; no placeholder contract can pass.
 
-Retain ColorThumb through ColorArea/ColorSlider/ColorWheel, Content through
-Dialog/Popover, ProgressCircle through pending Button, and Separator through
-Toolbar **only after** T5 verifies actual visible/interactive evidence and
-documentation ownership. Add subcomponent documentation to exact consumer story
-files when required; no filler standalone examples purely to satisfy directory
-counts.
+Extend `tests/unit/storybook/storybookDocsConfig.test.ts` and the Documentation
+ownership BDD to reject absent/unapproved contracts and missing required API
+sections. Check current .storybook/main.ts's node_modules propFilter against the
+approved inherited public API; empty tables are not proof of a prop-less
+component. Prefer the explicit approved reference table; do not globally expose
+all vendor props or change docgen policy without a reviewed narrow addendum. Add
+links from the final component Docs entries to that reference as necessary.
 
-For each file: write meaningful play assertions, run the focused MCP test, then
-query docs and update manifest. A failing story is evidence to resolve, not
-permission to suppress warnings or a11y.
+### T4b–h — One story file per independently reviewed implementation
+
+Create the seven exact T4 paths in Files and responsibilities, one slice at a
+time. Use current MCP instructions, typed framework Meta/StoryObj and
+storybook/test utilities; never hand-roll a second provider/router.
+
+| Slice                 | Observable acceptance, limited to approved supported API                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| AriaButton            | Own implementation, keyboard activation, correct callback, disabled nonactivation and pending progress semantics                  |
+| Link                  | Accessible name, keyboard activation and real destination; supported disabled/external affordances without external navigation    |
+| SegmentedControl/Item | Initial/changed selection, keyboard movement, disabled item and callback payload; both exported APIs documented                   |
+| Sheet                 | Approved children/trigger composition, accessible dialog name, open/close and focus return; do not assume overlay-prop forwarding |
+| AlertMessage          | Title/body, approved tones and live/status semantics                                                                              |
+| PageHeader            | Title alone, approved optional description/actions, long-content wrapping                                                         |
+| StatusPill            | Readable label, approved tones and long-content semantics                                                                         |
+
+Write play assertions for meaningful behavior or static semantics first; no fake
+interaction for static components. Perturb the asserted fixture/condition and
+demonstrate failure before trusting the passing play. Run focused MCP/a11y,
+requery docs and update one manifest claim after each slice; inspect
+375px/1280px wrapping and focus visibility. A product defect earns a separate
+reproduction/proposal, not a story-only workaround.
+
+ColorThumb, Content, ProgressCircle and Seperator stay in consumer stories if T5
+proves the claim; no mandatory helper colocation. Pass requires approved
+discoverable APIs, no unexplained inherited-prop loss, per-slice real
+assertions/results and no suppressed a11y/act warning. Roll back only the
+offending story/docs slice.
 
 ## T5: Validate and strengthen indirect coverage
 
-Priority P2. Depends on T2-T4. Human 1-2 days / agent 3-6 hours. Shared edits
-with T3 are sequential.
+Purpose: retain sufficient consumers. Objective: prove source/export/state
+ownership in a real scenario. Goal: no import-only claim, duplicated gallery or
+blanket colocation.
 
-Use the evidence snapshot to find the exact consumer story source/export for
-every source without a colocated story. Evaluate at symbol/state level. Fix
-missing assertions in the finite consumer edit set above; add a local story only
-when the existing consumer cannot demonstrate the relevant contract.
+Priority P2. Depends on T2 and the relevant API contract; does not depend on
+completion of all T4 components. Shared AcceptQuote edits follow T3; focused
+verification uses T1. Estimate: human 1–2 days / agent 4–8 active hours.
 
-| Family                                          | Required observable contract                                                                               |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| ButtonGroup/EditButton/LinkButton               | Relevant action reachable by keyboard; callback/navigation outcome, not just presence                      |
-| Details/FormikForm/HidableField/RhfHidableField | Correct label/error/summary rendering; hidden-to-visible and value preservation as supported               |
-| SubmitFormButton/SaveAndExitButton              | Valid/invalid/in-flight behavior and save outcome through owning wizard/banner                             |
-| UnsavedFormPrompt                               | Dirty navigation blocks, cancel retains input, confirm proceeds; browser refresh limitation stays explicit |
-| CommonForms ContactDetails and RHF counterpart  | Context populated, editable fields/validation and summary behavior                                         |
-| Checkbox/Radio/Select/Text/Number/ReadOnly      | Value/callback, disabled/readonly/validation behavior that each component owns                             |
-| Organisation/Certificate/Address/AutoSuggest    | Deterministic options, selection, no-results/loading and manual-address behavior where supported           |
-| BranchSelector/Confirmation/RFQDelete/Terms     | Actual modal opens, relevant action/cancel, focus/keyboard and state updates                               |
-| ColorThumb/Content/ProgressCircle/Separator     | Actual rendered helper is reached, accessible semantics/values correct, appropriate docs owner             |
+### Atomic claim review
 
-Preserve already verified SearchBox and ProgressFileList callback assertions.
-Where a shared args spy is used, assert callback payload after awaited
-interaction and confirm state reset across successive runs. No global
-act-warning suppression, sleep-based settlement, or unrelated UI refactor.
-Provider nesting: whole route shells own their forms; field stories use the
-harness's form providers. Use portal-aware `screen.findByRole` for
-dialogs/popovers and await user-visible async state.
+For each current source without a sufficient claim, record its candidate
+consumer, rendered condition, supported action, observable consequence,
+assertion locator, API heading and sufficiency rationale. The finite existing
+consumer edit paths remain in Files and responsibilities; any additional path
+must be named and justified in the manifest before authoring. New
+RhfForm/controller exports are inventoried and reviewed rather than silently
+omitted.
+
+One slice is one state claim, not an entire gallery. Use named stories or
+well-scoped play steps so failures identify the owner. Add a dedicated story
+only if no consumer can demonstrate the required contract. For helper branches,
+drive the enabling condition and prove a negative control (wrong condition or
+removed expected behavior makes the assertion fail); do not add a
+mutation-testing framework.
+
+### Required family acceptance and candidate consumers
+
+Paths below are candidates under `ClientApp/src`, not sufficiency claims. Review
+the actual source/export/state and generated ID before accepting them. An
+unrendered conditional branch fails even when another consumer passes; no family
+row grants a blanket exemption.
+
+| Family                                          | Required applicable observable contract                                                                 | Existing candidate story source                                                                                                                                                                                                                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ButtonGroup/EditButton/LinkButton               | Keyboard action, callback payload or real destination                                                   | components/Buttons/ButtonBreadth.stories.tsx                                                                                                                                                                                                                                      |
+| Details/FormikForm/HidableField/RhfHidableField | Label/error/summary, visibility transition and value retention as supported                             | components/forms/Forms.stories.tsx; routes/ta/organisationAndContact.stories.tsx                                                                                                                                                                                                  |
+| SubmitFormButton/SaveAndExitButton              | Valid/invalid/in-flight state and save outcome through the owning provider                              | components/forms/WizardForm/WizardForm.stories.tsx; components/forms/FormBanner/FormBanner.stories.tsx                                                                                                                                                                            |
+| UnsavedFormPrompt and RHF counterparts          | Dirty navigation blocked, cancel retains values, confirm proceeds; refresh limits explicit              | components/forms/WizardForm/WizardForm.stories.tsx; components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx                                                                                                                                                                    |
+| CommonForms ContactDetails/Formik and RHF       | Populated context, editable fields/validation and summary                                               | components/forms/Forms.stories.tsx; routes/ta/organisationAndContact.stories.tsx                                                                                                                                                                                                  |
+| Checkbox/Radio/Select/Text/Number/ReadOnly      | Owned value/callback/disabled/readonly/validation behavior                                              | components/Inputs/Inputs.stories.tsx; routes/preConditions/PreConditions.stories.tsx                                                                                                                                                                                              |
+| Organisation/Certificate/Address/AutoSuggest    | Deterministic lookup, selection, loading/zero-results/manual address where supported                    | components/Inputs/Inputs.stories.tsx; components/Inputs/AddressLookup/AddressLookup.stories.tsx                                                                                                                                                                                   |
+| BranchSelector/Confirmation/RFQDelete/Terms     | Real modal open/action/cancel, focus/keyboard and state outcome                                         | components/modals/Modals.stories.tsx; routes/acceptQuote/AcceptQuote.stories.tsx                                                                                                                                                                                                  |
+| ColorThumb/Content/ProgressCircle/Seperator     | Actual helper rendered, meaningful accessible semantics/value and exact API heading                     | components/AriaComponents/ColorArea/ColorArea.stories.tsx; components/AriaComponents/Dialog/Dialog.stories.tsx; components/AriaComponents/Popover/Popover.stories.tsx; components/AriaComponents/Button/Button.stories.tsx; components/AriaComponents/Toolbar/Toolbar.stories.tsx |
+| New/changed RHF shell and shared wrappers       | Approved public contract, owning provider/context and applicable error/intent/slot/dirty-state behavior | Review current components/forms/Forms.stories.tsx, WizardForm/WizardForm.stories.tsx and FormBanner/FormBanner.stories.tsx first; unresolved exports need a named sufficient consumer or an explicitly proposed dedicated path                                                    |
+
+All candidate paths are relative to ClientApp/src; the abbreviated RHF final-row
+paths are within components/forms, not new assumed files. Preserve SearchBox's
+exact Enter callback and ProgressFileList's cancel callback/visible state
+assertions. Static helpers need semantic assertions, not fake actions. Canvas
+queries stay scoped; genuine portal queries uniquely identify the relevant
+overlay.
+
+### Tests, commands and exit
+
+Before changes extend affected existing story plays and, where cross-story reset
+is involved, `tests/e2e/features/storybook/forms/forms-coverage.feature`,
+`modals/modals.feature` or `components/breadth.feature`, with steps in
+`tests/e2e/steps/storybook.steps.ts`. Add scenario title
+`Indirect evidence isolation` for sequence A -> B -> A: verify
+handler/spies/session/provider state restore, no stale dialog, no doubled
+request and no late unmount update. Await visible settled state; cleanup
+deferred work and temporary mocks in beforeEach teardown/finally. No
+sleeps/networkidle-based assertion success or act suppression.
+
+Run focused MCP on each discovered story with a11y, source validator and
+`npm run test:e2e:storybook -- --grep 'Indirect evidence isolation' --workers=1`
+after the scenario exists. Expected RED is missing consequence or leaked state;
+expected pass is exact payload/state plus clean repeated execution. Static
+source checks alone cannot pass a behavioral claim.
+
+Pass: reviewer accepts each retained consumer and its API owner, required states
+have current results, and irrelevant provider/guard behavior is explicitly
+excluded. Rollback only the strengthened consumer slice; leave unresolved claims
+failing rather than inventing an exemption.
 
 ## T6: Cover missing nested route entry points
 
-Priority P2. Depends on T1-T3 and current wizard integration state. Human 1-2
-days / agent 4-8 hours.
+Purpose: prove route entry/bootstrap behavior beyond leaf steps. Objective:
+exercise real wrapper mutation, validation, confirmation and navigation locally.
+Goal: correct request and returned data are consumed by the destination without
+live side effects.
 
-Use the ten proposed files above only where sufficiency review requires them,
-with real route modules, typed mock account/MSAL context, local MSW and exact
-route patterns. Each first failing acceptance test must demonstrate the route
-wrapper's own outcome; existing step stories remain reusable fixtures.
+Priority P2. T6a/T6b shared capabilities land before route authors start; T6c
+routes need T2, relevant docs and T1. No dependence on all T4. Estimate: human
+2–3 days / agent 6–12 active hours; ten entry points are separate slices, not
+one commit.
 
-| Route entry            | Required stories and assertions                                                                                     |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| acceptQuote/create     | Pending creation; returned reference navigates to report-recipient; quote lookup or create failure is characterized |
-| account/addBranch      | Real one-step wizard; branch confirmation cancel/confirm and completion destination                                 |
-| account/create         | Real account wizard; invalid submission; create confirmation and success destination                                |
-| account/update         | Loaded values; save/cancel flow; malformed/nonpositive ID navigates to not-found                                    |
-| contact/create         | Real create wrapper, validation and confirmation; current labels characterized without drive-by renaming            |
-| contact/update         | Existing contact data; update confirmation/cancel; completion behavior                                              |
-| requestForQuote/copy   | Existing source reference copied; returned destination; pending/rejection characterization                          |
-| requestForQuote/create | Pending; create request captured; returned organisation/contact destination                                         |
-| ta/create              | Pending; returned organisation-details destination; duplicate-request handling characterized                        |
-| ta/created             | Submitted heading/reference; dashboard button and link navigate; session tab selection observed                     |
+### T6a — Destination capability
 
-Redirect/bootstrap story harness: extend `portal` with a typed
-destination-observer outlet only if required by real navigation, and modify
-`.storybook/preview.ts` plus harness and tests together. Reuse the one global
-memory router. It must show the actual target path and route content without
-live requests or nested routers. Do not intercept `useNavigate` globally to
-fabricate success. For controlled pending cases use a deferred handler with
-explicit lifecycle cleanup, not permanent unresolved work. Current create/copy
-catch paths may log and leave a spinner. Characterize that honestly; a new
-user-visible error design requires its own agreed requirement and runtime
-regression test. Do not label a spinner as a successful error state or silently
-fix domain behavior under story authoring.
+Modify `.storybook/preview.ts`, `ClientApp/src/storybook/storybookHarness.tsx`
+and `ClientApp/src/storybook/storybookFixtures.ts`; create
+`tests/unit/storybook/routeHarness.test.tsx` and
+`tests/e2e/features/storybook/routes/route-harness.feature` with existing common
+steps. Extend typed portal parameters with
+`destinationRoutes: Array<{ path: string; element: ReactNode }>` and optional
+`observeLocation: (location: { pathname: string; params: Record<string, string | undefined> }) => void`.
+This is a proposed interface, not existing API. Put an observer as a parent
+route with an Outlet; the initial Story and exact destination routes are
+children of the **same** memory router. Use React Router matching, not a
+hand-written order router; exact patterns must win over wildcard and the
+observer must use the matched destination's params. Create the router once per
+mounted story, not on every args rerender.
+
+First test default stories unchanged, real initial params, destination matching,
+wrong returned reference, wildcard fallthrough, args rerender, navigation before
+response settles, observer cleanup and absence of nested routers. Prefer real
+destination content; a labeled test outlet can prove consumed path/params but is
+excluded from claims about that destination's production behavior.
+
+### T6b — Fail-closed isolation
+
+Modify `.storybook/msw-policy.ts` and existing preview/preview-setup only for
+reproduced gaps; extend `tests/unit/config/storybookMswPolicy.test.ts`,
+`tests/unit/storybook/mswHandlers.test.ts` and route-harness BDD. Keep installed
+MSW v3 onUnhandledFrame API; do not paste v2 initialize/loader patterns. Await
+worker readiness before request-producing route mounts. Register explicit local
+asset/tooling bypasses, block every unmatched application HTTP origin/path, stub
+token acquisition and telemetry, and prove a deliberately missing API handler
+causes a blocked request and failed scenario. Verify supported no-service-worker
+test setup separately; no fallback may contact a real service. Global fetch
+overrides must restore even on failure and cannot overlap multiple Docs stories;
+prefer per-story MSW handlers.
+
+RT5 startup pressure: extend the same MSW unit tests and Route harness BDD with
+delayed activation, rejected worker.start, eager import, loader-before-mount and
+supported no-service-worker cases. Before navigating/importing these controlled
+negative fixtures, install an inert transport/network-denial harness so even a
+failing test cannot reach a real endpoint. Assert application transport-attempt
+and live-send counters separately: eager attempts are captured/rejected before
+readiness, live-send count is zero, and a startup rejection prevents
+request-producing execution and fails the scenario. A post-mount missing-handler
+test alone is insufficient. In production-like story execution, no eager
+application request may precede the effective mock boundary; any reproduced
+import-time side effect requires a named responsible-module/test addendum before
+editing app code, never a warning suppression or allowlist expansion.
+
+RT6 Docs isolation: extend tests/unit/storybook/mswHandlers.test.ts,
+tests/unit/storybook/routeHarness.test.tsx, autodocs-documentation.feature,
+route-harness.feature and common steps. For the actual request-producing
+examples in the finite T5/T6/T7 file lists, use supported per-story
+parameters.docs.story.inline: false so each Docs example has its own frame and
+worker/handler lifecycle; do not change the global inline default or clone
+Autodocs. Maintain story-owned handlers and cleanup inside that frame, never a
+document-global fetch override. Frame isolation is a candidate mechanism, not
+automatic proof: overlap A/B frames against the same endpoint with conflicting
+sentinel responses, unmount A while B requests again, then reverse order. Assert
+A never consumes B's fixture, B retains its handler after A cleanup, no
+duplicate request and zero unmatched/live sends. Exercise the real generated
+Docs page, not only synthetic fixtures. Test provider/session cleanup too;
+same-origin shared storage is not made isolated merely by using iframes. If
+isolation fails, the lane remains pending until a narrow supported fix passes;
+do not silently serialize or remove stories and still claim the concurrency
+test. Docs iframe controls cannot update that example in the current Storybook
+line; label this limitation, disable inapplicable Docs controls and link to the
+unchanged single-story Canvas for interactive controls, consistent with T3. See
+[Story Doc Block inline behavior](https://storybook.js.org/docs/api/doc-blocks/doc-block-story).
+
+### T6c — Ten independently reviewable route slices
+
+Use proposed paths from Files and responsibilities only when no consumer proves
+the wrapper's obligations. Registered initial patterns below are verified
+against App.tsx; nested destination patterns and exact generated-client
+payload/response contracts are copied from the responsible route's current
+implementation into typed fixtures before writing the scenario, not guessed from
+a folder name.
+
+| Entry module under ClientApp/src/routes | Registered initial route        | Required outcome                                                                                                 |
+| --------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| acceptQuote/create                      | /accept-quote-create/:id/*      | Pending; quote lookup/create; returned reference consumed at report-recipient destination; failure characterized |
+| account/addBranch                       | /add-branch/*                   | Real wizard; confirmation cancel/confirm; completion destination                                                 |
+| account/create                          | /create-account/*               | Invalid submit; create confirmation; returned account/completion data                                            |
+| account/update                          | /update-organisation/:id/*      | Loaded values/save/cancel; malformed/nonpositive ID -> not-found                                                 |
+| contact/create                          | /create-contact                 | Real wrapper; validation/confirmation; current completion behavior                                               |
+| contact/update                          | /update-contact/*               | Existing data; confirmation/cancel; completion                                                                   |
+| requestForQuote/copy                    | /request-for-quote-copy/:id/*   | Correct source copied; returned organisation/contact destination; rejection characterized                        |
+| requestForQuote/create                  | /request-for-quote-create       | Pending; exact request; returned destination consumes new ID                                                     |
+| ta/create                               | /ta/type-approval-create        | Pending; returned organisation-details ID; duplicate-request behavior                                            |
+| ta/created                              | /ta/type-approval-success/:id/* | Submitted reference; dashboard button/link; session tab selection                                                |
+
+Each fixture records guard, account/session, params and owning form provider. Do
+not wrap a self-owned wizard form in another form. No global useNavigate mock.
+Assert token/client request and relevant payload, request count as required by
+the actual mount contract, settlement, returned reference, final content and
+cleanup. For create/copy routes, explicitly test args rerender,
+cancellation/unmount and repeated A -> B -> A to catch fabricated double
+mutations. Add invalid/confirmation focus associations/return and existing
+navigation announcement where owned; record unsupported/defective behavior
+rather than designing new UX.
+
+### Commands and exit
+
+`npm run test:unit -- tests/unit/storybook/routeHarness.test.tsx tests/unit/config/storybookMswPolicy.test.ts tests/unit/storybook/mswHandlers.test.ts`;
+`npm run test:e2e:storybook -- --grep 'Route harness' --workers=1`; then focused
+MCP per real route story and source validation. Expected RED is wrong
+params/navigation or live/unmatched request behavior, then tests pass before ten
+route consumers are integrated.
+
+Pass: no live escape, shared harness regressions pass, every route obligation
+has reviewed evidence/current execution, and known spinner defects remain
+distinct. Revert dependent T6 route and affected T7 shell/consumer slices first,
+then the regressed T6a/T6b capability, or revert the entire dependency group
+atomically. Never remove the harness before retained consumers. Record the
+capability-to-consumer list in integration signoff; test each intermediate
+rollback state and rerun baseline harness/network tests. Retain fail-closed
+isolation during rollback; stop execution if restoring it requires work outside
+the owned group. Do not change App.tsx/auth/production APIs.
 
 ## T7: Cover route shells and retain adequate existing route stories
 
-Priority P2. Depends on T6's harness and T2. Human 1 day / agent 3-5 hours.
+Purpose: prove shell orchestration while reusing adequate
+child/success/auth/summary examples. Objective: verify only shell-owned params,
+selected steps, navigation, notifications and chrome. Goal: no shell gap or
+duplicated child claim.
 
-Create the proposed shell files only where the recorded sufficiency review
-requires them. Render the actual parent route exports with params and full
-provider context. Reuse fixtures from child stories where exported safely, or
-shared typed fixtures from `storybookFixtures.ts`; do not import a story's side
-effects as a runtime fixture. Assert the shell's selected step, loaded
-reference/title, navigation, notification/error behavior and surrounding chrome
-that child-only examples cannot prove. Mutating operations remain local MSW
-requests. For quotation/report shells: loaded and failed lookup paths;
-confirmation/file action only if invoked by the scenario. For wizard shells:
-route step and unsaved navigation; initial/invalid path and save error where the
-implementation owns them. For `ta/manage/index.tsx`, record structural
-forwarding to AppDetails; add a test ensuring it remains a pure forwarding
-wrapper. If it gains hooks, conditions or local interaction, the forwarding
-exception fails and requires reassessment of consumer evidence; create a shell
-story only if no existing consumer demonstrates the new obligations.
+Priority P2. Depends on T2 and T6a/T6b capabilities **only where used**, not
+completion of ten T6 routes. Parallel shell authoring is allowed after shared
+capabilities merge; browser verification remains serial. Estimate: human 1–2
+days / agent 4–8 active hours.
 
-Retain `account/created`, `requestForQuote/created`, both summary subfolders and
-sign-out/helper through existing live IDs. Review auth loading vs completion and
-summary loaded vs loading; metadata must identify these as consumer examples. Do
-not relocate existing files just for colocation.
+Five independent conditional story paths remain in Files and responsibilities.
+Verified shell patterns are acceptQuote `/accept-quote/:id/*`, requestForQuote
+`/request-for-quote/:id/*`, ta `/ta/:id/*`, quotation `/quotation/:id/*`, and
+measurementReport `/report/:id/*`. For each, first list shell-owned outcomes and
+actual dependencies. Use real child routes where practical; any fixture outlet
+is labeled and cannot earn child/auth/production-integration coverage.
+
+Test loaded/failed lookup, selected step/reference/title, invalid initial path,
+notification and save/unsaved behavior only where owned. Before the story change
+extend `tests/e2e/features/storybook/routes/routes-coverage.feature` and common
+steps with title `Route shell ownership`. Capture named request/result
+assertions and include a wrong-ID or failed-child fixture so shell evidence
+cannot pass by merely rendering a title.
+
+For `ClientApp/src/routes/ta/manage/index.tsx`, forwarding equivalence refers to
+AppDetails with the same inputs and absence of additional owned behavior, not
+exact formatting/variable names. Add fixtures to `moduleCoverage.test.ts`
+accepting formatting/alias-only changes and rejecting new hooks/conditions/side
+effects until consumer sufficiency is re-reviewed. A rejected forwarding
+exemption does not force a local file if an existing consumer proves the new
+behavior.
+
+Retain account/created, RFQ/created, summary subfolders and sign-out/helper
+using current MCP-discovered IDs. Verify actual auth/loading/completion and
+summary states; mocked authentication excludes real B2C integration from the
+claim. Requery IDs instead of relocating files.
+
+Run source validator, focused MCP/a11y,
+`npm run test:e2e:storybook -- --grep 'Route shell ownership' --workers=1`, and
+unit forwarding/harness regressions. RED is missing shell consequence/wrong
+consumed reference; pass is isolated actual outcome and preserved child
+examples. Rollback one shell story at a time; include dependent shells in T6's
+consumer-first or atomic-group rollback. Test a retained consumer would reject a
+removed destinationRoutes capability, and the corrected rollback ordering leaves
+no incompatible consumer. No production router rewrite.
 
 ## T8: Publish accurate coverage evidence and run closure gates
 
-Priority P1 acceptance gate. Depends on all packages. Human 0.5 day / agent 2-4
-hours.
+Purpose: reproducible honest closure. Objective: reconcile source, docs,
+reviewed claims and executed results from one frozen input set. Goal: no
+misleading 100% or durable-CI claim.
 
-Replace fixed historical 84-module/132-file/Complete claims with current
-definitions and generated validation evidence. The docs must distinguish source
-modules/symbols, story entries, docs entries, story reachability, reviewed state
-evidence and app BDD paths. Update CoverageMatrix route exclusions consistently:
-preConditions has a story; sign-out/helper have Auth examples; common is a
-utility family with ErrorStates stories. Never claim a folder is excluded solely
-because an old matrix says so. Run these gates in order, releasing the browser
-worker before the next browser suite:
+Priority P1 acceptance gate; depends on all required obligations, not creation
+of every proposed file. Estimate: human 1–2 days / agent 4–8 active hours for
+verification/reporting; remediation discovered during closure is separately
+estimated, not hidden in this allowance.
+
+### Atomic closure sequence
+
+T8a creates the shared RT7 closure launcher and closureOrchestration.test.ts
+before using the entry command. Start with intended failing fake-adapter tests
+for absent cleanup, pre-freeze gates, wrong/stale handoff and cold-child
+ordering; implement the narrow orchestrator and run
+`npm run test:unit -- tests/unit/storybook/closureOrchestration.test.ts tests/unit/storybook/producerIdentity.test.ts tests/unit/storybook/inputFreeze.test.ts tests/unit/storybook/mcpExecutionReceipt.test.ts`.
+Then run the task-scoped mjs lint including the launcher and the owned-copy
+ACL/clean-build integration test before T8b's actual serial closure.
+
+1. The integration owner rebaselines the current integration commit, reviewed
+   lockfile/install, recursive exports, existing IDs, versions, known defects
+   and changed-input review. Preserve user changes and verify any reused
+   server's checkout identity; otherwise use the owned instance.
+2. Add/approve closure BDD negatives before implementation in
+   `tests/e2e/features/storybook/routes/routes-coverage.feature` and
+   `autodocs-documentation.feature`; unit negative fixtures live in
+   moduleCoverage/evidenceFreshness/mcpExecutionReceipt tests. Assert false
+   passes fail for stale input, dropped result, skipped required claim, missing
+   API owner or changed legacy content.
+3. Preparation is non-qualifying: optionally run diagnostic checks, build the
+   full catalogue, validate references and generate the three inventory MDX
+   regions with --write-inventory. Update handwritten docs/walkthrough; rebuild
+   and recheck references. Finish all source edits, reviewedSourceDigest
+   metadata and install/patch verification before freeze. Then enforce RT7 write
+   denial, record freezeId/producer identity, and rerun every qualifying
+   type/lint/unit/ source/build/reference gate on those final inputs.
+   Pre-generation or pre-freeze results cannot qualify closure. No source edits
+   or --write-inventory run after freeze; a required change releases the owned
+   freeze, invalidates all qualifying receipts and restarts preparation.
+4. Compute expected executable IDs using current generated index and actual
+   effective test tags/policy. Every skip/exclusion has a reason and replacement
+   evidence or fails its required claim. Keep smoke-only stories separate from
+   meaningful asserted states; full test execution alone is not 100% behavior
+   coverage.
+5. Run cold single, warm focused pair, full catalogue and repeat single through
+   MCP, a11y enabled, serially. Validate exact per-ID structured statuses and
+   errors under T1's contract; save raw redacted structured results plus
+   normalized receipts. Do not require optional fields or count skipped tests as
+   passing. Rehash before/after each gate.
+6. Run rendered Docs verification and Storybook BDD serially, then affected app
+   BDD when harness/runtime compatibility can affect route flows. MCP contract
+   evidence is not replaced by shell story tests. Full UI testing and Docs
+   testing are separate gates; a docs-only build does not substitute for the
+   full build.
+7. Integration signoff reconciles numerator/denominator,
+   direct/consumer/forwarding/nonvisual/unresolved, applicable/not-supported
+   states, executed/smoke/skipped/excluded stories and known defects. Publish
+   MCP review of all newly created/changed stories after required tests; do not
+   upload to Chromatic or deploy. If review publishing crosses a new external
+   destination, request authority first.
+8. This plan makes a **local integration closure** claim. Source drift
+   validation is enforced through existing unit tests and reference checks
+   through the docs verifier when invoked. Existing test:ci does not
+   automatically run MCP/Docs/BDD closure; do not call those CI-enforced.
+   Changing .github workflows or root gate policy is a separate explicitly
+   approved task.
+
+### Frozen build indexes
+
+After the qualifying full rebuild in gate5, while inputs remain frozen, run
+`New-Item -ItemType Directory -Path 'reports/storybook-coverage' -Force | Out-Null`,
+then:
+`Copy-Item -LiteralPath 'storybook-static/index.json' -Destination 'reports/storybook-coverage/frozen-full-index.json'`.
+Gate5 reference checks, gate6 MCP expected IDs and every receipt use this
+snapshot's canonical fullIndexDigest. Never substitute index.json from a
+docs-only build.
+
+After gate7's docs build/verifier, snapshot:
+`Copy-Item -LiteralPath 'storybook-static/index.json' -Destination 'reports/storybook-coverage/frozen-docs-index.json'`.
+The closure CLI requires both files, recomputes their canonical fingerprints,
+and validates documentation with the docs snapshot while execution eligibility
+always comes from the full snapshot. The snapshot copy operations are
+implementation-time build artifacts, not writes performed during this plan
+update.
+
+Before implementing this join, add fixtures to
+evidenceFreshness/mcpExecutionReceipt/moduleCoverage tests for full-index tags
+changed with IDs unchanged, missing snapshots, corrupted snapshot, wrong
+fullIndexDigest, pre-freeze type/lint/unit/source results, generated docs
+changed after early diagnostic gates, patch-only drift, producer/native URL
+mismatch, write-denial failure, docs-build membership differing legitimately,
+and a stale full snapshot from another source freeze. Legitimate docs-build
+membership differences never redefine required execution; required
+Docs-owner/link checks still must pass.
+
+### Exact gate commands and results
+
+Preparation commands, before qualifying gates: `npm run build-storybook`;
+`node scripts/storybook-coverage.mjs --mode references --index storybook-static/index.json --write-inventory`;
+finish handwritten edits; `npm run build-storybook`;
+`node scripts/storybook-coverage.mjs --mode references --index storybook-static/index.json`.
+Any checks here are diagnostic only. Acquire/test the RT7 freeze, compute final
+inputDigest/producerIdentityDigest, and establish native MCP binding.
+
+Run the following qualifying gates only after freeze. The explicitly assigned
+scripts/storybook-closure.mjs launcher records gate start/end identity and
+digests for every command, rejects pre-freeze receipts, and stops on the first
+nonzero gate or changed identity:
 
 1. `npm run type-check`
-2. `npm run lint` and `npm run lint:mdx`
-3. `npm run test:unit -- tests/unit/storybook tests/unit/config/vitestTopology.test.ts tests/unit/config/storybookVitestContract.test.ts tests/unit/config/storybookRuntimePolicy.test.ts tests/unit/e2e/routeCoverage.test.ts`
-4. MCP test-run focused after each story change; final full-catalogue call with
-   a11y true; cold/warm repeat from T1.
-5. `npm run storybook:verify:docs` (build once; verifier extends module/docs
-   evidence).
-6. `npm run test:e2e:storybook`
-7. `npm run test:e2e:app` for the touched route flows if harness or production
-   compatibility changes affected their behavior. Shell story tests may
-   corroborate MCP; they never replace the MCP acceptance result. Discover new
-   IDs through MCP, call stories-changed, and publish a Storybook review
-   including every created story. Record current commit/state, version set,
-   runner results, denominator/exclusions and exceptions. New totals must be
-   measured, never fixed at 324 or 142.
+2. `npm run lint`; `npm run lint:mdx`; dedicated coverage mjs lint command from
+   shared contract
+3. `npm run test:unit -- tests/unit/storybook tests/unit/config/vitestTopology.test.ts tests/unit/config/storybookVitestContract.test.ts tests/unit/config/storybookRuntimePolicy.test.ts tests/unit/config/storybookMswPolicy.test.ts tests/unit/config/storybookEndpoint.test.ts tests/unit/config/storybookCoverageLint.test.ts tests/unit/e2e/routeCoverage.test.ts`
+4. `node scripts/storybook-coverage.mjs --mode source`
+5. `npm run build-storybook`; `node scripts/verify-storybook-docs.mjs`;
+   `node scripts/storybook-coverage.mjs --mode references --index storybook-static/index.json`;
+   snapshot frozen-full-index.json and bind its fingerprint to the current
+   freeze/producer. No source generation or handwritten edit in this gate.
+6. Native MCP cold/warm/full/repeat test-run with a11y, then
+   `npm run test:e2e:storybook -- --workers=1`; then `npm run test:e2e:app` if
+   affected as above
+7. `npm run storybook:verify:docs` (separate docs build/verifier, no concurrent
+   full-output writer); compare IDs and confirm source input digest unchanged
+8. `node scripts/storybook-coverage.mjs --mode closure --index reports/storybook-coverage/frozen-full-index.json --docs-index reports/storybook-coverage/frozen-docs-index.json --receipts reports/storybook-coverage`
+
+Expected results are exit 0, zero unexpected diagnostics and zero failures,
+nonempty exact expected results, current inputs and all required claims/docs
+owners satisfied; raw test counts are measured, never fixed historically. The
+final docs build replaces static output, so capture and compare the full-build
+index before it: require identical relevant story/docs IDs or reject the
+mismatch before final closure. If any source/API/runtime or fixture change is
+needed, invalidate receipts, repair under the responsible package and restart
+all qualifying gates from a new freeze; earlier diagnostic passes are not
+reused.
+
+Exit: accurate local coverage report, explicit upstream/known-product defects
+and no unresolved required claim. Report planned tests separately from actual
+execution. Rollback only owned changes; do not reset the workspace, weaken
+a11y/act policy, commit user files or claim a failing gate passed.
 
 ## Safety, rollback, and verification
 
@@ -530,27 +1339,28 @@ a production service. Roll out in reviewable commits: T1 runner; T2 evidence
 gate; T3 docs; T4 components; T5 consumer assertions; T6/T7 route evidence; T8
 docs/closure. Commit only owned files after checks; no commit or push is
 performed during planning. Rollback is a scoped revert of the corresponding
-implementation commit(s), retaining prior stable story IDs. Restore the previous
-supported config if runner changes regress; do not reset the worktree or restore
-user files. No build while a suite is writing to the same static output. One
-browser suite at a time prevents 47005 conflicts and false startup diagnoses. No
-completion if MCP startup is still broken, a11y is disabled, a story is failing,
-or an exported renderable is unexplained.
+implementation commit(s), retaining prior stable story IDs and reverting
+consumers before prerequisites (or their complete dependency group atomically).
+Restore the previous supported config if runner changes regress; do not reset
+the worktree or restore user files. No build while a suite is writing to the
+same static output. One browser suite at a time prevents 47005 conflicts and
+false startup diagnoses. No completion if MCP startup is still broken, a11y is
+disabled, a story is failing, or an exported renderable is unexplained.
 
 ## Execution order and parallel lanes
 
-`(T2 static contract || T1 diagnosis) -> T3 -> (T4 || T6) -> T5 -> T7 -> T8`.
+`(T2a/source || T1a/diagnosis) -> T3; T4a contract bootstrap -> component slices; T6a/T6b -> independent T6 routes and T7 shells; T5 claims follow their relevant contracts; T8 serial closure waits for all required obligations`.
 Independent docs/story work may proceed provisionally while execution is
 blocked; verified completion still requires T1 and the final MCP gates.
 
 Component and nested-route story authoring may use isolated worktrees after the
 harness/manifest contract lands. One integration owner merges manifest/docs and
 performs browser validation serially. T3/T5 share AcceptQuote stories; T6/T7
-share routing harness; those edits remain sequential. Reconciled total: human
-7-12 working days / agent 2-4 working days of active work, with upstream waiting
-excluded and separately reported. Browser integration is serial; rebaseline
-source/provider digests and rerun affected evidence after wizard-migration
-merges. These are planning ranges, not guarantees.
+share routing harness; those edits remain sequential. Reconciled revision
+estimate: roughly 9–17 engineer-days / agent 3–6 active working days, allowing
+component/route authoring overlap but serial browser integration.
+Upstream/maintainer waiting and newly discovered remediation are separately
+reported. These are planning ranges, not guarantees.
 
 ## NOT in scope and deferred work
 
@@ -598,8 +1408,17 @@ merges. These are planning ranges, not guarantees.
 | D24 | DX       | Canonical digest excludes receipts/digest fields                   | Mechanical     | Explicit       | Prevent self-invalidating evidence                                    | Self-referential input hash                |
 | D25 | DX       | Separate routine checks from integration closure                   | Mechanical     | Pragmatic      | Preserve useful conservative proof without repeated full human audits | Catalogue-wide manual review on every edit |
 | D26 | DX       | Add focused request, consumer example and recovery runbook         | Mechanical     | Completeness   | Make next action executable                                           | Abstract journey only                      |
+| D27 | Revision | Managed/external target modes including CI                         | Mechanical     | Explicit       | Command, browser and MCP must agree                                   | URL-only override                          |
+| D28 | Revision | Validate installed structured MCP fields                           | Mechanical     | Explicit       | Per-status IDs and a11y establish execution                           | Assumed public runId                       |
+| D29 | Revision | Complete inputs and length-framed canonical digest                 | Mechanical     | Completeness   | Styles/imports/config changes invalidate old receipts                 | Partial hash or ambiguous framing          |
+| D30 | Revision | Approved Docs bootstrap before prop use                            | Mechanical     | Explicit       | Missing API has a named owner/publication path                        | Guessed design-system props                |
+| D31 | Revision | Family table plus individual claim evidence                        | Mechanical     | Completeness   | Restore finite obligations without blanket exemption                  | Imported gallery treated as covered        |
+| D32 | Revision | Shared route capabilities precede consumers                        | Mechanical     | Pragmatic      | Stable router and fail-closed isolation need regressions              | Coupled ten-route authoring                |
+| D33 | Revision | Freeze separate full/docs indexes                                  | Mechanical     | Explicit       | Docs build cannot redefine executed membership                        | Overwritten index as execution authority   |
+| D34 | Revision | Task-scoped code-only mjs lint                                     | Mechanical     | Pragmatic      | Check new scripts without changing root policy                        | Unlinted validator or gate expansion       |
+| D35 | Revision | Independent per-package threshold                                  | Mechanical     | Explicit       | Each package exceeds95; average is insufficient                       | Raising scores without revising content    |
 
-## CEO review: strategy and scope
+## CEO review history: strategy and scope (2026-10-14)
 
 ### Premise challenge and outcome
 
@@ -772,7 +1591,7 @@ The three confirmed foundations are corrected attributions, meaningful recursive
 evidence, and deterministic test isolation. The only outstanding strategy
 judgment was indirect coverage, already resolved by the user.
 
-### Independent strategy challenge
+### Historical independent strategy challenge (2026-10-14)
 
 [subagent-only] Independent reviewer Franklin raised six findings:
 claim-to-execution proof, characterization versus acceptable behavior,
@@ -786,7 +1605,7 @@ review is the recorded fallback for subsequent phases.
 CEO review complete; passing to Design. No unresolved strategy challenge to the
 user's direction.
 
-## Design review: catalogue usability, not portal redesign
+## Design review history: catalogue usability (2026-10-14)
 
 Design scope is the Storybook catalogue, API ownership and meaningful
 interaction examples. There is no existing root DESIGN.md and no new design
@@ -911,7 +1730,7 @@ promise.
 
 Design review complete; passing to Engineering.
 
-## Engineering review: executable architecture and proof
+## Engineering review history: architecture and proof (2026-10-14)
 
 ### Scope challenge from actual code
 
@@ -1052,14 +1871,14 @@ remains unavailable; dual-model consensus is N/A, not 6/6.
   with valid references and a passing unrelated branch remains unverified until
   its specific observable evidence is supplied.
 - Prefer conservative **whole-scope SHA-256 invalidation** over a new dependency
-  engine: digest sorted paths and byte contents of handwritten
-  components/routes/storybook, .storybook config/docs, relevant test
-  configuration, package.json and lockfile, plus version set and a canonicalized
-  manifest with stored digest/receipt fields excluded. Every input change
-  invalidates the closure receipt and affected claims are manually reviewed; if
-  reliable dependency attribution is absent, rerun/review the whole scope. No
-  unsupported graph freshness API is assumed; MCP reverse graph is a candidate
-  aid only.
+  engine: digest sorted paths and byte contents of handwritten all
+  ClientApp/src, public/media assets, .storybook, scripts/tests and root
+  configuration/lock inputs under the revised shared freshness contract.
+  Canonicalize only reviewedSourceDigest metadata; receipts are outside inputs.
+  Every input change invalidates the closure receipt and affected claims are
+  manually reviewed; if reliable dependency attribution is absent, rerun/review
+  the whole scope. No unsupported graph freshness API is assumed; MCP reverse
+  graph is a candidate aid only.
 - Enforce MSW readiness before request-producing mounts. Fail closed on every
   unmatched application request; allow only explicit local Storybook
   assets/tooling. Add a missing-handler negative proving zero live fallback and
@@ -1090,7 +1909,7 @@ No critical **planning** gap remains unassigned; runtime startup and missing
 stories are intentionally implementation obligations, not passing checks.
 Engineering review complete; passing to DX.
 
-## Developer-experience review
+## Developer-experience review history (2026-10-14)
 
 Mode DX POLISH. Product type: an internal component/route workbench and
 validation workflow, not a public SDK. Primary persona is a contributor
@@ -1369,11 +2188,11 @@ Before ordinary 6006 MCP results qualify as execution receipts, verify that
 server's checkout and input/version identity match the recorded implementation
 checkout. If identity cannot be established, use the owned
 diagnostic/integration instance; a reachable endpoint alone is not same-input
-evidence. The final independent reviewer approved 97/100 with zero critical
-failures; these three nonblocking clarifications address its deductions without
-changing scope.
+evidence. The earlier document reviewer approved 97/100 on 2026-10-14. That
+historical document-quality score is not the revised per-package readiness
+assessment or proof of executed tests.
 
-### Implementation tasks aggregated across phases
+### Historical implementation-task aggregation (2026-10-14)
 
 Computed with jq from the four per-phase JSONL artifacts, deduplicated by
 component/sorted files/title and sorted by priority then phase. Task order below
@@ -1481,28 +2300,63 @@ Artifacts:
 `C:/Users/gregm/.gstack/projects/gmtestandreview-portalsample/tasks-{ceo-review,design-review,eng-review,devex-review}-20261014-storybook.jsonl`.
 These were emitted from structured data through jq, not hand-written JSONL.
 
+## Current implementation-task aggregation — 2026-10-15
+
+These supersede the historical aggregation above. Exact active files and atomic
+slices are specified within T1–T8 and the new per-phase JSONL artifacts; prior
+estimates/file lists are not execution instructions.
+
+| Package | Priority | Human / agent active effort | Obligation                                                                     |
+| ------- | -------- | --------------------------- | ------------------------------------------------------------------------------ |
+| T1      | P1       | 0.5-2 days / 2-6 hours      | Diagnose and restore exact-ID MCP story execution                              |
+| T2      | P1       | 2-3 days / 6-10 hours       | Replace folder-name proxy with recursive reviewed evidence                     |
+| T3      | P2       | 0.5-1 day / 2-4 hours       | Clarify container/step APIs and verify Guard/default/ID presentation           |
+| T4      | P2       | 1-2 days / 4-8 hours        | Add seven missing component examples with behavior and a11y                    |
+| T5      | P2       | 1-2 days / 4-8 hours        | Review and strengthen indirect assertions without duplicate stories            |
+| T6      | P2       | 2-3 days / 6-12 hours       | Cover ten nested route obligations; create files only for real gaps            |
+| T7      | P2       | 1-2 days / 4-8 hours        | Cover shell obligations and retain sufficient success/auth/summary examples    |
+| T8      | P1       | 1-2 days / 4-8 hours        | Publish generated inventories, run closure gates and document focused workflow |
+
+Artifacts:
+C:/Users/gregm/.gstack/projects/gmtestandreview-portalsample/tasks-ceo-review-20261015-storybook.jsonl;
+tasks-design-review-20261015-storybook.jsonl;
+tasks-eng-review-20261015-storybook.jsonl;
+tasks-devex-review-20261015-storybook.jsonl. The latter three filenames are in
+the same directory. No artifact marks implementation complete.
+
+The user's checkout advanced through 97af7a41 to 9a8575b2 during these reviews,
+and source/story changes continue independently. That is recorded provenance,
+not this agent's implementation; rebaseline all source/docs claims and preserve
+the user's work before executing.
+
 ## GSTACK REVIEW REPORT
 
-| Review                 | Status        | Result                                                                                          |
-| ---------------------- | ------------- | ----------------------------------------------------------------------------------------------- |
-| Audit intake           | Complete      | Historical 258 TSX candidates, 23 without import matches; not behavioral coverage               |
-| CEO                    | Complete      | 11 review sections, 8 error paths, 7 failure modes; sufficient indirect coverage retained       |
-| Design                 | Complete      | 7 dimensions; planning judgment 6.6 -> 9.0 target, not measured UI                              |
-| Engineering            | Complete      | 4 sections, architecture/test diagrams, external test-plan artifact                             |
-| DX                     | Complete      | 8 dimensions; planning judgment 5.1 -> 8.6 target; warm five-minute target unmeasured           |
-| Outside voices         | Degraded      | Independent subagent each phase; Codex CLI version/model incompatible, dual-model consensus N/A |
-| Final document review  | Approved      | 97/100; zero critical failures, three nonblocking clarifications incorporated                   |
-| Implementation/testing | Not performed | MCP runner failure remains unresolved; no 100% completion claim                                 |
-| User approval          | Pending       | Two taste choices; user’s indirect-coverage direction stands                                    |
+Updated 2026-10-15. Scope: all eight packages, the companion test plan, current
+task artifacts, scorecard and pressure retest. No
+application/configuration/story implementation was performed.
 
-Decision total: 26 (23 auto-decided, two taste recommendations, one confirmed
-user premise); zero requests to reverse user direction. Per-phase findings
-incorporated: CEO six, Design six, Engineering seven, DX six. No phase claims
-independent second-model consensus.
+The earlier Pauli review (T1–T7 100; T8/document 99) is historical. Subsequent
+Red Team pressure review found patch freshness, gate sequencing, minimum-state,
+rollback, startup, concurrent Docs and producer/freeze issues; those findings
+override the earlier unconditional readiness statement. RT1–RT7 now specify
+corrections and their test-first acceptance.
 
-VERDICT: PLAN REVIEW COMPLETE; AWAITING USER APPROVAL. No implementation or
-visual change was made. Final artifact checks are secret scanning, Markdown
-formatting and clean patch whitespace; those checks are not Storybook
-interaction/a11y verification. Execution requires refreshed inputs at 15f82afa
-or the later selected integration commit, accepted BDD scenarios, successful MCP
-execution and all T8 gates.
+Current evidence is recorded in
+[pressure retest](2026-10-15-storybook-pressure-retest.md) and
+[scorecard](2026-10-15-storybook-work-package-scorecard.md). Their
+document/model results must not be described as implemented validator, Storybook
+runner, actual ACL enforcement or accessibility results. Independent
+reassessment is recorded after the last substantive correction; no second-model
+agreement is implied.
+
+Final artifact verification: secret scans; focused Prettier; seven-finding
+traceability and 24 Green/Amber/Red contract checks; bounded counterexample
+models; per-phase JSON parsing/eight unique task IDs; exactly one terminal
+report; diff whitespace and unchanged application source. All checks must be
+rerun after relevant edits. Runtime/install/permission/maintainer prerequisites
+remain mandatory before implementation closure.
+
+VERDICT: PLANNING RECOMMENDATIONS APPLIED; RETEST EVIDENCE AND CURRENT SCORES
+ARE IN THE LINKED ARTIFACTS. Sufficient indirect coverage remains accepted.
+Rebaseline the moving checkout before execution. No implementation, Storybook
+coverage or runtime test-success claim is made.
