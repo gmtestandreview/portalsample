@@ -192,7 +192,7 @@ cp -r "A Team/.claude"  your-project/
 cp -r "A Team/skills"   your-project/
 cp -r "A Team/hooks"    your-project/
 
-# 2. Declare your project scope
+# 2. Declare your project scope (in this repo the blank template lives at .agent-sync/pruned/INIT_TEMPLATE.md)
 cp "A Team/INIT_TEMPLATE.md" your-project/INIT.md
 # edit INIT.md — languages, stack, compliance scope, CLI(s)
 
