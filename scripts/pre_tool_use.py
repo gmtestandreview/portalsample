@@ -22,6 +22,7 @@ _WRAPPER_VALUES = {
         "-h",
         "-p",
         "-C",
+        "-D",
         "-T",
         "-r",
         "-t",
@@ -30,6 +31,7 @@ _WRAPPER_VALUES = {
         "--host",
         "--prompt",
         "--close-from",
+        "--chdir",
         "--command-timeout",
         "--role",
         "--type",
@@ -391,7 +393,10 @@ def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[st
     verb, args = _verb_name(tokens[index]), tokens[index + 1 :]
     if tokens[index] in {"-S", "--split-string"}:
         verb = _PARSER_LIMIT
-    found = [(verb, args)]
+    found: list[tuple[str, list[str]]] = []
+    if _wrapper_changes_directory(tokens[:index]):
+        found.append(("__location_change__", []))
+    found.append((verb, args))
     payload = _nested_payload(verb, args)
     if payload is not None:
         found.extend(commands(payload, depth + 1, _nested_shell(verb)))
@@ -399,6 +404,24 @@ def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[st
         # eval/iex execute their joined arguments as a command line.
         found.extend(commands(" ".join(args), depth + 1, shell))
     return found
+
+
+def _wrapper_changes_directory(prefix: list[str]) -> bool:
+    index = 0
+    while index < len(prefix):
+        wrapper = _verb_name(prefix[index])
+        index += 1
+        if wrapper not in _WRAPPERS:
+            continue
+        while index < len(prefix) and prefix[index].startswith("-"):
+            option = prefix[index]
+            short = "-C" if wrapper == "env" else "-D"
+            if wrapper in {"env", "sudo"} and (
+                option.startswith(short) or option == "--chdir" or option.startswith("--chdir=")
+            ):
+                return True
+            index += 2 if option in _WRAPPER_VALUES.get(wrapper, set()) else 1
+    return False
 
 
 def commands(text: str, depth: int = 0, shell: str = "") -> list[tuple[str, list[str]]]:
@@ -605,7 +628,7 @@ def _command_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
 def _is_destructive(command: str, shell: str = "") -> str | None:
     cleanup_allowed = _cleanup_allowed()
     for verb, args in commands(command, shell=shell):
-        if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl"}:
+        if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl", "__location_change__"}:
             cleanup_allowed = False
         rule = _command_rule(verb, args, cleanup_allowed)
         if rule:
