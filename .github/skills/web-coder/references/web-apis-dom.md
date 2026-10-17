@@ -5,9 +5,11 @@ Comprehensive reference for the Document Object Model (DOM) and Web APIs availab
 ## Document Object Model (DOM)
 
 ### What is the DOM?
+
 The DOM is a programming interface for HTML and XML documents. It represents the page structure as a tree of objects that can be manipulated with JavaScript.
 
 **DOM Tree Structure**:
+
 ```
 Document
 └── html
@@ -23,7 +25,7 @@ Document
 ### DOM Node Types
 
 | Node Type | Description | Example |
-|-----------|-------------|---------|
+| ----------- | ------------- | --------- |
 | Element | HTML element | `<div>`, `<p>` |
 | Text | Text content | Text inside elements |
 | Comment | HTML comment | `<!-- comment -->` |
@@ -183,7 +185,7 @@ element.removeEventListener('click', handleClick);
 ### Common Events
 
 | Category | Events |
-|----------|--------|
+| ---------- | -------- |
 | Mouse | `click`, `dblclick`, `mousedown`, `mouseup`, `mousemove`, `mouseenter`, `mouseleave`, `contextmenu` |
 | Keyboard | `keydown`, `keyup`, `keypress` (deprecated) |
 | Form | `submit`, `change`, `input`, `focus`, `blur`, `invalid` |
@@ -601,6 +603,7 @@ request.onsuccess = () => console.log(request.result);
 ## Best Practices
 
 ### Do's
+
 - ✅ Use `addEventListener` over inline event handlers
 - ✅ Remove event listeners when no longer needed
 - ✅ Use event delegation for dynamic content
@@ -612,6 +615,7 @@ request.onsuccess = () => console.log(request.result);
 - ✅ Validate and sanitize user input
 
 ### Don'ts
+
 - ❌ Use `innerHTML` with untrusted data (XSS risk)
 - ❌ Query DOM repeatedly in loops
 - ❌ Modify DOM in tight loops (batch operations)
@@ -624,6 +628,7 @@ request.onsuccess = () => console.log(request.result);
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - API
 - Application context
 - Beacon

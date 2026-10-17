@@ -13,7 +13,7 @@ Route first, then answer. Match the user's symptom in the table, `Read` that fil
 Do not answer from this page alone: it contains routing only, not the guidance. If two rows match, read both.
 
 | The user says | Read |
-|---|---|
+| --- | --- |
 | Search results are bad or irrelevant, wrong results, missing expected matches | `diagnosis/SKILL.md` |
 | Low recall, expected results are missing | `diagnosis/SKILL.md` |
 | Low precision, too many wrong matches | `diagnosis/SKILL.md` |

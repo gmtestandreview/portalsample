@@ -65,7 +65,7 @@ artifact, never the approval.
 ## Red Flags
 
 | Thought | Reality |
-|---------|---------|
+| --------- | --------- |
 | "This is too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
 | "I'll call it bounded and skip the spec" | Reaching for a label to skip work IS the doubt — take the heavier path. |
 | "It's bounded and the design is obvious — I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop until you hear yes. |
@@ -80,6 +80,7 @@ Classify first, announce the path, then create a task for each item on
 your path and complete them in order.
 
 **Spike:**
+
 1. **Explore project context** — enough to frame the probe
 2. **Present question + probe plan** — 2-3 sentences
 3. **Get approval** — a nod is enough
@@ -87,6 +88,7 @@ your path and complete them in order.
 5. **Report findings** — a recommendation; label anything built as throwaway
 
 **Bounded:**
+
 1. **Explore project context** — check files, docs, recent commits
 2. **Ask clarifying questions** — one at a time, the ones that matter
 3. **Present short design in chat** — approach, files touched, testing
@@ -94,6 +96,7 @@ your path and complete them in order.
 5. **Implement** — proceed with the normal development workflow (TDD applies); no plan document
 
 **Architectural:**
+
 1. **Explore project context** — check files, docs, recent commits
 2. **Offer the visual companion just-in-time** — NOT upfront. The first time a question would genuinely be clearer shown than described, offer it then (its own message); on approval its browser tab opens for you. If no visual question ever arises, never offer it. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria

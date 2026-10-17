@@ -7,6 +7,7 @@ from pathlib import Path
 import click
 
 from .errors import SkillError
+from .evidence import validate_evidence
 from .parser import read_properties
 from .prompt import to_prompt
 from .validator import validate
@@ -93,6 +94,25 @@ def to_prompt_cmd(skill_paths: tuple[Path, ...]) -> None:
     except SkillError as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
+
+
+@main.command("validate-evidence")
+@click.argument("record_path", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--root",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Explicit evidence bundle/repository root; defaults to record directory.",
+)
+@click.option(
+    "--dispatch", is_flag=True, help="Also check optional evaluation dispatch eligibility."
+)
+def validate_evidence_cmd(record_path: Path, root: Path | None, dispatch: bool) -> None:
+    """Check frozen evidence consistency, not correctness or host readiness."""
+    try:
+        disposition = validate_evidence(record_path, root, dispatch)
+    except (OSError, ValueError, RecursionError) as error:
+        raise click.ClickException(str(error)) from error
+    click.echo(f"Evidence consistent: {disposition} (not an acceptance verdict)")
 
 
 if __name__ == "__main__":

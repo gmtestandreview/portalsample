@@ -1,5 +1,9 @@
 # pre_tool_use.py Guard Fixes Implementation Plan
 
+## Execution status — 2026-10-17
+
+Implementation is applied; see the [completion evidence](../skill-reviews/2026-10-17-pre-tool-use-guard-completion.md). The current Node wrapper supersedes Task 5's original shell implementation and retains its newer fail-closed crash/interpreter behavior. All 227 hook tests pass. Task 6's settings are applied and 14 installed-module checks pass; activation in a fresh Claude Code session remains to be confirmed. Sonar server-side verification is unavailable (HTTP 403).
+
 **Goal:** Remove the false positives, latency, fail-closed breakage and
  log defects in `scripts/pre_tool_use.py` that block sonar and
   other tool calls, without weakening protection against real destructive

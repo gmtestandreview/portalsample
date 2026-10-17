@@ -25,6 +25,7 @@ This article explains how hooks work, how to configure them, and practical patte
 Hooks are shell commands or scripts that run automatically in response to lifecycle events during a Copilot agent session. They execute outside the AI model, they're deterministic, repeatable, and under your full control.
 
 **Key characteristics**:
+
 - Hooks run as shell commands on the user's machine
 - They execute synchronously—the agent waits for them to complete
 - They can block actions (e.g., prevent commits that fail linting)
@@ -35,7 +36,7 @@ Hooks are shell commands or scripts that run automatically in response to lifecy
 ### When to Use Hooks vs Other Customizations
 
 | Use Case | Best Tool |
-|----------|-----------|
+| ---------- | ----------- |
 | Run a linter after every code change | **Hook** |
 | Teach Copilot your coding standards | **Instruction** |
 | Automate a multi-step workflow | **Skill** or **Agent** |
@@ -59,7 +60,6 @@ hooks/
 ```
 
 > Note: Not all of these files are required for a generalised hook implementation. In your own repository, hooks are stored as JSON files in `.github/hooks/` (e.g., `.github/hooks/my-hook.json`). The folder structure above with README.md is specific to the Awesome Copilot repository for documentation purposes.
-
 
 ### hooks.json
 
@@ -86,7 +86,7 @@ The configuration defines which events trigger which commands:
 Hooks can trigger on several lifecycle events:
 
 | Event | When It Fires | Common Use Cases |
-|-------|---------------|------------------|
+| ------- | --------------- | ------------------ |
 | `sessionStart` | Agent session begins or resumes | Initialize environments, log session starts, validate project state |
 | `sessionEnd` | Agent session completes or is terminated | Clean up temp files, generate reports, send notifications |
 | `userPromptSubmitted` | User submits a prompt | Log requests for auditing and compliance; handle requests directly without invoking the LLM (v1.0.44+) |
@@ -274,9 +274,11 @@ exit 1     # deny (let the user decide interactively)
 > **Security note**: Use `PermissionRequest` hooks carefully. Blanket auto-approval in non-CI environments removes an important safety check. Scope the auto-approval logic precisely (e.g., only in CI, only for specific tools).
 
 > **Prompt mode security (v1.0.40+)**: When running the CLI in **prompt mode** (`copilot -p "..."`) — the non-interactive mode commonly used in CI pipelines — repo hooks are **disabled by default** for security. To opt in to repo hooks in prompt mode, set the environment variable `GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS=true` before running the command:
+>
 > ```bash
 > GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS=true copilot -p "..." --no-ask-user
 > ```
+>
 > This is a secure-by-default change: it prevents untrusted repository hooks from firing silently when a user runs a quick prompt command in an unfamiliar repository. Similarly, workspace MCP servers are disabled in prompt mode by default; opt in with `GITHUB_COPILOT_PROMPT_MODE_WORKSPACE_MCP=true`. Extensions follow a mixed model (v1.0.41+): **user-level extensions** (from `~/.copilot/`) load automatically in prompt mode, but **project-level extensions and management tools** are disabled by default — opt in with `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` to load them.
 
 ### Handling Tool Failures with postToolUseFailure
@@ -446,6 +448,7 @@ This pattern is useful for enterprise environments that need to audit AI interac
 Since v1.0.44, `userPromptSubmitted` hooks can do more than log or block — they can **handle a request entirely**, returning a response to the user without making any model call. When your hook script writes a JSON object with a `response` field to stdout, the CLI delivers that text to the user and skips the LLM altogether.
 
 This is useful for:
+
 - **FAQ bots**: Return canned answers for common questions without spending model quota
 - **Policy enforcement**: Reject out-of-scope prompts with a clear, consistent message
 - **Redirect patterns**: Direct users to a specific resource or runbook
@@ -609,6 +612,7 @@ echo "Pre-commit checks passed ✅"
 ```
 
 **Tips for hook scripts**:
+
 - Use `set -euo pipefail` to fail fast on errors
 - Keep scripts focused—one responsibility per script
 - Make scripts executable: `chmod +x scripts/pre-commit-check.sh`

@@ -6,4 +6,6 @@ export interface RouteLeavingGuardProps {
   body?: ReactNode;
   cancelBtn?: ReactNode;
   confirmBtn?: ReactNode;
+  /** Runs just before a confirmed navigation proceeds, e.g. to clear form errors. */
+  onProceed?: () => void;
 }

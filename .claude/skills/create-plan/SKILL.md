@@ -63,12 +63,15 @@ Throughout the entire workflow, operate in read-only mode. Do not write or updat
 ```
 
 ## Checklist item guidance
+
 Good checklist items:
+
 - Point to likely files/modules: src/..., app/..., services/...
 - Name concrete validation: "Run npm test", "Add unit tests for X"
 - Include safe rollout when relevant: feature flag, migration plan, rollback note
 
 Avoid:
+
 - Vague steps ("handle backend", "do auth")
 - Too many micro-steps
 - Writing code snippets (keep the plan implementation-agnostic)

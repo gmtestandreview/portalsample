@@ -58,6 +58,7 @@ const obj = {
 ### JSON Type Representation
 
 How JavaScript types map to JSON:
+
 - String → string
 - Number → number
 - Boolean → boolean
@@ -88,6 +89,7 @@ Markup language for encoding documents.
 ```
 
 **Use Cases**:
+
 - Configuration files
 - Data exchange
 - RSS/Atom feeds
@@ -119,6 +121,7 @@ const xmlString = serializer.serializeToString(xmlDoc);
 Universal character encoding (recommended for web).
 
 **Characteristics**:
+
 - Variable-width (1-4 bytes per character)
 - Backward compatible with ASCII
 - Supports all Unicode characters
@@ -188,6 +191,7 @@ const decoded = decoder.decode(bytes);
 ```
 
 **Use Cases**:
+
 - Embed binary data in JSON/XML
 - Data URLs (`data:image/png;base64,...`)
 - Basic authentication headers
@@ -217,7 +221,7 @@ Media type identification.
 ### Common MIME Types
 
 | Type | MIME Type |
-|------|-----------|
+| ------ | ----------- |
 | HTML | `text/html` |
 | CSS | `text/css` |
 | JavaScript | `text/javascript`, `application/javascript` |
@@ -264,6 +268,7 @@ const parsed = JSON.parse(json);
 ### Serializable Objects
 
 Objects that can be serialized by structured clone algorithm:
+
 - Basic types
 - Arrays, Objects,
 - Date, RegExp
@@ -271,6 +276,7 @@ Objects that can be serialized by structured clone algorithm:
 - ArrayBuffer, TypedArrays
 
 **Not Serializable**:
+
 - Functions
 - DOM nodes
 - Symbols (as values)
@@ -337,6 +343,7 @@ reader.readAsDataURL(blob);
 ### Arrays
 
 Ordered collections:
+
 ```javascript
 const arr = [1, 2, 3];
 arr.push(4); // Add to end
@@ -346,6 +353,7 @@ arr.pop(); // Remove from end
 ### Objects
 
 Key-value pairs:
+
 ```javascript
 const obj = { key: 'value' };
 obj.newKey = 'new value';
@@ -355,6 +363,7 @@ delete obj.key;
 ### Map
 
 Keyed collections (any type as key):
+
 ```javascript
 const map = new Map();
 map.set('key', 'value');
@@ -367,6 +376,7 @@ map.delete('key');
 ### Set
 
 Unique values:
+
 ```javascript
 const set = new Set([1, 2, 2, 3]); // {1, 2, 3}
 set.add(4);
@@ -377,6 +387,7 @@ set.delete(1);
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - ASCII
 - Base64
 - Character

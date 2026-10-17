@@ -39,7 +39,7 @@ node skills/drawio/scripts/drawio-to-png.mjs --renderer=cli|viewer|auto <input.d
 ### Skill Folder Contents
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `SKILL.md` | This instruction file |
 | `scripts/drawio-to-png.mjs` | Node.js export script (CLI + browser fallback) |
 | `scripts/package.json` | Dependencies (`puppeteer-core`) |
@@ -47,7 +47,7 @@ node skills/drawio/scripts/drawio-to-png.mjs --renderer=cli|viewer|auto <input.d
 ## Supported Export Formats
 
 | Format | Embed XML | Notes |
-|--------|-----------|-------|
+| -------- | ----------- | ------- |
 | `png` | Yes | Viewable everywhere, editable in draw.io |
 | `svg` | Yes | Scalable, editable in draw.io |
 | `pdf` | Yes | Printable, editable in draw.io |

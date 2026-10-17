@@ -12,7 +12,7 @@ Interact with Dependabot pull requests by commenting `@dependabot <command>`. De
 ## Commands for Individual PRs
 
 | Command | Description |
-|---|---|
+| --- | --- |
 | `@dependabot rebase` | Rebase the PR against the target branch |
 | `@dependabot recreate` | Recreate the PR from scratch, overwriting any manual edits |
 | `@dependabot ignore this dependency` | Close the PR and stop all future updates for this dependency |
@@ -26,7 +26,7 @@ Interact with Dependabot pull requests by commenting `@dependabot <command>`. De
 These commands work on Dependabot PRs created by grouped version or security updates.
 
 | Command | Description |
-|---|---|
+| --- | --- |
 | `@dependabot ignore DEPENDENCY_NAME` | Close the PR and stop updating this dependency in the group |
 | `@dependabot ignore DEPENDENCY_NAME major version` | Stop updating this dependency's major version |
 | `@dependabot ignore DEPENDENCY_NAME minor version` | Stop updating this dependency's minor version |

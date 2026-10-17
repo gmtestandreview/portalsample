@@ -258,7 +258,7 @@ describe('accept quote wizard prop factories', () => {
     mocks.savePaymentDetails.mockRejectedValueOnce(new Error('save failed'));
     await expect(
       props.onSaveAndNext?.(paymentValues, true, abortSignal)
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow('save failed');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save payment details:',
       expect.any(Error),
@@ -343,7 +343,7 @@ describe('accept quote wizard prop factories', () => {
     mocks.saveReportRecipient.mockRejectedValueOnce(new Error('save failed'));
     await expect(
       props.onSaveAndExit?.(recipientValues, false, abortSignal)
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow('save failed');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save payment report recipient',
       expect.any(Error),

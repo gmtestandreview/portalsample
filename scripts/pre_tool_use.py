@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """
 A Team PreToolUse safety guard.
 Blocks destructive commands and .env file access before any tool fires.
 Exit 2 = block + show error to Claude. Exit 0 = allow.
 """
 
+import getopt
 import json
 import os
 import re
@@ -12,45 +13,89 @@ import sys
 import time
 from typing import cast
 
-JsonObject = dict[str, object]
+type JsonObject = dict[str, object]
 
-_WRAPPERS = {"sudo", "command", "env", "time", "nohup", "exec", "xargs", "call"}
-_WRAPPER_VALUES = {
-    "sudo": {
-        "-u",
-        "-g",
-        "-h",
-        "-p",
-        "-C",
-        "-T",
-        "-r",
-        "-t",
-        "--user",
-        "--group",
-        "--host",
-        "--prompt",
-        "--close-from",
-        "--command-timeout",
-        "--role",
-        "--type",
-    },
-    "env": {"-u", "--unset", "-C", "--chdir"},
-    "time": {"-f", "--format", "-o", "--output"},
-    "exec": {"-a"},
-    "xargs": {
-        "-n",
-        "-I",
-        "-P",
-        "-L",
-        "-d",
-        "-E",
-        "--max-args",
-        "--replace",
-        "--max-procs",
-        "--max-lines",
-        "--delimiter",
-        "--eof",
-    },
+_WRAPPER_OPTIONS: dict[str, tuple[str, list[str]]] = {
+    # Fixed-arity subset only. Unsupported shell/expansion modes and optional
+    # arguments fail closed rather than guessing where the child command starts.
+    "sudo": (
+        "AbBEHkKnNPSVvu:g:p:C:D:R:T:r:t:",
+        [
+            "askpass",
+            "background",
+            "bell",
+            "set-home",
+            "reset-timestamp",
+            "remove-timestamp",
+            "non-interactive",
+            "no-update",
+            "preserve-groups",
+            "stdin",
+            "version",
+            "validate",
+            "help",
+            "user=",
+            "group=",
+            "host=",
+            "prompt=",
+            "close-from=",
+            "chdir=",
+            "chroot=",
+            "command-timeout=",
+            "role=",
+            "type=",
+        ],
+    ),
+    "env": (
+        "i0vu:C:a:",
+        [
+            "ignore-environment",
+            "null",
+            "debug",
+            "unset=",
+            "chdir=",
+            "argv0=",
+            "help",
+            "version",
+        ],
+    ),
+    "time": (
+        "apqvo:f:",
+        [
+            "append",
+            "portability",
+            "quiet",
+            "verbose",
+            "output=",
+            "format=",
+            "help",
+            "version",
+        ],
+    ),
+    "command": ("pvV", []),
+    "nohup": ("", ["help", "version"]),
+    "exec": ("cla:", []),
+    "xargs": (
+        "0prtxn:P:L:d:E:",
+        [
+            "null",
+            "interactive",
+            "no-run-if-empty",
+            "verbose",
+            "exit",
+            "max-args=",
+            "max-procs=",
+            "delimiter=",
+            "help",
+            "version",
+        ],
+    ),
+    "call": ("", []),
+}
+_WRAPPERS = set(_WRAPPER_OPTIONS)
+_WRAPPER_LOCATIONS = {
+    "env": {"-C", "--chdir"},
+    "sudo": {"-D", "--chdir", "-R", "--chroot"},
 }
 _SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 _PS_SHELLS = {"pwsh", "powershell"}
@@ -325,28 +370,52 @@ def _verb_name(token: str) -> str:
 _CONTROL_TOKENS = {"(", "{", "}", ")", "then", "do", "else", "if", "while", "until", "!"}
 
 
-def _skip_wrapper_options(tokens: list[str], index: int, wrapper: str) -> int:
-    while index < len(tokens) and tokens[index].startswith("-"):
-        option = tokens[index]
-        if wrapper == "env" and option in {"-S", "--split-string"}:
-            return index  # unsupported expanding wrapper is blocked by commands()
-        takes_value = option in _WRAPPER_VALUES.get(wrapper, set())
-        index += 2 if takes_value else 1
-    return index
+def _parse_wrapper_options(tokens: list[str], index: int, wrapper: str) -> tuple[int, bool] | None:
+    short, long = _WRAPPER_OPTIONS[wrapper]
+    try:
+        options, remaining = getopt.getopt(tokens[index:], short, long)
+    except getopt.GetoptError:
+        return None
+    index = len(tokens) - len(remaining)
+    # GNU env accepts a lone '-' after its options as ignore-environment.
+    if wrapper == "env" and index < len(tokens) and tokens[index] == "-":
+        index += 1
+    assignment_start = index
+    if wrapper in {"env", "sudo"}:
+        # These utilities accept NAME=value operands beyond shell identifier
+        # syntax, including option-looking names after '-' or '--'.
+        while index < len(tokens) and "=" in tokens[index]:
+            index += 1
+    if index > assignment_start and index < len(tokens) and tokens[index].startswith("-"):
+        return None  # Unsupported options interspersed after assignments.
+    locations = _WRAPPER_LOCATIONS.get(wrapper, set())
+    return index, any(option in locations for option, _value in options)
 
 
-def _verb_index(tokens: list[str]) -> int | None:
+def _command_prefix(tokens: list[str]) -> tuple[int | None, bool] | None:
+    """Locate the child command and its location state from one option parse."""
     index = 0
+    changes_directory = False
+    wrapped_assignment = False
+    wrapped = False
     while index < len(tokens):
         token = tokens[index]
         if token in _CONTROL_TOKENS or re.match(r"^[A-Za-z_][\w]*=", token):
+            wrapped_assignment = wrapped_assignment or wrapped
             index += 1
             continue
+        if wrapped_assignment and token.startswith("-"):
+            return None  # Do not guess at options interspersed after assignments.
         wrapper = _verb_name(token)
         if wrapper not in _WRAPPERS:
-            return index
-        index = _skip_wrapper_options(tokens, index + 1, wrapper)
-    return None
+            return index, changes_directory
+        parsed = _parse_wrapper_options(tokens, index + 1, wrapper)
+        if parsed is None:
+            return None
+        index, location = parsed
+        changes_directory = changes_directory or location
+        wrapped = True
+    return None, changes_directory
 
 
 def _nested_payload(verb: str, args: list[str]) -> str | None:
@@ -385,13 +454,17 @@ def _recursive_commands(payloads: list[str], depth: int, shell: str) -> list[tup
 
 
 def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[str, list[str]]]:
-    index = _verb_index(tokens)
+    prefix = _command_prefix(tokens)
+    if prefix is None:
+        return [(_PARSER_LIMIT, [])]
+    index, changes_directory = prefix
     if index is None:
         return []
     verb, args = _verb_name(tokens[index]), tokens[index + 1 :]
-    if tokens[index] in {"-S", "--split-string"}:
-        verb = _PARSER_LIMIT
-    found = [(verb, args)]
+    found: list[tuple[str, list[str]]] = []
+    if changes_directory:
+        found.append(("__location_change__", []))
+    found.append((verb, args))
     payload = _nested_payload(verb, args)
     if payload is not None:
         found.extend(commands(payload, depth + 1, _nested_shell(verb)))
@@ -605,7 +678,7 @@ def _command_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
 def _is_destructive(command: str, shell: str = "") -> str | None:
     cleanup_allowed = _cleanup_allowed()
     for verb, args in commands(command, shell=shell):
-        if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl"}:
+        if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl", "__location_change__"}:
             cleanup_allowed = False
         rule = _command_rule(verb, args, cleanup_allowed)
         if rule:
@@ -862,7 +935,7 @@ def _block(tool_name: str, tool_input: dict[str, object], rule: str, message: st
 def main() -> None:
     try:
         raw_data: object = json.load(sys.stdin)
-    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+    except json.JSONDecodeError, UnicodeDecodeError, OSError:
         return
     data = _as_json_object(raw_data)
     if data is None:

@@ -47,18 +47,18 @@ for examples of how `useLabel` is used by components.
 ### LabelAriaProps
 
 | Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `aria-describedby` | `string | undefined` | — | Identifies the element (or elements) that describes the object. |
-| `aria-details` | `string | undefined` | — | Identifies the element (or elements) that provide a detailed, extended description for the object. |
-| `aria-label` | `string | undefined` | — | Defines a string value that labels the current element. |
-| `aria-labelledby` | `string | undefined` | — | Identifies the element (or elements) that labels the current element. |
-| `id` | `string | undefined` | — | The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id). |
+| ------ | ------ | --------- | ------------- |
+| `aria-describedby` | `string \| undefined` | — | Identifies the element (or elements) that describes the object. |
+| `aria-details` | `string \| undefined` | — | Identifies the element (or elements) that provide a detailed, extended description for the object. |
+| `aria-label` | `string \| undefined` | — | Defines a string value that labels the current element. |
+| `aria-labelledby` | `string \| undefined` | — | Identifies the element (or elements) that labels the current element. |
+| `id` | `string \| undefined` | — | The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id). |
 | `label` | `ReactNode` | — | The content to display as the label. |
-| `labelElementType` | `ElementType | undefined` | 'label' | The HTML element used to render the label, e.g. 'label', or 'span'. |
+| `labelElementType` | `ElementType \| undefined` | 'label' | The HTML element used to render the label, e.g. 'label', or 'span'. |
 
 ### LabelAria
 
 | Name | Type | Description |
-|------|------|-------------|
+| ------ | ------ | ------------- |
 | `fieldProps` \* | `AriaLabelingProps & DOMProps` | Props to apply to the field container element being labeled. |
-| `labelProps` \* | `DOMAttributes<FocusableElement> | LabelHTMLAttributes<HTMLLabelElement>` | Props to apply to the label container element. |
+| `labelProps` \* | `DOMAttributes<FocusableElement> \| LabelHTMLAttributes<HTMLLabelElement>` | Props to apply to the label container element. |

@@ -19,7 +19,7 @@ Solve the execution problem -- staying focused during complex, multi-step tasks.
 Create in `docs_dev/` (or `$AIMAESTRO_PLANNING_DIR`):
 
 | File | Purpose | Update When |
-|------|---------|-------------|
+| ------ | --------- | ------------- |
 | `task_plan.md` | Goals, phases, decisions, errors | After each phase |
 | `findings.md` | Research, discoveries, resources | During research |
 | `progress.md` | Session log, test results | Throughout session |
@@ -32,6 +32,7 @@ mkdir -p "$PLAN_DIR"
 ```
 
 Then create `task_plan.md` with:
+
 ```markdown
 # Task: [Goal]
 
@@ -62,7 +63,7 @@ Then create `task_plan.md` with:
 ## The 3-Strike Protocol
 
 | Strike | Action |
-|--------|--------|
+| -------- | -------- |
 | 1 | Diagnose root cause, apply targeted fix |
 | 2 | Try a different approach entirely |
 | 3 | Question assumptions, search for similar issues |

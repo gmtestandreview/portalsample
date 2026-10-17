@@ -108,7 +108,9 @@ def test_claude_settings_registers_the_cross_platform_hook() -> None:
     registration = settings["hooks"]["PostToolUse"][0]
 
     assert registration["matcher"] == "Write|Edit|MultiEdit"
-    assert registration["hooks"][0]["command"] == "python scripts/post_tool_use.py"
+    assert (
+        registration["hooks"][0]["command"] == "node scripts/python314.cjs scripts/post_tool_use.py"
+    )
 
 
 @pytest.mark.parametrize(

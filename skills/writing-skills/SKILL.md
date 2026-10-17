@@ -8,8 +8,8 @@ description:
   Use also when explicitly asked to call "writing skills" or "called writing skills".
 compatibility: Codex, Claude, A Team, Claude Code, GitHub Copilot
 metadata:
-  version: '2026-10-06-auto-opt-3'
-  last-updated: '2026-10-06'
+  version: '2026-10-17-bounded-evidence'
+  last-updated: '2026-10-17'
 ---
 
 # Writing Skills
@@ -137,7 +137,12 @@ failures. `deploy` is prohibited while any required blocker remains unresolved.
 Run only when optimization/remediation/revision/implementation is requested.
 Audit-only requests report fixes without silent revision.
 
-1. Score the baseline.
+Load `references/bounded-optimisation.md` before iterative evaluation. It owns
+the wave cap, closeout reserve, frozen evidence, and publication/dispatch
+preflight; keep one methodology controller and preserve a usable checkpoint.
+
+1. Score the baseline when a scored audit is requested; otherwise record the
+   baseline defects and required acceptance gates without inventing a score.
 2. Apply the smallest justified fixes.
 3. Rerun affected available checks and regressions.
 4. Rescore from fresh evidence and re-evaluate blockers.

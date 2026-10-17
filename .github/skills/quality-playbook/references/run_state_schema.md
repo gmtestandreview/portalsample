@@ -40,7 +40,7 @@ Events MAY have additional fields per their type's spec below. Unknown fields ar
 ALWAYS the first line. Records schema metadata.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | Always `"_index"` |
 | `ts` | string | yes | ISO 8601 UTC |
 | `schema_version` | string | yes | `"1.5.6"` |
@@ -54,7 +54,7 @@ ALWAYS the first line. Records schema metadata.
 Marks the beginning of a playbook run.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"run_start"` |
 | `ts` | string | yes | |
 | `runner` | string | yes | One of `"claude"`, `"codex"`, `"copilot"`, `"cursor"` |
@@ -66,7 +66,7 @@ Marks the beginning of a playbook run.
 Marks the beginning of one of the six playbook phases.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"phase_start"` |
 | `ts` | string | yes | |
 | `phase` | integer | yes | 1, 2, 3, 4, 5, or 6 |
@@ -76,7 +76,7 @@ Marks the beginning of one of the six playbook phases.
 Phase 1 only. Records that one of the seven exploration patterns was walked.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"pattern_walked"` |
 | `ts` | string | yes | |
 | `phase` | integer | yes | Always 1 |
@@ -89,7 +89,7 @@ Phase 1 only. Records that one of the seven exploration patterns was walked.
 Phase 4 only. Records start/end of one of the four skill-derivation passes.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"pass_started"` or `"pass_ended"` |
 | `ts` | string | yes | |
 | `phase` | integer | yes | Always 4 |
@@ -101,7 +101,7 @@ Phase 4 only. Records start/end of one of the four skill-derivation passes.
 Records that a finding (skill-divergence, code-bug, etc.) was logged in the current phase.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"finding_logged"` |
 | `ts` | string | yes | |
 | `phase` | integer | yes | 1-6 |
@@ -113,7 +113,7 @@ Records that a finding (skill-divergence, code-bug, etc.) was logged in the curr
 Records that an artifact file was produced/updated.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"artifact_written"` |
 | `ts` | string | yes | |
 | `relative_path` | string | yes | Path relative to benchmark target (e.g. `"quality/EXPLORATION.md"`) |
@@ -125,7 +125,7 @@ Records that an artifact file was produced/updated.
 Records the outcome of a single quality-gate check.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"gate_check"` |
 | `ts` | string | yes | |
 | `gate_name` | string | yes | Identifier from `quality_gate.py` |
@@ -137,7 +137,7 @@ Records the outcome of a single quality-gate check.
 Marks the end of a phase. Cross-validated against the phase's expected artifacts before being written (see "Cross-validation rules" below).
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"phase_end"` |
 | `ts` | string | yes | |
 | `phase` | integer | yes | 1-6 |
@@ -159,7 +159,7 @@ Marks the end of a phase. Cross-validated against the phase's expected artifacts
 Records an error during the run.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"error"` |
 | `ts` | string | yes | |
 | `phase` | integer | optional | If error is phase-scoped |
@@ -171,7 +171,7 @@ Records an error during the run.
 v1.5.6+. Records the documentation-availability state at Phase 1 entry. Currently the only emitted state is `"code_only"`, indicating that `reference_docs/` and `reference_docs/cite/` carry no recognized plaintext content (`.md` or `.txt`) and Phase 1 is proceeding in code-only mode (see `references/code-only-mode.md`). A `"with_docs"` value is reserved for future explicit emission; today the absence of a `documentation_state` event implies docs were present.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"documentation_state"` |
 | `ts` | string | yes | |
 | `state` | string | yes | Currently `"code_only"`. Future values may include `"with_docs"`. |
@@ -184,7 +184,7 @@ When `documentation_state state="code_only"` is emitted, the playbook also prepe
 v1.5.6+. Records that the run aborted at Phase 1 entry because `--require-docs` was set and `reference_docs/` was empty. Mutually exclusive with `documentation_state state="code_only"` for the same Phase 1 entry — `--require-docs` is the opt-IN abort path; the absence of the flag preserves the documented code-only-mode downgrade. After this event the runner returns non-zero without invoking any LLM work, so no `phase_start phase=1` is recorded.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"aborted_missing_docs"` |
 | `ts` | string | yes | |
 | `reason` | string | yes | Free-form (e.g. `"reference_docs/ empty and --require-docs set"`) |
@@ -196,7 +196,7 @@ When `aborted_missing_docs` is emitted, the playbook also writes an `ERROR: abor
 Marks the end of the playbook run.
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"run_end"` |
 | `ts` | string | yes | |
 | `status` | string | yes | One of `"success"`, `"aborted"`, `"failed"` |
@@ -210,7 +210,7 @@ Marks the end of the playbook run.
 ### `_index` (cycle-level)
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"_index"` |
 | `ts` | string | yes | |
 | `schema_version` | string | yes | `"1.5.6"` |
@@ -223,7 +223,7 @@ Marks the end of the playbook run.
 ### `cycle_start`
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"cycle_start"` |
 | `ts` | string | yes | |
 | `hypothesis` | string | yes | The cycle's testable hypothesis |
@@ -232,7 +232,7 @@ Marks the end of the playbook run.
 ### `benchmark_start`
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"benchmark_start"` |
 | `ts` | string | yes | |
 | `benchmark` | string | yes | |
@@ -241,7 +241,7 @@ Marks the end of the playbook run.
 ### `lever_change_applied`
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"lever_change_applied"` |
 | `ts` | string | yes | |
 | `lever_id` | string | yes | E.g. `"lever-1-exploration-breadth-depth"` |
@@ -252,7 +252,7 @@ Marks the end of the playbook run.
 ### `lever_change_reverted`
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"lever_change_reverted"` |
 | `ts` | string | yes | |
 | `files_changed` | array of string | yes | |
@@ -261,7 +261,7 @@ Marks the end of the playbook run.
 ### `benchmark_end`
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"benchmark_end"` |
 | `ts` | string | yes | |
 | `benchmark` | string | yes | |
@@ -274,7 +274,7 @@ Marks the end of the playbook run.
 ### `cycle_end`
 
 | Field | Type | Required | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `event` | string | yes | `"cycle_end"` |
 | `ts` | string | yes | |
 | `verdict` | string | yes | One of `"ship"`, `"revert"`, `"iterate"`, `"halt-iterate-cap"` |
@@ -290,7 +290,7 @@ Marks the end of the playbook run.
 The AI verifies these conditions before appending a `phase_end` event. If any check fails, the AI appends an `error` event with `recoverable: true` and re-runs the failing phase.
 
 | Phase | Required conditions |
-|---|---|
+| --- | --- |
 | 1 | `quality/EXPLORATION.md` exists, ≥ 120 lines (aligned with the Phase 2 startup gate in `bin/run_playbook.check_phase_gate`), contains at least one finding section (regex `^##\s+(Finding\|Open Exploration Findings\|\d+\.)` — accepts `## Finding ...`, the SKILL-prescribed exact heading `## Open Exploration Findings`, and numbered `## N.` headings) |
 | 2 | All nine fixed-name Generate-contract artifacts exist non-empty under `quality/`: `REQUIREMENTS.md`, `QUALITY.md`, `CONTRACTS.md`, `COVERAGE_MATRIX.md`, `COMPLETENESS_REPORT.md`, `RUN_CODE_REVIEW.md`, `RUN_INTEGRATION_TESTS.md`, `RUN_SPEC_AUDIT.md`, `RUN_TDD_TESTS.md`. Plus at least one non-empty `quality/test_functional.<ext>` (extension varies by primary language). Pre-v1.5.6 this row described the v1.5.5-design triage model (`EXPLORATION_MERGED.md` / `triage.md`); that mapping was never adopted by shipped SKILL.md / orchestrator_protocol.md / agent files, which always documented Phase 2 as Generate. |
 | 3 | `quality/code_reviews/` directory contains at least one review file. If `quality/BUGS.md` has any `### BUG-` heading, `quality/patches/` contains at least one `BUG-*-regression-test.patch` file. Pre-v1.5.6 this row checked `quality/RUN_CODE_REVIEW.md` (a Phase 2 Generate output, not a Phase 3 review result) — same v1.5.5-design / shipped-Generate drift class as the Phase 2 row. Cluster B reconciled. |

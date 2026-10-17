@@ -47,6 +47,7 @@ Start by reading the foundational files to understand what this project is:
 Identify the framework and architecture pattern:
 
 **Framework detection** (check for config files):
+
 - `next.config.js/ts/mjs` = Next.js
 - `remix.config.js` or `app/root.tsx` with remix imports = Remix
 - `nuxt.config.ts` = Nuxt
@@ -60,23 +61,27 @@ Identify the framework and architecture pattern:
 - `Cargo.toml` = Rust
 
 **Entry points** — find where the app starts:
+
 - `src/index.*`, `src/main.*`, `src/app.*`
 - `pages/`, `app/` (file-based routing)
 - `server.*`, `api/`
 
 **Routing patterns**:
+
 - File-based routing (`pages/`, `app/`)
 - Express/Fastify router files
 - tRPC routers
 - GraphQL schema/resolvers
 
 **Data layer**:
+
 - `prisma/schema.prisma` = Prisma ORM
 - `drizzle.config.ts` = Drizzle ORM
 - `**/models/`, `**/entities/` = ORM models
 - Raw SQL files or query builders
 
 **API layer**:
+
 - `/api/` directory (serverless functions)
 - tRPC setup (`trpc.ts`, `router.ts`)
 - GraphQL (`schema.graphql`, `resolvers/`)
@@ -162,6 +167,7 @@ After presenting the mental model, ask the user:
 > "Would you like me to create a CLAUDE.md file with these findings? This will give Claude Code persistent context about this project in future sessions."
 
 If they say yes, generate a CLAUDE.md that includes:
+
 - Project overview (2-3 sentences)
 - Essential commands (install, dev, test, build, deploy)
 - Architecture overview (condensed)

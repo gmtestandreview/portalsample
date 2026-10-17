@@ -14,6 +14,7 @@ This skill helps the user install the latest [ai-ready](https://github.com/johnp
 1. Tell the user to download the latest `SKILL.md` to their personal skills directory by running one of these commands in their terminal. This will overwrite any existing local copy.
 
    **bash / zsh**
+
    ```bash
    mkdir -p ~/.copilot/skills/ai-ready
    curl -fsSL https://raw.githubusercontent.com/johnpapa/ai-ready/main/skills/ai-ready/SKILL.md \
@@ -21,6 +22,7 @@ This skill helps the user install the latest [ai-ready](https://github.com/johnp
    ```
 
    **PowerShell**
+
    ```powershell
    New-Item -ItemType Directory -Force -Path "$HOME/.copilot/skills/ai-ready" | Out-Null
    Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/johnpapa/ai-ready/main/skills/ai-ready/SKILL.md" -OutFile "$HOME/.copilot/skills/ai-ready/SKILL.md"
@@ -28,8 +30,10 @@ This skill helps the user install the latest [ai-ready](https://github.com/johnp
 
    For reproducible behavior, the user can replace `main` in the URL with a specific tag or commit SHA.
 2. Suggest the user review the downloaded skill before loading it to confirm it contains expected instructions:
+
    ```bash
    head -20 ~/.copilot/skills/ai-ready/SKILL.md
    ```
+
 3. After the user confirms they've installed it, tell them to reload skills with `/skills reload` and then say `make this repo ai-ready`.
 4. Do **not** run the install command on the user's behalf. The user must run it themselves.

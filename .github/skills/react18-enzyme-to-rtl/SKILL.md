@@ -27,6 +27,7 @@ This is not a 1:1 translation. Enzyme tests that verify internal state or instan
 ## API Map
 
 For complete before/after code for each Enzyme API, read:
+
 - **`references/enzyme-api-map.md`** - full mapping: shallow, mount, find, simulate, prop, state, instance, configure
 - **`references/async-patterns.md`** - waitFor, findBy, act(), Apollo MockedProvider, loading states, error states
 

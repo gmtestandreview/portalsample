@@ -49,3 +49,29 @@ Feature: Accept a quotation
     Then a confirmation dialog titled "Are you sure you want to accept this quote?" is displayed
     When the user confirms "Yes, submit"
     Then the accepted quote success page is displayed
+
+  Scenario: Required quote acceptance fields prevent progression
+    Given the user is viewing quotation "RFQ-2024-000892"
+    When the user follows "Proceed with quote"
+    And the user chooses to send the report to another address
+    And the user clicks "Save and next"
+    Then a validation error summary is displayed
+    And the quote acceptance step "Report recipient" is displayed
+    And the quote acceptance step "report-recipient" has not been saved
+
+  Scenario: User saves the quote acceptance wizard and exits
+    Given the user is viewing quotation "RFQ-2024-000892"
+    When the user follows "Proceed with quote"
+    And the user completes the report recipient step
+    And the user clicks "Save and exit"
+    Then the user should be redirected to the dashboard
+    And the quote acceptance step "report-recipient" has been saved
+
+  Scenario: User returns to the previous quote acceptance step
+    Given the user is viewing quotation "RFQ-2024-000892"
+    When the user follows "Proceed with quote"
+    And the user completes the report recipient step
+    And the user clicks "Save and next"
+    Then the quote acceptance step "Instrument/artefact delivery and return" is displayed
+    When the user clicks "Back"
+    Then the quote acceptance step "Report recipient" is displayed

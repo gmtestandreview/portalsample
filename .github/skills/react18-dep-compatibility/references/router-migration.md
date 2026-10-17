@@ -73,7 +73,7 @@ grep -rn "history\.push\|history\.replace\|history\.go" src/ --include="*.js" --
 ## v5 → v6 API Changes Summary
 
 | v5 | v6 | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `<Switch>` | `<Routes>` | Direct replacement |
 | `<Route path="/" component={C}>` | `<Route path="/" element={<C />}>` | element prop, not component |
 | `<Route exact path="/">` | `<Route path="/">` | exact is default in v6 |

@@ -12,7 +12,7 @@ Before taking any action, confirm:
 
 1. **Is `INIT.md` present?**
    - YES → continue
-   - NO → tell the user: "This project has not been initialized. Please fill out `INIT_TEMPLATE.md`, save it as `INIT.md`, then run `/orchestrate init`."
+   - NO → tell the user: "This project has not been initialized. Please fill out `.agent-sync/pruned/INIT_TEMPLATE.md`, save it as `INIT.md`, then run `/orchestrate init`."
 
 2. **Is `.agent-sync/TEAM.md` present?**
    - YES → continue (the team has been pruned for this project)

@@ -16,7 +16,7 @@ This workspace is a **source-map capture snapshot** of portal.measurement.gov.au
 ## What to edit
 
 | Edit | Path |
-|---|---|
+| --- | --- |
 | Application source | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx` |
 | Styles | `ClientApp/src/styles/**/*.scss` |
 

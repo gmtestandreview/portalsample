@@ -24,11 +24,11 @@ clear, example-driven command references.
 
 * **Command** - The name of the command or tool (e.g., `git`, `nmcli`, `distrobox-create`)
 * **URL** - Link to authoritative upstream documentation
-  - If one or more URLs are passed without a preceding `#fetch`, apply #tool:fetch to the first URL
-  - If ${file} is provided in lieu of a URL, and ${file} has a relevant URL to **command**, then use
+  * If one or more URLs are passed without a preceding `#fetch`, apply #tool:fetch to the first URL
+  * If ${file} is provided in lieu of a URL, and ${file} has a relevant URL to **command**, then use
   the data from the file as if fetched from the URL; use the URL extracted from the file when
   creating the `tldr` page
-    - If more than one URL is in the file, prompt for which URL should be used for the `tldr` page
+    * If more than one URL is in the file, prompt for which URL should be used for the `tldr` page
 
 ### Optional
 
@@ -111,12 +111,12 @@ Use this template structure when creating tldr pages:
 
 ### Template Guidelines
 
-- **Title**: Use exact command name (lowercase)
-- **Description**: One-line summary of what the command does
-- **Subcommands note**: Only include if relevant
-- **More information**: Link to authoritative upstream documentation (required)
-- **Examples**: 5-8 most common use cases, ordered by frequency of use
-- **Placeholders**: Use `{{placeholder}}` syntax for user-provided values
+* **Title**: Use exact command name (lowercase)
+* **Description**: One-line summary of what the command does
+* **Subcommands note**: Only include if relevant
+* **More information**: Link to authoritative upstream documentation (required)
+* **Examples**: 5-8 most common use cases, ordered by frequency of use
+* **Placeholders**: Use `{{placeholder}}` syntax for user-provided values
 
 ## Examples
 
@@ -182,29 +182,29 @@ You MAY fetch these example tldr pages to understand the proper format and style
 
 You MUST follow these placeholder conventions:
 
-- **Options with arguments**: When an option takes an argument, wrap BOTH the option AND its argument separately
-  - Example: `minipro {{[-p|--device]}} {{chip_name}}`
-  - Example: `git commit {{[-m|--message]}} {{message_text}}`
-  - **DO NOT** combine them as: `minipro -p {{chip_name}}` (incorrect)
+* **Options with arguments**: When an option takes an argument, wrap BOTH the option AND its argument separately
+  * Example: `minipro {{[-p|--device]}} {{chip_name}}`
+  * Example: `git commit {{[-m|--message]}} {{message_text}}`
+  * **DO NOT** combine them as: `minipro -p {{chip_name}}` (incorrect)
 
-- **Options without arguments**: Wrap standalone options (flags) that don't take arguments
-  - Example: `minipro {{[-E|--erase]}}`
-  - Example: `git add {{[-A|--all]}}`
+* **Options without arguments**: Wrap standalone options (flags) that don't take arguments
+  * Example: `minipro {{[-E|--erase]}}`
+  * Example: `git add {{[-A|--all]}}`
 
-- **Single short options**: Do NOT wrap single short options when used alone without long form
-  - Example: `ls -l` (not wrapped)
-  - Example: `minipro -L` (not wrapped)
-  - However, if both short and long forms exist, wrap them: `{{[-l|--list]}}`
+* **Single short options**: Do NOT wrap single short options when used alone without long form
+  * Example: `ls -l` (not wrapped)
+  * Example: `minipro -L` (not wrapped)
+  * However, if both short and long forms exist, wrap them: `{{[-l|--list]}}`
 
-- **Subcommands**: Generally do NOT wrap subcommands unless they are user-provided variables
-  - Example: `git init` (not wrapped)
-  - Example: `tldr {{command}}` (wrapped when variable)
+* **Subcommands**: Generally do NOT wrap subcommands unless they are user-provided variables
+  * Example: `git init` (not wrapped)
+  * Example: `tldr {{command}}` (wrapped when variable)
 
-- **Arguments and operands**: Always wrap user-provided values
-  - Example: `{{device_name}}`, `{{chip_name}}`, `{{repository_url}}`
-  - Example: `{{path/to/file}}` for file paths
-  - Example: `{{https://example.com}}` for URLs
+* **Arguments and operands**: Always wrap user-provided values
+  * Example: `{{device_name}}`, `{{chip_name}}`, `{{repository_url}}`
+  * Example: `{{path/to/file}}` for file paths
+  * Example: `{{https://example.com}}` for URLs
 
-- **Command structure**: Options should appear BEFORE their arguments in the placeholder syntax
-  - Correct: `command {{[-o|--option]}} {{value}}`
-  - Incorrect: `command -o {{value}}`
+* **Command structure**: Options should appear BEFORE their arguments in the placeholder syntax
+  * Correct: `command {{[-o|--option]}} {{value}}`
+  * Incorrect: `command -o {{value}}`

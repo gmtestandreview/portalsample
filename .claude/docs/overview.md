@@ -8,7 +8,7 @@
 
 A Team is a **portable multi-agent infrastructure** for AI coding assistants. It works with any model — Claude, GPT-4o, Gemini, or others — through any supported platform. It turns a single general-purpose model into a coordinated team of specialists — each with a defined role, tool access, and quality gate — that enforces the same engineering standards on every project it's deployed to.
 
-```
+```text
 Without A Team                        With A Team
 ─────────────────────────────────     ─────────────────────────────────────
 One model                             17 specialist agents (pruned for this repo)
@@ -192,7 +192,7 @@ cp -r "A Team/.claude"  your-project/
 cp -r "A Team/skills"   your-project/
 cp -r "A Team/hooks"    your-project/
 
-# 2. Declare your project scope
+# 2. Declare your project scope (in this repo the blank template lives at .agent-sync/pruned/INIT_TEMPLATE.md)
 cp "A Team/INIT_TEMPLATE.md" your-project/INIT.md
 # edit INIT.md — languages, stack, compliance scope, CLI(s)
 
@@ -207,7 +207,7 @@ After init: `.agent-sync/TEAM.md` lists what's active. Everything else is pruned
 ## Key Design Principles
 
 | Principle | How A Team implements it |
-|-----------|-------------------------|
+| ----------- | ------------------------- |
 | **Stateless** | Every agent reads from files; no memory between sessions |
 | **Prunable** | Orchestrator removes irrelevant agents at init; lean by default |
 | **Portable** | Works on Claude Code, Codex, Cursor, OpenCode — same files |
@@ -220,7 +220,7 @@ After init: `.agent-sync/TEAM.md` lists what's active. Everything else is pruned
 
 ## What Got Pruned (this repo: NMI Customer Portal — TypeScript/React SPA)
 
-```
+```text
 Active after /orchestrate init          Pruned
 ─────────────────────────────────       ──────────────────────────────────
 orchestrator                            chief-of-staff

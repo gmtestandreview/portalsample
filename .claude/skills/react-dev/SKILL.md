@@ -358,6 +358,7 @@ See [tanstack-router.md](references/tanstack-router.md) for TanStack patterns an
 <rules>
 
 ALWAYS:
+
 - Specific event types (MouseEvent, ChangeEvent, etc)
 - Explicit useState for unions/null
 - ComponentPropsWithoutRef for native element extension
@@ -368,6 +369,7 @@ ALWAYS:
 - Type-safe routing patterns (see routing section)
 
 NEVER:
+
 - any for event handlers
 - JSX.Element for children (use ReactNode)
 - forwardRef in React 19+

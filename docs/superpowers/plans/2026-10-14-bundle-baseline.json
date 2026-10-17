@@ -1,0 +1,24 @@
+{
+  "node": "v24.21.0",
+  "chunks": [
+    {
+      "name": "main.js",
+      "rawBytes": 629882,
+      "gzipBytes": 129851
+    },
+    {
+      "name": "redirect.js",
+      "rawBytes": 6428,
+      "gzipBytes": 2635
+    },
+    {
+      "name": "vendors.js",
+      "rawBytes": 1910202,
+      "gzipBytes": 565113
+    }
+  ],
+  "total": {
+    "rawBytes": 2546512,
+    "gzipBytes": 697599
+  }
+}

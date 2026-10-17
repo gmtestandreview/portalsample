@@ -1,0 +1,8 @@
+---
+exclude_paths:
+  - '.claude/**'
+  - '.github/skills/**'
+  - '.github/agents/**'
+  - '.github/instructions/**'
+  - '.agents/**'
+  - '.agent-sync/**'

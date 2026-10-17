@@ -3,25 +3,22 @@ import { useFormikContext } from 'formik';
 import { FormProvider } from 'react-hook-form';
 import { useFormikRhfBridge } from '../../components/forms/useFormikRhfBridge';
 import { RhfHiddenRulesProvider } from '../../components/forms/RhfHidableField';
-import type { Hideable } from '../../components/forms/types';
 import {
   summaryAndAcceptSaveValidation,
   summaryAndAcceptSubmitValidation,
 } from './validation';
+import {
+  createBridgedNamePredicate,
+  NO_HIDDEN_RULES,
+} from './formikBridgeHelpers';
 import type { SummaryAndAcceptFormValues } from './summaryAndAcceptFormFields';
 
 // Leaf paths of the fields whose schema rules carry messages.
 const touchPaths = ['associatedDispute', 'acceptanceOfQuote'] as const;
 
-const bridgedFieldNames: ReadonlySet<string> = new Set([
-  'associatedDisputes',
-  'associatedDispute',
-  'acceptanceOfQuote',
-]);
-
-const isBridgedFieldName = (name: string) => bridgedFieldNames.has(name);
-
-const NO_HIDDEN_RULES: Hideable = {};
+const isBridgedFieldName = createBridgedNamePredicate({
+  names: ['associatedDisputes', 'associatedDispute', 'acceptanceOfQuote'],
+});
 
 interface SummaryAndAcceptFormikBridgeProps {
   children?: ReactNode;

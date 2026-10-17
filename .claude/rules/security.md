@@ -21,6 +21,7 @@
 ## Security Response Protocol
 
 If any security issue is found:
+
 1. STOP immediately — do not continue with unrelated work
 2. Use `security-reviewer` agent for full assessment
 3. Fix CRITICAL issues before any other merge
@@ -30,7 +31,7 @@ If any security issue is found:
 ## OWASP Top 10 — Quick Reference
 
 | Risk | Prevention |
-|------|-----------|
+| ------ | ----------- |
 | Injection | Parameterized queries, input sanitization |
 | Broken Auth | bcrypt/argon2, JWT validation, session security |
 | Sensitive Data | HTTPS, env vars, PII encryption, sanitized logs |
@@ -43,6 +44,7 @@ If any security issue is found:
 ## Defense in Depth
 
 Apply multiple layers of security — never rely on a single control:
+
 1. Input validation at the boundary
 2. Parameterized queries in data access
 3. Output encoding in the view

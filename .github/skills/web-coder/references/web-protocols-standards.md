@@ -9,6 +9,7 @@ Organizations, specifications, and standards that govern the web.
 International community developing web standards.
 
 **Key Standards**:
+
 - HTML
 - CSS
 - XML
@@ -16,48 +17,52 @@ International community developing web standards.
 - WCAG (Accessibility)
 - Web APIs
 
-**Website**: https://www.w3.org/
+**Website**: <https://www.w3.org/>
 
 ### WHATWG (Web Hypertext Application Technology Working Group)
 
 Community maintaining HTML and DOM Living Standards.
 
 **Key Standards**:
+
 - HTML Living Standard
 - DOM Living Standard
 - Fetch Standard
 - URL Standard
 
-**Website**: https://whatwg.org/
+**Website**: <https://whatwg.org/>
 
 ### IETF (Internet Engineering Task Force)
 
 Develops internet standards.
 
 **Key Standards**:
+
 - HTTP
 - TLS
 - TCP/IP
 - DNS
 - WebRTC protocols
 
-**Website**: https://www.ietf.org/
+**Website**: <https://www.ietf.org/>
 
 ### ECMA International
 
 Standards organization for information systems.
 
 **Key Standards**:
+
 - ECMAScript (JavaScript)
 - JSON
 
-**Website**: https://www.ecma-international.org/
+**Website**: <https://www.ecma-international.org/>
 
 ### TC39 (Technical Committee 39)
 
 ECMAScript standardization committee.
 
 **Proposal Stages**:
+
 - **Stage 0**: Strawperson
 - **Stage 1**: Proposal
 - **Stage 2**: Draft
@@ -69,6 +74,7 @@ ECMAScript standardization committee.
 Coordinates internet protocol resources.
 
 **Responsibilities**:
+
 - MIME types
 - Port numbers
 - Protocol parameters
@@ -83,6 +89,7 @@ Coordinates DNS and IP addresses.
 ### HTML Standards
 
 **HTML5 Features**:
+
 - Semantic elements (`<article>`, `<section>`, etc.)
 - Audio and video elements
 - Canvas and SVG
@@ -94,6 +101,7 @@ Coordinates DNS and IP addresses.
 ### CSS Specifications
 
 **CSS Modules** (each specification is a module):
+
 - CSS Selectors Level 4
 - CSS Flexbox Level 1
 - CSS Grid Level 2
@@ -104,6 +112,7 @@ Coordinates DNS and IP addresses.
 ### JavaScript Standards
 
 **ECMAScript Versions**:
+
 - **ES5** (2009): Strict mode, JSON
 - **ES6/ES2015**: Classes, modules, arrow functions, promises
 - **ES2016**: Array.includes(), exponentiation operator (`**`)
@@ -118,6 +127,7 @@ Coordinates DNS and IP addresses.
 ### Web API Specifications
 
 **Common APIs**:
+
 - DOM (Document Object Model)
 - Fetch API
 - Service Workers
@@ -233,6 +243,7 @@ interface Element : Node {
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - Baseline (compatibility)
 - BCP 47 language tag
 - ECMA

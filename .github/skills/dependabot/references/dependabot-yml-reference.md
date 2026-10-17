@@ -4,7 +4,6 @@ Curated reference for the Dependabot configuration options used by this skill. F
 
 Use this reference to retrieve exact syntax after repository requirements are known; do not copy optional settings into a configuration unless repository evidence or the user's policy requires them.
 
-
 ## Contents
 
 - [File Structure](#file-structure)

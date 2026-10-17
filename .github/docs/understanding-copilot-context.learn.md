@@ -153,6 +153,7 @@ A: In GitHub Copilot Chat, you can see which files are being referenced in respo
 **Q: Can I control what context is included?**
 
 A: Yes, you have several ways to control context:
+
 - Open/close files to change what's available to Copilot
 - Use `#` mentions to explicitly reference specific files, symbols or functions
 - Configure `.gitignore` to exclude files from workspace context

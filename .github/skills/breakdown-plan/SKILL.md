@@ -506,8 +506,9 @@ jobs:
 - **Stakeholder Satisfaction**: >90% stakeholder approval for completed features
 - **Planning Accuracy**: <10% variance between estimated and actual delivery time
 
-This comprehensive GitHub project management approach ensures complete traceability from epic-level planning down to individual implementation tasks, with automated tracking and clear accountability for all team members.
+This comprehensive GitHub project management approach ensures complete traceability from epic-level planning down to individual implementation tasks, with automated tracking and clear accountability for all team members
 ---
+
 name: breakdown-plan
 description: 'Issue Planning and Automation prompt that generates comprehensive project plans with Epic > Feature > Story/Enabler > Test hierarchy, dependencies, priorities, and automated tracking.'
 ---

@@ -10,6 +10,7 @@ Complete scan command library for React 18.3.1 and React 19 migration audits.
 ## Usage
 
 Read the relevant section for your target:
+
 - **`references/react18-scans.md`** - all scans for React 16/17 → 18.3.1 audit
 - **`references/react19-scans.md`** - all scans for React 18 → 19 audit
 - **`references/test-scans.md`** - test file specific scans (used by both auditors)

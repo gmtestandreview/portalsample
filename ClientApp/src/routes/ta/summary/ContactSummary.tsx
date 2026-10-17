@@ -15,10 +15,15 @@ interface ContactSummaryProps {
   /** Id prefix for the rows, e.g. `organisationAndContact.contact`. */
   name: string;
   contact: Partial<ContactDto> | undefined;
+  hideTitleOther?: boolean;
 }
 
 /** Read-only contact block, matching `ContactDetailsInput` in summary mode. */
-const ContactSummary = ({ name, contact }: Readonly<ContactSummaryProps>) => {
+const ContactSummary = ({
+  name,
+  contact,
+  hideTitleOther = false,
+}: Readonly<ContactSummaryProps>) => {
   const title = titleText(contact?.title);
 
   return (
@@ -39,7 +44,7 @@ const ContactSummary = ({ name, contact }: Readonly<ContactSummaryProps>) => {
           value=''
         />
       ) : null}
-      {contact?.title === Title.Other && (
+      {contact?.title === Title.Other && !hideTitleOther && (
         <SummaryDisplay
           label='Title, if "Other"'
           id={`${name}.titleOther`}

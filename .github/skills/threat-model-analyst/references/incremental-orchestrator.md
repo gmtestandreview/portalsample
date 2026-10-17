@@ -15,17 +15,20 @@ This file contains the complete orchestration logic for performing an **incremen
 ## When to Use This Workflow
 
 Use incremental analysis when ALL of these conditions are met:
+
 1. The user's request involves updating, re-running, or refreshing a threat model
 2. A prior `threat-model-*` folder exists in the repository with a valid `threat-inventory.json`
 3. The user provides or implies both: a baseline report folder AND a target commit (defaults to HEAD)
 
 **Trigger examples:**
+
 - "Update the threat model using threat-model-20260309-174425 as the baseline"
 - "Run an incremental threat model analysis against the previous report"
 - "What changed security-wise since the last threat model?"
 - "Refresh the threat model for the latest commit"
 
 **NOT this workflow:**
+
 - First-time analysis (no baseline) → use `orchestrator.md`
 - "Analyze the security of this repo" with no mention of a prior report → use `orchestrator.md`
 
@@ -34,7 +37,7 @@ Use incremental analysis when ALL of these conditions are met:
 ## Inputs
 
 | Input | Source | Required? |
-|-------|--------|-----------|
+| ------- | -------- | ----------- |
 | Baseline report folder | Path to `threat-model-*` directory | Yes |
 | Baseline `threat-inventory.json` | `{baseline_folder}/threat-inventory.json` | Yes |
 | Baseline commit SHA | From `{baseline_folder}/0-assessment.md` Report Metadata | Yes |
@@ -47,12 +50,15 @@ Use incremental analysis when ALL of these conditions are met:
 ## Phase 0: Setup & Validation
 
 1. **Record start time:**
+
    ```
    Get-Date -Format "yyyy-MM-dd HH:mm:ss" -AsUTC
    ```
+
    Store as `START_TIME`.
 
 2. **Gather git info:**
+
    ```
    git remote get-url origin
    git branch --show-current
@@ -66,13 +72,16 @@ Use incremental analysis when ALL of these conditions are met:
    - Confirm target commit is resolvable: `git rev-parse {target_sha}`
    - **Get commit dates:** `git log -1 --format="%ai" {baseline_sha}` and `git log -1 --format="%ai" {target_sha}` — NOT today's date
    - **Get code change counts** (for HTML metrics bar):
+
      ```
      git rev-list --count {baseline_sha}..{target_sha}
      git log --oneline --merges --grep="Merged PR" {baseline_sha}..{target_sha} | wc -l
      ```
+
      Store as `COMMIT_COUNT` and `PR_COUNT`.
 
 4. **Baseline code access — reuse or create worktree:**
+
    ```
    # Check for existing worktree
    git worktree list
@@ -83,9 +92,11 @@ Use incremental analysis when ALL of these conditions are met:
    # If not → create one:
    git worktree add ../baseline-{baseline_sha_short} {baseline_sha}
    ```
+
    Store the worktree path as `BASELINE_WORKTREE` for old-code verification in later phases.
 
 5. **Create output folder:**
+
    ```
    threat-model-{YYYYMMDD-HHmmss}/
    ```
@@ -109,6 +120,7 @@ Store as the "inherited inventory" — the structural foundation.
 ```
 
 **Do NOT read the full prose** from the old report's markdown files yet. Only load structured data. Read old report prose on-demand when:
+
 - Verifying if a specific code pattern was previously analyzed
 - Resolving ambiguity about a component's role or classification
 - Historical context needed for a finding status decision
@@ -187,6 +199,7 @@ For EACH component in inherited inventory:
 ## Phase 4: Generate Report Files
 
 Now generate all report files. **Read the relevant skill files before starting:**
+
 - `orchestrator.md` — mandatory rules 1–34 apply to all report files
 - `output-formats.md` — templates and format rules
 - `diagram-conventions.md` — diagram colors and styles
@@ -208,7 +221,7 @@ Now generate all report files. **Read the relevant skill files before starting:*
 
   ⛔ **DEPLOYMENT CLASSIFICATION IS MANDATORY (even in incremental mode):**
   The `0.1-architecture.md` MUST contain:
-  1. `**Deployment Classification:** \`[VALUE]\`` line (e.g., `K8S_SERVICE`, `LOCALHOST_DESKTOP`)
+  1. `**Deployment Classification:** \`[VALUE]\`` line (e.g., `K8S_SERVICE`,`LOCALHOST_DESKTOP`)
   2. `### Component Exposure Table` with columns: Component, Listens On, Auth Required, Reachability, Min Prerequisite, Derived Tier
   If the baseline had these, carry them forward and update for new/modified components.
   If the baseline did NOT have these, **derive them from code NOW** — they are required for all subsequent steps.
@@ -245,6 +258,7 @@ Now generate all report files. **Read the relevant skill files before starting:*
 - **Read `skeletons/skeleton-stride-analysis.md` first** — use Summary table and per-component structure
 
 **⛔ CRITICAL REMINDERS FOR INCREMENTAL STRIDE (these rules from `orchestrator.md` apply identically here):**
+
 1. **The "A" in STRIDE-A is ALWAYS "Abuse"** (business logic abuse, workflow manipulation, feature misuse). NEVER use "Authorization" as the STRIDE-A category name. This applies to threat ID suffixes (T01.A), N/A justification labels, and all prose. Authorization issues fall under Elevation of Privilege (E), not the A category.
 2. **The `## Summary` table MUST appear at the TOP of the file**, immediately after `## Exploitability Tiers`, BEFORE any individual component sections. Use this EXACT structure at the top:
 
@@ -267,10 +281,11 @@ Now generate all report files. **Read the relevant skill files before starting:*
 ## [First Component Name]
 ```
 
-3. **STRIDE categories may produce 0, 1, 2, 3+ threats** per component. Do NOT cap at 1 threat per category. Components with rich security surfaces should typically have 2-4 threats per relevant category. If every STRIDE cell in the Summary table is 0 or 1, the analysis is too shallow — go back and identify additional threat vectors. The Summary table columns reflect actual threat counts.
-4. **⛔ PREREQUISITE FLOOR CHECK (per threat):** Before assigning a prerequisite to any threat, look up the component's `Min Prerequisite` and `Derived Tier` in the Component Exposure Table (`0.1-architecture.md`). The threat's prerequisite MUST be ≥ the component's floor. The threat's tier MUST be ≥ the component's derived tier. Use the canonical prerequisite→tier mapping from `analysis-principles.md`. Prerequisites MUST use only canonical values: `None`, `Authenticated User`, `Privileged User`, `Internal Network`, `Local Process Access`, `Host/OS Access`, `Admin Credentials`, `Physical Access`, `{Component} Compromise`. ⛔ `Application Access` and `Host Access` are FORBIDDEN.
+1. **STRIDE categories may produce 0, 1, 2, 3+ threats** per component. Do NOT cap at 1 threat per category. Components with rich security surfaces should typically have 2-4 threats per relevant category. If every STRIDE cell in the Summary table is 0 or 1, the analysis is too shallow — go back and identify additional threat vectors. The Summary table columns reflect actual threat counts.
+2. **⛔ PREREQUISITE FLOOR CHECK (per threat):** Before assigning a prerequisite to any threat, look up the component's `Min Prerequisite` and `Derived Tier` in the Component Exposure Table (`0.1-architecture.md`). The threat's prerequisite MUST be ≥ the component's floor. The threat's tier MUST be ≥ the component's derived tier. Use the canonical prerequisite→tier mapping from `analysis-principles.md`. Prerequisites MUST use only canonical values: `None`, `Authenticated User`, `Privileged User`, `Internal Network`, `Local Process Access`, `Host/OS Access`, `Admin Credentials`, `Physical Access`, `{Component} Compromise`. ⛔ `Application Access` and `Host Access` are FORBIDDEN.
 
 **⛔ HEADING ANCHOR RULE (applies to ALL output files):** ALL `##` and `###` headings in every output file must be PLAIN text — NO status tags (`[Existing]`, `[Fixed]`, `[Partial]`, `[New]`, `[Removed]`, or any old-style tags) in heading text. Tags break markdown anchor links and pollute table-of-contents. Place status annotations on the FIRST LINE of the section/finding body instead:
+
 - ✅ `## KmsPluginProvider` with first line `> **[New]** Component added in this release.`
 - ✅ `### FIND-01: Missing Auth Check` with first line `> **[Existing]**`
 - ❌ `## KmsPluginProvider [New]` (breaks `#kmspluginprovider` anchor)
@@ -281,24 +296,27 @@ This rule applies to: `0.1-architecture.md`, `2-stride-analysis.md`, `3-findings
 For each component, the STRIDE analysis approach depends on its change status:
 
 | Component Status | STRIDE Approach |
-|-----------------|-----------------|
+| ----------------- | ----------------- |
 | **Unchanged** | Carry forward all threat entries from old report with `[STILL PRESENT]` annotation. Re-verify each threat's mitigation status against current code. |
 | **Modified** | Re-analyze the component with access to the diff. For each old threat: determine if `still_present`, `fixed`, `mitigated`, or `modified`. Discover new threats from the code changes → classify as `new_in_modified`. |
 | **New** | Full fresh STRIDE-A analysis (same as single-analysis mode). All threats classified as `new_code`. |
 | **Removed** | Section header with note: "Component removed — all threats resolved with `removed_with_component` status." |
 
 **Threat ID continuity:**
+
 - Old threats keep their original IDs (e.g., T01.S, T02.T)
 - New threats continue the sequence from the old report's highest threat number
 - NEVER reassign or reuse an old threat ID
 
 **N/A categories (from §3.7 of PRD):**
+
 - Each component gets all 7 STRIDE-A categories addressed
 - Non-applicable categories: `N/A — {1-sentence justification}`
 - N/A entries do NOT count toward threat totals
 
 **Status annotation format in STRIDE tables:**
 Add a `Change` column to each threat table row with one of:
+
 - `Existing` — threat exists in current code, same as before (includes threats with minor detail changes)
 - `Fixed` — vulnerability was remediated (cite the specific code change)
 - `New` — threat from a new component, code change, or previously unidentified
@@ -313,6 +331,7 @@ Add a `Change` column to each threat table row with one of:
   JSON change_status keeps the detailed values for programmatic use. -->
 
 ⛔ POST-STEP CHECK: After writing the Change column for ALL threats, verify:
+
   1. Every threat row has exactly one of: Existing, Fixed, New, Removed
   2. No old-style tags: Still Present, New (Code), New (Modified), Previously Unidentified
   3. Fixed threats cite the specific code change
@@ -325,6 +344,7 @@ The skeleton defines the EXACT structure for each finding block, including the m
 ⛔ **DEPLOYMENT CONTEXT GATE (FAIL-CLOSED) — applies to ALL findings (new and carried-forward):**
 Read `0.1-architecture.md` Deployment Classification and Component Exposure Table.
 If classification is `LOCALHOST_DESKTOP` or `LOCALHOST_SERVICE`:
+
 - ZERO findings may have `Exploitation Prerequisites` = `None` → fix to `Local Process Access` or `Host/OS Access`
 - ZERO findings may be in `## Tier 1` → downgrade to T2/T3
 - ZERO CVSS vectors may use `AV:N` unless component has `Reachability = External`
@@ -337,7 +357,7 @@ For ALL classifications:
 For each old finding, verify against the current code:
 
 | Situation | change_status | Action |
-|-----------|---------------|--------|
+| ----------- | --------------- | -------- |
 | Code unchanged, vulnerability intact | `still_present` | Carry forward with `> **[Existing]**` on first line of body |
 | Code changed to fix the vulnerability | `fixed` | Mark with `> **[Fixed]**`, cite the specific code change |
 | Code changed partially | `partially_mitigated` | Mark with `> **[Partial]**`, explain what changed and what remains |
@@ -346,7 +366,7 @@ For each old finding, verify against the current code:
 For new findings:
 
 | Situation | change_status | Label |
-|-----------|---------------|-------|
+| ----------- | --------------- | ------- |
 | New component, new vulnerability | `new_code` | `> **[New]**` |
 | Existing component, vulnerability introduced by code change | `new_in_modified` | `> **[New]**` — cite the specific change |
 | Existing component, vulnerability was in old code but missed | `previously_unidentified` | `> **[New]**` — verify against baseline worktree |
@@ -358,6 +378,7 @@ For new findings:
   4. JSON change_status uses the detailed values (still_present, new_code, etc.) for programmatic comparison -->
 
 **Finding ID continuity:**
+
 - Old findings keep their original IDs (FIND-01 through FIND-N)
 - New findings continue the sequence: FIND-N+1, FIND-N+2, ...
 - No gaps, no duplicates
@@ -365,6 +386,7 @@ For new findings:
 - **Document order**: Findings are sorted by Tier (1→2→3), then by severity (Critical→Important→Moderate→Low), then by CVSS descending — same as standalone analysis. Because old IDs are preserved, the ID numbers may NOT be numerically ascending in the document. This is acceptable in incremental mode — ID stability for cross-report tracing takes precedence over sequential ordering. The `### FIND-XX:` headings will appear in tier/severity order, not ID order.
 
 **Previously-unidentified verification procedure:**
+
 1. Identify the finding's component and evidence files
 2. Read the same files at the baseline commit: `cat {BASELINE_WORKTREE}/{file_path}`
 3. If the vulnerability pattern exists in the old code → `previously_unidentified`
@@ -448,6 +470,7 @@ Same schema as single analysis, with additional fields:
 Standard assessment sections (all 7 mandatory) plus incremental-specific sections:
 
 **Standard sections (same as single analysis):**
+
 1. Report Files
 2. Executive Summary (with `> **Note on threat counts:**` blockquote)
 3. Action Summary (with `### Quick Wins`)
@@ -505,6 +528,7 @@ These vulnerabilities were present in the baseline code at commit `{baseline_sha
 ```
 
 **Report Metadata additions:**
+
 ```markdown
 | Baseline Report | `{baseline_folder}` |
 | Baseline Commit | `{baseline_sha}` (`{baseline_commit_date}` — run `git log -1 --format="%cs" {baseline_sha}`) |
@@ -608,6 +632,7 @@ Generate a self-contained HTML file that visualizes the comparison. All data com
 ```
 
 **Styling rules:**
+
 - Self-contained: ALL CSS in inline `<style>` block. No CDN links.
 - Color conventions: green (#28a745) = fixed, red (#dc3545) = new vulnerability, amber (#fd7e14) = previously unidentified, gray (#6c757d) = still present, blue (#2171b5) = modified
 - Print-friendly: include `@media print` styles
@@ -624,6 +649,7 @@ Run the standard `verification-checklist.md` (Phases 0–9) against the new repo
 ### 5b. Incremental Verification
 
 After standard verification passes, run the incremental-specific checks from `experiment-history/mode-c-verification-suite.md` (Phases 1–9, 33 checks). These verify:
+
 - Structural continuity (every old item accounted for)
 - Code-verified status accuracy (e.g., "fixed" actually verified against code diff)
 - Previously-unidentified classification (verified against baseline worktree)
@@ -651,6 +677,7 @@ These rules supplement (not replace) the 34 mandatory rules from `orchestrator.m
 ### Rule I1: Old Report Assessment Judgments Are Preserved
 
 When the new analysis would assign a different TMT category, component type, tier, or threat relevance than the old report → preserve the old report's value. Log the disagreement in Needs Verification with:
+
 - Old value
 - New analysis's proposed value
 - 1-2 sentence reasoning
@@ -681,6 +708,7 @@ The baseline worktree may be reused by future incremental analyses. Do NOT run `
 ### Rule I7: Change Status Consistency
 
 A component's `change_status` must be consistent with its threats' and findings' statuses:
+
 - `unchanged` component → its threats should be `still_present` (or `previously_unidentified` for newly discovered threats in unchanged code)
 - `removed` component → ALL its threats/findings must be `removed_with_component`
 - `modified` component → at least one threat should be `modified`, `fixed`, or `new_in_modified`
@@ -689,6 +717,7 @@ A component's `change_status` must be consistent with its threats' and findings'
 ### Rule I8: Carry Forward, Don't Copy
 
 "Carry forward" means regenerating a threat/finding entry that says the same thing — NOT literally copy-pasting old report text. The regenerated entry should:
+
 - Use the same ID
 - Reference current file paths (even if unchanged)
 - Be phrased in present tense about the current code
@@ -699,7 +728,7 @@ A component's `change_status` must be consistent with its threats' and findings'
 ## Summary: Phase-by-Phase Checklist
 
 | Phase | Action | Success Criteria |
-|-------|--------|-----------------|
+| ------- | -------- | ----------------- |
 | 0 | Setup, validate inputs, worktree | All inputs exist, worktree accessible |
 | 1 | Load old inventory skeleton | All arrays populated, metrics match |
 | 2 | Per-component change detection | Every component has a `change_status` |

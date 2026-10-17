@@ -37,7 +37,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ### What to Write
 
 | Focus | Example |
-|-------|---------|
+| ------- | --------- |
 | Behavior | "should add two numbers" |
 | Edge cases | "should handle empty input" |
 | Error states | "should throw for invalid data" |
@@ -73,7 +73,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ### What to Improve
 
 | Area | Action |
-|------|--------|
+| ------ | -------- |
 | Duplication | Extract common code |
 | Naming | Make intent clear |
 | Structure | Improve organization |
@@ -92,7 +92,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 Every test follows:
 
 | Step | Purpose |
-|------|---------|
+| ------ | --------- |
 | **Arrange** | Set up test data |
 | **Act** | Execute code under test |
 | **Assert** | Verify expected outcome |
@@ -102,7 +102,7 @@ Every test follows:
 ## 7. When to Use TDD
 
 | Scenario | TDD Value |
-|----------|-----------|
+| ---------- | ----------- |
 | New feature | High |
 | Bug fix | High (write test first) |
 | Complex logic | High |
@@ -114,7 +114,7 @@ Every test follows:
 ## 8. Test Prioritization
 
 | Priority | Test Type |
-|----------|-----------|
+| ---------- | ----------- |
 | 1 | Happy path |
 | 2 | Error cases |
 | 3 | Edge cases |
@@ -125,7 +125,7 @@ Every test follows:
 ## 9. Anti-Patterns
 
 | ❌ Don't | ✅ Do |
-|----------|-------|
+| ---------- | ------- |
 | Skip the RED phase | Watch test fail first |
 | Write tests after | Write tests before |
 | Over-engineer initial | Keep it simple |
@@ -139,7 +139,7 @@ Every test follows:
 ### Multi-Agent Pattern
 
 | Agent | Role |
-|-------|------|
+| ------- | ------ |
 | Agent A | Write failing tests (RED) |
 | Agent B | Implement to pass (GREEN) |
 | Agent C | Optimize (REFACTOR) |

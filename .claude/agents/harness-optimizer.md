@@ -35,7 +35,7 @@ For every task marked `[x]` (complete) in DAILY.md, verify that BEFORE the compl
 the history contains at least one of these verification commands:
 
 | Expected evidence | Counts as proof |
-|-------------------|----------------|
+| ------------------- | ---------------- |
 | `npm test` / `yarn test` / `bun test` | Test run |
 | `pytest` / `python -m pytest` | Test run |
 | `go test ./...` | Test run |

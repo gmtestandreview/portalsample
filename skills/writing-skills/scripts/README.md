@@ -61,6 +61,11 @@ After installation, the `skills-ref` executable will be available on your `PATH`
 Run commands from this `scripts/` directory so the local package and
 `pyproject.toml` settings resolve correctly.
 
+The test environment is pinned to Python **3.14.7** in `.python-version`.
+Use `uv sync --group dev` to create or update it, then confirm
+`uv run python --version` before running tests. Pip-based test environments
+should also use Python 3.14.7.
+
 These commands run deterministic parser, validator, prompt, and CLI tests. They
 do not execute behavioral skill-output evaluations. For output-quality evals,
 read and apply `../references/evaluating-skill-output.md`, then use
@@ -117,6 +122,12 @@ python -m pytest tests/test_cli.py
 # Validate a skill
 skills-ref validate path/to/skill
 
+# Validate a frozen evaluation record (consistency, not acceptance)
+skills-ref validate-evidence path/to/run.json --root path/to/evidence-root
+
+# Also check capacity, checkpoint and question before optional dispatch
+skills-ref validate-evidence path/to/run.json --root path/to/evidence-root --dispatch
+
 # Read skill properties (outputs JSON)
 skills-ref read-properties path/to/skill
 
@@ -125,6 +136,11 @@ skills-ref to-prompt path/to/skill-a path/to/skill-b
 ```
 
 ### Python API
+
+The evaluation record contract and limits are documented in
+[bounded optimisation](../references/bounded-optimisation.md). The preflight is
+read-only and accepts an honest HOLD; it is not an agent runner or semantic
+grader. Keep required host evidence separate from static test success.
 
 ```python
 from pathlib import Path

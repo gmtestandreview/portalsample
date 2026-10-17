@@ -60,7 +60,6 @@ Use the narrowest grouping mechanism that solves the stated problem:
 Dependencies matching multiple same-ecosystem groups go to the first matching group, so order groups
 intentionally.
 
-
 ## Reviewing Open Dependabot PRs
 
 Treat review and merge as separate authorization levels.

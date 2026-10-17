@@ -13,10 +13,12 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, TypedDict, cast
+from typing import TypedDict, cast
 
 try:
     from scripts.eval_control import (
@@ -359,6 +361,103 @@ def _load_json(path: Path) -> object:
         ) from exc
 
 
+def _record_description_error(
+    control: EvaluationControl | None,
+    spec: AttemptSpec | None,
+    error: BaseException,
+) -> None:
+    if control is not None and spec is not None:
+        control.record_error(spec, error)
+
+
+def _try_cached_description(
+    control: EvaluationControl,
+    spec: AttemptSpec,
+    result_parser: Callable[[str], str] | None,
+) -> str | None:
+    """Return a cached description wrapped in tags, or None if unavailable."""
+
+    def validate(result: CachedResult) -> str | None:
+        if result.outcome != "description" or not result.value:
+            return "cached description is empty or has the wrong outcome"
+        if len(result.value) > _MAX_DESCRIPTION_CHARS:
+            return "cached description exceeds the hard length limit"
+        if result_parser is not None:
+            try:
+                result_parser(f"<new_description>{result.value}</new_description>")
+            except Exception as exc:
+                return f"cached description is malformed: {exc}"
+        return None
+
+    cached = control.consume_cached(spec, validate)
+    if cached is not None and cached.value is not None:
+        return f"<new_description>{cached.value}</new_description>"
+    if not control.reserve_call(spec):
+        raise RuntimeError(
+            f"description call unavailable: {control.stop_reason or 'permit rejected'}"
+        )
+    return None
+
+
+def _build_claude_command(model: str | None) -> list[str]:
+    cmd = [shutil.which("claude") or "claude", "-p", "--output-format", "text"]
+    if model:
+        if os.name == "nt" and not _MODEL_NAME_RE.fullmatch(model):
+            raise ValueError("model contains unsupported characters on Windows")
+        cmd.extend(["--model", model])
+    return cmd
+
+
+def _build_claude_env() -> dict[str, str]:
+    # REMEMBER_NESTED_SUMMARIZER makes the Remember plugin's hooks no-op in this
+    # throwaway session, so parallel evals do not contend for its save lock.
+    return {
+        **{key: value for key, value in os.environ.items() if key != "CLAUDECODE"},
+        "REMEMBER_NESTED_SUMMARIZER": "1",
+    }
+
+
+def _run_claude_subprocess(
+    cmd: list[str],
+    prompt: str,
+    env: dict[str, str],
+    timeout: int,
+) -> subprocess.CompletedProcess[str]:
+    try:
+        return subprocess.run(
+            cmd,
+            input=prompt,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=timeout,
+            check=False,
+            shell=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f"claude -p timed out after {timeout} seconds") from exc
+    except OSError as exc:
+        raise RuntimeError(
+            "claude CLI not found on PATH; description improvement is unavailable in this runtime"
+        ) from exc
+
+
+def _record_description_result(
+    control: EvaluationControl,
+    spec: AttemptSpec,
+    stdout: str,
+    result_parser: Callable[[str], str] | None,
+) -> None:
+    try:
+        value = result_parser(stdout) if result_parser is not None else stdout.strip()
+        if not value:
+            raise ValueError("description result is empty")
+    except Exception as exc:
+        control.record_error(spec, exc)
+        raise
+    control.record_success(spec, CachedResult(outcome="description", value=value))
+
+
 def _call_claude(
     prompt: str,
     model: str | None,
@@ -372,77 +471,27 @@ def _call_claude(
     if control is not None and spec is None:
         raise ValueError("a controller requires an attempt specification")
 
-    def validate_cached(result: CachedResult) -> str | None:
-        if result.outcome != "description" or not result.value:
-            return "cached description is empty or has the wrong outcome"
-        if len(result.value) > _MAX_DESCRIPTION_CHARS:
-            return "cached description exceeds the hard length limit"
-        if result_parser is not None:
-            try:
-                result_parser(f"<new_description>{result.value}</new_description>")
-            except Exception as exc:
-                return f"cached description is malformed: {exc}"
-        return None
-
     if control is not None and spec is not None:
-        cached = control.consume_cached(spec, validate_cached)
-        if cached is not None and cached.value is not None:
-            return f"<new_description>{cached.value}</new_description>"
-        if not control.reserve_call(spec):
-            raise RuntimeError(
-                f"description call unavailable: {control.stop_reason or 'permit rejected'}"
-            )
+        cached = _try_cached_description(control, spec, result_parser)
+        if cached is not None:
+            return cached
 
-    cmd = ["claude", "-p", "--output-format", "text"]
-    if model:
-        if os.name == "nt" and not _MODEL_NAME_RE.fullmatch(model):
-            raise ValueError("model contains unsupported characters on Windows")
-        cmd.extend(["--model", model])
-
-    # REMEMBER_NESTED_SUMMARIZER makes the Remember plugin's hooks no-op in this
-    # throwaway session, so parallel evals do not contend for its save lock.
-    env = {
-        **{key: value for key, value in os.environ.items() if key != "CLAUDECODE"},
-        "REMEMBER_NESTED_SUMMARIZER": "1",
-    }
+    cmd = _build_claude_command(model)
+    env = _build_claude_env()
 
     try:
-        result = subprocess.run(
-            cmd,
-            input=prompt,
-            capture_output=True,
-            text=True,
-            env=env,
-            timeout=timeout,
-            check=False,
-            shell=(os.name == "nt"),
-        )
-    except subprocess.TimeoutExpired as exc:
-        error = RuntimeError(f"claude -p timed out after {timeout} seconds")
-        if control is not None and spec is not None:
-            control.record_error(spec, error)
-        raise error from exc
-    except OSError as exc:
-        error = RuntimeError(
-            "claude CLI not found on PATH; description improvement is unavailable in this runtime"
-        )
-        if control is not None and spec is not None:
-            control.record_error(spec, error)
-        raise error from exc
+        result = _run_claude_subprocess(cmd, prompt, env, timeout)
+    except RuntimeError as exc:
+        _record_description_error(control, spec, exc)
+        raise
+
     if result.returncode != 0:
         error = RuntimeError(f"claude -p exited {result.returncode}\nstderr: {result.stderr}")
-        if control is not None and spec is not None:
-            control.record_error(spec, error)
+        _record_description_error(control, spec, error)
         raise error
+
     if control is not None and spec is not None:
-        try:
-            value = result_parser(result.stdout) if result_parser is not None else result.stdout.strip()
-            if not isinstance(value, str) or not value:
-                raise ValueError("description result is empty")
-        except Exception as exc:
-            control.record_error(spec, exc)
-            raise
-        control.record_success(spec, CachedResult(outcome="description", value=value))
+        _record_description_result(control, spec, result.stdout, result_parser)
     return result.stdout
 
 

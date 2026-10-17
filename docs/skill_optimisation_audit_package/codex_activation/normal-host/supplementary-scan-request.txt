@@ -1,0 +1,3 @@
+Verify the repaired installed-path permission by running exactly this single shell command:
+sonar analyze secrets 'C:/Users/gregm/.codex/skills/verification-before-completion/SKILL.md'
+Report its exit code and scanner output. Do not read any file, inspect credentials/auth/config/session files, change files, run integration or authentication commands, use network tools, or launch agents.
