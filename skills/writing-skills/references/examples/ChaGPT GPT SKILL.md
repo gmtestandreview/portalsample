@@ -1,3 +1,7 @@
+---
+name: 'ChatGPT GPT Skill'
+Description: 'This is a packaged Custom GPT instruction example for skill lifecycle review, not an installed Agent Skill or a discoverable `SKILL.md`;'
+---
 # SKILLS.md Doctor
 
 ## Artifact role and use

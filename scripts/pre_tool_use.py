@@ -11,9 +11,18 @@ import os
 import re
 import sys
 import time
-from typing import cast
+from typing import Protocol, cast
 
 type JsonObject = dict[str, object]
+
+
+class _FcntlApi(Protocol):
+    LOCK_EX: int
+    LOCK_NB: int
+    LOCK_UN: int
+
+    def flock(self, descriptor: int, operation: int) -> object: ...
+
 
 _WRAPPER_OPTIONS: dict[str, tuple[str, list[str]]] = {
     # Fixed-arity subset only. Unsupported shell/expansion modes and optional
@@ -860,7 +869,7 @@ def _summary(tool_input: dict[str, object]) -> str:
 
 
 def _lock_descriptor(descriptor: int, release: bool) -> None:
-    if os.name == "nt":
+    if sys.platform == "win32":
         import msvcrt
 
         os.lseek(descriptor, 0, os.SEEK_SET)
@@ -869,8 +878,11 @@ def _lock_descriptor(descriptor: int, release: bool) -> None:
         return
     import fcntl
 
-    mode = fcntl.LOCK_UN if release else fcntl.LOCK_EX | fcntl.LOCK_NB
-    fcntl.flock(descriptor, mode)
+    # Some type-checker platforms omit fcntl's POSIX-only names. Cast the
+    # runtime module to the API available in this branch.
+    posix_fcntl = cast(_FcntlApi, fcntl)
+    mode = posix_fcntl.LOCK_UN if release else posix_fcntl.LOCK_EX | posix_fcntl.LOCK_NB
+    posix_fcntl.flock(descriptor, mode)
 
 
 def _audit_lock(descriptor: int, *, release: bool = False) -> None:
