@@ -13,7 +13,7 @@ import sys
 import time
 from typing import Protocol, cast
 
-JsonObject = dict[str, object]
+type JsonObject = dict[str, object]
 
 
 class _FcntlApi(Protocol):
