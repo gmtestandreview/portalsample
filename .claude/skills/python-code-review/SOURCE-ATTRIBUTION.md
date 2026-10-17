@@ -11,7 +11,7 @@ activation contract, and `evals/python-expert-cases.json` preserves secondary
 source designs. Historical definitions are retained for provenance and
 regression comparison; they do not override the current activation contract.
 
-`runs/2026-10-05-performance-retest/` contains the supplied historical retest
+`evals/runs/2026-10-05-performance-retest/` contains the supplied historical retest
 artifacts. They are immutable evidence for the revisions identified by that
 campaign's manifest and hashes. Do not carry its PASS results forward to a
 different or edited revision without a fresh representative run.
