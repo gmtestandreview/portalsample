@@ -844,7 +844,7 @@ def _inline_code_options(verb: str) -> frozenset[str]:
     options = _INLINE_CODE_OPTIONS.get(verb)
     if options is not None:
         return options
-    if re.fullmatch(r"python3?(?:\.\d+)?", verb):
+    if re.fullmatch(r"python(?:[23])?(?:\.\d+)?", verb):
         return frozenset({"-c"})
     return frozenset()
 
