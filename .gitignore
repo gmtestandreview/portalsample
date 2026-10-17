@@ -92,6 +92,7 @@ test_output.txt
 # settings.local.json stays per-developer: machine-specific absolute paths and
 # personal pre-approvals, merged over settings.json at runtime.
 .claude/settings.local.json
+.claude/settings.local.json.*.bak
 
 # SonarScanner working directory. Regenerated on every `sonar-scanner` run and
 # ~4 MB per analysis (protobuf UDG graphs, report staging). Build artifact, not
@@ -110,6 +111,7 @@ test_output.txt
 .agent-sync/logs/
 .agent-sync/sdd/
 .agent-sync/brainstorm/
+.agent-sync/*.pid
 __pycache__/
 .ruff_cache/
 

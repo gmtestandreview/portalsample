@@ -459,7 +459,7 @@ const InstrumentAndRequest = () => {
       <InstrumentDetailsSection
         measurementCategoryOptions={getMeasurementCategories()}
         onMeasurementCategoryChange={onMeasurementCategoryChange}
-        artefactTypesSelected={artefactTypesSelected ?? []}
+        artefactTypesSelected={artefactTypesSelected!}
         isInstrumentOrArtefactTypeDisabled={isInstrumentOrArtefactTypeDisabled}
       />
       <RequestDetailsSection />

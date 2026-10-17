@@ -1,8 +1,8 @@
 # Devil's Advocate: Atomic Audit of the SKILL Optimisation Execution
 
-**Review date:** 17 October 2026 (Australia/Sydney)  
-**Primary source:** `Pasted text(20261016-213146).txt` (2,951 lines; 324,950 bytes).  
-**Review boundary:** The attached transcript only. No repository checkout, API token-usage logs, hidden agent turns, or actual final files were supplied for independent execution.  
+**Review date:** 17 October 2026 (Australia/Sydney)
+**Primary source:** `Pasted text(20261016-213146).txt` (2,951 lines; 324,950 bytes).
+**Review boundary:** The attached transcript only. No repository checkout, API token-usage logs, hidden agent turns, or actual final files were supplied for independent execution.
 **Actual subject of the transcript:** Mostly `skills/skill-duplication-audit/SKILL.md`; `skills/writing-skills` supplied the scoring rubric, validation guidance, and merge handoff, plus an index-path fix. This is an audit of the *skill-writing/optimisation execution*, not evidence that `skills/writing-skills/SKILL.md` itself was optimised.
 
 ## 1. Verdict

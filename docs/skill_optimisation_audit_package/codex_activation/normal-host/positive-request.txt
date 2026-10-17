@@ -6,5 +6,3 @@ conventional-commit-writer: Use when writing git commit messages in Conventional
 Show the evidence behind the classification, the proposed survivor or boundary, what must be preserved, and the final accounting. Work only with supplied evidence and applicable local instructions. Before reading a file, run sonar analyze secrets for that file. Do not read credential, auth, configuration or session files; do not use network tools or launch other agents.
 
 Environment fact: sonar CLI is installed on PATH. Invoke sonar analyze secrets directly; no preliminary availability probe is needed.
-
-

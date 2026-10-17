@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 
-import { EMPTY, NULL_VALUE, ObjProto, UNDEF_VALUE } from "../internal/constants";
+import { CALL, EMPTY, NULL_VALUE, ObjProto, TO_STRING, UNDEF_VALUE } from "../internal/constants";
 import { asString } from "../string/as_string";
 
 const ERROR_TYPE = "[object Error]";
@@ -68,7 +68,7 @@ const ERROR_TYPE = "[object Error]";
 /*#__NO_SIDE_EFFECTS__*/
 export function dumpObj(object: any, format?: boolean | number): string {
     let propertyValueDump = EMPTY;
-    const objType = ObjProto.toString.call(object);
+    const objType = ObjProto[TO_STRING][CALL](object);
     if (objType === ERROR_TYPE) {
         object = { stack: asString(object.stack), message: asString(object.message), name: asString(object.name) };
     }

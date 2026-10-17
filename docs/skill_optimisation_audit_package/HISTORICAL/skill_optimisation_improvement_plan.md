@@ -1,7 +1,7 @@
 # Implementation Plan: Make SKILL Optimisation High-Assurance and Token-Efficient
 
-**Status:** Proposed changes; **not applied to the user's repository**.  
-**Basis:** Atomic review of attached 2,951-line execution transcript (see companion report and 253-atom ledger).  
+**Status:** Proposed changes; **not applied to the user's repository**.
+**Basis:** Atomic review of attached 2,951-line execution transcript (see companion report and 253-atom ledger).
 **Target:** The orchestration and optimisation instructions in `skills/writing-skills/SKILL.md` and/or its authoritative optimisation resource(s); relevant rules and evaluators under `skills/skill-duplication-audit/`. Exact insertion points must be verified from current repository files before editing.
 
 The user wants both thorough Devil's Advocate testing **and** a finished answer. The answer is **not** to eliminate challenge: it is to deliver the *minimum additional independent evidence* needed to reach a frozen acceptance standard, then stop or preserve a ready-to-resume checkpoint.

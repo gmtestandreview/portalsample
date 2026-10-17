@@ -224,6 +224,7 @@ describe('workflow step components', () => {
       '/request-for-quote/RFQ-1/organisation-and-contact',
       '/request-for-quote/RFQ-1/instrument-and-request',
     ]);
+    await screen.findByText('Request details');
   });
 
   it('initially disables instrument type for the no-measurement category', async () => {

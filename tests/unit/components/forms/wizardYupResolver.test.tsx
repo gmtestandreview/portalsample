@@ -115,16 +115,49 @@ describe('createWizardYupResolver', () => {
 
 describe('RhfForm api', () => {
   it('throws when the api hook is used outside the form', () => {
+    const expectedError = 'useRhfFormApi must be used inside RhfForm';
+    const expectedReactError =
+      'The above error occurred in the <Probe> component:';
+    const isExpectedConsoleError = (args: unknown[]) =>
+      args.length === 1 &&
+      ((args[0] instanceof Error && args[0].message === expectedError) ||
+        (typeof args[0] === 'string' &&
+          args[0].startsWith(expectedReactError)));
     const Probe = () => {
       useRhfFormApi();
       return null;
     };
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const originalConsoleError = console.error;
+    const spy = vi.spyOn(console, 'error').mockImplementation((...args) => {
+      if (!isExpectedConsoleError(args)) {
+        originalConsoleError(...args);
+      }
+    });
+    const suppressExpectedError = vi.fn((event: ErrorEvent) => {
+      if (
+        event.error instanceof Error &&
+        event.error.message === expectedError
+      ) {
+        event.preventDefault();
+      }
+    });
+    globalThis.addEventListener('error', suppressExpectedError);
     try {
-      expect(() => render(<Probe />)).toThrow(
-        'useRhfFormApi must be used inside RhfForm'
+      expect(() => render(<Probe />)).toThrow(expectedError);
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining(expectedReactError)
       );
+      expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
+      expect(suppressExpectedError).toHaveBeenCalled();
+      expect(
+        suppressExpectedError.mock.calls.every(
+          ([event]) =>
+            event.error instanceof Error &&
+            event.error.message === expectedError
+        )
+      ).toBe(true);
     } finally {
+      globalThis.removeEventListener('error', suppressExpectedError);
       spy.mockRestore();
     }
   });

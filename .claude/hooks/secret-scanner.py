@@ -21,7 +21,7 @@ class Finding(TypedDict):
 
 
 # Secret detection patterns with descriptions
-SECRET_PATTERNS = [
+DETECTION_PATTERNS = [
     # AWS Keys
     (r"AKIA[0-9A-Z]{16}", "AWS Access Key ID", "high"),
     (
@@ -223,7 +223,7 @@ def scan_file(file_path: str) -> list[Finding]:
             content = f.read()
 
         for line_num, line in enumerate(content.split("\n"), 1):
-            for pattern, description, severity in SECRET_PATTERNS:
+            for pattern, description, severity in DETECTION_PATTERNS:
                 matches = re.finditer(pattern, line)
                 for _match in matches:
                     # Skip if it looks like a comment or example
