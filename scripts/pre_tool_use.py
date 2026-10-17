@@ -640,17 +640,16 @@ def _unsafe_cmd_delete(
 
 def _unsafe_recursive_delete(
     recursive: bool,
-    force: bool,
     targets: list[str],
     cleanup_allowed: bool,
 ) -> bool:
     if not recursive:
         return False
     dangerous_target = any(_is_dangerous_target(target) for target in targets)
-    unsafe_forced_delete = force and not (
-        cleanup_allowed and targets and all(_is_safe_target(target) for target in targets)
+    safe_cleanup = (
+        cleanup_allowed and bool(targets) and all(_is_safe_target(target) for target in targets)
     )
-    return dangerous_target or unsafe_forced_delete
+    return dangerous_target or not safe_cleanup
 
 
 def _remover_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | None:
@@ -658,7 +657,7 @@ def _remover_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
     # Preserve the old CMD force/recursive protection, including /s/q.
     if _unsafe_cmd_delete(verb, recursive, force, targets, cleanup_allowed, args):
         return "recursive-delete"
-    if _unsafe_recursive_delete(recursive, force, targets, cleanup_allowed):
+    if _unsafe_recursive_delete(recursive, targets, cleanup_allowed):
         return "recursive-delete"
     return None
 
@@ -677,7 +676,12 @@ def _command_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
 
 def _is_destructive(command: str, shell: str = "") -> str | None:
     cleanup_allowed = _cleanup_allowed()
-    for verb, args in commands(command, shell=shell):
+    for command_index, (verb, args) in enumerate(commands(command, shell=shell)):
+        # A prior command can replace an approved directory with a symlink or
+        # junction before the recursive delete runs. Do not authorize a safe
+        # cleanup path after any earlier command in the same tool call.
+        if command_index:
+            cleanup_allowed = False
         if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl", "__location_change__"}:
             cleanup_allowed = False
         rule = _command_rule(verb, args, cleanup_allowed)
@@ -728,6 +732,13 @@ _ENV_EXEMPT_VERBS = {
     "test-path",
     "test",
     "stat",
+}
+_INLINE_CODE_OPTIONS: dict[str, frozenset[str]] = {
+    "node": frozenset({"-e", "--eval", "-p", "--print"}),
+    "nodejs": frozenset({"-e", "--eval", "-p", "--print"}),
+    "py": frozenset({"-c"}),
+    "python": frozenset({"-c"}),
+    "python3": frozenset({"-c"}),
 }
 
 
@@ -820,11 +831,55 @@ def _has_env_path_access(tool_name: str, tool_input: dict[str, object]) -> bool:
     return False
 
 
+def _inline_code_options(verb: str) -> frozenset[str]:
+    options = _INLINE_CODE_OPTIONS.get(verb)
+    if options is not None:
+        return options
+    if re.fullmatch(r"python3?(?:\.\d+)?", verb):
+        return frozenset({"-c"})
+    return frozenset()
+
+
+def _has_inline_code_access(verb: str, args: list[str]) -> bool:
+    options = _inline_code_options(verb)
+    if not options:
+        return False
+    for arg in args:
+        low = arg.lower()
+        if low in options:
+            return True
+        if any(low.startswith(option) for option in options if len(option) == 2):
+            return True
+        if low.startswith(("--eval=", "--print=")):
+            return True
+    return False
+
+
+def _has_env_loader_access(verb: str, args: list[str]) -> bool:
+    if verb not in {"node", "nodejs"}:
+        return False
+    for index, arg in enumerate(args):
+        low = arg.lower()
+        if low.startswith(("-r", "--require=")) and "dotenv" in low:
+            return True
+        if (
+            low in {"-r", "--require"}
+            and index + 1 < len(args)
+            and "dotenv" in args[index + 1].lower()
+        ):
+            return True
+    return False
+
+
 def _has_env_command_access(tool_name: str, tool_input: dict[str, object]) -> bool:
     command = tool_input.get("command")
     if tool_name not in _COMMAND_TOOLS or not isinstance(command, str):
         return False
     for verb, args in commands(command, shell=tool_name):
+        # Inline interpreter code is opaque to this lexical parser and can
+        # construct secret paths dynamically, so it must fail closed.
+        if _has_inline_code_access(verb, args) or _has_env_loader_access(verb, args):
+            return True
         for index, arg in enumerate(args[:-1]):
             if arg in {"<", ">"} and _is_env_file(args[index + 1]):
                 return True

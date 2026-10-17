@@ -282,6 +282,12 @@ DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", f"{_RM_RF} -- .scannerwork/cache", ALLOW),
     ("PowerShell", f"Remove-Item {_RECURSE_FORCE} -LiteralPath .scannerwork/cache", ALLOW),
     ("Bash", f"{_RM_RF} .scannerwork/../../src", BLOCK),
+    ("Bash", "rm -r ../outside", BLOCK),
+    ("Bash", "rm -r /tmp/anything", BLOCK),
+    ("PowerShell", "Remove-Item -Recurse ../outside", BLOCK),
+    ("Bash", "rm -r .scannerwork/cache", ALLOW),
+    ("PowerShell", "Remove-Item -Recurse .scannerwork/cache", ALLOW),
+    ("Bash", "rm -f marker; rm -r .scannerwork/cache", BLOCK),
 ]
 
 
@@ -386,6 +392,14 @@ ENV_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", "cat docs/environment.md", ALLOW),
     ("Bash", 'eval "cat .env"', BLOCK),
     ("PowerShell", 'iex "Get-Content .env"', BLOCK),
+    ("Bash", "python -c \"print(open('.env').read())\"", BLOCK),
+    ("Bash", "python3 -c \"print(open('.env').read())\"", BLOCK),
+    ("Bash", "node -e \"fs.readFileSync('.env')\"", BLOCK),
+    ("Bash", "node --eval \"fs.readFileSync('.env')\"", BLOCK),
+    ("Bash", "python -c \"print(open('.env.example').read())\"", BLOCK),
+    ("Bash", "python -cprint(open('.env').read())", BLOCK),
+    ("Bash", "python -c \"print(open('.' + 'env').read())\"", BLOCK),
+    ("Bash", "node -r dotenv/config app.js", BLOCK),
 ]
 
 
