@@ -14,6 +14,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import TypedDict
@@ -151,6 +152,34 @@ def test_missing_guard_still_allows_when_python314_helper_is_absent() -> None:
         code, stderr = run(folder, READ_OK)
         assert code == 0
         assert "inactive" in stderr
+
+
+def test_lock_descriptor_uses_sys_platform_guard() -> None:
+    """Regression: mypy only narrows platform-conditional imports via sys.platform."""
+    source = GUARD.read_text(encoding="utf-8")
+    assert "sys.platform" in source, "_lock_descriptor must use sys.platform for mypy"
+    assert 'os.name == "nt"' not in source, "os.name guard is invisible to mypy"
+
+
+def test_lock_descriptor_acquires_and_releases() -> None:
+    """The locking function works on the current platform."""
+    with tempfile.TemporaryDirectory(prefix="lock-") as directory:
+        lock_path = os.path.join(directory, "test.lock")
+        fd = os.open(lock_path, os.O_CREAT | os.O_RDWR)
+        try:
+            if sys.platform == "win32":
+                import msvcrt
+
+                os.lseek(fd, 0, os.SEEK_SET)
+                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+                msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+            else:
+                import fcntl
+
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                fcntl.flock(fd, fcntl.LOCK_UN)
+        finally:
+            os.close(fd)
 
 
 def main() -> int:

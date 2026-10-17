@@ -11,7 +11,8 @@ the canonical repository policy: path-specific instruction files supplement it
 only within their stated scope, and this file takes precedence when instructions
 conflict unless the task explicitly requires a policy change. Policy-sensitive
 files may be edited only when the task explicitly requests that policy change;
-application-code tasks must leave them unchanged. Markdown formatting follows
+For application-code tasks, leave them unchanged unless the task explicitly
+requests that policy change. Markdown formatting follows
 Prettier where applicable, while fenced code blocks retain a language identifier
 when the language is known and normal Markdown links use the form
 `[descriptive text](target)`.
@@ -113,8 +114,10 @@ ClientApp/media/                     ← captured media assets
 
 ### Environment Variables
 
-Config is injected at runtime into `window.*` — **not** `process.env`. Always
-use the `env` object from `ClientApp/src/env.ts`:
+Config is injected at runtime into `window.*` — **not** `process.env`. For
+handwritten browser-runtime application code, always use the `env` object from
+`ClientApp/src/env.ts`; Node-only tooling and tests may use `process.env` when
+that is their explicit runtime contract:
 
 ```ts
 import { env } from '../env';
@@ -153,7 +156,9 @@ forms pass `displayHeaderAndFooter={false}` to suppress the main chrome:
 `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`,
 `.noConsecutivePuncuation()`, `.numberWithinRange()`.
 
-**Always import the side-effect module** in any file that uses these methods:
+Import the side-effect module in files that use these methods. A local import
+is unnecessary only when a shared initialization path is guaranteed to import
+it before the schema is evaluated; do not rely on incidental import order.
 
 ```ts
 import '../../validationSchemas/yupExtensions';
@@ -176,16 +181,18 @@ guards.
 
 ### SCSS Module System
 
-All new SCSS files must use `@use` / `@forward`, not `@import`. The `@import`
-rule is deprecated in Dart Sass and will be removed in Sass 3.
+All new authored SCSS files must use `@use` / `@forward`, not `@import`. The
+`@import` rule is deprecated in Dart Sass and will be removed in Sass 3;
+generated or vendored Sass follows its upstream source and is not edited here.
 
 **Bootstrap shim**: `ClientApp/src/styles/_bootstrap-import.scss` isolates the
 Bootstrap `@import` to a single file. `index.scss` imports the shim
 (`@import './bootstrap-import'`) rather than Bootstrap directly. Do not add
 `@import 'bootstrap/scss/bootstrap'` anywhere else.
 
-**Division**: All Sass division must use `math.div()`. Any file using
-`math.div()` must declare `@use 'sass:math';` as its first `@use` statement:
+**Division**: In authored SCSS, all Sass division must use `math.div()`. Any
+authored file using `math.div()` must declare `@use 'sass:math';` as its first
+`@use` statement. Generated or vendored Sass follows its upstream source:
 
 ```scss
 @use 'sass:math';
@@ -202,9 +209,11 @@ Bootstrap 5 internal available only via the global `@import` cascade. Full
 
 ## Storybook
 
-When working on UI components, always use the `my-storybook-mcp-server` MCP
-tools to access Storybook's component and documentation knowledge before
-answering or taking any action.
+For UI component work in a configured Storybook environment, use the
+`my-storybook-mcp-server` MCP tools to access Storybook's component and
+documentation knowledge before answering or taking any action. If the endpoint
+is unavailable, record that limitation and do not infer undocumented
+component properties.
 
 ### Storybook async/render hygiene
 
@@ -216,7 +225,7 @@ await the user-visible settled state in the story play function with
 behind `useEffect` + `setState`; it creates post-render updates outside the
 Storybook test interaction boundary.
 
-Before the first Storybook MCP call, ensure `npm run storybook` is running and
+When a UI task uses Storybook MCP, first ensure `npm run storybook` is running and
 `http://localhost:6006/mcp` responds successfully. Confirm `codex mcp list`
 shows `my-storybook-mcp-server` enabled and
 `codex mcp get my-storybook-mcp-server` reports the expected URL. If Codex
@@ -224,10 +233,10 @@ started before Storybook was ready and the tools are absent, restart the Codex
 client or extension after the endpoint is healthy; do not bypass the MCP
 requirement.
 
-- **CRITICAL: Never hallucinate component properties!** Before using ANY
-  property on a component from a design system (including common-sounding ones
-  like `shadow`, etc.), you MUST use the MCP tools to check if the property is
-  actually documented for that component.
+- **CRITICAL: Never hallucinate component properties!** For each property on a
+  design-system component, including common-sounding ones like `shadow`, verify
+  it against the available MCP documentation or example stories before using
+  it. If that evidence is unavailable, do not infer the property.
 - Query `list-all-documentation` to get a list of all components
 - Query `get-documentation` for that component to see all available properties
   and examples
@@ -240,8 +249,8 @@ requirement.
   current conventions and recommendations.
 - Check your work by running `run-story-tests`.
 
-Remember: A story name might not reflect the property name correctly, so always
-verify properties through documentation or example stories before using them.
+Remember: when a story name might not reflect the property name correctly,
+verify the property through documentation or example stories before using it.
 
 ## Edit Boundaries
 
@@ -358,8 +367,8 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
   owns eval/benchmark/package tooling and Claude Code runtime activation.
 - `skill-duplication-audit`: Two or more skills appear to overlap in scope and
   need classification.
-- `smart-init`: `INIT.md` is missing and the project needs conversational
-  onboarding.
+- `smart-init`: The project's initialization instructions are missing and it
+  needs conversational onboarding.
 - `subagent-driven-development`: Executing a plan with independent tasks in the
   current session — fresh subagent per task, two-stage review.
 - `systematic-debugging`: Any bug, failing or flaky test, regression, crash, or

@@ -186,7 +186,7 @@ This skill automates a repetitive task (writing commit messages) with a proven t
 
 See [`skills/excalidraw-diagram-generator/`](https://github.com/github/awesome-copilot/tree/main/skills/excalidraw-diagram-generator) for a skill with rich bundled resources:
 
-```
+```text
 excalidraw-diagram-generator/
 ├── SKILL.md
 ├── references/

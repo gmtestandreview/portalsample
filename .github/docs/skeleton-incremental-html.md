@@ -123,7 +123,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 </table>
 ```
 
-**MUST have 13 columns: Component + S + T + R + I + D + E + A + Total + divider + T1 + T2 + T3**
+MUST have 13 columns: Component + S + T + R + I + D + E + A + Total + divider + T1 + T2 + T3
 
 ## Section 7: Needs Verification
 

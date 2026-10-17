@@ -75,7 +75,9 @@ for pattern in "${deny_patterns[@]}"; do
 done
 
 # Redirection and command substitution can create side effects or bypass simple checks.
-if [[ "$cmd" == *">"* || "$cmd" == *'`'* || "$cmd" == *'$('* ]]; then
+backtick='`'
+command_substitution='$('
+if [[ "$cmd" == *">"* || "$cmd" == *"$backtick"* || "$cmd" == *"$command_substitution"* ]]; then
   echo "DENY: redirection or command substitution requires explicit review"
   exit 1
 fi
