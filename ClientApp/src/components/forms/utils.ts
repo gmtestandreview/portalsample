@@ -1,13 +1,6 @@
 import { removeEmptyKeys } from '../../utils';
 import { getIn, isObject, setIn } from './formPath';
-import {
-  entriesIn,
-  fromPairs,
-  isArray,
-  isBoolean,
-  isFunction,
-  toPath,
-} from 'lodash';
+import { entriesIn, fromPairs, isBoolean, isFunction, toPath } from 'lodash';
 import type { ValidationError } from 'yup';
 import type {
   FormErrors,
@@ -58,7 +51,7 @@ export const removeHidden = <T extends FormValues>(
           : !isHidden(key, hide, values)
       )
       .map(([key, value]) => {
-        if (isArray(value)) {
+        if (Array.isArray(value)) {
           const newValues: any[] = [];
           value.forEach((x) => {
             if (isObject(x)) {

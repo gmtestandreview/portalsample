@@ -1,0 +1,407 @@
+{
+  "run_id": "2026-10-17-v3-closeout",
+  "controller": "writing-skills",
+  "target": "skill-duplication-audit v1.3",
+  "acceptance_owner": "Greg (human skill owner)",
+  "revision": "baseline 191002463906329ba8fe7bdcfe2bbff15f77f891 plus artifact hashes",
+  "artifacts": [
+    {
+      "id": "0",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/DEVILS_ADVOCATE_V3_REPORT.md",
+      "sha256": "4da13ddada63ee8db991985a72955c49fc188888b7e71269c9e91c34c85e03e8"
+    },
+    {
+      "id": "1",
+      "role": "checkpoint",
+      "path": "docs/skill_optimisation_audit_package/V3_CONTINUATION_CHECKPOINT.md",
+      "sha256": "3c3f65874d5c81ae7a15ed39ff69683eb02ac34209b9d1bbcd903cf546fe527c"
+    },
+    {
+      "id": "2",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/V3_IMPLEMENTATION.md",
+      "sha256": "707a16c022834f23a487377cc55aaf4433e29503b443fff779c18b6c25de0d85"
+    },
+    {
+      "id": "3",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/v3_candidate_freeze.json",
+      "sha256": "44424cd31aa692a08b105339edb1ea834cdaad0d8071d6cc2ec976004c146bac"
+    },
+    {
+      "id": "4",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/v3_implementation_control_status.csv",
+      "sha256": "bf47d9948352ca0eaae6543acf0cf1f410fc5abbf2342e2c9083163bd51f23d5"
+    },
+    {
+      "id": "5",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/v3_implementation_controls.csv",
+      "sha256": "8533689f1db167655da8b0197a73b4e4709e34716c9d9b017b00338a3b984d5b"
+    },
+    {
+      "id": "6",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/v3_implementation_tests.csv",
+      "sha256": "e19a5ab04746689cf631b796f27ad1909afe9ae9854f37a75bea31af965091e6"
+    },
+    {
+      "id": "7",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/v3_implementation_verification.json",
+      "sha256": "50de4eb42354f195aca620d98d1da3cda981a7b5147dd315d15c2ebee5a3d1cb"
+    },
+    {
+      "id": "8",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/v3_oracle_revision.json",
+      "sha256": "ccdf5acdfda6d426f93555058c08681297ef496d5d1ff4a9ded603ab21c65b4e"
+    },
+    {
+      "id": "9",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/v3_review_evidence.md",
+      "sha256": "f0d93badf9e211325cdb926a0599767a366b633519340a41af6247dd80c86d30"
+    },
+    {
+      "id": "10",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/v3_review_raw.md",
+      "sha256": "521f228611c63ac92451811e49aa4cde46125f8218a470c89dde00ed4c28372e"
+    },
+    {
+      "id": "11",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/SKILL.md",
+      "sha256": "85502296b0563e3967556b54cbec863521734568359effff71c6620b6c7f3642"
+    },
+    {
+      "id": "12",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/evals/README.md",
+      "sha256": "0afb4f1152c6531a38537d117ee76bf5cc88e73f0745b9016c595fb630f0c9ae"
+    },
+    {
+      "id": "13",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/evals/cases/03-subset-transitive-pressure.md",
+      "sha256": "92d8c2b216b74a1b85ecf77bfd53c78d385dc9ce137c1c910e9bb4c5cc79ac51"
+    },
+    {
+      "id": "14",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/evals/cases/04-modes-handoff-contradiction.md",
+      "sha256": "88346cc3a91a7507182998bdf192839539de2a924b573d24353232295972f412"
+    },
+    {
+      "id": "15",
+      "role": "oracle",
+      "path": "skills/skill-duplication-audit/evals/expected.md",
+      "sha256": "7da2f599e1545258fcbebeb066c534c0e7cac9f4796b421cc0af558377198526"
+    },
+    {
+      "id": "16",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/evals/oracles/expected-v1.1-v1.2.md",
+      "sha256": "ee743451c47dde28f153e750a98510fe26b0e4abd0edc9d86175a08649679c67"
+    },
+    {
+      "id": "17",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/evals/oracles/expected-v1.3.md",
+      "sha256": "e32b5a5811a7dd91c0bd12ca4f91c31c2487a7f93f186b6a7b244a2b0600b284"
+    },
+    {
+      "id": "18",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/evals/results/2026-10-17-v1.3-focused.md",
+      "sha256": "c11514de085fd802f28a196a37564c866a2523aacd71db04b57f69b4051bdd90"
+    },
+    {
+      "id": "19",
+      "role": "raw",
+      "path": "skills/skill-duplication-audit/evals/results/raw/v1.3-green-s1.md",
+      "sha256": "08ef22170ff4888fcf8023ea027fe310dd67fd5012c7c3c7bdd9e81123a6a15c"
+    },
+    {
+      "id": "20",
+      "role": "raw",
+      "path": "skills/skill-duplication-audit/evals/results/raw/v1.3-oracle1.3.1-s3.md",
+      "sha256": "6c619ef268a6778e91fe80da89bb4e48f679774eebd57556b5359f980cce091a"
+    },
+    {
+      "id": "21",
+      "role": "candidate",
+      "path": "skills/skill-duplication-audit/references/validation-cases.md",
+      "sha256": "827932d211f518bcd8818786bd1c6a55b43b8115927bacb365f5705858f828db"
+    },
+    {
+      "id": "22",
+      "role": "candidate",
+      "path": "skills/writing-skills/SKILL.md",
+      "sha256": "5f0a9b3481fc9e13541ef7a094abaf6a9840bafa489707b4e6dceeb93ba50602"
+    },
+    {
+      "id": "23",
+      "role": "rubric",
+      "path": "skills/writing-skills/references/audit-scoring.md",
+      "sha256": "87fbfc1358580076e737af71860eaddb8297fdcd03ad010de032c484102cbd63"
+    },
+    {
+      "id": "24",
+      "role": "candidate",
+      "path": "skills/writing-skills/references/bounded-optimisation.md",
+      "sha256": "e4e5eafcf3f4ee735cd74260a44b300e03945b13f8e65abc650a191d16910139"
+    },
+    {
+      "id": "25",
+      "role": "candidate",
+      "path": "skills/writing-skills/references/evaluating-skill-output.md",
+      "sha256": "8f9bd6dd8504345d53fe86df4b8d57fde48c256e844fef7553be24ff7c5119c4"
+    },
+    {
+      "id": "26",
+      "role": "candidate",
+      "path": "skills/writing-skills/references/index.md",
+      "sha256": "906d3f8c9042c97dba2323b78492add53044850caf6e426454f26acea18bb808"
+    },
+    {
+      "id": "27",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/README.md",
+      "sha256": "dc94650e279dec6c39ffee6626117cb25446f2fdb34f5b3d97372e3f26be179a"
+    },
+    {
+      "id": "28",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/skills_ref/cli.py",
+      "sha256": "aa019ea9526fe3c53aa30f1539fa4ce0c09d44bec2f2eaaca912f441f7969f43"
+    },
+    {
+      "id": "29",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/skills_ref/evidence.py",
+      "sha256": "5cfe6ae2fc281cf6ee444ad39304141041c58a76f71a75916a2995fc83c58579"
+    },
+    {
+      "id": "30",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/tests/test_evidence.py",
+      "sha256": "55f2c95bcd8672af9c4d01cdf7cc625244f6dce31fcb111401a413ad6637c7de"
+    },
+    {
+      "id": "followup-0",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/tests/test_prompt.py",
+      "sha256": "4c9e9fbe5adcb8a28fbbfd8f8521d4068e896dfb91863b02e719b44a6c4f7648"
+    },
+    {
+      "id": "followup-1",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/tests/test_render_graphs.py",
+      "sha256": "4dae96ba640264662119ab7817483bf0f8f3db025f0af662562239694cf4c51e"
+    },
+    {
+      "id": "followup-2",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/V3_COLLECTION_FIX.md",
+      "sha256": "1852ca9b81f0b5be9b29d06bdea417a330d41e69cb19dc3d59d43595835a9448"
+    },
+    {
+      "id": "followup-3",
+      "role": "candidate",
+      "path": "docs/skill_optimisation_audit_package/V3_CODEX_ACTIVATION.md",
+      "sha256": "d1f2db357a5e65b607e04bd1d1948a1d30d7a94abf708e0211d8b0932de9677f"
+    },
+    {
+      "id": "followup-4",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/v3_collection_fix_verification.json",
+      "sha256": "66a90059883c9fa65a197cdb2e041d8c2ed7265534cbf550ecb25298d97bee06"
+    },
+    {
+      "id": "followup-5",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/answer-workspace-write.md",
+      "sha256": "4a7a47c2a86f49735cff17a92d8112b434b68a1c0aae4f42a41c961fd6177bb9"
+    },
+    {
+      "id": "followup-6",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/answer.md",
+      "sha256": "01df3609bb9b4a9dd279ce614e411bd57c33350d4b8d99fc6a693649ade7b274"
+    },
+    {
+      "id": "followup-7",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/events-workspace-write.jsonl",
+      "sha256": "6e7a4bf4d00c25586aadb4e324a5bc67e076ae2cafc101c1e6171cde356c9a3f"
+    },
+    {
+      "id": "followup-8",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/events.jsonl",
+      "sha256": "66634df32b5aa7aafdb2538177885ddcf198605070b8787dc675ddf4aea9b16c"
+    },
+    {
+      "id": "followup-9",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/host-stderr-workspace-write.txt",
+      "sha256": "06c254e50387e353b44803fc9353c600d40ca3d4f811b1cb9d61f5b839656ea0"
+    },
+    {
+      "id": "followup-10",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/host-stderr.txt",
+      "sha256": "b650d54dbc8410ff1e39052abbc2dce149d5e642bc8206adb031609b3aa58b40"
+    },
+    {
+      "id": "followup-11",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/request.txt",
+      "sha256": "8ff3ba3660dab71786f481aef6622d5b37acb7e414d31faf4ec992b9ad95123b"
+    },
+    {
+      "id": "python-pin",
+      "role": "candidate",
+      "path": "skills/writing-skills/scripts/.python-version",
+      "sha256": "922fe0c3de073b01988e23348ea184456161678c5e329e6f34be89be24383f93"
+    },
+    {
+      "id": "python314-baseline",
+      "role": "raw",
+      "path": "docs/skill_optimisation_audit_package/v3_python314_test_baseline.json",
+      "sha256": "a9f929330464b80f898900519ea1d51cc6a91e22b8ce74d945e0869231164f99"
+    }
+  ],
+  "environment": {
+    "host": "Windows CLI and isolated synthetic Codex agents; natural acceptance not executed",
+    "interpreter": "CPython 3.13.11",
+    "tool": "skills-ref / pytest / Ruff / Pyright",
+    "tool_version": "skills-ref 0.1.0; Ruff 0.16.7; Pyright 1.1.414",
+    "config": "repository ruff.toml; Pyright CLI default",
+    "rules": "repository Ruff rules; current skill and oracle v1.3.1",
+    "file_count": 2
+  },
+  "evaluation": {
+    "evaluator": "root grading after isolated synthetic runs",
+    "kind": "behavioral",
+    "expected_case_ids": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5"
+    ],
+    "cases": [
+      {
+        "id": "R1",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "R2",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "R3",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "R4",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "S1",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "S2",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "S3",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "20"
+      },
+      {
+        "id": "S4",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      },
+      {
+        "id": "S5",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "19"
+      }
+    ],
+    "scope": "Eight unaffected cases plus fresh S3; not full campaign"
+  },
+  "summary": {
+    "PASS": 9,
+    "AMBER": 0,
+    "FAIL": 0,
+    "NHR": 0,
+    "N/A": 0
+  },
+  "score": null,
+  "gates": {
+    "static": "PASS",
+    "behavioral": "PASS",
+    "discovery": "PASS",
+    "loading": "NHR",
+    "application": "NHR",
+    "artifact": "PASS",
+    "runtime": "NHR",
+    "delivery": "PASS"
+  },
+  "budget": {
+    "optional_waves": 2,
+    "max_optional_waves": 2,
+    "remaining_capacity": null,
+    "closeout_reserve": 20,
+    "unit": "percent of planned evaluation effort",
+    "uncertainty": "",
+    "acceptance_impact": ""
+  },
+  "telemetry": {
+    "tokens": null,
+    "cached_tokens": null,
+    "agent_invocations": 5,
+    "elapsed_seconds": 4.413,
+    "elapsed_scope": "Final verification subprocess durations only; not whole-session usage"
+  },
+  "recommendation": "hold",
+  "followup": {
+    "primary_host": "Codex",
+    "secondary_host": "Claude Code (not tested)",
+    "full_suite": "Current pinned Python 3.14.7 baseline: 203 passed; previous 3.13.11 evidence is historical",
+    "activation_discovery": "PASS scoped: temporary candidate selected without explicit invocation",
+    "activation_loading": "BLOCKED: native CLI execution policy rejected required secrets scanner",
+    "activation_application": "NOT VERIFIED",
+    "activation_attempts": 2,
+    "release": "hold",
+    "candidate_scope": "Duplication v1.3 unchanged; controller natural activation not tested",
+    "current_test_python": "3.14.7"
+  }
+}

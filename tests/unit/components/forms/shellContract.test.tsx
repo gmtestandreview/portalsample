@@ -273,9 +273,7 @@ describe.each(['formik', 'rhf'] as const)(
         // The modal takes focus from the input: the blur validates asynchronously.
         await act(async () => {});
 
-        await act(async () => {
-          await user.click(screen.getByTestId('prompt-cancel-button'));
-        });
+        await user.click(screen.getByTestId('prompt-cancel-button'));
         await waitFor(() =>
           expect(
             screen.queryByTestId('prompt-save-modal')
@@ -286,9 +284,7 @@ describe.each(['formik', 'rhf'] as const)(
         await leave();
         const leaveButton = await screen.findByTestId('prompt-leave-button');
         await act(async () => {});
-        await act(async () => {
-          await user.click(leaveButton);
-        });
+        await user.click(leaveButton);
         await waitFor(() => expect(currentPath()).toBe('/other'));
       });
 

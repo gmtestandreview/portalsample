@@ -1,4 +1,5 @@
-"""Cross-platform process inspection helpers."""
+#!/usr/bin/env python3.14
+"""Cross-platform process inspection helpers for Python 3.14."""
 
 import os
 

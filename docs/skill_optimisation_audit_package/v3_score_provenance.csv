@@ -1,0 +1,13 @@
+﻿candidate_version,reported_score,score_type,rubric,evaluator,evidence_ref,disposition,verification_date
+v0.7/v0.8 early,~90; ~92-94,Static/self-estimate,unstated/not pinned,self-assessor,EXEC:L1-L22;L95-L99,UNVERIFIED estimate,2026-10-17 (historical report review only)
+v0.8,85,SKILL lifecycle/hostile audit,writing-skills audit-scoring,hostile subagent,EXEC:L403-L412,Reported; rubric/refs may not have been fully read,2026-10-17 (historical report review only)
+v0.8 with fixes,74,SKILL lifecycle/hostile audit,writing-skills audit-scoring,hostile subagent,EXEC:L314-L322;L403-L412,Reported; differing snapshot,2026-10-17 (historical report review only)
+v0.9,78,SKILL lifecycle/hostile audit,writing-skills audit-scoring,hostile subagent,EXEC:L403-L428,Post-audit final patches not rescored,2026-10-17 (historical report review only)
+v1.0,85,SKILL lifecycle/hostile audit,writing-skills audit-scoring,hostile subagent,EXEC:L1922-L1940,Reported with unresolved findings,2026-10-17 (historical report review only)
+v1.0.1,79,SKILL lifecycle/hostile audit,writing-skills audit-scoring,hostile subagent,EXEC:L1918-L1940,Reported; not final ready,2026-10-17 (historical report review only)
+v1.1,82,SKILL lifecycle/hostile audit,"normalized 77/94, N/A merge quality",auditor 1,EXEC:L2741-L2746;L2908-L2919,One auditor; required best-practices file not read,2026-10-17 (historical report review only)
+v1.1,18/18 first GREEN,Behavioral classification/contract,reported expected.md cases 01-04,GREEN evaluator,EXEC:L2937-L2945,One evaluator result; other pending; no comprehensive runtime proof,2026-10-17 (historical report review only)
+session execution,38/100,Execution process efficiency - historic reviewer rubric,prior assistant custom 100-point rubric,prior ChatGPT audit,skill_execution_devil_advocate_report.md,"Judgement, NOT token-measured and NOT SKILL score",2026-10-17 (historical report review only)
+writing-skills historical 2026-10-05,98-100 per file; entry 100,Static/per-file role quality,file-review-rubric,2026-10-05 package reviewer,2026-10-05-writing-skills-package-review.md:L1-L20,Retained secondary report; runtime HOLD,2026-10-17 (historical report review only)
+writing-skills vs skill-creator (original),97/79,Comparative package,shared adapted file review rubric,2026-10-05 SWOT reviewers,2026-10-05-writing-skills-vs-skill-creator-swot.md:L1-L25,Old comparison; not latest candidates,2026-10-17 (historical report review only)
+writing-skills vs corrected skill-creator,95/96,Comparative package (reassessment),shared adapted file review rubric,2026-10-05 SWOT reviewers,2026-10-05-writing-skills-vs-skill-creator-swot-after-corrections.md:L1-L37,Distinct evidence basis; readiness HOLD,2026-10-17 (historical report review only)

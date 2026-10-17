@@ -292,6 +292,77 @@ def test_delete_parser_preserves_security_boundaries(
     assert invoke(tool, {"command": command}) == expected
 
 
+WRAPPER_OPTIONS: list[tuple[str, int]] = [
+    (f"env - --chdir=other {_RM_RF} /", BLOCK),
+    (f"env -- --chdir=other {_RM_RF} /", BLOCK),
+    (f"env -- invalid-name=value {_RM_RF} /", BLOCK),
+    (f"env - invalid-name=value {_RM_RF} /", BLOCK),
+    (f"env invalid-name=value {_RM_RF} /", BLOCK),
+    (f"sudo invalid-name=value {_RM_RF} /", BLOCK),
+    (f"env -- a=b=c {_RM_RF} /", BLOCK),
+    (f"env - --chdir=other {_RM_RF} dist", ALLOW),
+    (f"env -- --chdir=other {_RM_RF} dist", ALLOW),
+    ("echo rm | xargs -I CMD CMD -rf /", BLOCK),
+    (f"env -iu ignored {_RM_RF} /", BLOCK),
+    (f"env -uignored {_RM_RF} /", BLOCK),
+    (f"sudo -nu root {_RM_RF} /", BLOCK),
+    (f"sudo -nuroot {_RM_RF} /", BLOCK),
+    (f"sudo -R other {_RM_RF} dist", BLOCK),
+    (f"sudo -nRother {_RM_RF} dist", BLOCK),
+    (f"sudo --chroot=other {_RM_RF} dist", BLOCK),
+    (f"sudo --chr other {_RM_RF} dist", BLOCK),
+    (f"env --chd=other {_RM_RF} dist", BLOCK),
+    (f"env --chd other {_RM_RF} dist", BLOCK),
+    (f"env -iCother {_RM_RF} dist", BLOCK),
+    (f"env -iC other {_RM_RF} dist", BLOCK),
+    (f"sudo --chd=other {_RM_RF} dist", BLOCK),
+    (f"env -i sudo -nRother {_RM_RF} dist", BLOCK),
+    (f"command -p env --chd=other {_RM_RF} dist", BLOCK),
+    (f"env - {_RM_RF} /", BLOCK),
+    (f"env -i - {_RM_RF} /", BLOCK),
+    ("env --unknown harmless", BLOCK),
+    ("sudo -Z harmless", BLOCK),
+    ("command -Z harmless", BLOCK),
+    ("time --unknown harmless", BLOCK),
+    ("nohup --unknown harmless", BLOCK),
+    ("exec -Z harmless", BLOCK),
+    ("xargs -Z harmless", BLOCK),
+    ("call -Z harmless", BLOCK),
+    (f"env --ch other {_RM_RF} dist", BLOCK),
+    ("sudo --ch harmless", BLOCK),
+    ("env --chdir", BLOCK),
+    ("sudo -nu", BLOCK),
+    ("exec -a", BLOCK),
+    ("xargs -n", BLOCK),
+    ("env --debug=unexpected harmless", BLOCK),
+    ("env -S 'harmless'", BLOCK),
+    ("sudo -s 'harmless'", BLOCK),
+    (f"env -iu ignored {_RM_RF} dist", ALLOW),
+    (f"sudo -nuroot {_RM_RF} dist", ALLOW),
+    (f"env -uCother {_RM_RF} dist", ALLOW),
+    (f"env --unset=--chdir=other {_RM_RF} dist", ALLOW),
+    (f"sudo -np--chroot=other {_RM_RF} dist", ALLOW),
+    (f"env -- {_RM_RF} dist", ALLOW),
+    (f"sudo -- {_RM_RF} dist", ALLOW),
+    (f"env - {_RM_RF} dist", ALLOW),
+    (f"time -po output {_RM_RF} dist", ALLOW),
+    (f"exec -cla alias {_RM_RF} dist", ALLOW),
+    (f"xargs -pr -n1 {_RM_RF} dist", ALLOW),
+    (f"exec -cla alias {_RM_RF} /", BLOCK),
+    (f"time -po output {_RM_RF} /", BLOCK),
+    (f"xargs -pn 1 {_RM_RF} /", BLOCK),
+    (f"env SETTING=value {_RM_RF} dist", ALLOW),
+    (f"sudo SETTING=value -nu root {_RM_RF} /", BLOCK),
+]
+
+
+@pytest.mark.parametrize(("command", "expected"), WRAPPER_OPTIONS)
+def test_wrapper_options_preserve_security_and_value_boundaries(
+    command: str, expected: int
+) -> None:
+    assert invoke("Bash", {"command": command}) == expected
+
+
 ENV_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", "grep -f .env src/a.ts", BLOCK),
     ("Bash", "grep --regexp='.env' src/a.ts", ALLOW),

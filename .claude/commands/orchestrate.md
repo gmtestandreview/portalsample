@@ -20,7 +20,7 @@ Invoke the Lead Orchestrator.
 
 **Prerequisites:**
 
-- `INIT.md` must exist (copy from `INIT_TEMPLATE.md` and fill in)
+- `INIT.md` must exist (copy from `.agent-sync/pruned/INIT_TEMPLATE.md` and fill in)
 - `TASKS.md` must exist for morning/tick/report modes
 
 **The orchestrator never writes product code. It only dispatches sub-agents.**

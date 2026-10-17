@@ -66,6 +66,8 @@ cp    a-team/INIT_TEMPLATE.md your-project/INIT.md
 rm -rf a-team
 ```
 
+> **Note:** In this repo the blank template lives at `.agent-sync/pruned/INIT_TEMPLATE.md`; the commands here refer to the upstream `a-team` checkout.
+
 ### Option C — Git, no GitHub CLI (sparse clone)
 
 ```bash

@@ -1,0 +1,31 @@
+{
+  "original_transcript_lines": 2951,
+  "original_transcript_sha256": "4ad3bbb82fe14d1d843147830d39e012eab91291269782871e8862ea4a8e4f23",
+  "original_ledger_atoms": 253,
+  "corrected_ledger_atoms": 253,
+  "event_atoms": 202,
+  "decision_atoms": 51,
+  "new_grade_distribution": {
+    "1": 27,
+    "2": 64,
+    "4": 15,
+    "Unknown": 111,
+    "3": 33,
+    "0": 3
+  },
+  "old_grade_distribution": {
+    "1": 27,
+    "2": 100,
+    "4": 14,
+    "3": 108,
+    "5": 1,
+    "0": 3
+  },
+  "secondary_sources_verified_bytes": 20,
+  "lesson_count": 26,
+  "fix_count": 19,
+  "regression_test_design_count": 18,
+  "checks_pass": true,
+  "errors": [],
+  "important_limit": "Mechanical checks validate internally generated audit data, not execution of target SKILL or its regression tests."
+}
