@@ -108,6 +108,7 @@ _WRAPPER_LOCATIONS = {
 }
 _SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 _PS_SHELLS = {"pwsh", "powershell"}
+_PARSER_MODES = {"", "Bash", "PowerShell", "CMD"}
 _EVAL_VERBS = {"eval", "iex", "invoke-expression"}
 _MAX_DEPTH = 8
 _PARSER_LIMIT = "__parser_limit__"
@@ -483,14 +484,18 @@ def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[st
     return found
 
 
-def commands(text: str, depth: int = 0, shell: str = "") -> list[tuple[str, list[str]]]:
-    """Parse bounded literal commands; substitutions precede their parent segments."""
+def commands(text: str, depth: int = 0, parser_mode: str = "") -> list[tuple[str, list[str]]]:
+    """Parse bounded commands only (never spawn a process) in a supported parser mode."""
+    if parser_mode not in _PARSER_MODES:
+        return [(_PARSER_LIMIT, [])]
     if depth > _MAX_DEPTH or len(text) > 32768:
         return [(_PARSER_LIMIT, [])]
-    body, expansions = _strip_blocks(text, shell)
-    found = _recursive_commands([*expansions, *_substitutions(body, shell)], depth, shell)
-    for tokens in _split(body, shell):
-        found.extend(_command_segment(tokens, depth, shell))
+    body, expansions = _strip_blocks(text, parser_mode)
+    found = _recursive_commands(
+        [*expansions, *_substitutions(body, parser_mode)], depth, parser_mode
+    )
+    for tokens in _split(body, parser_mode):
+        found.extend(_command_segment(tokens, depth, parser_mode))
     return found
 
 
@@ -685,7 +690,7 @@ def _command_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
 
 def _is_destructive(command: str, shell: str = "") -> str | None:
     cleanup_allowed = _cleanup_allowed()
-    for command_index, (verb, args) in enumerate(commands(command, shell=shell)):
+    for command_index, (verb, args) in enumerate(commands(command, parser_mode=shell)):
         # A prior command can replace an approved directory with a symlink or
         # junction before the recursive delete runs. Do not authorize a safe
         # cleanup path after any earlier command in the same tool call.
@@ -884,7 +889,7 @@ def _has_env_command_access(tool_name: str, tool_input: dict[str, object]) -> bo
     command = tool_input.get("command")
     if tool_name not in _COMMAND_TOOLS or not isinstance(command, str):
         return False
-    for verb, args in commands(command, shell=tool_name):
+    for verb, args in commands(command, parser_mode=tool_name):
         # Inline interpreter code is opaque to this lexical parser and can
         # construct secret paths dynamically, so it must fail closed.
         if _has_inline_code_access(verb, args) or _has_env_loader_access(verb, args):
