@@ -98,7 +98,7 @@ For every owner, mode 1 is the story alone (`-t "<Story Name>"`), mode 2 is its 
 story file, mode 3 is the full sequential run. Logs are in
 `reports/stabilisation/c3-settlement/`.
 
-### Result: every owner is mode 1 or mode 2. No owner requires a mode-3 explanation.
+### Result: every owner is mode 1 or mode 2. No owner requires a mode-3 explanation
 
 | Owner story | Mode 1 | Mode 2 | Mode 3 attribution | First owning stack |
 | --- | ---: | ---: | ---: | --- |
@@ -187,7 +187,6 @@ exists once the lookup has resolved.
 | W4 | C3 | **closed to 2 residual third-party lines**, see below |
 | W2 | C2 | closed, verified here (132 to 0) |
 | W5 | C4 | unchanged at 140 lines |
-
 
 ---
 

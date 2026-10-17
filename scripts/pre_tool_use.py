@@ -924,7 +924,7 @@ def _summary(tool_input: dict[str, object]) -> str:
 
 
 def _lock_descriptor(descriptor: int, release: bool) -> None:
-    if os.name == "nt":
+    if sys.platform == "win32":
         import msvcrt
 
         os.lseek(descriptor, 0, os.SEEK_SET)

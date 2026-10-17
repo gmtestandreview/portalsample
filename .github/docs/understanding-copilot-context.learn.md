@@ -104,7 +104,7 @@ Copilot: Here's a general approach to validation...
 
 **With #-mention**:
 
-```
+```text
 You: How do I handle validation in #user-service.ts?
 
 Copilot: Based on your UserService class, you can add validation like this...
