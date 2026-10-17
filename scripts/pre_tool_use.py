@@ -15,47 +15,6 @@ from typing import cast
 
 JsonObject = dict[str, object]
 
-_WRAPPERS = {"sudo", "command", "env", "time", "nohup", "exec", "xargs", "call"}
-_WRAPPER_VALUES = {
-    "sudo": {
-        "-u",
-        "-g",
-        "-h",
-        "-p",
-        "-C",
-        "-D",
-        "-T",
-        "-r",
-        "-t",
-        "--user",
-        "--group",
-        "--host",
-        "--prompt",
-        "--close-from",
-        "--chdir",
-        "--command-timeout",
-        "--role",
-        "--type",
-    },
-    "env": {"-u", "--unset", "-C", "--chdir"},
-    "time": {"-f", "--format", "-o", "--output"},
-    "exec": {"-a"},
-    "xargs": {
-        "-n",
-        "-I",
-        "-P",
-        "-L",
-        "-d",
-        "-E",
-        "--max-args",
-        "--replace",
-        "--max-procs",
-        "--max-lines",
-        "--delimiter",
-        "--eof",
-    },
-type JsonObject = dict[str, object]
-
 _WRAPPER_OPTIONS: dict[str, tuple[str, list[str]]] = {
     # Fixed-arity subset only. Unsupported shell/expansion modes and optional
     # arguments fail closed rather than guessing where the child command starts.
@@ -502,10 +461,6 @@ def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[st
     if index is None:
         return []
     verb, args = _verb_name(tokens[index]), tokens[index + 1 :]
-    if tokens[index] in {"-S", "--split-string"}:
-        verb = _PARSER_LIMIT
-    found: list[tuple[str, list[str]]] = []
-    if _wrapper_changes_directory(tokens[:index]):
     found: list[tuple[str, list[str]]] = []
     if changes_directory:
         found.append(("__location_change__", []))
@@ -517,24 +472,6 @@ def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[st
         # eval/iex execute their joined arguments as a command line.
         found.extend(commands(" ".join(args), depth + 1, shell))
     return found
-
-
-def _wrapper_changes_directory(prefix: list[str]) -> bool:
-    index = 0
-    while index < len(prefix):
-        wrapper = _verb_name(prefix[index])
-        index += 1
-        if wrapper not in _WRAPPERS:
-            continue
-        while index < len(prefix) and prefix[index].startswith("-"):
-            option = prefix[index]
-            short = "-C" if wrapper == "env" else "-D"
-            if wrapper in {"env", "sudo"} and (
-                option.startswith(short) or option == "--chdir" or option.startswith("--chdir=")
-            ):
-                return True
-            index += 2 if option in _WRAPPER_VALUES.get(wrapper, set()) else 1
-    return False
 
 
 def commands(text: str, depth: int = 0, shell: str = "") -> list[tuple[str, list[str]]]:
