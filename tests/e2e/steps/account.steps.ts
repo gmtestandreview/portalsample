@@ -127,3 +127,7 @@ Then('the sign-in page is displayed', async ({ page }) => {
     })
     .toBe(true);
 });
+
+When('the user clears the contact first name', async ({ page }) => {
+  await page.getByLabel('First name', { exact: true }).fill('');
+});

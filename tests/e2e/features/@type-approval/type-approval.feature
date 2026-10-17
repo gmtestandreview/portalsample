@@ -34,3 +34,36 @@ Feature: Apply for and manage pattern/type approval
     Then document "existing-certificate.pdf" is displayed
     When the applicant sends the message "Please confirm that the certificate was received."
     Then the message appears in the application thread
+
+  Scenario: Required type-approval application details prevent progression
+    When the applicant starts a new pattern/type approval application
+    And the applicant begins the application
+    And the applicant confirms the organisation and contact details
+    Then the type-approval step "Application details" is displayed
+    When the user clicks "Save and next"
+    Then a validation error summary is displayed
+    And the type-approval step "Application details" is displayed
+
+  Scenario: Applicant saves a type-approval application and exits
+    When the applicant starts a new pattern/type approval application
+    And the applicant begins the application
+    And the user clicks "Save and exit"
+    Then the user should be redirected to the dashboard
+
+  Scenario: Applicant returns to the previous type-approval step
+    When the applicant starts a new pattern/type approval application
+    And the applicant begins the application
+    And the applicant confirms the organisation and contact details
+    Then the type-approval step "Application details" is displayed
+    When the user clicks "Back"
+    Then the type-approval step "Organisation details" is displayed
+
+  Scenario: Unsaved type-approval changes can be kept
+    When the applicant starts a new pattern/type approval application
+    And the applicant begins the application
+    And the applicant confirms the organisation and contact details
+    And the applicant chooses the new-certificate application option
+    And the user clicks "Back"
+    Then an unsaved changes dialog is displayed
+    When the user cancels leaving the form
+    Then the type-approval step "Application details" is displayed

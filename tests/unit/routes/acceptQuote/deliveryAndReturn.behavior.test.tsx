@@ -15,6 +15,7 @@ import {
   deliveryAndReturnSaveValidation,
   deliveryAndReturnSubmitValidation,
 } from '@/routes/acceptQuote/validation';
+import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
 import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
@@ -79,17 +80,7 @@ vi.mock('@/components/Inputs/RhfAddressLookup', () => ({
   ),
 }));
 
-// Mirrors deliveryAndReturnProps.hidingFields.
-const hidingFields = {
-  contactHide: (x: DeliveryAndReturnStep) =>
-    x.returnContactType === 'SamePerson',
-  contact: {
-    titleOther: (x: DeliveryAndReturnStep) => x.contact?.title !== 'Other',
-  },
-  returnAddress: (x: DeliveryAndReturnStep) => x.returnAddressType !== 'Other',
-  carrierHide: (x: DeliveryAndReturnStep) =>
-    x.returnMethod !== 'ClientWillProvide',
-};
+const hidingFields = deliveryAndReturnHidingFields;
 
 const streetAddress = {
   line1: '1 Street Road',

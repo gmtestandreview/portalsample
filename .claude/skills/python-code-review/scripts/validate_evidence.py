@@ -18,6 +18,21 @@ CASES = ROOT / "evals/cases.json"
 SKILL = ROOT / "SKILL.md"
 VALID = {"PASS", "AMBER", "FAIL", "NHR", "N/A"}
 
+# All active, nonhistorical sources that can affect instructions/eval expectations.
+# Historical snapshots and the current run-record are excluded to avoid circular hashes.
+RESOURCE_FILES = (
+    [ROOT / "SOURCE-ATTRIBUTION.md"]
+    + sorted((ROOT / "references").glob("*.md"))
+    + [
+        ROOT / "evals/cases.json",
+        ROOT / "evals/qaq-rmi.md",
+        ROOT / "evals/evidence-applicability.md",
+        ROOT / "evals/current-revision-pressure/README.md",
+        ROOT / "scripts/validate_evidence.py",
+    ]
+)
+
+
 
 def _validate_trace_paths(cid: str, arm: str, paths: list[str], problems: list[str]) -> None:
     for name in paths:
@@ -75,7 +90,18 @@ def main() -> int:
     digest = hashlib.sha256(SKILL.read_bytes()).hexdigest()
     if record.get("candidate_sha256") != digest:
         problems.append("SKILL.md hash differs from run record; new evaluation required")
+    expected_paths = {str(p.relative_to(ROOT)) for p in RESOURCE_FILES}
+    observed_hashes = record.get("resource_sha256", {})
+    if not isinstance(observed_hashes, dict) or set(observed_hashes) != expected_paths:
+        problems.append("Resource inventory incomplete or unexpected; re-freeze candidate")
+    else:
+        for path in RESOURCE_FILES:
+            name = str(path.relative_to(ROOT))
+            if not path.is_file() or observed_hashes[name] != hashlib.sha256(path.read_bytes()).hexdigest():
+                problems.append(f"Changed/missing supporting resource: {name}")
     expected = {c["id"]: c for c in cases}
+    if len(expected) != len(cases):
+        problems.append("Duplicate source case ID")
     rows = record.get("cases", [])
     _validate_cases(rows, expected, problems)
     required_unresolved = [
@@ -88,7 +114,7 @@ def main() -> int:
         for problem in problems:
             print(" -", problem)
         return 1
-    print(f"VALID schema/trace pointers: {len(rows)} cases; SKILL hash {digest}")
+    print(f"VALID schema, resource hashes, and trace pointers: {len(rows)} cases; SKILL hash {digest}")
     print(f"Required cases without behavioral PASS: {len(required_unresolved)}")
     print("Behavioral assessment and deployment approval: NOT established by this validator")
     return 0

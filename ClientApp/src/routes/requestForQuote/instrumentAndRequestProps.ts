@@ -93,6 +93,10 @@ const saveStep =
     }
   };
 
+/** The serial number only applies when the request says one is available. */
+export const isSerialNumberHidden = (x: InstrumentAndRequestStep) =>
+  x.hasSerialNumber !== YesNo.Yes;
+
 const instrumentAndRequestProps = (
   id: string,
   accounts: AccountInfo[],
@@ -107,8 +111,7 @@ const instrumentAndRequestProps = (
   location: '/instrument-and-request',
   title: 'Instrument and request',
   hidingFields: {
-    serialNumber: (x: InstrumentAndRequestStep) =>
-      x.hasSerialNumber !== YesNo.Yes,
+    serialNumber: isSerialNumberHidden,
   },
   validateHard: instrumentAndRequestSubmitValidation,
   validateSoft: instrumentAndRequestSaveValidation,

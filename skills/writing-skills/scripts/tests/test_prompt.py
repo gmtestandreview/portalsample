@@ -1,15 +1,16 @@
 """Tests for prompt module."""
 
-import xml.etree.ElementTree as ET
 from pathlib import Path
+from xml.etree.ElementTree import Element
 
 import pytest
+from defusedxml import ElementTree as ET
 
 from skills_ref.errors import ParseError, SkillError
 from skills_ref.prompt import to_prompt
 
 
-def _required_text(element: ET.Element, path: str) -> str:
+def _required_text(element: Element, path: str) -> str:
     text = element.findtext(path)
     assert text is not None, f"Missing XML text at {path}"
     return text.strip()

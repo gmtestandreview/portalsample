@@ -23,6 +23,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 SETTINGS = ROOT / ".claude" / "settings.json"
 GUARD = ROOT / "scripts" / "pre_tool_use.py"
+WRAPPER = ROOT / "scripts" / "pre_tool_use_wrapper.cjs"
+LAUNCHER = ROOT / "scripts" / "python314.cjs"
 
 
 class ToolCall(TypedDict):
@@ -47,8 +49,10 @@ def wrapper_command() -> str:
 
 
 def project(folder: Path, guard_source: str | None) -> None:
+    (folder / "scripts").mkdir()
+    shutil.copyfile(WRAPPER, folder / "scripts" / WRAPPER.name)
+    shutil.copyfile(LAUNCHER, folder / "scripts" / LAUNCHER.name)
     if guard_source is not None:
-        (folder / "scripts").mkdir()
         (folder / "scripts" / "pre_tool_use.py").write_text(guard_source, encoding="utf-8")
 
 
@@ -114,6 +118,39 @@ def test_wrapper_resolves_project_path_and_uses_isolated_python() -> None:
         project(root, "import sys\nassert sys.flags.isolated and sys.flags.no_site\nsys.exit(2)\n")
         code, _ = run(root, READ_OK, cwd=unrelated)
         assert code == 2, "guard was skipped or Python isolation flags were absent"
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        None,
+        "this is invalid JavaScript",
+        "module.exports.findPython314 = () => { throw new Error('private probe detail'); };",
+    ],
+)
+def test_broken_python314_helper_blocks_without_exposing_details(source: str | None) -> None:
+    with tempfile.TemporaryDirectory(prefix="wrapper-broken-helper-") as directory:
+        folder = Path(directory)
+        project(folder, "pass\n")
+        helper = folder / "scripts" / LAUNCHER.name
+        if source is None:
+            helper.unlink()
+        else:
+            helper.write_text(source, encoding="utf-8")
+        code, stderr = run(folder, READ_OK)
+        assert code == 2
+        assert "BLOCKED" in stderr
+        assert "private probe detail" not in stderr
+
+
+def test_missing_guard_still_allows_when_python314_helper_is_absent() -> None:
+    with tempfile.TemporaryDirectory(prefix="wrapper-missing-both-") as directory:
+        folder = Path(directory)
+        project(folder, None)
+        (folder / "scripts" / LAUNCHER.name).unlink()
+        code, stderr = run(folder, READ_OK)
+        assert code == 0
+        assert "inactive" in stderr
 
 
 def main() -> int:

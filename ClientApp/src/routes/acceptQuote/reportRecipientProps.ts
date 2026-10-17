@@ -77,6 +77,9 @@ const saveStep =
         AppLogger.error('Failed to save payment report recipient', e as Error, {
           Id: id,
         });
+        // Surface the failure so the wizard shows an error and stays on the
+        // step, instead of reporting a failed save as a success.
+        throw e;
       }
     } else {
       throw new Error('No authenticated account available to save form.');

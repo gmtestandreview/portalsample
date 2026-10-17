@@ -10,16 +10,17 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 import run_red_green_eval
+
 try:
-    from scripts.eval_control import ClaudeCliError, EvaluationControl
+    from scripts.eval_control import ClaudeCliError
 except ModuleNotFoundError:
-    from eval_control import ClaudeCliError, EvaluationControl
+    from eval_control import ClaudeCliError
 
 
 class RedGreenControlTests(unittest.TestCase):
     def test_result_error_event_preserves_rate_limit_status(self) -> None:
         with self.assertRaises(ClaudeCliError) as raised:
-            run_red_green_eval._result_event_decision({
+            run_red_green_eval.result_event_decision({
                 "type": "result",
                 "is_error": True,
                 "api_error_status": 429,
@@ -40,8 +41,19 @@ class RedGreenControlTests(unittest.TestCase):
                 ),
                 "artifact path escapes workspace",
             )
+            invalid_manifest: list[object] = [{1: "evidence.txt", "sha256": "x"}]
+            self.assertEqual(
+                run_red_green_eval.validate_artifact_manifest(
+                    root,
+                    invalid_manifest,
+                ),
+                "artifact evidence has invalid fields",
+            )
             manifest[0]["sha256"] = "0" * 64
-            self.assertIn("digest mismatch", run_red_green_eval.validate_artifact_manifest(root, manifest) or "")
+            self.assertIn(
+                "digest mismatch",
+                run_red_green_eval.validate_artifact_manifest(root, manifest) or "",
+            )
 
 
 if __name__ == "__main__":

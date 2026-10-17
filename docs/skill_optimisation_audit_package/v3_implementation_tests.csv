@@ -1,0 +1,19 @@
+test_id,observed_result,status,evidence_and_limit
+T01,Dispatch rejects exhausted reserve and requires saved checkpoint,PASS scoped,Automated preflight tests; actual provider interruption not simulated
+T02,Distinct explicit score kinds and provenance fields required,PASS static,Reference contract and evidence validator; no cross-rubric numeric trend reported
+T03,Candidate mutation rejected,PASS,Parameterized current-hash test
+T04,New uncertainty and acceptance impact required before optional dispatch,PASS scoped,Dispatch tests enforce fields; usefulness remains controller judgment
+T05,AMBER cannot be counted as PASS,PASS,Summary arithmetic regression
+T06,Checkpoint is already saved and optional work can stop with valid HOLD,PASS scoped,HOLD record accepted while dispatch blocked; live session termination not simulated
+T07,96 greater-than 96 fails; 96 greater-than 95 and 96 greater-or-equal 96 pass numeric gate,PASS,Literal comparator deployment tests with independent gate prerequisites
+T08,Changed oracle/candidate/rubric or absent raw invalidates evidence,PASS,Hash and missing-file tests
+T09,Focused new question permitted within remaining capacity,PASS scoped,Positive dispatch case; procedure requires decision value
+T10,Oracle correction creates retained historical version and stale hashes rejected,PASS,Archived original plus immutable new hash identity; no retroactive score upgrade
+T11,Contradictory summary Boolean grades null-as-fail and missing/duplicate cases rejected,PASS,Focused grader-consistency tests
+T12,Format subset and hub contradiction obey v1.3 decision rules,PASS scoped,Focused GREEN R1 R3; fresh S3 recheck against corrected oracle v1.3.1; v1.3 S3 comparison invalidated
+T13,Confirmed survivor and hub handoff does not perform merges,PASS scoped,Focused GREEN S4 S5 raw outputs show hold before eligibility and handoff after confirmation
+T14,Canonical dependency set and bounded utility-based delegation,PASS static,Freeze manifest and reference policy; not measured token efficiency
+T15,Missing raw output blocks evidence publication,PASS,Missing raw regression
+T16,Absent provider counters remain null and no measured savings claimed,PASS,Telemetry tests and final record; invocations/elapsed are observations
+T17,Only authorized skill/control/evidence files changed,PASS scoped,Changed-path audit and controller identity tests; no hook edits
+T18,Static pass remains separate from natural target-host readiness,PASS scoped,Deploy rejected on NHR runtime dimensions; actual target-host gate NHR

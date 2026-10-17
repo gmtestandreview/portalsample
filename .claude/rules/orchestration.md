@@ -17,7 +17,7 @@ Before doing any work in a new project:
 3. The orchestrator writes `.agent-sync/TEAM.md` (active roster) and `.agent-sync/ROUTING.md`
 4. Only proceed with work after `TEAM.md` exists
 
-If `INIT.md` does not exist: instruct the user to fill out `INIT_TEMPLATE.md` first.
+If `INIT.md` does not exist: instruct the user to fill out `.agent-sync/pruned/INIT_TEMPLATE.md` first.
 
 ## State Machine Protocol
 

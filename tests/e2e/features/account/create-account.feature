@@ -22,3 +22,13 @@ Feature: Create a new account
     When the authentication session expires
     And the user refreshes the page
     Then the sign-in page is displayed
+
+  Scenario: Required contact details prevent account creation
+    Given the user has accepted the terms of use
+    And the organisation form is displayed
+    When the user submits the organisation form
+    Then the contact form is displayed
+    When the user clears the contact first name
+    And the user clicks "Create account"
+    Then a validation error summary is displayed
+    And the contact form is displayed

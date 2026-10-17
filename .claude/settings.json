@@ -245,7 +245,7 @@
           },
           {
             "type": "command",
-            "command": "if test -f scripts/watcher.py; then (python scripts/watcher.py >/dev/null 2>&1 || python3 scripts/watcher.py >/dev/null 2>&1) & fi"
+            "command": "if test -f scripts/watcher.py; then (node scripts/python314.cjs scripts/watcher.py >/dev/null 2>&1) & fi"
           }
         ]
       }
@@ -256,7 +256,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/post_tool_use.py"
+            "command": "node scripts/python314.cjs scripts/post_tool_use.py"
           }
         ]
       }
