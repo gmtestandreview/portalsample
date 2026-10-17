@@ -14,9 +14,10 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, NoReturn, TypedDict, cast
+from typing import Any, NoReturn, TypedDict, TypeGuard, cast
 
 try:
     from scripts.eval_control import (
@@ -41,6 +42,7 @@ except ModuleNotFoundError:
 
 CLAUDE_DIR = ".claude"
 CLAUDE_TIMEOUT_SECONDS = 360
+SKILL_MD_FILENAME = "SKILL.md"
 
 
 def _reject_nonfinite_json_constant(value: str) -> NoReturn:
@@ -207,7 +209,7 @@ def create_fixture(root: Path) -> None:
     target = root / "target-skill"
     (target / "references").mkdir(parents=True)
     (target / "scripts").mkdir()
-    (target / "SKILL.md").write_text(BASE_SKILL_MD, encoding="utf-8")
+    (target / SKILL_MD_FILENAME).write_text(BASE_SKILL_MD, encoding="utf-8")
     (target / "references" / "evaluation.md").write_text(EVALUATION_REFERENCE, encoding="utf-8")
     package_script = target / "scripts" / "package_skill.py"
     package_script.write_text(PACKAGE_SCRIPT, encoding="utf-8")
@@ -224,6 +226,81 @@ def copy_candidate_skill(candidate: Path, project_root: Path) -> None:
         }
 
     shutil.copytree(candidate, destination, ignore=ignore)
+
+
+def _record_eval_error(
+    control: EvaluationControl | None,
+    spec: AttemptSpec | None,
+    error: BaseException,
+) -> None:
+    if control is not None and spec is not None:
+        control.record_error(spec, error)
+
+
+def _execute_claude_process(
+    cmd: list[str],
+    project_root: Path,
+    transcript_path: Path,
+    result_path: Path,
+    env: dict[str, str],
+) -> tuple[str, str, subprocess.Popen[str]]:
+    """Run the Claude CLI, write transcript/result files, return (stdout, stderr, process)."""
+    with transcript_path.open("w", encoding="utf-8") as transcript:
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=str(project_root),
+            env=env,
+            text=True,
+            shell=False,
+            start_new_session=(os.name != "nt"),
+        )
+        try:
+            stdout, stderr = process.communicate(timeout=CLAUDE_TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
+            _terminate_process_tree(process)
+            stdout, stderr = process.communicate()
+            transcript.write(stdout or "")
+            result_path.write_text(stderr or "", encoding="utf-8")
+            raise
+        transcript.write(stdout or "")
+
+    result_path.write_text(stderr or "", encoding="utf-8")
+    return stdout, stderr, process
+
+
+def _parse_stream_events(stdout: str) -> list[Event]:
+    events: list[Event] = []
+    for line in stdout.splitlines():
+        try:
+            parsed = cast(
+                JsonValue,
+                json.loads(line, parse_constant=_reject_nonfinite_json_constant),
+            )
+        except ValueError:
+            continue
+        if not isinstance(parsed, dict):
+            continue
+        result_event_decision(parsed)
+        events.append(parsed)
+    return events
+
+
+def _record_eval_result(
+    control: EvaluationControl,
+    spec: AttemptSpec,
+    run_data: RunData,
+) -> None:
+    if run_data["exit_code"] != 0:
+        control.record_error(
+            spec, RuntimeError(f"claude exited with status {run_data['exit_code']}"),
+        )
+    else:
+        control.record_success(
+            spec,
+            CachedResult(outcome="engaged", payload={"run_data": run_data}),
+        )
 
 
 def run_claude(
@@ -272,60 +349,26 @@ def run_claude(
         "REMEMBER_NESTED_SUMMARIZER": "1",
     }
     started = time.monotonic()
-    with transcript_path.open("w", encoding="utf-8") as transcript:
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            cwd=str(project_root),
-            env=env,
-            text=True,
-            shell=False,
-            start_new_session=(os.name != "nt"),
+    try:
+        stdout, stderr, process = _execute_claude_process(
+            cmd, project_root, transcript_path, result_path, env,
         )
-        try:
-            stdout, stderr = process.communicate(timeout=CLAUDE_TIMEOUT_SECONDS)
-        except subprocess.TimeoutExpired as exc:
-            _terminate_process_tree(process)
-            stdout, stderr = process.communicate()
-            transcript.write(stdout or "")
-            result_path.write_text(stderr or "", encoding="utf-8")
-            error = TimeoutError(
-                f"claude run exceeded {CLAUDE_TIMEOUT_SECONDS}s"
-            )
-            if control is not None and spec is not None:
-                control.record_error(spec, error)
-            raise error from exc
-        transcript.write(stdout or "")
+    except subprocess.TimeoutExpired as exc:
+        error = TimeoutError(f"claude run exceeded {CLAUDE_TIMEOUT_SECONDS}s")
+        _record_eval_error(control, spec, error)
+        raise error from exc
 
-    result_path.write_text(stderr or "", encoding="utf-8")
-    events: list[Event] = []
-    for line in stdout.splitlines():
-        try:
-            parsed = cast(
-                JsonValue,
-                json.loads(
-                    line,
-                    parse_constant=_reject_nonfinite_json_constant,
-                ),
-            )
-        except ValueError:
-            continue
-        if not isinstance(parsed, dict):
-            continue
-        try:
-            _result_event_decision(parsed)
-        except ClaudeCliError as exc:
-            if control is not None and spec is not None:
-                control.record_error(spec, exc)
-            raise
-        events.append(parsed)
+    try:
+        events = _parse_stream_events(stdout)
+    except ClaudeCliError as exc:
+        _record_eval_error(control, spec, exc)
+        raise
 
     exit_code = process.returncode
     if exit_code is None:
         raise RuntimeError("claude process did not exit after communicate()")
 
-    run_data = {
+    run_data: RunData = {
         "exit_code": exit_code,
         "duration_seconds": round(time.monotonic() - started, 2),
         "events": events,
@@ -333,21 +376,11 @@ def run_claude(
         "usage": _extract_usage(events),
     }
     if control is not None and spec is not None:
-        if exit_code != 0:
-            error = RuntimeError(f"claude exited with status {exit_code}")
-            control.record_error(spec, error)
-        else:
-            control.record_success(
-                spec,
-                CachedResult(
-                    outcome="engaged",
-                    payload={"run_data": run_data},
-                ),
-            )
+        _record_eval_result(control, spec, run_data)
     return run_data
 
 
-def _result_event_decision(event: Event) -> str | None:
+def result_event_decision(event: Event) -> str | None:
     """Classify terminal events without turning API errors into valid negatives."""
     if event.get("type") != "result":
         return None
@@ -362,12 +395,34 @@ def _result_event_decision(event: Event) -> str | None:
 def _extract_usage(events: list[Event]) -> dict[str, object]:
     for event in reversed(events):
         usage = event.get("usage")
-        if isinstance(usage, dict):
+        if _is_string_keyed_mapping(usage):
             return dict(usage)
         result = event.get("result")
-        if isinstance(result, dict) and isinstance(result.get("usage"), dict):
-            return dict(cast(dict[object, object], result["usage"]))
+        if _is_string_keyed_mapping(result):
+            usage = result.get("usage")
+            if _is_string_keyed_mapping(usage):
+                return dict(usage)
     return {}
+
+
+def _is_string_keyed_mapping(value: object) -> TypeGuard[dict[str, object]]:
+    """Narrow decoded JSON objects to dictionaries with string keys."""
+    if not isinstance(value, dict):
+        return False
+    keys: Iterable[object] = cast(Iterable[object], value)
+    return all(isinstance(key, str) for key in keys)
+
+
+def _is_object_list(value: object) -> TypeGuard[list[object]]:
+    """Narrow decoded JSON arrays without leaking unknown element types."""
+    return isinstance(value, list)
+
+
+def _object_list_or_none(value: object) -> list[object] | None:
+    """Return a typed decoded JSON array, or None for malformed input."""
+    if _is_object_list(value):
+        return value
+    return None
 
 
 def _sha256_file(path: Path) -> str:
@@ -390,24 +445,37 @@ def artifact_manifest(root: Path) -> list[dict[str, str]]:
     return entries
 
 
-def validate_artifact_manifest(root: Path, artifacts: object) -> str | None:
-    if not isinstance(artifacts, list):
-        return "artifact manifest is not a list"
-    root = root.resolve()
-    for raw in artifacts:
-        if not isinstance(raw, dict):
-            return "artifact evidence is not an object"
-        relative = raw.get("relative_path")
-        expected = raw.get("sha256")
-        if not isinstance(relative, str) or not isinstance(expected, str):
+def _validate_artifact(root: Path, raw: object) -> str | None:
+    if not _is_string_keyed_mapping(raw):
+        if isinstance(raw, dict):
             return "artifact evidence has invalid fields"
-        path = (root / relative).resolve()
-        if root != path and root not in path.parents:
-            return "artifact path escapes workspace"
-        if not path.is_file():
-            return f"artifact is missing: {relative}"
-        if _sha256_file(path) != expected:
-            return f"artifact digest mismatch: {relative}"
+        return "artifact evidence is not an object"
+
+    relative = raw.get("relative_path")
+    expected = raw.get("sha256")
+    if not isinstance(relative, str) or not isinstance(expected, str):
+        return "artifact evidence has invalid fields"
+
+    path = (root / relative).resolve()
+    if root != path and root not in path.parents:
+        return "artifact path escapes workspace"
+    if not path.is_file():
+        return f"artifact is missing: {relative}"
+    if _sha256_file(path) != expected:
+        return f"artifact digest mismatch: {relative}"
+    return None
+
+
+def validate_artifact_manifest(root: Path, artifacts: object) -> str | None:
+    artifact_items = _object_list_or_none(artifacts)
+    if artifact_items is None:
+        return "artifact manifest is not a list"
+
+    root = root.resolve()
+    for raw in artifact_items:
+        error = _validate_artifact(root, raw)
+        if error is not None:
+            return error
     return None
 
 
@@ -462,7 +530,7 @@ def final_result(events: list[Event]) -> str:
 
 def summarize_case(label: str, project_root: Path, run_data: RunData) -> CaseSummary:
     target = project_root / "target-skill"
-    skill_path = target / "SKILL.md"
+    skill_path = target / SKILL_MD_FILENAME
     skill_text = skill_path.read_text(encoding="utf-8") if skill_path.is_file() else ""
     combined = event_text(run_data["events"])
     result = final_result(run_data["events"])
@@ -594,7 +662,7 @@ Overall: {overall}
 
 
 def _skill_content_digest(candidate: Path) -> str:
-    return hashlib.sha256((candidate / "SKILL.md").read_bytes()).hexdigest()
+    return hashlib.sha256((candidate / SKILL_MD_FILENAME).read_bytes()).hexdigest()
 
 
 def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:

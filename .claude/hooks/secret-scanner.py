@@ -191,7 +191,7 @@ def should_skip_file(file_path: str) -> bool:
             chunk = f.read(1024)
             if b"\0" in chunk:
                 return True
-    except BaseException:
+    except OSError:
         return True
 
     return False
@@ -242,7 +242,7 @@ def scan_file(file_path: str) -> list[Finding]:
                             "match": "[REDACTED]",
                         }
                     )
-    except Exception:
+    except OSError:
         # Skip files that can't be read
         pass
 
@@ -278,14 +278,12 @@ def print_findings(findings: list[Finding]) -> None:
         print(f"  🔵 Low: {low_count}", file=sys.stderr)
     print("", file=sys.stderr)
 
+    severity_icons = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🔵"}
     for finding in findings:
-        severity_emoji = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🔵"}.get(
-            finding["severity"], "⚪"
-        )
-
-        print(f"{severity_emoji} {finding['description']}", file=sys.stderr)
+        icon = severity_icons.get(finding["severity"], "⚪")
+        label: str = finding["description"]
+        print(f"{icon} {label}", file=sys.stderr)
         print(f"   File: {finding['file']}:{finding['line']}", file=sys.stderr)
-        print(f"   Match: {finding['match']}", file=sys.stderr)
         print("", file=sys.stderr)
 
     print("❌ COMMIT BLOCKED: Remove secrets before committing", file=sys.stderr)
@@ -308,66 +306,96 @@ def print_findings(findings: list[Finding]) -> None:
     print("", file=sys.stderr)
 
 
-def main() -> None:
-    # Read hook input from stdin (Claude Code passes JSON via stdin)
+def _read_command() -> str:
+    """Read the command from Claude Code's hook input."""
     try:
         input_data = json.load(sys.stdin)
-    except json.JSONDecodeError, ValueError:
+    except ValueError:
         # If no valid JSON on stdin, allow the action
-        sys.exit(0)
+        return ""
+
+    tool_input = input_data.get("tool_input", {})
+    return tool_input.get("command", "")
+
+
+def _existing_files(lines: list[str], prefix_length: int = 0) -> list[str]:
+    """Return existing file paths from git output lines."""
+    files: list[str] = []
+    for line in lines:
+        if len(line) <= prefix_length:
+            continue
+        file_path = line[prefix_length:].strip()
+        if os.path.isfile(file_path):
+            files.append(file_path)
+    return files
+
+
+def _auto_staged_files(command: str) -> list[str]:
+    """Find files that ``git commit -a`` would stage."""
+    commit_match = re.search(r"git\s+commit\s+(.+)", command)
+    if not commit_match or not re.search(r"-\w*a", commit_match.group(1)):
+        return []
+
+    result = subprocess.run(["git", "diff", "--name-only"], capture_output=True, text=True)
+    return _existing_files(result.stdout.strip().split("\n"))
+
+
+def _all_added_files() -> list[str]:
+    """Find files that ``git add .`` would add."""
+    result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True)
+    return _existing_files(result.stdout.strip().split("\n"), prefix_length=3)
+
+
+def _explicitly_added_files(args: str) -> list[str]:
+    """Find existing paths from an explicit ``git add`` command."""
+    return [token for token in args.split() if not token.startswith("-") and os.path.isfile(token)]
+
+
+def _added_files(command: str) -> list[str]:
+    """Find files from a chained ``git add`` command."""
+    files: list[str] = []
+    for part in re.split(r"&&|;", command):
+        add_match = re.match(r"git\s+add\s+(.+)", part.strip())
+        if not add_match:
+            continue
+
+        args = add_match.group(1).strip()
+        if args in (".", "-A", "--all"):
+            files.extend(_all_added_files())
+        else:
+            files.extend(_explicitly_added_files(args))
+    return files
+
+
+def _files_to_scan(command: str) -> list[str]:
+    """Resolve staged files, including files implied by the pending command."""
+    staged_files = get_staged_files()
+    if staged_files:
+        return staged_files
+
+    return _auto_staged_files(command) + _added_files(command)
+
+
+def _scan_files(file_paths: list[str]) -> list[Finding]:
+    """Scan each resolved file and combine its findings."""
+    findings: list[Finding] = []
+    for file_path in file_paths:
+        findings.extend(scan_file(file_path))
+    return findings
+
+
+def main() -> None:
+    command = _read_command()
 
     # Only act on git commit commands
-    tool_input = input_data.get("tool_input", {})
-    command = tool_input.get("command", "")
     if not re.search(r"git\s+commit", command):
         sys.exit(0)
 
-    # Get staged files
-    staged_files = get_staged_files()
-
-    # PreToolUse runs before the command, so files may not be staged yet.
-    # Handle two cases:
-    # 1. git commit -a/-am: scans tracked modified files (what -a would stage)
-    # 2. git add ... && git commit: scans files from the git add part
-    if not staged_files:
-        # Check if commit uses -a flag (auto-stage tracked modified files)
-        commit_match = re.search(r"git\s+commit\s+(.+)", command)
-        if commit_match and re.search(r"-\w*a", commit_match.group(1)):
-            result = subprocess.run(["git", "diff", "--name-only"], capture_output=True, text=True)
-            for f in result.stdout.strip().split("\n"):
-                if f.strip() and os.path.isfile(f.strip()):
-                    staged_files.append(f.strip())
-
-        # Check for chained git add ... && git commit
-        for part in re.split(r"&&|;", command):
-            part = part.strip()
-            add_match = re.match(r"git\s+add\s+(.+)", part)
-            if add_match:
-                args = add_match.group(1).strip()
-                if args in (".", "-A", "--all"):
-                    result = subprocess.run(
-                        ["git", "status", "--porcelain"], capture_output=True, text=True
-                    )
-                    for line in result.stdout.strip().split("\n"):
-                        if line and len(line) > 3:
-                            f = line[3:].strip()
-                            if os.path.isfile(f):
-                                staged_files.append(f)
-                else:
-                    for token in args.split():
-                        if not token.startswith("-") and os.path.isfile(token):
-                            staged_files.append(token)
-
+    staged_files = _files_to_scan(command)
     if not staged_files:
         sys.exit(0)
 
-    # Scan all staged files
-    all_findings: list[Finding] = []
-    for file_path in staged_files:
-        findings = scan_file(file_path)
-        all_findings.extend(findings)
-
-    # If we found any secrets, block the commit
+    all_findings = _scan_files(staged_files)
     if all_findings:
         print_findings(all_findings)
         sys.exit(2)

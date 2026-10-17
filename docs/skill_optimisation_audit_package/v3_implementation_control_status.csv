@@ -6,9 +6,9 @@ C04,PRESENT AND ENFORCED,Target v1.3 subset hub merge hold handoff rules aligned
 C05,PRESENT AND ENFORCED,Frozen manifests and current-hash rejection tests,Local read-only preflight; no automatic file lock
 C06,PRESENT AND ENFORCED,Old oracle retained; v1.3 S3 invalidated; v1.3.1 S3 rerun,Controller must freeze before every future comparison
 C07,PRESENT AND ENFORCED,One controller field writing-skills; human owner; specialist tools conditional,Repository has no skill-creator evaluator implementation
-C08,NOT VERIFIED,Codex discovery evidenced by two fresh ordinary-request runs against exact temporary candidate,Secrets scan rejected by execution policy; loading application and runtime acceptance blocked
-C09,PRESENT AND ENFORCED,Reserve and wave-cap dispatch tests; hashed checkpoint required,Real provider interruption not simulated
-C10,NOT VERIFIED,Absent usage counters recorded as null,No measured provider token/cached usage
-C11,NOT VERIFIED,Local Boolean/count preflight now implemented and tested,External specialist aggregator unavailable; no claim it was verified
+C08,PRESENT AND ENFORCED,Actual installed v1.3 and controller discovered/read/applied in fresh normal CLI sessions; near-miss and repaired scan PASS,Native CLI scope; already-running IDE and Claude untested; integration diagnostics outside skill acceptance
+C09,PRESENT AND ENFORCED,Reserve and wave-cap dispatch tests plus one five-assertion pressure closeout sample,Real provider interruption and actual child dispatch not simulated
+C10,NOT VERIFIED,Actual CLI token/cache counters retained per run; absent whole-session counters remain null,No measured efficiency or historical savings claim
+C11,PRESENT AND ENFORCED,43 fresh local evidence-validator tests pass; external benchmark aggregator N/A,No comparative arms or winner claim; external implementation not verified or substituted
 C12,PRESENT AND ENFORCED,Scope excludes hook guard work; changed-path audit confirms no hook edits,User-authorized follow-up repaired and verified baseline collection failures
-C13,PRESENT AND ENFORCED,Fresh markdownlint-cli2 on changed Markdown; zero issues,Static syntax gate only
+C13,PRESENT AND ENFORCED,Original scoped markdownlint retained; latest closeout uses Prettier links JSON and diff verification,Static documentation checks only; no new markdownlint execution claimed

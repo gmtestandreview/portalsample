@@ -1,5 +1,30 @@
 # Independent reviewer handbacks
 
+## Installed-host closeout reviewer
+
+> APPROVE scoped for the authorized installed native Codex deployment.
+>
+> Reviewed all ten closeout documents, acceptance/run records, both matrices,
+> installed-path policy, installation/verification/results records and four
+> public transcripts. Independently confirmed all 82 source/installed hashes,
+> active policy identity and both protected hook hashes.
+>
+> Both identified documentation issues are corrected. No material blocker
+> remains within this scope. Existing IDE/Claude operation, unrelated
+> integration health and automation remain unverified. Final artifact-hash
+> refresh and link checks remain with the parent.
+
+## Original implementation handbacks
+
+Parent closeout note: these quoted handbacks remain historical raw review
+evidence. Current
+[normal installed-host acceptance](V3_NORMAL_HOST_ACCEPTANCE.md) and
+[evidence matrix](v3_implementation_controls.csv) supersede the earlier runtime
+gap without altering the reviewers' original claims. Both protected hooks remain
+unchanged; no integration command was run. Exact pre-closeout document bytes are
+retained in the
+[prior-documents manifest](codex_activation/normal-host/prior-documents-manifest.json).
+
 ## Initial target review
 
 ```text

@@ -211,4 +211,5 @@ spec.loader.exec_module(module)
             timeout=20,
         )
         assert result.returncode == 0, result.stderr
-        assert result.stdout == "" and result.stderr == ""
+        assert result.stdout == ""
+        assert result.stderr == ""

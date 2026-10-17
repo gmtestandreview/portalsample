@@ -1,11 +1,22 @@
 # V3 repository implementation — 17 October 2026
 
-Current follow-up: the two collection errors are
-[resolved and verified](V3_COLLECTION_FIX.md), with **203 tests passing on
-Python 3.13.11 and 3.14.7**. Codex is the selected primary host; its
-[natural activation check](V3_CODEX_ACTIVATION.md) discovered the revised skill
-but could not load it because execution policy blocked the required secrets
-scanner. Release remains HOLD for that concrete host blocker.
+Latest authorized closeout: both verified packages are backed up and installed,
+with 82 source-matching files and an active installed-path scanner/read policy.
+[Normal-host acceptance](V3_NORMAL_HOST_ACCEPTANCE.md) passes the positive,
+near-miss, controller closeout and supplementary scan checks. Recommendation:
+**deploy** scoped to the installed Codex packages. Both protected hooks remain
+unchanged. The earlier implementation and fixture results below retain their
+distinct environments and dates.
+
+Preceding fixture follow-up: the
+[scanner-policy continuation](V3_POLICY_CONTINUATION.md) verifies two complete
+natural Codex activation runs under a prepared exact-path policy, one F04/F05
+pressure sample, and 43 fresh local evidence-validator tests. External
+specialist benchmark aggregation is N/A for this noncomparative scope.
+Recommendation: **deploy**, scoped to the tested primary Codex environment and
+its execution prerequisite; no installation occurred. The completed
+[collection/Python repair](V3_COLLECTION_FIX.md) remains unchanged: 203 tests
+passed on Python 3.13.11 and 3.14.7.
 
 ## Scope and execution contract
 
@@ -69,10 +80,11 @@ The review and repository changes are complete. All 19 recommendations have a
 current disposition in [fix matrix](v3_implementation_controls.csv), with
 [current controls](v3_implementation_control_status.csv) and
 [18 regression dispositions](v3_implementation_tests.csv). F04/F05 retain
-explicit controller judgment rather than claiming automated enforcement of
-evaluator usefulness. F16 remains NOT VERIFIED for natural host acceptance. The
-local preflight is enforced when invoked; an automatic agent runner or
-provider-budget monitor was not added.
+explicit controller judgment, now exercised by one focused pressure sample,
+rather than claiming automated enforcement of evaluator usefulness. F16 now
+passes for isolated primary Codex acceptance. The local preflight is enforced
+when invoked; an automatic agent runner or provider-budget monitor was not
+added.
 
 Changes:
 
@@ -94,19 +106,20 @@ Changes:
 
 ## Final acceptance gates
 
-| Gate                                          | Result       | Evidence and limit                                                                         |
-| --------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------ |
-| Repository review and requested dispositions  | PASS         | All 19 fixes and 13 controls inspected against current sources                             |
-| Deterministic regression                      | PASS scoped  | 154 tests, including 43 new preflight cases                                                |
-| Static analyzers                              | PASS scoped  | Ruff 0.16.7; Pyright 1.1.414, two source files, Python 3.13.11; editor equivalence unknown |
-| Skill structure                               | PASS         | Both entrypoints validated by local skills-ref                                             |
-| Markdown and diff integrity                   | PASS scoped  | Changed Markdown lint and git diff checks                                                  |
-| Synthetic behavior                            | PASS scoped  | Eight unaffected cases plus fresh S3; one sample each, no statistical claim                |
-| Natural discovery/loading/application/runtime | BLOCKED      | Codex discovered the isolated candidate; execution policy blocked secrets scan and loading |
-| External specialist aggregation               | NHR          | No current repository skill-creator evaluator source/tool to verify                        |
-| Full skills-ref suite                         | PASS         | Follow-up: 203 pass on Python 3.13.11 and 3.14.7; see collection repair evidence           |
-| Provider token efficiency                     | NOT VERIFIED | Counters unavailable; no measured savings claim                                            |
-| Final repository delivery                     | PASS         | Current artifacts, hashes, limitations and checkpoint saved                                |
+| Gate                                          | Result       | Evidence and limit                                                                                          |
+| --------------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------- |
+| Repository review and requested dispositions  | PASS         | All 19 fixes and 13 controls inspected against current sources                                              |
+| Deterministic regression                      | PASS scoped  | 154 tests, including 43 new preflight cases                                                                 |
+| Static analyzers                              | PASS scoped  | Ruff 0.16.7; Pyright 1.1.414, two source files, Python 3.13.11; editor equivalence unknown                  |
+| Skill structure                               | PASS         | Both entrypoints validated by local skills-ref                                                              |
+| Markdown and diff integrity                   | PASS scoped  | Changed Markdown lint and git diff checks                                                                   |
+| Synthetic behavior                            | PASS scoped  | Eight unaffected cases plus fresh S3; one sample each, no statistical claim                                 |
+| Natural discovery/loading/application/runtime | PASS scoped  | Two fresh complete Codex runs under exact-path scanner/read policy; see current continuation                |
+| F04/F05 controller process decisions          | PASS scoped  | Five assertions in one independent pressure sample; no actual child dispatch or automatic enforcement claim |
+| External specialist aggregation               | N/A          | No comparative arms, aggregated benchmark statistics or winner claim; local arithmetic remains required     |
+| Full skills-ref suite                         | PASS         | Follow-up: 203 pass on Python 3.13.11 and 3.14.7; see collection repair evidence                            |
+| Provider token efficiency                     | NOT VERIFIED | Counters unavailable; no measured savings claim                                                             |
+| Final repository delivery                     | PASS         | Current artifacts, hashes, limitations and checkpoint saved                                                 |
 
 Exact subprocess outputs are retained in
 [verification record](v3_implementation_verification.json). Current artifact
@@ -120,13 +133,18 @@ tokens avoided in one retrieval; this tool estimate is not provider telemetry.
 
 ## Release and restart decision
 
-Recommendation: **hold** for release. The human skill owner decides acceptance;
-repository implementation completion is distinct from deployment readiness. The
-full-suite issue is resolved. Codex target-host loading remains blocked by the
-required secrets scanner being rejected under the CLI execution policy. The
-external specialist implementation and provider usage cannot be verified from
-this repository. No install, publish, actual skill merge, hook change, commit or
-push was performed.
+Recommendation: **deploy**, scoped to the tested primary Codex
+candidate/environment with the prepared scanner/read policy as an execution
+prerequisite. Greg decides release acceptance. The original scanner blocker and
+F04/F05 evidence gaps are resolved within that scope; external specialist
+benchmark aggregation is inapplicable. Normal installed-client operation,
+controller natural discovery and Claude Code were not tested or claimed.
+Whole-session provider efficiency remains unverified and is not a required
+acceptance gate. That preceding fixture phase performed no installation; the
+subsequent user-authorized package installation and normal-host acceptance are
+now complete. No site publication, actual skill merge, hook change, commit or
+push was performed. See the latest installed-host report for current scope
+instead of the preceding fixture-only limits.
 
 The single restart point is
 [continuation checkpoint](V3_CONTINUATION_CHECKPOINT.md). Resume only a named

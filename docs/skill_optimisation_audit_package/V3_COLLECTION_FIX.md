@@ -1,5 +1,14 @@
 # Full-suite collection repair — 17 October 2026
 
+Closeout: this collection/Python work remains complete and was not rerun or
+modified for deployment. The subsequent
+[authorized installed Codex acceptance](V3_NORMAL_HOST_ACCEPTANCE.md) is PASS
+scoped. Both skills were backed up and installed, and the installed-path policy
+is active. This later deployment supersedes the original no-overwrite statement
+at the end of this report; the recorded 203-test baseline remains historical
+execution evidence for its stated environments. Protected hook hashes are
+unchanged.
+
 The two pre-existing skills-ref collection errors are resolved.
 
 The active test baseline is now **Python 3.14.7**, pinned in
@@ -40,7 +49,7 @@ test was added merely to assert import spelling. The full tests exercise real
 XML round-tripping and Node/Graphviz rendering. No dependency, interpreter,
 policy or runtime application change was required.
 
-## Host decision
+## Host decision at collection-repair close
 
 The user selected Codex as primary for this task and uses Claude Code equally.
 Natural activation means a fresh ordinary request leads the actual host to
@@ -48,6 +57,7 @@ discover the revised package, read it, apply its instructions and produce the
 expected artifact, without naming the skill in the request. The earlier subagent
 tests established behavior after explicit loading, not that discovery.
 
-An isolated Codex CLI check is recorded separately. Claude Code remains a
-separate acceptance target; the primary-host choice does not establish its
-activation. Existing user-installed skills were not overwritten.
+At collection-repair close, only the isolated Codex check had been attempted and
+existing installed skills had not been overwritten. The later authorized
+deployment and normal-host acceptance are recorded separately above. Claude Code
+remains untested; Codex acceptance does not establish its activation.

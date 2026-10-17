@@ -1,9 +1,26 @@
 # Codex primary-host activation check — 17 October 2026
 
+Latest closeout:
+[normal installed-host acceptance](V3_NORMAL_HOST_ACCEPTANCE.md) is **PASS
+scoped**, following explicit backup/install authorization. The active policy now
+uses installed paths, not fixture paths. An ordinary positive request,
+near-miss, controller closeout and repaired supplementary scan are recorded in
+the [normal-host results](codex_activation/normal-host/results.json).
+Installed-byte identities and protected hooks are verified. The fixture results
+and original blocked attempts below retain their historical scopes.
+
+Preceding fixture result: **PASS scoped** for discovery, loading, application,
+artifact and runtime in two fresh Codex sessions under a narrowly scoped
+temporary scanner/read policy. See the
+[policy correction and current acceptance](V3_POLICY_CONTINUATION.md) and
+[public run results](codex_activation/policy-correction/results.json). The
+blocked attempts below are retained as historical failure evidence, not the
+current gate result. No permanent policy or installed skill was changed.
+
 The user chose Codex as primary for this task; Claude Code remains a separate
 acceptance target. No further host-selection decision is pending.
 
-## Method
+## Original blocked method
 
 Codex CLI `0.162.0-alpha.17.2` received an ordinary comparison request with
 inline evidence, without a skill name, skill path, oracle, or expected label. An
@@ -20,7 +37,7 @@ temporary workspace. Both used ephemeral sessions and ignored user configuration
 to avoid bringing unrelated connector setup into the check. Execution-policy
 rules were not bypassed.
 
-## Observed gates
+## Original blocked gates
 
 | Gate                      | Result       | Evidence                                                                                                  |
 | ------------------------- | ------------ | --------------------------------------------------------------------------------------------------------- |
@@ -31,10 +48,12 @@ rules were not bypassed.
 | Codex runtime acceptance  | HOLD         | Discovery alone is insufficient                                                                           |
 | Claude Code runtime       | NOT TESTED   | Primary-host choice was Codex                                                                             |
 
-The remaining step is to permit the required secrets scanner under the intended
-Codex host execution policy and rerun the same request in a fresh session. Do
-not skip the scanner, silently relax policy, or count the generic answer as
-successful application. No installed skill or execution policy was changed.
+The original remaining step was to permit the required scanner and rerun natural
+activation. That step has now been executed with exact-path scan/read
+permissions. The successful request adds the verified environment fact that
+Sonar is installed on PATH, avoiding blocked availability probes. It still names
+no skill or expected result. The generic blocked answers remain unverified
+application evidence.
 
 ## Preserved evidence
 

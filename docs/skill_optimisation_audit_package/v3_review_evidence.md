@@ -1,5 +1,24 @@
 # Independent review evidence — 17 October 2026
 
+Latest independent closeout review: **APPROVE scoped** for the installed native
+Codex packages. The reviewer inspected all ten requested documents, both
+matrices, active policy, installation/verification records and four final public
+transcripts; it independently confirmed 82 source/installed hashes, policy
+identity and both protected-hook hashes. Two documentation-precision issues were
+corrected. The [public handback](v3_review_raw.md) and
+[installed acceptance](V3_NORMAL_HOST_ACCEPTANCE.md) preserve the scope; no IDE,
+Claude, unrelated-integration or automatic-enforcement claim is added.
+
+Closeout context:
+[authorized normal-host installation and acceptance](V3_NORMAL_HOST_ACCEPTANCE.md)
+are now separately recorded in the
+[current matrix](v3_implementation_controls.csv). The reviewer statements below
+retain their original implementation/oracle scopes; none is recast as a new
+normal-host execution. The installed policy, identities, public outputs and
+protected-hook hashes provide the latest acceptance evidence. Historical numeric
+results remain historical, and the Python/collection baseline is not rerun for
+this documentation closeout.
+
 These are preserved reviewer handbacks, not an independently metered campaign.
 No reviewer assigned a numeric score or tested natural host activation.
 

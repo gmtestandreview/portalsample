@@ -9,19 +9,19 @@
       "id": "0",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/DEVILS_ADVOCATE_V3_REPORT.md",
-      "sha256": "4da13ddada63ee8db991985a72955c49fc188888b7e71269c9e91c34c85e03e8"
+      "sha256": "feb2f807b6bb0333acddbd2a79b92ab3b5fdb9af57fb6683528ed5e95581b290"
     },
     {
       "id": "1",
       "role": "checkpoint",
       "path": "docs/skill_optimisation_audit_package/V3_CONTINUATION_CHECKPOINT.md",
-      "sha256": "3c3f65874d5c81ae7a15ed39ff69683eb02ac34209b9d1bbcd903cf546fe527c"
+      "sha256": "4a8b70c1ee08b471ed2cb8ca166601c025a23b895b39b10cc66f75ba9bf2d548"
     },
     {
       "id": "2",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/V3_IMPLEMENTATION.md",
-      "sha256": "707a16c022834f23a487377cc55aaf4433e29503b443fff779c18b6c25de0d85"
+      "sha256": "b034c8f6576d1c4837a1c4bbc7ad0b840b3ff336d33edc0699441a1097755028"
     },
     {
       "id": "3",
@@ -33,13 +33,13 @@
       "id": "4",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/v3_implementation_control_status.csv",
-      "sha256": "bf47d9948352ca0eaae6543acf0cf1f410fc5abbf2342e2c9083163bd51f23d5"
+      "sha256": "708ee707f52c74cc90ee36ee7e2fbce767ff299d41610b9c601835dde384a78d"
     },
     {
       "id": "5",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/v3_implementation_controls.csv",
-      "sha256": "8533689f1db167655da8b0197a73b4e4709e34716c9d9b017b00338a3b984d5b"
+      "sha256": "6aa938f1910df5f8094aa4d1209986df5c4617c9cc773706e2bf7bb175a213b0"
     },
     {
       "id": "6",
@@ -63,13 +63,13 @@
       "id": "9",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/v3_review_evidence.md",
-      "sha256": "f0d93badf9e211325cdb926a0599767a366b633519340a41af6247dd80c86d30"
+      "sha256": "6e78425daa608d5ab27c657e04fe5046e339eb4b96925f64397a2e400db0de32"
     },
     {
       "id": "10",
       "role": "raw",
       "path": "docs/skill_optimisation_audit_package/v3_review_raw.md",
-      "sha256": "521f228611c63ac92451811e49aa4cde46125f8218a470c89dde00ed4c28372e"
+      "sha256": "c75f3643d0b2e88d4cc131ba4fc61310c7c42865322c2eaa581d44ce65cfa378"
     },
     {
       "id": "11",
@@ -207,13 +207,13 @@
       "id": "followup-2",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/V3_COLLECTION_FIX.md",
-      "sha256": "1852ca9b81f0b5be9b29d06bdea417a330d41e69cb19dc3d59d43595835a9448"
+      "sha256": "893a72d2839f2882b2b9c90eaa1f8ef95e3c5da917cd3e245fa40b2a3fb72280"
     },
     {
       "id": "followup-3",
       "role": "candidate",
       "path": "docs/skill_optimisation_audit_package/V3_CODEX_ACTIVATION.md",
-      "sha256": "d1f2db357a5e65b607e04bd1d1948a1d30d7a94abf708e0211d8b0932de9677f"
+      "sha256": "bcd79e2056bb29d992f093ec45eb59dae2dce6d17cbf01e134c761b9f3a52809"
     },
     {
       "id": "followup-4",
@@ -274,6 +274,78 @@
       "role": "raw",
       "path": "docs/skill_optimisation_audit_package/v3_python314_test_baseline.json",
       "sha256": "a9f929330464b80f898900519ea1d51cc6a91e22b8ce74d945e0869231164f99"
+    },
+    {
+      "id": "continuation-V3_POLICY_CONTINUATION",
+      "path": "docs/skill_optimisation_audit_package/V3_POLICY_CONTINUATION.md",
+      "sha256": "9ed74f60071017a45a37fc67b8c2e44a9c6648dc81f5617387048114ad877e07",
+      "role": "raw"
+    },
+    {
+      "id": "continuation-v3_codex_runtime_run",
+      "path": "docs/skill_optimisation_audit_package/v3_codex_runtime_run.json",
+      "sha256": "b510a410331a05f6184bae7ab0d79fe3937250990a64ac6a531318fea6ab7916",
+      "role": "raw"
+    },
+    {
+      "id": "continuation-v3_pressure_contract",
+      "path": "docs/skill_optimisation_audit_package/v3_pressure_contract.json",
+      "sha256": "6db94c200fbb5d501c5b6f80054451fc931a6bf5821be3784ef5917ddf82cd3d",
+      "role": "raw"
+    },
+    {
+      "id": "continuation-v3_pressure_raw",
+      "path": "docs/skill_optimisation_audit_package/v3_pressure_raw.md",
+      "sha256": "510e4eaf681c243d194d31388466c6f013bfcbd6a7fe4b74aa46632ef7922eab",
+      "role": "raw"
+    },
+    {
+      "id": "continuation-v3_continuation_verification",
+      "path": "docs/skill_optimisation_audit_package/v3_continuation_verification.json",
+      "sha256": "3cf3110908c0ed490a59e079103f14b5cbfe9fcb338ae9e3d24e7a482e1b01b0",
+      "role": "raw"
+    },
+    {
+      "id": "continuation-v3_continuation_review",
+      "path": "docs/skill_optimisation_audit_package/v3_continuation_review.md",
+      "sha256": "f06ff9c3197729e6d67f0173f97e9086732cb77948a501214f938c444cb1c6c8",
+      "role": "raw"
+    },
+    {
+      "role": "raw",
+      "sha256": "33436df8e090c322978cd551593218b9cc72003ddf5fd7e9c8b366f61959963f",
+      "path": "docs/skill_optimisation_audit_package/v3_normal_host_run.json",
+      "id": "normal-closeout-v3_normal_host_run"
+    },
+    {
+      "role": "raw",
+      "sha256": "1027ab86d0f84a46b5f4f48ba94d5ca74de05b56c466285e11311180592721c0",
+      "path": "docs/skill_optimisation_audit_package/V3_NORMAL_HOST_ACCEPTANCE.md",
+      "id": "normal-closeout-V3_NORMAL_HOST_ACCEPTANCE"
+    },
+    {
+      "role": "raw",
+      "sha256": "5c2862d0e770a1021de301798e4788c2349a7521b6c370be65dd2d279d1ef880",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/results.json",
+      "id": "normal-closeout-results"
+    },
+    {
+      "role": "raw",
+      "sha256": "06efa3d69d6ead728bccd251f2c5fcad6dd23ac60db683f3a861f5d5848ae4fb",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/verification.json",
+      "id": "normal-closeout-verification"
+    },
+    {
+      "role": "raw",
+      "sha256": "95526a3431848e7f130063cc2fe30a5e206e3ef5dae7e64bf7ded0af1ffbf420",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/install-manifest.json",
+      "id": "normal-closeout-install-manifest"
+    },
+    {
+      "role": "raw",
+      "sha256": "98a6201d27ddec48d77ee19d2ae54eb48bb64c56d6ed7ae182b0034d27dcf246",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/scanner-installed.rules",
+      "id": "normal-closeout-scanner-installed"
     }
   ],
   "environment": {
@@ -288,17 +360,7 @@
   "evaluation": {
     "evaluator": "root grading after isolated synthetic runs",
     "kind": "behavioral",
-    "expected_case_ids": [
-      "R1",
-      "R2",
-      "R3",
-      "R4",
-      "S1",
-      "S2",
-      "S3",
-      "S4",
-      "S5"
-    ],
+    "expected_case_ids": ["R1", "R2", "R3", "R4", "S1", "S2", "S3", "S4", "S5"],
     "cases": [
       {
         "id": "R1",
@@ -366,14 +428,14 @@
   },
   "score": null,
   "gates": {
+    "delivery": "PASS",
+    "runtime": "PASS",
+    "loading": "PASS",
     "static": "PASS",
-    "behavioral": "PASS",
+    "application": "PASS",
     "discovery": "PASS",
-    "loading": "NHR",
-    "application": "NHR",
     "artifact": "PASS",
-    "runtime": "NHR",
-    "delivery": "PASS"
+    "behavioral": "PASS"
   },
   "budget": {
     "optional_waves": 2,
@@ -391,17 +453,30 @@
     "elapsed_seconds": 4.413,
     "elapsed_scope": "Final verification subprocess durations only; not whole-session usage"
   },
-  "recommendation": "hold",
+  "recommendation": "deploy",
   "followup": {
     "primary_host": "Codex",
     "secondary_host": "Claude Code (not tested)",
     "full_suite": "Current pinned Python 3.14.7 baseline: 203 passed; previous 3.13.11 evidence is historical",
     "activation_discovery": "PASS scoped: temporary candidate selected without explicit invocation",
-    "activation_loading": "BLOCKED: native CLI execution policy rejected required secrets scanner",
-    "activation_application": "NOT VERIFIED",
-    "activation_attempts": 2,
-    "release": "hold",
-    "candidate_scope": "Duplication v1.3 unchanged; controller natural activation not tested",
-    "current_test_python": "3.14.7"
-  }
+    "activation_loading": "PASS normal-host: installed entrypoint/reference scanned then read",
+    "activation_application": "PASS normal-host: strict-subset result/accounting plus installed controller closeout",
+    "activation_attempts": 5,
+    "release": "deploy scoped installed native Codex packages; authorized installation complete",
+    "candidate_scope": "Duplication v1.3 and controller source files installed unchanged; both naturally loaded/applied; old pressure decisions remain one sample",
+    "current_test_python": "3.14.7",
+    "policy_continuation": "V3_POLICY_CONTINUATION.md",
+    "runtime_record": "v3_codex_runtime_run.json",
+    "activation_attempts_scope": "Five normal-host CLI attempts: initial target with supplementary scan failure, final positive, near-miss, controller, repaired direct scan",
+    "external_aggregation": "N/A: no comparative benchmark or winner claim",
+    "historical_record": "v3_implementation_run.pre-policy.json retains pre-policy gate state",
+    "normal_host_record": "v3_normal_host_run.json",
+    "normal_host_report": "V3_NORMAL_HOST_ACCEPTANCE.md",
+    "normal_host_acceptance": "PASS scoped: real installed duplication/controller, normal config, positive near-miss closeout and repaired scan",
+    "installed_packages": "User-authorized backup/install; 82 source-matching copied files",
+    "active_installed_policy": "C:/Users/gregm/.codex/rules/v3-installed-skills.rules",
+    "protected_hooks": "Two exact hook hashes unchanged; no integration/auth command executed",
+    "remaining_limits": "Already-running IDE and Claude untested; unrelated plugin/Storybook diagnostics not repaired; no whole-session efficiency claim"
+  },
+  "record_scope": "Implementation evidence index; original nine-case behavioral evaluation is preserved; current runtime environment is separately bound in v3_codex_runtime_run.json"
 }
