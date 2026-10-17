@@ -2,7 +2,7 @@
 name: skill-duplication-audit
 description: Use when classifying duplicated or overlapping activation scope between two or more Agent Skills, including a proposed new skill (redundancy, "does X make Y redundant", skills triggering on the same prompt), defining boundaries, or recommending whether skills should merge, stay separate, or intentionally compose. Do not use for repeated text inside one skill, for comparing agents, for judging a skill's writing quality, or for performing a merge (use writing-skills).
 metadata:
-  version: "1.2"
+  version: "1.3"
   owner: Greg
   target: a-team
 ---

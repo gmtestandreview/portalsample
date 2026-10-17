@@ -1,5 +1,11 @@
 # Devil's Advocate V3 — Evidence-led forensic audit and closeout
 
+Repository continuation completed on 17 October 2026:
+[implementation and verification](V3_IMPLEMENTATION.md). The report below remains
+the historical audit of the supplied transcript. Its missing-checkout limitation
+was resolved for repository review; natural target-host acceptance remains
+unverified. Historical scores are not current scores.
+
 **Audit date:** 17 October 2026 (Australia/Sydney)
 **Scope:** The supplied 2,951-line optimisation conversation, previous audit package and 20 additional October reports/JSON resources. No new SKILL optimisation, test campaign or repository mutation was performed.
 **Source of truth:** `Pasted text(20261016-213146).txt`, SHA-256 `4ad3bbb82fe14d1d843147830d39e012eab91291269782871e8862ea4a8e4f23`. Reference `EXEC:Ln` means one-based line in this exact transcript. A dated report cited by filename is **secondary evidence**, not a fresh execution.

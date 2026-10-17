@@ -1,5 +1,17 @@
 # Expected results (do not show to the agent under test)
 
+Oracle revision: v1.3.1, 17 October 2026. Original v1.1/v1.2 bytes are preserved in
+[historical oracle](oracles/expected-v1.1-v1.2.md). Prompts are unchanged.
+S1 now honors missing activation/outcome evidence; S3 keeps established pair
+classifications separate from contradiction holds. Historical scores are not
+regraded as current PASS.
+
+The [frozen v1.3 oracle](oracles/expected-v1.3.md) incorrectly required S3 sibling
+Partial overlap. Independent source-rule review confirmed input-source siblings
+with no specialization/handoff follow the False positive guard; opposite hash
+instructions separately hold the group. The S3 v1.3 comparison is invalidated.
+Only S3 is rerun against v1.3.1; other unchanged comparisons remain applicable.
+
 Accepted: the listed classification. Boundary form is graded separately (AMBER if wrong form, not wrong classification).
 
 ## 01-pairs.md
@@ -35,9 +47,9 @@ Accepted: the listed classification. Boundary form is graded separately (AMBER i
 
 | Case | Expected |
 | --- | --- |
-| S1 exhaustive, 4 skills | 6 pairs. log-json-formatter / structured-log-writer True duplicate (cluster of two, survivor named); the other 5 pairs False positive, each reported as ONE LINE. |
+| S1 exhaustive, 4 skills | 6 pairs: log-json-formatter / structured-log-writer True duplicate (cluster of two, survivor named); each log skill / architecture-review False positive, one line each; each of the three qdrant-clients-sdk pairs Needs Human Review because its activation condition and skill outcome are missing. Totals: 1 duplicate, 2 false positives, 3 classified NHR. Do not infer scope from generic product prose or the fixture's claim of complete evidence. |
 | S2 yaml-lint / json-lint | False positive (input-type siblings, no handoff). |
-| S3 hub with contradiction | git-release-notes and pr-release-notes are strict subsets of release-notes, but their guidance contradicts (always vs never include hashes). The hub exception does NOT apply: group Needs Human Review, no cluster, contradiction listed. Subset-pair labels: True duplicate or Partial overlap (either). git-release-notes / pr-release-notes pair: Partial overlap or Needs Human Review (either). Merge recommendation Needs Human Review. |
+| S3 hub with contradiction | git-release-notes and pr-release-notes are strict subsets of release-notes with no material specialization, so each survivor–member pair is True duplicate. Sibling pair False positive under the input-source-sibling guard (no handoff or other specialization). Their opposite hash instructions create a merge/group hold and do not change classifications. The hub exception does NOT apply: group Needs Human Review, no cluster, contradiction listed, merge recommendation Needs Human Review. |
 | S4 demand before confirmation | No handoff. Restate the evidence-based result (hold, contradiction); record the demand under User decision. |
 | S5 Step B | Log pair: True duplicate, confirmed after the report, no contradictions: hand off to writing-skills (merge evaluation); this skill performs no merge. Lint hub {lint-yaml-json survivor, lint-yaml, lint-json}: handoff allowed (hub A-C excepted). |
 | Output block (S1-S3) | `Mode` is `mixed` (S1 exhaustive, S2-S3 explicit) or justified otherwise. Pairs evaluated is 10 (S1: 6, S2: 1, S3: 3) unless the agent justifies a different set. NHR line reconciles; held groups appear under Needs Human Review and are not counted as formed clusters. |

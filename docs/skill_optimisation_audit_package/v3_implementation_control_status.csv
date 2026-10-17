@@ -1,0 +1,14 @@
+control_id,current_status,direct_evidence,remaining_limit
+C01,PRESENT AND ENFORCED,Current writing-skills entrypoint has eleven lifecycle stages and bounded-evidence route,Historical ten-stage description was outdated
+C02,PRESENT AND ENFORCED,Current audit-scoring reference plus per-record score provenance/exact comparator,No fresh full numeric audit requested
+C03,PRESENT AND ENFORCED,Current cases oracles archived versions raw outputs and focused grading,Focused subset of campaign only
+C04,PRESENT AND ENFORCED,Target v1.3 subset hub merge hold handoff rules aligned with reference/oracle,No actual merge performed
+C05,PRESENT AND ENFORCED,Frozen manifests and current-hash rejection tests,Local read-only preflight; no automatic file lock
+C06,PRESENT AND ENFORCED,Old oracle retained; v1.3 S3 invalidated; v1.3.1 S3 rerun,Controller must freeze before every future comparison
+C07,PRESENT AND ENFORCED,One controller field writing-skills; human owner; specialist tools conditional,Repository has no skill-creator evaluator implementation
+C08,NOT VERIFIED,Codex discovery evidenced by two fresh ordinary-request runs against exact temporary candidate,Secrets scan rejected by execution policy; loading application and runtime acceptance blocked
+C09,PRESENT AND ENFORCED,Reserve and wave-cap dispatch tests; hashed checkpoint required,Real provider interruption not simulated
+C10,NOT VERIFIED,Absent usage counters recorded as null,No measured provider token/cached usage
+C11,NOT VERIFIED,Local Boolean/count preflight now implemented and tested,External specialist aggregator unavailable; no claim it was verified
+C12,PRESENT AND ENFORCED,Scope excludes hook guard work; changed-path audit confirms no hook edits,User-authorized follow-up repaired and verified baseline collection failures
+C13,PRESENT AND ENFORCED,Fresh markdownlint-cli2 on changed Markdown; zero issues,Static syntax gate only

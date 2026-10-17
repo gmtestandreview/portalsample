@@ -12,6 +12,13 @@ Behavioral evidence for `SKILL.md`. Cases are synthetic or reference real skill 
 
 ## Running a campaign
 
+Before dispatch, freeze candidate, references, case files, oracle and rubric
+hashes and save a usable checkpoint. Apply the controller's
+[bounded optimisation contract](../../writing-skills/references/bounded-optimisation.md).
+The current oracle is `expected.md` revision v1.3.1; prior revisions are archived under
+`oracles/`. Oracle corrections invalidate affected old comparisons; retain
+historical raw outputs and do not silently upgrade their scores.
+
 1. RED: give an agent only a case file and the five classification labels. No skill.
 2. GREEN: give an agent `SKILL.md` and the case files. Allow `references/validation-cases.md` only when `SKILL.md` directs it; forbid other reads.
 3. Grade each case against `expected.md`: `PASS`, `AMBER` (right outcome, but a boundary form, count, or secondary pair label differs from `expected.md` without changing clusters or the overall recommendation), `FAIL`, or `NHR`.

@@ -1,0 +1,20 @@
+fix_id,baseline_status,final_status,evidence,limit
+F01,MISSING,PRESENT AND ENFORCED,bounded-optimisation.md and evidence.py dispatch reserve/cap tests,Local preflight plus controller obligation; no automatic provider-budget monitor
+F02,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Per-record identity artifacts evaluator kind score operator and threshold,Semantic rubric assessment remains evaluator responsibility
+F03,MISSING,PRESENT AND ENFORCED,Candidate dependency hashes checked on publication and dispatch; mutation tests,Read-only check does not lock files; controller rechecks at completion
+F04,PRESENT BUT NOT ENFORCED,PRESENT BUT NOT ENFORCED,Conditional reference requires new uncertainty and acceptance impact; dispatch checks nonempty fields,Decision value cannot be inferred by deterministic validation
+F05,MISSING,PRESENT BUT NOT ENFORCED,One controller and bounded focused evaluator/adversary policy,Agent count allocation requires controller compliance
+F06,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Raw artifact roles hashes and per-case evidence IDs required; missing raw rejected,Grader must assess the raw content
+F07,STALE,PRESENT AND ENFORCED,Target v1.3 reference/oracle corrections; focused GREEN raw and grading,Focused synthetic evaluation only
+F08,PRESENT AND ENFORCED,PRESENT AND ENFORCED,Full suite 203 tests passes on Python 3.13.11 and 3.14.7; Ruff Pyright skills-ref Markdown and diff checks,Collection failures resolved in follow-up
+F09,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Canonical freeze manifest and artifact dependency contract,Controller selects the necessary dependency set
+F10,MISSING,PRESENT AND ENFORCED,Checkpoint artifact required and hashed before dispatch; continuation report saved,No forced provider interruption simulation
+F11,PRESENT AND ENFORCED,PRESENT AND ENFORCED,Scope exclusions and final changed-path audit; no hook edits,Unrelated issues recorded separately
+F12,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Historical oracle archived byte-for-byte; new oracle v1.3; stale hash rejection,Old scores retained as historical; no retroactive regrade
+F13,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Controller field fixed to writing-skills; target owns rules; human acceptance owner required,External skill-creator tools were not present in repository and were not invented
+F14,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Explicit score kinds and exact comparator tests; numeric score cannot override gates,No new quality score requested or assigned
+F15,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Manifest compatibility contract and current-hash/missing-raw checks,Environment equivalence needs human/tool evidence
+F16,NOT VERIFIED,NOT VERIFIED,Codex primary selected; isolated ordinary requests discovered revised candidate; remaining gates separated,CLI execution policy blocked required secrets scan before loading; Claude Code untested
+F17,MISSING,PRESENT AND ENFORCED,Boolean/count/case-set validation; unsupported winner claim rejected,Specialist external benchmark aggregator not available or validated
+F18,PRESENT BUT NOT ENFORCED,PRESENT AND ENFORCED,Environment record captures host interpreter tool version config rules file_count; fresh analyzer record,Editor Pylance equivalence unknown; asserted environment not automatically verified
+F19,MISSING,PRESENT AND ENFORCED,Nullable provider counters and numeric observed invocation/elapsed fields; tests reject textual estimates,No measured token usage or savings available

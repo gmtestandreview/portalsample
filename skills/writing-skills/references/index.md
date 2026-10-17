@@ -27,6 +27,7 @@ Purpose: route the agent to the **smallest sufficient set of references** for th
 | Mandatory `SKILL.md` format, frontmatter, directory/resource rules | `specification.md` | `SKILL-testing-checklist.md` at final validation |
 | General skill authoring and information architecture | `best practices-for-skill-creators.md` | `anthropic-best-practices.md` only for Claude/Anthropic targets |
 | Static quality audit or optimization | `best-practices-evaluations.md` | `audit-scoring.md` for scoring; `../assets/templates/skill-audit.md` only for report shape |
+| Iterative optimisation, comparative campaigns or interrupted closeout | `bounded-optimisation.md` | Scoring/testing references only for the acceptance question being evaluated |
 | Full scored audit | `best-practices-evaluations.md` | `audit-scoring.md`; `SKILL-testing-checklist.md` for final validation |
 | Classify as Discipline, Technique, Pattern, Reference, or Hybrid | `skill-classification.md` | Testing reference selected from the resulting class |
 | Fix activation or description wording | `description-optimization.md` | Use for rigorous description evaluation testing. |
