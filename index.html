@@ -23,12 +23,12 @@
     <link rel="apple-touch-icon" href="/NMI-tile.png" />
 
     <!--
-    Runtime configuration — injected by the server before the bundle loads.
-    In development (webpack-dev-server), set these in webpack.config.js via
-    HtmlWebpackPlugin templateParameters or use a .env.local file with the
-    dotenv-webpack plugin.
+    Runtime configuration — injected before the bundle loads.
+    In development (vite dev), the envTemplatePlugin in vite.config.ts
+    replaces the EJS tags with dev defaults. In CI/production, supply real
+    values via environment variables.
 
-    NEVER use process.env in source code — these window.* globals are the
+    NEVER use process.env in source code — these globalThis.* values are the
     only runtime config mechanism. See ClientApp/src/env.ts.
   -->
     <script>
@@ -54,5 +54,6 @@
   </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/ClientApp/src/index.tsx"></script>
   </body>
 </html>

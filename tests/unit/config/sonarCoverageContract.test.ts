@@ -106,10 +106,10 @@ describe('sonar coverage denominator contract', () => {
   it('keeps the analysed sources aligned with the measured sources', () => {
     const sources = readSonarProperty('sonar.sources');
 
-    expect(sources).toEqual(['ClientApp/src', 'webpack.config.js']);
+    expect(sources).toEqual(['ClientApp/src', 'vite.config.ts']);
     expect(unitConfig.test?.coverage?.include).toEqual([
       'ClientApp/src/**/*.{ts,tsx}',
-      'webpack.config.js',
+      'vite.config.ts',
     ]);
   });
 });

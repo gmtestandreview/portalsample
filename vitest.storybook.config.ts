@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { playwright } from '@vitest/browser-playwright';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { defineConfig } from 'vitest/config';
-import { storybookCoverageConfig } from './vitest.storybook.coverage';
-import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime';
+import { storybookCoverageConfig } from './vitest.storybook.coverage.ts';
+import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime.ts';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 // Fixed port below the Windows dynamic range (49152+); the excluded TCP ranges

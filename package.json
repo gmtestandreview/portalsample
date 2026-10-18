@@ -14,8 +14,8 @@
     }
   },
   "scripts": {
-    "start": "webpack serve --mode development --open",
-    "build": "webpack --mode production",
+    "start": "vite",
+    "build": "vite build",
     "type-check": "tsc --noEmit",
     "lint": "eslint \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx}\" \"tests/**/*.{ts,tsx}\" \"*.config.{ts,js}\" \"vitest*.{ts,js}\"",
     "lint:mdx": "remark \".storybook/**/*.mdx\" \"ClientApp/src/**/*.mdx\" --frail",
@@ -112,6 +112,7 @@
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@types/semver": "7.8.0",
+    "@vitejs/plugin-react": "^6.1.2",
     "@vitest/browser": "4.1.11",
     "@vitest/browser-playwright": "4.1.11",
     "@vitest/coverage-v8": "4.1.11",
