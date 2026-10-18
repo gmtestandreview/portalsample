@@ -82,12 +82,24 @@ const paymentDetailsHandler = http.get(
 const meta = {
   title: 'Routes/AcceptQuote',
   component: ReportRecipient,
+  subcomponents: {
+    PaymentDetails,
+    DeliveryAndReturn,
+    QuotationSummary,
+    SummaryAndAccept,
+  },
   decorators: [withPortalProviders],
   beforeEach({ msw }) {
     msw.use(reportRecipientHandler, paymentDetailsHandler);
   },
   parameters: {
     layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'This page groups five peer AcceptQuote workflow step APIs. The peer entries are documentation groupings, not child controls of ReportRecipient.',
+      },
+    },
     portal: {
       initialEntries: ['/accept-quote/123/report-recipient'],
       formik: {

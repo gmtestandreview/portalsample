@@ -48,6 +48,54 @@ const GuardHarness = ({
 const meta = {
   title: 'Components/RouteLeavingGuard',
   component: RouteLeavingGuard,
+  argTypes: {
+    when: {
+      description: 'Whether navigation should be intercepted.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    title: {
+      description: 'Heading shown in the confirmation modal.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: { summary: "'Unsaved changes'" },
+      },
+    },
+    body: {
+      description: 'Message shown in the confirmation modal.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: {
+          summary:
+            "'You have made changes to this form. You can discard your changes, or cancel to stay on the page.'",
+        },
+      },
+    },
+    cancelBtn: {
+      description: 'Label or content for the cancel action.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: { summary: "'Cancel'" },
+      },
+    },
+    confirmBtn: {
+      description: 'Label or content for the discard action.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: { summary: "'Discard changes'" },
+      },
+    },
+    onProceed: {
+      description: 'Runs immediately before confirmed navigation proceeds.',
+      control: false,
+      table: {
+        type: { summary: '() => void' },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
+  },
   parameters: {
     portal: { initialEntries: ['/form'] },
     docs: {

@@ -11,15 +11,31 @@
  * project's baseURL setting.
  */
 
+import process from 'node:process';
 import { expect, type APIResponse, type Page } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
+import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
 
 const { Given, When, Then } = createBdd();
 
-const STORYBOOK_BASE = 'http://localhost:6006';
+const storybookTestURL = process.env['STORYBOOK_TEST_URL'];
+const storybookServerMode = process.env['STORYBOOK_TEST_SERVER_MODE'];
+const storybookTarget = resolveStorybookTestTarget({
+  ...(storybookTestURL === undefined ? {} : { url: storybookTestURL }),
+  ...(storybookServerMode === undefined
+    ? {}
+    : { serverMode: storybookServerMode }),
+  ci: Boolean(process.env['CI']),
+});
+const STORYBOOK_BASE = storybookTarget.baseURL;
+const STORYBOOK_MCP = storybookTarget.mcpURL;
 const REPRESENTATIVE_DOCS_ID = 'components-pill--documentation';
 const REPRESENTATIVE_STORY_ID = 'components-pill--dashboard-statuses';
 const STYLE_GUIDE_DOCS_ID = 'documentation-style-guide--documentation';
+const AUTOSUGGEST_DOCS_ID = 'components-inputs-autosuggest--documentation';
+const ACCEPT_QUOTE_DOCS_ID = 'routes-acceptquote--documentation';
+const ROUTE_LEAVING_GUARD_DOCS_ID =
+  'components-routeleavingguard--documentation';
 
 /** Ceiling for waiting on a story bundle to compile and render on first hit. */
 const STORY_RENDER_TIMEOUT_MS = 15_000;
@@ -94,7 +110,7 @@ function visibleSource(page: Page) {
 // ---------------------------------------------------------------------------
 
 Given('the Storybook MCP server is running', async ({ request }) => {
-  const response = await request.get(`${STORYBOOK_BASE}/mcp`, {
+  const response = await request.get(STORYBOOK_MCP, {
     headers: { accept: 'text/html' },
   });
 
@@ -107,7 +123,7 @@ Given('the Storybook MCP server is running', async ({ request }) => {
 Then(
   'the Storybook MCP endpoint should initialize and list configured tools',
   async ({ request }) => {
-    const initialize = await request.post(`${STORYBOOK_BASE}/mcp`, {
+    const initialize = await request.post(STORYBOOK_MCP, {
       headers: MCP_HEADERS,
       data: {
         jsonrpc: '2.0',
@@ -135,13 +151,13 @@ Then(
       ...MCP_HEADERS,
       'mcp-session-id': sessionId,
     };
-    const initialized = await request.post(`${STORYBOOK_BASE}/mcp`, {
+    const initialized = await request.post(STORYBOOK_MCP, {
       headers: sessionHeaders,
       data: { jsonrpc: '2.0', method: 'notifications/initialized' },
     });
     expect(initialized.status()).toBe(202);
 
-    const toolsList = await request.post(`${STORYBOOK_BASE}/mcp`, {
+    const toolsList = await request.post(STORYBOOK_MCP, {
       headers: sessionHeaders,
       data: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
     });
@@ -226,6 +242,18 @@ When('I open a representative component story', async ({ page }) => {
 
 When('I open the Documentation Style Guide', async ({ page }) => {
   await loadDocsIframe(page, STYLE_GUIDE_DOCS_ID);
+});
+
+When('I open the AutoSuggest documentation', async ({ page }) => {
+  await loadDocsIframe(page, AUTOSUGGEST_DOCS_ID);
+});
+
+When('I open the AcceptQuote documentation', async ({ page }) => {
+  await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
+});
+
+When('I open the RouteLeavingGuard documentation', async ({ page }) => {
+  await loadDocsIframe(page, ROUTE_LEAVING_GUARD_DOCS_ID);
 });
 
 When(
@@ -364,6 +392,59 @@ Then(
       'href',
       /documentation-.*--documentation/
     );
+  }
+);
+
+Then('the AutoSuggestContainer owner is visible', async ({ page }) => {
+  await expect(
+    page.getByText('AutoSuggestContainer', { exact: true }).last()
+  ).toBeVisible();
+});
+
+Then(
+  'the Loading story is listed with its rendered owner',
+  async ({ page }) => {
+    await expect(
+      page
+        .locator('#loading-autosuggestcontainer')
+        .getByText('Loading (AutoSuggestContainer)', { exact: true })
+    ).toBeVisible();
+  }
+);
+
+Then(
+  'the AcceptQuote owner and four peer APIs are visible',
+  async ({ page }) => {
+    const docs = page.locator('#storybook-docs');
+    await expect(
+      page.getByRole('heading', { name: 'AcceptQuote', exact: true })
+    ).toBeVisible();
+    await Promise.all(
+      [
+        'PaymentDetails',
+        'DeliveryAndReturn',
+        'QuotationSummary',
+        'SummaryAndAccept',
+      ].map((apiName) =>
+        expect(docs.getByText(apiName, { exact: true }).last()).toBeVisible()
+      )
+    );
+  }
+);
+
+Then(
+  'the RouteLeavingGuard type and default cells are visible',
+  async ({ page }) => {
+    const apiTable = page.getByRole('table').filter({ hasText: 'when' });
+    await expect(apiTable).toContainText('boolean');
+    await expect(apiTable).toContainText('false');
+    await expect(apiTable).toContainText("'Unsaved changes'");
+    await expect(apiTable).toContainText("'Discard changes'");
+    await expect(
+      page
+        .locator('#custom-title-body-and-button-labels')
+        .getByText('Custom title, body, and button labels', { exact: true })
+    ).toBeVisible();
   }
 );
 

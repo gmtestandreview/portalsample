@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "source": "ClientApp/src/components/Field.tsx",
+      "export": "Field",
+      "classification": "direct",
+      "owner": "Field",
+      "reason": "The component is a renderable public field.",
+      "docsOwnerId": "components-field",
+      "states": [
+        {
+          "name": "default",
+          "applicability": "required",
+          "outcome": "shows the field label and accepts text",
+          "storyFile": "ClientApp/src/components/Field.stories.tsx",
+          "storyExport": "Default",
+          "storyId": "components-field--default",
+          "assertionFile": "ClientApp/src/components/Field.stories.tsx",
+          "assertionExport": "Default.play",
+          "assertionMarker": "expect-visible-label",
+          "rationale": "The default state proves the component is rendered and usable."
+        }
+      ],
+      "review": {
+        "reviewer": "storybook-remediation",
+        "rationale": "The source export and asserted story are reviewed together.",
+        "reviewedSourceDigest": "sha256:field-source"
+      }
+    }
+  ]
+}

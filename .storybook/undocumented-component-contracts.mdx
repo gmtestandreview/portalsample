@@ -1,0 +1,126 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Documentation/T4a Component Contracts" />
+
+# T4a component contract packet
+
+> **Status: PENDING MAINTAINER APPROVAL**
+>
+> This is a contract packet published as an unattached-to-component reference
+> for Gate 3/T4a. It is not proof that
+> the seven story lanes are approved, and it does not authorize story-file
+> implementation. Each local API table remains pending until the component
+> maintainer supplies or approves the exact supported props, defaults,
+> composition, inherited-prop scope, and accessibility semantics.
+
+## Evidence boundary
+
+The repository Storybook MCP `docs-list` now discovers this packet as
+`documentation-t4a-component-contracts--documentation` and separately
+discovers the legacy `StatusPill` entry (`components-pill`). It still does not
+discover local component entries for the seven T4 owners below. The React Aria
+MCP documents upstream primitives; those pages are references for the
+underlying primitive contract only. They do not establish the public API of an
+NMI wrapper.
+
+No local prop is listed below solely because it appears in a source type. A
+story author must not infer a wrapper API from that type or from a similarly
+named component.
+
+## Contract fields required for approval
+
+Every owner section must be completed and approved before its story lane can
+start:
+
+| Field | Required evidence |
+| --- | --- |
+| Exact import/export identity | Repository path and exported symbol, confirmed by the owner |
+| Approved API table | Prop name, type, default, supported values, and whether it is forwarded |
+| Supported composition | Children, peer components, provider, trigger, or slot rules |
+| Inherited-prop scope | Explicit allowlist; no assumption that wrapper props are fully forwarded |
+| Interaction and a11y semantics | Keyboard, focus, disabled/pending, naming, live-region, and dismissal rules as applicable |
+| Approval provenance | Maintainer, date, and reference or review receipt |
+
+## AriaButton
+
+- **Owner:** `ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/AriaComponents/AriaButton/Button.tsx`, export `Button`
+- **Upstream reference:** React Aria `Button` API and `Pending` sections
+- **Story lane contract:** own implementation; keyboard activation; correct callback; disabled non-activation; pending progress semantics
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local wrapper props, defaults, forwarding, and allowed children are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+## Link
+
+- **Owner:** `ClientApp/src/components/AriaComponents/Link/Link.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/AriaComponents/Link/Link.tsx`, export `Link`
+- **Upstream reference:** React Aria `Link` API and `Events` sections
+- **Story lane contract:** accessible name; keyboard activation; real destination; approved disabled/external affordances without external navigation
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local wrapper props, destination policy, and disabled/external semantics are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+## SegmentedControl
+
+- **Owner:** `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.tsx`, exports `SegmentedControl` and `SegmentedControlItem`
+- **Upstream reference:** React Aria `ToggleButtonGroup` API, `ToggleButton` API, and `Selection` sections
+- **Story lane contract:** initial and changed selection; keyboard movement; disabled item; callback payload; both exported APIs documented
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local group/item forwarding, selection defaults, and child contract are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+## Sheet
+
+- **Owner:** `ClientApp/src/components/AriaComponents/Sheet/Sheet.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx`, export `Sheet`
+- **Upstream reference:** React Aria `Sheet` API, `Position`, and composition examples
+- **Story lane contract:** approved children/trigger composition; accessible dialog name; open/close; focus return; no assumed overlay-prop forwarding
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local wrapper composition and supported overlay props are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+## AlertMessage
+
+- **Owner:** `ClientApp/src/components/reactaria_components/AlertMessage.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/reactaria_components/AlertMessage.tsx`, export `AlertMessage`
+- **Upstream reference:** No matching React Aria primitive page; this is an NMI wrapper contract
+- **Story lane contract:** title/body; approved tones; live/status semantics
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local content, tone, and live-region props are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+## PageHeader
+
+- **Owner:** `ClientApp/src/components/reactaria_components/PageHeader.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/reactaria_components/PageHeader.tsx`, export `PageHeader`
+- **Upstream reference:** No matching React Aria primitive page; this is an NMI wrapper contract
+- **Story lane contract:** title alone; approved optional description/actions; long-content wrapping
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local title, description, action, and layout props are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+## React Aria StatusPill
+
+- **Owner:** `ClientApp/src/components/reactaria_components/StatusPill.stories.tsx`
+- **Implementation identity:** `ClientApp/src/components/reactaria_components/StatusPill.tsx`, export `StatusPill`
+- **Upstream reference:** No matching React Aria primitive page; this is an NMI wrapper contract
+- **Story lane contract:** readable label; approved tones; long-content semantics
+- **Approved API table:** PENDING MAINTAINER APPROVAL — local status vocabulary, tone mapping, and content props are not established by the local Storybook docs
+- **Inherited-prop scope:** PENDING MAINTAINER APPROVAL
+- **Approval provenance:** PENDING MAINTAINER APPROVAL
+
+The React Aria `StatusPill` owner above is **not the same component** as the
+legacy `ClientApp/src/components/Pill/StatusPill.tsx`, whose discovered story
+IDs are `components-pill--dashboard-statuses` and
+`components-pill--quote-statuses`. The legacy story IDs must remain unchanged
+and must not be used as evidence for the React Aria owner.
+
+## Approval and execution stop condition
+
+T4a remains incomplete until each section has a non-placeholder approved API
+table and approval provenance. After approval, query the real Storybook
+docs-list/docs-show entry for each owner and use only the approved API in the
+corresponding story slice. Do not create the seven story files from this
+pending packet alone.

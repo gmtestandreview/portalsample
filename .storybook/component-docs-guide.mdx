@@ -8,6 +8,30 @@ Storybook documentation combines inferred component metadata with executable
 stories. Keep each kind of information in its natural source so the docs stay
 accurate as the implementation changes.
 
+## Version provenance and upstream wording
+
+The installed project line is Storybook 10.6.1. This guide records the current
+repository configuration and the evidence used to interpret its generated
+documentation; historical investigations are labelled as historical rather
+than treated as current runtime evidence.
+
+The “Storybook 9 Essential Changes for Story Writing” heading is upstream
+guidance retained for compatibility context. If Storybook 10.6.1 or its MCP
+documentation serializer reproduces that wording, the discrepancy is an
+upstream presentation issue tracked by reproduction and version, not a local
+wording fix. This guide does not claim that changing its prose repairs the
+tool output; it records the distinction so the issue is not misattributed.
+
+### RouteLeavingGuard serializer reproduction
+
+With Storybook 10.6.1, `docs-show` for `components-routeleavingguard` currently
+serializes the generated Props prose as `title?: ReactNode = Unsaved changes`,
+`body?: ReactNode = ...`, and similar unquoted assignments. The source defaults
+remain the runtime contract, while the existing Guard stories provide the
+supported type/default presentation through `argTypes`. This is a versioned
+MCP/docs serializer reproduction; the component source types are not rewritten
+to accommodate it.
+
 ## Autodocs policy
 
 Autodocs is enabled globally by `.storybook/preview.ts`:

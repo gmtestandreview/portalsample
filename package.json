@@ -30,6 +30,7 @@
     "test:unit:watch": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs --watch --configLoader runner --config vitest.unit.config.ts",
     "test:storybook": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.storybook.config.ts",
     "test:storybook:watch": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs --watch --configLoader runner --config vitest.storybook.config.ts",
+    "test:storybook:coverage": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.storybook.config.ts --coverage",
     "test:all": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner",
     "test:quality:regression": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config quality/vitest.regression.config.ts",
     "test:ci": "npm run type-check && npm run test:ci:unit && npm run test:ci:storybook && npm run test:ci:quality",
@@ -87,6 +88,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.5.0",
+    "@codacy/codacy-cloud-cli": "^1.14.0",
     "@eslint-react/eslint-plugin": "5.23.3",
     "@eslint/js": "10.0.1",
     "@mizchi/lsmcp": "^0.10.0",

@@ -5,7 +5,7 @@ import AutoSuggestContainer from './AutoSuggestContainer';
 import type { AutoSuggestOption } from './types';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
-const noopAsync = async () => {};
+const noopAsync = () => Promise.resolve();
 const noop = () => {};
 
 const mockOptions: AutoSuggestOption<string>[] = [
@@ -22,9 +22,13 @@ const mockOptions: AutoSuggestOption<string>[] = [
   },
 ];
 
+const getMockOptions = () => Promise.resolve(mockOptions);
+const getEmptyOptions = () => Promise.resolve<AutoSuggestOption<string>[]>([]);
+
 const meta = {
   title: 'Components/Inputs/AutoSuggest',
   component: AutoSuggest,
+  subcomponents: { AutoSuggestContainer },
   decorators: [withPortalProviders],
 } satisfies Meta<typeof AutoSuggest>;
 
@@ -35,7 +39,7 @@ export const WithSuggestions: Story = {
   args: {
     name: 'suburb',
     label: 'Suburb',
-    getOptions: async (_term: string) => mockOptions,
+    getOptions: getMockOptions,
     onSelectedOption: noopAsync,
     placeholder: 'Type to search...',
   },
@@ -50,7 +54,7 @@ export const WithSuggestions: Story = {
     <AutoSuggest
       name='suburb'
       label='Suburb'
-      getOptions={async (_term: string) => mockOptions}
+      getOptions={getMockOptions}
       onSelectedOption={noopAsync}
       placeholder='Type to search...'
     />
@@ -87,7 +91,7 @@ export const EmptyState: Story = {
   args: {
     name: 'suburb',
     label: 'Suburb',
-    getOptions: async (_term: string) => [],
+    getOptions: getEmptyOptions,
     onSelectedOption: noopAsync,
     placeholder: 'Type to search...',
   },
@@ -102,7 +106,7 @@ export const EmptyState: Story = {
     <AutoSuggest
       name='suburb'
       label='Suburb'
-      getOptions={async (_term: string) => []}
+      getOptions={getEmptyOptions}
       onSelectedOption={noopAsync}
       placeholder='Type to search...'
     />
@@ -120,12 +124,19 @@ export const EmptyState: Story = {
 };
 
 export const Loading: Story = {
+  name: 'Loading (AutoSuggestContainer)',
   args: {
     name: 'suburb',
     label: 'Suburb (loading state)',
-    getOptions: async (_term: string) => [],
+    getOptions: getEmptyOptions,
     onSelectedOption: noopAsync,
     placeholder: 'Loading...',
+  },
+  argTypes: {
+    id: { table: { disable: true } },
+    getOptions: { table: { disable: true } },
+    selectedOption: { table: { disable: true } },
+    inlineHelp: { table: { disable: true } },
   },
   parameters: {
     portal: {

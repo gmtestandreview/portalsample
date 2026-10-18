@@ -117,6 +117,148 @@ const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
 ];
 
 describe('Storybook documentation architecture', () => {
+  it('keeps AutoSuggest ownership and Loading controls truthful', () => {
+    const autoSuggestStory = read(
+      'ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx'
+    );
+
+    expect(autoSuggestStory).toMatch(
+      /subcomponents:\s*\{\s*AutoSuggestContainer\s*\}/
+    );
+    expect(autoSuggestStory).toMatch(
+      /name:\s*['"]Loading \(AutoSuggestContainer\)['"]/
+    );
+    expect(autoSuggestStory).toMatch(
+      /Loading[\s\S]*argTypes:[\s\S]*getOptions:[\s\S]*table:\s*\{[\s\S]*disable:\s*true/
+    );
+    expect(autoSuggestStory).toMatch(
+      /Loading[\s\S]*argTypes:[\s\S]*selectedOption:[\s\S]*table:\s*\{[\s\S]*disable:\s*true/
+    );
+  });
+
+  it('exposes AcceptQuote step APIs as peers without changing legacy stories', () => {
+    const acceptQuoteStory = read(
+      'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx'
+    );
+
+    expect(acceptQuoteStory).toMatch(
+      /subcomponents:\s*\{[\s\S]*PaymentDetails,[\s\S]*DeliveryAndReturn,[\s\S]*QuotationSummary,[\s\S]*SummaryAndAccept[\s\S]*\}/
+    );
+    for (const storyExport of [
+      'ReportRecipientStep',
+      'PaymentDetailsStep',
+      'DeliveryAndReturnStep',
+      'QuotationSummaryStep',
+      'SummaryAndAcceptStep',
+    ]) {
+      expect(acceptQuoteStory).toContain(`export const ${storyExport}`);
+    }
+  });
+
+  it('stops T4 stories while the explicit contract packet is pending', () => {
+    const contractPath = resolve(
+      repoRoot,
+      '.storybook/undocumented-component-contracts.mdx'
+    );
+
+    expect(existsSync(contractPath)).toBe(true);
+
+    const contracts = readFileSync(contractPath, 'utf8');
+    const requiredOwners = [
+      [
+        'AriaButton',
+        'ClientApp/src/components/AriaComponents/AriaButton/Button.tsx',
+      ],
+      ['Link', 'ClientApp/src/components/AriaComponents/Link/Link.tsx'],
+      [
+        'SegmentedControl',
+        'ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.tsx',
+      ],
+      ['Sheet', 'ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx'],
+      [
+        'AlertMessage',
+        'ClientApp/src/components/reactaria_components/AlertMessage.tsx',
+      ],
+      [
+        'PageHeader',
+        'ClientApp/src/components/reactaria_components/PageHeader.tsx',
+      ],
+      [
+        'React Aria StatusPill',
+        'ClientApp/src/components/reactaria_components/StatusPill.tsx',
+      ],
+    ];
+
+    expect(contracts).toContain('T4a');
+    expect(contracts).toContain('PENDING MAINTAINER APPROVAL');
+    expect(contracts).toContain('Approved API table');
+    expect(contracts).toContain('Inherited-prop scope');
+    expect(contracts).toContain('Approval provenance');
+
+    for (const [owner, identity] of requiredOwners) {
+      const sectionStart = contracts.indexOf(`## ${owner}`);
+      const nextSection = contracts.indexOf('\n## ', sectionStart + 1);
+      const section = contracts.slice(
+        sectionStart,
+        nextSection === -1 ? contracts.length : nextSection
+      );
+
+      expect(section, owner).toContain(`## ${owner}`);
+      expect(section, owner).toContain(identity);
+      expect(section, owner).toContain('Approved API table');
+      expect(section, owner).toContain('Inherited-prop scope');
+      expect(section, owner).toContain('Approval provenance');
+      expect(section, owner).toContain('PENDING MAINTAINER APPROVAL');
+    }
+
+    const pendingStoryPaths = [
+      'ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx',
+      'ClientApp/src/components/AriaComponents/Link/Link.stories.tsx',
+      'ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.stories.tsx',
+      'ClientApp/src/components/AriaComponents/Sheet/Sheet.stories.tsx',
+      'ClientApp/src/components/reactaria_components/AlertMessage.stories.tsx',
+      'ClientApp/src/components/reactaria_components/PageHeader.stories.tsx',
+      'ClientApp/src/components/reactaria_components/StatusPill.stories.tsx',
+    ];
+
+    for (const storyPath of pendingStoryPaths) {
+      expect(existsSync(resolve(repoRoot, storyPath)), storyPath).toBe(false);
+    }
+
+    expect(contracts).toContain('ClientApp/src/components/Pill/StatusPill.tsx');
+    expect(contracts).toContain(
+      'ClientApp/src/components/reactaria_components/StatusPill.tsx'
+    );
+    expect(contracts).toContain('not the same component');
+    expect(contracts).toContain('components-pill--dashboard-statuses');
+    expect(contracts).toContain('components-pill--quote-statuses');
+  });
+
+  it('presents RouteLeavingGuard types and quoted defaults separately', () => {
+    const guardStory = read(
+      'ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx'
+    );
+
+    expect(guardStory).toMatch(
+      /argTypes:\s*\{[\s\S]*when:[\s\S]*type:\s*\{\s*summary:\s*['"]boolean['"]/
+    );
+    expect(guardStory).toMatch(
+      /title:[\s\S]*defaultValue:\s*\{\s*summary:\s*['"]'Unsaved changes'['"]/
+    );
+    expect(guardStory).toMatch(
+      /confirmBtn:[\s\S]*defaultValue:\s*\{\s*summary:\s*['"]'Discard changes'['"]/
+    );
+  });
+
+  it('records Storybook 10.6.1 provenance and upstream wording ownership', () => {
+    expect(componentDocsGuide).toContain('Storybook 10.6.1');
+    expect(componentDocsGuide).toContain('Storybook 9 Essential Changes');
+    expect(componentDocsGuide).toContain('upstream');
+    expect(componentDocsGuide).toMatch(/not a local\s+wording fix/);
+    expect(componentDocsGuide).toContain('components-routeleavingguard');
+    expect(componentDocsGuide).toContain('title?: ReactNode = Unsaved changes');
+  });
+
   it('keeps main.ts syntactically valid', () => {
     const result = ts.transpileModule(main, {
       compilerOptions: {

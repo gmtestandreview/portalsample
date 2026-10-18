@@ -126,6 +126,53 @@ stories use deterministic local fixtures and existing API contracts.
 | BDD integration          | Existing `tests/e2e/features/storybook/integrations/mcp.feature`, documentation and routes coverage features |
 | Testing configuration    | Existing tests under `tests/unit/config/` and `tests/unit/storybook/`                                        |
 
+## Separate Storybook 10.6 documentation-standard scenarios
+
+The separately supplied `storybook-10.6-bdd-documentation-standard.md`
+contains eight embedded Gherkin features and 22 documentation/governance
+scenarios. Record them here for traceability, but do not treat them as the
+implementation-specific Gate 3 approval packet. They are baseline contracts
+for documentation, configuration, accessibility policy, isolation, CI policy,
+and existing governance tests; they are not proof that corresponding
+`.feature` files were registered or executed.
+
+The AR comments below preserve the source report's traceability. An em dash
+means that the source scenario had no AR comment; this is intentional and is a
+known limitation of the separate standard, not a new T1–T8 requirement.
+
+| Feature | AR | Scenario |
+| --- | --- | --- |
+| Autodocs Contract | AR-001 | Autodocs is activated globally at project level |
+| Autodocs Contract | AR-002 | Components opt out of Autodocs using negative tag syntax |
+| Autodocs Contract | AR-001 | No custom Autodocs template overrides the Storybook default |
+| Code Panel and Source Contract | AR-003 | Code Panel is enabled globally |
+| Code Panel and Source Contract | AR-004 | Generated source excludes preview decorators |
+| MDX and Doc Blocks Contract | AR-007 | All standalone MDX documentation pages render |
+| MDX and Doc Blocks Contract | AR-006 | GFM tables render as HTML tables in MDX |
+| MDX and Doc Blocks Contract | AR-008 | Style Guide uses native design-system Doc Blocks |
+| MDX and Doc Blocks Contract | — | Documentation navigation includes project guides |
+| Documentation Ownership Contract | AR-012 | TypeScript owns public prop types via react-docgen-typescript |
+| Documentation Ownership Contract | — | JSDoc descriptions populate component documentation |
+| Documentation Ownership Contract | AR-013 | Controls sort required props and exclude internals |
+| Documentation Ownership Contract | — | Args represent runtime story state without custom render functions |
+| Accessibility Enforcement | AR-005 | a11y violations cause test failures in CI |
+| Accessibility Enforcement | — | a11y enforcement level is documented in configuration |
+| Network and Routing Isolation | AR-010 | MSW intercepts HTTP requests in stories |
+| Network and Routing Isolation | AR-011 | Memory router provides route isolation |
+| CI Quality Gate | AR-009 | Documentation build is a CI quality gate |
+| CI Quality Gate | AR-015 | Interaction tests run via Vitest browser mode |
+| CI Quality Gate | AR-014 | MCP integration endpoint is operational |
+| Governance Tests | — | Storybook documentation architecture test enforces configuration |
+| Governance Tests | — | Workflow policy test enforces CI gates |
+
+These 22 scenarios do not replace the revised Gate 3 package scenarios. Gate 3
+still requires separate approval for T1 native MCP protocol and producer
+identity, T2 recursive evidence and freeze validation, T3 named documentation
+ownership corrections, the seven T4 component contracts, T5 conditional
+consumer evidence, T6/T7 route behavior and isolation, and T8 frozen local
+closure. The standard's generic MCP, CLI, MSW, router, and governance
+scenarios remain insufficient for those package-specific acceptance gates.
+
 ## Alternatives and selected approach
 
 | Approach                                                                           | Coverage                                                    | Effort estimate                                                                        | Risk and tradeoff                                            |
@@ -612,7 +659,7 @@ evidence-backed addendum, not a guessed patch.
   `playwright.storybook.config.ts` and `tests/e2e/steps/storybook.steps.ts`.
   Export proposed resolveStorybookTestTarget({ url, serverMode, ci }) returning
   { baseURL, mcpURL, command, webServer }; default URL stays
-  http://localhost:6006. Accept only http loopback hosts, valid ports, and no
+  <http://localhost:6006>. Accept only http loopback hosts, valid ports, and no
   credentials/query/hash/subpath. Derive baseURL, MCP URL and
   `node --max-old-space-size=8192 ./node_modules/storybook/dist/bin/dispatcher.js dev --host HOST -p PORT --no-open`
   from the same validated target; HOST/PORT are validated resolver outputs, not
