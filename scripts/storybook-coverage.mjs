@@ -58,16 +58,18 @@ const sameKeys = (value, expected) => {
 const nonEmptyString = (value) =>
   typeof value === 'string' && value.trim().length > 0;
 
-function isRelativePath(value) {
+const normalisePathSeparators = (value) => value.replaceAll('\\', '/');
+
+const hasRelativePathSegments = (value) =>
+  !value.startsWith('/') &&
+  !/^[A-Za-z]:\//u.test(value) &&
+  !value.split('/').some((part) => part === '' || part === '..');
+
+const isRelativePath = (value) => {
   if (!nonEmptyString(value)) return false;
-  const normalised = value.replaceAll('\\', '/');
-  return (
-    normalised === value &&
-    !normalised.startsWith('/') &&
-    !/^[A-Za-z]:\//u.test(normalised) &&
-    !normalised.split('/').some((part) => part === '' || part === '..')
-  );
-}
+  const normalised = normalisePathSeparators(value);
+  return normalised === value && hasRelativePathSegments(normalised);
+};
 
 const error = (code, message, pathValue) => ({
   code,

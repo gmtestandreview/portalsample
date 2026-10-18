@@ -11,6 +11,19 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$(git rev-parse --show-toplevel)/scripts/python314.cjs\" \"$(git rev-parse --show-toplevel)/scripts/post_tool_use.py\"",
+            "commandWindows": "powershell -NoProfile -Command \"$root = (git rev-parse --show-toplevel).Trim(); & node (Join-Path $root 'scripts/python314.cjs') (Join-Path $root 'scripts/post_tool_use.py'); exit $LASTEXITCODE\"",
+            "timeout": 30
+          }
+        ]
+      }
     ]
   }
 }

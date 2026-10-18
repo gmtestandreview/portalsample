@@ -6,7 +6,7 @@ Run the production incident playbook when production is degraded or down.
 
 **Usage:**
 
-```
+```text
 /incident-response
 /incident-response "Portal login failing for all users since 09:15"
 ```

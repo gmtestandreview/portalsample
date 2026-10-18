@@ -133,6 +133,23 @@ describe('Storybook coverage manifest schema v1', () => {
       errors: [{ code: 'MANIFEST_SCHEMA_INVALID' }],
     });
   });
+
+  it.each([
+    '',
+    '/absolute/path.tsx',
+    'C:/absolute/path.tsx',
+    'nested/../path.tsx',
+  ])('rejects a non-relative source path: %s', (source) => {
+    expect(
+      validateManifest({
+        ...validManifest,
+        records: [{ ...validRecord, source }],
+      })
+    ).toMatchObject({
+      ok: false,
+      errors: [{ code: 'MANIFEST_SCHEMA_INVALID' }],
+    });
+  });
 });
 
 describe('recursive canonical source/export discovery', () => {

@@ -1,29 +1,30 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
 import ts from 'typescript';
 import type { UserConfig } from 'vite';
 import { describe, expect, it } from 'vitest';
 import storybookConfig from '../../../.storybook/main';
 import { onLog } from '../../../.storybook/rollupOnLog';
 
-const repoRoot = process.cwd();
-
-const read = (path: string) => readFileSync(resolve(repoRoot, path), 'utf8');
-
-const main = read('.storybook/main.ts');
-const preview = read('.storybook/preview.ts');
-const componentDocsGuide = read('.storybook/component-docs-guide.mdx');
-const introduction = read('.storybook/introduction.mdx');
-const styleGuide = read('.storybook/style-guide.mdx');
-const scssVariables = read('ClientApp/src/styles/_variables.scss');
-const docsVerifier = read('scripts/verify-storybook-docs.mjs');
+const main = readFileSync('.storybook/main.ts', 'utf8');
+const preview = readFileSync('.storybook/preview.ts', 'utf8');
+const componentDocsGuide = readFileSync(
+  '.storybook/component-docs-guide.mdx',
+  'utf8'
+);
+const introduction = readFileSync('.storybook/introduction.mdx', 'utf8');
+const styleGuide = readFileSync('.storybook/style-guide.mdx', 'utf8');
+const scssVariables = readFileSync(
+  'ClientApp/src/styles/_variables.scss',
+  'utf8'
+);
+const docsVerifier = readFileSync('scripts/verify-storybook-docs.mjs', 'utf8');
 const tsconfigJson = ts.parseConfigFileTextToJson(
   'tsconfig.json',
-  read('tsconfig.json')
+  readFileSync('tsconfig.json', 'utf8')
 ).config as {
   compilerOptions?: { types?: string[] };
 };
-const packageJson = JSON.parse(read('package.json')) as {
+const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
 };
@@ -34,19 +35,37 @@ const allDependencies = {
 };
 
 const declaredVersion = (packageName: string) =>
-  allDependencies[packageName]?.replace(/^[~^]/, '');
+  Object.entries(allDependencies)
+    .find(([dependencyName]) => dependencyName === packageName)?.[1]
+    ?.replace(/^[~^]/, '');
 
-const storyFiles = readdirSync(resolve(repoRoot, 'ClientApp/src'), {
-  recursive: true,
-  withFileTypes: true,
-})
-  .filter(
-    (entry) => entry.isFile() && /\.stories\.[cm]?[jt]sx?$/.test(entry.name)
-  )
-  .map((entry) => resolve(entry.parentPath, entry.name));
+const rawStoryFiles = import.meta.glob(
+  '../../../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+  { eager: true, import: 'default', query: '?raw' }
+) as Record<string, string>;
 
-const toRepoPath = (absolutePath: string) =>
-  absolutePath.slice(repoRoot.length + 1).replace(/\\/g, '/');
+const rawStandingGuidanceDocuments = {
+  ...import.meta.glob('../../../docs/**/*.md', {
+    eager: true,
+    import: 'default',
+    query: '?raw',
+  }),
+  ...import.meta.glob('../../../.storybook/*.mdx', {
+    eager: true,
+    import: 'default',
+    query: '?raw',
+  }),
+} as Record<string, string>;
+
+const toRepoPath = (globPath: string) =>
+  globPath.slice('../../../'.length).replace(/\\/g, '/');
+
+const storyFiles = Object.entries(rawStoryFiles).map(
+  ([globPath, contents]) => ({
+    path: toRepoPath(globPath),
+    contents,
+  })
+);
 
 /**
  * Directories that record what the documentation architecture *was* — baselines,
@@ -67,17 +86,14 @@ const historicalRecordPaths = [
  * to write Storybook documentation in this repository.
  */
 const standingGuidanceDocuments = [
-  ...readdirSync(resolve(repoRoot, 'docs'), {
-    recursive: true,
-    withFileTypes: true,
-  })
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
-    .map((entry) => toRepoPath(resolve(entry.parentPath, entry.name))),
-  ...readdirSync(resolve(repoRoot, '.storybook'), { withFileTypes: true })
-    .filter((entry) => entry.isFile() && entry.name.endsWith('.mdx'))
-    .map((entry) => toRepoPath(resolve(entry.parentPath, entry.name))),
+  ...Object.entries(rawStandingGuidanceDocuments).map(
+    ([globPath, contents]) => ({
+      path: toRepoPath(globPath),
+      contents,
+    })
+  ),
 ].filter(
-  (path) => !historicalRecordPaths.some((prefix) => path.startsWith(prefix))
+  ({ path }) => !historicalRecordPaths.some((prefix) => path.startsWith(prefix))
 );
 
 /**
@@ -87,7 +103,7 @@ const standingGuidanceDocuments = [
 const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
   {
     label: "'docs' tag taught as the Autodocs trigger",
-    pattern: /add(?:ed|ing)?\s+(?:the\s+)?['"`]docs['"`]\s+tag/i,
+    pattern: /\b(?:add|added|adding)\s+the\s+['"`]docs['"`]\s+tag\b/i,
   },
   {
     label: "'docs' listed in a story tags array",
@@ -118,8 +134,9 @@ const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
 
 describe('Storybook documentation architecture', () => {
   it('keeps AutoSuggest ownership and Loading controls truthful', () => {
-    const autoSuggestStory = read(
-      'ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx'
+    const autoSuggestStory = readFileSync(
+      'ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx',
+      'utf8'
     );
 
     expect(autoSuggestStory).toMatch(
@@ -137,8 +154,9 @@ describe('Storybook documentation architecture', () => {
   });
 
   it('exposes AcceptQuote step APIs as peers without changing legacy stories', () => {
-    const acceptQuoteStory = read(
-      'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx'
+    const acceptQuoteStory = readFileSync(
+      'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx',
+      'utf8'
     );
 
     expect(acceptQuoteStory).toMatch(
@@ -155,15 +173,15 @@ describe('Storybook documentation architecture', () => {
     }
   });
 
-  it('stops T4 stories while the explicit contract packet is pending', () => {
-    const contractPath = resolve(
-      repoRoot,
-      '.storybook/undocumented-component-contracts.mdx'
+  it('validates the approved T4 contract packet before story execution', () => {
+    expect(existsSync('.storybook/undocumented-component-contracts.mdx')).toBe(
+      true
     );
 
-    expect(existsSync(contractPath)).toBe(true);
-
-    const contracts = readFileSync(contractPath, 'utf8');
+    const contracts = readFileSync(
+      '.storybook/undocumented-component-contracts.mdx',
+      'utf8'
+    );
     const requiredOwners = [
       [
         'AriaButton',
@@ -188,12 +206,55 @@ describe('Storybook documentation architecture', () => {
         'ClientApp/src/components/reactaria_components/StatusPill.tsx',
       ],
     ];
+    const requiredStories = [
+      {
+        path: 'ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx',
+        exports: ['Primary', 'KeyboardActivation', 'Disabled', 'Pending'],
+      },
+      {
+        path: 'ClientApp/src/components/AriaComponents/Link/Link.stories.tsx',
+        exports: ['NavigatesWithHref', 'LinkRoleWithoutHref', 'Disabled'],
+      },
+      {
+        path: 'ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.stories.tsx',
+        exports: ['SelectionChanges', 'KeyboardSelection', 'DisabledItem'],
+      },
+      {
+        path: 'ClientApp/src/components/AriaComponents/Sheet/Sheet.stories.tsx',
+        exports: ['ContextDrivenOpenAndDismiss'],
+      },
+      {
+        path: 'ClientApp/src/components/reactaria_components/AlertMessage.stories.tsx',
+        exports: ['Default', 'WarningTone', 'LongMessage'],
+      },
+      {
+        path: 'ClientApp/src/components/reactaria_components/PageHeader.stories.tsx',
+        exports: ['TitleOnly', 'WithContextAndActions', 'LongContent'],
+      },
+      {
+        path: 'ClientApp/src/components/reactaria_components/StatusPill.stories.tsx',
+        exports: ['Neutral', 'ToneVariants', 'LongLabel'],
+      },
+    ];
 
     expect(contracts).toContain('T4a');
-    expect(contracts).toContain('PENDING MAINTAINER APPROVAL');
+    expect(contracts).toContain('APPROVED FOR T4 STORY IMPLEMENTATION');
     expect(contracts).toContain('Approved API table');
     expect(contracts).toContain('Inherited-prop scope');
     expect(contracts).toContain('Approval provenance');
+    expect(contracts).toMatch(
+      /approved by the user in the 2026-10-18\s+conversation/
+    );
+
+    for (const { path, exports } of requiredStories) {
+      expect(existsSync(path), path).toBe(true);
+      const storyContents = readFileSync(path, 'utf8');
+      for (const storyExport of exports) {
+        expect(storyContents, `${path}: ${storyExport}`).toMatch(
+          new RegExp(`export\\s+const\\s+${storyExport}\\s*:\\s*Story\\b`)
+        );
+      }
+    }
 
     for (const [owner, identity] of requiredOwners) {
       const sectionStart = contracts.indexOf(`## ${owner}`);
@@ -208,21 +269,7 @@ describe('Storybook documentation architecture', () => {
       expect(section, owner).toContain('Approved API table');
       expect(section, owner).toContain('Inherited-prop scope');
       expect(section, owner).toContain('Approval provenance');
-      expect(section, owner).toContain('PENDING MAINTAINER APPROVAL');
-    }
-
-    const pendingStoryPaths = [
-      'ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx',
-      'ClientApp/src/components/AriaComponents/Link/Link.stories.tsx',
-      'ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.stories.tsx',
-      'ClientApp/src/components/AriaComponents/Sheet/Sheet.stories.tsx',
-      'ClientApp/src/components/reactaria_components/AlertMessage.stories.tsx',
-      'ClientApp/src/components/reactaria_components/PageHeader.stories.tsx',
-      'ClientApp/src/components/reactaria_components/StatusPill.stories.tsx',
-    ];
-
-    for (const storyPath of pendingStoryPaths) {
-      expect(existsSync(resolve(repoRoot, storyPath)), storyPath).toBe(false);
+      expect(section, owner).not.toContain('PENDING MAINTAINER APPROVAL');
     }
 
     expect(contracts).toContain('ClientApp/src/components/Pill/StatusPill.tsx');
@@ -235,8 +282,9 @@ describe('Storybook documentation architecture', () => {
   });
 
   it('presents RouteLeavingGuard types and quoted defaults separately', () => {
-    const guardStory = read(
-      'ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx'
+    const guardStory = readFileSync(
+      'ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx',
+      'utf8'
     );
 
     expect(guardStory).toMatch(
@@ -376,17 +424,15 @@ describe('Storybook documentation architecture', () => {
   });
 
   it('does not repeat inherited Autodocs or obsolete docs tags in stories', () => {
-    const invalidStoryTags = storyFiles.flatMap((path) => {
-      const matches = readFileSync(path, 'utf8').matchAll(
-        /tags:\s*\[([^\]]*)\]/g
-      );
+    const invalidStoryTags = storyFiles.flatMap(({ path, contents }) => {
+      const matches = contents.matchAll(/tags:\s*\[([^\]]*)\]/g);
 
       return [...matches]
         .filter((match) => {
           const tags = match[1] ?? '';
           return /['"]autodocs['"]/.test(tags) || /['"]docs['"]/.test(tags);
         })
-        .map(() => path.replace(`${repoRoot}\\`, ''));
+        .map(() => path);
     });
 
     expect(invalidStoryTags).toEqual([]);
@@ -411,11 +457,11 @@ describe('Storybook documentation architecture', () => {
       'msw-storybook-addon/types'
     );
 
-    const legacyMswParameters = storyFiles.filter((path) =>
-      /parameters:\s*\{[\s\S]{0,800}?\bmsw\s*:/.test(readFileSync(path, 'utf8'))
+    const legacyMswParameters = storyFiles.filter(({ contents }) =>
+      /parameters:\s*\{[\s\S]{0,800}?\bmsw\s*:/.test(contents)
     );
 
-    expect(legacyMswParameters.map(toRepoPath)).toEqual([]);
+    expect(legacyMswParameters.map(({ path }) => path)).toEqual([]);
   });
 
   it('composes the Docs preview annotations required by definePreview', () => {
@@ -427,9 +473,7 @@ describe('Storybook documentation architecture', () => {
 
   it('keeps preview mocks in the canonical portal harness', () => {
     expect(preview).not.toContain('storybookMocks');
-    expect(existsSync(resolve(repoRoot, '.storybook/storybookMocks.ts'))).toBe(
-      false
-    );
+    expect(existsSync('.storybook/storybookMocks.ts')).toBe(false);
   });
 
   it('does not replace inferred component descriptions globally', () => {
@@ -440,25 +484,28 @@ describe('Storybook documentation architecture', () => {
 
   it('does not clone Storybook default Autodocs template', () => {
     expect(preview).not.toContain('autoDocsTemplate');
-    expect(existsSync(resolve(repoRoot, '.storybook/preview-docs.ts'))).toBe(
-      false
-    );
+    expect(existsSync('.storybook/preview-docs.ts')).toBe(false);
   });
 
   it('teaches the correct Autodocs tag and opt-out mechanism', () => {
-    expect(componentDocsGuide).not.toMatch(/Adding the ['"]docs['"] Tag/i);
     expect(componentDocsGuide).not.toMatch(
-      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i
+      /(?:add|added|adding)\s+the\s+['"]docs['"]\s+tag.*autodocs/i
     );
 
     expect(componentDocsGuide).toContain('autodocs');
     expect(componentDocsGuide).toContain('!autodocs');
   });
 
-  it('keeps every standing guidance document free of removed architecture', () => {
-    const offences = standingGuidanceDocuments.flatMap((path) => {
-      const contents = read(path);
+  it('detects the singular stale docs-tag instruction', () => {
+    expect(
+      removedArchitecturePatterns[0]?.pattern.test(
+        "Add the 'docs' tag to enable Autodocs."
+      )
+    ).toBe(true);
+  });
 
+  it('keeps every standing guidance document free of removed architecture', () => {
+    const offences = standingGuidanceDocuments.flatMap(({ path, contents }) => {
       return removedArchitecturePatterns
         .filter(({ pattern }) => pattern.test(contents))
         .map(({ label }) => `${path}: ${label}`);
@@ -502,14 +549,22 @@ describe('Storybook documentation architecture', () => {
   });
 
   it('keeps documented NMI brand colours aligned with SCSS tokens', () => {
-    for (const token of ['nmi-primary', 'nmi-header-primary']) {
-      const scssValue = new RegExp(`\\$${token}:\\s*(#[0-9a-f]{6})`, 'i').exec(
-        scssVariables
-      )?.[1];
-      const documentedValue = new RegExp(
-        `\\(\\$${token}\\)'\\s*:\\s*'(#[0-9a-f]{6})'`,
-        'i'
-      ).exec(styleGuide)?.[1];
+    const colourTokens = [
+      {
+        token: 'nmi-primary',
+        scssPattern: /\$nmi-primary:\s*(#[0-9a-f]{6})/i,
+        documentedPattern: /\(\$nmi-primary\)'\s*:\s*'(#[0-9a-f]{6})'/i,
+      },
+      {
+        token: 'nmi-header-primary',
+        scssPattern: /\$nmi-header-primary:\s*(#[0-9a-f]{6})/i,
+        documentedPattern: /\(\$nmi-header-primary\)'\s*:\s*'(#[0-9a-f]{6})'/i,
+      },
+    ];
+
+    for (const { token, scssPattern, documentedPattern } of colourTokens) {
+      const scssValue = scssPattern.exec(scssVariables)?.[1];
+      const documentedValue = documentedPattern.exec(styleGuide)?.[1];
 
       expect(scssValue, `SCSS value for $${token}`).toBeDefined();
       expect(documentedValue, `documented value for $${token}`).toBeDefined();

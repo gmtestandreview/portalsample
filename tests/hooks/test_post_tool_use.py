@@ -11,6 +11,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 HOOK = ROOT / "scripts" / "post_tool_use.py"
 CLAUDE_SETTINGS = ROOT / ".claude" / "settings.json"
+CODEX_HOOKS = ROOT / ".codex" / "hooks.json"
 REMINDER = (
     "[A Team] File modified. Use code-reviewer agent before committing. "
     "Use verification-before-completion before claiming done."
@@ -93,6 +94,25 @@ def test_claude_code_failed_tool_response_is_ignored() -> None:
     assert result.stdout == ""
 
 
+def test_codex_apply_patch_is_acknowledged() -> None:
+    result = invoke(
+        {
+            "hook_event_name": "PostToolUse",
+            "tool_name": "apply_patch",
+            "tool_input": {"command": "*** Begin Patch"},
+            "tool_response": {"output": "ok"},
+        }
+    )
+
+    assert result.returncode == 0
+    assert json.loads(result.stdout) == {
+        "hookSpecificOutput": {
+            "hookEventName": "PostToolUse",
+            "additionalContext": REMINDER,
+        }
+    }
+
+
 @pytest.mark.parametrize("raw_input", ["not-json", "", "{", '{"tool_name":"Edit"} trailing'])
 def test_malformed_input_fails_open(raw_input: str) -> None:
     result = invoke(None, raw_input=raw_input)
@@ -110,6 +130,28 @@ def test_claude_settings_registers_the_cross_platform_hook() -> None:
     assert registration["matcher"] == "Write|Edit|MultiEdit"
     assert (
         registration["hooks"][0]["command"] == "node scripts/python314.cjs scripts/post_tool_use.py"
+    )
+
+
+def test_codex_settings_registers_the_post_tool_hook() -> None:
+    if not CODEX_HOOKS.is_file():
+        pytest.skip("local .codex/hooks.json is not available")
+    settings = json.loads(CODEX_HOOKS.read_text(encoding="utf-8"))
+    registration = settings["hooks"]["PostToolUse"][0]
+    hook = registration["hooks"][0]
+    root_expr = "$(git rev-parse --show-toplevel)"
+
+    assert registration["matcher"] == "apply_patch"
+    assert hook["type"] == "command"
+    assert hook["command"] == (
+        f'node "{root_expr}/scripts/python314.cjs" "{root_expr}/scripts/post_tool_use.py"'
+    )
+    assert hook["commandWindows"] == (
+        'powershell -NoProfile -Command '
+        '"$root = (git rev-parse --show-toplevel).Trim(); '
+        '& node (Join-Path $root \'scripts/python314.cjs\') '
+        '(Join-Path $root \'scripts/post_tool_use.py\'); '
+        'exit $LASTEXITCODE"'
     )
 
 

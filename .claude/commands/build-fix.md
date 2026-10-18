@@ -6,7 +6,7 @@ Diagnose and fix build errors or TypeScript type errors with minimal code change
 
 **Usage:**
 
-```
+```text
 /build-fix                   Fix all build errors
 /build-fix --ts-only         TypeScript errors only
 /build-fix --lint-only       ESLint errors only

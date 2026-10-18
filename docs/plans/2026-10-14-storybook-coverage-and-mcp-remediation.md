@@ -2,14 +2,24 @@
 
 # Storybook coverage and MCP remediation plan
 
-Date: 2026-10-14 (Australia/Sydney). Branch:
-`feat/formik-to-react-hooks-migration`. Audit baseline: `5bc51af1`; final
-planning checkout: `15f82afa87f3fcf33ac50f99d27431329361f08a`; base branch:
-`main`. Revised 2026-10-15 at `234dd9ad8b617c5bc3786c106e20c1278c7bc524`.
-Status: pressure-review recommendations applied to planning contracts on
-2026-10-15 at `9a8575b240c31d779fb79fd3ccebe78b94e149bb`. The earlier 99/100
-review is historical; current pressure retest and reassessment are recorded in
-the scorecard and retest report. Implementation has not started.
+Date: 2026-10-14 (Australia/Sydney). Active execution-state amendment:
+2026-10-19 (Australia/Sydney). Branch: `feat/storybook-coverage-remediation`.
+Original branch point: `aae45ca18284d8bb5d289a73ab423649fa05f4fb`; recovery
+parent: `b64b58c84a8535d5fbc45db6b34f4abd916a9390`; current checkout:
+`5855da341871fcd0c0ef86f00c23ff49071a13de`. Revised planning contracts were
+applied on 2026-10-15; the earlier 99/100 review is historical. The scorecard,
+pressure retest and this amendment are planning/evidence records, not runtime
+closure proof.
+
+Current status: Gate 3 package-specific approval is explicitly recorded from the
+user. The HEAD commit contains the T1a endpoint-target slice and T2a
+manifest/recursive-validator slice. The approved T4a contract packet and seven
+T4 story files are present as current worktree changes, and the Sheet internal
+composition fix is present as a current worktree change. T1b/T1c, T2b/T2c/T2d,
+T3 verification, T5, T6, T7 and T8 remain incomplete unless the evidence ledger
+below says otherwise. This amendment supersedes stale statements below that say
+implementation has not started, while preserving the original contracts, stable
+package IDs and historical review narrative.
 
 ## Goal and confirmed premise
 
@@ -53,11 +63,16 @@ submission, navigation, or error behavior.
 - `RouteLeavingGuard/types.ts` contains valid TypeScript. MCP combines types and
   default values into a type-like prose block. Verify the rendered Docs table
   and manifest before proposing a runtime/type edit.
-- Current MCP test-run still returns `Failed to start test runner process`.
-  Installed addon-vitest wraps startup in a 30-second timeout.
-  `vitest.config.ts` already contains a direct Storybook-child configuration
-  branch intended to avoid slow workspace discovery. Root cause of the
-  **current** failure remains unproved.
+- Earlier recovery MCP test-run attempts returned
+  `Failed to start test runner process`; a later focused native run for the
+  approved T4 story IDs passed after restoring the live Storybook/browser leader
+  state. These are separate observations: the focused T4 receipt does not close
+  T1's cold/warm/repeat producer-identity contract or T8. Installed addon-vitest
+  wraps startup in a 30-second timeout. `vitest.config.ts` already contains a
+  direct Storybook-child configuration branch intended to avoid slow workspace
+  discovery. Root cause of the earlier generic startup failure remains unproved;
+  the later focused pass is not evidence that the cold-start cause has been
+  repaired.
 - `.storybook/main.ts`, `.storybook/preview.ts`, `vitest.storybook.config.ts`,
   `vitest.storybook.runtime.ts`, `storybookHarness.tsx`, preview setup, existing
   story metadata, root scripts and local patch mechanism were inspected.
@@ -69,28 +84,224 @@ submission, navigation, or error behavior.
   Installed version is 10.6.1; use installed contracts when documentation
   versions differ.
 
+## Execution-state reconciliation — 2026-10-19
+
+This section records the conversation atoms that change execution planning. It
+does not convert a report, a baseline, a score, or a focused receipt into
+package closure. Evidence marked as reported remains attributable to the
+conversation but must be reproduced by the T8 frozen closure before it is a
+final claim.
+
+### Checkout and preservation boundary
+
+The exact checkout is
+`C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\.worktrees\feat-storybook-coverage-remediation`,
+branch `feat/storybook-coverage-remediation`, HEAD
+`5855da341871fcd0c0ef86f00c23ff49071a13de`, with parent
+`b64b58c84a8535d5fbc45db6b34f4abd916a9390` and original branch point
+`aae45ca18284d8bb5d289a73ab423649fa05f4fb`. Existing dirty files are user-owned
+unless explicitly attributable to the remediation; they must not be stashed,
+reset, staged, overwritten, or committed as part of this plan.
+
+The current dirty set includes command/instruction and hook files, Codacy
+configuration, the active plan and contract packet, Storybook coverage/tests,
+the Sheet source, and seven untracked T4 stories. The exact set must be captured
+with `git status --short` before each implementation slice; this plan does not
+authorize cleanup of any of them.
+
+At this amendment, the named dirty paths are:
+
+- `.claude/commands/adr.md`, `architecture-review.md`, `build-fix.md`,
+  `code-review.md`, `incident-response.md`, `refactor.md`;
+- `.claude/docs/plans/2026-09-09-a-team-wiring-review.md`, `.codex/hooks.json`,
+  `.github/instructions/code-review-generic.instructions.md`;
+- `.codacy/codacy.config.json`, `.codacy/codacy.config.baseline.json`;
+- `.storybook/undocumented-component-contracts.mdx`,
+  `ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx`;
+- `docs/plans/2026-10-14-storybook-coverage-and-mcp-remediation.md` (this
+  amendment);
+- `scripts/apply-local-patches.mjs`, `scripts/post_tool_use.py`,
+  `scripts/storybook-coverage.mjs`, `tests/hooks/test_post_tool_use.py`,
+  `tests/unit/storybook/moduleCoverage.test.ts`,
+  `tests/unit/storybook/storybookDocsConfig.test.ts`;
+- seven untracked story files: AriaButton, Link, SegmentedControl, Sheet,
+  AlertMessage, PageHeader and React Aria StatusPill at the exact T4 paths
+  listed in the T4 file table.
+
+### Conversation decision and evidence ledger
+
+| Atom                                                 | Current plan treatment                                                                                                                                                             | Evidence boundary                                                                                                                  |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Recovery request and revised T1–T8/RT1–RT7 contracts | Retained as the governing implementation contract and dependency order                                                                                                             | Authoritative plan, scorecard and pressure retest; their model checks are not live closure                                         |
+| Separate BDD standard recovery                       | Retained as a separate documentation/governance appendix with 22 scenarios                                                                                                         | Scratchpad exists at the supplied Claude session path; its A–G “Complete” report is not Gate 3 approval                            |
+| Material discrepancies                               | Corrected in this plan: configuration/text/governance evidence is not one-to-one runtime evidence; native MCP and CLI Vitest are separate                                          | No AR is promoted to runtime proof solely from the scratchpad                                                                      |
+| CLI baseline                                         | Preserved as supplemental evidence: initial 142 files/324 tests, later approved-T4 run 149 files/344 tests                                                                         | CLI Vitest does not prove native MCP execution, producer identity, freeze identity or T8                                           |
+| Native MCP discovery                                 | Docs-list, docs-show, story discovery and instructions were observed to work; the T4 contract packet is now discoverable as `documentation-t4a-component-contracts--documentation` | Discovery reachability is separate from test-run capability                                                                        |
+| Native MCP test-run                                  | Earlier startup failure was captured; a later focused 20-ID T4 run passed after restoring the live Storybook/browser leader state                                                  | Focused T4 success does not close T1 cold/warm/repeat or T8                                                                        |
+| Native review-create                                 | A review receipt was created for the focused T4 stories and verified as a 20-story review                                                                                          | It is closure evidence for that review only; it does not replace T8's frozen receipt set                                           |
+| Gate 3 approval                                      | Explicitly approved by the user before the T4 implementation lane                                                                                                                  | The approval is for the T1–T8 package scenario packet, not the separate 22 documentation scenarios                                 |
+| Seven T4 API contracts                               | Explicitly approved; the contract packet records import identity, props/defaults, composition, forwarding and semantics                                                            | Do not infer additional props from React Aria or source types                                                                      |
+| Legacy StatusPill                                    | Kept distinct from React Aria StatusPill                                                                                                                                           | Legacy IDs remain `components-pill--dashboard-statuses` and `components-pill--quote-statuses`; they are not T4 React Aria evidence |
+| Sheet internal composition                           | Resolved by keeping the public non-forwarding contract while making `Modal` the direct child of `ModalOverlay` and adapting children inside `Modal` with `composeRenderProps`      | RED was the failed click/open story; GREEN was dialog discovery, close/removal, focus return and a11y success                      |
+| Existing user changes                                | Preserved                                                                                                                                                                          | No unrelated dirty file is part of the remediation acceptance set                                                                  |
+
+### Seven prior handoff dispositions
+
+The previous handoffs are reconciled as follows; none is treated as authority
+over the current checkout when it conflicts with current repository evidence.
+
+| Handoff                                                                        | Disposition in this plan                                                                                                                                                    |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Recovery baseline: branch, `b64b58c8`, clean/dirty claims and 142/324 baseline | Replaced by the current `git` identity and dirty-set evidence above; the 142/324 result remains historical supplemental evidence                                            |
+| BDD documentation-standard report                                              | Recovered at the supplied scratchpad path; retained as a separate A–G/AR record, not implementation or Gate 3 proof                                                         |
+| Material-discrepancy correction                                                | Adopted: no one-to-one AR traceability claim, no broad MCP-operational claim, no CLI-to-native substitution, and RT5/RT6 remain explicit                                    |
+| 22-scenario plan request                                                       | Already represented in the separate-scenarios table below; the 22 scenarios remain documentation/governance contracts, not the T1–T8 packet                                 |
+| Native MCP reconnect, `test-run` and `review-create` attempts                  | Discovery and focused T4 results are recorded separately; earlier startup failure, later recovery conditions, exact IDs and review receipt remain distinct evidence classes |
+| T4 API approval and StatusPill reconciliation                                  | Approved contract packet is authoritative; React Aria StatusPill and legacy Pill/StatusPill remain separate owners and IDs                                                  |
+| Sheet systematic-debugging/react-aria handoff                                  | Resolved by the direct-child `Modal` composition fix and focused open/close/focus/a11y story; no public forwarding change is authorized                                     |
+
+### Current package status
+
+| Package | Planned exit                                                                                                                                                         | Current observation                                                                                                                                                                                                                                                                           | Status                                                                                   |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| T1      | Exact validated endpoint, native protocol, child/producer identity, cold/warm/repeat and diagnostic closure                                                          | T1a target resolver and endpoint unit tests are in HEAD; focused native T4 execution passed, but T1b/T1c receipts, cold/warm/repeat and wrong-producer/URL negatives are not closed                                                                                                           | Partial; next closure work remains                                                       |
+| T2      | Recursive v1 manifest, canonical exports/classifications, meaningful baseline, freshness, patch/freeze and lint contracts                                            | Manifest, recursive discovery, schema/claim validator, guarded CLI and RED fixtures are in HEAD; T2b freshness/freeze, T2c docs wiring and T2d lint/closure remain                                                                                                                            | Partial; next closure work remains                                                       |
+| T3      | Correct owners, five AcceptQuote APIs, Guard type/default presentation, IDs and version attribution                                                                  | HEAD changes AutoSuggest, AcceptQuote, RouteLeavingGuard and the component documentation guide; current evidence does not close rendered five-step ownership, Guard table/default, stable-ID and version checks                                                                               | Partial; verification remains                                                            |
+| T4      | Seven approved contracts with direct semantic/interaction/a11y evidence, inherited-prop negatives where applicable, responsive/focus evidence and legacy distinction | Seven stories are present; 20 focused native IDs passed with a11y enabled; CLI is reported at 149/344; docs verification is reported at 504 entries (160 docs + 344 stories), 149 components and 9 accepted docgen exceptions; Sheet composition is fixed and typecheck/contract tests passed | T4 story slice evidenced; package closure remains subject to T4 acceptance and T8 freeze |
+| T5      | Sufficient indirect consumer evidence for forms, inputs, modals, buttons and conditional states                                                                      | No current attributable closure evidence for all T5 claims                                                                                                                                                                                                                                    | Incomplete                                                                               |
+| T6      | Ten route bootstrap obligations plus RT5/RT6 fail-closed MSW and concurrent Docs ownership                                                                           | No current attributable closure evidence                                                                                                                                                                                                                                                      | Incomplete                                                                               |
+| T7      | Shell-owned layout/outlet/error/guard behavior and forwarding-equivalence reassessment                                                                               | No current attributable closure evidence                                                                                                                                                                                                                                                      | Incomplete                                                                               |
+| T8      | Frozen local closure with exact inventories, producer/install/native identity, ACL restoration, eight serial gates and review receipts                               | No frozen closure launcher/receipt set or complete eight-gate result is evidenced                                                                                                                                                                                                             | Blocked pending prerequisites                                                            |
+
+The T1/T2 commit changed only the owned implementation surfaces shown by its
+commit diff; the current worktree also contains the seven T4 story files and the
+Sheet fix. The following reported checks are retained as current conversation
+evidence, not rerun by this plan edit: full Storybook CLI 149/344, native
+focused T4 20/20 with `a11y: true`, docs verification 504/160/344, TypeScript
+no-emit, the focused Storybook docs contract test 29/29, Prettier for the Sheet
+files, and `git diff --check`. T8 must rerun qualifying gates after freeze and
+record attributable receipts.
+
+### Approved T4 contracts and Sheet decision
+
+The approved owners are AriaButton, Link, SegmentedControl and Item, Sheet,
+AlertMessage, PageHeader and React Aria StatusPill. The public Sheet contract
+remains non-forwarding: `ModalOverlayProps` is the declared type, but `isOpen`,
+`defaultOpen`, `onOpenChange`, dismissal props, class names and other inherited
+props are not passed through. Its supported composition is the surrounding
+trigger/context plus local `Modal` → `Dialog` composition.
+
+The implementation defect found during the approved Sheet slice was internal
+composition, not a request to broaden that public contract. The old nesting made
+`Modal` a render-prop result of `ModalOverlay`; the corrected shape keeps
+`Modal` as the direct overlay child and applies `composeRenderProps` to
+`props.children` inside `Modal`. The required regression story is
+`components-ariacomponents-sheet--context-driven-open-and-dismiss`: click the
+trigger, find the named dialog in the document body, assert content and close
+control, close it, assert removal and trigger focus, and retain a11y failure
+enforcement. Do not add prop-forwarding assertions that contradict the approved
+contract.
+
+The focused native receipt requested these exact current story IDs and returned
+20/20 passing results with a11y enabled:
+
+- `components-ariacomponents-ariabutton--primary`,
+  `components-ariacomponents-ariabutton--keyboard-activation`,
+  `components-ariacomponents-ariabutton--disabled`,
+  `components-ariacomponents-ariabutton--pending`;
+- `components-ariacomponents-link--navigates-with-href`,
+  `components-ariacomponents-link--link-role-without-href`,
+  `components-ariacomponents-link--disabled`;
+- `components-ariacomponents-segmentedcontrol--selection-changes`,
+  `components-ariacomponents-segmentedcontrol--keyboard-selection`,
+  `components-ariacomponents-segmentedcontrol--disabled-item`;
+- `components-ariacomponents-sheet--context-driven-open-and-dismiss`;
+- `components-react-aria-alertmessage--default`,
+  `components-react-aria-alertmessage--warning-tone`,
+  `components-react-aria-alertmessage--long-message`;
+- `components-react-aria-pageheader--title-only`,
+  `components-react-aria-pageheader--with-context-and-actions`,
+  `components-react-aria-pageheader--long-content`;
+- `components-react-aria-statuspill--neutral`,
+  `components-react-aria-statuspill--tone-variants`,
+  `components-react-aria-statuspill--long-label`.
+
+The associated local review receipt was created at
+`http://localhost:6006/?path=/review/` with title “Approved T4 component stories
+with Sheet composition fix”; it showed five groups and 20 stories. This receipt
+is retained as focused review evidence, not as a replacement for the T8 frozen
+full/docs index and eight serial gates.
+
+### Gate 3 packet and approval boundary
+
+Gate 3 is approved. The approved packet still consists of the current T1–T8
+scenario groups in this plan: T1 CLI/native protocol and identity; T2 schema,
+recursive evidence and freeze; T3 ownership/defaults/IDs/version; T4 the seven
+contracts and semantic/a11y stories; T5 indirect consumer sufficiency; T6
+route/bootstrap and RT5/RT6 isolation; T7 shell boundaries and forwarding
+equivalence; and T8 frozen local closure. The separate 22-scenario BDD standard
+is not substituted for these groups.
+
+The next implementation authorization is the T1b receipt/producer-identity slice
+below. It must not redo the T1a/T2a files already present in HEAD. T2b
+freshness/receipt work follows its T1b contract; T3 verification and T4
+completion checks may then close their current partial lanes before T5, T6/T7
+and T8. A green baseline, the 97/100 planning score, the BDD-standard “Complete”
+label or the focused T4 review does not waive any package exit criterion.
+
+### Next atomic task: T1b receipt and producer identity
+
+This is the next reviewable task after the current T1a/T2a slices. It is not a
+request to repair the runner speculatively. The exact targets are
+`tests/unit/storybook/mcpExecutionReceipt.test.ts`,
+`tests/unit/storybook/producerIdentity.test.ts`,
+`tests/e2e/features/storybook/integrations/mcp.feature`,
+`tests/e2e/steps/storybook.steps.ts` and, only where the already-landed T2a
+module provides the dependency, the receipt-normalizer surface in
+`scripts/storybook-coverage.mjs`.
+
+RED tests must fail on requested/executed ID mismatch, one-of-two results,
+duplicate status, unknown ID, no stories, missing per-ID a11y, cancellation,
+`isError`/unhandled errors, missing child provenance, wrong producer/native URL,
+PID reuse and a result from a different source freeze. The minimal GREEN
+implementation normalizes the advertised native structured response, matches
+exact requested IDs and per-ID a11y statuses, and joins the result to the owned
+producer/child identity without requiring optional timestamps or a public run
+ID. The focused BDD scenario uses the existing MCP schema and an owned external
+Storybook process only after port, checkout, PID/cwd and cleanup ownership are
+recorded; it does not replace the native MCP call with an SSE GET or CLI Vitest.
+
+Acceptance requires targeted RED/GREEN unit evidence, one cold request followed
+by the warm pair and repeat request under the same producer/freeze identity,
+explicit wrong-native-URL rejection, preserved 6006 ownership and redacted
+startup/child diagnostics. A reproduced child failure remains a T1 blocker until
+a supported fix or an explicitly recorded upstream blocker exists. The
+downstream effects are T2b receipt freshness and T8 serial closure; no T8 claim
+is made from this slice alone. Roll back only the owned T1b files if the receipt
+contract regresses, and preserve all current dirty user files.
+
 ## Assumptions, boundaries, and unknowns
 
-Planning artifacts only in this turn. No app implementation, dependency upgrade,
-server restart, commit, or publishing is performed by this plan review. At
-intake the worktree contained user changes in `WizardRoutedStep.tsx`, new
-`useWizardStepController.ts`, and `package-lock.json`. During review the wizard
-extraction was committed externally as `15f82afa`; only the lockfile remained
-dirty at the final planning check. Audit evidence predates that commit and must
-be refreshed against the implementation checkout. Capture the baseline again
-when executing. Never stash, overwrite, or incorporate those changes
-accidentally. Use an isolated implementation worktree from the intended
-integration commit; coordinate the wizard-story lane with the ongoing Formik/RHF
-migration. Keep both currently supported form providers. Keep auth guards,
-production APIs, runtime config contract, security checks, a11y `test: 'error'`,
-act warnings, and current gate names intact. No direct node_modules edits.
-Dependency problems require a supported configuration fix or an
-upstream/version-managed fix with reproducibility proof. A confirmed upstream
-blocker stays visible; it does not become a reported pass. No new deployment,
-telemetry service, test framework, public endpoint, or live MSAL flow. Open
-engineering unknowns are assigned diagnostic tasks: child startup cause; actual
-rendered default-value table; sufficiently exercised indirect stories. Do not
-assume their outcomes.
+This plan amendment performs no app implementation, dependency upgrade, server
+restart, commit or publishing. Existing implementation evidence is recorded for
+planning purposes only. At intake the worktree contained user changes in
+`WizardRoutedStep.tsx`, new `useWizardStepController.ts`, and
+`package-lock.json`. During review the wizard extraction was committed
+externally as `15f82afa`; only the lockfile remained dirty at the final planning
+check. Audit evidence predates that commit and must be refreshed against the
+implementation checkout. Capture the baseline again when executing. Never stash,
+overwrite, or incorporate those changes accidentally. Use an isolated
+implementation worktree from the intended integration commit; coordinate the
+wizard-story lane with the ongoing Formik/RHF migration. Keep both currently
+supported form providers. Keep auth guards, production APIs, runtime config
+contract, security checks, a11y `test: 'error'`, act warnings, and current gate
+names intact. No direct node_modules edits. Dependency problems require a
+supported configuration fix or an upstream/version-managed fix with
+reproducibility proof. A confirmed upstream blocker stays visible; it does not
+become a reported pass. No new deployment, telemetry service, test framework,
+public endpoint, or live MSAL flow. Open engineering unknowns are assigned
+diagnostic tasks: child startup cause; actual rendered default-value table;
+sufficiently exercised indirect stories. Do not assume their outcomes.
 
 ## Requirement traceability
 
@@ -128,50 +339,50 @@ stories use deterministic local fixtures and existing API contracts.
 
 ## Separate Storybook 10.6 documentation-standard scenarios
 
-The separately supplied `storybook-10.6-bdd-documentation-standard.md`
-contains eight embedded Gherkin features and 22 documentation/governance
-scenarios. Record them here for traceability, but do not treat them as the
-implementation-specific Gate 3 approval packet. They are baseline contracts
-for documentation, configuration, accessibility policy, isolation, CI policy,
-and existing governance tests; they are not proof that corresponding
-`.feature` files were registered or executed.
+The separately supplied `storybook-10.6-bdd-documentation-standard.md` contains
+eight embedded Gherkin features and 22 documentation/governance scenarios.
+Record them here for traceability, but do not treat them as the
+implementation-specific Gate 3 approval packet. They are baseline contracts for
+documentation, configuration, accessibility policy, isolation, CI policy, and
+existing governance tests; they are not proof that corresponding `.feature`
+files were registered or executed.
 
 The AR comments below preserve the source report's traceability. An em dash
 means that the source scenario had no AR comment; this is intentional and is a
 known limitation of the separate standard, not a new T1–T8 requirement.
 
-| Feature | AR | Scenario |
-| --- | --- | --- |
-| Autodocs Contract | AR-001 | Autodocs is activated globally at project level |
-| Autodocs Contract | AR-002 | Components opt out of Autodocs using negative tag syntax |
-| Autodocs Contract | AR-001 | No custom Autodocs template overrides the Storybook default |
-| Code Panel and Source Contract | AR-003 | Code Panel is enabled globally |
-| Code Panel and Source Contract | AR-004 | Generated source excludes preview decorators |
-| MDX and Doc Blocks Contract | AR-007 | All standalone MDX documentation pages render |
-| MDX and Doc Blocks Contract | AR-006 | GFM tables render as HTML tables in MDX |
-| MDX and Doc Blocks Contract | AR-008 | Style Guide uses native design-system Doc Blocks |
-| MDX and Doc Blocks Contract | — | Documentation navigation includes project guides |
-| Documentation Ownership Contract | AR-012 | TypeScript owns public prop types via react-docgen-typescript |
-| Documentation Ownership Contract | — | JSDoc descriptions populate component documentation |
-| Documentation Ownership Contract | AR-013 | Controls sort required props and exclude internals |
-| Documentation Ownership Contract | — | Args represent runtime story state without custom render functions |
-| Accessibility Enforcement | AR-005 | a11y violations cause test failures in CI |
-| Accessibility Enforcement | — | a11y enforcement level is documented in configuration |
-| Network and Routing Isolation | AR-010 | MSW intercepts HTTP requests in stories |
-| Network and Routing Isolation | AR-011 | Memory router provides route isolation |
-| CI Quality Gate | AR-009 | Documentation build is a CI quality gate |
-| CI Quality Gate | AR-015 | Interaction tests run via Vitest browser mode |
-| CI Quality Gate | AR-014 | MCP integration endpoint is operational |
-| Governance Tests | — | Storybook documentation architecture test enforces configuration |
-| Governance Tests | — | Workflow policy test enforces CI gates |
+| Feature                          | AR     | Scenario                                                           |
+| -------------------------------- | ------ | ------------------------------------------------------------------ |
+| Autodocs Contract                | AR-001 | Autodocs is activated globally at project level                    |
+| Autodocs Contract                | AR-002 | Components opt out of Autodocs using negative tag syntax           |
+| Autodocs Contract                | AR-001 | No custom Autodocs template overrides the Storybook default        |
+| Code Panel and Source Contract   | AR-003 | Code Panel is enabled globally                                     |
+| Code Panel and Source Contract   | AR-004 | Generated source excludes preview decorators                       |
+| MDX and Doc Blocks Contract      | AR-007 | All standalone MDX documentation pages render                      |
+| MDX and Doc Blocks Contract      | AR-006 | GFM tables render as HTML tables in MDX                            |
+| MDX and Doc Blocks Contract      | AR-008 | Style Guide uses native design-system Doc Blocks                   |
+| MDX and Doc Blocks Contract      | —      | Documentation navigation includes project guides                   |
+| Documentation Ownership Contract | AR-012 | TypeScript owns public prop types via react-docgen-typescript      |
+| Documentation Ownership Contract | —      | JSDoc descriptions populate component documentation                |
+| Documentation Ownership Contract | AR-013 | Controls sort required props and exclude internals                 |
+| Documentation Ownership Contract | —      | Args represent runtime story state without custom render functions |
+| Accessibility Enforcement        | AR-005 | a11y violations cause test failures in CI                          |
+| Accessibility Enforcement        | —      | a11y enforcement level is documented in configuration              |
+| Network and Routing Isolation    | AR-010 | MSW intercepts HTTP requests in stories                            |
+| Network and Routing Isolation    | AR-011 | Memory router provides route isolation                             |
+| CI Quality Gate                  | AR-009 | Documentation build is a CI quality gate                           |
+| CI Quality Gate                  | AR-015 | Interaction tests run via Vitest browser mode                      |
+| CI Quality Gate                  | AR-014 | MCP integration endpoint is operational                            |
+| Governance Tests                 | —      | Storybook documentation architecture test enforces configuration   |
+| Governance Tests                 | —      | Workflow policy test enforces CI gates                             |
 
 These 22 scenarios do not replace the revised Gate 3 package scenarios. Gate 3
 still requires separate approval for T1 native MCP protocol and producer
 identity, T2 recursive evidence and freeze validation, T3 named documentation
-ownership corrections, the seven T4 component contracts, T5 conditional
-consumer evidence, T6/T7 route behavior and isolation, and T8 frozen local
-closure. The standard's generic MCP, CLI, MSW, router, and governance
-scenarios remain insufficient for those package-specific acceptance gates.
+ownership corrections, the seven T4 component contracts, T5 conditional consumer
+evidence, T6/T7 route behavior and isolation, and T8 frozen local closure. The
+standard's generic MCP, CLI, MSW, router, and governance scenarios remain
+insufficient for those package-specific acceptance gates.
 
 ## Alternatives and selected approach
 
@@ -2378,6 +2589,12 @@ the user's work before executing.
 
 ## GSTACK REVIEW REPORT
 
+Historical planning-review record (2026-10-15). The 2026-10-19 execution-state
+reconciliation near the top of this document supersedes its then-current “no
+implementation” and “rebaseline before execution” statements for the present
+checkout; it does not erase the review evidence or change the T1–T8/RT1–RT7
+contracts.
+
 Updated 2026-10-15. Scope: all eight packages, the companion test plan, current
 task artifacts, scorecard and pressure retest. No
 application/configuration/story implementation was performed.
@@ -2403,7 +2620,8 @@ report; diff whitespace and unchanged application source. All checks must be
 rerun after relevant edits. Runtime/install/permission/maintainer prerequisites
 remain mandatory before implementation closure.
 
-VERDICT: PLANNING RECOMMENDATIONS APPLIED; RETEST EVIDENCE AND CURRENT SCORES
-ARE IN THE LINKED ARTIFACTS. Sufficient indirect coverage remains accepted.
-Rebaseline the moving checkout before execution. No implementation, Storybook
-coverage or runtime test-success claim is made.
+HISTORICAL VERDICT (2026-10-15): PLANNING RECOMMENDATIONS APPLIED; RETEST
+EVIDENCE AND THEN-CURRENT SCORES ARE IN THE LINKED ARTIFACTS. Sufficient
+indirect coverage remains accepted. The present checkout is governed by the
+2026-10-19 execution-state reconciliation above, which records partial T1/T2/T3
+implementation, the approved T4 story slice and the remaining closure work.

@@ -107,7 +107,7 @@
 
 ## Phase 0 — Snapshot + spike gate  *(main session; PR1 branch)*
 
-#### Task 0.1: Snapshot the superpowers 6.3.0 skill source
+### Task 0.1: Snapshot the superpowers 6.3.0 skill source
 
 **Files:** Create `.claude/docs/plans/_sp-6.3.0-snapshot/`
 
@@ -189,7 +189,7 @@ git commit -m "docs: RED baselines for brainstorming + subagent-driven-developme
 
 > Tasks 1.1–1.5 are parallel-safe (disjoint directories). **Task 1.6 must complete and verify before Phase 2 starts** — Phase 2 uses `writing-skills`.
 
-#### Task 1.1: Additive text merges — 4 skills, no new files
+### Task 1.1: Additive text merges — 4 skills, no new files
 
 **Files:** Modify `skills/{dispatching-parallel-agents,executing-plans,using-git-worktrees,verification-before-completion}/SKILL.md`
 
@@ -329,7 +329,7 @@ python3 -c "import yaml; d=yaml.safe_load(open('skills/writing-skills/SKILL.md')
 
 > Each task: invoke `writing-skills` and follow RED→GREEN→REFACTOR. RED baselines are Task 0.3. These are large tasks (~30–60 min), not "5-minute steps".
 
-#### Task 2.1: brainstorming — replace body with the snapshot, preserve items 1–5
+### Task 2.1: brainstorming — replace body with the snapshot, preserve items 1–5
 
 **Files:** Modify `skills/brainstorming/SKILL.md`; Create `skills/brainstorming/{visual-companion.md,spec-document-reviewer-prompt.md}`, `skills/brainstorming/scripts/*`
 
@@ -411,7 +411,7 @@ done
 
 ## Phase 3 — Port receiving-code-review  *(subagent-driven; PR1 branch)*
 
-#### Task 3.1: receiving-code-review
+### Task 3.1: receiving-code-review
 
 **Files:** Create `skills/receiving-code-review/SKILL.md`
 
@@ -430,7 +430,7 @@ grep -n 'superpowers:\|your human partner' skills/receiving-code-review/SKILL.md
 
 ## Phase 4 — Wiring  *(main session; PR1 branch)*
 
-#### Task 4.1: Symlink the remaining merged/ported skills into `.claude/skills/`
+### Task 4.1: Symlink the remaining merged/ported skills into `.claude/skills/`
 
 **Files:** Create 11 remaining symlinks under `.claude/skills/`; `verification-before-completion` was already symlinked in Task 0.2.
 
@@ -474,7 +474,7 @@ echo "no output = .claude/skills matches skills/ exactly"
 
 - [x] **Step 1: Add 12 entries** to `permissions.allow` (keep 2-space indent + array style):
 
-```
+```text
 "Skill(adr)", "Skill(adr:*)",
 "Skill(architecture-design)", "Skill(architecture-design:*)",
 "Skill(architecture-review)", "Skill(architecture-review:*)",
@@ -510,7 +510,7 @@ grep -oE '"Skill\([^"]*\)"' .claude/settings.json | sort -u | wc -l   # expect: 
 
 ## Phase 5 — Agent roster  *(subagent-driven; PR2 branch, from PR1 tip)*
 
-#### Task 5.1: Delete chief-of-staff
+### Task 5.1: Delete chief-of-staff
 
 **Files:** Delete `.claude/agents/chief-of-staff.md`
 
@@ -547,7 +547,7 @@ done
 
 ## Phase 6 — Commands  *(subagent-driven; PR2 branch)*
 
-#### Task 6.1: `/skills` dispatcher
+### Task 6.1: `/skills` dispatcher
 
 **Files:** Create `.claude/commands/skills.md`
 
@@ -576,7 +576,7 @@ done
 
 ## Phase 7 — Docs reconciliation  *(subagent-driven; PR2 branch)*
 
-#### Task 7.1: using-a-team/SKILL.md
+### Task 7.1: using-a-team/SKILL.md
 
 **Files:** Modify `skills/using-a-team/SKILL.md`
 
@@ -662,7 +662,7 @@ The whole-branch review flagged `.claude/docs/overview.md` as still describing t
 
 ## Phase 8 — Final verification  *(main session; PR2 branch)*
 
-#### Task 8.1: Spec §7 success checklist
+### Task 8.1: Spec §7 success checklist
 
 - [ ] **Step 1: Mechanical checks**
 

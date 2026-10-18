@@ -8,7 +8,7 @@ Review staged and recent code changes for quality, security, and correctness.
 
 **Usage:**
 
-```
+```text
 /code-review
 /code-review --staged-only
 /code-review --commit HEAD~3..HEAD
