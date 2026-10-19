@@ -9,12 +9,14 @@ Multimedia content, graphics, and related technologies for the web.
 Lossy compression for photographs.
 
 **Characteristics**:
+
 - Good for photos
 - No transparency support
 - Small file size
 - Quality degrades with editing
 
 **Usage**:
+
 ```html
 <img src="photo.jpg" alt="Photo">
 ```
@@ -24,6 +26,7 @@ Lossy compression for photographs.
 Lossless compression with transparency.
 
 **Characteristics**:
+
 - Supports alpha channel (transparency)
 - Larger file size than JPEG
 - Good for logos, graphics, screenshots
@@ -38,6 +41,7 @@ Lossless compression with transparency.
 Modern format with better compression.
 
 **Characteristics**:
+
 - Smaller than JPEG/PNG
 - Supports transparency
 - Supports animation
@@ -55,6 +59,7 @@ Modern format with better compression.
 Next-generation image format.
 
 **Characteristics**:
+
 - Better compression than WebP
 - Supports HDR
 - Slower encoding
@@ -65,6 +70,7 @@ Next-generation image format.
 Animated images (limited colors).
 
 **Characteristics**:
+
 - 256 colors max
 - Supports animation
 - Simple transparency (no alpha)
@@ -75,6 +81,7 @@ Animated images (limited colors).
 XML-based vector graphics.
 
 **Characteristics**:
+
 - Scalable without quality loss
 - Small file size for simple graphics
 - CSS/JS manipulatable
@@ -91,6 +98,7 @@ XML-based vector graphics.
 ```
 
 **Creating SVG**:
+
 ```html
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <!-- Rectangle -->
@@ -187,12 +195,14 @@ canvas.toBlob(blob => {
 3D graphics in the browser.
 
 **Use Cases**:
+
 - 3D visualizations
 - Games
 - Data visualization
 - VR/AR
 
 **Libraries**:
+
 - **Three.js**: Easy 3D graphics
 - **Babylon.js**: Game engine
 - **PixiJS**: 2D WebGL renderer
@@ -239,6 +249,7 @@ animate();
 ```
 
 **Attributes**:
+
 - `controls`: Show playback controls
 - `autoplay`: Start automatically
 - `loop`: Repeat video
@@ -385,11 +396,13 @@ Art direction and format switching:
    - Consider device pixel ratio
 
 4. **Lazy loading**:
+
    ```html
    <img src="image.jpg" loading="lazy" alt="Lazy loaded">
    ```
 
 5. **Dimensions**:
+
    ```html
    <img src="image.jpg" width="800" height="600" alt="With dimensions">
    ```
@@ -476,6 +489,7 @@ Website icon:
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - Alpha
 - Baseline (image)
 - Baseline (scripting)

@@ -22,6 +22,7 @@ Use this skill when you need to:
 Enter plan mode. Before writing any tests, explore the existing project:
 
 ### Project structure
+
 - Find the tech stack: is this React, Next.js, Vue, SvelteKit, or another framework?
 - Check if Playwright is already installed (`playwright.config.ts`, `@playwright/test` in package.json)
 - Look for existing test directories (`e2e/`, `tests/`, `__tests__/`)
@@ -29,6 +30,7 @@ Enter plan mode. Before writing any tests, explore the existing project:
 - Find the dev server command and port (`npm run dev`, `next dev`, etc.)
 
 ### Application structure
+
 - Identify the main routes/pages (look at router config, pages directory, or route files)
 - Find authentication flow (login page URL, auth API endpoints, token storage)
 - Check for test IDs in components (`data-testid`, `data-test`, `data-cy` attributes)
@@ -36,6 +38,7 @@ Enter plan mode. Before writing any tests, explore the existing project:
 - Check `.env` files for test-specific environment variables
 
 ### CI/CD
+
 - Check for existing CI config (`.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`)
 - Look for Docker or docker-compose setup (useful for consistent test environments)
 - Check if there's a staging/preview environment URL pattern
@@ -594,6 +597,7 @@ playwright.config.ts         # Playwright configuration
 ## Best practices
 
 ### Use role-based locators first
+
 Prefer `getByRole()`, `getByLabel()`, `getByText()` over CSS selectors or test IDs. These locators mirror how users interact with the page and catch accessibility issues:
 
 ```typescript
@@ -610,6 +614,7 @@ await page.locator('#email-input').fill('user@test.com');
 ```
 
 ### Wait for network, not timers
+
 Never use `page.waitForTimeout()`. Wait for specific conditions:
 
 ```typescript
@@ -627,6 +632,7 @@ await expect(page.getByTestId('spinner')).toBeHidden();
 ```
 
 ### Isolate test data
+
 Each test should create its own data and clean up after:
 
 ```typescript

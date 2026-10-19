@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-17",
+  "scope": "skills-ref collection repair",
+  "files": [
+    "skills/writing-skills/scripts/tests/test_prompt.py",
+    "skills/writing-skills/scripts/tests/test_render_graphs.py"
+  ],
+  "baseline_python313": {
+    "python": "3.13.11",
+    "command": "uv run --group dev pytest -q tests/test_prompt.py tests/test_render_graphs.py",
+    "exit_code": 2,
+    "observed": "Two AttributeError collection errors: defusedxml.ElementTree has no attribute Element",
+    "pyright_errors": 4
+  },
+  "fixed_python313": {
+    "python": "3.13.11",
+    "targeted_command": "uv run --group dev pytest -q tests/test_prompt.py tests/test_render_graphs.py",
+    "targeted_observed": "49 passed in 15.51s",
+    "full_command": "uv run --group dev pytest -q",
+    "full_observed": "203 passed in 15.73s",
+    "exit_code": 0
+  },
+  "fixed_python314": {
+    "python": "3.14.7",
+    "full_command": "uv run --group dev pytest -q",
+    "full_observed": "203 passed in 16.41s",
+    "exit_code": 0
+  },
+  "analyzers": {
+    "ruff_command": "uv run --group dev ruff check tests/test_prompt.py tests/test_render_graphs.py",
+    "ruff_observed": "All checks passed!",
+    "pyright_version": "1.1.414",
+    "pyright_command": "pyright tests/test_prompt.py tests/test_render_graphs.py --pythonpath .venv/Scripts/python.exe",
+    "pyright_mode": "CLI default; editor equivalence unknown",
+    "pyright_file_count": 2,
+    "pyright_observed": "0 errors, 0 warnings, 0 informations"
+  },
+  "independent_review": "No material findings. Both stdlib imports supply annotations only; XML parsing remains with defusedxml. The root assertion provides explicit narrowing and a clearer test failure without changing valid SVG behavior.",
+  "primary_host": "Codex",
+  "secondary_host": "Claude Code, not tested in this follow-up"
+}

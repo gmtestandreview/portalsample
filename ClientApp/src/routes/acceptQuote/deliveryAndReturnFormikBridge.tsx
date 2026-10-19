@@ -3,11 +3,16 @@ import { FormProvider } from 'react-hook-form';
 import type { AddressDetailsDto } from '../../api/web-api-client';
 import { useFormikRhfBridge } from '../../components/forms/useFormikRhfBridge';
 import { RhfHiddenRulesProvider } from '../../components/forms/RhfHidableField';
-import type { Hideable } from '../../components/forms/types';
 import {
   deliveryAndReturnSaveValidation,
   deliveryAndReturnSubmitValidation,
 } from './validation';
+import {
+  addressTouchPaths,
+  CONTACT_TOUCH_PATHS,
+  createBridgedNamePredicate,
+  NO_HIDDEN_RULES,
+} from './formikBridgeHelpers';
 import DeliveryAndReturnFormFields, {
   type DeliveryAndReturnFormValues,
 } from './deliveryAndReturnFormFields';
@@ -22,49 +27,32 @@ const touchPaths = [
   'carrierContactPhone',
   'insuranceNotes',
   'specialInstructions',
-  'contact.title',
-  'contact.titleOther',
-  'contact.firstName',
-  'contact.lastName',
-  'contact.role',
-  'contact.phone',
-  'contact.mobile',
-  'contact.email',
-  'returnAddress.line1',
-  'returnAddress.line2',
-  'returnAddress.line3',
-  'returnAddress.suburb',
-  'returnAddress.postcode',
-  'returnAddress.state',
-  'returnAddress.searchText',
+  ...CONTACT_TOUCH_PATHS,
+  ...addressTouchPaths('returnAddress'),
 ] as const;
 
-const bridgedFieldNames: ReadonlySet<string> = new Set([
-  'returnContactType',
-  'returnOrganisationName',
-  'returnAddressType',
-  'returnAddress',
-  'returnMethod',
-  'packagingNotes',
-  'carrierName',
-  'carrierAccountNumber',
-  'carrierContactPerson',
-  'carrierContactPhone',
-  'shipmentMode',
-  'shipmentPriority',
-  'insuranceNotes',
-  'customsValue',
-  'specialInstructions',
-]);
-
-// The contact and the address are edited per field or (address) as a whole, so
-// any path beneath them is mirrored along with the top-level fields.
-const isBridgedFieldName = (name: string) =>
-  bridgedFieldNames.has(name) ||
-  name.startsWith('contact.') ||
-  name.startsWith('returnAddress.');
-
-const NO_HIDDEN_RULES: Hideable = {};
+const isBridgedFieldName = createBridgedNamePredicate({
+  names: [
+    'returnContactType',
+    'returnOrganisationName',
+    'returnAddressType',
+    'returnAddress',
+    'returnMethod',
+    'packagingNotes',
+    'carrierName',
+    'carrierAccountNumber',
+    'carrierContactPerson',
+    'carrierContactPhone',
+    'shipmentMode',
+    'shipmentPriority',
+    'insuranceNotes',
+    'customsValue',
+    'specialInstructions',
+  ],
+  // The contact and the address are edited per field or (address) as a whole,
+  // so any path beneath them is mirrored along with the top-level fields.
+  prefixes: ['contact.', 'returnAddress.'],
+});
 
 interface DeliveryAndReturnFormikBridgeProps {
   streetAddress?: AddressDetailsDto | undefined;

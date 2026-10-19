@@ -6,9 +6,10 @@ Run: python -m pytest tests/hooks/test_github_mcp_server.py -q
 import json
 import os
 import shutil
-import subprocess
+import subprocess  # nosec B404: tests intentionally exercise process lifecycle
 import sys
 import time
+from collections.abc import Sequence
 from pathlib import Path
 
 import pytest
@@ -21,6 +22,8 @@ TOKEN_KEYS = (
     "GH_PERSONAL_ACCESS_TOKEN",
     "GITHUB_PAT_TOKEN",
 )
+Launcher = tuple[list[str], dict[str, str], Path, Path]
+TASKKILL = Path(os.environ.get("SYSTEMROOT", r"C:\Windows")) / "System32" / "taskkill.exe"
 
 AUTH = """const fs = require('node:fs');
 const path = require('node:path');
@@ -51,8 +54,13 @@ sys.exit(int(os.environ.get("LAUNCHER_TEST_DOCKER_EXIT", "0")))
 """
 
 
+def fixture_value(label: str) -> str:
+    """Return a deterministic, non-secret value for credential test cases."""
+    return f"dummy-{label}"
+
+
 @pytest.fixture
-def launcher(tmp_path: Path):
+def launcher(tmp_path: Path) -> Launcher:
     tools = tmp_path / "fake tools"
     tools.mkdir()
     temp = tmp_path / "credential temp"
@@ -62,7 +70,8 @@ def launcher(tmp_path: Path):
     # Use a native executable: a .cmd double would transfer batch control and
     # would not model the real gh.exe returning to its caller.
     node = shutil.which("node")
-    assert node is not None, "Repository Node runtime is required"
+    if node is None:
+        pytest.fail("Repository Node runtime is required")
     try:
         os.link(node, tools / "gh.exe")
     except OSError:
@@ -83,7 +92,22 @@ def launcher(tmp_path: Path):
     return command, environment, tmp_path, temp
 
 
-def wait_for_marker(marker: Path, process: subprocess.Popen) -> None:
+def validated_command(command: Sequence[str]) -> list[str]:
+    """Return the fixture-owned launcher command after validating its shape."""
+    if not command or any(not isinstance(argument, str) or not argument for argument in command):
+        pytest.fail("Launcher command must be a non-empty sequence of strings")
+
+    arguments = list(command)
+    if len(arguments) != 4 or arguments[1:3] != ["/d", "/c"]:
+        pytest.fail("Launcher command must use cmd.exe with /d /c")
+    if Path(arguments[3]).resolve() != LAUNCHER.resolve():
+        pytest.fail("Launcher command must target the repository launcher")
+    if Path(arguments[0]).name.casefold() != "cmd.exe":
+        pytest.fail("Launcher command must use cmd.exe as its executable")
+    return arguments
+
+
+def wait_for_marker(marker: Path, process: subprocess.Popen[bytes]) -> None:
     deadline = time.monotonic() + 10
     while not marker.exists():
         if process.poll() is not None:
@@ -93,10 +117,10 @@ def wait_for_marker(marker: Path, process: subprocess.Popen) -> None:
         time.sleep(0.02)
 
 
-def stop_tree(process: subprocess.Popen) -> None:
+def stop_tree(process: subprocess.Popen[bytes]) -> None:
     if process.poll() is None:
-        subprocess.run(
-            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+        subprocess.run(  # nosec B603: fixed absolute Windows utility and arguments
+            [str(TASKKILL), "/PID", str(process.pid), "/T", "/F"],
             capture_output=True,
             timeout=10,
         )
@@ -104,10 +128,13 @@ def stop_tree(process: subprocess.Popen) -> None:
 
 
 @pytest.mark.parametrize("boundary", ["gh", "docker"])
-def test_authentication_never_spools_a_credential_to_disk(launcher, boundary: str) -> None:
+def test_authentication_never_spools_a_credential_to_disk(
+    launcher: Launcher, boundary: str
+) -> None:
     command, environment, state, temp = launcher
+    command = validated_command(command)
     environment["LAUNCHER_TEST_HOLD"] = boundary
-    process = subprocess.Popen(
+    process = subprocess.Popen(  # nosec B603: command is fixture-owned and validated
         command,
         env=environment,
         cwd=state,
@@ -118,20 +145,23 @@ def test_authentication_never_spools_a_credential_to_disk(launcher, boundary: st
     try:
         marker = "auth-ready" if boundary == "gh" else "docker-ready"
         wait_for_marker(state / marker, process)
-        assert list(temp.iterdir()) == [], "Credential acquisition wrote to disk"
+        if list(temp.iterdir()):
+            pytest.fail("Credential acquisition wrote to disk")
     finally:
         stop_tree(process)
-    assert list(temp.iterdir()) == [], "Interrupted launcher left a credential file"
+    if list(temp.iterdir()):
+        pytest.fail("Interrupted launcher left a credential file")
 
 
 @pytest.mark.parametrize("boundary", ["gh", "docker"])
-def test_ctrl_c_leaves_no_credential_file(launcher, boundary: str) -> None:
+def test_ctrl_c_leaves_no_credential_file(launcher: Launcher, boundary: str) -> None:
     command, environment, state, temp = launcher
+    command = validated_command(command)
     environment["LAUNCHER_TEST_HOLD"] = boundary
     startup = subprocess.STARTUPINFO()
     startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     startup.wShowWindow = subprocess.SW_HIDE
-    process = subprocess.Popen(
+    process = subprocess.Popen(  # nosec B603: command is fixture-owned and validated
         command,
         env=environment,
         cwd=state,
@@ -155,14 +185,16 @@ kernel.FreeConsole()
     try:
         marker = "auth-ready" if boundary == "gh" else "docker-ready"
         wait_for_marker(state / marker, process)
-        sent = subprocess.run(
+        sent = subprocess.run(  # nosec B603: fixed interpreter and inline test script
             [sys.executable, "-c", sender, str(process.pid)],
             capture_output=True,
             timeout=10,
         )
-        assert sent.returncode == 0, sent.stderr.decode()
+        if sent.returncode != 0:
+            pytest.fail(sent.stderr.decode())
         process.communicate(input=b"Y\r\n", timeout=10)
-        assert list(temp.iterdir()) == [], "Ctrl+C left a credential file"
+        if list(temp.iterdir()):
+            pytest.fail("Ctrl+C left a credential file")
     finally:
         stop_tree(process)
 
@@ -173,28 +205,36 @@ kernel.FreeConsole()
         ({}, "dummy-cli-credential"),
         (
             {
-                "GITHUB_PERSONAL_ACCESS_TOKEN": "dummy-primary",
-                "GH_PERSONAL_ACCESS_TOKEN": "dummy-alias",
+                "GITHUB_PERSONAL_ACCESS_TOKEN": fixture_value("primary"),
+                "GH_PERSONAL_ACCESS_TOKEN": fixture_value("alias"),
             },
-            "dummy-primary",
+            fixture_value("primary"),
         ),
         (
-            {"GH_PERSONAL_ACCESS_TOKEN": "dummy-alias", "GITHUB_PAT_TOKEN": "dummy-legacy"},
-            "dummy-alias",
+            {
+                "GH_PERSONAL_ACCESS_TOKEN": fixture_value("alias"),
+                "GITHUB_PAT_TOKEN": fixture_value("legacy"),
+            },
+            fixture_value("alias"),
         ),
-        ({"GITHUB_PAT_TOKEN": "dummy-legacy"}, "dummy-legacy"),
+        ({"GITHUB_PAT_TOKEN": fixture_value("legacy")}, fixture_value("legacy")),
     ],
 )
 def test_passes_resolved_credential_only_through_environment(
-    launcher, credentials, expected
+    launcher: Launcher, credentials: dict[str, str], expected: str
 ) -> None:
     command, environment, state, temp = launcher
+    command = validated_command(command)
     environment.update(credentials)
-    result = subprocess.run(command, env=environment, cwd=state, capture_output=True, timeout=15)
-    assert result.returncode == 0, result.stderr.decode()
+    result = subprocess.run(  # nosec B603: command is fixture-owned and validated
+        command, env=environment, cwd=state, capture_output=True, timeout=15
+    )
+    if result.returncode != 0:
+        pytest.fail(result.stderr.decode())
     recorded = json.loads((state / "docker.json").read_text())
-    assert recorded["credential"] == expected
-    assert recorded["args"] == [
+    if recorded["credential"] != expected:
+        pytest.fail("Launcher did not pass the expected credential")
+    expected_args = [
         "run",
         "-i",
         "--rm",
@@ -202,24 +242,39 @@ def test_passes_resolved_credential_only_through_environment(
         "GITHUB_PERSONAL_ACCESS_TOKEN",
         "ghcr.io/github/github-mcp-server",
     ]
-    assert expected.encode() not in result.stdout + result.stderr
-    assert list(temp.iterdir()) == []
-    if credentials:
-        assert not (state / "auth-ready").exists(), "Explicit credentials should bypass gh"
+    if recorded["args"] != expected_args:
+        pytest.fail("Launcher passed unexpected Docker arguments")
+    if expected.encode() in result.stdout + result.stderr:
+        pytest.fail("Expected secret value was leaked to subprocess output")
+    if list(temp.iterdir()):
+        pytest.fail("Credential handling left a temporary file")
+    if credentials and (state / "auth-ready").exists():
+        pytest.fail("Explicit credentials should bypass gh")
 
 
-def test_failed_authentication_does_not_start_docker(launcher) -> None:
+def test_failed_authentication_does_not_start_docker(launcher: Launcher) -> None:
     command, environment, state, temp = launcher
+    command = validated_command(command)
     environment["LAUNCHER_TEST_AUTH_FAIL"] = "1"
-    result = subprocess.run(command, env=environment, cwd=state, capture_output=True, timeout=15)
-    assert result.returncode == 1
-    assert not (state / "docker.json").exists()
-    assert list(temp.iterdir()) == []
+    result = subprocess.run(  # nosec B603: command is fixture-owned and validated
+        command, env=environment, cwd=state, capture_output=True, timeout=15
+    )
+    if result.returncode != 1:
+        pytest.fail(f"Expected authentication failure exit code 1, got {result.returncode}")
+    if (state / "docker.json").exists():
+        pytest.fail("Docker started after authentication failed")
+    if list(temp.iterdir()):
+        pytest.fail("Failed authentication left a temporary credential file")
 
 
-def test_docker_failure_is_returned_to_caller(launcher) -> None:
+def test_docker_failure_is_returned_to_caller(launcher: Launcher) -> None:
     command, environment, state, temp = launcher
+    command = validated_command(command)
     environment["LAUNCHER_TEST_DOCKER_EXIT"] = "23"
-    result = subprocess.run(command, env=environment, cwd=state, capture_output=True, timeout=15)
-    assert result.returncode == 23
-    assert list(temp.iterdir()) == []
+    result = subprocess.run(  # nosec B603: command is fixture-owned and validated
+        command, env=environment, cwd=state, capture_output=True, timeout=15
+    )
+    if result.returncode != 23:
+        pytest.fail(f"Expected Docker exit code 23, got {result.returncode}")
+    if list(temp.iterdir()):
+        pytest.fail("Docker failure left a temporary credential file")

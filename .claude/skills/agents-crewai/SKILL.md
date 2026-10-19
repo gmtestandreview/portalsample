@@ -15,6 +15,7 @@ Build teams of autonomous AI agents that collaborate to solve complex tasks.
 ## When to use CrewAI
 
 **Use CrewAI when:**
+
 - Building multi-agent systems with specialized roles
 - Need autonomous collaboration between agents
 - Want role-based task delegation (researcher, writer, analyst)
@@ -23,6 +24,7 @@ Build teams of autonomous AI agents that collaborate to solve complex tasks.
 - Need simpler setup than LangChain/LangGraph
 
 **Key features:**
+
 - **Standalone**: No LangChain dependencies, lean footprint
 - **Role-based**: Agents have roles, goals, and backstories
 - **Dual paradigm**: Crews (autonomous) + Flows (event-driven)
@@ -31,6 +33,7 @@ Build teams of autonomous AI agents that collaborate to solve complex tasks.
 - **Production-ready**: Tracing, enterprise features
 
 **Use alternatives instead:**
+
 - **LangChain**: General-purpose LLM apps, RAG pipelines
 - **LangGraph**: Complex stateful workflows with cycles
 - **AutoGen**: Microsoft ecosystem, multi-agent conversations
@@ -440,7 +443,7 @@ agent = Agent(role="Analyst", goal="Analyze data", llm=llm)
 ## CrewAI vs alternatives
 
 | Feature | CrewAI | LangChain | LangGraph |
-|---------|--------|-----------|-----------|
+| --------- | -------- | ----------- | ----------- |
 | **Best for** | Multi-agent teams | General LLM apps | Stateful workflows |
 | **Learning curve** | Low | Medium | Higher |
 | **Agent paradigm** | Role-based | Tool-based | Graph-based |
@@ -458,6 +461,7 @@ agent = Agent(role="Analyst", goal="Analyze data", llm=llm)
 ## Common issues
 
 **Agent stuck in loop:**
+
 ```python
 agent = Agent(
     role="...",
@@ -467,6 +471,7 @@ agent = Agent(
 ```
 
 **Task not using context:**
+
 ```python
 task2 = Task(
     description="...",
@@ -476,6 +481,7 @@ task2 = Task(
 ```
 
 **Memory errors:**
+
 ```python
 # Use environment variable for storage
 import os
@@ -490,9 +496,9 @@ os.environ["CREWAI_STORAGE_DIR"] = "./my_storage"
 
 ## Resources
 
-- **GitHub**: https://github.com/crewAIInc/crewAI (25k+ stars)
-- **Docs**: https://docs.crewai.com
-- **Tools**: https://github.com/crewAIInc/crewAI-tools
-- **Examples**: https://github.com/crewAIInc/crewAI-examples
+- **GitHub**: <https://github.com/crewAIInc/crewAI> (25k+ stars)
+- **Docs**: <https://docs.crewai.com>
+- **Tools**: <https://github.com/crewAIInc/crewAI-tools>
+- **Examples**: <https://github.com/crewAIInc/crewAI-examples>
 - **Version**: 1.2.0+
 - **License**: MIT

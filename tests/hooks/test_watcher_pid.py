@@ -9,6 +9,7 @@ import gc
 import subprocess
 import sys
 import tempfile
+from functools import partial
 from pathlib import Path
 from typing import Literal
 
@@ -188,11 +189,12 @@ def test_helper_early_exit_is_rejected(mode: Literal["own", "live", "released", 
     with tempfile.TemporaryDirectory(prefix="watcher-early-exit-") as directory:
         helper = Path(directory) / "early_exit.py"
         helper.write_text("def pid_is_running(pid):\n    raise SystemExit(0)\n", encoding="utf-8")
+        if mode == "own":
+            probe = partial(test_pid_is_running_reports_own_pid, helper)
+        else:
+            probe = partial(test_each_real_helper_preserves_process_liveness, helper, mode)
         with pytest.raises(AssertionError, match="probe exited before completing"):
-            if mode == "own":
-                test_pid_is_running_reports_own_pid(helper)
-            else:
-                test_each_real_helper_preserves_process_liveness(helper, mode)
+            probe()
 
 
 def main() -> int:

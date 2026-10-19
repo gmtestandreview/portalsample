@@ -15,7 +15,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### Component Types
 
 | Type | Use | State |
-|------|-----|-------|
+| ------ | ----- | ------- |
 | **Server** | Data fetching, static | None |
 | **Client** | Interactivity | useState, effects |
 | **Presentational** | UI display | Props only |
@@ -35,7 +35,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### When to Extract Hooks
 
 | Pattern | Extract When |
-|---------|-------------|
+| --------- | ------------- |
 | **useLocalStorage** | Same storage logic needed |
 | **useDebounce** | Multiple debounced values |
 | **useFetch** | Repeated fetch patterns |
@@ -53,7 +53,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ## 3. State Management Selection
 
 | Complexity | Solution |
-|------------|----------|
+| ------------ | ---------- |
 | Simple | useState, useReducer |
 | Shared local | Context |
 | Server state | React Query, SWR |
@@ -62,7 +62,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### State Placement
 
 | Scope | Where |
-|-------|-------|
+| ------- | ------- |
 | Single component | useState |
 | Parent-child | Lift state up |
 | Subtree | Context |
@@ -75,7 +75,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### New Hooks
 
 | Hook | Purpose |
-|------|---------|
+| ------ | --------- |
 | **useActionState** | Form submission state |
 | **useOptimistic** | Optimistic UI updates |
 | **use** | Read resources in render |
@@ -100,7 +100,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### Render Props vs Hooks
 
 | Use Case | Prefer |
-|----------|--------|
+| ---------- | -------- |
 | Reusable logic | Custom hook |
 | Render flexibility | Render props |
 | Cross-cutting | Higher-order component |
@@ -112,7 +112,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### When to Optimize
 
 | Signal | Action |
-|--------|--------|
+| -------- | -------- |
 | Slow renders | Profile first |
 | Large lists | Virtualize |
 | Expensive calc | useMemo |
@@ -132,7 +132,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### Error Boundary Usage
 
 | Scope | Placement |
-|-------|-----------|
+| ------- | ----------- |
 | App-wide | Root level |
 | Feature | Route/feature level |
 | Component | Around risky component |
@@ -151,7 +151,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### Props Typing
 
 | Pattern | Use |
-|---------|-----|
+| --------- | ----- |
 | Interface | Component props |
 | Type | Unions, complex |
 | Generic | Reusable components |
@@ -159,7 +159,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ### Common Types
 
 | Need | Type |
-|------|------|
+| ------ | ------ |
 | Children | ReactNode |
 | Event handler | MouseEventHandler |
 | Ref | RefObject<Element> |
@@ -169,7 +169,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ## 9. Testing Principles
 
 | Level | Focus |
-|-------|-------|
+| ------- | ------- |
 | Unit | Pure functions, hooks |
 | Integration | Component behavior |
 | E2E | User flows |
@@ -186,7 +186,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ## 10. Anti-Patterns
 
 | ❌ Don't | ✅ Do |
-|----------|-------|
+| ---------- | ------- |
 | Prop drilling deep | Use context |
 | Giant components | Split smaller |
 | useEffect for everything | Server components |

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.14
 # scripts/watcher.py
 #
 # Generic A Team watcher — coordinates Claude Code ↔ secondary CLI (Codex, OpenCode, etc.)

@@ -43,7 +43,8 @@ node --max-old-space-size=8192 \
 
 The `--configLoader runner` flag matters — `native` emits a child-process
 warning here. For memory-heavy suites prefer the watch form, which carries the 8
-GB heap bump; ad-hoc `npx vitest` runs must include the same flag.
+GB heap bump; ad-hoc `npx vitest` runs must include the same flag when invoking
+those memory-heavy suites.
 
 ```bash
 # Run one unit test file
@@ -96,9 +97,11 @@ to avoid fixing a heading.
 
 ## Storybook
 
-When working on UI components, always use the `my-storybook-mcp-server` MCP
-tools to access Storybook's component and documentation knowledge before
-answering or taking any action.
+For UI component work in a configured Storybook environment, use the
+`my-storybook-mcp-server` MCP tools to access Storybook's component and
+documentation knowledge before answering or taking any action. If the endpoint
+is unavailable, record that limitation and do not infer undocumented
+component properties.
 
 ### Storybook async/render hygiene
 
@@ -110,16 +113,16 @@ await the user-visible settled state in the story play function with
 behind `useEffect` + `setState`; it creates post-render updates outside the
 Storybook test interaction boundary.
 
-Before the first Storybook MCP call, ensure `npm run storybook` is running and
+When a UI task uses Storybook MCP, first ensure `npm run storybook` is running and
 `http://localhost:6006/mcp` responds successfully. Confirm the configured
 `my-storybook-mcp-server` points to that endpoint. If the agent client started
 before Storybook was ready and the tools are absent, restart the client after
 the endpoint is healthy; do not bypass the MCP requirement.
 
-- **CRITICAL: Never hallucinate component properties!** Before using ANY
-  property on a component from a design system (including common-sounding ones
-  like `shadow`, etc.), you MUST use the MCP tools to check if the property is
-  actually documented for that component.
+- **CRITICAL: Never hallucinate component properties!** For each property on a
+  design-system component, including common-sounding ones like `shadow`, verify
+  it against the available MCP documentation or example stories before using
+  it. If that evidence is unavailable, do not infer the property.
 - Query `docs-list` to get a list of all components
 - Query `docs-show` for that component to see all available properties and
   examples
@@ -132,8 +135,8 @@ the endpoint is healthy; do not bypass the MCP requirement.
   current conventions and recommendations.
 - Check your work by running `test-run`.
 
-Remember: A story name might not reflect the property name correctly, so always
-verify properties through documentation or example stories before using them.
+Remember: when a story name might not reflect the property name correctly,
+verify the property through documentation or example stories before using it.
 
 ## Edit boundaries
 
@@ -143,7 +146,9 @@ verify properties through documentation or example stories before using them.
 - `ClientApp/src/**/*.tsx`
 - `ClientApp/src/styles/**/*.scss`
 
-**Never edit (generated / vendor):**
+**Never edit (generated / vendor) directly, except when the task explicitly
+requires snapshot repair and the responsible generator or upstream source is
+unavailable:**
 
 - `ClientApp/src/api/web-api-client.ts`
 - `ClientApp/src/main.*.js`
@@ -179,8 +184,10 @@ confirm with the user before proceeding.
 
 ### Environment variables
 
-Config is injected at runtime into `window.*` — **not** `process.env`. Always
-use the `env` object from `ClientApp/src/env.ts`:
+Config is injected at runtime into `window.*` — **not** `process.env`. For
+handwritten browser-runtime application code, always use the `env` object from
+`ClientApp/src/env.ts`; Node-only tooling and tests may use `process.env` when
+that is their explicit runtime contract:
 
 ```ts
 import { env } from '../env';
@@ -223,8 +230,8 @@ directly.
 `.noConsecutivePuncuation()`, `.numberWithinRange()` to `Yup.StringSchema` (19
 methods total).
 
-Any schema file that calls one of these methods **must** import the side-effect
-module:
+Any authored schema file that calls one of these methods **must** import the
+side-effect module; generated or vendored schema follows its upstream source:
 
 ```ts
 import '../../validationSchemas/yupExtensions';
@@ -241,16 +248,18 @@ guards.
 
 ### SCSS module system
 
-All new SCSS files must use `@use` / `@forward`, not `@import`. The `@import`
-rule is deprecated in Dart Sass and will be removed in Sass 3.
+All new authored SCSS files must use `@use` / `@forward`, not `@import`. The
+`@import` rule is deprecated in Dart Sass and will be removed in Sass 3;
+generated or vendored Sass follows its upstream source and is not edited here.
 
 **Bootstrap shim**: `ClientApp/src/styles/_bootstrap-import.scss` isolates the
 Bootstrap `@import` to a single file. `index.scss` imports the shim
 (`@import './bootstrap-import'`) rather than Bootstrap directly. Do not add
 `@import 'bootstrap/scss/bootstrap'` anywhere else.
 
-**Division**: All Sass division must use `math.div()`. Any file that uses
-`math.div()` must declare `@use 'sass:math';` as its first `@use` statement:
+**Division**: In authored SCSS, all Sass division must use `math.div()`. Any
+authored file that uses `math.div()` must declare `@use 'sass:math';` as its
+first `@use` statement. Generated or vendored Sass follows its upstream source:
 
 ```scss
 @use 'sass:math';
@@ -297,7 +306,7 @@ the `Skill` tool.
 | `scalability-review`             | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone.                                                                                                                                                 |
 | `skill-creator`                  | Creating, evaluating, benchmarking, packaging, or fixing activation for an Agent Skill, or running a skill release-readiness review. Complements `writing-skills` (authoring workflow and gates); `skill-creator` owns eval/benchmark/package tooling and Claude Code runtime activation.           |
 | `skill-duplication-audit`        | Two or more skills appear to overlap in scope and need classification.                                                                                                                                                                                                                              |
-| `smart-init`                     | `INIT.md` is missing and the project needs conversational onboarding.                                                                                                                                                                                                                               |
+| `smart-init`                     | The project's initialization instructions are missing and it needs conversational onboarding.                                                                                                                                                                                                      |
 | `subagent-driven-development`    | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review.                                                                                                                                                                                         |
 | `systematic-debugging`           | Any bug, failing or flaky test, regression, crash, or incorrect output whose cause is not established.                                                                                                                                                                                              |
 | `test-driven-development`        | Implementing or changing observable behavior — new feature, bug fix, or refactor. RED before GREEN.                                                                                                                                                                                                 |

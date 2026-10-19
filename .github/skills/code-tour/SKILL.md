@@ -32,18 +32,18 @@ Two reference files are bundled:
 
 These are confirmed production `.tour` files. Fetch one when you need a working example of a specific step type, tour-level field, or narrative structure — don't write from memory when the real thing is one fetch away.
 
-Find more with the GitHub code search: https://github.com/search?q=path%3A**%2F*.tour+&type=code
+Find more with the GitHub code search: <https://github.com/search?q=path%3A**%2F*.tour+&type=code>
 
 #### By step type / technique demonstrated
 
 | What to study | File URL |
-|---|---|
-| `directory` + `file+line` (contributor onboarding) | https://github.com/coder/code-server/blob/main/.tours/contributing.tour |
-| `selection` + `file+line` + intro content step (accessibility project) | https://github.com/a11yproject/a11yproject.com/blob/main/.tours/code-tour.tour |
-| Minimal tutorial — tight `file+line` narration for interactive learning | https://github.com/lostintangent/rock-paper-scissors/blob/master/main.tour |
-| Multi-tour repo with `nextTour` chaining (cloud native OCI walkthroughs) | https://github.com/lucasjellema/cloudnative-on-oci-2021/blob/main/.tours/introduction.tour |
-| `isPrimary: true` (marks the onboarding entry point) | https://github.com/nickvdyck/webbundlr/blob/main/.tours/getting-started.tour |
-| `pattern` instead of `line` (regex-anchored steps) | https://github.com/nickvdyck/webbundlr/blob/main/.tours/architecture.tour |
+| --- | --- |
+| `directory` + `file+line` (contributor onboarding) | <https://github.com/coder/code-server/blob/main/.tours/contributing.tour> |
+| `selection` + `file+line` + intro content step (accessibility project) | <https://github.com/a11yproject/a11yproject.com/blob/main/.tours/code-tour.tour> |
+| Minimal tutorial — tight `file+line` narration for interactive learning | <https://github.com/lostintangent/rock-paper-scissors/blob/master/main.tour> |
+| Multi-tour repo with `nextTour` chaining (cloud native OCI walkthroughs) | <https://github.com/lucasjellema/cloudnative-on-oci-2021/blob/main/.tours/introduction.tour> |
+| `isPrimary: true` (marks the onboarding entry point) | <https://github.com/nickvdyck/webbundlr/blob/main/.tours/getting-started.tour> |
+| `pattern` instead of `line` (regex-anchored steps) | <https://github.com/nickvdyck/webbundlr/blob/main/.tours/architecture.tour> |
 
 **Raw content tip:** Prefix `raw.githubusercontent.com` and drop `/blob/` for raw JSON access.
 
@@ -81,7 +81,7 @@ python skills/code-tour/scripts/generate_from_docs.py \
 Don't read everything — start here, then follow imports.
 
 | Stack | Entry points to read first |
-|-------|---------------------------|
+| ------- | --------------------------- |
 | **Node.js / TS** | `index.js/ts`, `server.js`, `app.js`, `src/main.ts`, `package.json` (scripts) |
 | **Python** | `main.py`, `app.py`, `__main__.py`, `manage.py` (Django), `app/__init__.py` (Flask/FastAPI) |
 | **Go** | `main.go`, `cmd/<name>/main.go`, `internal/` |
@@ -95,7 +95,7 @@ Don't read everything — start here, then follow imports.
 The same persona asks for different things depending on what kind of repo this is:
 
 | Repo type | What to emphasize | Typical anchor files |
-|-----------|-------------------|----------------------|
+| ----------- | ------------------- | ---------------------- |
 | **Service / API** | Request lifecycle, auth, error contracts | router, middleware, handler, schema |
 | **Library / SDK** | Public API surface, extension points, versioning | index/exports, types, changelog |
 | **CLI tool** | Command parsing, config loading, output formatting | main, commands/, config |
@@ -128,7 +128,7 @@ depth, and focus before asking anything.
 ### Intent map
 
 | User says | → Persona | → Depth | → Action |
-|-----------|-----------|---------|----------|
+| ----------- | ----------- | --------- | ---------- |
 | "tour for this PR" / "PR review" / "#123" | pr-reviewer | standard | Add `uri` step for the PR; use `ref` for the branch |
 | "why did X break" / "RCA" / "incident" | rca-investigator | standard | Trace the failure causality chain |
 | "debug X" / "bug tour" / "find the bug" | bug-fixer | standard | Entry → fault points → tests |
@@ -147,6 +147,7 @@ depth, and focus before asking anything.
 **Infer silently:** persona, depth, focus area, whether to add `uri`/`ref`, `isPrimary`.
 
 **Ask only if you genuinely can't infer:**
+
 - "bug tour" but no bug described → ask for the bug description
 - "feature tour" but no feature named → ask which feature
 - "specific files" explicitly requested → honor them as required stops
@@ -160,7 +161,7 @@ For PR tours: set `"ref"` to the branch, open with a `uri` step for the PR, cove
 ### User-provided customization — always honor these
 
 | User says | What to do |
-|-----------|-----------|
+| ----------- | ----------- |
 | "cover `src/auth.ts` and `config/db.yml`" | Those files are required stops |
 | "pin to the `v2.3.0` tag" / "this commit: abc123" | Set `"ref": "v2.3.0"` |
 | "link to PR #456" / pastes a URL | Add a `uri` step at the right narrative moment |
@@ -177,6 +178,7 @@ For PR tours: set `"ref"` to the branch, open with a `uri` step for the PR, cove
 A tour pointing to the wrong file or a non-existent line is worse than no tour.
 
 For every planned step:
+
 1. Read the file
 2. Find the exact line of the code you want to highlight
 3. Understand it well enough to explain it to the target persona
@@ -209,6 +211,7 @@ Omit any field that doesn't apply to this tour.
 **`when`** — conditional display. A JavaScript expression evaluated at runtime. Only show this tour
 if the condition is true. Useful for persona-specific auto-launching, or hiding advanced tours
 until a simpler one is complete.
+
 ```json
 { "when": "workspaceFolders[0].name === 'api'" }
 ```
@@ -232,7 +235,7 @@ All step types: **content** (intro/closing, max 2), **directory**, **file+line**
 ### When to use each step type
 
 | Situation | Step type |
-|-----------|-----------|
+| ----------- | ----------- |
 | Tour intro or closing | content |
 | "Here's what lives in this folder" | directory |
 | One line tells the whole story | file + line |
@@ -248,7 +251,7 @@ All step types: **content** (intro/closing, max 2), **directory**, **file+line**
 Match steps to depth and persona. These are targets, not hard limits.
 
 | Depth | Total steps | Core path steps | Notes |
-|-------|-------------|-----------------|-------|
+| ------- | ------------- | ----------------- | ------- |
 | Quick | 5–8 | 3–5 | Vibecoder, fast explorer — cut ruthlessly |
 | Standard | 9–13 | 6–9 | Most personas — breadth + enough detail |
 | Deep | 14–18 | 10–13 | Architect, RCA — every tradeoff surfaced |
@@ -256,7 +259,7 @@ Match steps to depth and persona. These are targets, not hard limits.
 Scale with repo size too. A 3-file CLI doesn't get 15 steps. A 200-file monolith shouldn't be squeezed into 5.
 
 | Repo size | Recommended standard depth |
-|-----------|---------------------------|
+| ----------- | --------------------------- |
 | Tiny (< 20 files) | 5–8 steps |
 | Small (20–80 files) | 8–11 steps |
 | Medium (80–300 files) | 10–13 steps |
@@ -301,7 +304,7 @@ Don't summarize — the reader just read it. Instead, tell them what they can no
 ## The 20 personas
 
 | Persona | Goal | Must cover | Avoid |
-|---------|------|------------|-------|
+| --------- | ------ | ------------ | ------- |
 | **Vibecoder** | Get the vibe fast | Entry point, request flow, main modules. Max 8 steps. | Deep dives, edge cases |
 | **New joiner** | Structured ramp-up | Directories, setup, business context, service boundaries. | Advanced internals |
 | **Bug fixer** | Root cause fast | User action → trigger → fault points. Repro hints + test locations. | Architecture tours |
@@ -322,6 +325,7 @@ The `nextTour` field chains them: when the reader finishes one tour, VS Code off
 launch the next automatically.
 
 **Plan the series before writing any tour.** A good series has:
+
 - A clear escalation path (broad → narrow, orientation → deep-dive)
 - No duplicate steps between tours
 - Each tour standalone enough to be useful on its own
@@ -335,7 +339,7 @@ Set `nextTour` in each tour to the `title` of the next one (must match exactly).
 If asked for any of these, say clearly that it's not supported — do not suggest a workaround that doesn't exist:
 
 | Request | Reality |
-|---|---|
+| --- | --- |
 | **Auto-advance to next step after X seconds** | Not supported. Navigation is always manual — the reader clicks Next. There is no timer, delay, or autoplay step mechanic in CodeTour. |
 | **Embed a video or GIF in a step** | Not supported. Descriptions are Markdown text only. |
 | **Run arbitrary shell commands** | Not supported. `commands` only executes VS Code commands (e.g. `workbench.action.terminal.focus`), not shell commands. |
@@ -347,7 +351,7 @@ If asked for any of these, say clearly that it's not supported — do not sugges
 ## Anti-patterns
 
 | Anti-pattern | Fix |
-|---|---|
+| --- | --- |
 | **File listing** — visiting files with "this file contains..." | Tell a story; each step should depend on the previous one |
 | **Generic descriptions** | Name the specific pattern/gotcha unique to *this* codebase |
 | **Line number guessing** | Never write a line number you didn't verify by reading the file |
@@ -386,6 +390,7 @@ python ~/.agents/skills/code-tour/scripts/validate_tour.py .tours/<name>.tour --
 ```
 
 The validator checks:
+
 - JSON validity
 - Every `file` path exists and every `line` is within file bounds
 - Every `directory` exists
@@ -410,6 +415,7 @@ If you can't run scripts, manually verify: step 1 has `file`/`directory`, all pa
 ## Step 6: Summarize
 
 After writing the tour, tell the user:
+
 - File path (`.tours/<name>.tour`)
 - One-paragraph summary of what the tour covers and who it's for
 - The `vscode.dev` URL if the repo is public (so they can share it immediately)
@@ -421,6 +427,7 @@ After writing the tour, tell the user:
 ## File naming
 
 `<persona>-<focus>.tour` — kebab-case, communicates both:
+
 ```
 onboarding-new-joiner.tour
 bug-fixer-payment-flow.tour

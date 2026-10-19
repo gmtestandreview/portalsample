@@ -13,6 +13,7 @@ These rules are the most frequently violated. Read them first, and re-check afte
 When the target system runs on Kubernetes, **containers that share a Pod must be represented together** — never as independent standalone components.
 
 **DO THIS — annotate the primary container's label:**
+
 ```
 InferencingFlow(("Inferencing Flow<br/>+ MISE, Dapr")):::process
 IngestionFlow(("Ingestion Flow<br/>+ MISE, Dapr")):::process
@@ -20,6 +21,7 @@ VectorDbApi(("VectorDB API<br/>+ Dapr")):::process
 ```
 
 **DO NOT DO THIS — never create standalone sidecar nodes:**
+
 ```
 ❌ MISE(("MISE Sidecar")):::process
 ❌ DaprSidecar(("Dapr Sidecar")):::process
@@ -93,7 +95,7 @@ After drawing ANY diagram, verify:
 These colors are shared across ALL Mermaid diagrams. Colors are from ColorBrewer qualitative palettes — designed for colorblind accessibility.
 
 | Color Role | Fill | Stroke | Used For |
-|------------|------|--------|----------|
+| ------------ | ------ | -------- | ---------- |
 | Blue | `#6baed6` | `#2171b5` | Services/Processes |
 | Amber | `#fdae61` | `#d94701` | External Interactors |
 | Green | `#74c476` | `#238b45` | Data Stores |
@@ -104,7 +106,7 @@ These colors are shared across ALL Mermaid diagrams. Colors are from ColorBrewer
 ### Design Rationale
 
 | Element | Fill | Stroke | Text | Why |
-|---------|------|--------|------|-----|
+| --------- | ------ | -------- | ------ | ----- |
 | Process | `#6baed6` | `#2171b5` | `#000000` | Medium blue — visible on both themes |
 | External Interactor | `#fdae61` | `#d94701` | `#000000` | Warm amber — distinct from blue/green |
 | Data Store | `#74c476` | `#238b45` | `#000000` | Medium green — natural for storage |
@@ -164,9 +166,11 @@ Used in: `1-threatmodel.md`, `1.1-threatmodel.mmd`, `1.2-threatmodel-summary.mmd
 ### `.mmd` File Format — CRITICAL
 
 The `.mmd` file contains **raw Mermaid source only** — no markdown, no code fences. The file must start on line 1 with:
+
 ```
 %%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#ffffff', 'lineColor': '#666666' }}}%%
 ```
+
 Followed by `flowchart LR` on line 2. NEVER use `flowchart TB`.
 
 **WRONG**: File starts with ` ```plaintext ` or ` ```mermaid ` — these are code fences and corrupt the `.mmd` file.
@@ -180,7 +184,7 @@ classDef datastore fill:#74c476,stroke:#238b45,stroke-width:2px,color:#000000
 ```
 
 | Element Type | Shape Syntax | Example |
-|-------------|-------------|---------|
+| ------------- | ------------- | --------- |
 | Process | `(("Name"))` circle | `WebApi(("Web API")):::process` |
 | External Interactor | `["Name"]` rectangle | `User["User/Browser"]:::external` |
 | Data Store | `[("Name")]` cylinder | `Database[("PostgreSQL")]:::datastore` |
@@ -264,6 +268,7 @@ flowchart LR
 ```
 
 **Key points:**
+
 - AuthProxy and Dapr are annotated on the host node (`+ AuthProxy, Dapr`), not as separate nodes
 - `ApiService -->|"HTTPS"| IdP` = auth proxy's cross-boundary call, drawn from host container
 - `ApiService -->|"TCP"| Redis` = Dapr's cross-boundary call, drawn from host container
@@ -284,7 +289,7 @@ classDef datastore fill:#74c476,stroke:#238b45,stroke-width:2px,color:#000000
 ```
 
 | Element Type | Shape Syntax | Notes |
-|-------------|-------------|-------|
+| ------------- | ------------- | ------- |
 | Services/Processes | `["Name"]` or `(["Name"])` | Rounded rectangles or stadium |
 | External Actors | `(["Name"])` with `external` class | Amber distinguishes them |
 | Data Stores | `[("Name")]` cylinder | Same as DFD |
@@ -297,6 +302,7 @@ style LayerId fill:#f0f4ff,stroke:#2171b5,stroke-width:2px,stroke-dasharray: 5 5
 ```
 
 Layer colors:
+
 - Backend: `fill:#f0f4ff,stroke:#2171b5` (light blue)
 - Data: `fill:#f0fff0,stroke:#238b45` (light green)
 - External: `fill:#fff8f0,stroke:#d94701` (light amber)
@@ -311,6 +317,7 @@ Layer colors:
 ### Kubernetes Pods in Architecture Diagrams
 
 Show pods with their full container composition:
+
 ```
 inf["Inferencing Flow<br/>+ MISE + Dapr"]:::service
 ing["Ingestion Flow<br/>+ MISE + Dapr"]:::service
@@ -426,12 +433,15 @@ Used in: `1.2-threatmodel-summary.mmd` (generated only when detailed diagram has
 2. **Only combine components that are NOT**: entry points, core flow components, security-critical services, primary data stores
 3. **Candidates for aggregation**: supporting infrastructure, secondary caches, multiple externals at same trust level
 4. **Combined element labels must list contents:**
+
    ```
    DataLayer[("Data Layer<br/>(UserDB, OrderDB, Redis)")]
    SupportServices(("Supporting<br/>(Logging, Monitoring)"))
    ```
+
 5. Use `SDF` prefix for summary data flows: `SDF01`, `SDF02`, ...
 6. Include mapping table in `1-threatmodel.md`:
+
    ```
    | Summary Element | Contains | Summary Flows | Maps to Detailed Flows |
    ```
@@ -441,7 +451,7 @@ Used in: `1.2-threatmodel-summary.mmd` (generated only when detailed diagram has
 ## Naming Conventions
 
 | Item | Convention | Example |
-|------|-----------|---------|
+| ------ | ----------- | --------- |
 | Element ID | PascalCase, no spaces | `WebApi`, `UserDb` |
 | Display Name | Human readable in quotes | `"Web API"`, `"User Database"` |
 | Flow Label | Protocol or action in quotes | `"HTTPS"`, `"SQL"`, `"gRPC"` |
@@ -449,6 +459,7 @@ Used in: `1.2-threatmodel-summary.mmd` (generated only when detailed diagram has
 | Boundary ID | PascalCase | `InternalNetwork`, `PublicDMZ` |
 
 **CRITICAL: Always quote ALL text in Mermaid diagrams:**
+
 - Element labels: `["Name"]`, `(("Name"))`, `[("Name")]`
 - Flow labels: `-->|"Label"|`
 - Subgraph titles: `subgraph ID["Title"]`

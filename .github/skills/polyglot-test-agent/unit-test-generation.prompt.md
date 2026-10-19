@@ -29,7 +29,7 @@ Generate concise, parameterized, and effective unit tests using discovered conve
 ### Key Testing Goals
 
 | Goal | Description |
-|------|-------------|
+| ------ | ------------- |
 | **Minimal but Comprehensive** | Avoid redundant tests |
 | **Logical Coverage** | Focus on meaningful edge cases, domain-specific inputs, boundary values, and bug-revealing scenarios |
 | **Core Logic Focus** | Test positive cases and actual execution logic; avoid low-value tests for language features |
@@ -60,7 +60,7 @@ Apply this analysis to the **entire** code scope, not just a portion.
 ## Coverage Types
 
 | Type | Examples |
-|------|----------|
+| ------ | ---------- |
 | **Happy Path** | Valid inputs produce expected outputs |
 | **Edge Cases** | Empty values, boundaries, special characters, zero/negative numbers |
 | **Error Cases** | Invalid inputs, null handling, exceptions, timeouts |

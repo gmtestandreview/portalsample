@@ -25,6 +25,7 @@ Help developers optimize website and web application performance to improve user
 ### Step 1: Measure Current Performance
 
 I'll help you establish baseline metrics:
+
 - Run Lighthouse audits
 - Measure Core Web Vitals (LCP, FID, CLS)
 - Check bundle sizes
@@ -34,6 +35,7 @@ I'll help you establish baseline metrics:
 ### Step 2: Identify Issues
 
 Analyze performance problems:
+
 - Large JavaScript bundles
 - Unoptimized images
 - Render-blocking resources
@@ -45,6 +47,7 @@ Analyze performance problems:
 ### Step 3: Prioritize Optimizations
 
 Focus on high-impact improvements:
+
 - Critical rendering path optimization
 - Code splitting and lazy loading
 - Image optimization
@@ -54,6 +57,7 @@ Focus on high-impact improvements:
 ### Step 4: Implement Optimizations
 
 Apply performance improvements:
+
 - Optimize assets (images, fonts, CSS, JS)
 - Implement code splitting
 - Add caching headers
@@ -63,6 +67,7 @@ Apply performance improvements:
 ### Step 5: Verify Improvements
 
 Measure impact of changes:
+
 - Re-run Lighthouse audits
 - Compare before/after metrics
 - Monitor real user metrics (RUM)
@@ -510,35 +515,44 @@ import Image from 'next/image';
 ## Common Pitfalls
 
 ### Problem: Optimized for Desktop but Slow on Mobile
+
 **Symptoms:** Good Lighthouse score on desktop, poor on mobile
 **Solution:**
+
 - Test on real mobile devices
 - Use Chrome DevTools mobile throttling
 - Optimize for 3G/4G networks
 - Reduce JavaScript execution time
+
 ```bash
 # Test with throttling
 lighthouse https://yoursite.com --throttling.cpuSlowdownMultiplier=4
 ```
 
 ### Problem: Large JavaScript Bundle
+
 **Symptoms:** Long Time to Interactive (TTI), high FID
 **Solution:**
+
 - Analyze bundle with webpack-bundle-analyzer
 - Remove unused dependencies
 - Implement code splitting
 - Lazy load non-critical code
+
 ```bash
 # Analyze bundle
 npx webpack-bundle-analyzer dist/stats.json
 ```
 
 ### Problem: Images Causing Layout Shifts
+
 **Symptoms:** High CLS score, content jumping
 **Solution:**
+
 - Always specify width and height
 - Use aspect-ratio CSS property
 - Reserve space with skeleton loaders
+
 ```css
 img {
   aspect-ratio: 16 / 9;
@@ -548,12 +562,15 @@ img {
 ```
 
 ### Problem: Slow Server Response Time
+
 **Symptoms:** High TTFB (Time to First Byte)
 **Solution:**
+
 - Implement server-side caching
 - Use CDN for static assets
 - Optimize database queries
 - Consider static site generation (SSG)
+
 ```javascript
 // Next.js: Static generation
 export async function getStaticProps() {
@@ -568,6 +585,7 @@ export async function getStaticProps() {
 ## Performance Checklist
 
 ### Images
+
 - [ ] Convert to modern formats (WebP, AVIF)
 - [ ] Implement responsive images
 - [ ] Add lazy loading
@@ -576,6 +594,7 @@ export async function getStaticProps() {
 - [ ] Use CDN for delivery
 
 ### JavaScript
+
 - [ ] Bundle size < 200KB (gzipped)
 - [ ] Implement code splitting
 - [ ] Lazy load non-critical code
@@ -584,6 +603,7 @@ export async function getStaticProps() {
 - [ ] Use async/defer for scripts
 
 ### CSS
+
 - [ ] Inline critical CSS
 - [ ] Defer non-critical CSS
 - [ ] Remove unused CSS
@@ -591,6 +611,7 @@ export async function getStaticProps() {
 - [ ] Use CSS containment
 
 ### Caching
+
 - [ ] Set cache headers for static assets
 - [ ] Implement service worker
 - [ ] Use CDN caching
@@ -598,6 +619,7 @@ export async function getStaticProps() {
 - [ ] Version static assets
 
 ### Core Web Vitals
+
 - [ ] LCP < 2.5s
 - [ ] FID < 100ms
 - [ ] CLS < 0.1
@@ -607,6 +629,7 @@ export async function getStaticProps() {
 ## Performance Tools
 
 ### Measurement Tools
+
 - **Lighthouse** - Comprehensive performance audit
 - **WebPageTest** - Detailed waterfall analysis
 - **Chrome DevTools** - Performance profiling
@@ -614,12 +637,14 @@ export async function getStaticProps() {
 - **Web Vitals Extension** - Monitor Core Web Vitals
 
 ### Analysis Tools
+
 - **webpack-bundle-analyzer** - Visualize bundle composition
 - **source-map-explorer** - Analyze bundle size
 - **Bundlephobia** - Check package sizes before installing
 - **ImageOptim** - Image compression tool
 
 ### Monitoring Tools
+
 - **Google Analytics** - Track Core Web Vitals
 - **Sentry** - Performance monitoring
 - **New Relic** - Application performance monitoring

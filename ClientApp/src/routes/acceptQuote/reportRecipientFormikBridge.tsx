@@ -3,11 +3,15 @@ import type { AddressDetailsDto } from '../../api/web-api-client';
 import { FormProvider } from 'react-hook-form';
 import { useFormikRhfBridge } from '../../components/forms/useFormikRhfBridge';
 import { RhfHiddenRulesProvider } from '../../components/forms/RhfHidableField';
-import type { Hideable } from '../../components/forms/types';
 import {
   reportRecipientSaveValidation,
   reportRecipientSubmitValidation,
 } from './validation';
+import {
+  addressTouchPaths,
+  createBridgedNamePredicate,
+  NO_HIDDEN_RULES,
+} from './formikBridgeHelpers';
 import ReportRecipientFormFields, {
   type ReportRecipientFormValues,
 } from './reportRecipientFormFields';
@@ -15,24 +19,15 @@ import ReportRecipientFormFields, {
 const touchPaths = [
   'organisationName',
   'reportAddressType',
-  'businessStreetAddress.line1',
-  'businessStreetAddress.line2',
-  'businessStreetAddress.line3',
-  'businessStreetAddress.suburb',
-  'businessStreetAddress.postcode',
-  'businessStreetAddress.state',
-  'businessStreetAddress.searchText',
+  ...addressTouchPaths('businessStreetAddress'),
 ] as const;
 
 // The address is edited as a whole (selection) or per field (manual entry), so
 // any path beneath it is mirrored along with the two top-level fields.
-const isBridgedFieldName = (name: string) =>
-  name === 'organisationName' ||
-  name === 'reportAddressType' ||
-  name === 'businessStreetAddress' ||
-  name.startsWith('businessStreetAddress.');
-
-const NO_HIDDEN_RULES: Hideable = {};
+const isBridgedFieldName = createBridgedNamePredicate({
+  names: ['organisationName', 'reportAddressType', 'businessStreetAddress'],
+  prefixes: ['businessStreetAddress.'],
+});
 
 interface ReportRecipientFormikBridgeProps {
   streetAddress?: AddressDetailsDto | undefined;

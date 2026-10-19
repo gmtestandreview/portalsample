@@ -10,17 +10,18 @@ Minimum versions required for React 18.3.1 and React 19 compatibility.
 Use this skill whenever checking whether a dependency supports a target React version, resolving peer dependency conflicts, deciding whether to upgrade or use `legacy-peer-deps`, or assessing the risk of a `react-router` v5 to v6 migration.
 
 Review this matrix before running `npm install` during a React upgrade and before accepting an npm dependency conflict resolution, especially where concurrent mode compatibility may be affected.
+
 ## Core Upgrade Targets
 
 | Package | React 17 (current) | React 18.3.1 (min) | React 19 (min) | Notes |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `react` | 17.x | **18.3.1** | **19.0.0** | Pin exactly to 18.3.1 for the R18 orchestra |
 | `react-dom` | 17.x | **18.3.1** | **19.0.0** | Must match react version exactly |
 
 ## Testing Libraries
 
 | Package | React 18 Min | React 19 Min | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `@testing-library/react` | **14.0.0** | **16.0.0** | RTL 13 uses ReactDOM.render internally - broken in R18 |
 | `@testing-library/jest-dom` | **6.0.0** | **6.0.0** | v5 works but v6 has React 18 matcher updates |
 | `@testing-library/user-event` | **14.0.0** | **14.0.0** | v13 is sync, v14 is async - API change required |
@@ -30,7 +31,7 @@ Review this matrix before running `npm install` during a React upgrade and befor
 ## Apollo Client
 
 | Package | React 18 Min | React 19 Min | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `@apollo/client` | **3.8.0** | **3.11.0** | 3.8 adds `useSyncExternalStore` for concurrent mode |
 | `graphql` | **15.x** | **16.x** | Apollo 3.8+ peer requires graphql 15 or 16 |
 
@@ -39,7 +40,7 @@ Read **`references/apollo-details.md`** for concurrent mode issues and MockedPro
 ## Emotion
 
 | Package | React 18 Min | React 19 Min | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `@emotion/react` | **11.10.0** | **11.13.0** | 11.10 adds React 18 concurrent mode support |
 | `@emotion/styled` | **11.10.0** | **11.13.0** | Must match @emotion/react version |
 | `@emotion/cache` | **11.10.0** | **11.13.0** | If used directly |
@@ -47,7 +48,7 @@ Read **`references/apollo-details.md`** for concurrent mode issues and MockedPro
 ## React Router
 
 | Package | React 18 Min | React 19 Min | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `react-router-dom` | **v6.0.0** | **v6.8.0** | v5 → v6 is a breaking migration - see details below |
 | `react-router-dom` v5 | 5.3.4 (workaround) | ❌ Not supported | See legacy peer deps note |
 
@@ -56,7 +57,7 @@ Read **`references/apollo-details.md`** for concurrent mode issues and MockedPro
 ## Redux
 
 | Package | React 18 Min | React 19 Min | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `react-redux` | **8.0.0** | **9.0.0** | v7 works on R18 legacy root only - breaks on concurrent mode |
 | `redux` | **4.x** | **5.x** | Redux itself is framework-agnostic - react-redux version matters |
 | `@reduxjs/toolkit` | **1.9.0** | **2.0.0** | RTK 1.9 tested against React 18 |
@@ -64,7 +65,7 @@ Read **`references/apollo-details.md`** for concurrent mode issues and MockedPro
 ## Other Common Packages
 
 | Package | React 18 Min | React 19 Min | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `react-query` / `@tanstack/react-query` | **4.0.0** | **5.0.0** | v3 doesn't support concurrent mode |
 | `react-hook-form` | **7.0.0** | **7.43.0** | v6 has concurrent mode issues |
 | `formik` | **2.2.9** | **2.4.0** | v2.2.9 patched for React 18 |
@@ -95,6 +96,7 @@ Is the package critical to the app?
 ## --legacy-peer-deps Rules
 
 Only use `--legacy-peer-deps` when:
+
 - The package has no React 18 compatible release
 - The package is actively maintained (not abandoned)
 - The conflict is only a peer dep declaration mismatch (not actual API incompatibility)

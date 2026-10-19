@@ -162,7 +162,7 @@ The `.github/` directory in your repository enables team-wide customizations tha
 
 A well-organized Copilot configuration directory looks like this:
 
-```
+```text
 .github/
 ├── agents/
 │   ├── terraform-expert.agent.md
@@ -181,7 +181,7 @@ A well-organized Copilot configuration directory looks like this:
 
 In monorepos with multiple packages or services, GitHub Copilot CLI discovers customizations at **every directory level** from your working directory up to the git repository root. This means each package or service can have its own `.github/` folder with specialized agents, instructions, skills, and MCP servers, while still inheriting configuration from parent directories.
 
-```
+```text
 my-monorepo/
 ├── .github/
 │   └── instructions/
@@ -203,7 +203,7 @@ When you work inside `packages/api/`, Copilot loads configuration from `packages
 
 In addition to repository-level skills, GitHub Copilot CLI supports a **personal skills directory** at `~/.agents/skills/`. Skills you place here are discovered automatically across all your projects, making them ideal for personal workflows and reusable utilities that are not project-specific.
 
-```
+```text
 ~/.agents/
 └── skills/
     ├── my-review-style/
@@ -433,7 +433,7 @@ Both commands accept an optional prompt argument to seed the new session with an
 
 The `/session rename` command renames the current session. When called **without a name argument**, it automatically generates a session name based on the conversation history:
 
-```
+```text
 /session rename               # auto-generate a name from conversation history
 /session rename "My feature"  # set a specific name
 ```
@@ -449,7 +449,7 @@ copilot --resume="auth-refactor"        # resume that session by name
 
 The `/session delete` command removes sessions you no longer need:
 
-```
+```text
 /session delete              # delete the current session
 /session delete <id>         # delete a session by ID
 /session delete-all          # delete all sessions
@@ -461,7 +461,7 @@ In the session picker, press **`s`** to cycle the sort order: relevance, last us
 
 The `/rewind` command opens a timeline picker that lets you roll back the conversation to any earlier point in history, reverting both the conversation and any file changes made after that point. You can also trigger it by pressing **double-Esc**:
 
-```
+```text
 /rewind
 ```
 
@@ -469,7 +469,7 @@ Use `/rewind` when you want to branch off from a different point in the conversa
 
 The `/undo` command reverts the last turn—including any file changes the agent made—letting you course-correct without manually undoing edits:
 
-```
+```text
 /undo
 ```
 
@@ -477,7 +477,7 @@ Use `/undo` when the agent's last response went in an unwanted direction and you
 
 The `/fork` command (v1.0.45+) copies the current session into a **new independent session** that starts from the same conversation state. The original session continues unchanged — you can switch back to it at any time. This is useful when you want to explore two different approaches to a problem simultaneously:
 
-```
+```text
 /fork
 ```
 
@@ -485,7 +485,7 @@ After forking, the new session is immediately active. Both sessions share the sa
 
 The `/cd` command changes the working directory for the current session. Each session maintains its own working directory that persists when you switch between sessions:
 
-```
+```text
 /cd ~/projects/my-other-repo
 ```
 
@@ -493,7 +493,7 @@ This is useful when you have multiple backgrounded sessions each focused on a di
 
 The `/share html` command exports the current session — including conversation history and any research reports — as a **self-contained interactive HTML file**:
 
-```
+```text
 /share html
 ```
 
@@ -501,7 +501,7 @@ The exported file contains everything needed to view the session without a netwo
 
 The `/chronicle` command opens an interactive timeline of everything the agent has done in the current session. It shows file changes, tool calls, and conversation turns in chronological order, letting you review the full arc of the session at a glance:
 
-```
+```text
 /chronicle
 ```
 
@@ -515,41 +515,40 @@ Chronicle tracks which files were created, modified, or deleted during the sessi
 
 The `/ask` command lets you ask a quick question without affecting your conversation history. The current session context is preserved, so you can use it for one-off lookups without derailing an ongoing task. Responses are rendered as full markdown, including tables and formatted links:
 
-```
+```text
 /ask What does the `retry` utility in src/utils do?
 ```
 
 The `/env` command shows all loaded environment details — instructions, MCP servers, skills, agents, and plugins — in a single view. Use it to verify that the right resources are active for the current session:
 
-```
+```text
 /env
 ```
 
 The `/context` command shows a visualization of the current conversation's context window usage — how many tokens are consumed and how much headroom remains:
 
-```
+```text
 /context
 ```
 
 The `/usage` command displays session metrics such as the number of tokens consumed, API calls made, and any quota information for the current session:
 
-```
+```text
 /usage
 ```
 
 The `/compact` command summarizes the conversation history to free up context window space while preserving the thread of the conversation. Use it when your context is getting full but you do not want to start a fresh session:
 
-```
+```text
 /compact
 ```
 
 > **Note**: Skills remain loaded and effective after `/compact`. You do not need to re-invoke them after compacting.
-
 > **ACP sessions (v1.0.39+)**: The `/compact`, `/context`, `/usage`, and `/env` commands are now available in ACP (Agent Coordination Protocol) sessions, allowing remote ACP clients to surface session details and manage context from within their own automated workflows.
 
 The `/statusline` command (with `/footer` as an alias) lets you control which items appear in the terminal status bar. You can show or hide individual indicators like the working directory, current branch, effort level, context window usage, quota, and **active account username** (v1.0.43+). The **changes** toggle shows a running count of added/removed lines for the session — useful when tracking the scope of an ongoing edit:
 
-```
+```text
 /statusline             # show the statusline configuration menu
 ```
 
@@ -557,7 +556,7 @@ Toggle the **username** indicator to display which GitHub account is currently a
 
 The `/keep-alive` command prevents the system from sleeping while Copilot CLI is active. This is useful during long-running agent sessions on laptops or machines with aggressive sleep settings:
 
-```
+```text
 /keep-alive             # toggle keep-alive on or off
 ```
 
@@ -565,19 +564,18 @@ The `/keep-alive` command prevents the system from sleeping while Copilot CLI is
 
 The `/allow-all` command (also accessible as `/yolo`) enables autopilot mode, where the agent runs all tools without asking for confirmation. It now supports `on`, `off`, and `show` subcommands:
 
-```
+```text
 /allow-all on     # enable allow-all mode
 /allow-all off    # disable allow-all mode
 /allow-all show   # check current allow-all status
 ```
 
 > **Note**: `/allow-all on` permissions persist after `/clear` starts a new session, so you don't need to re-enable it each time.
-
 > **ACP clients (v1.0.39+)**: ACP clients can also toggle allow-all mode programmatically via session configuration, without issuing a slash command. This is useful for automated pipelines that drive Copilot CLI through the ACP protocol.
 
 The `/autopilot` command (v1.0.45+) is a quick in-session toggle that switches between **interactive mode** (where the agent pauses to ask for confirmation before tool use) and **autopilot mode** (where it runs autonomously). Unlike `/allow-all` which specifically controls whether tool permissions are required, `/autopilot` toggles the overall agent mode:
 
-```
+```text
 /autopilot        # toggle between interactive and autopilot modes
 ```
 

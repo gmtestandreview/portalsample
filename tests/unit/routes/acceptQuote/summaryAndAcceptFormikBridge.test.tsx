@@ -112,6 +112,37 @@ describe('SummaryAndAcceptFormikBridge', () => {
     });
   });
 
+  it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{
+          associatedDisputes: YesNo.Yes,
+          associatedDispute: 'Existing dispute',
+          acceptanceOfQuote: true,
+        }}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const dispute = screen.getByLabelText(DISPUTE_LABEL);
+    expect(screen.getByRole('radio', { name: 'Yes' })).toBeChecked();
+    expect(dispute).toHaveValue('Existing dispute');
+    expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked();
+
+    await user.clear(dispute);
+    await user.type(dispute, 'Edited dispute');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(submitted(onSubmit)).toEqual({
+      associatedDisputes: YesNo.Yes,
+      associatedDispute: 'Edited dispute',
+      acceptanceOfQuote: true,
+    });
+  });
+
   it('shows messages only after a failed submit', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();

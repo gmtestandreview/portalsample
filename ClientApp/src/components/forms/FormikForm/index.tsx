@@ -2,7 +2,7 @@ import { Formik, isEmptyChildren, isFunction } from 'formik';
 import type { FormikHelpers, FormikProps, FormikValues } from 'formik';
 import React from 'react';
 import BlockUISpinner from '../../BlockUISpinner';
-import FormBanner from '../FormBanner';
+import FormBannerSlot from '../FormBannerSlot';
 import type { FormikFormProps } from './types';
 import UnsavedFormPrompt from '../UnsavedFormPrompt';
 import { removeHidden, validateForm } from '../utils';
@@ -79,29 +79,6 @@ const FormikForm = <Values extends FormikValues>(
     }
   };
 
-  const renderBanner = () => {
-    if (banner === undefined || isEmptyChildren(banner)) {
-      if (showBanner) {
-        return (
-          <FormBanner
-            {...omitUndefined({
-              title: bannerTitle,
-              refTitle: bannerRefTitle,
-              subTitle: bannerSubTitle,
-              showGoToDashboardButton,
-              discard,
-            })}
-            showSaveAndExitButton={canSaveDraft ?? true}
-          />
-        );
-      }
-
-      return null;
-    }
-
-    return React.Children.only(banner);
-  };
-
   const renderChildren = (formik: FormikProps<Values>) => {
     if (isFunction(children)) {
       return children(formik);
@@ -124,7 +101,18 @@ const FormikForm = <Values extends FormikValues>(
     >
       {(formik) => (
         <>
-          {renderBanner()}
+          <FormBannerSlot
+            {...omitUndefined({
+              banner,
+              showBanner,
+              title: bannerTitle,
+              refTitle: bannerRefTitle,
+              subTitle: bannerSubTitle,
+              showGoToDashboardButton,
+              discard,
+              canSaveDraft,
+            })}
+          />
           {formik.isSubmitting && (
             <BlockUISpinner>
               <p>Saving...</p>

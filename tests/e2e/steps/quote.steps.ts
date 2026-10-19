@@ -214,3 +214,27 @@ Then('the accepted quote success page is displayed', async ({ page }) => {
     })
   ).toBeVisible();
 });
+
+Then(
+  'the quote acceptance step {string} has been saved',
+  async ({ scenarioState }, step: string) => {
+    expect(scenarioState.completedAcceptQuoteSteps.has(step)).toBe(true);
+  }
+);
+
+Then(
+  'the quote acceptance step {string} has not been saved',
+  async ({ scenarioState }, step: string) => {
+    expect(scenarioState.completedAcceptQuoteSteps.has(step)).toBe(false);
+  }
+);
+
+When(
+  'the user chooses to send the report to another address',
+  async ({ page }) => {
+    await page
+      .locator('label')
+      .filter({ hasText: /^\s*Other\s*$/ })
+      .click();
+  }
+);

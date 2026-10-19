@@ -53,7 +53,7 @@ Breaking documents into retrievable chunks
 ## ⚠️ Sharp Edges
 
 | Issue | Severity | Solution |
-|-------|----------|----------|
+| ------- | ---------- | ---------- |
 | Issue | critical | ## Contextual Chunking (Anthropic's approach) |
 | Issue | high | ## Test different sizes |
 | Issue | high | ## Always filter by metadata first |

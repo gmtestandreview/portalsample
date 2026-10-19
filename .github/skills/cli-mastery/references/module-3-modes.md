@@ -23,7 +23,7 @@
 ## Mode Comparison
 
 | Feature | Interactive | Plan | Autopilot |
-|---------|------------|------|-----------|
+| --------- | ------------ | ------ | ----------- |
 | Speed | Fast | Slower | Fastest |
 | Safety | Medium | Highest | Lowest |
 | Control | You approve each action | You approve the plan | Full AI autonomy |

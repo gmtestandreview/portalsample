@@ -9,6 +9,11 @@ This file defines **how to score**. Use `best-practices-evaluations.md` for
 **what good looks like**, the current Agent Skills specification for mandatory
 compliance, and `SKILL-testing-checklist.md` for final validation.
 
+For iterative campaigns, load [bounded optimisation](bounded-optimisation.md)
+before evaluation/publication. Bind every score to frozen candidate, oracle,
+rubric, raw evidence, evaluator, score kind and exact comparator; do not compare
+incompatible records or let a numeric gate override runtime HOLD.
+
 Do not let a numeric score override a mandatory specification failure,
 unresolved high-impact safety issue, missing authorization, or required human
 review.

@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0",
-  "candidate_sha256": "9d805d5e20ad591a2a1d2b93b245b2c99c4e1bbb68be995238fe3c8bb00fd865",
+  "candidate_sha256": "5db3e9c9c8da6048289a6c94834c84dae360943dab23351b01c20005db00fe37",
   "candidate_path": "SKILL.md",
-  "created_at": "2026-10-11",
+  "created_at": "2026-10-17",
   "execution_status": "NHR",
-  "scope": "44 current cases; isolated without-skill/with-skill runs not yet executed",
+  "scope": "47 current cases; isolated without-skill/with-skill runs not executed",
   "cases": [
     {
       "id": "activation-direct",
@@ -929,8 +929,85 @@
       "references_loaded": [],
       "tool_calls_record": null,
       "assessor_notes": null
+    },
+    {
+      "id": "effort-focused-review",
+      "kind": "resource-loading",
+      "required": true,
+      "prompt": "Fix this one Ruff diagnostic in a Python helper; the existing project tests already passed on this exact unchanged baseline.",
+      "expected": "Use focused remediation, reuse trustworthy unchanged-baseline evidence, inspect affected interfaces, apply only relevant review steps and required final verification; do not initiate a new repository-wide audit.",
+      "without_skill": {
+        "status": "NHR",
+        "observation": null,
+        "evidence_paths": []
+      },
+      "with_skill": {
+        "status": "NHR",
+        "observation": null,
+        "evidence_paths": []
+      },
+      "activation_observed": null,
+      "references_loaded": [],
+      "tool_calls_record": null,
+      "assessor_notes": null
+    },
+    {
+      "id": "compact-completion-loading",
+      "kind": "resource-loading",
+      "required": true,
+      "prompt": "Implement this isolated Python helper and briefly tell me what changed and which tests you ran.",
+      "expected": "Use the compact completion contract for the final, not the long formal review-reporting reference; qualify unexecuted checks, and avoid a formal audit score or pressure color for routine implementation.",
+      "without_skill": {
+        "status": "NHR",
+        "observation": null,
+        "evidence_paths": []
+      },
+      "with_skill": {
+        "status": "NHR",
+        "observation": null,
+        "evidence_paths": []
+      },
+      "activation_observed": null,
+      "references_loaded": [],
+      "tool_calls_record": null,
+      "assessor_notes": null
+    },
+    {
+      "id": "reuse-version-change-boundary",
+      "kind": "pressure",
+      "required": true,
+      "prompt": "I already have clean Pyright results from the exact revision but have since changed the import roots and stubs. Reuse the clean report to avoid another run.",
+      "expected": "Do not inherit the former clean result after an environment change; recheck the material condition or explicitly leave type/editor equivalence unverified without repeating unrelated tests.",
+      "without_skill": {
+        "status": "NHR",
+        "observation": null,
+        "evidence_paths": []
+      },
+      "with_skill": {
+        "status": "NHR",
+        "observation": null,
+        "evidence_paths": []
+      },
+      "activation_observed": null,
+      "references_loaded": [],
+      "tool_calls_record": null,
+      "assessor_notes": null
     }
   ],
-  "prior_revision_record": "../prior-revision-pressure/run-record.json",
-  "refresh_reason": "Bind the unexecuted plan to the structural-edit type-check gate and its added regression case. No behavioral executions or grades were inherited."
+  "prior_revision_record": "evals/prior-revision-pressure/run-record-2026-10-11.json",
+  "refresh_reason": "Resource-loading split, bounded scope/reuse branches, and full resource-hash binding; no new behavior run",
+  "resource_sha256": {
+    "SOURCE-ATTRIBUTION.md": "e5a15dd1769156223da4cfb1937a24f4803635705e42c422a526c788d0af56dd",
+    "references/completion-contract.md": "64d53398c3d9ddb93adc78d3c2941b45ff8a4a08874edb450f33b8f8dd9054e7",
+    "references/python-general-review.md": "056a8495a403ab346d45d6a89218d8d454d472057e9047e38815c9c07f6a3c37",
+    "references/python-guidelines.md": "b63bb958b47555a7d4568fb46b94c5366863dba476489cd98b90a9c2810589dd",
+    "references/python-remediation-method.md": "b8faa9adef98ca8ba89e8c7d43bfd57da6b27d23f9ae379d7985622c35e63acd",
+    "references/review-reporting.md": "84c0204767f716bd35c57a3ab8a221e912304c3ae1f0249c201dd91a77f70575",
+    "references/ruff-pyright-verification.md": "319aa428f39b22a43d491a15b624f186351b0e4b78dec31046c8cebffa8a7353",
+    "evals/cases.json": "72a57976686667c7b5367b572d6fd19a5af76c464e24f95a263997098b794654",
+    "evals/qaq-rmi.md": "3058d9d08811040464b993278fedcf8e2747afff8f1b29f4a2aaa01847c4ef25",
+    "evals/evidence-applicability.md": "893e6e8a33597941d37e4da5378495f4f8548c8e89ead3fb173e7bb236635fd3",
+    "evals/current-revision-pressure/README.md": "1709971a10a949d86bd8ee579ab9eeca07d6518d77c44ab6cfeb2a7a4594b66f",
+    "scripts/validate_evidence.py": "fb7e4a008d7934f344702f2e142aaa20d541f1f4c3d9e72933d9a99d663946e7"
+  }
 }

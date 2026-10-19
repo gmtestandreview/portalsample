@@ -1,4 +1,5 @@
 import type { Page, Route } from '@playwright/test';
+import { failureKey } from './mock-failure';
 import {
   ApplicationType,
   CRMLookupTypes,
@@ -554,6 +555,28 @@ const handleApplicationResource = async (context: MockContext) => {
   const resource = match?.[2];
   if (encodedReferenceId === undefined || resource === undefined) {
     await route.fallback();
+    return;
+  }
+  const failureKeys = [
+    failureKey(method, pathname),
+    failureKey(method, `/api/request-for-pattern-approval/*/${resource}`),
+  ];
+  const failureKeyInUse = failureKeys.find((key) => state.failures.has(key));
+  const failure = failureKeyInUse && state.failures.get(failureKeyInUse);
+  if (failureKeyInUse && failure) {
+    if (failure.once !== false) {
+      state.failures.delete(failureKeyInUse);
+    }
+    await route.fulfill({
+      status: failure.status,
+      contentType: 'application/json',
+      body: JSON.stringify(
+        failure.body ?? {
+          status: failure.status,
+          title: 'Configured E2E failure',
+        }
+      ),
+    });
     return;
   }
   const referenceId = decodeURIComponent(encodedReferenceId);

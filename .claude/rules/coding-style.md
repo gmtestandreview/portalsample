@@ -6,12 +6,12 @@ NEVER mutate. ALWAYS return a new copy.
 
 ```js
 // [INVALID]
-user.verified = true
-results.push(item)
+user.verified = true;
+results.push(item);
 
 // [VALID]
-return { ...user, verified: true }
-return [...results, item]
+return { ...user, verified: true };
+return [...results, item];
 ```
 
 ## Early Returns over Nesting (max 4 levels)
@@ -22,7 +22,7 @@ function process(user) {
   if (user) {
     if (user.active) {
       if (user.role === 'admin') {
-        doWork()
+        doWork();
       }
     }
   }
@@ -30,10 +30,10 @@ function process(user) {
 
 // [VALID]
 function process(user) {
-  if (!user) return
-  if (!user.active) return
-  if (user.role !== 'admin') return
-  doWork()
+  if (!user) return;
+  if (!user.active) return;
+  if (user.role !== 'admin') return;
+  doWork();
 }
 ```
 
@@ -57,15 +57,15 @@ def handle_order(order):
 ```ts
 // [INVALID]
 try {
-  await sendEmail(user)
+  await sendEmail(user);
 } catch (_) {}
 
 // [VALID]
 try {
-  await sendEmail(user)
+  await sendEmail(user);
 } catch (err) {
-  logger.error('email failed', { userId: user.id, err })
-  throw new EmailError('Failed to notify user', { cause: err })
+  logger.error('email failed', { userId: user.id, err });
+  throw new EmailError('Failed to notify user', { cause: err });
 }
 ```
 
@@ -74,39 +74,39 @@ try {
 ```ts
 // [INVALID]
 app.post('/order', (req, res) => {
-  createOrder(req.body.amount, req.body.userId)
-})
+  createOrder(req.body.amount, req.body.userId);
+});
 
 // [VALID]
 app.post('/order', (req, res) => {
-  const { amount, userId } = OrderSchema.parse(req.body)
-  createOrder(amount, userId)
-})
+  const { amount, userId } = OrderSchema.parse(req.body);
+  createOrder(amount, userId);
+});
 ```
 
 ## No Magic Numbers
 
 ```ts
 // [INVALID]
-if (retries > 3) throw new Error('too many retries')
-await sleep(5000)
+if (retries > 3) throw new Error('too many retries');
+await sleep(5000);
 
 // [VALID]
-const MAX_RETRIES = 3
-const RETRY_DELAY_MS = 5000
-if (retries > MAX_RETRIES) throw new Error('too many retries')
-await sleep(RETRY_DELAY_MS)
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 5000;
+if (retries > MAX_RETRIES) throw new Error('too many retries');
+await sleep(RETRY_DELAY_MS);
 ```
 
 ## Naming Conventions
 
-| Kind | Convention | Example |
-|------|-----------|---------|
-| Variables, functions | camelCase | `getUserById`, `isActive` |
-| Booleans | is/has/should/can prefix | `isLoading`, `hasPermission` |
-| Types, interfaces, components | PascalCase | `UserProfile`, `OrderItem` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES`, `BASE_URL` |
-| Custom hooks | use prefix | `useAuth`, `useDebounce` |
+| Kind                          | Convention               | Example                      |
+| ----------------------------- | ------------------------ | ---------------------------- |
+| Variables, functions          | camelCase                | `getUserById`, `isActive`    |
+| Booleans                      | is/has/should/can prefix | `isLoading`, `hasPermission` |
+| Types, interfaces, components | PascalCase               | `UserProfile`, `OrderItem`   |
+| Constants                     | UPPER_SNAKE_CASE         | `MAX_RETRIES`, `BASE_URL`    |
+| Custom hooks                  | use prefix               | `useAuth`, `useDebounce`     |
 
 ## File Organization
 
@@ -116,7 +116,8 @@ await sleep(RETRY_DELAY_MS)
 
 ## Surgical Changes
 
-Touch only what the task requires. Every line in the diff must trace directly to the request.
+Touch only what the task requires. Every line in the diff must trace directly to
+the request.
 
 ### Don't rewrite what wasn't broken
 
@@ -179,7 +180,8 @@ def process_payment(order_id, amount):
   import { logger } from './logger'      // ← leave — not your responsibility
 ```
 
-**Self-check before committing:** "Is every changed line a direct consequence of the task I was given? If not — undo the extra changes."
+**Self-check before committing:** "Is every changed line a direct consequence of
+the task I was given? If not — undo the extra changes."
 
 ## Pre-Completion Checklist
 
