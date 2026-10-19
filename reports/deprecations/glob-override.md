@@ -46,7 +46,7 @@ is registry-signature-verified.
 
 ## Blast radius — `npm explain glob --all` (before mutation)
 
-```
+```text
 glob@13.0.6 dev
 node_modules/glob
   glob@"^13.0.1" from @joshwooding/vite-plugin-react-docgen-typescript@0.7.0
@@ -106,7 +106,7 @@ already-scoped 10 → 13 jump for these three owners.
 
 ## `npm explain glob --all` (after mutation)
 
-```
+```text
 glob@13.0.6 dev overridden
 node_modules/glob
   overridden glob@"13.0.6" (was "^10.0.0") from unified-engine@11.2.2

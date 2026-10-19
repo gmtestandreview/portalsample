@@ -50,7 +50,7 @@ Hooks are ideal for **deterministic automation** that must happen reliably—thi
 
 Each hook in this repository is a folder containing:
 
-```
+```text
 hooks/
 └── my-hook/
     ├── README.md          # Documentation with frontmatter
@@ -272,7 +272,6 @@ exit 1     # deny (let the user decide interactively)
 ```
 
 > **Security note**: Use `PermissionRequest` hooks carefully. Blanket auto-approval in non-CI environments removes an important safety check. Scope the auto-approval logic precisely (e.g., only in CI, only for specific tools).
-
 > **Prompt mode security (v1.0.40+)**: When running the CLI in **prompt mode** (`copilot -p "..."`) — the non-interactive mode commonly used in CI pipelines — repo hooks are **disabled by default** for security. To opt in to repo hooks in prompt mode, set the environment variable `GITHUB_COPILOT_PROMPT_MODE_REPO_HOOKS=true` before running the command:
 >
 > ```bash
@@ -488,7 +487,6 @@ exit 0
 ```
 
 > **How it works**: When the hook exits with code `0` **and** writes a valid `{"response": "..."}` JSON object to stdout, the CLI delivers that text to the user and stops processing — no model call is made. If the hook exits with code `0` but writes nothing (or writes no `response` key), the CLI proceeds normally and calls the LLM.
-
 > **Multiple hooks**: If several `userPromptSubmitted` hooks are configured, the first one that returns a `response` wins; subsequent hooks for that event are skipped.
 
 ### Notification on Session End
