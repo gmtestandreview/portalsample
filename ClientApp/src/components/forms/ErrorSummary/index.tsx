@@ -1,8 +1,9 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
 import { startCase, capitalize } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
+import { useFormState } from 'react-hook-form';
 import { Link } from 'react-router';
 import type {
   ProblemDetails,
@@ -12,6 +13,8 @@ import type { ErrorSummaryProps, FormikErrorsSummaryProps } from './types';
 import HashLink from '../../Utilities/hashLink';
 import { HttpStatusCode } from '../../../types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { useIsRhfShell } from '../RhfForm';
+import { flattenRhfErrors } from './rhfErrors';
 
 type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;
@@ -169,6 +172,43 @@ const formatServerErrorKeys = (
     {}
   );
 
+interface SummaryFocusState {
+  hasErrors: boolean;
+  isSubmitting: boolean;
+  isValidating: boolean;
+  submitCount: number;
+}
+
+// Move focus to the summary once per failed submit attempt, after validation
+// has settled. The timer is only cleared on unmount: clearing it when the
+// dependencies change would cancel the focus as soon as `isSubmitting` flips.
+const useFocusSummaryOnFailedSubmit = ({
+  hasErrors,
+  isSubmitting,
+  isValidating,
+  submitCount,
+}: SummaryFocusState) => {
+  const focusedSubmitCount = useRef(0);
+  const focusTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    if (
+      isSubmitting ||
+      isValidating ||
+      !hasErrors ||
+      submitCount === focusedSubmitCount.current
+    ) {
+      return;
+    }
+    focusedSubmitCount.current = submitCount;
+    focusTimeout.current = handleAlertScroll();
+  }, [hasErrors, isSubmitting, isValidating, submitCount]);
+
+  useEffect(() => () => clearTimeout(focusTimeout.current), []);
+};
+
 const FormikErrorsSummary = ({
   disableLinkedError,
 }: FormikErrorsSummaryProps) => {
@@ -184,17 +224,44 @@ const FormikErrorsSummary = ({
     if (submitCount > 0) {
       setErrorSummary(errors);
     }
-    if (isSubmitting && !isValidating && hasErrors) {
-      const timeoutId = handleAlertScroll();
-      return () => clearTimeout(timeoutId);
-    }
-    return undefined;
-  }, [errors, submitCount, isValidating, isSubmitting, hasErrors]);
+  }, [errors, submitCount]);
+
+  useFocusSummaryOnFailedSubmit({
+    hasErrors,
+    isSubmitting,
+    isValidating,
+    submitCount,
+  });
 
   if (!hasErrors) {
     return null;
   }
   return renderErrors(sanitizedErrorSummary, disableLinkedError);
+};
+
+/**
+ * RHF counterpart of `FormikErrorsSummary`. Errors are shown once the form has
+ * been submitted; before that they only mark their fields. The messages are
+ * read through `flattenRhfErrors`, which never touches the DOM `ref` RHF keeps
+ * on each error. Focus is not moved to a field (`shouldFocusError: false`), so
+ * the summary alone takes it.
+ */
+const RhfErrorsSummary = ({ disableLinkedError }: FormikErrorsSummaryProps) => {
+  const { errors, submitCount, isValidating, isSubmitting } = useFormState();
+  const flatErrors = submitCount > 0 ? flattenRhfErrors(errors) : {};
+  const hasErrors = Object.keys(flatErrors).length > 0;
+
+  useFocusSummaryOnFailedSubmit({
+    hasErrors,
+    isSubmitting,
+    isValidating,
+    submitCount,
+  });
+
+  if (!hasErrors) {
+    return null;
+  }
+  return renderErrors(flatErrors, disableLinkedError);
 };
 
 const ErrorSummary = ({
@@ -203,6 +270,7 @@ const ErrorSummary = ({
   disableLinkedError,
   isWafViolation,
 }: Readonly<ErrorSummaryProps>) => {
+  const isRhfShell = useIsRhfShell();
   useEffect(() => {
     if (serverErrors) {
       const timeoutId = handleAlertScroll();
@@ -274,7 +342,8 @@ const ErrorSummary = ({
     return renderServerError(error);
   }
 
-  return <FormikErrorsSummary {...omitUndefined({ disableLinkedError })} />;
+  const Summary = isRhfShell ? RhfErrorsSummary : FormikErrorsSummary;
+  return <Summary {...omitUndefined({ disableLinkedError })} />;
 };
 
 export default ErrorSummary;

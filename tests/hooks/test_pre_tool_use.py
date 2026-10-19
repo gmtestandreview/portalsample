@@ -20,7 +20,7 @@ Run:  python tests/hooks/test_pre_tool_use.py
 
 import json
 import os
-import subprocess
+import subprocess  # nosec B404
 import sys
 import tempfile
 from collections.abc import Mapping
@@ -182,7 +182,7 @@ FALSE_POSITIVES: list[tuple[str, dict[str, str]]] = [
 ]
 
 
-SECRET = "hunter2-" + "token"
+TEST_CREDENTIAL = "fixture-redaction-value"
 
 
 def invoke(tool_name: str, tool_input: Mapping[str, str], project_dir: Path | None = None) -> int:
@@ -190,12 +190,13 @@ def invoke(tool_name: str, tool_input: Mapping[str, str], project_dir: Path | No
         with tempfile.TemporaryDirectory(prefix="pretooluse-") as folder:
             return invoke(tool_name, tool_input, Path(folder))
     payload = json.dumps({"tool_name": tool_name, "tool_input": tool_input})
-    proc = subprocess.run(
+    proc = subprocess.run(  # nosec B603
         [sys.executable, "-I", "-S", str(GUARD)],
         input=payload,
         capture_output=True,
         text=True,
         timeout=30,
+        check=False,
         cwd=project_dir,
         env={**os.environ, "CLAUDE_PROJECT_DIR": str(project_dir)},
     )
@@ -205,8 +206,8 @@ def invoke(tool_name: str, tool_input: Mapping[str, str], project_dir: Path | No
 def check_log(project_dir: Path) -> list[str]:
     """Log is append-only JSONL, records blocks, redacts secrets, stores no file bodies."""
     problems: list[str] = []
-    invoke("Write", {"file_path": "a.txt", "content": "BODY-" + SECRET}, project_dir)
-    invoke("Bash", {"command": f"export API_TOKEN={SECRET}; {_RM_RF} /"}, project_dir)
+    invoke("Write", {"file_path": "a.txt", "content": "BODY-" + TEST_CREDENTIAL}, project_dir)
+    invoke("Bash", {"command": f"export API_TOKEN={TEST_CREDENTIAL}; {_RM_RF} /"}, project_dir)
     log_file = project_dir / ".agent-sync" / "logs" / "pre_tool_use.jsonl"
     if not log_file.is_file():
         return ["append-only JSONL log is missing"]
@@ -222,19 +223,20 @@ def check_log(project_dir: Path) -> list[str]:
         for r in records
     ):
         problems.append("blocked calls are not logged")
-    if SECRET in "\n".join(lines):
+    if TEST_CREDENTIAL in "\n".join(lines):
         problems.append("secret/body leaked into log")
     return problems
 
 
 def check_fail_open_wrapper(project_dir: Path) -> list[str]:
     """Garbage on stdin must not crash the guard (the wrapper treats crashes as errors)."""
-    proc = subprocess.run(
+    proc = subprocess.run(  # nosec B603
         [sys.executable, "-I", "-S", str(GUARD)],
         input="not json",
         capture_output=True,
         text=True,
         timeout=30,
+        check=False,
         cwd=project_dir,
         env={**os.environ, "CLAUDE_PROJECT_DIR": str(project_dir)},
     )
@@ -247,10 +249,15 @@ def check_fail_open_wrapper(project_dir: Path) -> list[str]:
     ids=[case[0] for case in BEHAVIOURS],
 )
 def test_guard_behaviour(label: str, expected: int, tool: str, payload: dict[str, str]) -> None:
-    assert invoke(tool, payload) == expected, label
+    assert invoke(tool, payload) == expected, label  # nosec B101
 
 
 DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
+    ("Bash", f"env -C other {_RM_RF} dist", BLOCK),
+    ("Bash", f"env --chdir=other {_RM_RF} dist", BLOCK),
+    ("Bash", f"env -Cother {_RM_RF} dist", BLOCK),
+    ("Bash", f"sudo -D other {_RM_RF} dist", BLOCK),
+    ("Bash", f"sudo --chdir=other {_RM_RF} dist", BLOCK),
     ("Bash", f"bash -ce '{_RM_RF} /'", BLOCK),
     ("Bash", f'eval "{_RM_RF} /"', BLOCK),
     ("PowerShell", f'iex "Remove-Item {_RECURSE_FORCE} ."', BLOCK),
@@ -277,6 +284,12 @@ DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", f"{_RM_RF} -- .scannerwork/cache", ALLOW),
     ("PowerShell", f"Remove-Item {_RECURSE_FORCE} -LiteralPath .scannerwork/cache", ALLOW),
     ("Bash", f"{_RM_RF} .scannerwork/../../src", BLOCK),
+    ("Bash", "rm -r ../outside", BLOCK),
+    ("Bash", "rm -r /tmp/anything", BLOCK),
+    ("PowerShell", "Remove-Item -Recurse ../outside", BLOCK),
+    ("Bash", "rm -r .scannerwork/cache", ALLOW),
+    ("PowerShell", "Remove-Item -Recurse .scannerwork/cache", ALLOW),
+    ("Bash", "rm -f marker; rm -r .scannerwork/cache", BLOCK),
 ]
 
 
@@ -284,7 +297,78 @@ DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
 def test_delete_parser_preserves_security_boundaries(
     tool: str, command: str, expected: int
 ) -> None:
-    assert invoke(tool, {"command": command}) == expected
+    assert invoke(tool, {"command": command}) == expected  # nosec B101
+
+
+WRAPPER_OPTIONS: list[tuple[str, int]] = [
+    (f"env - --chdir=other {_RM_RF} /", BLOCK),
+    (f"env -- --chdir=other {_RM_RF} /", BLOCK),
+    (f"env -- invalid-name=value {_RM_RF} /", BLOCK),
+    (f"env - invalid-name=value {_RM_RF} /", BLOCK),
+    (f"env invalid-name=value {_RM_RF} /", BLOCK),
+    (f"sudo invalid-name=value {_RM_RF} /", BLOCK),
+    (f"env -- a=b=c {_RM_RF} /", BLOCK),
+    (f"env - --chdir=other {_RM_RF} dist", ALLOW),
+    (f"env -- --chdir=other {_RM_RF} dist", ALLOW),
+    ("echo rm | xargs -I CMD CMD -rf /", BLOCK),
+    (f"env -iu ignored {_RM_RF} /", BLOCK),
+    (f"env -uignored {_RM_RF} /", BLOCK),
+    (f"sudo -nu root {_RM_RF} /", BLOCK),
+    (f"sudo -nuroot {_RM_RF} /", BLOCK),
+    (f"sudo -R other {_RM_RF} dist", BLOCK),
+    (f"sudo -nRother {_RM_RF} dist", BLOCK),
+    (f"sudo --chroot=other {_RM_RF} dist", BLOCK),
+    (f"sudo --chr other {_RM_RF} dist", BLOCK),
+    (f"env --chd=other {_RM_RF} dist", BLOCK),
+    (f"env --chd other {_RM_RF} dist", BLOCK),
+    (f"env -iCother {_RM_RF} dist", BLOCK),
+    (f"env -iC other {_RM_RF} dist", BLOCK),
+    (f"sudo --chd=other {_RM_RF} dist", BLOCK),
+    (f"env -i sudo -nRother {_RM_RF} dist", BLOCK),
+    (f"command -p env --chd=other {_RM_RF} dist", BLOCK),
+    (f"env - {_RM_RF} /", BLOCK),
+    (f"env -i - {_RM_RF} /", BLOCK),
+    ("env --unknown harmless", BLOCK),
+    ("sudo -Z harmless", BLOCK),
+    ("command -Z harmless", BLOCK),
+    ("time --unknown harmless", BLOCK),
+    ("nohup --unknown harmless", BLOCK),
+    ("exec -Z harmless", BLOCK),
+    ("xargs -Z harmless", BLOCK),
+    ("call -Z harmless", BLOCK),
+    (f"env --ch other {_RM_RF} dist", BLOCK),
+    ("sudo --ch harmless", BLOCK),
+    ("env --chdir", BLOCK),
+    ("sudo -nu", BLOCK),
+    ("exec -a", BLOCK),
+    ("xargs -n", BLOCK),
+    ("env --debug=unexpected harmless", BLOCK),
+    ("env -S 'harmless'", BLOCK),
+    ("sudo -s 'harmless'", BLOCK),
+    (f"env -iu ignored {_RM_RF} dist", ALLOW),
+    (f"sudo -nuroot {_RM_RF} dist", ALLOW),
+    (f"env -uCother {_RM_RF} dist", ALLOW),
+    (f"env --unset=--chdir=other {_RM_RF} dist", ALLOW),
+    (f"sudo -np--chroot=other {_RM_RF} dist", ALLOW),
+    (f"env -- {_RM_RF} dist", ALLOW),
+    (f"sudo -- {_RM_RF} dist", ALLOW),
+    (f"env - {_RM_RF} dist", ALLOW),
+    (f"time -po output {_RM_RF} dist", ALLOW),
+    (f"exec -cla alias {_RM_RF} dist", ALLOW),
+    (f"xargs -pr -n1 {_RM_RF} dist", ALLOW),
+    (f"exec -cla alias {_RM_RF} /", BLOCK),
+    (f"time -po output {_RM_RF} /", BLOCK),
+    (f"xargs -pn 1 {_RM_RF} /", BLOCK),
+    (f"env SETTING=value {_RM_RF} dist", ALLOW),
+    (f"sudo SETTING=value -nu root {_RM_RF} /", BLOCK),
+]
+
+
+@pytest.mark.parametrize(("command", "expected"), WRAPPER_OPTIONS)
+def test_wrapper_options_preserve_security_and_value_boundaries(
+    command: str, expected: int
+) -> None:
+    assert invoke("Bash", {"command": command}) == expected  # nosec B101
 
 
 ENV_BOUNDARIES: list[tuple[str, str, int]] = [
@@ -310,6 +394,14 @@ ENV_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", "cat docs/environment.md", ALLOW),
     ("Bash", 'eval "cat .env"', BLOCK),
     ("PowerShell", 'iex "Get-Content .env"', BLOCK),
+    ("Bash", "python -c \"print(open('.env').read())\"", BLOCK),
+    ("Bash", "python3 -c \"print(open('.env').read())\"", BLOCK),
+    ("Bash", "node -e \"fs.readFileSync('.env')\"", BLOCK),
+    ("Bash", "node --eval \"fs.readFileSync('.env')\"", BLOCK),
+    ("Bash", "python -c \"print(open('.env.example').read())\"", BLOCK),
+    ("Bash", "python -cprint(open('.env').read())", BLOCK),
+    ("Bash", "python -c \"print(open('.' + 'env').read())\"", BLOCK),
+    ("Bash", "node -r dotenv/config app.js", BLOCK),
 ]
 
 
@@ -317,53 +409,54 @@ ENV_BOUNDARIES: list[tuple[str, str, int]] = [
 def test_secret_paths_and_search_data_are_distinguished(
     tool: str, command: str, expected: int
 ) -> None:
-    assert invoke(tool, {"command": command}) == expected
+    assert invoke(tool, {"command": command}) == expected  # nosec B101
 
 
 @pytest.mark.parametrize(("tool", "payload"), FALSE_POSITIVES)
 def test_legitimate_tool_calls_are_allowed(tool: str, payload: dict[str, str]) -> None:
-    assert invoke(tool, payload) == ALLOW
+    assert invoke(tool, payload) == ALLOW  # nosec B101
 
 
 def test_log_records_blocks_without_exposing_content() -> None:
     with tempfile.TemporaryDirectory(prefix="pretooluse-log-") as directory:
-        assert check_log(Path(directory)) == []
+        assert check_log(Path(directory)) == []  # nosec B101
 
 
 def test_malformed_stdin_fails_open() -> None:
     with tempfile.TemporaryDirectory(prefix="pretooluse-malformed-") as directory:
-        assert check_fail_open_wrapper(Path(directory)) == []
+        assert check_fail_open_wrapper(Path(directory)) == []  # nosec B101
 
 
 @pytest.mark.parametrize("payload", [None, [], "Bash", {}, {"tool_name": []}])
 def test_wrong_hook_payload_shapes_fail_open(payload: object) -> None:
     with tempfile.TemporaryDirectory(prefix="pretooluse-shape-") as directory:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             [sys.executable, "-I", "-S", str(GUARD)],
             input=json.dumps(payload),
             cwd=directory,
             capture_output=True,
             text=True,
             timeout=20,
+            check=False,
             env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
         )
-        assert result.returncode == 0
-        assert result.stdout == ""
+        assert result.returncode == 0  # nosec B101
+        assert result.stdout == ""  # nosec B101
 
 
 @pytest.mark.parametrize(
     "command",
     [
-        f'curl -H "Authorization: Bearer {SECRET}" https://example.invalid',
-        f"echo password='{SECRET} two words'",
-        f"echo --token {SECRET}",
-        f"$env:TOKEN = '{SECRET}'",
+        f'curl -H "Authorization: Bearer {TEST_CREDENTIAL}" https://example.invalid',
+        f"echo password='{TEST_CREDENTIAL} two words'",
+        f"echo --token {TEST_CREDENTIAL}",
+        f"$env:TOKEN = '{TEST_CREDENTIAL}'",
     ],
 )
 @pytest.mark.parametrize("blocked", [False, True])
 def test_audit_and_stderr_do_not_persist_credential_values(command: str, blocked: bool) -> None:
     with tempfile.TemporaryDirectory(prefix="pretooluse-private-") as directory:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603
             [sys.executable, "-I", "-S", str(GUARD)],
             input=json.dumps(
                 {
@@ -375,13 +468,14 @@ def test_audit_and_stderr_do_not_persist_credential_values(command: str, blocked
             capture_output=True,
             text=True,
             timeout=20,
+            check=False,
             env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
         )
-        assert result.returncode == (BLOCK if blocked else ALLOW)
-        assert SECRET not in result.stdout + result.stderr
+        assert result.returncode == (BLOCK if blocked else ALLOW)  # nosec B101
+        assert TEST_CREDENTIAL not in result.stdout + result.stderr  # nosec B101
         log = Path(directory) / ".agent-sync/logs/pre_tool_use.jsonl"
-        assert log.is_file(), "append-only audit log missing"
-        assert SECRET not in log.read_text(encoding="utf-8")
+        assert log.is_file(), "append-only audit log missing"  # nosec B101
+        assert TEST_CREDENTIAL not in log.read_text(encoding="utf-8")  # nosec B101
 
 
 def test_log_uses_project_root_preserves_records_and_rotates() -> None:
@@ -391,24 +485,25 @@ def test_log_uses_project_root_preserves_records_and_rotates() -> None:
         other_cwd.mkdir()
         log = root / ".agent-sync/logs/pre_tool_use.jsonl"
         for _ in range(2):
-            result = subprocess.run(
+            result = subprocess.run(  # nosec B603
                 [sys.executable, "-I", "-S", str(GUARD)],
                 input=json.dumps({"tool_name": "Read", "tool_input": {"file_path": "a.ts"}}),
                 cwd=other_cwd,
                 capture_output=True,
                 text=True,
                 timeout=20,
+                check=False,
                 env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
             )
-            assert result.returncode == ALLOW
-            assert log.is_file(), "log ignored CLAUDE_PROJECT_DIR"
-        assert len(log.read_text(encoding="utf-8").splitlines()) == 2
-        assert not (other_cwd / ".agent-sync").exists()
+            assert result.returncode == ALLOW  # nosec B101
+            assert log.is_file(), "log ignored CLAUDE_PROJECT_DIR"  # nosec B101
+        assert len(log.read_text(encoding="utf-8").splitlines()) == 2  # nosec B101
+        assert not (other_cwd / ".agent-sync").exists()  # nosec B101
         prior = "{}\n" * (512 * 1024 // 3 + 1)
         log.write_text(prior, encoding="utf-8")
-        assert invoke("Read", {"file_path": "a.ts"}, root) == ALLOW
-        assert log.with_suffix(".jsonl.1").read_text(encoding="utf-8") == prior
-        assert log.stat().st_size <= 512 * 1024
+        assert invoke("Read", {"file_path": "a.ts"}, root) == ALLOW  # nosec B101
+        assert log.with_suffix(".jsonl.1").read_text(encoding="utf-8") == prior  # nosec B101
+        assert log.stat().st_size <= 512 * 1024  # nosec B101
 
 
 def test_concurrent_rotation_preserves_prior_archive() -> None:
@@ -450,24 +545,24 @@ guard._log("Read", {"file_path": "a.ts"}, "allow")
         processes: list[subprocess.Popen[str]] = []
         try:
             for _ in range(2):
-                processes.append(
-                    subprocess.Popen(
-                        [sys.executable, "-I", "-S", "-c", child, str(GUARD)],
-                        cwd=root,
-                        env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        text=True,
-                    )
+                process = subprocess.Popen(  # nosec B603
+                    [sys.executable, "-I", "-S", "-c", child, str(GUARD)],
+                    cwd=root,
+                    env={**os.environ, "CLAUDE_PROJECT_DIR": directory},
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
                 )
+                processes.append(process)
             for process in processes:
                 stdout, stderr = process.communicate(timeout=10)
-                assert process.returncode == 0, stderr
-                assert stdout == "" and stderr == ""
-            assert log.with_suffix(".jsonl.1").read_text(encoding="utf-8") == prior
+                assert process.returncode == 0, stderr  # nosec B101
+                assert stdout == ""  # nosec B101
+                assert stderr == ""  # nosec B101
+            assert log.with_suffix(".jsonl.1").read_text(encoding="utf-8") == prior  # nosec B101
             records = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
-            assert len(records) == 2
-            assert all(record["decision"] == "allow" for record in records)
+            assert len(records) == 2  # nosec B101
+            assert all(record["decision"] == "allow" for record in records)  # nosec B101
         finally:
             for process in processes:
                 if process.poll() is None:
@@ -480,14 +575,15 @@ def test_guard_does_not_persist_file_bodies_or_credentials() -> None:
     body = "TEST_FILE_BODY_DO_NOT_LOG"
     with tempfile.TemporaryDirectory(prefix="pretooluse-redaction-") as directory:
         project_dir = Path(directory)
-        assert invoke("Write", {"file_path": "a.txt", "content": body}, project_dir) == ALLOW
-        assert invoke("Bash", {"command": f"echo API_TOKEN={SECRET}"}, project_dir) == ALLOW
+        assert invoke("Write", {"file_path": "a.txt", "content": body}, project_dir) == ALLOW  # nosec B101
+        result = invoke("Bash", {"command": f"echo API_TOKEN={TEST_CREDENTIAL}"}, project_dir)
+        assert result == ALLOW  # nosec B101
         logs = project_dir / ".agent-sync" / "logs"
         for path in logs.glob("*"):
             if path.is_file():
                 text = path.read_text(encoding="utf-8")
-                assert body not in text, "file body persisted in audit log"
-                assert SECRET not in text, "credential persisted in audit log"
+                assert body not in text, "file body persisted in audit log"  # nosec B101
+                assert TEST_CREDENTIAL not in text, "credential persisted in audit log"  # nosec B101
 
 
 def main() -> int:

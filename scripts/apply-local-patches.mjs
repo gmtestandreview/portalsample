@@ -54,7 +54,7 @@ export function applyLocalPatches(
       '--no-index',
       '--unsafe-paths',
       '--check',
-      '--ignore-space-change',
+      '--ignore-whitespace',
       '--whitespace=nowarn',
       patchPath,
     ]);
@@ -64,7 +64,7 @@ export function applyLocalPatches(
         'apply',
         '--no-index',
         '--unsafe-paths',
-        '--ignore-space-change',
+        '--ignore-whitespace',
         '--whitespace=nowarn',
         patchPath,
       ]);
@@ -81,7 +81,7 @@ export function applyLocalPatches(
       '--unsafe-paths',
       '--reverse',
       '--check',
-      '--ignore-space-change',
+      '--ignore-whitespace',
       '--whitespace=nowarn',
       patchPath,
     ]);

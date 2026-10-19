@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-17",
+  "scope": "skills-ref test baseline upgrade",
+  "previous_test_python": "3.13.11",
+  "current_test_python": "3.14.7",
+  "interpreter": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\.worktrees\\skill-v3-closeout-20261017\\skills\\writing-skills\\scripts\\.venv\\Scripts\\python.exe",
+  "pin_path": "skills/writing-skills/scripts/.python-version",
+  "pin_sha256": "922fe0c3de073b01988e23348ea184456161678c5e329e6f34be89be24383f93",
+  "execution_root": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\.worktrees\\skill-v3-closeout-20261017\\skills\\writing-skills\\scripts",
+  "command": [
+    "uv",
+    "run",
+    "--group",
+    "dev",
+    "pytest",
+    "-q"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 24.452,
+  "stdout": "........................................................................ [ 35%]\n........................................................................ [ 70%]\n...........................................................              [100%]\n203 passed in 23.26s\n",
+  "stderr": "",
+  "historical_evidence": "v3_collection_fix_verification.json retains genuine Python 3.13.11 runs; they are not current baseline claims"
+}

@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
   ReportAddressTypeValues,
+  type AddressDetailsDto,
   type ReportRecipientStep,
 } from '@/api/web-api-client';
 import ReportRecipientFormikBridge from '@/routes/acceptQuote/reportRecipientFormikBridge';
@@ -119,6 +120,41 @@ describe('ReportRecipientFormikBridge', () => {
         postcode: '2070',
         state: 'NSW',
       },
+    });
+  });
+
+  it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{
+          reportAddressType: ReportAddressTypeValues.Other,
+          businessStreetAddress: {
+            isManuallyEntered: true,
+            line1: '9 Test Street',
+            suburb: 'Lindfield',
+            postcode: '2070',
+            state: 'NSW' as AddressDetailsDto['state'],
+          },
+          organisationName: 'Loaded report organisation',
+        }}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const organisationName = screen.getByLabelText(
+      'Organisation name for report'
+    );
+    expect(organisationName).toHaveValue('Loaded report organisation');
+
+    await user.clear(organisationName);
+    await user.type(organisationName, 'Edited report organisation');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
+      organisationName: 'Edited report organisation',
     });
   });
 

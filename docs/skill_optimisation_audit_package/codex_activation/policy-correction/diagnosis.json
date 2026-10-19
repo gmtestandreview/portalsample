@@ -1,0 +1,36 @@
+{
+  "scope": "Curated diagnosis observations; original failure evidence remains in parent codex_activation directory; transient debug dumps removed",
+  "observations": [
+    {
+      "stage": "original",
+      "result": "Read-only and workspace-write both rejected sonar analyze secrets before CreateProcess; no scanner execution or instruction read"
+    },
+    {
+      "stage": "project-rule-only",
+      "result": "Raw scanner rule matched in execpolicy check but project-local policy was not effective in the isolated ignored-config CLI run"
+    },
+    {
+      "stage": "active-user-layer",
+      "result": "Exact-path raw scanner allow rule permitted real scan; scan-only natural run then rejected Get-Content -LiteralPath and an unallowed meta-skill scan"
+    },
+    {
+      "stage": "discarded-draft",
+      "result": "An added exact wrapper rule was unnecessary; a draft newline parse error prevented one CLI startup and was corrected before acceptance; neither is part of final rule file"
+    },
+    {
+      "stage": "availability-probes",
+      "result": "Original ordinary requests sometimes attempted differing Get-Command sonar pipelines, rejected by exact policy; these attempts remain nonacceptance results"
+    },
+    {
+      "stage": "environment-clarification",
+      "result": "Request states verified sonar-on-PATH fact and direct invocation; no skill name, path, oracle or expected label supplied"
+    },
+    {
+      "stage": "final-acceptance",
+      "result": "Two new sessions scanned, read and applied exact duplication v1.3 and reference; required accounting and preservation output correct; second run used only final two rules"
+    }
+  ],
+  "root_cause_bound": "No effective allowance for required commands under tested approval_policy=never. Internal fallback reason and inactive project-layer cause not established. No explicit prohibition identified or overridden.",
+  "final_rule_scope": "Exact fixture/meta-skill scan paths and exact-path Get-Content -LiteralPath; no retained wrapper, availability, integration or general analysis allowance",
+  "integration_executed": false
+}

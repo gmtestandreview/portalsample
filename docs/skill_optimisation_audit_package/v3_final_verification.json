@@ -1,0 +1,66 @@
+{
+  "checks": [
+    {
+      "name": "253 unique atoms",
+      "passed": true,
+      "detail": "253 items"
+    },
+    {
+      "name": "Grade compliance",
+      "passed": true,
+      "detail": "Counter({'Unknown': 111, '2': 64, '3': 33, '1': 27, '4': 15, '0': 3})"
+    },
+    {
+      "name": "All sources anchors",
+      "passed": true,
+      "detail": "Against 2951 lines"
+    },
+    {
+      "name": "All prior lesson IDs and mapping",
+      "passed": true,
+      "detail": "LL01-LL26"
+    },
+    {
+      "name": "Fix/test links",
+      "passed": true,
+      "detail": "26 lessons and 19 fixes linked"
+    },
+    {
+      "name": "Findings mapped",
+      "passed": true,
+      "detail": "12 root causes, all represented in lessons"
+    },
+    {
+      "name": "Sources including 6 missing",
+      "passed": true,
+      "detail": "35 entries"
+    },
+    {
+      "name": "Controls audited",
+      "passed": true,
+      "detail": "13 controls and statuses"
+    },
+    {
+      "name": "Score types separated",
+      "passed": true,
+      "detail": "12 historical score records"
+    },
+    {
+      "name": "Historical additional JSON parse",
+      "passed": true,
+      "detail": "4 uploaded JSON records parse"
+    },
+    {
+      "name": "Regression cases not misrepresented as executed",
+      "passed": true,
+      "detail": "18 designs, no SKILL run"
+    },
+    {
+      "name": "Report & checkpoint",
+      "passed": true,
+      "detail": "both available"
+    }
+  ],
+  "passed": true,
+  "note": "Checks apply to audit package only, not current or historical SKILL execution."
+}

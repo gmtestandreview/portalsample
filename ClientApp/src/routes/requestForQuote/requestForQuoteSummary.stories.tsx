@@ -6,15 +6,15 @@ import RequestForQuoteSummary from './requestForQuoteSummary';
 const expectInstrumentSectionReady = async (
   canvas: ReturnType<typeof within>
 ) => {
-  await expect(await canvas.findByText('Serial number')).toBeInTheDocument();
+  await expect(await canvas.findByText('Request details')).toBeInTheDocument();
 };
 
 /**
  * `RequestForQuoteSummary` is the review surface of the request-for-quote wizard. It
  * presents the captured Organisation/Contact and Instrument/Request sections inside
  * accordions. While editable it shows review guidance and per-section Edit buttons;
- * once submitted it swaps those for a "Back to dashboard" link. Its summary children
- * are Formik-bound, so the story supplies a matching context.
+ * once submitted it swaps those for a "Back to dashboard" link. It reads its values and hiding rules from the surrounding Formik context,
+ * so the story supplies a matching one.
  */
 const meta = {
   title: 'Routes/RequestForQuote/RequestForQuoteSummary',

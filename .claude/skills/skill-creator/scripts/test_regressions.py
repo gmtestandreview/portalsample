@@ -507,9 +507,23 @@ class WindowsClaudeCliInvocationTests(unittest.TestCase):
                     eval_project_root=root,
                 )
 
-    def test_improve_description_run_passes_shell_kwarg(self) -> None:
+    def test_improve_description_run_disables_shell_execution(self) -> None:
         call = _find_subprocess_call("improve_description.py", "run")
-        self.assertIn("shell", {kw.arg for kw in call.keywords})
+        shell_keyword = next((kw for kw in call.keywords if kw.arg == "shell"), None)
+        self.assertIsNotNone(shell_keyword)
+        assert shell_keyword is not None
+        self.assertIsInstance(shell_keyword.value, ast.Constant)
+        assert isinstance(shell_keyword.value, ast.Constant)
+        self.assertIs(shell_keyword.value.value, False)
+
+    def test_red_green_popen_disables_shell_execution(self) -> None:
+        call = _find_subprocess_call("run_red_green_eval.py", "Popen")
+        shell_keyword = next((kw for kw in call.keywords if kw.arg == "shell"), None)
+        self.assertIsNotNone(shell_keyword)
+        assert shell_keyword is not None
+        self.assertIsInstance(shell_keyword.value, ast.Constant)
+        assert isinstance(shell_keyword.value, ast.Constant)
+        self.assertIs(shell_keyword.value.value, False)
 
 
 if __name__ == "__main__":

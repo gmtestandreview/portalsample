@@ -250,7 +250,7 @@ The agent can then query your database, analyze query plans, and suggest optimiz
 
 ### Organizing Agents in Your Repository
 
-```
+```text
 .github/
 └── agents/
     ├── security-reviewer.agent.md
