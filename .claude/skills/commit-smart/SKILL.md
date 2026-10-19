@@ -41,7 +41,7 @@ git diff --cached
 Determine the commit type from the changes:
 
 | Signal | Type |
-|--------|------|
+| -------- | ------ |
 | New files with new functionality | `feat` |
 | New test files or test additions | `test` |
 | Changes to existing logic fixing incorrect behavior | `fix` |
@@ -53,6 +53,7 @@ Determine the commit type from the changes:
 | Performance improvements | `perf` |
 
 Determine the scope from the primary directory or module affected:
+
 - `src/api/` -> `api`
 - `src/components/auth/` -> `auth`
 - `tests/` -> `tests`
@@ -62,6 +63,7 @@ Determine the scope from the primary directory or module affected:
 ### Step 4: Check for user overrides
 
 If the user provided arguments via `$ARGUMENTS`:
+
 - Single word (e.g., `fix`) -> use as commit type
 - Two words (e.g., `refactor api`) -> use as type and scope
 - Otherwise -> use auto-detected values
@@ -71,6 +73,7 @@ If the user provided arguments via `$ARGUMENTS`:
 Format: `type(scope): imperative short description`
 
 Rules:
+
 - Subject line max 72 characters
 - Use imperative mood ("add", "fix", "refactor", not "added", "fixes")
 - Don't end with a period
@@ -78,6 +81,7 @@ Rules:
 - If changes are trivial (typo fix, formatting), skip the body
 
 Example:
+
 ```
 feat(auth): add JWT refresh token rotation
 
@@ -91,11 +95,13 @@ security, since each refresh token can only be used once.
 Show the user the proposed commit message and ask for confirmation.
 
 If confirmed, run:
+
 ```bash
 git commit -m "<message>"
 ```
 
 Then verify with:
+
 ```bash
 git log --oneline -1
 ```

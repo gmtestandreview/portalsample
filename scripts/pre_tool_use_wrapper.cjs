@@ -14,23 +14,32 @@ if (!existsSync(guardPath)) {
   process.exit(0);
 }
 
-const interpreters = ['python', 'python3', 'py'];
-const interpreter = interpreters.find((candidate) => {
-  const result = spawnSync(candidate, ['--version'], { stdio: 'ignore' });
-  return !result.error && result.status === 0;
-});
-
-if (!interpreter) {
+let interpreter;
+try {
+  const { findPython314 } = require('./python314.cjs');
+  interpreter = findPython314();
+} catch {
   process.stderr.write(
-    '[A Team] BLOCKED: no Python interpreter found; security gate cannot run.\n'
+    '[A Team] BLOCKED: Python 3.14 launcher failed to initialize.\n'
   );
   process.exit(2);
 }
 
-const result = spawnSync(interpreter, ['-I', '-S', guardPath], {
-  input: readFileSync(0),
-  stdio: ['pipe', 'inherit', 'inherit'],
-});
+if (!interpreter) {
+  process.stderr.write(
+    '[A Team] BLOCKED: no Python 3.14 interpreter found; security gate cannot run.\n'
+  );
+  process.exit(2);
+}
+
+const result = spawnSync(
+  interpreter.command,
+  [...interpreter.args, '-I', '-S', guardPath],
+  {
+    input: readFileSync(0),
+    stdio: ['pipe', 'inherit', 'inherit'],
+  }
+);
 
 if (result.error || result.status === null) {
   process.stderr.write('[A Team] BLOCKED: security gate failed to execute.\n');

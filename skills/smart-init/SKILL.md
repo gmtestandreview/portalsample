@@ -25,7 +25,7 @@ Check in this order:
 Read the ROADMAP file and extract:
 
 | Look for in ROADMAP | Maps to INIT.md field |
-|--------------------|-----------------------|
+| -------------------- | ----------------------- |
 | Project name in H1 or title | Project name |
 | Description paragraph | Project overview |
 | Stack table or technology mentions | Languages & stack |
@@ -100,6 +100,7 @@ git ls-files | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -10
 ```
 
 Extension → stack mapping:
+
 - `.kt` → Kotlin / Android (agents: kotlin-reviewer, compose-ui)
 - `.swift` → Swift / iOS (agents: swift-reviewer)
 - `.py` → Python (agents: python-reviewer)

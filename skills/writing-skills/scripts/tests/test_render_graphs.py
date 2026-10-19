@@ -5,10 +5,11 @@ import locale
 import os
 import shutil
 import subprocess
-import xml.etree.ElementTree as ET
 from pathlib import Path
+from xml.etree.ElementTree import Element
 
 import pytest
+from defusedxml import ElementTree as ET
 
 RENDERER = Path(__file__).resolve().parents[1] / "render-graphs.js"
 
@@ -38,7 +39,7 @@ def _skill(tmp_path: Path, markdown: str, name: str = "graph-skill") -> Path:
     return skill
 
 
-def _text_labels(root: ET.Element) -> list[str]:
+def _text_labels(root: Element) -> list[str]:
     labels: list[str] = []
     for node in root.iter("{http://www.w3.org/2000/svg}text"):
         assert node.text is not None, "SVG text node has no label"
@@ -48,6 +49,7 @@ def _text_labels(root: ET.Element) -> list[str]:
 
 def _labels(svg: Path) -> list[str]:
     root = ET.parse(svg).getroot()
+    assert root is not None, "SVG document has no root element"
     assert root.tag == "{http://www.w3.org/2000/svg}svg"
     labels = _text_labels(root)
     # SVG image data has its own document/namespace. Inspect the embedded

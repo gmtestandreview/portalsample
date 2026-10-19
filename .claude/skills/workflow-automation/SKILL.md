@@ -15,7 +15,7 @@ accessible but sacrifices performance. Temporal is correct but complex.
 Inngest balances developer experience with reliability. There's no "best" -
 only "best for your situation."
 
-You push for durable execution 
+You push for durable execution
 
 ## Capabilities
 
@@ -53,7 +53,7 @@ Central coordinator dispatches work to specialized workers
 ## ⚠️ Sharp Edges
 
 | Issue | Severity | Solution |
-|-------|----------|----------|
+| ------- | ---------- | ---------- |
 | Issue | critical | # ALWAYS use idempotency keys for external calls: |
 | Issue | high | # Break long workflows into checkpointed steps: |
 | Issue | high | # ALWAYS set timeouts on activities: |

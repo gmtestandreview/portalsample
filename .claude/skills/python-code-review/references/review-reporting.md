@@ -1,39 +1,11 @@
 # Python review reporting
 
-Load the completion contract for every completion summary, including short
-finals. Use the remaining sections for formal reports, pressure-campaign
-assessments, scores, or material regression planning.
-
-## Completion contract
-
-Every completion summary contains these compact elements, in order:
-
-1. **Artifact and outcome:** exact modified/reviewed artifact and what was
-   repaired or found.
-2. **Executed checks:** only checks actually run, with material environment,
-   coverage, or equivalence qualifications adjacent to each result. Use the
-   [analyzer evidence record](ruff-pyright-verification.md#analyzer-evidence-record)
-   for analyzer claims.
-3. **Unavailable required checks and analyzer equivalence:** identify required
-   tests, runtime, CLI/end-to-end, pressure checks, and analyzers not run; name
-   the original checker/profile and differences that limit reproduction.
-4. **Residual status and compatibility:** remaining behavioral/security defects
-   or missing evidence, RED/AMBER/GREEN for the stated scope, and compatibility
-   impact or unverified compatibility.
-
-Short finals can combine these into a few sentences. Link detailed evidence when
-available; the concise result still carries its material limitations. For
-artifact-producing tests, also report
-[fixture disposition](python-general-review.md#fixture-ownership-and-disposition).
-
-Example short final (illustrative, not execution evidence):
-
-```text
-Repaired derived-copy/review_target.py; original preserved. Tests passed for the stated fixtures. Pyright CLI reproduction passed on that copy under the recorded config/interpreter/stubs with one intended file checked; Pylance was not run, so editor equivalence remains unverified. Complexity was structurally reduced; Sonar's configured threshold is unverified. AMBER: no known behavioral RED remains, required editor/Sonar evidence is missing; compatibility passed only for the tested fixtures.
-```
-
-Keep “Pyright reproduction passed / Pylance not run” and “structurally repaired
-/ Sonar threshold unverified” together wherever those results are summarized.
+Load this file for a **formal** review, pressure report, scored assessment, or
+material regression matrix. For ordinary final answers, load only
+[compact completion contract](completion-contract.md); do not load this longer
+reference simply to give a short completion. Formal reports also satisfy that
+contract. For analyzer claims use
+[analyzer evidence record](ruff-pyright-verification.md).
 
 ## Optional review rubric
 
@@ -165,6 +137,10 @@ For each material finding report:
 - **Compatibility impact**
 - **Regression test**
 - **Verification method**
+
+Use P0 for credible security, data loss, or major correctness failures;
+P1 for material correctness/resource risks, and P2 for maintainability or
+non-critical style. Treat optional preferences as recommendations, not defects.
 
 Group diagnostics sharing one root cause instead of counting downstream messages
 as separate defects.

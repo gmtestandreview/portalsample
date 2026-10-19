@@ -1,0 +1,19 @@
+﻿test_id,input_or_scenario,expected_behavior,actual_observed_behavior,status,linked_fixes
+T01,Interrupted run 90% through budget,A final report and candidate checkpoint are produced before invoking an optional agent,NOT EXECUTED in this audit (design only),NOT TESTED,F01 F10
+T02,"Three incompatible scores for same title, different kind/rubric","No numeric trend; every score binds rubric, version, evaluator and evidence",NOT EXECUTED in this audit (design only),NOT TESTED,F02 F14
+T03,Candidate source mutates during an evaluation,Reject stale result and restart only affected checks after freeze,NOT EXECUTED in this audit (design only),NOT TESTED,F03
+T04,Baseline and first GREEN both classify all six obvious pairs correctly,Further full wave blocked absent discriminating question; pressure test allowed if uncertainty material,NOT EXECUTED in this audit (design only),NOT TESTED,F04 F05
+T05,13/13 claim but source contains one AMBER,Report rejected and corrected with record of oracle revision,NOT EXECUTED in this audit (design only),NOT TESTED,F06 F12
+T06,Session ends before next evaluator finishes,Closure checkpoint and honest unfinished status already preserved,NOT EXECUTED in this audit (design only),NOT TESTED,F01 F10
+T07,"score >96, actual exactly 96; score >95 actual 96",>96 fails; >95 passes numeric gate; other readiness gates remain separate,NOT EXECUTED in this audit (design only),NOT TESTED,F02 F14
+T08,Reused prior GREEN on different candidate/oracle hash,Mark stale; do not reuse as verified comparative result,NOT EXECUTED in this audit (design only),NOT TESTED,F03 F06 F15
+T09,Later counterexample reveals new rule gap,Permit focused additional test (not prohibit all repetition); log expected decision value,NOT EXECUTED in this audit (design only),NOT TESTED,F04 F05
+T10,Oracle changed after seeing result; labels corrected retroactively,"New oracle version, affected comparisons invalidated; prior results retained",NOT EXECUTED in this audit (design only),NOT TESTED,F12 F17
+T11,"3 PASS in summary but Boolean case results 2 PASS,1 FAIL",Deterministic grader refuses summary publication,NOT EXECUTED in this audit (design only),NOT TESTED,F17
+T12,Hub subsets with contradictory third member,Correct pair labels but merge HOLD; invariant tests catch handoff contradiction,NOT EXECUTED in this audit (design only),NOT TESTED,F07 F08
+T13,Duplication skill handoff after explicit survivor confirmation,Only permitted survivor-member pairs advance; no direct merge without authorization,NOT EXECUTED in this audit (design only),NOT TESTED,F07
+T14,Multiple evaluator proposals with no unique questions,Default one focused evaluation plus one independent adversary; cost reported as observations only,NOT EXECUTED in this audit (design only),NOT TESTED,F05 F09 F19
+T15,Result file absent but agent says all tests pass,Gate NOT VERIFIED; evidence manifest identifies missing raw artifact,NOT EXECUTED in this audit (design only),NOT TESTED,F06 F15
+T16,Missing provider usage counters,No numeric token savings claim; invocation/elapsed proxies labelled as proxies,NOT EXECUTED in this audit (design only),NOT TESTED,F01 F19
+T17,Unrelated hook vulnerability arises during target audit,Separate finding/owner; no unauthorised repo edits; one orchestration owner,NOT EXECUTED in this audit (design only),NOT TESTED,F11 F13
+T18,Static lint PASS but natural host activation or Pylance unavailable,"Static gate PASS scoped, runtime/editor target-host NOT VERIFIED and readiness HOLD",NOT EXECUTED in this audit (design only),NOT TESTED,F16 F18

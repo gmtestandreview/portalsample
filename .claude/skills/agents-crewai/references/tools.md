@@ -417,7 +417,7 @@ selected_tools = mcp_adapter.get_tools(tool_names=["search", "translate"])
 ## Tool Categories Reference
 
 | Category | Tools | Use Case |
-|----------|-------|----------|
+| ---------- | ------- | ---------- |
 | **Search** | Serper, Tavily, Brave, EXA | Web search, information retrieval |
 | **Scraping** | ScrapeWebsite, Firecrawl, Selenium | Extract web content |
 | **Files** | FileRead, FileWrite, DirectoryRead | Local file operations |

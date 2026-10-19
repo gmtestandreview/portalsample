@@ -9,6 +9,7 @@ Tools and workflows for web development.
 Distributed version control system.
 
 **Basic Commands**:
+
 ```bash
 # Initialize repository
 git init
@@ -47,6 +48,7 @@ git log --oneline --graph
 ```
 
 **Best Practices**:
+
 - Commit often with meaningful messages
 - Use branches for features
 - Pull before push
@@ -56,6 +58,7 @@ git log --oneline --graph
 ### GitHub/GitLab/Bitbucket
 
 Git hosting platforms with collaboration features:
+
 - Pull requests / Merge requests
 - Code review
 - Issue tracking
@@ -91,6 +94,7 @@ npm audit fix
 ```
 
 **package.json**:
+
 ```json
 {
   "name": "my-project",
@@ -112,6 +116,7 @@ npm audit fix
 ### Yarn
 
 Faster alternative to npm:
+
 ```bash
 yarn add package-name
 yarn remove package-name
@@ -122,6 +127,7 @@ yarn build
 ### pnpm
 
 Efficient package manager (disk space saving):
+
 ```bash
 pnpm install
 pnpm add package-name
@@ -181,6 +187,7 @@ npm run build
 ### Parcel
 
 Zero-config bundler:
+
 ```bash
 parcel index.html
 parcel build index.html
@@ -226,6 +233,7 @@ describe('sum function', () => {
 ### Vitest
 
 Vite-powered testing (Jest-compatible):
+
 ```javascript
 import { describe, test, expect } from 'vitest';
 
@@ -239,6 +247,7 @@ describe('math', () => {
 ### Playwright
 
 End-to-end testing:
+
 ```javascript
 import { test, expect } from '@playwright/test';
 
@@ -282,6 +291,7 @@ Code formatter:
 ### Stylelint
 
 CSS linter:
+
 ```json
 {
   "extends": "stylelint-config-standard",
@@ -297,6 +307,7 @@ CSS linter:
 ### Visual Studio Code
 
 **Key Features**:
+
 - IntelliSense
 - Debugging
 - Git integration
@@ -304,6 +315,7 @@ CSS linter:
 - Terminal integration
 
 **Popular Extensions**:
+
 - ESLint
 - Prettier
 - Live Server
@@ -476,6 +488,7 @@ const dbUrl = process.env.DATABASE_URL;
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - Bun
 - Continuous integration
 - Deno

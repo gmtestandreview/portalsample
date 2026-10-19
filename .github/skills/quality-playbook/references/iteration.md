@@ -60,6 +60,7 @@ These rules apply to every iteration strategy:
    - **baseline (no strategy)** → suggest: `Run the next iteration of the quality playbook using the gap strategy.`
 
    Format the suggestion clearly so the user can copy-paste it:
+
    ```
    ────────────────────────────────────────────────────────
    Next iteration suggestion:

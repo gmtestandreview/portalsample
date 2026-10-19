@@ -96,7 +96,7 @@ Example `.mcp.json` or `.vscode/mcp.json`:
 
 GitHub Copilot CLI can install MCP servers directly from the official registry with guided configuration — no manual JSON editing required. During an interactive session, run:
 
-```
+```shell
 /mcp install
 ```
 
@@ -104,7 +104,7 @@ A picker will list available servers from the registry. After selecting one, the
 
 You can also install a specific server by name without the picker:
 
-```
+```shell
 /mcp install @modelcontextprotocol/server-postgres
 ```
 
@@ -213,7 +213,7 @@ With this configuration, the agent can:
 
 ### Example Conversation
 
-```
+```text
 User: The users page is loading slowly. Can you figure out why?
 
 Agent: Let me check the query that powers the users page.
@@ -275,7 +275,7 @@ When an MCP server fails to start or loses its connection, Copilot CLI surfaces 
 
 For example, a PostgreSQL server that can't connect because `DATABASE_URL` is not set will show:
 
-```
+```text
 ⚠ MCP server "postgres" failed to start
   Error: connect ECONNREFUSED 127.0.0.1:5432
   stderr: Error: DATABASE_URL environment variable is required
@@ -283,7 +283,7 @@ For example, a PostgreSQL server that can't connect because `DATABASE_URL` is no
 
 **Diagnosing connection problems with `/mcp show`**: Run `/mcp show` to see the current status of all configured MCP servers — which ones are running, which have failed, and their connection details. When an MCP server name contains whitespace, the failure warning also suggests a directly runnable `/mcp show <name>` command for quick inspection.
 
-```
+```shell
 /mcp show              # list all servers and their status
 /mcp show postgres     # inspect a specific server
 ```

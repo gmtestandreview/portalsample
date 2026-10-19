@@ -140,7 +140,7 @@ Available in `/experimental` (v1.0.42+), the **rubber-duck agent** applies a nov
 
 To try it, enable experimental features and then select the rubber-duck agent from the agent picker:
 
-```
+```bash
 /experimental           # toggle experimental features
 /agent                  # open the agent picker and select rubber-duck
 ```

@@ -35,11 +35,13 @@ python -m py_compile **/*.py
 ## Workflow
 
 ### 1. Collect All Errors
+
 - Run diagnostics to get ALL errors at once
 - Categorize: type inference, missing types, imports, config, dependencies
 - Prioritize: build-blocking first, then type errors, then warnings
 
 ### 2. Fix Strategy (MINIMAL CHANGES)
+
 1. Read the error message carefully — understand expected vs actual
 2. Find the minimal fix (type annotation, null check, import fix)
 3. Verify fix doesn't break other code — rerun diagnostics
@@ -48,7 +50,7 @@ python -m py_compile **/*.py
 ### 3. Common Fixes
 
 | Error | Fix |
-|-------|-----|
+| ------- | ----- |
 | `implicitly has 'any' type` | Add type annotation |
 | `Object is possibly 'undefined'` | Optional chaining or null check |
 | `Property does not exist` | Add to interface or use optional |

@@ -104,7 +104,7 @@ Apply these rules by default. If the user explicitly requests different wording,
 ## Scoped Step Definitions
 
 Prefer `@`-prefixed directories to scope step definitions to specific feature domains. This avoids conflicts when common step names (e.g. `I should see {string} text`) need different implementations depending on context.
-More details on scoped steps: https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped?id=tags-from-path
+More details on scoped steps: <https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped?id=tags-from-path>
 
 **Example structure with scoped steps**
 

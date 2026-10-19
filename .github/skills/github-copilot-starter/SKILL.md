@@ -20,9 +20,11 @@ Ask the user for the following information if not provided:
 Based on the provided stack, create the following files in the appropriate directories:
 
 ### 1. `.github/copilot-instructions.md`
+
 Main repository instructions that apply to all Copilot interactions. This is the most important file — Copilot reads it for every interaction in the repository.
 
 Use this structure:
+
 ```md
 # {Project Name} — Copilot Instructions
 
@@ -49,7 +51,9 @@ List the primary language, frameworks, and key dependencies.
 ```
 
 ### 2. `.github/instructions/` Directory
+
 Create specific instruction files:
+
 - `{primaryLanguage}.instructions.md` - Language-specific guidelines
 - `testing.instructions.md` - Testing standards and practices
 - `documentation.instructions.md` - Documentation requirements
@@ -58,7 +62,9 @@ Create specific instruction files:
 - `code-review.instructions.md` - Code review standards and GitHub review guidelines
 
 ### 3. `.github/skills/` Directory
+
 Create reusable skills as self-contained folders:
+
 - `setup-component/SKILL.md` - Component/module creation
 - `write-tests/SKILL.md` - Test generation
 - `code-review/SKILL.md` - Code review assistance
@@ -67,7 +73,9 @@ Create reusable skills as self-contained folders:
 - `debug-issue/SKILL.md` - Debugging assistance
 
 ### 4. `.github/agents/` Directory
+
 Always create these 4 agents:
+
 - `software-engineer.agent.md`
 - `architect.agent.md`
 - `reviewer.agent.md`
@@ -76,17 +84,21 @@ Always create these 4 agents:
 For each, fetch the most specific match from awesome-copilot agents. If none exists, use the generic template.
 
 **Agent Attribution**: When using content from awesome-copilot agents, add attribution comments:
+
 ```markdown
 <!-- Based on/Inspired by: https://github.com/github/awesome-copilot/blob/main/agents/[filename].agent.md -->
 ```
 
 ### 5. `.github/workflows/` Directory (only if user uses GitHub Actions)
+
 Skip this section entirely if the user answered "no" to GitHub Actions.
 
 Create Coding Agent workflow file:
+
 - `copilot-setup-steps.yml` - GitHub Actions workflow for Coding Agent environment setup
 
 **CRITICAL**: The workflow MUST follow this exact structure:
+
 - Job name MUST be `copilot-setup-steps`
 - Include proper triggers (workflow_dispatch, push, pull_request on the workflow file)
 - Set appropriate permissions (minimum required)
@@ -97,23 +109,27 @@ Create Coding Agent workflow file:
 For each file, follow these principles:
 
 **MANDATORY FIRST STEP**: Always use the fetch tool to research existing patterns before creating any content:
-1. **Fetch specific instruction from awesome-copilot docs**: https://github.com/github/awesome-copilot/blob/main/docs/README.instructions.md
-2. **Fetch specific agents from awesome-copilot docs**: https://github.com/github/awesome-copilot/blob/main/docs/README.agents.md
-3. **Fetch specific skills from awesome-copilot docs**: https://github.com/github/awesome-copilot/blob/main/docs/README.skills.md
+
+1. **Fetch specific instruction from awesome-copilot docs**: <https://github.com/github/awesome-copilot/blob/main/docs/README.instructions.md>
+2. **Fetch specific agents from awesome-copilot docs**: <https://github.com/github/awesome-copilot/blob/main/docs/README.agents.md>
+3. **Fetch specific skills from awesome-copilot docs**: <https://github.com/github/awesome-copilot/blob/main/docs/README.skills.md>
 4. **Check for existing patterns** that match the technology stack
 
 **Primary Approach**: Reference and adapt existing instructions from awesome-copilot repository:
+
 - **Use existing content** when available - don't reinvent the wheel
 - **Adapt proven patterns** to the specific project context
 - **Combine multiple examples** if the stack requires it
 - **ALWAYS add attribution comments** when using awesome-copilot content
 
 **Attribution Format**: When using content from awesome-copilot, add this comment at the top of the file:
+
 ```md
 <!-- Based on/Inspired by: https://github.com/github/awesome-copilot/blob/main/instructions/[filename].instructions.md -->
 ```
 
 **Examples:**
+
 ```md
 <!-- Based on: https://github.com/github/awesome-copilot/blob/main/instructions/react.instructions.md -->
 ---
@@ -136,6 +152,7 @@ description: "Java Spring Boot development standards"
 ```
 
 **Secondary Approach**: If no awesome-copilot instructions exist, create **SIMPLE GUIDELINES ONLY**:
+
 - **High-level principles** and best practices (2-3 sentences each)
 - **Architectural patterns** (mention patterns, not implementation)
 - **Code style preferences** (naming conventions, structure preferences)
@@ -143,6 +160,7 @@ description: "Java Spring Boot development standards"
 - **Documentation standards** (format, requirements)
 
 **STRICTLY AVOID in .instructions.md files:**
+
 - ❌ **Writing actual code examples or snippets**
 - ❌ **Detailed implementation steps**
 - ❌ **Test cases or specific test code**
@@ -151,6 +169,7 @@ description: "Java Spring Boot development standards"
 - ❌ **Import statements or dependency lists**
 
 **CORRECT .instructions.md content:**
+
 - ✅ **"Use descriptive variable names and follow camelCase"**
 - ✅ **"Prefer composition over inheritance"**
 - ✅ **"Write unit tests for all public methods"**
@@ -158,6 +177,7 @@ description: "Java Spring Boot development standards"
 - ✅ **"Follow the repository's established error handling patterns"**
 
 **Research Strategy with fetch tool:**
+
 1. **Check awesome-copilot first** - Always start here for ALL file types
 2. **Look for exact tech stack matches** (e.g., React, Node.js, Spring Boot)
 3. **Look for general matches** (e.g., frontend agents, testing skills, review workflows)
@@ -166,11 +186,13 @@ description: "Java Spring Boot development standards"
 6. **Only create custom content** if nothing relevant exists
 
 **Fetch these awesome-copilot directories:**
-- **Instructions**: https://github.com/github/awesome-copilot/tree/main/instructions
-- **Agents**: https://github.com/github/awesome-copilot/tree/main/agents
-- **Skills**: https://github.com/github/awesome-copilot/tree/main/skills
+
+- **Instructions**: <https://github.com/github/awesome-copilot/tree/main/instructions>
+- **Agents**: <https://github.com/github/awesome-copilot/tree/main/agents>
+- **Skills**: <https://github.com/github/awesome-copilot/tree/main/skills>
 
 **Awesome-Copilot Areas to Check:**
+
 - **Frontend Web Development**: React, Angular, Vue, TypeScript, CSS frameworks
 - **C# .NET Development**: Testing, documentation, and best practices
 - **Java Development**: Spring Boot, Quarkus, testing, documentation
@@ -220,6 +242,7 @@ project-root/
 Use this structure for all files:
 
 **Instructions (.instructions.md):**
+
 ```md
 ---
 applyTo: "**/*.{lang-ext}"
@@ -239,6 +262,7 @@ Apply the repository-wide guidance from `../copilot-instructions.md` to all code
 ```
 
 **Skills (SKILL.md):**
+
 ```md
 ---
 name: {skill-name}
@@ -259,6 +283,7 @@ Ask for {required inputs} if not provided.
 ```
 
 **Agents (.agent.md):**
+
 ```md
 ---
 description: Generate an implementation plan for new features or refactoring existing code.
@@ -282,9 +307,9 @@ The plan consists of a Markdown document that describes the implementation plan,
 1. **Gather project information** - Ask the user for technology stack, project type, and development style if not provided
 2. **Research awesome-copilot patterns**:
    - Use the fetch tool to explore awesome-copilot directories
-   - Check instructions: https://github.com/github/awesome-copilot/tree/main/instructions
-   - Check agents: https://github.com/github/awesome-copilot/tree/main/agents (especially for matching expert agents)
-   - Check skills: https://github.com/github/awesome-copilot/tree/main/skills
+   - Check instructions: <https://github.com/github/awesome-copilot/tree/main/instructions>
+   - Check agents: <https://github.com/github/awesome-copilot/tree/main/agents> (especially for matching expert agents)
+   - Check skills: <https://github.com/github/awesome-copilot/tree/main/skills>
    - Document all sources for attribution comments
 3. **Create the directory structure**
 4. **Generate main copilot-instructions.md** with project-wide standards
@@ -306,6 +331,7 @@ After creating all files, provide the user with:
 ## Quality Checklist
 
 Before completing, verify:
+
 - [ ] All authored Copilot markdown files have proper YAML frontmatter where required
 - [ ] Language-specific best practices are included
 - [ ] Files reference each other appropriately using Markdown links
@@ -345,6 +371,7 @@ jobs:
 **KEEP WORKFLOWS SIMPLE** - Only include essential steps:
 
 **Node.js/JavaScript:**
+
 ```yaml
 - name: Set up Node.js
   uses: actions/setup-node@v4
@@ -360,6 +387,7 @@ jobs:
 ```
 
 **Python:**
+
 ```yaml
 - name: Set up Python
   uses: actions/setup-python@v4
@@ -374,6 +402,7 @@ jobs:
 ```
 
 **Java:**
+
 ```yaml
 - name: Set up JDK
   uses: actions/setup-java@v4
@@ -387,6 +416,7 @@ jobs:
 ```
 
 **AVOID in workflows:**
+
 - ❌ Complex configuration setups
 - ❌ Multiple environment configurations
 - ❌ Advanced tooling setup
@@ -395,6 +425,7 @@ jobs:
 - ❌ Database setup or external services
 
 **INCLUDE only:**
+
 - ✅ Language/runtime setup
 - ✅ Basic dependency installation
 - ✅ Simple linting (if standard)

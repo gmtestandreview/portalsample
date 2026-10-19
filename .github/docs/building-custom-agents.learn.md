@@ -35,6 +35,7 @@ Custom agents are Markdown files (`*.agent.md`) that configure GitHub Copilot wi
 When a user selects a custom agent in VS Code or assigns it to an issue via the Copilot coding agent, the agent's configuration shapes the entire interaction.
 
 **Key Points**:
+
 - Agents persist across a conversation—they maintain their persona and context
 - Agents can invoke tools, run commands, search codebases, and interact with MCP servers
 - Multiple agents can coexist in a repository, each serving different workflows
@@ -43,11 +44,13 @@ When a user selects a custom agent in VS Code or assigns it to an issue via the 
 ### How Agents Differ from Other Customizations
 
 **Agents vs Instructions**:
+
 - Agents are explicitly selected; instructions apply automatically to matching files
 - Agents define a complete persona; instructions provide passive background context
 - Use agents for interactive workflows; use instructions for coding standards
 
 **Agents vs Skills**:
+
 - Agents are persistent personas; skills are single-task capabilities
 - Agents can invoke skills during a conversation
 - Use agents for complex multi-step workflows; use skills for focused, repeatable tasks
@@ -76,7 +79,7 @@ tools: ['codebase', 'terminal', 'github']
 **tools** (recommended): An array of built-in tools and MCP servers the agent can access. Common tools include:
 
 | Tool | Purpose |
-|------|---------|
+| ------ | --------- |
 | `codebase` | Search and analyze code across the repository |
 | `terminal` | Run shell commands |
 | `github` | Interact with GitHub APIs (issues, PRs, etc.) |
@@ -239,7 +242,7 @@ The agent can then query your database, analyze query plans, and suggest optimiz
 ### Choosing the Right Model
 
 | Scenario | Recommended Model |
-|----------|-------------------|
+| ---------- | ------------------- |
 | Complex reasoning, security review | Claude Sonnet 4 or higher |
 | Code generation, refactoring | GPT-4.1 |
 | Quick analysis, simple tasks | Claude Haiku or GPT-4.1-mini |
@@ -247,7 +250,7 @@ The agent can then query your database, analyze query plans, and suggest optimiz
 
 ### Organizing Agents in Your Repository
 
-```
+```text
 .github/
 └── agents/
     ├── security-reviewer.agent.md

@@ -89,6 +89,27 @@ class ImproveDescriptionControlTests(unittest.TestCase):
         self.assertEqual(control.attempted_calls, 1)
         self.assertEqual(control.successful_calls, 1)
 
+    def test_claude_invocation_disables_shell_execution(self) -> None:
+        response = self._response("<new_description>safe result</new_description>")
+        resolved_executable = r"C:\Program Files\Claude\claude.cmd"
+        with patch.object(improve_description.os, "name", "nt"), patch.object(
+            improve_description.shutil,
+            "which",
+            return_value=resolved_executable,
+        ), patch.object(
+            improve_description.subprocess,
+            "run",
+            return_value=response,
+        ) as run:
+            result = improve_description._call_claude(
+                "prompt",
+                "claude-sonnet-4-6",
+            )
+
+        self.assertEqual(result, response.stdout)
+        self.assertEqual(run.call_args.args[0][0], resolved_executable)
+        self.assertFalse(run.call_args.kwargs["shell"])
+
     def test_cached_rewrite_skips_claude_and_counts_as_resumed(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             checkpoint = CheckpointStore(Path(directory) / "checkpoint.jsonl")

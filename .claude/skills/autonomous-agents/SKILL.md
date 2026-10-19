@@ -53,7 +53,7 @@ Self-evaluation and iterative improvement
 ## ⚠️ Sharp Edges
 
 | Issue | Severity | Solution |
-|-------|----------|----------|
+| ------- | ---------- | ---------- |
 | Issue | critical | ## Reduce step count |
 | Issue | critical | ## Set hard cost limits |
 | Issue | critical | ## Test at scale before production |

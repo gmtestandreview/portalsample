@@ -1,469 +1,14 @@
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MemoryRouter, Route, Routes } from 'react-router';
-import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
-import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
-import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
-
-const mocks: {
-  acquireTokenSilent: ReturnType<typeof vi.fn>;
-  instance: { acquireTokenSilent: ReturnType<typeof vi.fn> };
-  msalAccounts: Array<{ homeAccountId: string }>;
-  setAuthToken: ReturnType<typeof vi.fn>;
-  getLookup: ReturnType<typeof vi.fn>;
-  getReportRecipient: ReturnType<typeof vi.fn>;
-  getDeliveryAndReturn: ReturnType<typeof vi.fn>;
-  getPaymentDetails: ReturnType<typeof vi.fn>;
-  getSummaryAndAccept: ReturnType<typeof vi.fn>;
-  getQuoteOfferPDFByQuoteID: ReturnType<typeof vi.fn>;
-  appLoggerError: ReturnType<typeof vi.fn>;
-  appLoggerVerbose: ReturnType<typeof vi.fn>;
-  useAccountState: ReturnType<typeof vi.fn>;
-  setShowRFQSelectModal: ReturnType<typeof vi.fn>;
-  formikValues: Record<string, unknown>;
-  setFieldValue: ReturnType<typeof vi.fn>;
-  setFieldTouched: ReturnType<typeof vi.fn>;
-  selectChangeHandlers: Map<string, React.ChangeEventHandler<HTMLInputElement>>;
-  dashboardNotification: { message: string; severity: string } | null;
-  setDashboardNotification: ReturnType<typeof vi.fn>;
-  clearDashboardNotification: ReturnType<typeof vi.fn>;
-  clearDashboardInfoNotification: ReturnType<typeof vi.fn>;
-  openPdfPageInNewTab: ReturnType<typeof vi.fn>;
-} = vi.hoisted(() => {
-  // acquireTokenSilent and instance must be stable object references.
-  // deliveryAndReturn.tsx lists `instance` in its useEffect dep array; a new
-  // object on every useMsal() call would re-fire the effect every render.
-  const acquireTokenSilent = vi.fn();
-  const instance = { acquireTokenSilent };
-  return {
-    acquireTokenSilent,
-    instance,
-    msalAccounts: [{ homeAccountId: 'account-1' }],
-    setAuthToken: vi.fn(),
-    getLookup: vi.fn(),
-    getReportRecipient: vi.fn(),
-    getDeliveryAndReturn: vi.fn(),
-    getPaymentDetails: vi.fn(),
-    getSummaryAndAccept: vi.fn(),
-    getQuoteOfferPDFByQuoteID: vi.fn(),
-    appLoggerError: vi.fn(),
-    appLoggerVerbose: vi.fn(),
-    useAccountState: vi.fn(),
-    setShowRFQSelectModal: vi.fn(),
-    formikValues: {},
-    setFieldValue: vi.fn(),
-    setFieldTouched: vi.fn(),
-    selectChangeHandlers: new Map<
-      string,
-      React.ChangeEventHandler<HTMLInputElement>
-    >(),
-    dashboardNotification: null as { message: string; severity: string } | null,
-    setDashboardNotification: vi.fn(),
-    clearDashboardNotification: vi.fn(),
-    clearDashboardInfoNotification: vi.fn(),
-    openPdfPageInNewTab: vi.fn(),
-  };
-});
-
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: mocks.msalAccounts,
-    instance: mocks.instance,
-  }),
-  useAccount: (account: { homeAccountId: string }) => account,
-}));
-
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-}));
-
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
-
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
-
-  return {
-    ...actual,
-    CRMLookupTypes: {
-      TCPortalMeasurementCategory: 'TCPortalMeasurementCategory',
-      TCArtefactTypePortalCategory: 'TCArtefactTypePortalCategory',
-    },
-    LookupClient: vi.fn(function LookupClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getLookup: mocks.getLookup,
-      };
-    }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getReportRecipient: mocks.getReportRecipient,
-        getDeliveryAndReturn: mocks.getDeliveryAndReturn,
-        getPaymentDetails: mocks.getPaymentDetails,
-        getSummaryAndAccept: mocks.getSummaryAndAccept,
-      };
-    }),
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-      };
-    }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
-      };
-    }),
-  };
-});
-
-vi.mock('formik', () => {
-  const getPath = (path: string) =>
-    path
-      .split('.')
-      .reduce<unknown>(
-        (value, part) =>
-          value && typeof value === 'object'
-            ? (value as Record<string, unknown>)[part]
-            : undefined,
-        mocks.formikValues
-      );
-
-  return {
-    useFormikContext: () => ({
-      initialValues: mocks.formikValues,
-      values: mocks.formikValues,
-      submitCount: 0,
-      setFieldValue: mocks.setFieldValue,
-      setFieldTouched: mocks.setFieldTouched,
-      getFieldMeta: (name: string) => ({ initialValue: getPath(name) }),
-    }),
-    useField: (name: string) => [{ value: getPath(name) ?? '' }],
-    getIn: (values: Record<string, unknown>, name: string) =>
-      name
-        .split('.')
-        .reduce<unknown>(
-          (value, part) =>
-            value && typeof value === 'object'
-              ? (value as Record<string, unknown>)[part]
-              : undefined,
-          values
-        ),
-  };
-});
-
-vi.mock('../../../ClientApp/src/components/Inputs/TextInput', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='text-input' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/TextAreaInput', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='textarea-input' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/RadioButtonGroup', () => ({
-  default: ({
-    legend,
-    name,
-    options,
-  }: {
-    legend: string;
-    name: string;
-    options: { label: string }[];
-  }) => (
-    <fieldset data-testid='radio-group' data-name={name}>
-      <legend>{legend}</legend>
-      {options.map((option) => (
-        <span key={option.label}>{option.label}</span>
-      ))}
-    </fieldset>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/SelectInput', () => ({
-  default: ({
-    label,
-    name,
-    options,
-    onChange,
-    readOnly,
-  }: {
-    label: string;
-    name: string;
-    options: { value: string; displayText: string }[];
-    onChange?: React.ChangeEventHandler<HTMLInputElement>;
-    readOnly?: boolean;
-  }) => {
-    if (onChange) mocks.selectChangeHandlers.set(name, onChange);
-    return (
-      <label>
-        {label}
-        <input
-          data-testid={`select-${name}`}
-          data-readonly={readOnly ? 'true' : 'false'}
-          onChange={onChange}
-          value={options[0]?.value ?? ''}
-          readOnly
-        />
-      </label>
-    );
-  },
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/NumberInput', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='number-input' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/DatePicker', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='date-picker' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/AddressLookup', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='address-lookup' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/RhfAddressLookup', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='address-lookup' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Inputs/Checkbox', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid='checkbox' data-name={name}>
-      {label}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/forms/HidableField', () => ({
-  default: ({
-    children,
-    name,
-  }: {
-    children: React.ReactNode;
-    name: string;
-  }) => (
-    <div data-testid='hidable-field' data-name={name}>
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock(
-  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
-  () => ({
-    default: ({ name }: { name: string }) => (
-      <div data-testid='contact-details'>{name}</div>
-    ),
-  })
-);
-
-vi.mock('../../../ClientApp/src/components/modals/ModalContext', () => ({
-  useModalDispatch: () => ({
-    setShowRFQSelectModal: mocks.setShowRFQSelectModal,
-  }),
-}));
-
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Utilities/mailingLabel', () => ({
-  default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
-    <div data-testid='mailing-label'>{quotationIdNum}</div>
-  ),
-}));
-
-vi.mock(
-  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
-  () => ({
-    default: ({ deliveryInstructions }: { deliveryInstructions?: string }) => (
-      <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
-    ),
-  })
-);
-
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-
-vi.mock('../../../ClientApp/src/components/Accordion', () => ({
-  CustomAccordion: ({
-    children,
-    id,
-  }: {
-    children: React.ReactNode;
-    id: string;
-  }) => (
-    <section data-testid='accordion' data-id={id}>
-      {children}
-    </section>
-  ),
-  CustomAccordionBody: ({
-    children,
-    name,
-  }: {
-    children: React.ReactNode;
-    name: string;
-  }) => (
-    <div data-testid='accordion-body'>
-      {name}
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Buttons/EditButton', () => ({
-  default: ({ link }: { link: string }) => (
-    <a data-testid='edit-button' href={link}>
-      Edit
-    </a>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <p data-testid='header-intro'>{children}</p>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/InTextLink', () => ({
-  default: ({
-    children,
-    onClick,
-    className,
-  }: {
-    children: React.ReactNode;
-    onClick: React.MouseEventHandler<HTMLButtonElement>;
-    className?: string;
-  }) => (
-    <button type='button' className={className} onClick={onClick}>
-      {children}
-    </button>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/components/Icons/ExternalLinkIcon', () => ({
-  default: () => <span data-testid='external-link-icon' />,
-}));
-
-vi.mock('../../../ClientApp/src/components/Alert/NotificationMessage', () => ({
-  default: ({ message, onClose }: { message: string; onClose: () => void }) => (
-    <button type='button' data-testid='notification-message' onClick={onClose}>
-      {message}
-    </button>
-  ),
-}));
-
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  getDashboardNotification: () => mocks.dashboardNotification,
-  clearDashboardNotification: mocks.clearDashboardNotification,
-  setDashboardNotification: mocks.setDashboardNotification,
-  clearDashboardInfoNotification: mocks.clearDashboardInfoNotification,
-}));
-
-vi.mock('../../../ClientApp/src/storage/types', () => ({
-  NotificationSeverity: { Error: 'error', Info: 'info' },
-}));
-
-vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof HelperFunctionsModule>();
-
-    return {
-      ...actual,
-      openPdfPageInNewTab: mocks.openPdfPageInNewTab,
-    };
-  }
-);
-
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-    verbose: mocks.appLoggerVerbose,
-  },
-}));
-
-vi.mock('react-number-format', () => ({
-  NumericFormat: ({ value }: { value?: string }) => <span>{value}</span>,
-  PatternFormat: ({ value }: { value?: string }) => <span>{value}</span>,
-}));
-
-vi.mock('../../../ClientApp/src/routes/acceptQuote/quotationSummary', () => ({
-  default: () => (
-    <div data-testid='quotation-summary'>Quotation summary content</div>
-  ),
-}));
-
-const accountDetails = {
-  homeAccountId: 'account-1',
-  givenName: 'Alex',
-  familyName: 'Tester',
-} as AccountDetails;
-
-const streetAddress = {
-  line1: '1 National Circuit',
-  suburb: 'Canberra',
-  state: 'ACT',
-  postcode: '2600',
-};
-
-const basePreInfo = {
-  quotationIdNum: 'Q-100',
-  crmQuoteId: 'CRM-Q-100',
-  nmiFacilityDeliveryInstructions: 'Use the loading dock.',
-  nmiCheckedByName: 'NMI Officer',
-  nmiCheckedByJobTitle: 'Approver',
-  nmiCheckedByPhone: '02 0000 0000',
-  nmiCheckedByEmail: 'officer@example.test',
-};
-
-const renderRoute = (
-  initialPath: string,
-  element: React.ReactNode,
-  routePath = '/workflow/:id'
-) =>
-  render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path={routePath} element={element} />
-      </Routes>
-    </MemoryRouter>
-  );
+import {
+  accountDetails,
+  basePreInfo,
+  mocks,
+  renderRoute,
+  streetAddress,
+  triggerInputChange,
+} from './workflowStepComponents.test.setup';
 
 describe('workflow step components', () => {
   beforeEach(() => {
@@ -474,7 +19,7 @@ describe('workflow step components', () => {
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
     mocks.useAccountState.mockReturnValue({ details: accountDetails });
     mocks.dashboardNotification = null;
-    mocks.selectChangeHandlers.clear();
+    mocks.inputChangeHandlers.clear();
     mocks.formikValues = {
       sourceReferenceId: 'SOURCE-1',
       isCorrectBranchOrLocation: 'No',
@@ -567,7 +112,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/organisation-and-contact',
-      <OrganisationAndContact name='' />,
+      <OrganisationAndContact />,
       '/request-for-quote/:id/*'
     );
 
@@ -582,7 +127,24 @@ describe('workflow step components', () => {
       'RFQ-1',
       '/request-for-quote/RFQ-1/organisation-and-contact'
     );
-  });
+  }, 30_000);
+
+  it('disables the branch selector until the branch answer is No', async () => {
+    mocks.formikValues['isCorrectBranchOrLocation'] = undefined;
+    const OrganisationAndContact = (
+      await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
+    ).default;
+
+    renderRoute(
+      '/request-for-quote/RFQ-1/organisation-and-contact',
+      <OrganisationAndContact />,
+      '/request-for-quote/:id/*'
+    );
+
+    expect(
+      screen.getByTestId('open-manage-branch-division-button')
+    ).toBeDisabled();
+  }, 30_000);
 
   it('opens the branch selector with an empty request id when the route id is omitted', async () => {
     const OrganisationAndContact = (
@@ -591,7 +153,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/organisation-and-contact',
-      <OrganisationAndContact name='' />,
+      <OrganisationAndContact />,
       '/organisation-and-contact'
     );
     fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
@@ -610,7 +172,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -624,9 +186,7 @@ describe('workflow step components', () => {
     ).toBeInTheDocument();
 
     await act(async () => {
-      mocks.selectChangeHandlers.get('measurementCategory')?.({
-        target: { value: 'no-measurement' },
-      } as React.ChangeEvent<HTMLInputElement>);
+      triggerInputChange('measurementCategory', 'no-measurement');
     });
 
     await waitFor(() =>
@@ -648,6 +208,25 @@ describe('workflow step components', () => {
     ).toHaveAttribute('data-readonly', 'true');
   });
 
+  it('keeps request-for-quote summary edit links available for both editable sections', async () => {
+    const RequestForQuoteSummary = (
+      await import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary')
+    ).default;
+
+    renderRoute(
+      '/request-for-quote/RFQ-1/summary',
+      <RequestForQuoteSummary name='' />,
+      '/request-for-quote/:id/*'
+    );
+
+    const editLinks = screen.getAllByTestId('edit-button');
+    expect(editLinks.map((link) => link.getAttribute('href'))).toEqual([
+      '/request-for-quote/RFQ-1/organisation-and-contact',
+      '/request-for-quote/RFQ-1/instrument-and-request',
+    ]);
+    await screen.findByText('Request details');
+  });
+
   it('initially disables instrument type for the no-measurement category', async () => {
     mocks.formikValues['measurementCategory'] = 'no-measurement';
     const InstrumentAndRequest = (
@@ -656,7 +235,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -675,7 +254,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -686,64 +265,6 @@ describe('workflow step components', () => {
     );
     expect(
       screen.getByTestId('select-instrumentOrArtefactType')
-    ).toBeInTheDocument();
-  });
-
-  it('renders all artefact lookup options in request summary mode', async () => {
-    mocks.formikValues = {};
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='instrumentAndRequest' isSummary />,
-      '/request-for-quote/:id/*'
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
-    );
-    expect(
-      screen.getByTestId('select-instrumentAndRequest.instrumentOrArtefactType')
-    ).toHaveAttribute('data-readonly', 'false');
-  });
-
-  it('normalises sparse lookup ids and summary artefact options', async () => {
-    mocks.formikValues = {};
-    mocks.getLookup.mockReset();
-    mocks.getLookup
-      .mockResolvedValueOnce([
-        { id: undefined, label: 'Mass' },
-        { id: 'no-measurement', label: 'No measurement' },
-      ])
-      .mockResolvedValueOnce([
-        { id: undefined, parentId: undefined, label: undefined },
-        {
-          id: 'no-instrument',
-          parentId: 'no-measurement',
-          label: 'No instrument',
-        },
-      ]);
-    const InstrumentAndRequest = (
-      await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
-    ).default;
-
-    renderRoute(
-      '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='instrumentAndRequest' isSummary />,
-      '/request-for-quote/:id/*'
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
-    );
-    expect(
-      screen.getByTestId('select-instrumentAndRequest.instrumentOrArtefactType')
     ).toBeInTheDocument();
   });
 
@@ -768,7 +289,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -778,9 +299,7 @@ describe('workflow step components', () => {
       ).toBeInTheDocument()
     );
     await act(async () => {
-      mocks.selectChangeHandlers.get('measurementCategory')?.({
-        target: { value: 'measurement-1' },
-      } as React.ChangeEvent<HTMLInputElement>);
+      triggerInputChange('measurementCategory', 'measurement-1');
     });
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
@@ -799,7 +318,7 @@ describe('workflow step components', () => {
     ).default;
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -808,14 +327,9 @@ describe('workflow step components', () => {
         screen.getByText('Instrument/artefact details')
       ).toBeInTheDocument()
     );
-    const onChange = mocks.selectChangeHandlers.get('measurementCategory');
     await act(async () => {
-      onChange?.({
-        target: { value: '' },
-      } as React.ChangeEvent<HTMLInputElement>);
-      onChange?.({
-        target: { value: null },
-      } as unknown as React.ChangeEvent<HTMLInputElement>);
+      triggerInputChange('measurementCategory', '');
+      triggerInputChange('measurementCategory', null);
     });
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
@@ -832,7 +346,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -853,9 +367,7 @@ describe('workflow step components', () => {
 
     expect(screen.getByTestId('header-intro')).toBeInTheDocument();
     expect(screen.getAllByTestId('edit-button')).toHaveLength(2);
-    await screen.findByTestId(
-      'select-instrumentAndRequest.instrumentOrArtefactType'
-    );
+    await screen.findByText('Request details');
     unmount();
 
     renderRoute(
@@ -869,9 +381,7 @@ describe('workflow step components', () => {
       'href',
       '/dashboard'
     );
-    await screen.findByTestId(
-      'select-instrumentAndRequest.instrumentOrArtefactType'
-    );
+    await screen.findByText('Request details');
   });
 
   it('renders report recipient edit and summary address branches', async () => {
@@ -1016,7 +526,7 @@ describe('workflow step components', () => {
 
       await waitFor(() =>
         expect(
-          screen.getByText(new RegExp(expectedAddress))
+          screen.getByText(expectedAddress, { exact: false })
         ).toBeInTheDocument()
       );
     }
@@ -1072,7 +582,7 @@ describe('workflow step components', () => {
     ).default;
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 

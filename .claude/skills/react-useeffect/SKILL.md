@@ -10,7 +10,7 @@ Effects are an **escape hatch** from React. They let you synchronize with extern
 ## Quick Reference
 
 | Situation | DON'T | DO |
-|-----------|-------|-----|
+| ----------- | ------- | ----- |
 | Derived state from props/state | `useState` + `useEffect` | Calculate during render |
 | Expensive calculations | `useEffect` to cache | `useMemo` |
 | Reset state on prop change | `useEffect` with `setState` | `key` prop |

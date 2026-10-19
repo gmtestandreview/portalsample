@@ -1,0 +1,115 @@
+[
+  {
+    "command": [
+      "sonar",
+      "analyze",
+      "secrets",
+      "C:/Users/gregm/.codex/skills/skill-duplication-audit/SKILL.md"
+    ],
+    "result": {
+      "matchedRules": [
+        {
+          "prefixRuleMatch": {
+            "matchedPrefix": [
+              "sonar",
+              "analyze",
+              "secrets",
+              "C:/Users/gregm/.codex/skills/skill-duplication-audit/SKILL.md"
+            ],
+            "decision": "allow",
+            "justification": "Required secrets scans of exact installed V3 skill instructions only"
+          }
+        }
+      ],
+      "decision": "allow"
+    },
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "sonar",
+      "analyze",
+      "secrets",
+      "C:\\Users\\gregm\\.codex\\skills\\verification-before-completion\\SKILL.md"
+    ],
+    "result": {
+      "matchedRules": [
+        {
+          "prefixRuleMatch": {
+            "matchedPrefix": [
+              "sonar",
+              "analyze",
+              "secrets",
+              "C:\\Users\\gregm\\.codex\\skills\\verification-before-completion\\SKILL.md"
+            ],
+            "decision": "allow",
+            "justification": "Required secrets scans of exact installed V3 skill instructions only"
+          }
+        }
+      ],
+      "decision": "allow"
+    },
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "Get-Content",
+      "-LiteralPath",
+      "C:/Users/gregm/.codex/skills/writing-skills/references/bounded-optimisation.md"
+    ],
+    "result": {
+      "matchedRules": [
+        {
+          "prefixRuleMatch": {
+            "matchedPrefix": [
+              "Get-Content",
+              "-LiteralPath",
+              "C:/Users/gregm/.codex/skills/writing-skills/references/bounded-optimisation.md"
+            ],
+            "decision": "allow",
+            "justification": "Read exact installed V3 instructions after their required secrets scans"
+          }
+        }
+      ],
+      "decision": "allow"
+    },
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "sonar",
+      "analyze",
+      "secrets",
+      "C:/Users/gregm/AppData/Local/Temp/codex-v3-acceptance-20261017/.agents/skills/skill-duplication-audit/SKILL.md"
+    ],
+    "result": {
+      "matchedRules": []
+    },
+    "exit_code": 0
+  },
+  {
+    "command": ["sonar", "analyze", "secrets", "unrelated.txt"],
+    "result": {
+      "matchedRules": []
+    },
+    "exit_code": 0
+  },
+  {
+    "command": ["sonar", "integrate", "claude"],
+    "result": {
+      "matchedRules": []
+    },
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "Get-Content",
+      "-LiteralPath",
+      "C:/Users/gregm/.codex/auth.json"
+    ],
+    "result": {
+      "matchedRules": []
+    },
+    "exit_code": 0
+  }
+]

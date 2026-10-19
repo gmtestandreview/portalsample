@@ -1,0 +1,42 @@
+[
+  {
+    "sha256": "4da13ddada63ee8db991985a72955c49fc188888b7e71269c9e91c34c85e03e8",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/DEVILS_ADVOCATE_V3_REPORT.md"
+  },
+  {
+    "sha256": "cdfea913f2390594626b7e8c954e40327a827bda4f082f4917a559ad82878bb5",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/V3_CODEX_ACTIVATION.md"
+  },
+  {
+    "sha256": "1852ca9b81f0b5be9b29d06bdea417a330d41e69cb19dc3d59d43595835a9448",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/V3_COLLECTION_FIX.md"
+  },
+  {
+    "sha256": "e486d271bc088adbad19f1a67cd466d7a4cab6e991e76051f5f22997c4e3aeca",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/V3_CONTINUATION_CHECKPOINT.md"
+  },
+  {
+    "sha256": "4c0b96f85ebf4b1fe93f538ede15d755be7b723d3006ba88fe369c5575c29e7a",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/v3_continuation_review.md"
+  },
+  {
+    "sha256": "e384c61d40d17da3c08357c1b9d4b60061deb8641a5447f911424153f7c46840",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/V3_IMPLEMENTATION.md"
+  },
+  {
+    "sha256": "6448fd7ca63a35039b708e015a237242f3b0d070985a76e8b0c6dc0e1717239a",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/V3_POLICY_CONTINUATION.md"
+  },
+  {
+    "sha256": "08a10456f83f060bfcbc60f1df033e46dd00ba0e740da76874f982290ba2c83d",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/v3_pressure_raw.md"
+  },
+  {
+    "sha256": "f0d93badf9e211325cdb926a0599767a366b633519340a41af6247dd80c86d30",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/v3_review_evidence.md"
+  },
+  {
+    "sha256": "521f228611c63ac92451811e49aa4cde46125f8218a470c89dde00ed4c28372e",
+    "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents/v3_review_raw.md"
+  }
+]

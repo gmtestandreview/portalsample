@@ -5,7 +5,7 @@
 ### 1) Naming Rules
 
 | Item | Rule | Example | Evidence |
-|------|------|---------|----------|
+| ------ | ------ | --------- | ---------- |
 | Files | [RULE] | [EXAMPLE] | [FILE] |
 | Functions/methods | [RULE] | [EXAMPLE] | [FILE] |
 | Types/interfaces | [RULE] | [EXAMPLE] | [FILE] |

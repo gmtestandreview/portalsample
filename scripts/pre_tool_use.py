@@ -1,59 +1,114 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """
 A Team PreToolUse safety guard.
 Blocks destructive commands and .env file access before any tool fires.
 Exit 2 = block + show error to Claude. Exit 0 = allow.
 """
 
+import getopt
 import json
 import os
 import re
 import sys
 import time
-from typing import cast
+from typing import Protocol, cast
 
-JsonObject = dict[str, object]
+type JsonObject = dict[str, object]
 
-_WRAPPERS = {"sudo", "command", "env", "time", "nohup", "exec", "xargs", "call"}
-_WRAPPER_VALUES = {
-    "sudo": {
-        "-u",
-        "-g",
-        "-h",
-        "-p",
-        "-C",
-        "-T",
-        "-r",
-        "-t",
-        "--user",
-        "--group",
-        "--host",
-        "--prompt",
-        "--close-from",
-        "--command-timeout",
-        "--role",
-        "--type",
-    },
-    "env": {"-u", "--unset", "-C", "--chdir"},
-    "time": {"-f", "--format", "-o", "--output"},
-    "exec": {"-a"},
-    "xargs": {
-        "-n",
-        "-I",
-        "-P",
-        "-L",
-        "-d",
-        "-E",
-        "--max-args",
-        "--replace",
-        "--max-procs",
-        "--max-lines",
-        "--delimiter",
-        "--eof",
-    },
+
+class _FcntlApi(Protocol):
+    LOCK_EX: int
+    LOCK_NB: int
+    LOCK_UN: int
+
+    def flock(self, descriptor: int, operation: int) -> object: ...
+
+
+_WRAPPER_OPTIONS: dict[str, tuple[str, list[str]]] = {
+    # Fixed-arity subset only. Unsupported shell/expansion modes and optional
+    # arguments fail closed rather than guessing where the child command starts.
+    "sudo": (
+        "AbBEHkKnNPSVvu:g:p:C:D:R:T:r:t:",
+        [
+            "askpass",
+            "background",
+            "bell",
+            "set-home",
+            "reset-timestamp",
+            "remove-timestamp",
+            "non-interactive",
+            "no-update",
+            "preserve-groups",
+            "stdin",
+            "version",
+            "validate",
+            "help",
+            "user=",
+            "group=",
+            "host=",
+            "prompt=",
+            "close-from=",
+            "chdir=",
+            "chroot=",
+            "command-timeout=",
+            "role=",
+            "type=",
+        ],
+    ),
+    "env": (
+        "i0vu:C:a:",
+        [
+            "ignore-environment",
+            "null",
+            "debug",
+            "unset=",
+            "chdir=",
+            "argv0=",
+            "help",
+            "version",
+        ],
+    ),
+    "time": (
+        "apqvo:f:",
+        [
+            "append",
+            "portability",
+            "quiet",
+            "verbose",
+            "output=",
+            "format=",
+            "help",
+            "version",
+        ],
+    ),
+    "command": ("pvV", []),
+    "nohup": ("", ["help", "version"]),
+    "exec": ("cla:", []),
+    "xargs": (
+        "0prtxn:P:L:d:E:",
+        [
+            "null",
+            "interactive",
+            "no-run-if-empty",
+            "verbose",
+            "exit",
+            "max-args=",
+            "max-procs=",
+            "delimiter=",
+            "help",
+            "version",
+        ],
+    ),
+    "call": ("", []),
+}
+_WRAPPERS = set(_WRAPPER_OPTIONS)
+_WRAPPER_LOCATIONS = {
+    "env": {"-C", "--chdir"},
+    "sudo": {"-D", "--chdir", "-R", "--chroot"},
 }
 _SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 _PS_SHELLS = {"pwsh", "powershell"}
+_PARSER_MODES = {"", "Bash", "PowerShell", "CMD"}
 _EVAL_VERBS = {"eval", "iex", "invoke-expression"}
 _MAX_DEPTH = 8
 _PARSER_LIMIT = "__parser_limit__"
@@ -325,28 +380,52 @@ def _verb_name(token: str) -> str:
 _CONTROL_TOKENS = {"(", "{", "}", ")", "then", "do", "else", "if", "while", "until", "!"}
 
 
-def _skip_wrapper_options(tokens: list[str], index: int, wrapper: str) -> int:
-    while index < len(tokens) and tokens[index].startswith("-"):
-        option = tokens[index]
-        if wrapper == "env" and option in {"-S", "--split-string"}:
-            return index  # unsupported expanding wrapper is blocked by commands()
-        takes_value = option in _WRAPPER_VALUES.get(wrapper, set())
-        index += 2 if takes_value else 1
-    return index
+def _parse_wrapper_options(tokens: list[str], index: int, wrapper: str) -> tuple[int, bool] | None:
+    short, long = _WRAPPER_OPTIONS[wrapper]
+    try:
+        options, remaining = getopt.getopt(tokens[index:], short, long)
+    except getopt.GetoptError:
+        return None
+    index = len(tokens) - len(remaining)
+    # GNU env accepts a lone '-' after its options as ignore-environment.
+    if wrapper == "env" and index < len(tokens) and tokens[index] == "-":
+        index += 1
+    assignment_start = index
+    if wrapper in {"env", "sudo"}:
+        # These utilities accept NAME=value operands beyond shell identifier
+        # syntax, including option-looking names after '-' or '--'.
+        while index < len(tokens) and "=" in tokens[index]:
+            index += 1
+    if index > assignment_start and index < len(tokens) and tokens[index].startswith("-"):
+        return None  # Unsupported options interspersed after assignments.
+    locations = _WRAPPER_LOCATIONS.get(wrapper, set())
+    return index, any(option in locations for option, _value in options)
 
 
-def _verb_index(tokens: list[str]) -> int | None:
+def _command_prefix(tokens: list[str]) -> tuple[int | None, bool] | None:
+    """Locate the child command and its location state from one option parse."""
     index = 0
+    changes_directory = False
+    wrapped_assignment = False
+    wrapped = False
     while index < len(tokens):
         token = tokens[index]
         if token in _CONTROL_TOKENS or re.match(r"^[A-Za-z_][\w]*=", token):
+            wrapped_assignment = wrapped_assignment or wrapped
             index += 1
             continue
+        if wrapped_assignment and token.startswith("-"):
+            return None  # Do not guess at options interspersed after assignments.
         wrapper = _verb_name(token)
         if wrapper not in _WRAPPERS:
-            return index
-        index = _skip_wrapper_options(tokens, index + 1, wrapper)
-    return None
+            return index, changes_directory
+        parsed = _parse_wrapper_options(tokens, index + 1, wrapper)
+        if parsed is None:
+            return None
+        index, location = parsed
+        changes_directory = changes_directory or location
+        wrapped = True
+    return None, changes_directory
 
 
 def _nested_payload(verb: str, args: list[str]) -> str | None:
@@ -385,13 +464,17 @@ def _recursive_commands(payloads: list[str], depth: int, shell: str) -> list[tup
 
 
 def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[str, list[str]]]:
-    index = _verb_index(tokens)
+    prefix = _command_prefix(tokens)
+    if prefix is None:
+        return [(_PARSER_LIMIT, [])]
+    index, changes_directory = prefix
     if index is None:
         return []
     verb, args = _verb_name(tokens[index]), tokens[index + 1 :]
-    if tokens[index] in {"-S", "--split-string"}:
-        verb = _PARSER_LIMIT
-    found = [(verb, args)]
+    found: list[tuple[str, list[str]]] = []
+    if changes_directory:
+        found.append(("__location_change__", []))
+    found.append((verb, args))
     payload = _nested_payload(verb, args)
     if payload is not None:
         found.extend(commands(payload, depth + 1, _nested_shell(verb)))
@@ -401,14 +484,18 @@ def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[st
     return found
 
 
-def commands(text: str, depth: int = 0, shell: str = "") -> list[tuple[str, list[str]]]:
-    """Parse bounded literal commands; substitutions precede their parent segments."""
+def commands(text: str, depth: int = 0, parser_mode: str = "") -> list[tuple[str, list[str]]]:
+    """Parse bounded commands only (never spawn a process) in a supported parser mode."""
+    if parser_mode not in _PARSER_MODES:
+        return [(_PARSER_LIMIT, [])]
     if depth > _MAX_DEPTH or len(text) > 32768:
         return [(_PARSER_LIMIT, [])]
-    body, expansions = _strip_blocks(text, shell)
-    found = _recursive_commands([*expansions, *_substitutions(body, shell)], depth, shell)
-    for tokens in _split(body, shell):
-        found.extend(_command_segment(tokens, depth, shell))
+    body, expansions = _strip_blocks(text, parser_mode)
+    found = _recursive_commands(
+        [*expansions, *_substitutions(body, parser_mode)], depth, parser_mode
+    )
+    for tokens in _split(body, parser_mode):
+        found.extend(_command_segment(tokens, depth, parser_mode))
     return found
 
 
@@ -567,17 +654,16 @@ def _unsafe_cmd_delete(
 
 def _unsafe_recursive_delete(
     recursive: bool,
-    force: bool,
     targets: list[str],
     cleanup_allowed: bool,
 ) -> bool:
     if not recursive:
         return False
     dangerous_target = any(_is_dangerous_target(target) for target in targets)
-    unsafe_forced_delete = force and not (
-        cleanup_allowed and targets and all(_is_safe_target(target) for target in targets)
+    safe_cleanup = (
+        cleanup_allowed and bool(targets) and all(_is_safe_target(target) for target in targets)
     )
-    return dangerous_target or unsafe_forced_delete
+    return dangerous_target or not safe_cleanup
 
 
 def _remover_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | None:
@@ -585,7 +671,7 @@ def _remover_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
     # Preserve the old CMD force/recursive protection, including /s/q.
     if _unsafe_cmd_delete(verb, recursive, force, targets, cleanup_allowed, args):
         return "recursive-delete"
-    if _unsafe_recursive_delete(recursive, force, targets, cleanup_allowed):
+    if _unsafe_recursive_delete(recursive, targets, cleanup_allowed):
         return "recursive-delete"
     return None
 
@@ -604,8 +690,13 @@ def _command_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | No
 
 def _is_destructive(command: str, shell: str = "") -> str | None:
     cleanup_allowed = _cleanup_allowed()
-    for verb, args in commands(command, shell=shell):
-        if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl"}:
+    for command_index, (verb, args) in enumerate(commands(command, parser_mode=shell)):
+        # A prior command can replace an approved directory with a symlink or
+        # junction before the recursive delete runs. Do not authorize a safe
+        # cleanup path after any earlier command in the same tool call.
+        if command_index:
+            cleanup_allowed = False
+        if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl", "__location_change__"}:
             cleanup_allowed = False
         rule = _command_rule(verb, args, cleanup_allowed)
         if rule:
@@ -655,6 +746,13 @@ _ENV_EXEMPT_VERBS = {
     "test-path",
     "test",
     "stat",
+}
+_INLINE_CODE_OPTIONS: dict[str, frozenset[str]] = {
+    "node": frozenset({"-e", "--eval", "-p", "--print"}),
+    "nodejs": frozenset({"-e", "--eval", "-p", "--print"}),
+    "py": frozenset({"-c"}),
+    "python": frozenset({"-c"}),
+    "python3": frozenset({"-c"}),
 }
 
 
@@ -747,11 +845,55 @@ def _has_env_path_access(tool_name: str, tool_input: dict[str, object]) -> bool:
     return False
 
 
+def _inline_code_options(verb: str) -> frozenset[str]:
+    options = _INLINE_CODE_OPTIONS.get(verb)
+    if options is not None:
+        return options
+    if re.fullmatch(r"python(?:[23])?(?:\.\d+)?", verb):
+        return frozenset({"-c"})
+    return frozenset()
+
+
+def _has_inline_code_access(verb: str, args: list[str]) -> bool:
+    options = _inline_code_options(verb)
+    if not options:
+        return False
+    for arg in args:
+        low = arg.lower()
+        if low in options:
+            return True
+        if any(low.startswith(option) for option in options if len(option) == 2):
+            return True
+        if low.startswith(("--eval=", "--print=")):
+            return True
+    return False
+
+
+def _has_env_loader_access(verb: str, args: list[str]) -> bool:
+    if verb not in {"node", "nodejs"}:
+        return False
+    for index, arg in enumerate(args):
+        low = arg.lower()
+        if low.startswith(("-r", "--require=")) and "dotenv" in low:
+            return True
+        if (
+            low in {"-r", "--require"}
+            and index + 1 < len(args)
+            and "dotenv" in args[index + 1].lower()
+        ):
+            return True
+    return False
+
+
 def _has_env_command_access(tool_name: str, tool_input: dict[str, object]) -> bool:
     command = tool_input.get("command")
     if tool_name not in _COMMAND_TOOLS or not isinstance(command, str):
         return False
-    for verb, args in commands(command, shell=tool_name):
+    for verb, args in commands(command, parser_mode=tool_name):
+        # Inline interpreter code is opaque to this lexical parser and can
+        # construct secret paths dynamically, so it must fail closed.
+        if _has_inline_code_access(verb, args) or _has_env_loader_access(verb, args):
+            return True
         for index, arg in enumerate(args[:-1]):
             if arg in {"<", ">"} and _is_env_file(args[index + 1]):
                 return True
@@ -787,7 +929,7 @@ def _summary(tool_input: dict[str, object]) -> str:
 
 
 def _lock_descriptor(descriptor: int, release: bool) -> None:
-    if os.name == "nt":
+    if sys.platform == "win32":
         import msvcrt
 
         os.lseek(descriptor, 0, os.SEEK_SET)
@@ -796,8 +938,11 @@ def _lock_descriptor(descriptor: int, release: bool) -> None:
         return
     import fcntl
 
-    mode = fcntl.LOCK_UN if release else fcntl.LOCK_EX | fcntl.LOCK_NB
-    fcntl.flock(descriptor, mode)
+    # Some type-checker platforms omit fcntl's POSIX-only names. Cast the
+    # runtime module to the API available in this branch.
+    posix_fcntl = cast(_FcntlApi, fcntl)
+    mode = posix_fcntl.LOCK_UN if release else posix_fcntl.LOCK_EX | posix_fcntl.LOCK_NB
+    posix_fcntl.flock(descriptor, mode)
 
 
 def _audit_lock(descriptor: int, *, release: bool = False) -> None:
@@ -862,7 +1007,7 @@ def _block(tool_name: str, tool_input: dict[str, object], rule: str, message: st
 def main() -> None:
     try:
         raw_data: object = json.load(sys.stdin)
-    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+    except json.JSONDecodeError, UnicodeDecodeError, OSError:
         return
     data = _as_json_object(raw_data)
     if data is None:

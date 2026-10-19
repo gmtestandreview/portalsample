@@ -408,7 +408,7 @@ Verify [feature] meets performance requirements
 ## Quick Reference: Test Case Naming
 
 | Type | Prefix | Example |
-|------|--------|---------|
+| ------ | -------- | --------- |
 | Functional | TC-FUNC- | TC-FUNC-001 |
 | UI/Visual | TC-UI- | TC-UI-045 |
 | Integration | TC-INT- | TC-INT-012 |
@@ -423,7 +423,7 @@ Verify [feature] meets performance requirements
 ## Priority Definitions
 
 | Priority | Description | When to Run |
-|----------|-------------|-------------|
+| ---------- | ------------- | ------------- |
 | P0 | Critical path, blocks release | Every build |
 | P1 | Major features, high impact | Daily/Weekly |
 | P2 | Standard features, moderate impact | Weekly/Release |

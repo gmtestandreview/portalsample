@@ -1,0 +1,28 @@
+{
+  "candidate": "skill-duplication-audit v1.3",
+  "oracle": "v1.3.1",
+  "affected_case": "S3",
+  "reason": "Independent source-rule review corrected unsupported sibling Partial overlap; original result preserved",
+  "artifacts": [
+    {
+      "path": "skills/skill-duplication-audit/SKILL.md",
+      "sha256": "85502296b0563e3967556b54cbec863521734568359effff71c6620b6c7f3642"
+    },
+    {
+      "path": "skills/skill-duplication-audit/references/validation-cases.md",
+      "sha256": "827932d211f518bcd8818786bd1c6a55b43b8115927bacb365f5705858f828db"
+    },
+    {
+      "path": "skills/skill-duplication-audit/evals/expected.md",
+      "sha256": "7da2f599e1545258fcbebeb066c534c0e7cac9f4796b421cc0af558377198526"
+    },
+    {
+      "path": "skills/skill-duplication-audit/evals/cases/04-modes-handoff-contradiction.md",
+      "sha256": "88346cc3a91a7507182998bdf192839539de2a924b573d24353232295972f412"
+    },
+    {
+      "path": "skills/writing-skills/references/audit-scoring.md",
+      "sha256": "87fbfc1358580076e737af71860eaddb8297fdcd03ad010de032c484102cbd63"
+    }
+  ]
+}

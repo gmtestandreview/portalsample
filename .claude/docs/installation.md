@@ -66,6 +66,8 @@ cp    a-team/INIT_TEMPLATE.md your-project/INIT.md
 rm -rf a-team
 ```
 
+> **Note:** In this repo the blank template lives at `.agent-sync/pruned/INIT_TEMPLATE.md`; the commands here refer to the upstream `a-team` checkout.
+
 ### Option C — Git, no GitHub CLI (sparse clone)
 
 ```bash
@@ -104,9 +106,11 @@ Codex CLI, Cursor, OpenCode, and GitHub Copilot each read their hooks and manife
 To enable a platform's plugin:
 
 - **GitHub Copilot** has a native install command:
+
   ```bash
   copilot plugin install RBraga01/a-team:.copilot-plugin
   ```
+
 - **Codex CLI, Cursor, and OpenCode** don't currently have an equivalent one-line install — copy `.codex-plugin/`, `.cursor-plugin/`, or `.opencode/` into your project root manually from a clone of the repo.
 
 ---

@@ -241,3 +241,7 @@ Then('the RFQ submitted page should be displayed', async ({ page }) => {
     })
   ).toBeVisible();
 });
+
+Then('a validation error summary is displayed', async ({ page }) => {
+  await expect(page.getByTestId('form-error-summary')).toBeVisible();
+});

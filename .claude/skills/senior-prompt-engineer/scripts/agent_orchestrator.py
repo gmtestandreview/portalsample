@@ -10,7 +10,6 @@ import json
 import logging
 import argparse
 from pathlib import Path
-from typing import Dict, List, Optional
 from datetime import datetime
 
 logging.basicConfig(
@@ -22,7 +21,7 @@ logger = logging.getLogger(__name__)
 class AgentOrchestrator:
     """Production-grade agent orchestrator"""
     
-    def __init__(self, config: Dict):
+    def __init__(self, config: dict):
         self.config = config
         self.results = {
             'status': 'initialized',
@@ -38,7 +37,7 @@ class AgentOrchestrator:
         logger.info("Configuration validated")
         return True
     
-    def process(self) -> Dict:
+    def process(self) -> dict:
         """Main processing logic"""
         logger.info("Starting processing...")
         
@@ -60,7 +59,7 @@ class AgentOrchestrator:
             logger.error(f"Processing failed: {e}")
             raise
     
-    def _execute(self) -> Dict:
+    def _execute(self) -> dict:
         """Execute main logic"""
         # Implementation here
         return {'success': True}

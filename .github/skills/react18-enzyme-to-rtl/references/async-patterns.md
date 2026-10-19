@@ -210,7 +210,7 @@ it('handles sequential state updates', async () => {
 ## RTL Async Query Guide
 
 | Method | Behavior | Use when |
-|---|---|---|
+| --- | --- | --- |
 | `getBy*` | Synchronous - throws if not found | Element is always present immediately |
 | `queryBy*` | Synchronous - returns null if not found | Checking element does NOT exist |
 | `findBy*` | Async - waits up to 1000ms, rejects if not found | Element appears asynchronously |

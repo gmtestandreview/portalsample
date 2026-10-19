@@ -186,6 +186,7 @@ At the END of `3-findings.md`, append the Threat Coverage Verification table:
 ```
 
 **Fixed rules baked into this skeleton:**
+
 - Finding ID: `FIND-` prefix (never `F-`, `F01`, `Finding`)
 - Attribute names: `SDL Bugbar Severity`, `Exploitation Prerequisites`, `Exploitability Tier`, `Remediation Effort` (exact — not abbreviated)
 - CVSS: starts with `CVSS:4.0/` (never bare vector)

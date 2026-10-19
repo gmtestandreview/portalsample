@@ -323,6 +323,7 @@ A custom library is an XML file with `.xml` extension loaded via `File > Open Li
 ```
 
 Each shape entry contains:
+
 - `xml`: XML-escaped cell definition
 - `w` / `h`: Default width/height
 - `aspect`: `"fixed"` to lock ratio
@@ -331,4 +332,5 @@ Each shape entry contains:
     }
   ]
 </mxlibrary>
+
 ```

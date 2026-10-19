@@ -47,7 +47,7 @@ Also check for a `references/` directory alongside SKILL.md (16 reference files 
 > cp -r ~/awesome-copilot/skills/quality-playbook/* .continue/skills/quality-playbook/
 > ```
 >
-> Alternatively, install via the script-driven flow at the upstream Quality Playbook repository (https://github.com/andrewstellman/quality-playbook) for the full v1.5.6 install UX (auto-detect, marker-directory creation, smoke checks).
+> Alternatively, install via the script-driven flow at the upstream Quality Playbook repository (<https://github.com/andrewstellman/quality-playbook>) for the full v1.5.6 install UX (auto-detect, marker-directory creation, smoke checks).
 
 Then stop and wait for the user to install it.
 

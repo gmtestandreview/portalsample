@@ -50,9 +50,11 @@
   WHY: Keep a separate log entry for each phase to track progress clearly.
 -->
 - **Status:** pending
-- Actions taken:
+
+- Actions taken
   -
-- Files created/modified:
+
+- Files created/modified
   -
 
 ## Test Results
@@ -97,7 +99,7 @@
 -->
 <!-- If you can answer these, context is solid -->
 | Question | Answer |
-|----------|--------|
+| ---------- | -------- |
 | Where am I? | Phase X |
 | Where am I going? | Remaining phases |
 | What's the goal? | [goal statement] |

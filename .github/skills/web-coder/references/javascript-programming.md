@@ -5,9 +5,11 @@ Comprehensive reference for JavaScript, ECMAScript, programming concepts, and mo
 ## Core Concepts
 
 ### JavaScript
+
 High-level, interpreted programming language that conforms to the ECMAScript specification. Primary language for web development alongside HTML and CSS.
 
 **Key Characteristics**:
+
 - Dynamically typed
 - Prototype-based inheritance
 - First-class functions
@@ -15,9 +17,11 @@ High-level, interpreted programming language that conforms to the ECMAScript spe
 - Asynchronous execution
 
 ### ECMAScript
+
 The standardized specification that JavaScript implements.
 
 **Major Versions**:
+
 - **ES5** (2009): Strict mode, JSON support
 - **ES6/ES2015**: Classes, arrow functions, promises, modules
 - **ES2016+**: Async/await, optional chaining, nullish coalescing
@@ -98,6 +102,7 @@ parseFloat("3.14"); // 3.14
 ### Truthy and Falsy Values
 
 **Falsy values** (evaluate to false):
+
 - `false`
 - `0`, `-0`
 - `""` (empty string)
@@ -106,6 +111,7 @@ parseFloat("3.14"); // 3.14
 - `NaN`
 
 **Everything else is truthy**, including:
+
 - `"0"` (string)
 - `"false"` (string)
 - `[]` (empty array)
@@ -175,6 +181,7 @@ const makePerson = (name, age) => ({ name, age });
 ### First-Class Functions
 
 Functions are values that can be:
+
 - Assigned to variables
 - Passed as arguments
 - Returned from other functions
@@ -678,6 +685,7 @@ throw new ValidationError("Invalid input");
 ## Best Practices
 
 ### Do's
+
 - ✅ Use `const` by default, `let` when needed
 - ✅ Use strict mode (`'use strict';`)
 - ✅ Use arrow functions for callbacks
@@ -690,6 +698,7 @@ throw new ValidationError("Invalid input");
 - ✅ Use modern ES6+ features
 
 ### Don'ts
+
 - ❌ Use `var` (use `let` or `const`)
 - ❌ Pollute global scope
 - ❌ Use `==` (use `===` for strict equality)
@@ -702,6 +711,7 @@ throw new ValidationError("Invalid input");
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - Algorithm
 - Argument
 - Array

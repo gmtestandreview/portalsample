@@ -21,7 +21,7 @@ import re
 import sys
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence, Tuple
+from collections.abc import Iterable, Sequence
 
 
 REQUIRED_DOCS: Sequence[str] = (
@@ -36,7 +36,7 @@ REQUIRED_DOCS: Sequence[str] = (
 
 ALLOWED_HIDDEN_ARTIFACTS = {".codebase-scan.txt"}
 
-REQUIRED_HEADINGS: Dict[str, Sequence[str]] = {
+REQUIRED_HEADINGS: dict[str, Sequence[str]] = {
     "STACK.md": (
         "# Technology Stack",
         "### 1) Runtime Summary",
@@ -114,7 +114,7 @@ PLACEHOLDER_RE = re.compile(
 )
 
 # Credential-like values. These are intentionally conservative and should not match plain env var names.
-SECRET_PATTERNS: Sequence[Tuple[str, re.Pattern]] = (
+SECRET_PATTERNS: Sequence[tuple[str, re.Pattern]] = (
     (
         "private key material",
         re.compile(r"-----BEGIN (?:RSA |DSA |EC |OPENSSH |PGP )?PRIVATE KEY-----"),
@@ -192,7 +192,7 @@ def rel_name(path: Path, root: Path) -> str:
         return str(path)
 
 
-def add(findings: List[Finding], severity: str, file: str, message: str) -> None:
+def add(findings: list[Finding], severity: str, file: str, message: str) -> None:
     findings.append(Finding(severity=severity, file=file, message=message))
 
 
@@ -223,8 +223,8 @@ def has_evidence_content(text: str) -> bool:
     return False
 
 
-def validate_docs_dir(project_root: Path, docs_dir: Path) -> List[Finding]:
-    findings: List[Finding] = []
+def validate_docs_dir(project_root: Path, docs_dir: Path) -> list[Finding]:
+    findings: list[Finding] = []
     if not docs_dir.exists():
         add(findings, "error", str(docs_dir), "docs directory does not exist")
         return findings
@@ -256,7 +256,7 @@ def validate_docs_dir(project_root: Path, docs_dir: Path) -> List[Finding]:
     return findings
 
 
-def validate_file(project_root: Path, docs_dir: Path, path: Path, findings: List[Finding]) -> None:
+def validate_file(project_root: Path, docs_dir: Path, path: Path, findings: list[Finding]) -> None:
     doc_name = path.name
     try:
         text = path.read_text(encoding="utf-8")

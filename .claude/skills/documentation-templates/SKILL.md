@@ -15,7 +15,7 @@ allowed-tools: Read, Glob, Grep
 ### Essential Sections (Priority Order)
 
 | Section | Purpose |
-|---------|---------|
+| --------- | --------- |
 | **Title + One-liner** | What is this? |
 | **Quick Start** | Running in <5 min |
 | **Features** | What can I do? |
@@ -102,7 +102,7 @@ Get a user by ID.
 ### When to Comment
 
 | ✅ Comment | ❌ Don't Comment |
-|-----------|-----------------|
+| ----------- | ----------------- |
 | Why (business logic) | What (obvious) |
 | Complex algorithms | Every line |
 | Non-obvious behavior | Self-explanatory code |
@@ -173,6 +173,7 @@ For AI crawlers and agents:
 ### MCP-Ready Documentation
 
 For RAG indexing:
+
 - Clear H1-H3 hierarchy
 - JSON/YAML examples for data structures
 - Mermaid diagrams for flows
@@ -183,7 +184,7 @@ For RAG indexing:
 ## 7. Structure Principles
 
 | Principle | Why |
-|-----------|-----|
+| ----------- | ----- |
 | **Scannable** | Headers, lists, tables |
 | **Examples first** | Show, don't just tell |
 | **Progressive detail** | Simple → Complex |

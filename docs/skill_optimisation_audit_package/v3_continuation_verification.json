@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-17",
+  "scope": "V3 scanner policy and evidence continuation; no candidate code or skill edits",
+  "python": "3.14.7",
+  "codex_cli": "0.162.0-alpha.17.2",
+  "sonar_cli": "1.7.0",
+  "tests": {
+    "command": ".venv/Scripts/python.exe -m pytest -q -p no:cacheprovider tests/test_evidence.py",
+    "cwd": "skills/writing-skills/scripts",
+    "exit_code": 0,
+    "stdout": "........................................... [100%]\n43 passed in 0.94s\n"
+  },
+  "unchanged_baseline": "v3_python314_test_baseline.json preserves the completed 203-test upgrade/collection result; not rerun for evidence-only changes",
+  "natural_acceptance": {
+    "runs": 2,
+    "results": "codex_activation/policy-correction/results.json",
+    "gates": {
+      "discovery": "PASS",
+      "loading": "PASS",
+      "application": "PASS",
+      "artifact": "PASS",
+      "runtime": "PASS"
+    },
+    "scope": "Exact duplication v1.3 fixture; prepared temporary policy; operational scanner-PATH fact appended to ordinary request"
+  },
+  "pressure": {
+    "contract": "v3_pressure_contract.json",
+    "raw": "v3_pressure_raw.md",
+    "candidate_entrypoint_sha256": "5f0a9b3481fc9e13541ef7a094abaf6a9840bafa489707b4e6dceeb93ba50602",
+    "candidate_reference_sha256": "e4e5eafcf3f4ee735cd74260a44b300e03945b13f8e65abc650a191d16910139",
+    "cases": [
+      {
+        "id": "P1",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "v3_pressure_raw.md: earlier-state evaluator paragraph"
+      },
+      {
+        "id": "P2",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "v3_pressure_raw.md: actual-current-state paragraph"
+      },
+      {
+        "id": "P3",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "v3_pressure_raw.md: single controller and human owner decision"
+      },
+      {
+        "id": "P4",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "v3_pressure_raw.md: delivered unscored closeout and evidence gate table"
+      },
+      {
+        "id": "P5",
+        "status": "PASS",
+        "passed": true,
+        "evidence": "v3_pressure_raw.md: one restart checkpoint and no child launch observation"
+      }
+    ],
+    "summary": {
+      "PASS": 5,
+      "AMBER": 0,
+      "FAIL": 0,
+      "NHR": 0,
+      "N/A": 0
+    },
+    "limits": "One decision sample; no live child dispatch, automated enforcement, no-skill causal comparison or reliability claim"
+  },
+  "specialist_aggregation": {
+    "status": "N/A",
+    "reason": "No comparative benchmark arms, aggregated arm statistics or winner claim; local Boolean/count validation remains required"
+  },
+  "review": "v3_continuation_review.md",
+  "release": "deploy",
+  "release_scope": "Recommendation for tested primary Codex candidate/environment with equivalent scan/read permissions; no installation or permanent policy change",
+  "token_efficiency": null,
+  "hooks_changed": false,
+  "integration_executed": false,
+  "cleanup": {
+    "transient_debug_files_removed": 26,
+    "fixture_retained": "C:/Users/gregm/AppData/Local/Temp/codex-v3-acceptance-20261017",
+    "public_evidence_retained": true,
+    "temporary_user_rule_removed": true
+  },
+  "final_checks": {
+    "secrets": "No issues found for curated report/record files and evidence dependencies",
+    "format": "Prettier --check passed for six curated Markdown files and seven JSON files",
+    "diff": "git diff --check -- docs/skill_optimisation_audit_package exit 0",
+    "links": "All local links in six curated Markdown files resolve",
+    "matrix": "19 unique fix IDs and 13 unique control IDs",
+    "candidate_identity": "All four duplication/controller entrypoint and active-reference hashes unchanged",
+    "json": "All seven curated JSON files parse",
+    "scope": "No candidate/hook code edits by this continuation; concurrent secret-scanner.py modification preserved",
+    "preflight": "Both runtime record and implementation index: Evidence consistent: deploy (not an acceptance verdict)"
+  },
+  "subsequent_installed_acceptance": {
+    "protected_hooks": "Both hashes unchanged",
+    "record": "v3_normal_host_run.json",
+    "report": "V3_NORMAL_HOST_ACCEPTANCE.md",
+    "results": "codex_activation/normal-host/results.json",
+    "scope": "Subsequent user-authorized installation and normal-host checks; preceding 43-test/fixture evidence retains original scope",
+    "active_policy": "C:/Users/gregm/.codex/rules/v3-installed-skills.rules"
+  }
+}

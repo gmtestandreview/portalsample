@@ -1,0 +1,53 @@
+{
+  "no_broad_test_rerun": "Python upgrade and collection baseline unchanged; installed byte identity and structural checks directly verify deployment",
+  "authentication_command_executed": false,
+  "scope": "Normal native CLI only; existing IDE and Claude untested",
+  "date": "2026-10-17",
+  "installed_source_mismatches": [],
+  "cleanup": "Transient stderr dumps removed after public startup observations are retained in results.json",
+  "installed_source_files_checked": 82,
+  "active_policy": {
+    "retained": true,
+    "path": "C:/Users/gregm/.codex/rules/v3-installed-skills.rules",
+    "sha256": "98a6201d27ddec48d77ee19d2ae54eb48bb64c56d6ed7ae182b0034d27dcf246",
+    "matches_recorded_copy": true
+  },
+  "protected_hooks": [
+    {
+      "after_sha256": "86051bff2278e061d79fda5306862a8884ebac4f8eae0e11f7d22bc47defe621",
+      "path": "C:\\Users\\gregm\\.claude\\hooks\\sonar-secrets\\build-scripts\\pretool-secrets.ps1",
+      "before_sha256": "86051bff2278e061d79fda5306862a8884ebac4f8eae0e11f7d22bc47defe621",
+      "unchanged": true
+    },
+    {
+      "after_sha256": "d0426ffd985bc55dc6d9cfa5178a8a9f4df2e96c155df22ea4615f05dd7bbf7e",
+      "path": "C:\\Users\\gregm\\.claude\\hooks\\sonar-secrets\\build-scripts\\prompt-secrets.ps1",
+      "before_sha256": "d0426ffd985bc55dc6d9cfa5178a8a9f4df2e96c155df22ea4615f05dd7bbf7e",
+      "unchanged": true
+    }
+  ],
+  "prior_artifacts": "prior-documents-manifest.json preserves exact pre-closeout documentation bytes",
+  "candidate_code_modified": false,
+  "integration_executed": false,
+  "installed_structure": {
+    "controller_exit": 0,
+    "duplication_exit": 0,
+    "commands": [
+      "skills-ref validate C:/Users/gregm/.codex/skills/skill-duplication-audit",
+      "skills-ref validate C:/Users/gregm/.codex/skills/writing-skills"
+    ],
+    "output": "Both report Valid skill"
+  },
+  "documentation_closeout": {
+    "control_matrix": "13 controls",
+    "review": "v3_continuation_review.md and v3_review_raw.md",
+    "independent_review": "APPROVE scoped; exact installed hashes/policy/hooks independently checked",
+    "additional_canonical_report": "V3_NORMAL_HOST_ACCEPTANCE.md",
+    "transient_stderr_dumps_removed": 5,
+    "requested_documents": 10,
+    "fix_matrix": "19 unique fix IDs",
+    "broken_links": 0,
+    "prettier": "All eleven curated Markdown documents formatted",
+    "local_links_checked": 80
+  }
+}

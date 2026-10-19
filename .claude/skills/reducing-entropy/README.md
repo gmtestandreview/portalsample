@@ -74,7 +74,7 @@ Before starting, **you must load at least one mindset** from the `references/` d
 This skill actively rejects these common arguments:
 
 | Argument | Why It's Rejected |
-|----------|-------------------|
+| ---------- | ------------------- |
 | "Keep what exists" | Status quo bias. The question is total code, not churn. |
 | "This adds flexibility" | Flexibility for what? YAGNI. |
 | "Better separation of concerns" | More files/functions = more code. Separation isn't free. |

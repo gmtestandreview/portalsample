@@ -25,7 +25,7 @@ correct mxGraph XML structure. All generated files open immediately in the
 **Supported diagram types**
 
 | Diagram Type | Template Available | Description |
-|---|---|---|
+| --- | --- | --- |
 | Flowchart | `assets/templates/flowchart.drawio` | Process flows with decisions and branches |
 | System Architecture | `assets/templates/architecture.drawio` | Multi-tier / layered service architecture |
 | Sequence Diagram | `assets/templates/sequence.drawio` | Actor lifelines and timed message flows |
@@ -40,9 +40,11 @@ correct mxGraph XML structure. All generated files open immediately in the
 ## 2. Prerequisites
 
 - If running with VS Code integration enabled, Install the drawio extension: **draw.io VS Code extension** — `hediet.vscode-drawio` (extension id). Install with:
+
   ```
   ext install hediet.vscode-drawio
   ```
+
 - **Supported file extensions**: `.drawio`, `.drawio.svg`, `.drawio.png`
 - **Python 3.8+** (optional) — for the validation and shape-insertion scripts in `scripts/`
 
@@ -55,6 +57,7 @@ Follow these steps in order for every diagram generation task.
 ### Step 1 — Understand the Request
 
 Ask or infer:
+
 1. **Diagram type** — What kind of diagram? (flowchart, architecture, UML, ER, sequence, network...)
 2. **Entities / actors** — What are the main components, actors, classes, or tables?
 3. **Relationships** — How are they connected? What direction? What cardinality?
@@ -91,6 +94,7 @@ If the request is ambiguous, infer the most sensible diagram type from context (
 ### Step 3 — Plan the Layout
 
 Before generating XML, sketch the logical placement:
+
 - Organise into **rows** or **tiers** (use swimlanes for layers)
 - **Horizontal spacing**: 40–60px between same-row shapes
 - **Vertical spacing**: 80–120px between tier rows
@@ -100,6 +104,7 @@ Before generating XML, sketch the logical placement:
 ### Step 4 — Generate the mxGraph XML
 
 **Vertex cell** (every shape):
+
 ```xml
 <mxCell id="unique-id" value="Label"
         style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;"
@@ -109,6 +114,7 @@ Before generating XML, sketch the logical placement:
 ```
 
 **Edge cell** (every connector):
+
 ```xml
 <mxCell id="edge-id" value="Label (optional)"
         style="edgeStyle=orthogonalEdgeStyle;html=1;"
@@ -118,6 +124,7 @@ Before generating XML, sketch the logical placement:
 ```
 
 **Critical rules**:
+
 - Every cell id must be **globally unique** within the file
 - Every vertex must have an `mxGeometry` child with `x`, `y`, `width`, `height`, `as="geometry"`
 - Every edge must have `source` and `target` matching existing vertex ids — **exception**: floating edges (e.g. sequence diagram lifelines) use `sourcePoint`/`targetPoint` inside `<mxGeometry>` instead; see §4 Sequence Diagram
@@ -130,7 +137,7 @@ Before generating XML, sketch the logical placement:
 Use the standard semantic color palette for consistency:
 
 | Purpose | fillColor | strokeColor |
-|---|---|---|
+| --- | --- | --- |
 | Primary / Info | `#dae8fc` | `#6c8ebf` |
 | Success / Start | `#d5e8d4` | `#82b366` |
 | Warning / Decision | `#fff2cc` | `#d6b656` |
@@ -178,9 +185,11 @@ edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;
 
 1. **Write the file** to the requested path with `.drawio` extension
 2. **Run the validator** (optional but recommended):
+
    ```bash
    python .github/skills/draw-io-diagram-generator/scripts/validate-drawio.py <path-to-file.drawio>
    ```
+
 3. **Tell the user** how to open the file:
    > "Open `<filename>` in VS Code — it will render automatically with the draw.io extension. You can use draw.io's web app or desktop app as well if you prefer."
 4. **Provide a brief description** of what is in the diagram so the user knows what to expect.
@@ -310,6 +319,7 @@ Key elements: Actors (top), Lifelines (dashed vertical lines), Activation boxes,
 Use `shape=table` containers with `childLayout=tableLayout`. Rows are `shape=tableRow` cells with `portConstraint=eastwest`. Columns inside each row are `shape=partialRectangle`.
 
 Relationship arrows use `edgeStyle=entityRelationEdgeStyle`:
+
 - One-to-One: `startArrow=ERone;endArrow=ERone`
 - One-to-Many: `startArrow=ERone;endArrow=ERmany`
 - Many-to-Many: `startArrow=ERmany;endArrow=ERmany`
@@ -322,7 +332,7 @@ Class boxes are swimlane containers. Attributes and methods are plain text cells
 Arrow styles by relationship type:
 
 | Relationship | Style String |
-|---|---|
+| --- | --- |
 | Inheritance (extends) | `edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=0;` |
 | Realization (implements) | `edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=block;endFill=0;` |
 | Composition | `edgeStyle=orthogonalEdgeStyle;html=1;startArrow=diamond;startFill=1;endArrow=none;` |
@@ -362,6 +372,7 @@ When modifying an existing `.drawio` file:
 5. **Verify edges** — after repositioning nodes, confirm edge source/target ids remain valid
 
 Use `scripts/add-shape.py` to safely add a single shape without editing raw XML:
+
 ```bash
 python .github/skills/draw-io-diagram-generator/scripts/add-shape.py docs/arch.drawio "New Service" 700 380
 ```
@@ -371,22 +382,26 @@ python .github/skills/draw-io-diagram-generator/scripts/add-shape.py docs/arch.d
 ## 7. Best Practices
 
 **Layout**
+
 - Align shapes to the 10px grid (all coordinates divisible by 10)
 - Group related shapes inside swimlane containers
 - One diagram topic per page; use multi-page files for complex systems
 - Aim for 40 or fewer cells per page for readability
 
 **Labels**
+
 - Add a title text cell (`text;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1`) at top of every page
 - Always set `whiteSpace=wrap;html=1` on vertex shapes
 - Keep labels concise — 3 words or fewer per shape where possible
 
 **Style consistency**
+
 - Use the semantic color palette from Section 3 Step 5 consistently across a project
 - Prefer `edgeStyle=orthogonalEdgeStyle` for clean right-angle connectors
 - Do not inline arbitrary HTML in labels unless necessary
 
 **File naming**
+
 - Use kebab-case: `order-service-flow.drawio`, `database-schema.drawio`
 - Place diagrams alongside the code they document: `docs/` or `architecture/`
 
@@ -395,7 +410,7 @@ python .github/skills/draw-io-diagram-generator/scripts/add-shape.py docs/arch.d
 ## 8. Troubleshooting
 
 | Problem | Likely Cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | File opens blank in VS Code | Missing id=0 or id=1 cell | Add both root cells before any other cells |
 | Shape at wrong position | Child inside container — coords are relative | Check `parent`; adjust x/y relative to container |
 | Edge not visible | source or target id does not match any vertex | Verify both ids exist exactly as written |
@@ -423,6 +438,7 @@ Before delivering any generated `.drawio` file, verify:
 - [ ] A title label cell exists at the top of each page
 
 Run the automated validator:
+
 ```bash
 python .github/skills/draw-io-diagram-generator/scripts/validate-drawio.py <file.drawio>
 ```
@@ -448,7 +464,7 @@ When delivering a diagram, always provide:
 All companion files are in `.github/skills/draw-io-diagram-generator/`:
 
 | File | Contents |
-|---|---|
+| --- | --- |
 | `references/drawio-xml-schema.md` | Complete mxfile / mxGraphModel / mxCell attribute reference, coordinate system, reserved cells, validation rules |
 | `references/style-reference.md` | All style keys with allowed values, vertex and edge style keys, shape catalog, semantic color palette |
 | `references/shape-libraries.md` | All shape library categories (General, Flowchart, UML, ER, Network, BPMN, Mockup, K8s) with style strings |

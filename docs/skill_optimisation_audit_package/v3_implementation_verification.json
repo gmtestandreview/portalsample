@@ -1,0 +1,115 @@
+{
+  "scope": "Final scoped skill verification; not natural host activation",
+  "baseline": "191002463906329ba8fe7bdcfe2bbff15f77f891",
+  "python": "3.13.11",
+  "ruff": "0.16.7",
+  "pyright": "1.1.414",
+  "pyright_file_count": 2,
+  "pyright_mode": "CLI default; editor equivalence unknown",
+  "checks": [
+    {
+      "name": "scoped_tests",
+      "command": [
+        "uv",
+        "run",
+        "--group",
+        "dev",
+        "pytest",
+        "-q",
+        "tests/test_evidence.py",
+        "tests/test_cli.py",
+        "tests/test_validator.py",
+        "tests/test_models.py",
+        "tests/test_parser.py",
+        "tests/test_package.py",
+        "tests/test_writing_skills_metadata.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.27,
+      "stdout": "........................................................................ [ 46%]\n........................................................................ [ 93%]\n..........                                                               [100%]\n154 passed in 1.82s\n",
+      "stderr": ""
+    },
+    {
+      "name": "ruff",
+      "command": [
+        "uv",
+        "run",
+        "--group",
+        "dev",
+        "ruff",
+        "check",
+        "skills_ref/evidence.py",
+        "skills_ref/cli.py",
+        "tests/test_evidence.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.056,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "uv",
+        "run",
+        "--group",
+        "dev",
+        "ruff",
+        "format",
+        "--check",
+        "skills_ref/evidence.py",
+        "skills_ref/cli.py",
+        "tests/test_evidence.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.056,
+      "stdout": "3 files already formatted\n",
+      "stderr": ""
+    },
+    {
+      "name": "pyright",
+      "command": [
+        "pyright",
+        "skills_ref/evidence.py",
+        "skills_ref/cli.py",
+        "--pythonpath",
+        ".venv/Scripts/python.exe"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.508,
+      "stdout": "0 errors, 0 warnings, 0 informations\n",
+      "stderr": ""
+    },
+    {
+      "name": "controller_frontmatter",
+      "command": [
+        "uv",
+        "run",
+        "skills-ref",
+        "validate",
+        "../"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.262,
+      "stdout": "Valid skill: ..\n",
+      "stderr": ""
+    },
+    {
+      "name": "target_frontmatter",
+      "command": [
+        "uv",
+        "run",
+        "skills-ref",
+        "validate",
+        "../../skill-duplication-audit"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.261,
+      "stdout": "Valid skill: ..\\..\\skill-duplication-audit\n",
+      "stderr": ""
+    }
+  ],
+  "full_suite_limit": "Baseline collection errors in test_prompt.py and test_render_graphs.py: defusedxml.ElementTree.Element is unavailable",
+  "tokens": null,
+  "cached_tokens": null
+}

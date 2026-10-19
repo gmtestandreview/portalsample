@@ -51,3 +51,33 @@ When('the user cancels leaving the form', async ({ page }) => {
     })
     .click();
 });
+
+Given(
+  'saving the quote report recipient step will fail with status {int}',
+  async ({ scenarioState }, status: number) => {
+    scenarioState.failures.set(
+      failureKey(
+        'PUT',
+        `/api/accept-quote/QA-${scenarioState.activeReferenceId}/report-recipient`
+      ),
+      { status }
+    );
+  }
+);
+
+Given(
+  'saving the type-approval application details step will fail with status {int}',
+  async ({ scenarioState }, status: number) => {
+    scenarioState.failures.set(
+      failureKey(
+        'PUT',
+        '/api/request-for-pattern-approval/*/application-and-instrument'
+      ),
+      { status }
+    );
+  }
+);
+
+Then('a save error is displayed', async ({ page }) => {
+  await expect(page.getByRole('alert')).toBeVisible();
+});
