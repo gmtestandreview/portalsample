@@ -25,7 +25,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Phase Objectives
 
 | Phase | Objective |
-|-------|-----------|
+| ------- | ----------- |
 | **Recon** | Map attack surface |
 | **Initial Access** | Get first foothold |
 | **Execution** | Run code on target |
@@ -53,7 +53,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Information Targets
 
 | Category | Value |
-|----------|-------|
+| ---------- | ------- |
 | Technology stack | Attack vector selection |
 | Employee info | Social engineering |
 | Network ranges | Scanning scope |
@@ -66,7 +66,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Selection Criteria
 
 | Vector | When to Use |
-|--------|-------------|
+| -------- | ------------- |
 | **Phishing** | Human target, email access |
 | **Public exploits** | Vulnerable services exposed |
 | **Valid credentials** | Leaked or cracked |
@@ -79,7 +79,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Windows Targets
 
 | Check | Opportunity |
-|-------|-------------|
+| ------- | ------------- |
 | Unquoted service paths | Write to path |
 | Weak service permissions | Modify service |
 | Token privileges | Abuse SeDebug, etc. |
@@ -88,7 +88,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Linux Targets
 
 | Check | Opportunity |
-|-------|-------------|
+| ------- | ------------- |
 | SUID binaries | Execute as owner |
 | Sudo misconfiguration | Command execution |
 | Kernel vulnerabilities | Kernel exploits |
@@ -101,7 +101,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Key Techniques
 
 | Technique | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | LOLBins | Use legitimate tools |
 | Obfuscation | Hide malicious code |
 | Timestomping | Hide file modifications |
@@ -121,7 +121,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Credential Types
 
 | Type | Use |
-|------|-----|
+| ------ | ----- |
 | Password | Standard auth |
 | Hash | Pass-the-hash |
 | Ticket | Pass-the-ticket |
@@ -140,7 +140,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Attack Categories
 
 | Attack | Target |
-|--------|--------|
+| -------- | -------- |
 | Kerberoasting | Service account passwords |
 | AS-REP Roasting | Accounts without pre-auth |
 | DCSync | Domain credentials |
@@ -153,6 +153,7 @@ LATERAL MOVEMENT → COLLECTION → C2 → EXFILTRATION → IMPACT
 ### Attack Narrative
 
 Document the full attack chain:
+
 1. How initial access was gained
 2. What techniques were used
 3. What objectives were achieved
@@ -161,6 +162,7 @@ Document the full attack chain:
 ### Detection Gaps
 
 For each successful technique:
+
 - What should have detected it?
 - Why didn't detection work?
 - How to improve detection
@@ -188,7 +190,7 @@ For each successful technique:
 ## 10. Anti-Patterns
 
 | ❌ Don't | ✅ Do |
-|----------|-------|
+| ---------- | ------- |
 | Rush to exploitation | Follow methodology |
 | Cause damage | Minimize impact |
 | Skip reporting | Document everything |

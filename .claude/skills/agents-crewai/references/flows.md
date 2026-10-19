@@ -7,7 +7,7 @@ Flows provide event-driven orchestration with precise control over execution pat
 ## When to Use Flows vs Crews
 
 | Scenario | Use Crews | Use Flows |
-|----------|-----------|-----------|
+| ---------- | ----------- | ----------- |
 | Simple multi-agent collaboration | ✅ | |
 | Sequential/hierarchical tasks | ✅ | |
 | Conditional branching | | ✅ |

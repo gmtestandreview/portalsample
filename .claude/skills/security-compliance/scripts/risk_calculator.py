@@ -15,7 +15,6 @@ import argparse
 import csv
 import json
 from dataclasses import dataclass
-from typing import List, Dict, Optional
 from datetime import datetime
 
 
@@ -53,9 +52,9 @@ class RiskCalculator:
     }
 
     def __init__(self):
-        self.risks: List[Risk] = []
+        self.risks: list[Risk] = []
 
-    def calculate_quantitative(self, risk: Risk) -> Dict:
+    def calculate_quantitative(self, risk: Risk) -> dict:
         """Calculate quantitative risk metrics (SLE, ALE)"""
         sle = risk.asset_value * risk.exposure_factor
         ale = sle * risk.aro
@@ -65,7 +64,7 @@ class RiskCalculator:
             "ale": round(ale, 2)
         }
 
-    def calculate_qualitative(self, risk: Risk) -> Dict:
+    def calculate_qualitative(self, risk: Risk) -> dict:
         """Calculate qualitative risk metrics"""
         risk_score = risk.likelihood_qualitative * risk.impact_qualitative
         risk_level = self.RISK_MATRIX.get(
@@ -80,7 +79,7 @@ class RiskCalculator:
             "sla_days": sla_days
         }
 
-    def cost_benefit_analysis(self, risk: Risk, control_cost: float, new_aro: float) -> Dict:
+    def cost_benefit_analysis(self, risk: Risk, control_cost: float, new_aro: float) -> dict:
         """Perform cost-benefit analysis for a security control"""
         quant = self.calculate_quantitative(risk)
         ale_before = quant["ale"]
@@ -108,7 +107,7 @@ class RiskCalculator:
         """Add risk to assessment"""
         self.risks.append(risk)
 
-    def generate_report(self) -> List[Dict]:
+    def generate_report(self) -> list[dict]:
         """Generate comprehensive risk report"""
         report = []
 
@@ -138,7 +137,7 @@ class RiskCalculator:
 
         return report
 
-    def generate_summary(self) -> Dict:
+    def generate_summary(self) -> dict:
         """Generate summary statistics"""
         if not self.risks:
             return {}
@@ -164,7 +163,7 @@ class RiskCalculator:
         }
 
 
-def load_risks_from_csv(filename: str) -> List[Risk]:
+def load_risks_from_csv(filename: str) -> list[Risk]:
     """Load risks from CSV file"""
     risks = []
 
@@ -187,7 +186,7 @@ def load_risks_from_csv(filename: str) -> List[Risk]:
     return risks
 
 
-def save_report_to_csv(report: List[Dict], filename: str):
+def save_report_to_csv(report: list[dict], filename: str):
     """Save risk report to CSV file"""
     if not report:
         print("No data to save")

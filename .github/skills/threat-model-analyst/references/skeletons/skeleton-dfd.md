@@ -43,6 +43,7 @@ flowchart LR
 ```
 
 **NEVER change these fixed elements:**
+
 - `%%{init:` themeVariables: only `background`, `primaryColor`, `lineColor`
 - `flowchart LR` — never TB
 - classDef colors: process=#6baed6/#2171b5, external=#fdae61/#d94701, datastore=#74c476/#238b45
@@ -52,6 +53,7 @@ flowchart LR
 - linkStyle: `stroke:#666666,stroke-width:2px`
 
 **DFD shapes:**
+
 - Process: `(("Name"))` (double parentheses = circle)
 - Data Store: `[("Name")]` (bracket-paren = cylinder)
 - External: `["Name"]` (brackets = rectangle)

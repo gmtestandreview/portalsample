@@ -9,7 +9,7 @@
 ## Key commands
 
 | Command | What it does |
-|---------|-------------|
+| --------- | ------------- |
 | `/mcp` | List connected MCP servers |
 | `/mcp add <name> <command>` | Add a new MCP server |
 

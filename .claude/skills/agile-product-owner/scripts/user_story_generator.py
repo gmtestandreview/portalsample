@@ -5,7 +5,7 @@ Creates well-formed user stories with acceptance criteria
 """
 
 import json
-from typing import Dict, List, Tuple
+
 
 class UserStoryGenerator:
     """Generate INVEST-compliant user stories"""
@@ -48,7 +48,7 @@ class UserStoryGenerator:
             "Can {capability} without {negative_outcome}"
         ]
     
-    def generate_epic_stories(self, epic: Dict) -> List[Dict]:
+    def generate_epic_stories(self, epic: dict) -> list[dict]:
         """Break down epic into user stories"""
         stories = []
         
@@ -77,7 +77,7 @@ class UserStoryGenerator:
         
         return stories
     
-    def generate_story(self, persona: str, feature: str, epic: str, index: int) -> Dict:
+    def generate_story(self, persona: str, feature: str, epic: str, index: int) -> dict:
         """Generate a single user story"""
         
         persona_data = self.personas.get(persona, self.personas['end_user'])
@@ -97,7 +97,7 @@ class UserStoryGenerator:
         
         return story
     
-    def generate_enabler_story(self, requirement: str, epic: str) -> Dict:
+    def generate_enabler_story(self, requirement: str, epic: str) -> dict:
         """Generate technical enabler story"""
         
         return {
@@ -130,7 +130,7 @@ class UserStoryGenerator:
         words = feature.split()[:5]
         return ' '.join(words).title()
     
-    def _generate_narrative(self, persona: Dict, feature: str) -> str:
+    def _generate_narrative(self, persona: dict, feature: str) -> str:
         """Generate story narrative in standard format"""
         
         template = self.story_templates['feature']
@@ -144,7 +144,7 @@ class UserStoryGenerator:
             benefit=benefit
         )
     
-    def _generate_acceptance_criteria(self, feature: str) -> List[str]:
+    def _generate_acceptance_criteria(self, feature: str) -> list[str]:
         """Generate acceptance criteria"""
         
         criteria = []
@@ -177,7 +177,7 @@ class UserStoryGenerator:
         
         return f"use {feature.lower()}"
     
-    def _extract_benefit(self, feature: str, needs: List[str]) -> str:
+    def _extract_benefit(self, feature: str, needs: list[str]) -> str:
         """Extract benefit based on feature and persona needs"""
         
         feature_lower = feature.lower()
@@ -237,7 +237,7 @@ class UserStoryGenerator:
         # Low for nice-to-haves
         return 'low'
     
-    def _check_invest_criteria(self, feature: str) -> Dict[str, bool]:
+    def _check_invest_criteria(self, feature: str) -> dict[str, bool]:
         """Check INVEST criteria compliance"""
         
         return {
@@ -249,7 +249,7 @@ class UserStoryGenerator:
             'testable': not any(word in feature.lower() for word in ['maybe', 'possibly', 'somehow'])
         }
     
-    def generate_sprint_stories(self, capacity: int, backlog: List[Dict]) -> Dict:
+    def generate_sprint_stories(self, capacity: int, backlog: list[dict]) -> dict:
         """Generate stories for a sprint based on capacity"""
         
         sprint = {
@@ -281,7 +281,7 @@ class UserStoryGenerator:
         
         return sprint
     
-    def format_story_output(self, story: Dict) -> str:
+    def format_story_output(self, story: dict) -> str:
         """Format story for display"""
         
         output = []

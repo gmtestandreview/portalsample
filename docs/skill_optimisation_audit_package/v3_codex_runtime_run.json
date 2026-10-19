@@ -1,0 +1,219 @@
+{
+  "run_id": "2026-10-17-v3-codex-policy-acceptance",
+  "controller": "writing-skills",
+  "target": "skill-duplication-audit v1.3",
+  "acceptance_owner": "Greg (human skill owner)",
+  "revision": "191002463906329ba8fe7bdcfe2bbff15f77f891 plus unchanged candidate/reference hashes",
+  "artifacts": [
+    {
+      "path": "skills/skill-duplication-audit/SKILL.md",
+      "sha256": "85502296b0563e3967556b54cbec863521734568359effff71c6620b6c7f3642",
+      "role": "candidate",
+      "id": "candidate"
+    },
+    {
+      "path": "skills/skill-duplication-audit/references/validation-cases.md",
+      "sha256": "827932d211f518bcd8818786bd1c6a55b43b8115927bacb365f5705858f828db",
+      "role": "rubric",
+      "id": "rubric"
+    },
+    {
+      "path": "skills/skill-duplication-audit/evals/expected.md",
+      "sha256": "7da2f599e1545258fcbebeb066c534c0e7cac9f4796b421cc0af558377198526",
+      "role": "oracle",
+      "id": "oracle"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/V3_CONTINUATION_CHECKPOINT.md",
+      "sha256": "4a8b70c1ee08b471ed2cb8ca166601c025a23b895b39b10cc66f75ba9bf2d548",
+      "role": "checkpoint",
+      "id": "checkpoint"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/request.txt",
+      "sha256": "640c1cf070f9fc4855cf7872774e25a4998e96132cceb76a82d93e350eca49ba",
+      "role": "candidate",
+      "id": "request"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/scanner-acceptance.rules",
+      "sha256": "33d1fb1fbc5259349f0ecf98e6a6e03af1810431f73e51cd74c186f61c0deb73",
+      "role": "candidate",
+      "id": "rules"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/natural-1-public.jsonl",
+      "sha256": "e618d66060ba3e6587bc4e8016312b6d78896c788ec0f99c563eb3d309da39ae",
+      "role": "raw",
+      "id": "raw1"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/natural-2-public.jsonl",
+      "sha256": "b38b290871bfa89e77800e345d19740c7f9b206e6e3b863c25c7119e1a785966",
+      "role": "raw",
+      "id": "raw2"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/results.json",
+      "sha256": "606eb9e9cdbc000ab1f97bcf96cb44377ca5cd8d8863ef01e4b8f8ec7b96672b",
+      "role": "raw",
+      "id": "results"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/policy-checks.json",
+      "sha256": "c65237a447aaeae7c8889fca4f7d7d4b3cf8733ba155959c226054eda5f5b893",
+      "role": "raw",
+      "id": "policy-checks"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/v3_continuation_verification.json",
+      "sha256": "3cf3110908c0ed490a59e079103f14b5cbfe9fcb338ae9e3d24e7a482e1b01b0",
+      "role": "raw",
+      "id": "verification"
+    },
+    {
+      "path": "docs/skill_optimisation_audit_package/v3_continuation_review.md",
+      "sha256": "f06ff9c3197729e6d67f0173f97e9086732cb77948a501214f938c444cb1c6c8",
+      "role": "raw",
+      "id": "review"
+    },
+    {
+      "id": "continuation-V3_POLICY_CONTINUATION",
+      "path": "docs/skill_optimisation_audit_package/V3_POLICY_CONTINUATION.md",
+      "sha256": "9ed74f60071017a45a37fc67b8c2e44a9c6648dc81f5617387048114ad877e07",
+      "role": "raw"
+    },
+    {
+      "id": "continuation-diagnosis",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/policy-correction/diagnosis.json",
+      "sha256": "92e5d63ddc19277817e51370e0330d25536a870f455f6068a60a395f3853e1ec",
+      "role": "raw"
+    }
+  ],
+  "environment": {
+    "config": "--ignore-user-config --ephemeral --skip-git-repo-check --sandbox workspace-write; approval_policy=never",
+    "tool_version": "Codex 0.162.0-alpha.17.2; Sonar 1.7.0",
+    "host": "Windows native Codex CLI ephemeral sessions; exact .agents fixture; same-name installed skill disabled per invocation",
+    "interpreter": "PowerShell 7; Python 3.14.7 for local accounting tests only",
+    "tool": "Codex CLI and Sonar CLI",
+    "file_count": 3,
+    "rules": "Two exact-path rules temporarily loaded from user rules directory; no bypass"
+  },
+  "evaluation": {
+    "cases": [
+      {
+        "evidence": "raw1",
+        "id": "N1-discovery",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw1",
+        "id": "N1-loading",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw1",
+        "id": "N1-application",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw1",
+        "id": "N1-artifact",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw1",
+        "id": "N1-runtime",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw2",
+        "id": "N2-discovery",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw2",
+        "id": "N2-loading",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw2",
+        "id": "N2-application",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw2",
+        "id": "N2-artifact",
+        "status": "PASS",
+        "passed": true
+      },
+      {
+        "evidence": "raw2",
+        "id": "N2-runtime",
+        "status": "PASS",
+        "passed": true
+      }
+    ],
+    "evaluator": "parent inspected public commands and final artifacts; independent focused evidence reviewer",
+    "scope": "Two ordinary-request samples of exact duplication candidate; expected subset behavior from unchanged v1.3.1 oracle and candidate rules; no comparative winner",
+    "expected_case_ids": [
+      "N1-discovery",
+      "N1-loading",
+      "N1-application",
+      "N1-artifact",
+      "N1-runtime",
+      "N2-discovery",
+      "N2-loading",
+      "N2-application",
+      "N2-artifact",
+      "N2-runtime"
+    ],
+    "kind": "runtime"
+  },
+  "summary": {
+    "AMBER": 0,
+    "PASS": 10,
+    "N/A": 0,
+    "NHR": 0,
+    "FAIL": 0
+  },
+  "score": null,
+  "gates": {
+    "delivery": "PASS",
+    "runtime": "PASS",
+    "loading": "PASS",
+    "static": "PASS",
+    "application": "PASS",
+    "discovery": "PASS",
+    "artifact": "PASS",
+    "behavioral": "PASS"
+  },
+  "budget": {
+    "max_optional_waves": 2,
+    "closeout_reserve": 20,
+    "uncertainty": "",
+    "scope": "User-requested acceptance reruns, not optional optimisation waves; no further dispatch authorized by this record",
+    "unit": "percent of planned continuation effort",
+    "remaining_capacity": null,
+    "optional_waves": 0,
+    "acceptance_impact": ""
+  },
+  "telemetry": {
+    "elapsed_scope": "Targeted 43-test verifier subprocess wall time only; native session durations and whole-continuation usage unavailable",
+    "cached_tokens": 230528,
+    "tokens": 281114,
+    "counter_scope": "Successful native runs only; input token counters reported by CLI; not billing or savings",
+    "agent_invocations": 2,
+    "elapsed_seconds": 1.6939879
+  },
+  "recommendation": "deploy",
+  "release_scope": "Scoped primary Codex candidate acceptance under equivalent scan/read permissions; no installation or normal installed-host claim"
+}

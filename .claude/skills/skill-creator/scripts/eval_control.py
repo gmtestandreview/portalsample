@@ -11,7 +11,7 @@ import time
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Callable, Mapping
+from collections.abc import Callable, Mapping
 
 CHECKPOINT_SCHEMA_VERSION = 1
 _MODEL_RE = re.compile(r"^claude-[a-z0-9-]*\d[a-z0-9-]*$")

@@ -104,7 +104,7 @@ Apply these rules by default. If the user explicitly requests different wording,
 ## Scoped Step Definitions
 
 Prefer `@`-prefixed directories to scope step definitions to specific feature domains. This avoids conflicts when common step names (e.g. `I should see {string} text`) need different implementations depending on context.
-More details on scoped steps: https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped?id=tags-from-path
+More details on scoped steps: <https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped?id=tags-from-path>
 
 **Example structure with scoped steps**
 
@@ -153,7 +153,9 @@ Then('the cart badge should show {int}', async ({ page }, count: number) => {
   await expect(page.locator('.cart-badge')).toHaveText(String(count));
 });
 ```
+
 Suggest the most appropriate file to add them to, inferred from the existing file naming (e.g. add auth-related steps to `steps/auth.steps.ts` if that file exists).
+
 ## Further Reading
 
-For deeper detail on any topic — configuration, step styles, fixtures, hooks, reporters — fetch the official documentation: https://vitalets.github.io/playwright-bdd/#/
+For deeper detail on any topic — configuration, step styles, fixtures, hooks, reporters — fetch the official documentation: <https://vitalets.github.io/playwright-bdd/#/>

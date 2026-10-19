@@ -36,7 +36,7 @@ Comprehensive guide to modern React state management patterns, from local compon
 ### 1. State Categories
 
 | Type | Description | Solutions |
-|------|-------------|-----------|
+| ------ | ------------- | ----------- |
 | **Local State** | Component-specific, UI state | useState, useReducer |
 | **Global State** | Shared across components | Redux Toolkit, Zustand, Jotai |
 | **Server State** | Remote data, caching | React Query, SWR, RTK Query |
@@ -393,6 +393,7 @@ function Dashboard() {
 ## Best Practices
 
 ### Do's
+
 - **Colocate state** - Keep state as close to where it's used as possible
 - **Use selectors** - Prevent unnecessary re-renders with selective subscriptions
 - **Normalize data** - Flatten nested structures for easier updates
@@ -400,6 +401,7 @@ function Dashboard() {
 - **Separate concerns** - Server state (React Query) vs client state (Zustand)
 
 ### Don'ts
+
 - **Don't over-globalize** - Not everything needs to be in global state
 - **Don't duplicate server state** - Let React Query manage it
 - **Don't mutate directly** - Always use immutable updates

@@ -1,0 +1,95 @@
+[
+  {
+    "command": [
+      "sonar",
+      "analyze",
+      "secrets",
+      ".agents/skills/skill-duplication-audit/SKILL.md"
+    ],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": [
+        {
+          "prefixRuleMatch": {
+            "matchedPrefix": [
+              "sonar",
+              "analyze",
+              "secrets",
+              ".agents/skills/skill-duplication-audit/SKILL.md"
+            ],
+            "decision": "allow",
+            "justification": "Required secrets scans of exact V3 fixture and meta-skill instructions only"
+          }
+        }
+      ],
+      "decision": "allow"
+    }
+  },
+  {
+    "command": ["sonar", "analyze", "secrets", "unrelated.txt"],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": []
+    }
+  },
+  {
+    "command": ["sonar", "integrate", "claude"],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": []
+    }
+  },
+  {
+    "command": ["sonar", "analyze", "all"],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": []
+    }
+  },
+  {
+    "command": [
+      "Get-Content",
+      "-LiteralPath",
+      ".agents/skills/skill-duplication-audit/SKILL.md"
+    ],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": [
+        {
+          "prefixRuleMatch": {
+            "matchedPrefix": [
+              "Get-Content",
+              "-LiteralPath",
+              ".agents/skills/skill-duplication-audit/SKILL.md"
+            ],
+            "decision": "allow",
+            "justification": "Read exact scanned V3 acceptance and meta-skill instructions only"
+          }
+        }
+      ],
+      "decision": "allow"
+    }
+  },
+  {
+    "command": [
+      "Get-Content",
+      "-LiteralPath",
+      "C:/Users/gregm/.codex/auth.json"
+    ],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": []
+    }
+  },
+  {
+    "command": [
+      "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "-Command",
+      "sonar analyze secrets .agents/skills/skill-duplication-audit/SKILL.md; Write-Output unexpected"
+    ],
+    "exit_code": 0,
+    "result": {
+      "matchedRules": []
+    }
+  }
+]

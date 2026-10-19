@@ -31,19 +31,23 @@ Generate a briefing anytime by telling Copilot CLI:
 *How you write status updates, based on your examples.*
 
 ### Format
+
 - **Structure:** [e.g., Bullet points grouped by project area / Narrative prose / Numbered items with headers]
 - **Typical length:** [e.g., Half a page / 5-8 bullet points / 2-3 short paragraphs]
 - **Uses headers or section breaks:** [Yes/No -- and what kind]
 - **Uses sub-bullets or nested detail:** [Yes/No]
 
 ### Tone
+
 - **Register:** [e.g., Professional and direct / Conversational / Formal executive style]
 - **Characteristics:** [e.g., Action-oriented, leads with outcomes, names people involved, uses specific metrics]
 
 ### Organization
+
 - **How you group information:** [e.g., By project area / By theme / Chronologically / By priority]
 
 ### Content You Typically Include
+
 - [e.g., Key accomplishments or shipped items]
 - [e.g., Active risks or blockers]
 - [e.g., Upcoming milestones or deadlines]
@@ -52,11 +56,13 @@ Generate a briefing anytime by telling Copilot CLI:
 - [e.g., People updates -- who's working on what]
 
 ### Content You Typically Skip
+
 - [e.g., Routine maintenance, minor bug fixes]
 - [e.g., Internal process details]
 - [e.g., Items the audience already knows about]
 
 ### Distinctive Patterns
+
 - [e.g., Always opens with a one-line summary]
 - [e.g., Uses bold for action items]
 - [e.g., Ends with "let me know if you have questions"]
@@ -69,6 +75,7 @@ Generate a briefing anytime by telling Copilot CLI:
 *To add a new audience, copy one of the sections below and change the details.*
 
 ### [Audience Name]
+
 - **Who:** [Description of this audience -- e.g., "My VP and their chief of staff"]
 - **What they care about:** [Themes or priorities this audience focuses on]
 - **Detail level:** [Big picture only / Moderate detail / Full play-by-play]
@@ -83,6 +90,7 @@ Generate a briefing anytime by telling Copilot CLI:
 ## Information Sources
 
 ### Tools Available
+
 *Data sources roundup can pull from automatically in your current setup.*
 
 - [ ] **GitHub** -- repos: [list specific repos, orgs, or "all repos I have access to"]
@@ -92,11 +100,13 @@ Generate a briefing anytime by telling Copilot CLI:
 - [ ] **Other:** [describe any other connected sources]
 
 ### Specific Places to Look
+
 - **For work product and project activity:** [specific repos, boards, trackers, documents]
 - **For conversations and decisions:** [specific channels, threads, email lists, meeting series]
 - **For upcoming items and deadlines:** [calendars, project milestones, roadmap docs]
 
 ### Known Gaps
+
 *Sources you mentioned during setup that aren't currently connected. For these, you'll need to paste relevant context when generating a briefing.*
 
 - [e.g., Jira board -- not connected, paste ticket updates manually]
@@ -107,15 +117,18 @@ Generate a briefing anytime by telling Copilot CLI:
 ## Preferences
 
 ### Always Include
+
 - [Standing sections or themes that should appear in every briefing]
 - [Recurring metrics or KPIs to track]
 - [Required sections your org expects]
 
 ### Never Include
+
 - [Repos, channels, or activity types to filter out]
 - [Types of noise that aren't worth mentioning]
 
 ### Other Rules
+
 - [Maximum length constraints]
 - [Required formatting rules]
 - [Anything else]

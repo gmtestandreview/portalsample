@@ -86,7 +86,7 @@ Suggestion: [manual steps to fix]
 
 ## Common Fixes by Language
 
-### C#
+### C #
 
 | Error                 | Fix                        |
 | --------------------- | -------------------------- |

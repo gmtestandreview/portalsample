@@ -202,9 +202,7 @@ Component `##` headings become link targets from `3-findings.md`.
 ### Template
 
 > **⛔ CRITICAL: The `## Summary` table MUST appear at the TOP of the file, immediately after `## Exploitability Tiers` and BEFORE any individual `## Component` sections. It is a navigation aid — readers need it first. The model consistently moves it to the BOTTOM — that is WRONG. Follow this exact order: `# STRIDE + Abuse Cases — Threat Analysis` → `## Exploitability Tiers` → `## Summary` → `---` → `## Component 1` → `## Component 2` → ...**
-
 > **⛔ RIGID TIER DEFINITIONS — Apply these EXACTLY. Do NOT use subjective judgment.** This is a skill directive — do NOT copy this line into the output. The tier table below is what goes into the report, WITHOUT this directive line.
-
 > **⛔ LEAKED DIRECTIVE CHECK:** The output file MUST NOT contain the text "RIGID TIER DEFINITIONS", "Do NOT use subjective judgment", or any line starting with `⛔`. These are skill instructions, not report content. If you see them in your output, remove them before finalizing.
 
 ```markdown
@@ -222,7 +220,7 @@ Threats are classified into three exploitability tiers based on the prerequisite
 ```
 
 > **⛔ COPY THE TIERS TABLE VERBATIM.** The 4th column must be `Assignment Rule` (NOT `Example`, `Description`, `Criteria`, or any other name). The cell values must be the exact text above — do NOT replace them with deployment-specific examples. Do NOT add a "Deployment context affecting tier assignment" paragraph after the table — deployment context belongs in the individual component sections, not in the tier definitions.
-
+>
 > **⛔ STRIDE-A CATEGORY LABELS (MANDATORY — the “A” is “Abuse”, NEVER “Authorization”):**
 > The 7 STRIDE-A categories used in ALL tables (Summary, per-component Tier tables, threat-inventory.json) are:
 > **S**poofing | **T**ampering | **R**epudiation | **I**nformation Disclosure | **D**enial of Service | **E**levation of Privilege | **A**buse
@@ -260,7 +258,7 @@ Threats are classified into three exploitability tiers based on the prerequisite
 
 | ID | Category | Threat | Prerequisites | Affected Flow | Mitigation | Status |
 
-```
+```markdown
 
 **⛔ STRIDE Status Column — Valid Values (must match Coverage table):**
 The `Status` column in each threat row MUST use exactly one of these values:
@@ -599,7 +597,7 @@ Include at end of Executive Summary:
 
 **Every entry in "Discovered from Codebase" MUST include a relative link to the source file or document from which the information was inferred.** Example:
 
-```
+```text
 
 | Deployment Model | Air-gapped, single-admin workstation ([daemon.json](src/Container/Moby/daemon.json), [InstallAzureEdgeDiagnosticTool.ps1](src/Setup/InstallArtifacts/InstallAzureEdgeDiagnosticTool.ps1)) | All findings — no Tier 1 |
 | Network Exposure | All services bind to localhost:80 only ([KustoContainerHelper.psm1](src/Container/Kusto/KustoContainerHelper.psm1)) | FIND-01, FIND-03 |
@@ -607,10 +605,12 @@ Include at end of Executive Summary:
 ```
 
 ### Needs Verification
+
 | Item | Question | What to Check | Why Uncertain |
 |------|----------|---------------|---------------|
 
 ### Finding Overrides
+
 | Finding ID | Original Severity | Override | Justification | New Status |
 |------------|-------------------|----------|---------------|------------|
 | — | — | — | No overrides applied. Update this section after review. | — |
@@ -619,7 +619,8 @@ Include at end of Executive Summary:
 <!-- Any other context from the user's prompt -->
 
 [Freeform notes provided by user]
-```
+
+```markdown
 
 ### References Consulted Template
 

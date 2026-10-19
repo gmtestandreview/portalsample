@@ -4,12 +4,17 @@
 
 ### Core Principles
 
-Zero Trust is a security model based on the principle of "never trust, always verify." It assumes that threats exist both inside and outside the network.
+Zero Trust is a security model based on the principle of "never trust, always
+verify." It assumes that threats exist both inside and outside the network.
 
 **Foundational Tenets**:
-1. **Verify explicitly** - Always authenticate and authorize based on all available data points
-2. **Use least privilege access** - Limit user access with Just-In-Time and Just-Enough-Access (JIT/JEA)
-3. **Assume breach** - Minimize blast radius and segment access. Verify end-to-end encryption
+
+1. **Verify explicitly** - Always authenticate and authorize based on all
+   available data points
+2. **Use least privilege access** - Limit user access with Just-In-Time and
+   Just-Enough-Access (JIT/JEA)
+3. **Assume breach** - Minimize blast radius and segment access. Verify
+   end-to-end encryption
 
 ### Zero Trust Architecture Components
 
@@ -72,30 +77,35 @@ Zero Trust is a security model based on the principle of "never trust, always ve
 ### Zero Trust Implementation Roadmap
 
 **Phase 1: Foundation (Months 1-3)**
+
 - Implement strong identity and access management (IAM)
 - Deploy multi-factor authentication (MFA) everywhere
 - Create comprehensive asset inventory
 - Establish baseline logging and monitoring
 
 **Phase 2: Visibility (Months 4-6)**
+
 - Map all data flows and dependencies
 - Implement network traffic analysis
 - Deploy endpoint detection and response (EDR)
 - Establish user and entity behavior analytics (UEBA)
 
 **Phase 3: Segmentation (Months 7-9)**
+
 - Implement network micro-segmentation
 - Create security zones based on data sensitivity
 - Apply least privilege access policies
 - Implement application-layer controls
 
 **Phase 4: Automation (Months 10-12)**
+
 - Automate policy enforcement
 - Implement SOAR for incident response
 - Deploy continuous compliance monitoring
 - Integrate threat intelligence feeds
 
 **Phase 5: Optimization (Ongoing)**
+
 - Continuous policy refinement
 - Regular access reviews and certifications
 - Threat hunting and proactive defense
@@ -127,6 +137,7 @@ Layer 1: Data Security
 ### Security Control Types by Layer
 
 **Preventive Controls** (Stop attacks before they occur):
+
 - Firewalls and network segmentation
 - Multi-factor authentication
 - Encryption at rest and in transit
@@ -135,6 +146,7 @@ Layer 1: Data Security
 - Security awareness training
 
 **Detective Controls** (Identify attacks when they occur):
+
 - Security Information and Event Management (SIEM)
 - Intrusion Detection Systems (IDS)
 - Log monitoring and analysis
@@ -143,6 +155,7 @@ Layer 1: Data Security
 - User and Entity Behavior Analytics (UEBA)
 
 **Corrective Controls** (Fix issues after detection):
+
 - Incident response procedures
 - Patch management
 - Malware removal
@@ -151,6 +164,7 @@ Layer 1: Data Security
 - Forensic analysis
 
 **Deterrent Controls** (Discourage attackers):
+
 - Warning banners
 - Security policies and consequences
 - Legal agreements and NDAs
@@ -200,9 +214,11 @@ Internet
 
 ### Micro-segmentation Strategy
 
-Traditional segmentation creates large security zones. Micro-segmentation creates granular controls around individual workloads.
+Traditional segmentation creates large security zones. Micro-segmentation
+creates granular controls around individual workloads.
 
 **Benefits**:
+
 - Limits lateral movement
 - Reduces blast radius of breaches
 - Enables Zero Trust networking
@@ -277,14 +293,14 @@ Corporate Resources (Applications, Files, Databases)
 
 **VPN vs. ZTNA Comparison**:
 
-| Aspect | VPN | ZTNA |
-|--------|-----|------|
-| Access model | Network-level | Application-level |
-| Trust model | Implicit trust once connected | Continuous verification |
-| Lateral movement | Possible | Prevented |
-| Deployment | On-premises appliance | Cloud-native service |
-| User experience | Full network access | Seamless app access |
-| Security | Perimeter-based | Identity-based |
+| Aspect           | VPN                           | ZTNA                    |
+| ---------------- | ----------------------------- | ----------------------- |
+| Access model     | Network-level                 | Application-level       |
+| Trust model      | Implicit trust once connected | Continuous verification |
+| Lateral movement | Possible                      | Prevented               |
+| Deployment       | On-premises appliance         | Cloud-native service    |
+| User experience  | Full network access           | Seamless app access     |
+| Security         | Perimeter-based               | Identity-based          |
 
 ---
 
@@ -315,6 +331,7 @@ Corporate Resources (Applications, Files, Databases)
 ### Shared Responsibility Model
 
 **Cloud Provider Responsibilities** (Security OF the cloud):
+
 - Physical security of data centers
 - Hardware and infrastructure
 - Network infrastructure
@@ -322,6 +339,7 @@ Corporate Resources (Applications, Files, Databases)
 - Managed service security (e.g., RDS, DynamoDB)
 
 **Customer Responsibilities** (Security IN the cloud):
+
 - Data encryption and classification
 - Identity and access management (IAM)
 - Application security and patching
@@ -330,6 +348,7 @@ Corporate Resources (Applications, Files, Databases)
 - Compliance and governance
 
 **Shared Responsibilities** (varies by service model):
+
 - IaaS (e.g., EC2): Customer manages OS and above
 - PaaS (e.g., App Service): Customer manages application and data
 - SaaS (e.g., Office 365): Customer manages data and access policies
@@ -337,6 +356,7 @@ Corporate Resources (Applications, Files, Databases)
 ### Cloud Security Best Practices
 
 **Identity & Access Management**:
+
 ```bash
 # Enforce MFA for all users
 aws iam create-virtual-mfa-device --virtual-mfa-device-name root-mfa
@@ -362,6 +382,7 @@ aws iam update-access-key --access-key-id AKIAIOSFODNN7EXAMPLE --status Inactive
 ```
 
 **Data Encryption**:
+
 ```bash
 # Enable S3 bucket encryption by default
 aws s3api put-bucket-encryption \
@@ -387,6 +408,7 @@ aws rds create-db-instance \
 ```
 
 **Network Security**:
+
 ```bash
 # Create security group with minimal access
 aws ec2 create-security-group \
@@ -411,6 +433,7 @@ aws ec2 create-flow-logs \
 ```
 
 **Monitoring & Logging**:
+
 ```bash
 # Enable CloudTrail for all regions
 aws cloudtrail create-trail \
@@ -480,14 +503,14 @@ spec:
     runAsUser: 1000
     fsGroup: 1000
   containers:
-  - name: app
-    image: myapp:1.0
-    securityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-        - ALL
-      readOnlyRootFilesystem: true
+    - name: app
+      image: myapp:1.0
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
 
 # 3. Use Network Policies
 apiVersion: networking.k8s.io/v1
@@ -499,24 +522,24 @@ spec:
     matchLabels:
       app: web
   policyTypes:
-  - Ingress
-  - Egress
+    - Ingress
+    - Egress
   ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: loadbalancer
-    ports:
-    - protocol: TCP
-      port: 8080
+    - from:
+        - podSelector:
+            matchLabels:
+              app: loadbalancer
+      ports:
+        - protocol: TCP
+          port: 8080
   egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: database
-    ports:
-    - protocol: TCP
-      port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: database
+      ports:
+        - protocol: TCP
+          port: 5432
 
 # 4. Use Resource Limits
 apiVersion: v1
@@ -525,26 +548,26 @@ metadata:
   name: resource-limited-pod
 spec:
   containers:
-  - name: app
-    image: myapp:1.0
-    resources:
-      limits:
-        cpu: "1"
-        memory: "512Mi"
-      requests:
-        cpu: "500m"
-        memory: "256Mi"
+    - name: app
+      image: myapp:1.0
+      resources:
+        limits:
+          cpu: '1'
+          memory: '512Mi'
+        requests:
+          cpu: '500m'
+          memory: '256Mi'
 
 # 5. Enable audit logging
 apiVersion: audit.k8s.io/v1
 kind: Policy
 rules:
-- level: Metadata
-  resources:
-  - group: ""
-    resources: ["secrets", "configmaps"]
-- level: RequestResponse
-  users: ["system:serviceaccount:kube-system:*"]
+  - level: Metadata
+    resources:
+      - group: ''
+        resources: ['secrets', 'configmaps']
+  - level: RequestResponse
+    users: ['system:serviceaccount:kube-system:*']
 ```
 
 ---
@@ -721,16 +744,16 @@ decrypted_data = cipher.decrypt(encrypted_data)
 
 ```yaml
 policy:
-  name: "Prevent PII Exfiltration"
-  description: "Block transfer of SSNs via email or cloud storage"
+  name: 'Prevent PII Exfiltration'
+  description: 'Block transfer of SSNs via email or cloud storage'
 
   content_detection:
     - type: pattern
-      pattern: '\d{3}-\d{2}-\d{4}'  # SSN pattern
+      pattern: '\d{3}-\d{2}-\d{4}' # SSN pattern
       confidence: high
     - type: keyword
-      keywords: ["SSN", "Social Security Number"]
-      proximity: 50  # characters
+      keywords: ['SSN', 'Social Security Number']
+      proximity: 50 # characters
 
   actions:
     email:
@@ -750,9 +773,9 @@ policy:
       - allow_with_justification
 
   exceptions:
-    - group: "HR Department"
+    - group: 'HR Department'
       action: allow_with_audit
-    - application: "Payroll System"
+    - application: 'Payroll System'
       action: allow
 ```
 
@@ -813,36 +836,36 @@ Tier 3 (Less Secure, Avoid):
 ```yaml
 # Example: Enterprise application RBAC
 roles:
-  - name: "Admin"
+  - name: 'Admin'
     permissions:
-      - "users:read"
-      - "users:write"
-      - "users:delete"
-      - "settings:write"
-      - "audit_logs:read"
+      - 'users:read'
+      - 'users:write'
+      - 'users:delete'
+      - 'settings:write'
+      - 'audit_logs:read'
 
-  - name: "Manager"
+  - name: 'Manager'
     permissions:
-      - "users:read"
-      - "users:write"
-      - "reports:read"
-      - "reports:write"
+      - 'users:read'
+      - 'users:write'
+      - 'reports:read'
+      - 'reports:write'
 
-  - name: "User"
+  - name: 'User'
     permissions:
-      - "users:read_self"
-      - "reports:read"
+      - 'users:read_self'
+      - 'reports:read'
 
 # User assignment
 users:
-  - email: "admin@company.com"
-    roles: ["Admin"]
+  - email: 'admin@company.com'
+    roles: ['Admin']
 
-  - email: "manager@company.com"
-    roles: ["Manager"]
+  - email: 'manager@company.com'
+    roles: ['Manager']
 
-  - email: "employee@company.com"
-    roles: ["User"]
+  - email: 'employee@company.com'
+    roles: ['User']
 ```
 
 **Attribute-Based Access Control (ABAC)**:
@@ -931,24 +954,29 @@ def can_edit(user, document):
 
 **PAM Best Practices**:
 
-1. **Eliminate standing privileges**: Use JIT access instead of permanent admin rights
+1. **Eliminate standing privileges**: Use JIT access instead of permanent admin
+   rights
 2. **Rotate credentials**: Auto-rotate privileged passwords after each session
-3. **Session monitoring**: Record all privileged sessions for audit and forensics
+3. **Session monitoring**: Record all privileged sessions for audit and
+   forensics
 4. **Break-glass procedures**: Emergency access when PAM is unavailable
 5. **Separate admin accounts**: Never use privileged accounts for regular tasks
-6. **Remove local admin rights**: Users should not have admin on their workstations
+6. **Remove local admin rights**: Users should not have admin on their
+   workstations
 
 ---
 
 ## Secure Software Development Lifecycle (SDLC)
 
-See [application-security.md](./application-security.md) for detailed coverage of secure SDLC, DevSecOps, and application security practices.
+See [application-security.md](./application-security.md) for detailed coverage
+of secure SDLC, DevSecOps, and application security practices.
 
 ---
 
 ## Security Architecture Review Checklist
 
 ### Network Architecture Review
+
 - [ ] Network segmentation properly implemented (DMZ, app tier, data tier)
 - [ ] Firewall rules follow least privilege (deny by default)
 - [ ] No overly permissive security groups (0.0.0.0/0)
@@ -959,6 +987,7 @@ See [application-security.md](./application-security.md) for detailed coverage o
 - [ ] IDS/IPS deployed and tuned
 
 ### Identity & Access Review
+
 - [ ] MFA enforced for all users
 - [ ] Privileged access managed (PAM solution in place)
 - [ ] No shared accounts or default credentials
@@ -969,6 +998,7 @@ See [application-security.md](./application-security.md) for detailed coverage o
 - [ ] Password policy enforces complexity and rotation
 
 ### Data Protection Review
+
 - [ ] Data classified and labeled
 - [ ] Encryption at rest for sensitive data (AES-256)
 - [ ] Encryption in transit (TLS 1.2+)
@@ -979,6 +1009,7 @@ See [application-security.md](./application-security.md) for detailed coverage o
 - [ ] Data retention policies enforced
 
 ### Cloud Security Review
+
 - [ ] Cloud Security Posture Management (CSPM) enabled
 - [ ] Security services enabled (GuardDuty, Security Hub, Defender)
 - [ ] S3 buckets not publicly accessible (unless required)
@@ -989,6 +1020,7 @@ See [application-security.md](./application-security.md) for detailed coverage o
 - [ ] Infrastructure as Code (IaC) security scanned
 
 ### Monitoring & Detection Review
+
 - [ ] SIEM deployed and ingesting logs
 - [ ] Critical security events generate alerts
 - [ ] Log retention meets compliance requirements (typically 1 year)
@@ -999,6 +1031,7 @@ See [application-security.md](./application-security.md) for detailed coverage o
 - [ ] Security metrics tracked and reported
 
 ### Incident Response Review
+
 - [ ] Incident response plan documented and tested
 - [ ] Incident response team (CIRT) identified
 - [ ] Playbooks created for common scenarios

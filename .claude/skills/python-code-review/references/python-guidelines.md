@@ -299,21 +299,11 @@ Average-case time is O(n), space O(u) for u distinct hashable items. Hash and
 equality semantics matter: unhashable nested values require a different
 algorithm or an explicitly justified canonical key.
 
-## Python code review output
+## Reporting boundary
 
-Report only issues supported by the code and context. Use this compact structure:
-
-- **Summary:** affected behavior and highest severity.
-- **Findings:** severity, known file/line, reproduction or mechanism, impact,
-  minimal fix, and any compatibility tradeoff.
-- **Validation:** test commands *actually run* with results; otherwise a
-  proposed reproduction and regression checklist.
-- **Residual risks:** unknown version, dependencies, user intent, or inputs.
-
-Severity: **critical** for credible security, data loss, or major correctness
-failures; **high** for material correctness/resource risks; **medium** for
-maintainability and non-critical style; **low** for optional preferences.
-Do not assert arbitrary style preferences as correctness failures.
+For completions, use [compact completion contract](completion-contract.md).
+Formal reviews use [review reporting](review-reporting.md). The illustrative
+code examples in this file do not establish defects without contextual evidence.
 
 ## Reference links
 

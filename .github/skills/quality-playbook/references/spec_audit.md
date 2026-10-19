@@ -79,9 +79,11 @@ The triage report must include a `## Pre-audit docs validation` section regardle
 **Spot-check claims about code contents must extract, not assert.** When the spec audit prompt or pre-validation includes claims like "function X handles constant Y at line Z," the triage must read the cited lines and report what they actually contain. Do not confirm a claim by checking that the function exists or that the constant is defined somewhere — confirm it by showing the exact text at the cited lines. Format each spot-check result as:
 
 ```
+
 Claim: "vring_transport_features() preserves VIRTIO_F_RING_RESET at line 3527"
 Actual line 3527: `default:`
 Result: CLAIM IS FALSE — line 3527 is the default branch, not a RING_RESET case label
+
 ```
 
 Spot-check claims derived from generated requirements or gathered docs (rather than from the code) are **hypotheses to test**, not facts to confirm. This rule prevents the contamination chain observed in v1.3.17 where a false spot-check claim was accepted as "accurate" without reading the actual lines, causing three auditors to inherit a hallucinated code-presence claim.
@@ -103,10 +105,13 @@ After all three models report, merge findings.
 **Log the effective council size.** If a model did not return a usable report (timeout, empty output, refusal), record this in the triage header:
 
 ```
+
 ## Council Status
+
 - Model A: Fresh report received (YYYY-MM-DD)
 - Model B: Fresh report received (YYYY-MM-DD)
 - Model C: TIMEOUT — no usable report. Effective council: 2/3.
+
 ```
 
 When the effective council is 2/3, downgrade the confidence tier: "All three" becomes impossible, "Two of three" becomes the ceiling. When the effective council is 1/3, all findings are "Needs verification" regardless of how confident that single model is. Do not silently substitute stale reports from prior runs — if a model didn't produce a fresh report for this run, it didn't participate.
@@ -134,9 +139,11 @@ When models disagree on factual claims, deploy a read-only probe: give one model
 # Rejection proof: function X does check for null at line 247
 assert "if (ptr == NULL)" in source_of("X"), "X has null check at line 247"
 ```
+
 If you cannot write a passing assertion, **do not reject the finding**. The inability to produce mechanical proof is itself evidence that the finding may be real.
 
 **For confirmations** (finding is a real bug): Write an assertion that FAILS (expected-failure), proving the bug exists:
+
 ```python
 # Confirmation proof: RING_RESET is not a case label in the whitelist
 assert "case VIRTIO_F_RING_RESET:" in source_of("vring_transport_features"), \
@@ -177,6 +184,7 @@ After triage, compare the spec audit findings against the code review findings f
 A session that terminates early (timeout, context exhaustion, crash) may generate scaffolding (directory structure, empty templates) without producing the actual review or audit content. The retry mechanism in the run script can regenerate scaffolding but cannot recover the analytical work.
 
 **After any session completes, check for partial results:**
+
 1. If `quality/code_reviews/` exists but contains no `.md` files with actual findings (or only contains template headers with no BUG/VIOLATED/INCONSISTENT entries), the code review did not run. Mark this as FAILED in PROGRESS.md, not as "complete with no findings."
 2. If `quality/spec_audits/` exists but contains no triage summary, the spec audit did not run.
 3. If `quality/test_regression.*` exists but contains only imports and no test functions, regression tests were not written.
@@ -208,6 +216,7 @@ This prevents the failure mode observed in v1.3.4 where express and zod silently
 
 Save audit reports to `quality/spec_audits/YYYY-MM-DD-[model].md`
 Save triage summary to `quality/spec_audits/YYYY-MM-DD-triage.md`
+
 ```
 
 ## The Four Guardrails (Critical for All Auditors)

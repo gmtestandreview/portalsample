@@ -142,6 +142,7 @@ cat all_urls.txt | unfurl paths | sort -u > custom_wordlist.txt
 6. **Error Pages** - Exotic injection points
 
 **Analysis Questions:**
+
 - How does the app pass data? (Params, API, Hybrid)
 - Where does the app talk about users? (UID, UUID endpoints)
 - Does the site have multi-tenancy or user levels?
@@ -235,7 +236,7 @@ echo "[+] Recon complete!"
 ### Essential Tools
 
 | Tool | Purpose |
-|------|---------|
+| ------ | --------- |
 | Amass | Subdomain enumeration |
 | Subfinder | Fast subdomain discovery |
 | httpx/httprobe | Live host detection |
@@ -301,7 +302,7 @@ amass enum -d target.com | httpx | nuclei -t ~/nuclei-templates/
 ## Troubleshooting
 
 | Issue | Solution |
-|-------|----------|
+| ------- | ---------- |
 | Rate limited | Use proxy rotation, reduce concurrency |
 | Too many results | Focus on specific technology stacks |
 | False positives | Manually verify findings before reporting |

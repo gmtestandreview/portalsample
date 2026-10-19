@@ -37,6 +37,20 @@ details essential to correctness; otherwise state assumptions. For specialist
 domains, cover Python-specific issues and compose with narrower guidance when
 available.
 
+## Effort and reuse gate
+
+Choose the smallest review or implementation scope that answers the request.
+For one diagnostic or local bug, inspect its affected interfaces and relevant
+sinks; do not expand to all 15 broad-review steps without an observed reason.
+Reuse earlier checks **only** for the same unchanged artifact, effective
+configuration, environment, and acceptance question; after edits rerun affected
+gates. Do not repeat analyzers/agent reviews merely to increase confidence
+without a new failure, changed input, or mandatory missing gate. Run the
+smallest failing/reproduction case first, then relevant regression and contract
+checks. Two bounded evaluation waves are the default; additional runs require
+a material unresolved decision. If a gate cannot run, report it rather than
+substituting unbounded exploration. Leave enough effort for final delivery.
+
 ## Evidence boundary
 
 Classify material findings as:
@@ -70,8 +84,10 @@ remediation as AMBER; do not silently omit the gate or weaken project rules.
 
 ## Required review order
 
-For review, hardening, or broad remediation, skip a step only when genuinely
-inapplicable:
+For **broad** review, hardening, or broad remediation, follow the ordered
+checks below where applicable. For a **focused** finding, apply only the
+relevant steps and their independent safety, compatibility, and verification
+gates; record significant omitted coverage instead of calling it exhaustive:
 
 1. **Freeze provenance.** Identify exact artifact/copy and Python floor. For
    supplied diagnostics, use the
@@ -134,8 +150,8 @@ Counts never dilute a material RED; analyzer cleanliness cannot override it.
 
 Load the smallest sufficient set:
 
-- [Python guidelines](references/python-guidelines.md) — conditional Python rules
-  and examples for any task path; honor the target Python version.
+- [Python guidelines](references/python-guidelines.md) — load only for a
+  matching Python idiom or example; not by default for routine code changes.
 - [Remediation method](references/python-remediation-method.md) — deep
   correctness, external-data/sink tracing, compatibility, determinism,
   filesystem, CLI/server/subprocess, async, and remediation.
@@ -143,34 +159,37 @@ Load the smallest sufficient set:
   performance/data volume, testing quality, security, concurrency, modernization.
 - [Analyzer verification](references/ruff-pyright-verification.md) — Ruff,
   Pyright/Pylance, mypy, Sonar, provenance, coverage, and fresh verification.
-- [Review reporting](references/review-reporting.md) — required completion
-  contract plus formal reporting, pressure matrices, and optional scoring.
+- [Compact completion](references/completion-contract.md) — load for
+  substantive Python task finals, not interim comments or basic explanations.
+- [Formal review reporting](references/review-reporting.md) — only for
+  material findings, formal reports, pressure matrices, or requested scores.
 
 Examples: async/filesystem/CLI/server/subprocess review → remediation method;
 broad application/performance review → general review; analyzer diagnostics →
-analyzer verification. Every completion summary loads only the compact completion
-contract from review reporting. Artifact-producing tests load
+analyzer verification. For artifact-producing tests consult
 [fixture ownership/disposition](references/python-general-review.md).
-Do not load all references for a narrow request.
+Open only the listed resources the active task requires; avoid unrelated
+examples, broad review matrices, and evaluation fixtures.
 
-## Validation
+## Validation (skill maintainers only)
 
-Use [current cases](evals/cases.json) for unified-skill activation, task-path,
-load-boundary, provenance, compatibility, hostile-input, determinism, analyzer,
-pressure, and regression designs. Use [QAQ/RMI](evals/qaq-rmi.md) for static
-bidirectional mappings. [Original review-only cases](evals/original-code-review-cases.json)
-and the [historical pressure report](evals/python-code-review-pressure-test-report.md)
-are retained as historical evidence, not the current activation contract.
-[Python-expert cases](evals/python-expert-cases.json) preserve secondary designs.
-
-For repeatable isolated evaluation use the [current-revision run plan](evals/current-revision-pressure/README.md) and its evidence validator; a planned run is not a completed run.\n\nDefinitions and mappings are not run evidence. Use
-[evidence applicability](evals/evidence-applicability.md) to determine which
-recorded runs apply to which revision; unavailable current behavior remains NHR.
+The [current cases](evals/cases.json), [QAQ/RMI](evals/qaq-rmi.md), and
+[current-revision run plan](evals/current-revision-pressure/README.md) are
+evaluation design, **not** ordinary Python-task guidance or executed evidence.
+Use [evidence applicability](evals/evidence-applicability.md) to bind old runs
+to versions; after any content edit, required activation and pressure behavior
+is NHR until an applicable isolated run. The
+[original review cases](evals/original-code-review-cases.json),
+[Python-expert cases](evals/python-expert-cases.json), and
+[historical pressure report](evals/python-code-review-pressure-test-report.md)
+are preserved for regression/provenance, not current PASS claims.
 
 ## Completion rule
 
 Report the artifact/patch, assumptions/tradeoffs, checks actually executed,
 required checks not executed, compatibility implications, and remaining risk.
-Illustrative snippets are not tests. Review/remediation completions additionally
-follow the reporting completion contract and state residual RED/AMBER/GREEN.
+Illustrative snippets are not tests. For substantive task finals follow
+[compact completion](references/completion-contract.md); formal reviews also
+use [review reporting](references/review-reporting.md) and state residual
+RED/AMBER/GREEN.
 Never claim production readiness without required behavioral/analyzer evidence.

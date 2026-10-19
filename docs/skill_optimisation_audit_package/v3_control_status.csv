@@ -1,0 +1,14 @@
+﻿control_id,control,status,evidence_and_limit,linked_fixes
+C01,Ten-stage writing-skills lifecycle,NOT VERIFIED,Historical 5 October review says present and applied; no authoritative current SKILL bytes supplied,F01 F13
+C02,rubric and per-file grading criteria,NOT VERIFIED,"Historical audit-scoring and file-review-rubric referenced, not uploaded as primary current files",F02 F14
+C03,target behavioural case/eval folder,PRESENT BUT NOT ENFORCED,Transcript documents folder creation part-way through the run; comprehensive raw evidence still missing,F06 F15
+C04,target-cluster rules / hub exception / merge handoff,NOT VERIFIED,Transcript reports v1.1 text and first GREEN result; current target source not available,F07
+C05,candidate freeze and hash enforcement,NOT VERIFIED,No primary record of a version-bound candidate hash gate during 17 Oct; current runner enforcement unknown,F03
+C06,fixed oracle and immutable versions,PRESENT BUT NOT ENFORCED,Expected files were created but changed; PASS summary later corrected,F12 F17
+C07,single controller / skill-creator tool ownership,NOT VERIFIED,"Historical after-corrections SWOT defines intended ownership, not live Oct 17 enforcement",F13
+C08,target host loading/activation and application check,NOT VERIFIED,Synthetic GREEN subagent cases exist but no confirmed natural target-host activation on final candidate,F16
+C09,closeout reserve and interruption checkpoint,NOT VERIFIED,Actual session ended mid-evaluation with no final report; current rule and enforcement not inspectable,F01 F10
+C10,observable model-token budget metering,NOT VERIFIED,No usage telemetry furnished in transcript or attached reports,F19
+C11,specialist evaluator truth checking,NOT VERIFIED,Other skill-creator reports show correction; invocation in failed run not evidenced,F17
+C12,unrelated hook guard security change handling,PRESENT AND ENFORCED,Transcript explicitly avoided touching pre_tool_use.py in this task,F11
+C13,markdownlint static check,PRESENT AND ENFORCED,Multiple visible command outputs show 0 lint issues on scoped files; not a runtime gate,F08

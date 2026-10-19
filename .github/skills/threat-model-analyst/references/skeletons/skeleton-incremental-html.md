@@ -7,6 +7,7 @@
 The HTML report has exactly 8 sections in this order. Each section MUST be present.
 
 ## Section 1: Header + Comparison Cards
+
 ```html
 <div class="header">
   <div class="report-badge">INCREMENTAL THREAT MODEL COMPARISON</div>
@@ -36,6 +37,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 <!-- SKELETON INSTRUCTION: Section 2 (Risk Shift) is merged into Section 1 above. The old separate risk-shift div is removed. The comparison-cards div replaces both the old subtitle + risk-shift + time-between box. -->
 
 ## Section 2: Metrics Bar (5 boxes)
+
 ```html
 <div class="metrics-bar">
   [FILL: Components: old → new (±N)]
@@ -45,9 +47,11 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
   [FILL: Code Changes: N commits, M PRs — use git rev-list --count and git log --oneline --merges --grep="Merged PR"]
 </div>
 ```
+
 **MUST include Trust Boundaries as one of the 5 metrics. 5th box is Code Changes (NOT Time Between).**
 
 ## Section 3: Status Summary Cards (colored)
+
 ```html
 <div class="status-cards">
   <!-- Green card --> Fixed: [FILL: count] [FILL: 1-sentence summary, NO IDs]
@@ -67,6 +71,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 **Status info appears ONLY here — NOT also in the metrics bar.**
 
 ## Section 4: Component Status Grid
+
 ```html
 <table class="component-grid">
   <tr><th>Component</th><th>Type</th><th>Status</th><th>Source Files</th></tr>
@@ -77,6 +82,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 ```
 
 ## Section 5: Threat/Finding Status Breakdown
+
 ```html
 <div class="status-breakdown">
   [FILL: Grouped by status — Fixed items, New items, etc.]
@@ -86,6 +92,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 ```
 
 ## Section 6: STRIDE Heatmap with Deltas
+
 ```html
 <table class="stride-heatmap">
   <thead>
@@ -110,9 +117,11 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
   </tbody>
 </table>
 ```
+
 **MUST have 13 columns: Component + S + T + R + I + D + E + A + Total + divider + T1 + T2 + T3**
 
 ## Section 7: Needs Verification
+
 ```html
 <div class="needs-verification">
   [REPEAT: items where analysis disagrees with old report]
@@ -122,6 +131,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 ```
 
 ## Section 8: Footer
+
 ```html
 <div class="footer">
   Model: [FILL] | Duration: [FILL]
@@ -133,6 +143,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 ---
 
 **Fixed CSS variables (use in `<style>` block):**
+
 ```css
 --red: #dc3545;    /* new vulnerability */
 --green: #28a745;  /* fixed/improved */
@@ -142,6 +153,7 @@ The HTML report has exactly 8 sections in this order. Each section MUST be prese
 ```
 
 **Fixed rules:**
+
 - ALL CSS in inline `<style>` block — no external stylesheets
 - Include `@media print` styles
 - Heatmap MUST have T1/T2/T3 columns after divider

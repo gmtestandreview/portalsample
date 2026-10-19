@@ -404,7 +404,7 @@ opcache.max_accelerated_files=10000
 opcache.validate_timestamps=0  ; Production only
 ```
 
-2. **Use Discovery Caching**:
+1. **Use Discovery Caching**:
 
 ```php
 use Symfony\Component\Cache\Adapter\RedisAdapter;
@@ -420,7 +420,7 @@ $server = Server::builder()
     ->build();
 ```
 
-3. **Optimize Composer Autoloader**:
+1. **Optimize Composer Autoloader**:
 
 ```bash
 composer dump-autoload --optimize --classmap-authoritative

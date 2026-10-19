@@ -25,7 +25,7 @@ The skill auto-detects your project type and handles the rest.
 ## Triggers
 
 | Trigger | Example |
-|---------|---------|
+| --------- | --------- |
 | Update dependencies | "update dependencies", "update deps" |
 | Check outdated | "check for outdated packages" |
 | Fix dependency issues | "fix my dependency problems" |
@@ -37,7 +37,7 @@ The skill auto-detects your project type and handles the rest.
 ## Supported Languages
 
 | Language | Package File | Update Tool | Audit Tool |
-|----------|--------------|-------------|------------|
+| ---------- | -------------- | ------------- | ------------ |
 | **Node.js** | package.json | `taze` | `npm audit` |
 | **Python** | requirements.txt, pyproject.toml | `pip-review` | `safety`, `pip-audit` |
 | **Go** | go.mod | `go get -u` | `govulncheck` |
@@ -51,7 +51,7 @@ The skill auto-detects your project type and handles the rest.
 ## Quick Reference
 
 | Update Type | Version Change | Action |
-|-------------|----------------|--------|
+| ------------- | ---------------- | -------- |
 | **Fixed** | No `^` or `~` | Skip (intentionally pinned) |
 | **PATCH** | `x.y.z` → `x.y.Z` | Auto-apply |
 | **MINOR** | `x.y.z` → `x.Y.0` | Auto-apply |
@@ -220,7 +220,7 @@ When dependencies are broken, run diagnosis:
 ### Common Issues & Fixes
 
 | Issue | Symptoms | Fix |
-|-------|----------|-----|
+| ------- | ---------- | ----- |
 | **Version Conflict** | "Cannot resolve dependency tree" | Clean install, use overrides/resolutions |
 | **Peer Dependency** | "Peer dependency not satisfied" | Install required peer version |
 | **Security Vuln** | `npm audit` shows issues | `npm audit fix` or manual update |
@@ -277,7 +277,7 @@ dotnet list package --vulnerable
 ### Severity Response
 
 | Severity | Action |
-|----------|--------|
+| ---------- | -------- |
 | **Critical** | Fix immediately |
 | **High** | Fix within 24h |
 | **Moderate** | Fix within 1 week |
@@ -288,7 +288,7 @@ dotnet list package --vulnerable
 ## Anti-Patterns
 
 | Avoid | Why | Instead |
-|-------|-----|---------|
+| ------- | ----- | --------- |
 | Update fixed versions | Intentionally pinned | Skip them |
 | Auto-apply MAJOR | Breaking changes | Prompt user |
 | Batch MAJOR prompts | Loses context | Prompt individually |
@@ -317,7 +317,7 @@ After updates:
 The skill auto-detects project type by scanning for package files:
 
 | File Found | Language | Package Manager |
-|------------|----------|-----------------|
+| ------------ | ---------- | ----------------- |
 | `package.json` | Node.js | npm/yarn/pnpm |
 | `requirements.txt` | Python | pip |
 | `pyproject.toml` | Python | pip/poetry |
@@ -330,6 +330,7 @@ The skill auto-detects project type by scanning for package files:
 | `*.csproj` | .NET | dotnet |
 
 **Detection order matters for monorepos:**
+
 1. Check current directory first
 2. Then check for workspace/monorepo patterns
 3. Offer to run recursively if applicable
@@ -396,7 +397,7 @@ PATCH: Bug fixes - backward compatible
 ### Range Specifiers
 
 | Specifier | Meaning | Example |
-|-----------|---------|---------|
+| ----------- | --------- | --------- |
 | `^1.2.3` | Minor + Patch OK | `>=1.2.3 <2.0.0` |
 | `~1.2.3` | Patch only | `>=1.2.3 <1.3.0` |
 | `1.2.3` | Exact (fixed) | Only `1.2.3` |
@@ -423,6 +424,7 @@ PATCH: Bug fixes - backward compatible
 ### Node.js Conflicts
 
 **Diagnosis:**
+
 ```bash
 npm ls package-name      # See dependency tree
 npm explain package-name # Why installed
@@ -430,6 +432,7 @@ yarn why package-name    # Yarn equivalent
 ```
 
 **Resolution with overrides:**
+
 ```json
 // package.json
 {
@@ -440,6 +443,7 @@ yarn why package-name    # Yarn equivalent
 ```
 
 **Resolution with resolutions (Yarn):**
+
 ```json
 {
   "resolutions": {
@@ -451,12 +455,14 @@ yarn why package-name    # Yarn equivalent
 ### Python Conflicts
 
 **Diagnosis:**
+
 ```bash
 pip check
 pipdeptree -p package-name
 ```
 
 **Resolution:**
+
 ```bash
 # Use virtual environment
 python -m venv venv
@@ -483,7 +489,7 @@ pip install -c constraints.txt -r requirements.txt
 ## Related Tools
 
 | Tool | Language | Purpose |
-|------|----------|---------|
+| ------ | ---------- | --------- |
 | [taze](https://github.com/antfu-collective/taze) | Node.js | Smart dependency updates |
 | [npm-check-updates](https://github.com/raineorshine/npm-check-updates) | Node.js | Alternative to taze |
 | [pip-review](https://github.com/jgonggrijp/pip-review) | Python | Interactive pip updates |

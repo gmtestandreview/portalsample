@@ -1,7 +1,6 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useBlocker } from 'react-router';
-import { useFormikContext } from 'formik';
 import type { RouteLeavingGuardProps } from './types';
 import PrimaryButton from '../Buttons/PrimaryButton';
 
@@ -11,9 +10,8 @@ const RouteLeavingGuard = ({
   body = 'You have made changes to this form. You can discard your changes, or cancel to stay on the page.',
   cancelBtn = 'Cancel',
   confirmBtn = 'Discard changes',
+  onProceed,
 }: Readonly<RouteLeavingGuardProps>) => {
-  const formik = useFormikContext();
-
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       Boolean(when) && currentLocation.pathname !== nextLocation.pathname
@@ -27,7 +25,7 @@ const RouteLeavingGuard = ({
 
   const handleConfirmNavigationClick = () => {
     if (blocker.state === 'blocked') {
-      formik.setErrors({});
+      onProceed?.();
       blocker.proceed();
     }
   };

@@ -1,0 +1,2061 @@
+{
+  "runner": "Codacy analysis-runner public API bundled with VS Code extension 1.16.2",
+  "runnerVersion": "0.23.1",
+  "node": "v24.21.0",
+  "root": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au",
+  "configurationSha256": "b08e2455843d96f536ae51bb83440d1cee1aa487431e5d71ff75abf7d58194dc",
+  "targets": [
+    {
+      "file": "scripts/pre_tool_use.py",
+      "sha256": "55a7608e79762a7d6bc7bce466d4b99840c497295d5c540dcf1cb12c509587f5"
+    },
+    {
+      "file": "scripts/post_tool_use.py",
+      "sha256": "eb105a62663a60342af98ea0a5b6a4f3e1bc310740c25aa09c20f0e16edc1915"
+    },
+    {
+      "file": "scripts/watcher.py",
+      "sha256": "f57eee20a0506b2b6a5af4124e2880f64909f904623a559c39ef2c7852fd481b"
+    },
+    {
+      "file": "scripts/process_utils.py",
+      "sha256": "a7365b40b21c5ef638e359d18310c40258b854b4b94d39226560ad650d787b92"
+    },
+    {
+      "file": "templates/watcher.py",
+      "sha256": "fa6efc43d4782d7567573881a15ca72dd44cab763b18a2d6b5448f30d41f20df"
+    },
+    {
+      "file": ".claude/hooks/secret-scanner.py",
+      "sha256": "8738e91504509c55ca3661e1e444d5285dc4258f8a389498f892e06c56491edd"
+    },
+    {
+      "file": "scripts/pre_tool_use_wrapper.cjs",
+      "sha256": "f44dd96000cd63e41b9d22cb0aaacbe3ab424eb01e462226c4a5d1fa62c27305"
+    },
+    {
+      "file": "scripts/python314.cjs",
+      "sha256": "66d817a1c0219785827aa3de8f083c1c6ed063d07a6bdd88a0c45745b98c2d00"
+    },
+    {
+      "file": "tests/hooks/test_github_mcp_server.py",
+      "sha256": "cf63c597c9e19a1d491bb210e77a51d24ea9e33ba99815ad1af4e3e45bbc6e5f"
+    },
+    {
+      "file": "tests/hooks/test_guard_parser.py",
+      "sha256": "601c0f909bbc207c2d06e2f0578de82446f75a53f17a1e58862b7e67e25e9772"
+    },
+    {
+      "file": "tests/hooks/test_post_tool_use.py",
+      "sha256": "212a11a7439567679158b32e60340715103ec79382f32192e65492a1481b2ad2"
+    },
+    {
+      "file": "tests/hooks/test_pre_tool_use.py",
+      "sha256": "3d41d3b931491c2236a3a51cb142908ef1a73868982dbe17614840063cc85cd9"
+    },
+    {
+      "file": "tests/hooks/test_python314.py",
+      "sha256": "1ec4fd4ea12630fb6719fb5c7b31c6036a13c5a7c8812d780fdd4d6989081089"
+    },
+    {
+      "file": "tests/hooks/test_watcher_pid.py",
+      "sha256": "5013a81256a859cc393658320d218eca9e0d8a481cb9c36c44d16d21abfcfdf1"
+    },
+    {
+      "file": "tests/hooks/test_wrapper.py",
+      "sha256": "d0f0422104ad25c40de3cfb50a924d67d24ae41a982925155843b09449496242"
+    }
+  ],
+  "issueCount": 169,
+  "findings": [
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "scripts\\watcher.py",
+      "line": 124,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": "scripts\\watcher.py",
+      "line": 136,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": "scripts\\watcher.py",
+      "line": 198,
+      "column": 16,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": "scripts\\watcher.py",
+      "line": 223,
+      "column": 24,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "templates\\watcher.py",
+      "line": 169,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": "templates\\watcher.py",
+      "line": 179,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": "templates\\watcher.py",
+      "line": 239,
+      "column": 16,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": "templates\\watcher.py",
+      "line": 264,
+      "column": 24,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 122,
+      "column": 9,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 188,
+      "column": 16,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 229,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 259,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 274,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_guard_parser.py",
+      "line": 56,
+      "column": 18,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 22,
+      "column": 16,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 193,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 232,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 417,
+      "column": 18,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 442,
+      "column": 18,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 470,
+      "column": 22,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 79,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 111,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 137,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 161,
+      "column": 18,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 196,
+      "column": 18,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 147,
+      "column": 14,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 63,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_dodgy",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 185,
+      "column": 1,
+      "severity": "Error",
+      "category": "Security",
+      "message": "Possible hardcoded secret key (secret)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "scripts\\pre_tool_use.py",
+      "line": 872,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Module has no attribute \"LOCK_UN\". (attr-defined)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "scripts\\pre_tool_use.py",
+      "line": 873,
+      "column": 5,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Module has no attribute \"flock\". (attr-defined)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 170,
+      "column": 19,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Item \"None\" of \"Popen[bytes] | None\" has no attribute \"pid\". (union-attr)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 172,
+      "column": 17,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Item \"None\" of \"Popen[bytes] | None\" has no attribute \"wait\". (union-attr)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 76,
+      "column": 17,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Argument 1 to \"link\" has incompatible type \"str | None\"; expected \"str | bytes | PathLike[str] | PathLike[bytes]\". (arg-type)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "tests\\hooks\\test_github_mcp_server.py",
+      "line": 78,
+      "column": 22,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Argument 1 to \"copy2\" has incompatible type \"str | None\"; expected \"str | PathLike[str]\". (arg-type)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mypy",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 64,
+      "column": 10,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "List item 0 has incompatible type \"str | None\"; expected \"str | bytes | PathLike[str] | PathLike[bytes]\". (list-item)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "scripts\\watcher.py",
+      "line": 33,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "scripts\\watcher.py",
+      "line": 124,
+      "column": 12,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B607",
+      "filePath": "scripts\\watcher.py",
+      "line": 141,
+      "column": 5,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "Starting a process with a partial executable path (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "scripts\\watcher.py",
+      "line": 141,
+      "column": 5,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "templates\\watcher.py",
+      "line": 33,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "templates\\watcher.py",
+      "line": 169,
+      "column": 12,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B607",
+      "filePath": "templates\\watcher.py",
+      "line": 184,
+      "column": 5,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "Starting a process with a partial executable path (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "templates\\watcher.py",
+      "line": 184,
+      "column": 5,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "tests\\hooks\\test_guard_parser.py",
+      "line": 4,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_guard_parser.py",
+      "line": 56,
+      "column": 18,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_guard_parser.py",
+      "line": 63,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_guard_parser.py",
+      "line": 64,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 4,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 22,
+      "column": 16,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 40,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 41,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 58,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 59,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 77,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 78,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 79,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 80,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 92,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 93,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 100,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 101,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 110,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 111,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 122,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 123,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 132,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 133,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 142,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 143,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 149,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_post_tool_use.py",
+      "line": 150,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 23,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 193,
+      "column": 12,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 232,
+      "column": 12,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 250,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 292,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 363,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 396,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 401,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 406,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 411,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 417,
+      "column": 18,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 426,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 427,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 442,
+      "column": 18,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 456,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 457,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 459,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 460,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 470,
+      "column": 22,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 479,
+      "column": 13,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 480,
+      "column": 13,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 481,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 482,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 485,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 486,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 487,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 530,
+      "column": 21,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 541,
+      "column": 17,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 542,
+      "column": 17,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 543,
+      "column": 13,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 545,
+      "column": 13,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 546,
+      "column": 13,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 559,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 560,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 565,
+      "column": 17,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_pre_tool_use.py",
+      "line": 566,
+      "column": 17,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 6,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 78,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 79,
+      "column": 14,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 85,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 88,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 89,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 91,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 93,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 94,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 101,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 106,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B607",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 111,
+      "column": 14,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "Starting a process with a partial executable path (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 111,
+      "column": 14,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 128,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 130,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 131,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 133,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B607",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 137,
+      "column": 14,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "Starting a process with a partial executable path (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 137,
+      "column": 14,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 143,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 145,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 146,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B607",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 161,
+      "column": 18,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "Starting a process with a partial executable path (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 161,
+      "column": 18,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 170,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 171,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 172,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 196,
+      "column": 18,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 213,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_python314.py",
+      "line": 214,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 9,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 70,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 81,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 94,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 105,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 106,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 147,
+      "column": 14,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 154,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 155,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 163,
+      "column": 49,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 178,
+      "column": 17,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_watcher_pid.py",
+      "line": 179,
+      "column": 17,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B404",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 16,
+      "column": 1,
+      "severity": "Info",
+      "category": "Security",
+      "message": "Consider possible security implications associated with the subprocess module. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 46,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 47,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B603",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 63,
+      "column": 12,
+      "severity": "Warning",
+      "category": "Security",
+      "message": "subprocess call - check for execution of untrusted input. (CWE-78)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 88,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 89,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 120,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 141,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 142,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 143,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 152,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "Bandit",
+      "patternId": "Bandit_B101",
+      "filePath": "tests\\hooks\\test_wrapper.py",
+      "line": 153,
+      "column": 9,
+      "severity": "High",
+      "category": "Security",
+      "message": "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code. (CWE-703)"
+    },
+    {
+      "toolId": "ESLint8",
+      "patternId": "ESLint8_security_detect-non-literal-fs-filename",
+      "filePath": "scripts\\pre_tool_use_wrapper.cjs",
+      "line": 10,
+      "column": 6,
+      "severity": "High",
+      "category": "Security",
+      "message": "Found existsSync from package \"node:fs\" with non literal argument at index 0"
+    },
+    {
+      "toolId": "ESLint8",
+      "patternId": "ESLint8_xss_no-mixed-html",
+      "filePath": "scripts\\python314.cjs",
+      "line": 34,
+      "column": 5,
+      "severity": "High",
+      "category": "Security",
+      "message": "HTML passed in to function 'process.stderr.write'"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": ".claude\\hooks\\secret-scanner.py",
+      "line": 194,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception BaseException (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W0718",
+      "filePath": ".claude\\hooks\\secret-scanner.py",
+      "line": 245,
+      "column": 12,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "Catching too general exception Exception (broad-exception-caught)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": ".claude\\hooks\\secret-scanner.py",
+      "line": 336,
+      "column": 22,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "PyLintPython3",
+      "patternId": "PyLintPython3_W1510",
+      "filePath": ".claude\\hooks\\secret-scanner.py",
+      "line": 348,
+      "column": 30,
+      "severity": "High",
+      "category": "ErrorProne",
+      "message": "'subprocess.run' used without explicitly defining the value for 'check'. (subprocess-run-check)"
+    },
+    {
+      "toolId": "Prospector",
+      "patternId": "Prospector_mccabe",
+      "filePath": ".claude\\hooks\\secret-scanner.py",
+      "line": 311,
+      "column": 1,
+      "severity": "Warning",
+      "category": "Complexity",
+      "message": "main is too complex (19) (MC0001)"
+    },
+    {
+      "toolId": "Lizard",
+      "patternId": "Lizard_ccn-critical",
+      "filePath": ".claude\\hooks\\secret-scanner.py",
+      "line": 311,
+      "column": 1,
+      "severity": "Error",
+      "category": "Complexity",
+      "message": "main has a cyclomatic complexity of 22 (threshold: 20)"
+    }
+  ],
+  "runs": [
+    {
+      "name": "repository configuration",
+      "capability": {
+        "ready": [
+          {
+            "toolId": "Ruff",
+            "displayName": "Ruff",
+            "version": "0.16.7",
+            "installation": "global",
+            "runner": "local",
+            "expectedVersion": "0.16.0",
+            "filesRouted": 12,
+            "configSource": "local",
+            "configPath": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\ruff.toml"
+          },
+          {
+            "toolId": "PyLintPython3",
+            "displayName": "Pylint",
+            "version": "4.0.5",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 12,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "Prospector",
+            "displayName": "Prospector",
+            "version": "1.19.1",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 12,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "Bandit",
+            "displayName": "Bandit",
+            "version": "1.9.4",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 12,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "Lizard",
+            "displayName": "Lizard",
+            "version": "1.23.0",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 14,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "ESLint8",
+            "displayName": "ESLint 8",
+            "version": "8.57.1",
+            "installation": "bundled",
+            "runner": "local",
+            "filesRouted": 2,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "ESLint9",
+            "displayName": "ESLint 9",
+            "version": "9.39.5",
+            "installation": "bundled",
+            "runner": "local",
+            "filesRouted": 2,
+            "configSource": "local",
+            "configPath": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\eslint.config.mjs"
+          }
+        ],
+        "unavailable": [
+          {
+            "toolId": "Semgrep",
+            "displayName": "Opengrep",
+            "reason": "opengrep binary not found in PATH or Codacy install directory",
+            "remediation": "codacy-analysis analyze . --install-dependencies  # auto-install into ~/.codacy\ncurl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | bash  # manual"
+          }
+        ],
+        "checkedAt": "2026-10-16T22:16:55.421Z"
+      },
+      "toolResults": [
+        {
+          "toolId": "Ruff",
+          "status": "success",
+          "issueCount": 0,
+          "errorCount": 0,
+          "durationMs": 114,
+          "filesAnalyzed": 12
+        },
+        {
+          "toolId": "PyLintPython3",
+          "status": "success",
+          "issueCount": 27,
+          "errorCount": 0,
+          "durationMs": 4616,
+          "filesAnalyzed": 12
+        },
+        {
+          "toolId": "Prospector",
+          "status": "success",
+          "issueCount": 8,
+          "errorCount": 0,
+          "durationMs": 3809,
+          "filesAnalyzed": 12
+        },
+        {
+          "toolId": "Bandit",
+          "status": "success",
+          "issueCount": 126,
+          "errorCount": 3,
+          "durationMs": 499,
+          "filesAnalyzed": 12
+        },
+        {
+          "toolId": "Lizard",
+          "status": "success",
+          "issueCount": 0,
+          "errorCount": 0,
+          "durationMs": 16605,
+          "filesAnalyzed": 14
+        },
+        {
+          "toolId": "ESLint8",
+          "status": "success",
+          "issueCount": 2,
+          "errorCount": 0,
+          "durationMs": 65308,
+          "filesAnalyzed": 2
+        },
+        {
+          "toolId": "ESLint9",
+          "status": "success",
+          "issueCount": 0,
+          "errorCount": 0,
+          "durationMs": 48895,
+          "filesAnalyzed": 2
+        }
+      ],
+      "errors": [
+        {
+          "toolId": "Bandit",
+          "phase": "outputParse",
+          "kind": "ParseWarning",
+          "level": "warning",
+          "message": "Bandit emitted warnings about nosec comment text; detailed stderr omitted"
+        },
+        {
+          "toolId": "Bandit",
+          "phase": "toolInvoke",
+          "kind": "FileError",
+          "level": "warning",
+          "message": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\scripts\\post_tool_use.py: syntax error while parsing AST from file"
+        },
+        {
+          "toolId": "Bandit",
+          "phase": "toolInvoke",
+          "kind": "FileError",
+          "level": "warning",
+          "message": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\scripts\\pre_tool_use.py: syntax error while parsing AST from file"
+        }
+      ]
+    },
+    {
+      "name": "explicit secret scanner check",
+      "configurationDifference": "One-off copy removes .claude/** exclusion; all pattern settings retained",
+      "capability": {
+        "ready": [
+          {
+            "toolId": "Ruff",
+            "displayName": "Ruff",
+            "version": "0.16.7",
+            "installation": "global",
+            "runner": "local",
+            "expectedVersion": "0.16.0",
+            "filesRouted": 1,
+            "configSource": "local",
+            "configPath": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\ruff.toml"
+          },
+          {
+            "toolId": "PyLintPython3",
+            "displayName": "Pylint",
+            "version": "4.0.5",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 1,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "Prospector",
+            "displayName": "Prospector",
+            "version": "1.19.1",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 1,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "Bandit",
+            "displayName": "Bandit",
+            "version": "1.9.4",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 1,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "Lizard",
+            "displayName": "Lizard",
+            "version": "1.23.0",
+            "installation": "codacy",
+            "runner": "local",
+            "filesRouted": 1,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "ESLint8",
+            "displayName": "ESLint 8",
+            "version": "8.57.1",
+            "installation": "bundled",
+            "runner": "local",
+            "filesRouted": 0,
+            "configSource": "codacy"
+          },
+          {
+            "toolId": "ESLint9",
+            "displayName": "ESLint 9",
+            "version": "9.39.5",
+            "installation": "bundled",
+            "runner": "local",
+            "filesRouted": 0,
+            "configSource": "local",
+            "configPath": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\eslint.config.mjs"
+          }
+        ],
+        "unavailable": [
+          {
+            "toolId": "Semgrep",
+            "displayName": "Opengrep",
+            "reason": "opengrep binary not found in PATH or Codacy install directory",
+            "remediation": "codacy-analysis analyze . --install-dependencies  # auto-install into ~/.codacy\ncurl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | bash  # manual"
+          }
+        ],
+        "checkedAt": "2026-10-16T22:18:17.165Z"
+      },
+      "toolResults": [
+        {
+          "toolId": "Ruff",
+          "status": "success",
+          "issueCount": 0,
+          "errorCount": 0,
+          "durationMs": 30,
+          "filesAnalyzed": 1
+        },
+        {
+          "toolId": "PyLintPython3",
+          "status": "success",
+          "issueCount": 4,
+          "errorCount": 0,
+          "durationMs": 1503,
+          "filesAnalyzed": 1
+        },
+        {
+          "toolId": "Prospector",
+          "status": "success",
+          "issueCount": 1,
+          "errorCount": 0,
+          "durationMs": 1602,
+          "filesAnalyzed": 1
+        },
+        {
+          "toolId": "Bandit",
+          "status": "success",
+          "issueCount": 0,
+          "errorCount": 1,
+          "durationMs": 350,
+          "filesAnalyzed": 1
+        },
+        {
+          "toolId": "Lizard",
+          "status": "success",
+          "issueCount": 1,
+          "errorCount": 0,
+          "durationMs": 199,
+          "filesAnalyzed": 1
+        }
+      ],
+      "errors": [
+        {
+          "toolId": "Bandit",
+          "phase": "toolInvoke",
+          "kind": "FileError",
+          "message": "C:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\.claude\\hooks\\secret-scanner.py: syntax error while parsing AST from file",
+          "level": "warning"
+        }
+      ]
+    }
+  ]
+}

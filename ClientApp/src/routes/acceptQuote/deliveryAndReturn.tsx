@@ -28,6 +28,125 @@ import {
 
 const getName = prefixedPropertyOf<DeliveryAndReturnStep>('deliveryAndReturn');
 
+type ReturnAddressSummaryProps = Readonly<{
+  deliveryAndReturnStep: DeliveryAndReturnStep;
+  streetAddress: AddressDetailsDto | undefined;
+  postalAddress: AddressDetailsDto | undefined;
+}>;
+
+const ReturnAddressSummary = ({
+  deliveryAndReturnStep,
+  streetAddress,
+  postalAddress,
+}: ReturnAddressSummaryProps) => {
+  const {
+    returnAddressType,
+    rfqOrganisation,
+    returnOrganisationName,
+    returnAddress,
+  } = deliveryAndReturnStep;
+  let address: AddressDetailsDto | undefined;
+
+  const organisationName = returnOrganisationName;
+
+  switch (returnAddressType) {
+    case 'BusinessAddress':
+      address = streetAddress;
+      break;
+    case 'PostalAddress':
+      address = rfqOrganisation?.postalAddressSameAsStreetAddress
+        ? streetAddress
+        : postalAddress;
+      break;
+    case 'Other':
+      address = returnAddress;
+      break;
+    default:
+      return null;
+  }
+
+  return (
+    <>
+      <h3>Instrument/artefact return address</h3>
+      <div className='mb-4'>
+        <div className='form-label mb-0'>
+          Return organisation name (optional)
+        </div>
+        {organisationName ? <p>{organisationName}</p> : <p>-</p>}
+      </div>
+      {address && (
+        <>
+          <div className='form-label mb-0'>Return address</div>
+          <p>{getFormattedAddress(address)}</p>
+        </>
+      )}
+    </>
+  );
+};
+
+type DeliveryAndReturnSummaryProps = Readonly<{
+  deliveryAndReturnStep: DeliveryAndReturnStep | undefined;
+  streetAddress: AddressDetailsDto | undefined;
+  postalAddress: AddressDetailsDto | undefined;
+}>;
+
+const DeliveryAndReturnSummary = ({
+  deliveryAndReturnStep,
+  streetAddress,
+  postalAddress,
+}: DeliveryAndReturnSummaryProps) => (
+  <>
+    <Row className='mb-4'>
+      <h2 className='h3 my-3'>Instrument/artefact return</h2>
+      <h3 className='h4 my-3'>Return contact person</h3>
+      <RadioButtonGroup
+        legend='Please select your contact person for the returned instrument/artefact when the job has completed'
+        name={getName('returnContactType')}
+        id='q-returnContactType'
+        isSummary
+        options={RETURN_CONTACT_TYPE_OPTIONS}
+      />
+    </Row>
+    <HidableField name={getName('rfqHide')}>
+      <Row className='mb-4'>
+        <h4 className='h5 my-3'>Return contact person details</h4>
+        <ContactDetailsInput
+          key='contact'
+          name='requestForQuote.contact'
+          isSummary
+        />
+      </Row>
+    </HidableField>
+    <HidableField name={getName('contactHide')}>
+      <Row className='mb-4'>
+        <h4 className='h5 my-3'>Return contact person details</h4>
+        <ContactDetailsInput
+          key='contact'
+          name={getName('contact')}
+          isSummary
+        />
+      </Row>
+    </HidableField>
+    {deliveryAndReturnStep && (
+      <ReturnAddressSummary
+        deliveryAndReturnStep={deliveryAndReturnStep}
+        streetAddress={streetAddress}
+        postalAddress={postalAddress}
+      />
+    )}
+    <Row className='mb-4'>
+      <h3 className='h4 my-3'>Return method</h3>
+      <RadioButtonGroup
+        legend='Choose your return method for the instrument/artefact'
+        name={getName('returnMethod')}
+        id='q-returnMethod'
+        isSummary
+        options={RETURN_METHOD_OPTIONS}
+      />
+    </Row>
+  </>
+);
+
 const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
@@ -180,100 +299,11 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
             />
           </Row>
           {isSummary ? (
-            <>
-              <Row className='mb-4'>
-                <h2 className='h3 my-3'>Instrument/artefact return</h2>
-                <h3 className='h4 my-3'>Return contact person</h3>
-                <RadioButtonGroup
-                  legend='Please select your contact person for the returned instrument/artefact when the job has completed'
-                  name={getName('returnContactType')}
-                  id='q-returnContactType'
-                  isSummary={isSummary}
-                  options={RETURN_CONTACT_TYPE_OPTIONS}
-                />
-              </Row>
-              <HidableField name={getName('rfqHide')}>
-                <Row className='mb-4'>
-                  <h4 className='h5 my-3'>Return contact person details</h4>
-                  <ContactDetailsInput
-                    key='contact'
-                    name='requestForQuote.contact'
-                    isSummary={isSummary}
-                  />
-                </Row>
-              </HidableField>
-              <HidableField name={getName('contactHide')}>
-                <Row className='mb-4'>
-                  <h4 className='h5 my-3'>Return contact person details</h4>
-                  <ContactDetailsInput
-                    key='contact'
-                    name={getName('contact')}
-                    isSummary={isSummary}
-                  />
-                </Row>
-              </HidableField>
-              {deliveryAndReturnStep &&
-                (() => {
-                  const {
-                    returnAddressType,
-                    rfqOrganisation,
-                    returnOrganisationName,
-                    returnAddress,
-                  } = deliveryAndReturnStep;
-                  let address: AddressDetailsDto | undefined;
-
-                  const organisationName = returnOrganisationName;
-
-                  switch (returnAddressType) {
-                    case 'BusinessAddress':
-                      address = streetAddress;
-                      break;
-                    case 'PostalAddress':
-                      address =
-                        rfqOrganisation?.postalAddressSameAsStreetAddress
-                          ? streetAddress
-                          : postalAddress;
-                      break;
-                    case 'Other':
-                      address = returnAddress;
-                      break;
-                    default:
-                      return null;
-                  }
-
-                  return (
-                    <>
-                      <h3>Instrument/artefact return address</h3>
-                      <div className='mb-4'>
-                        <div className='form-label mb-0'>
-                          Return organisation name (optional)
-                        </div>
-                        {organisationName ? (
-                          <p>{organisationName}</p>
-                        ) : (
-                          <p>-</p>
-                        )}
-                      </div>
-                      {address && (
-                        <>
-                          <div className='form-label mb-0'>Return address</div>
-                          <p>{getFormattedAddress(address)}</p>
-                        </>
-                      )}
-                    </>
-                  );
-                })()}
-              <Row className='mb-4'>
-                <h3 className='h4 my-3'>Return method</h3>
-                <RadioButtonGroup
-                  legend='Choose your return method for the instrument/artefact'
-                  name={getName('returnMethod')}
-                  id='q-returnMethod'
-                  isSummary={isSummary}
-                  options={RETURN_METHOD_OPTIONS}
-                />
-              </Row>
-            </>
+            <DeliveryAndReturnSummary
+              deliveryAndReturnStep={deliveryAndReturnStep}
+              streetAddress={streetAddress}
+              postalAddress={postalAddress}
+            />
           ) : (
             <DeliveryAndReturnFormikBridge
               streetAddress={streetAddress}

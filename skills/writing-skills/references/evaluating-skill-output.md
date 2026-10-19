@@ -74,6 +74,12 @@ what the first run produces.
 
 ## Running evals
 
+For iterative skill optimisation in this package, load
+[bounded optimisation](bounded-optimisation.md) before dispatch. Its frozen
+oracle, raw-evidence, preflight and closeout controls govern publication.
+The illustrative workflows below do not authorize unbounded campaigns or
+retroactive changes to a frozen comparison oracle.
+
 The core pattern is to run each test case twice: once **with the skill** and
 once **without it** (or with a previous version). This gives you a baseline to
 compare against.

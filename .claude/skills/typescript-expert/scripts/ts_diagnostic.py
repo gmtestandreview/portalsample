@@ -25,7 +25,8 @@ import tempfile
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Sequence, cast
+from typing import cast
+from collections.abc import Sequence
 
 
 PASS = "PASS"

@@ -208,7 +208,7 @@ describe('ErrorSummary', () => {
     expect(document.querySelector('#form-error-summary')).not.toBeNull();
   });
 
-  it('calls handleAlertScroll in FormikErrorsSummary when isSubmitting=true with existing errors', async () => {
+  it('scrolls and focuses the summary after a failed submit settles', async () => {
     vi.useFakeTimers();
 
     let formikInstance: FormikProps<{ name: string }> | null = null;
@@ -237,12 +237,8 @@ describe('ErrorSummary', () => {
 
     expect(document.querySelector('#form-error-summary')).not.toBeNull();
 
-    // Set isSubmitting=true directly while hasErrors=true and isValidating=false.
-    // This triggers the useEffect condition: isSubmitting && !isValidating && hasErrors → handleAlertScroll()
-    await act(async () => {
-      formikInstance!.setSubmitting(true);
-    });
-
+    // The failed submit above settles with errors and no pending submission, so
+    // the summary schedules its focus once; let the timer fire.
     act(() => {
       vi.advanceTimersByTime(200);
     });

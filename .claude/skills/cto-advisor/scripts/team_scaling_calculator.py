@@ -5,7 +5,6 @@ Engineering Team Scaling Calculator - Optimize team growth and structure
 
 import json
 import math
-from typing import Dict, List, Tuple
 
 class TeamScalingCalculator:
     def __init__(self):
@@ -34,7 +33,7 @@ class TeamScalingCalculator:
             'data_engineer': 0.05
         }
     
-    def calculate_scaling_plan(self, current_state: Dict, growth_targets: Dict) -> Dict:
+    def calculate_scaling_plan(self, current_state: dict, growth_targets: dict) -> dict:
         """Calculate optimal scaling plan"""
         results = {
             'current_analysis': self._analyze_current_state(current_state),
@@ -74,7 +73,7 @@ class TeamScalingCalculator:
         
         return results
     
-    def _analyze_current_state(self, current_state: Dict) -> Dict:
+    def _analyze_current_state(self, current_state: dict) -> dict:
         """Analyze current team state"""
         total_engineers = current_state.get('headcount', 0)
         
@@ -118,7 +117,7 @@ class TeamScalingCalculator:
                 return stage
         return 'startup'
     
-    def _calculate_balance_score(self, roles: Dict, total: int) -> float:
+    def _calculate_balance_score(self, roles: dict, total: int) -> float:
         """Calculate team balance score"""
         if total == 0:
             return 0
@@ -137,7 +136,7 @@ class TeamScalingCalculator:
         
         return max(0, score)
     
-    def _create_growth_timeline(self, current: Dict, targets: Dict) -> List[Dict]:
+    def _create_growth_timeline(self, current: dict, targets: dict) -> list[dict]:
         """Create quarterly growth timeline"""
         current_headcount = current.get('headcount', 0)
         target_headcount = targets.get('target_headcount', current_headcount)
@@ -171,7 +170,7 @@ class TeamScalingCalculator:
         
         return timeline
     
-    def _generate_hiring_plan(self, current: Dict, targets: Dict) -> Dict:
+    def _generate_hiring_plan(self, current: dict, targets: dict) -> dict:
         """Generate detailed hiring plan"""
         current_roles = current.get('roles', {})
         target_headcount = targets.get('target_headcount', 0)
@@ -218,7 +217,7 @@ class TeamScalingCalculator:
         
         return hiring_plan
     
-    def _get_role_priority(self, role: str, current_roles: Dict, target_size: int) -> int:
+    def _get_role_priority(self, role: str, current_roles: dict, target_size: int) -> int:
         """Determine hiring priority for a role"""
         # Priority based on criticality and current gaps
         priorities = {
@@ -236,7 +235,7 @@ class TeamScalingCalculator:
         
         return priorities.get(role, 5)
     
-    def _distribute_quarterly_hires(self, total_hires: int, role_needs: Dict) -> Dict:
+    def _distribute_quarterly_hires(self, total_hires: int, role_needs: dict) -> dict:
         """Distribute quarterly hires across roles"""
         distribution = {}
         
@@ -259,7 +258,7 @@ class TeamScalingCalculator:
         
         return distribution
     
-    def _design_team_structure(self, target_headcount: int) -> Dict:
+    def _design_team_structure(self, target_headcount: int) -> dict:
         """Design optimal team structure"""
         stage = self._get_team_stage(target_headcount)
         structure = {
@@ -307,7 +306,7 @@ class TeamScalingCalculator:
         
         return structure
     
-    def _calculate_budget(self, hiring_plan: Dict, location: str) -> Dict:
+    def _calculate_budget(self, hiring_plan: dict, location: str) -> dict:
         """Calculate budget projection"""
         # Average salaries by role and location (in USD)
         salary_bands = {
@@ -363,7 +362,7 @@ class TeamScalingCalculator:
         
         return budget
     
-    def _assess_scaling_risks(self, current: Dict, targets: Dict) -> List[Dict]:
+    def _assess_scaling_risks(self, current: dict, targets: dict) -> list[dict]:
         """Assess risks in scaling plan"""
         risks = []
         
@@ -392,7 +391,7 @@ class TeamScalingCalculator:
         
         return risks
     
-    def _generate_recommendations(self, results: Dict) -> List[str]:
+    def _generate_recommendations(self, results: dict) -> list[str]:
         """Generate scaling recommendations"""
         recommendations = []
         
@@ -425,7 +424,7 @@ class TeamScalingCalculator:
         
         return recommendations
 
-def calculate_team_scaling(current_state: Dict, growth_targets: Dict) -> str:
+def calculate_team_scaling(current_state: dict, growth_targets: dict) -> str:
     """Main function to calculate team scaling"""
     calculator = TeamScalingCalculator()
     results = calculator.calculate_scaling_plan(current_state, growth_targets)

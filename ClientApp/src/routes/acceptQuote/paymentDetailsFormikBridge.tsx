@@ -4,27 +4,24 @@ import {
   paymentDetailsSaveValidation,
   paymentDetailsSubmitValidation,
 } from './validation';
+import {
+  CONTACT_TOUCH_PATHS,
+  createBridgedNamePredicate,
+} from './formikBridgeHelpers';
 import PaymentDetailsFormFields, {
   type PaymentDetailsFormValues,
 } from './paymentDetailsFormFields';
 
-const bridgedFieldNames = [
+const touchPaths = [
   'purchaseOrderNo',
   'invoiceSentTo',
-  'contact.title',
-  'contact.titleOther',
-  'contact.firstName',
-  'contact.lastName',
-  'contact.role',
-  'contact.phone',
-  'contact.mobile',
-  'contact.email',
+  ...CONTACT_TOUCH_PATHS,
 ] as const;
 
-const isBridgedFieldName = (name: string) =>
-  name === 'purchaseOrderNo' ||
-  name === 'invoiceSentTo' ||
-  name.startsWith('contact.');
+const isBridgedFieldName = createBridgedNamePredicate({
+  names: ['purchaseOrderNo', 'invoiceSentTo'],
+  prefixes: ['contact.'],
+});
 
 interface PaymentDetailsFormikBridgeProps {
   quotationId?: string | undefined;
@@ -40,7 +37,7 @@ const PaymentDetailsFormikBridge = ({
   const methods = useFormikRhfBridge<PaymentDetailsFormValues>({
     softSchema: paymentDetailsSaveValidation,
     hardSchema: paymentDetailsSubmitValidation,
-    touchPaths: bridgedFieldNames,
+    touchPaths,
     isBridgedName: isBridgedFieldName,
   });
 
