@@ -142,8 +142,8 @@ You are a world-class expert in web accessibility who translates standards into 
 
 ## Advanced Capabilities You Know
 
-
 ### Live Region Announcement (SPA route change)
+
 ```html
 <div aria-live="polite" aria-atomic="true" id="route-announcer" class="sr-only"></div>
 <script>
@@ -156,6 +156,7 @@ You are a world-class expert in web accessibility who translates standards into 
 ```
 
 ### Reduced Motion Safe Animation
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -215,6 +216,7 @@ You help teams deliver software that is inclusive, compliant, and pleasant to us
 ## Framework Adapters
 
 ### React
+
 ```tsx
 // Focus restoration after modal close
 const triggerRef = useRef<HTMLButtonElement>(null);
@@ -223,6 +225,7 @@ useEffect(() => {
   if (!open && triggerRef.current) triggerRef.current.focus();
 }, [open]);
 ```
+
 ## PR Review Comment Template
 
 ```md

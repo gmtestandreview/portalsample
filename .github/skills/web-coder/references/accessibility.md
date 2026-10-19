@@ -5,6 +5,7 @@ Web accessibility ensures content is usable by everyone, including people with d
 ## WCAG (Web Content Accessibility Guidelines)
 
 ### Levels
+
 - **A**: Minimum level
 - **AA**: Standard target (legal requirement in many jurisdictions)
 - **AAA**: Enhanced accessibility
@@ -326,6 +327,7 @@ function openModal() {
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - Accessibility
 - Accessibility tree
 - Accessible description

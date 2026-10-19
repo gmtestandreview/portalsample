@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.14
 """Fail-open PostToolUse acknowledgement for file-writing tools.
 
 Claude Code sends hook input as one JSON object on stdin.  This hook deliberately
@@ -6,8 +6,6 @@ does not depend on a shell-specific syntax or an undocumented environment
 variable, and it does not mutate the repository.  PostToolUse is advisory, so
 malformed input and non-successful tool results are ignored with exit code 0.
 """
-
-from __future__ import annotations
 
 import json
 import sys
@@ -25,7 +23,7 @@ REMINDER = (
 def _read_payload() -> dict[str, object] | None:
     try:
         payload: object = json.load(sys.stdin)
-    except (json.JSONDecodeError, OSError, TypeError):
+    except json.JSONDecodeError, OSError, TypeError:
         return None
     if not isinstance(payload, dict):
         return None
@@ -59,10 +57,7 @@ def _is_successful_file_tool(payload: Mapping[str, object]) -> bool:
             return False
 
         result_type = _first(result, "resultType", "result_type", "status")
-        if (
-            isinstance(result_type, str)
-            and result_type.casefold() not in SUCCESS_RESULTS
-        ):
+        if isinstance(result_type, str) and result_type.casefold() not in SUCCESS_RESULTS:
             return False
 
     return True

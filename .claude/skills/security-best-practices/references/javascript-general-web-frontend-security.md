@@ -139,7 +139,6 @@ Each rule contains: required practice, insecure patterns, detection hints, and r
 
 Severity: Critical if you can prove attacker-controlled input can reach these APIs; otherwise Medium
 
-
 Required:
 
 * MUST treat `innerHTML`, `outerHTML`, and `insertAdjacentHTML` as dangerous sinks when their input can contain untrusted data. ([OWASP Cheat Sheet Series][2])
@@ -182,7 +181,7 @@ False positive notes:
 
 ### JS-XSS-002: Avoid `document.write` / `document.writeln` (XSS + document clobbering hazards)
 
-Severity: Critical if you can prove attacker-controlled input can reach these APIs; otherwise Medium 
+Severity: Critical if you can prove attacker-controlled input can reach these APIs; otherwise Medium
 
 Required:
 
@@ -670,7 +669,6 @@ When actively scanning, use these high-signal patterns:
   * `<script src="https://...">` without `integrity=`
   * Tag manager snippets and dynamic script injection code paths ([MDN Web Docs][12])
 
-
 * DOM clobbering gadgets:
 
   * `window.<name> || ...` and `document.<name> || ...` patterns
@@ -733,7 +731,6 @@ DOM clobbering:
 [6]: https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"
 [7]: https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html "https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html"
 [8]: https://cheatsheetseries.owasp.org/cheatsheets/DOM_Clobbering_Prevention_Cheat_Sheet.html "https://cheatsheetseries.owasp.org/cheatsheets/DOM_Clobbering_Prevention_Cheat_Sheet.html"
-[9]: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/noopener "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/rel/noopener"
 [10]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP"
 [11]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/require-trusted-types-for "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/require-trusted-types-for"
 [12]: https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity"

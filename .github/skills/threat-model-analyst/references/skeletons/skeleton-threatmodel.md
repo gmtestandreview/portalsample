@@ -60,6 +60,7 @@
 ````
 
 **Fixed rules:**
+
 - Use `DF01`, `DF02` for detailed flows; `SDF01`, `SDF02` for summary flows
 - Element Type: exactly `Process`, `External Interactor`, or `Data Store`
 - TMT Category: must be a specific ID from tmt-element-taxonomy.md (e.g., `SE.P.TMCore.WebSvc`)

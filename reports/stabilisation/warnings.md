@@ -141,9 +141,9 @@ and must not precede that gate.
 
 ## W3 — React `not wrapped in act(...)` (unit)
 
-**Signature**
+### Signature
 
-```
+```text
 Warning: An update to %s inside a test was not wrapped in act(...).
 ```
 
@@ -221,9 +221,9 @@ attribution drift, not owners. Full three-mode settlement evidence in
 
 ## W5 — `[env] Missing required runtime variable` (Storybook)
 
-**Signature**
+### Signature
 
-```
+```text
 [env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
 [env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
 ```
@@ -253,9 +253,9 @@ to change.
 
 ## W6 — Storybook `CriticalPresetLoadError` unhandled rejection (unit)
 
-**Signature**
+### Signature
 
-```
+```text
 Unhandled promise rejection: SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: …/.storybook/main.ts.
 ```
 

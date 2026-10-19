@@ -31,6 +31,7 @@ Custom instructions are markdown files (`.instructions.md`) that contain:
 - **Compliance requirements**: Security policies, regulatory constraints
 
 **Key Points**:
+
 - Instructions apply automatically when Copilot works on matching files
 - They persist across all chat sessions and inline completions
 - They can be scoped globally, per language, or per directory using glob patterns
@@ -39,11 +40,13 @@ Custom instructions are markdown files (`.instructions.md`) that contain:
 ### How Instructions Differ from Other Customizations
 
 **Instructions vs Skills**:
+
 - Instructions are always active for matching files; skills require explicit invocation (by users or agents)
 - Instructions provide passive context; skills drive specific tasks with bundled resources
 - Use instructions for standards that apply repeatedly; use skills for on-demand operations
 
 **Instructions vs Agents**:
+
 - Instructions are lightweight context; agents are specialized personas with tool access
 - Instructions work with any Copilot interaction; agents require explicit selection
 - Use instructions for coding standards; use agents for complex workflows with tooling needs
@@ -93,6 +96,7 @@ export function UserProfile({ userId, onUpdate }: UserProfileProps) {
 - Prefer named exports over default exports
 
 **Why This Works**:
+
 - The `applyTo` glob pattern targets TypeScript/TSX files specifically
 - Copilot reads these instructions whenever it generates or suggests code for matching files
 - Standards are enforced consistently without developers needing to remember every rule
@@ -115,26 +119,31 @@ applyTo:
 ### Common Scoping Patterns
 
 **All TypeScript files**:
+
 ```yaml
 applyTo: '**/*.ts, **/*.tsx'
 ```
 
 **Specific directory**:
+
 ```yaml
 applyTo: 'src/components/**/*.tsx'
 ```
 
 **Test files only**:
+
 ```yaml
 applyTo: '**/*.test.ts, **/*.spec.ts'
 ```
 
 **Single technology**:
+
 ```yaml
 applyTo: '**/*.py'
 ```
 
 **Entire project**:
+
 ```yaml
 applyTo: '**'
 ```
@@ -247,6 +256,7 @@ A well-structured instruction file includes:
 ❌ **Vague**: "Handle errors properly"
 
 ✅ **Specific**:
+
 ````markdown
 ## Error Handling
 
@@ -322,6 +332,7 @@ Now that you understand custom instructions, you can:
 - **Configuration Basics**: [Copilot Configuration Basics](../copilot-configuration-basics/) - Learn how to organize and manage your customizations
 
 **Suggested Reading Order**:
+
 1. This article (defining custom instructions)
 2. [Creating Effective Skills](../creating-effective-skills/) - Learn complementary customization type
 3. [Building Custom Agents](../building-custom-agents/) - Decision framework for when to use each type

@@ -1,0 +1,679 @@
+{
+  "authorization": "User explicitly chose Back up and install verified packages",
+  "installed_files": [
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/SKILL.md",
+      "source": "skills/writing-skills/SKILL.md",
+      "before_sha256": "d6b61ab55104582115b3139a7cf2956d52260f550cd8982184a3dac6233c5883",
+      "changed": true,
+      "installed_sha256": "5f0a9b3481fc9e13541ef7a094abaf6a9840bafa489707b4e6dceeb93ba50602",
+      "source_sha256": "5f0a9b3481fc9e13541ef7a094abaf6a9840bafa489707b4e6dceeb93ba50602"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/SKILL.md",
+      "source": "skills/skill-duplication-audit/SKILL.md",
+      "before_sha256": "5eb2f19747a01088fc4f2a2fce879cd15b08f1bd5e63cd6365299f921efc70ba",
+      "changed": true,
+      "installed_sha256": "85502296b0563e3967556b54cbec863521734568359effff71c6620b6c7f3642",
+      "source_sha256": "85502296b0563e3967556b54cbec863521734568359effff71c6620b6c7f3642"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/references/validation-cases.md",
+      "source": "skills/skill-duplication-audit/references/validation-cases.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "827932d211f518bcd8818786bd1c6a55b43b8115927bacb365f5705858f828db",
+      "source_sha256": "827932d211f518bcd8818786bd1c6a55b43b8115927bacb365f5705858f828db"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/regression/regression-evals.md",
+      "source": "skills/writing-skills/evals/regression/regression-evals.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "7a03f10c51553d27d94e904402f6de9d1fcceea2588acb950b24729f16f26729",
+      "source_sha256": "7a03f10c51553d27d94e904402f6de9d1fcceea2588acb950b24729f16f26729"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/uv.lock",
+      "source": "skills/writing-skills/scripts/uv.lock",
+      "before_sha256": "2eb66bbe815cf4d9d53034b98126419398ddd64b4610052e3e6bdc53680693f8",
+      "changed": true,
+      "installed_sha256": "9dc6c3915d505298aceb17f57dbd558adb523b655e23d8b7a55b948d78430f42",
+      "source_sha256": "9dc6c3915d505298aceb17f57dbd558adb523b655e23d8b7a55b948d78430f42"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/using-scripts-in-skills.md",
+      "source": "skills/writing-skills/references/using-scripts-in-skills.md",
+      "before_sha256": "76af12cc92b21af972d8997d2608cc18cb1612b3b28ec878d28b610282e2e88b",
+      "changed": false,
+      "installed_sha256": "76af12cc92b21af972d8997d2608cc18cb1612b3b28ec878d28b610282e2e88b",
+      "source_sha256": "76af12cc92b21af972d8997d2608cc18cb1612b3b28ec878d28b610282e2e88b"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/testing-skills-with-subagents.md",
+      "source": "skills/writing-skills/references/testing-skills-with-subagents.md",
+      "before_sha256": "7318cefd10400efa41f10142baa42d89e80286c6b98ffeb03d157dce9cc3db1b",
+      "changed": true,
+      "installed_sha256": "3c25f5531364ca5c27bc2c6d5bbedda5cf5a65b05a320f4b81d39e3e11e8a262",
+      "source_sha256": "3c25f5531364ca5c27bc2c6d5bbedda5cf5a65b05a320f4b81d39e3e11e8a262"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/specification.md",
+      "source": "skills/writing-skills/references/specification.md",
+      "before_sha256": "d1d4401903e230be5ec189fc9647b0480f697e1685703a6a9aaf6da053045f6d",
+      "changed": false,
+      "installed_sha256": "d1d4401903e230be5ec189fc9647b0480f697e1685703a6a9aaf6da053045f6d",
+      "source_sha256": "d1d4401903e230be5ec189fc9647b0480f697e1685703a6a9aaf6da053045f6d"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/skill-testing-data-model.md",
+      "source": "skills/writing-skills/references/skill-testing-data-model.md",
+      "before_sha256": "74ac3477527421cf5fd199fcc6904a7c0d1eab0b06df216e71b932baec7bff32",
+      "changed": true,
+      "installed_sha256": "71f52e21e3eb747735dcb35881917659d8e967320eaa80c2e8443036bbb9a956",
+      "source_sha256": "71f52e21e3eb747735dcb35881917659d8e967320eaa80c2e8443036bbb9a956"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/SKILL-testing-checklist.md",
+      "source": "skills/writing-skills/references/SKILL-testing-checklist.md",
+      "before_sha256": "e0b0698ac09ba301402900e5507ab8ce16bed99eaf6bbac98b38c4cf0dc67290",
+      "changed": false,
+      "installed_sha256": "e0b0698ac09ba301402900e5507ab8ce16bed99eaf6bbac98b38c4cf0dc67290",
+      "source_sha256": "e0b0698ac09ba301402900e5507ab8ce16bed99eaf6bbac98b38c4cf0dc67290"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/skill-classification.md",
+      "source": "skills/writing-skills/references/skill-classification.md",
+      "before_sha256": "f991747e67db675f5446f5142a43a97e41d7f67b3bb2d075610988f4b5ced35e",
+      "changed": false,
+      "installed_sha256": "f991747e67db675f5446f5142a43a97e41d7f67b3bb2d075610988f4b5ced35e",
+      "source_sha256": "f991747e67db675f5446f5142a43a97e41d7f67b3bb2d075610988f4b5ced35e"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/persuasion-principles.md",
+      "source": "skills/writing-skills/references/persuasion-principles.md",
+      "before_sha256": "c966cea7abf3999c1e4b97498c4b2356ed03a19d72d47d9c952559731cfb812d",
+      "changed": false,
+      "installed_sha256": "c966cea7abf3999c1e4b97498c4b2356ed03a19d72d47d9c952559731cfb812d",
+      "source_sha256": "c966cea7abf3999c1e4b97498c4b2356ed03a19d72d47d9c952559731cfb812d"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/instruction-form.md",
+      "source": "skills/writing-skills/references/instruction-form.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "9251625bf8772ed22069ca6e50d5ee6d536858730fb64f4c0cb627de7cd1cc56",
+      "source_sha256": "9251625bf8772ed22069ca6e50d5ee6d536858730fb64f4c0cb627de7cd1cc56"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/index.md",
+      "source": "skills/writing-skills/references/index.md",
+      "before_sha256": "f0517287a3045e32f51e48079a85285803937c38a628f1f69fe5f69a60b41e2e",
+      "changed": true,
+      "installed_sha256": "906d3f8c9042c97dba2323b78492add53044850caf6e426454f26acea18bb808",
+      "source_sha256": "906d3f8c9042c97dba2323b78492add53044850caf6e426454f26acea18bb808"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/file-review-rubric.md",
+      "source": "skills/writing-skills/references/file-review-rubric.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "01fd745e2648b6a5c4ddd7921659a7984d8d1bf3daf71fa89bb9339d357dadf4",
+      "source_sha256": "01fd745e2648b6a5c4ddd7921659a7984d8d1bf3daf71fa89bb9339d357dadf4"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/README.md",
+      "source": "skills/writing-skills/evals/README.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "4dc1fc610954124dbb7c8129f4b39b1025ba318749382026f07361980970edbc",
+      "source_sha256": "4dc1fc610954124dbb7c8129f4b39b1025ba318749382026f07361980970edbc"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/assets/templates/swot-analysis.md",
+      "source": "skills/writing-skills/assets/templates/swot-analysis.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "7998852c88da81e32ac5e9c7cf3e2f0d6539f87a76b31a9bf247656a0b33163c",
+      "source_sha256": "7998852c88da81e32ac5e9c7cf3e2f0d6539f87a76b31a9bf247656a0b33163c"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/campaigns/behavioral-evidence-2026-09-13.md",
+      "source": "skills/writing-skills/evals/campaigns/behavioral-evidence-2026-09-13.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "e067ddc09b09f1038b29a0d204cc1d6582a63eae566949647fab267c6774a3a2",
+      "source_sha256": "e067ddc09b09f1038b29a0d204cc1d6582a63eae566949647fab267c6774a3a2"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/campaigns/authoring-review-2026-10-04.md",
+      "source": "skills/writing-skills/evals/campaigns/authoring-review-2026-10-04.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "316262c31a0ec39f8219b51f964164794e2d9cb0d180bf7d10e221688cbd33c4",
+      "source_sha256": "316262c31a0ec39f8219b51f964164794e2d9cb0d180bf7d10e221688cbd33c4"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/assets/templates/skill-audit.md",
+      "source": "skills/writing-skills/assets/templates/skill-audit.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "36f9d60bc73235608f5a0d91e9844f84e2af6332189ccb3bfd2eb4a56dcbf190",
+      "source_sha256": "36f9d60bc73235608f5a0d91e9844f84e2af6332189ccb3bfd2eb4a56dcbf190"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/examples/ChaGPT GPT SKILL.md",
+      "source": "skills/writing-skills/references/examples/ChaGPT GPT SKILL.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "3f8c989c011a7e31b72a80f1f690f90bcf0d02451c02ccd5d8313ee17a7ed40d",
+      "source_sha256": "3f8c989c011a7e31b72a80f1f690f90bcf0d02451c02ccd5d8313ee17a7ed40d"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_writing_skills_metadata.py",
+      "source": "skills/writing-skills/scripts/tests/test_writing_skills_metadata.py",
+      "before_sha256": "354cb3e869a0bcc25fb52857e693ab09ece3eb317480dd5b81f7d2611cb9f155",
+      "changed": false,
+      "installed_sha256": "354cb3e869a0bcc25fb52857e693ab09ece3eb317480dd5b81f7d2611cb9f155",
+      "source_sha256": "354cb3e869a0bcc25fb52857e693ab09ece3eb317480dd5b81f7d2611cb9f155"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_validator.py",
+      "source": "skills/writing-skills/scripts/tests/test_validator.py",
+      "before_sha256": "70f2bb709ef3684e2eec49819668aec8e3264a541e5794837d26ba741b8c2bba",
+      "changed": true,
+      "installed_sha256": "d453f09206b8be000cdb0720084611557e9512e90552309e2ef0c50198c200e5",
+      "source_sha256": "d453f09206b8be000cdb0720084611557e9512e90552309e2ef0c50198c200e5"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_render_graphs.py",
+      "source": "skills/writing-skills/scripts/tests/test_render_graphs.py",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "4dae96ba640264662119ab7817483bf0f8f3db025f0af662562239694cf4c51e",
+      "source_sha256": "4dae96ba640264662119ab7817483bf0f8f3db025f0af662562239694cf4c51e"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_prompt.py",
+      "source": "skills/writing-skills/scripts/tests/test_prompt.py",
+      "before_sha256": "4f544c9ca23ee6b409892e6f46fd15897319f927b48a25fc248e020b7a016a88",
+      "changed": true,
+      "installed_sha256": "4c9e9fbe5adcb8a28fbbfd8f8521d4068e896dfb91863b02e719b44a6c4f7648",
+      "source_sha256": "4c9e9fbe5adcb8a28fbbfd8f8521d4068e896dfb91863b02e719b44a6c4f7648"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_parser.py",
+      "source": "skills/writing-skills/scripts/tests/test_parser.py",
+      "before_sha256": "b2ae38b19c2b8227ddafec12452aa65b106a0aa2112022842074503cbea313fa",
+      "changed": true,
+      "installed_sha256": "76bb15ff61e09b596113f741633587cb121df4427cf4cd5170555ccdd22f698a",
+      "source_sha256": "76bb15ff61e09b596113f741633587cb121df4427cf4cd5170555ccdd22f698a"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_package.py",
+      "source": "skills/writing-skills/scripts/tests/test_package.py",
+      "before_sha256": "0641f8d16fa2db7b0cd07434dd0dbfd0d43c3fe44a392696484242fa4e4254ee",
+      "changed": false,
+      "installed_sha256": "0641f8d16fa2db7b0cd07434dd0dbfd0d43c3fe44a392696484242fa4e4254ee",
+      "source_sha256": "0641f8d16fa2db7b0cd07434dd0dbfd0d43c3fe44a392696484242fa4e4254ee"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_models.py",
+      "source": "skills/writing-skills/scripts/tests/test_models.py",
+      "before_sha256": "2fd200ce4435ce6f29007117be54822f287f3f801432937d22300c801abd2a5b",
+      "changed": false,
+      "installed_sha256": "2fd200ce4435ce6f29007117be54822f287f3f801432937d22300c801abd2a5b",
+      "source_sha256": "2fd200ce4435ce6f29007117be54822f287f3f801432937d22300c801abd2a5b"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_evidence.py",
+      "source": "skills/writing-skills/scripts/tests/test_evidence.py",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "55f2c95bcd8672af9c4d01cdf7cc625244f6dce31fcb111401a413ad6637c7de",
+      "source_sha256": "55f2c95bcd8672af9c4d01cdf7cc625244f6dce31fcb111401a413ad6637c7de"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/tests/test_cli.py",
+      "source": "skills/writing-skills/scripts/tests/test_cli.py",
+      "before_sha256": "46354c58a39e580c5d6d77aaea023a5bf6118bb3cd1cbf3a9bdd99fd14edbcb2",
+      "changed": true,
+      "installed_sha256": "1e5d2db612a5e48934ebcc809ca43f70322d260139309c6dbaee40c1679a4ead",
+      "source_sha256": "1e5d2db612a5e48934ebcc809ca43f70322d260139309c6dbaee40c1679a4ead"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/reference/reference-evals.md",
+      "source": "skills/writing-skills/evals/reference/reference-evals.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "be03735a5643b4a5200978897b8e9b39d8d52fea7f6a3b4514c9f59d99de4354",
+      "source_sha256": "be03735a5643b4a5200978897b8e9b39d8d52fea7f6a3b4514c9f59d99de4354"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/assets/prompt-2-full-audit+conditional-merge.md",
+      "source": "skills/writing-skills/assets/prompt-2-full-audit+conditional-merge.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "6437055a758a61e2b61c5a3a6089c8ff8f58010f9eef75cb9861e34efa920bdd",
+      "source_sha256": "6437055a758a61e2b61c5a3a6089c8ff8f58010f9eef75cb9861e34efa920bdd"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/assets/prompt-1-quick-merge-plan.md",
+      "source": "skills/writing-skills/assets/prompt-1-quick-merge-plan.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "f34807ef6d4f13efe4fb186bfcfe2eb9a2eb9c130b607850f9d3bfee8ce2438f",
+      "source_sha256": "f34807ef6d4f13efe4fb186bfcfe2eb9a2eb9c130b607850f9d3bfee8ce2438f"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/activation-regression-cases.md",
+      "source": "skills/writing-skills/evals/activation-regression-cases.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "2179074473e766753a4912cf893544c248658eefaa5211c362ab659acb3dc979",
+      "source_sha256": "2179074473e766753a4912cf893544c248658eefaa5211c362ab659acb3dc979"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/evaluating-skill-output.md",
+      "source": "skills/writing-skills/references/evaluating-skill-output.md",
+      "before_sha256": "8d3861178779b5e6771b99e8bf2bd787724192c22562d0f1675c048b67029158",
+      "changed": true,
+      "installed_sha256": "8f9bd6dd8504345d53fe86df4b8d57fde48c256e844fef7553be24ff7c5119c4",
+      "source_sha256": "8f9bd6dd8504345d53fe86df4b8d57fde48c256e844fef7553be24ff7c5119c4"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/description-optimization.md",
+      "source": "skills/writing-skills/references/description-optimization.md",
+      "before_sha256": "6f1e5a1884f6fd46a1df50abb275a7a01fb2a2b362d42d7727c98aa48f46c75b",
+      "changed": false,
+      "installed_sha256": "6f1e5a1884f6fd46a1df50abb275a7a01fb2a2b362d42d7727c98aa48f46c75b",
+      "source_sha256": "6f1e5a1884f6fd46a1df50abb275a7a01fb2a2b362d42d7727c98aa48f46c75b"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/codex-skill-installation.md",
+      "source": "skills/writing-skills/references/codex-skill-installation.md",
+      "before_sha256": "98dcda975fd95603589aa1645c751becffa0ffb8ea15b32ead5c7d0aa7ecaf46",
+      "changed": false,
+      "installed_sha256": "98dcda975fd95603589aa1645c751becffa0ffb8ea15b32ead5c7d0aa7ecaf46",
+      "source_sha256": "98dcda975fd95603589aa1645c751becffa0ffb8ea15b32ead5c7d0aa7ecaf46"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/bounded-optimisation.md",
+      "source": "skills/writing-skills/references/bounded-optimisation.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "e4e5eafcf3f4ee735cd74260a44b300e03945b13f8e65abc650a191d16910139",
+      "source_sha256": "e4e5eafcf3f4ee735cd74260a44b300e03945b13f8e65abc650a191d16910139"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/best-practices-evaluations.md",
+      "source": "skills/writing-skills/references/best-practices-evaluations.md",
+      "before_sha256": "671a23d7bee0164d83b127aa6076eb791e2161b551bba9e9e4bedfbb6e23f893",
+      "changed": false,
+      "installed_sha256": "671a23d7bee0164d83b127aa6076eb791e2161b551bba9e9e4bedfbb6e23f893",
+      "source_sha256": "671a23d7bee0164d83b127aa6076eb791e2161b551bba9e9e4bedfbb6e23f893"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/best practices-for-skill-creators.md",
+      "source": "skills/writing-skills/references/best practices-for-skill-creators.md",
+      "before_sha256": "182fe1af74f1136b5737aa278c31c0652903269f012358de6b80294afb260ac2",
+      "changed": true,
+      "installed_sha256": "a2c7bd68ba986fb292b411e4f66c5ea69ce858fdfd524f3260a605cca9062b55",
+      "source_sha256": "a2c7bd68ba986fb292b411e4f66c5ea69ce858fdfd524f3260a605cca9062b55"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/audit-scoring.md",
+      "source": "skills/writing-skills/references/audit-scoring.md",
+      "before_sha256": "5489169da8417c8a6c801583160917e03c3d5dd01f9d540112b6e7893958ef6b",
+      "changed": true,
+      "installed_sha256": "87fbfc1358580076e737af71860eaddb8297fdcd03ad010de032c484102cbd63",
+      "source_sha256": "87fbfc1358580076e737af71860eaddb8297fdcd03ad010de032c484102cbd63"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/anthropic-best-practices.md",
+      "source": "skills/writing-skills/references/anthropic-best-practices.md",
+      "before_sha256": "405e5f389abe4696e7c05b1b67625ccc59da2be331796fb2bca1286e81a651dd",
+      "changed": true,
+      "installed_sha256": "194fcff05e77054eec89cfe5b86358faeae16489fdcdfdd64c1635727e978c65",
+      "source_sha256": "194fcff05e77054eec89cfe5b86358faeae16489fdcdfdd64c1635727e978c65"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/adding-skills-support.md",
+      "source": "skills/writing-skills/references/adding-skills-support.md",
+      "before_sha256": "d12474d895742ed2a6cf5d876e369af16f014fcaf5d22e30884f5321ea8caeab",
+      "changed": true,
+      "installed_sha256": "9f8a36b87e14fa8b40da7394e3beb5288f29bd0092527acd4c18ab1cadd4f842",
+      "source_sha256": "9f8a36b87e14fa8b40da7394e3beb5288f29bd0092527acd4c18ab1cadd4f842"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/references/a-team-local-policy.md",
+      "source": "skills/writing-skills/references/a-team-local-policy.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "f0df308c24d665034a4ce4c2f25cb8b4b53a29d45d04ceb5ed3207f91eadb30d",
+      "source_sha256": "f0df308c24d665034a4ce4c2f25cb8b4b53a29d45d04ceb5ed3207f91eadb30d"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/pressure/pressure-evals.md",
+      "source": "skills/writing-skills/evals/pressure/pressure-evals.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "2b1ffcc0c49f43b4bc49f7d20d77f752fc2bab8f799b11237afc0b0f787ac3de",
+      "source_sha256": "2b1ffcc0c49f43b4bc49f7d20d77f752fc2bab8f799b11237afc0b0f787ac3de"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/activation/activation-evals.md",
+      "source": "skills/writing-skills/evals/activation/activation-evals.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "eae68f2662457b65fb29c9e7d3ff97cf8d90f65175ba008292b02f19bbec48aa",
+      "source_sha256": "eae68f2662457b65fb29c9e7d3ff97cf8d90f65175ba008292b02f19bbec48aa"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/red-green/red-green-evals.md",
+      "source": "skills/writing-skills/evals/red-green/red-green-evals.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "b835b2869a45ce105514e0387db91e4fb00efa910bea4ed9dfdfe75880561a4a",
+      "source_sha256": "b835b2869a45ce105514e0387db91e4fb00efa910bea4ed9dfdfe75880561a4a"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/evals/evaluation-schema.md",
+      "source": "skills/writing-skills/evals/evaluation-schema.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "1f760927b71e8fa9f4f86f340ff640597bd8a3ab64490ac2b9e03d95778c0725",
+      "source_sha256": "1f760927b71e8fa9f4f86f340ff640597bd8a3ab64490ac2b9e03d95778c0725"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/.python-version",
+      "source": "skills/writing-skills/scripts/.python-version",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "922fe0c3de073b01988e23348ea184456161678c5e329e6f34be89be24383f93",
+      "source_sha256": "922fe0c3de073b01988e23348ea184456161678c5e329e6f34be89be24383f93"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/__init__.py",
+      "source": "skills/writing-skills/scripts/skills_ref/__init__.py",
+      "before_sha256": "7f57c9343dddef8feebe58589c35cf3906565aa015aeba073100e683f00256e4",
+      "changed": false,
+      "installed_sha256": "7f57c9343dddef8feebe58589c35cf3906565aa015aeba073100e683f00256e4",
+      "source_sha256": "7f57c9343dddef8feebe58589c35cf3906565aa015aeba073100e683f00256e4"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/validator.py",
+      "source": "skills/writing-skills/scripts/skills_ref/validator.py",
+      "before_sha256": "46750c0aa35acf90acc0b780681d959b6b561dc87dcd75e4dfcdd5076d403cca",
+      "changed": true,
+      "installed_sha256": "e75284dd9efa654422ae2c8a4f31bbe422270d9fd1e3ffc553fed9df76712019",
+      "source_sha256": "e75284dd9efa654422ae2c8a4f31bbe422270d9fd1e3ffc553fed9df76712019"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/py.typed",
+      "source": "skills/writing-skills/scripts/skills_ref/py.typed",
+      "before_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "changed": false,
+      "installed_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "source_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/prompt.py",
+      "source": "skills/writing-skills/scripts/skills_ref/prompt.py",
+      "before_sha256": "a13012d26f8a61899d92dfda0808ceed6101e2fb9dad0d3e19558bf68fa3f719",
+      "changed": true,
+      "installed_sha256": "51d2c126bc9155d7aa9c3a9a4969e793bcc4825ca3f3001f7e308bbcf14266a6",
+      "source_sha256": "51d2c126bc9155d7aa9c3a9a4969e793bcc4825ca3f3001f7e308bbcf14266a6"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/parser.py",
+      "source": "skills/writing-skills/scripts/skills_ref/parser.py",
+      "before_sha256": "f51e9f404b135280a3f10bf8e75dd5daf1a0cb6789f02adf6b6dde66af934398",
+      "changed": true,
+      "installed_sha256": "72026711667dcd831c6af692446349ac8af1e255a98b7f768f8409ad715d6df4",
+      "source_sha256": "72026711667dcd831c6af692446349ac8af1e255a98b7f768f8409ad715d6df4"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/models.py",
+      "source": "skills/writing-skills/scripts/skills_ref/models.py",
+      "before_sha256": "180e07360b08b41eb58d1a7145c1f1b13745c004f4babd36834f32bbbec3d463",
+      "changed": false,
+      "installed_sha256": "180e07360b08b41eb58d1a7145c1f1b13745c004f4babd36834f32bbbec3d463",
+      "source_sha256": "180e07360b08b41eb58d1a7145c1f1b13745c004f4babd36834f32bbbec3d463"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/evidence.py",
+      "source": "skills/writing-skills/scripts/skills_ref/evidence.py",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "5cfe6ae2fc281cf6ee444ad39304141041c58a76f71a75916a2995fc83c58579",
+      "source_sha256": "5cfe6ae2fc281cf6ee444ad39304141041c58a76f71a75916a2995fc83c58579"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/errors.py",
+      "source": "skills/writing-skills/scripts/skills_ref/errors.py",
+      "before_sha256": "052a8d151ccb58dd19a1e5f557d15baf469822dbfdf7bd5d459b0186e858cabc",
+      "changed": false,
+      "installed_sha256": "052a8d151ccb58dd19a1e5f557d15baf469822dbfdf7bd5d459b0186e858cabc",
+      "source_sha256": "052a8d151ccb58dd19a1e5f557d15baf469822dbfdf7bd5d459b0186e858cabc"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/skills_ref/cli.py",
+      "source": "skills/writing-skills/scripts/skills_ref/cli.py",
+      "before_sha256": "f0107b2722c70ed3acbf2f838675c1f7797d32a6877c4d33e531706974201719",
+      "changed": true,
+      "installed_sha256": "aa019ea9526fe3c53aa30f1539fa4ce0c09d44bec2f2eaaca912f441f7969f43",
+      "source_sha256": "aa019ea9526fe3c53aa30f1539fa4ce0c09d44bec2f2eaaca912f441f7969f43"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/v1.3-oracle1.3.1-s3.md",
+      "source": "skills/skill-duplication-audit/evals/results/raw/v1.3-oracle1.3.1-s3.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "6c619ef268a6778e91fe80da89bb4e48f679774eebd57556b5359f980cce091a",
+      "source_sha256": "6c619ef268a6778e91fe80da89bb4e48f679774eebd57556b5359f980cce091a"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/v1.3-green-s1.md",
+      "source": "skills/skill-duplication-audit/evals/results/raw/v1.3-green-s1.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "08ef22170ff4888fcf8023ea027fe310dd67fd5012c7c3c7bdd9e81123a6a15c",
+      "source_sha256": "08ef22170ff4888fcf8023ea027fe310dd67fd5012c7c3c7bdd9e81123a6a15c"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/v1.1-red-s1.md",
+      "source": "skills/skill-duplication-audit/evals/results/raw/v1.1-red-s1.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "679c67ed4a9eb66054497b6afa3762abb74550881b9d8776f30209eb03f9ff0f",
+      "source_sha256": "679c67ed4a9eb66054497b6afa3762abb74550881b9d8776f30209eb03f9ff0f"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/v1.1-green-s1.md",
+      "source": "skills/skill-duplication-audit/evals/results/raw/v1.1-green-s1.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "b407794e574a0eb470c788d102be33cc6a8f62a4f819cee75752790ce7728690",
+      "source_sha256": "b407794e574a0eb470c788d102be33cc6a8f62a4f819cee75752790ce7728690"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/v1.1-audit-a2.md",
+      "source": "skills/skill-duplication-audit/evals/results/raw/v1.1-audit-a2.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "b8c00ac6c541515e4b32cec0c8717dbd1d076f640a4e443962cede6b9eb4e155",
+      "source_sha256": "b8c00ac6c541515e4b32cec0c8717dbd1d076f640a4e443962cede6b9eb4e155"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/v1.1-audit-a1.md",
+      "source": "skills/skill-duplication-audit/evals/results/raw/v1.1-audit-a1.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "aabe509478e0c735f53b85d7f1d84a83e78e790de4603dfa200fdda5cc452326",
+      "source_sha256": "aabe509478e0c735f53b85d7f1d84a83e78e790de4603dfa200fdda5cc452326"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/pyproject.toml",
+      "source": "skills/writing-skills/scripts/pyproject.toml",
+      "before_sha256": "2c67fa6a1da9058823211ef7dcd7e11088ac53281b25edc4bada0e259ac978e9",
+      "changed": true,
+      "installed_sha256": "89daad00cbbe172fdf4df54dcc31675cfb4ed5c5a755ac87365a62eb659a990b",
+      "source_sha256": "89daad00cbbe172fdf4df54dcc31675cfb4ed5c5a755ac87365a62eb659a990b"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/graphviz-conventions.dot",
+      "source": "skills/writing-skills/scripts/graphviz-conventions.dot",
+      "before_sha256": "e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694",
+      "changed": false,
+      "installed_sha256": "e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694",
+      "source_sha256": "e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/README.md",
+      "source": "skills/writing-skills/scripts/README.md",
+      "before_sha256": "3e911d0b4ffa2b99adaea88d616d254ff73e6068b8f66a159cc3e7e4f4f5394b",
+      "changed": true,
+      "installed_sha256": "dc94650e279dec6c39ffee6626117cb25446f2fdb34f5b3d97372e3f26be179a",
+      "source_sha256": "dc94650e279dec6c39ffee6626117cb25446f2fdb34f5b3d97372e3f26be179a"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/writing-skills/scripts/render-graphs.js",
+      "source": "skills/writing-skills/scripts/render-graphs.js",
+      "before_sha256": "b7235f5bb531ae31491874db959809898ff8b776b2f9bb837446f101af73e72f",
+      "changed": true,
+      "installed_sha256": "01648a6f30d244c6de1d24d567130ff84490853bb001b1efd94609955e0e0507",
+      "source_sha256": "01648a6f30d244c6de1d24d567130ff84490853bb001b1efd94609955e0e0507"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/2026-10-17-v1.1-campaign.md",
+      "source": "skills/skill-duplication-audit/evals/results/2026-10-17-v1.1-campaign.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "eadea530827bf11a5058117d356e9bd108e56181097f829ff82f41fc08ad3bfa",
+      "source_sha256": "eadea530827bf11a5058117d356e9bd108e56181097f829ff82f41fc08ad3bfa"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/2026-10-17-v1.0-full-retest.md",
+      "source": "skills/skill-duplication-audit/evals/results/2026-10-17-v1.0-full-retest.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "9b6884207697b26c6adee1f552e12d9cc1ec895bb0f35656fe9acc5f38d92abe",
+      "source_sha256": "9b6884207697b26c6adee1f552e12d9cc1ec895bb0f35656fe9acc5f38d92abe"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/2026-10-17-history-v0.8-v0.9.md",
+      "source": "skills/skill-duplication-audit/evals/results/2026-10-17-history-v0.8-v0.9.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "2d5b3ef8f22d499e9d5a07808282d24257c35c2f70de2c78093578035dffc4fe",
+      "source_sha256": "2d5b3ef8f22d499e9d5a07808282d24257c35c2f70de2c78093578035dffc4fe"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/2026-10-17-v1.3-focused.md",
+      "source": "skills/skill-duplication-audit/evals/results/2026-10-17-v1.3-focused.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "c11514de085fd802f28a196a37564c866a2523aacd71db04b57f69b4051bdd90",
+      "source_sha256": "c11514de085fd802f28a196a37564c866a2523aacd71db04b57f69b4051bdd90"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/results/raw/.markdownlint.json",
+      "source": "skills/skill-duplication-audit/evals/results/raw/.markdownlint.json",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "e340d73b29177d38670298ea314fac8eb5b5b902368c44c0d5b905e3a24d4b2b",
+      "source_sha256": "e340d73b29177d38670298ea314fac8eb5b5b902368c44c0d5b905e3a24d4b2b"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/expected.md",
+      "source": "skills/skill-duplication-audit/evals/expected.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "7da2f599e1545258fcbebeb066c534c0e7cac9f4796b421cc0af558377198526",
+      "source_sha256": "7da2f599e1545258fcbebeb066c534c0e7cac9f4796b421cc0af558377198526"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/README.md",
+      "source": "skills/skill-duplication-audit/evals/README.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "0afb4f1152c6531a38537d117ee76bf5cc88e73f0745b9016c595fb630f0c9ae",
+      "source_sha256": "0afb4f1152c6531a38537d117ee76bf5cc88e73f0745b9016c595fb630f0c9ae"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/cases/05-novel-domains.md",
+      "source": "skills/skill-duplication-audit/evals/cases/05-novel-domains.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "e69a9a4d2e6b89c2bfc5e8979cb0b9bf52e817d2c9d52cedb7fd9202029d35fb",
+      "source_sha256": "e69a9a4d2e6b89c2bfc5e8979cb0b9bf52e817d2c9d52cedb7fd9202029d35fb"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/cases/04-modes-handoff-contradiction.md",
+      "source": "skills/skill-duplication-audit/evals/cases/04-modes-handoff-contradiction.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "88346cc3a91a7507182998bdf192839539de2a924b573d24353232295972f412",
+      "source_sha256": "88346cc3a91a7507182998bdf192839539de2a924b573d24353232295972f412"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/cases/03-subset-transitive-pressure.md",
+      "source": "skills/skill-duplication-audit/evals/cases/03-subset-transitive-pressure.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "92d8c2b216b74a1b85ecf77bfd53c78d385dc9ce137c1c910e9bb4c5cc79ac51",
+      "source_sha256": "92d8c2b216b74a1b85ecf77bfd53c78d385dc9ce137c1c910e9bb4c5cc79ac51"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/cases/02-pressure-cluster.md",
+      "source": "skills/skill-duplication-audit/evals/cases/02-pressure-cluster.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "8a282a2dff0640e658879c0ce515d19c78767155cf4e90f15f534d5258eb2193",
+      "source_sha256": "8a282a2dff0640e658879c0ce515d19c78767155cf4e90f15f534d5258eb2193"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/cases/01-pairs.md",
+      "source": "skills/skill-duplication-audit/evals/cases/01-pairs.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "59adc62daaf692ad9d7e8dfb5df585f6a7e35baa30912dd52f660c2cfd187901",
+      "source_sha256": "59adc62daaf692ad9d7e8dfb5df585f6a7e35baa30912dd52f660c2cfd187901"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/oracles/expected-v1.3.md",
+      "source": "skills/skill-duplication-audit/evals/oracles/expected-v1.3.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "e32b5a5811a7dd91c0bd12ca4f91c31c2487a7f93f186b6a7b244a2b0600b284",
+      "source_sha256": "e32b5a5811a7dd91c0bd12ca4f91c31c2487a7f93f186b6a7b244a2b0600b284"
+    },
+    {
+      "destination": "C:/Users/gregm/.codex/skills/skill-duplication-audit/evals/oracles/expected-v1.1-v1.2.md",
+      "source": "skills/skill-duplication-audit/evals/oracles/expected-v1.1-v1.2.md",
+      "before_sha256": null,
+      "changed": true,
+      "installed_sha256": "ee743451c47dde28f153e750a98510fe26b0e4abd0edc9d86175a08649679c67",
+      "source_sha256": "ee743451c47dde28f153e750a98510fe26b0e4abd0edc9d86175a08649679c67"
+    }
+  ],
+  "rollback": "For each installed_files entry restore backup copy if before_sha256 is non-null; otherwise remove only that recorded added file; verify old entrypoint hashes. Do not recursively reset user skill directories.",
+  "preservation": "Pre-existing installed-only files retained; cache/environment directories not deployed; no hook files touched",
+  "changed_file_count": 66,
+  "copied_file_count": 82,
+  "backups": [
+    {
+      "entrypoint_sha256": "5eb2f19747a01088fc4f2a2fce879cd15b08f1bd5e63cd6365299f921efc70ba",
+      "directory": "C:\\Users\\gregm\\.codex\\skill-backups\\v3-normal-host-20261017-33ec54de\\skill-duplication-audit",
+      "name": "skill-duplication-audit"
+    },
+    {
+      "entrypoint_sha256": "d6b61ab55104582115b3139a7cf2956d52260f550cd8982184a3dac6233c5883",
+      "directory": "C:\\Users\\gregm\\.codex\\skill-backups\\v3-normal-host-20261017-33ec54de\\writing-skills",
+      "name": "writing-skills"
+    }
+  ],
+  "backup_root": "C:/Users/gregm/.codex/skill-backups/v3-normal-host-20261017-33ec54de",
+  "date": "2026-10-17"
+}

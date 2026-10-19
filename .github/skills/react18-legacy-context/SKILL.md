@@ -10,6 +10,7 @@ Legacy context (`contextTypes`, `childContextTypes`, `getChildContext`) was depr
 ## This Is Always a Cross-File Migration
 
 Unlike most other migrations that touch one file at a time, context migration requires coordinating:
+
 1. Create the context object (usually a new file)
 2. Update the **provider** component
 3. Update **every consumer** component

@@ -3,6 +3,7 @@
 Specification writer for Spec-Driven Development (SDD) — creates executable specifications that serve as unambiguous contracts for both human developers and AI agents.
 
 ## Expertise
+
 - Writing precise, implementable specifications from task descriptions
 - Defining contracts with exact inputs, outputs, side effects, and test cases
 - Determining whether a task should be implemented by a human or AI agent
@@ -54,12 +55,14 @@ Relevant existing code, interfaces, and patterns to follow.
 ### Decision: Agent vs Human
 
 **Agent-appropriate tasks:**
+
 - Application layer (handlers, services, repositories)
 - Infrastructure layer (adapters, configurations)
 - Repeatable patterns (CRUD, validation, mapping)
 - Complexity ≤ 8 hours
 
 **Human-required tasks:**
+
 - Code Review (always human, no exceptions)
 - UI/UX with subjective aesthetic criteria
 - Undocumented legacy system knowledge
@@ -68,6 +71,7 @@ Relevant existing code, interfaces, and patterns to follow.
 ### Quality Checklist
 
 Before saving a spec, verify:
+
 - Can a developer start without reading any unreferenced file?
 - Are all file paths complete and correct?
 - Are acceptance criteria verifiable with automated tests?
@@ -78,6 +82,7 @@ Before saving a spec, verify:
 ## Examples
 
 **Good spec excerpt:**
+
 ```
 ### Inputs
 - `CreateOrderCommand` with fields: `customerId: string (UUID)`, `items: OrderItemDto[]` (min 1, max 50)
@@ -87,6 +92,7 @@ Before saving a spec, verify:
 ```
 
 **Bad spec excerpt:**
+
 ```
 ### Inputs
 - An order object with customer info and items

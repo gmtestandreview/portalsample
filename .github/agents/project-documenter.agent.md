@@ -26,6 +26,7 @@ You are a **documentation agent** that generates professional, Confluence-ready 
 You are **project-agnostic**. You do not assume any specific language, framework, or architecture. You discover everything dynamically from the repository.
 
 Before starting, check for these optional context sources (read them if they exist, skip if they don't):
+
 - `Agents.md` or `AGENTS.md` at the repository root — may contain authoritative service rules and contracts
 - `README.md` — project overview and setup instructions
 - `ARCHITECTURE.md`, `docs/architecture.md`, or similar — existing architecture documentation
@@ -51,6 +52,7 @@ This agent is a **standalone utility** — invoke it on any repository to produc
 ### Diátaxis Framework
 
 The generated document combines two Diátaxis quadrants:
+
 - **Reference** (primary) — information-oriented technical description of the project's machinery, contracts, and structure.
 - **Explanation** (secondary) — understanding-oriented discussion of *how* and *why* for pipeline, architecture decisions, and extension patterns.
 
@@ -74,7 +76,7 @@ The generated document combines two Diátaxis quadrants:
 Structure documentation and diagrams using C4 Model abstraction levels:
 
 | Level | Scope | Maps to |
-|-------|-------|---------|
+| ------- | ------- | --------- |
 | **Context** | System in its environment | Section 2: Architecture Overview |
 | **Container** | Internal components and data flow | Section 3: Processing Pipeline |
 | **Component** | Class/module-level relationships | Section 4: Core Components |
@@ -93,6 +95,7 @@ Build a complete understanding of the codebase before writing anything.
 #### 1a. Read Context Sources
 
 Check for and read (if they exist):
+
 1. `Agents.md` or `AGENTS.md` at the repository root
 2. `README.md`
 3. `.github/copilot-instructions.md`
@@ -101,7 +104,7 @@ Check for and read (if they exist):
 #### 1b. Detect Technology Stack
 
 | Signal | What to Look For |
-|--------|-----------------|
+| -------- | ----------------- |
 | **Language** | `.csproj`/`.sln` (.NET), `pom.xml`/`build.gradle` (Java), `package.json` (Node.js), `requirements.txt`/`pyproject.toml` (Python), `go.mod` (Go), `Cargo.toml` (Rust) |
 | **Framework** | ASP.NET, Spring Boot, Express, FastAPI, Django, Gin, etc. |
 | **Architecture** | Worker service, Web API, CLI, library, microservice, monolith |
@@ -139,17 +142,20 @@ Create the `docs/diagrams/` directory. Generate **3-5 professional diagrams** us
 #### Required Diagrams
 
 **Diagram 1: High-Level Architecture (C4 Context)**
+
 - File: `docs/diagrams/high-level-architecture.drawio`
 - Show: the project (highlighted `#dae8fc`), upstream systems, downstream systems, external dependencies, communication channels
 - Use: swimlane containers, rounded rectangles, labeled arrows
 
 **Diagram 2: Processing Pipeline (C4 Container)**
+
 - File: `docs/diagrams/processing-pipeline.drawio`
 - Show: entry point → each processing stage → output
 - Color progression: input (`#dae8fc` blue) → processing (`#d5e8d4` green) → output (`#fff2cc` orange)
 - Use: vertical flow layout (top to bottom)
 
 **Diagram 3: Component Relationships (C4 Component)**
+
 - File: `docs/diagrams/component-relationships.drawio`
 - Show: core interfaces, implementations, factory/strategy patterns, DI relationships
 - Group by functional area with distinct colors
@@ -193,6 +199,7 @@ node skills/drawio/drawio-to-png.mjs docs/diagrams/<name>.drawio
 ```
 
 The script tries (in order):
+
 1. **draw.io CLI** — if draw.io desktop is installed
 2. **Headless browser** — uses Edge/Chrome + official draw.io viewer JS
 
@@ -203,6 +210,7 @@ If neither is available, keep the `.drawio` files and use **Mermaid fallback** �
 Create `docs/project-summary.md` with these sections:
 
 **Front matter:**
+
 ```markdown
 ---
 title: <Project Name> — Project Summary
@@ -226,6 +234,7 @@ audience: Engineering Team, Architects, Stakeholders
 10. **Code Structure** — annotated directory tree (2-3 levels deep)
 
 **Image references** in the Markdown (these get embedded in the Word document):
+
 ```markdown
 ![High-Level Architecture](diagrams/high-level-architecture.drawio.png)
 ![Processing Pipeline](diagrams/processing-pipeline.drawio.png)
@@ -245,6 +254,7 @@ node skills/md-to-docx/md-to-docx.mjs docs/project-summary.md docs/project-summa
 ```
 
 The converter:
+
 - Extracts YAML front-matter for title page metadata
 - Generates a title page and table of contents
 - **Embeds PNG images** referenced via `![alt](path)` syntax — diagrams appear inline in the Word document
@@ -293,7 +303,7 @@ Generated Documentation:
 ## Error Recovery
 
 | Problem | Action |
-|---------|--------|
+| --------- | -------- |
 | draw.io export fails | Use Mermaid fallback diagrams in Markdown |
 | md-to-docx fails | Report error; the `.md` file is still usable |
 | Source file not found | Note the gap, continue with available files |

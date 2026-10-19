@@ -22,7 +22,7 @@ These cases define the intended activation boundary. They are **test designs, no
 3. "What does this Python error mean?"
 4. "Summarise this regulation."
 5. "Make this Gantt chart blue."
-6. "What is the current Commonwealth procurement threshold?" 
+6. "What is the current Commonwealth procurement threshold?"
    - Expected: authoritative procurement lookup/research task; this skill may support project implications after the current rule is verified, but must not answer from memory.
 7. "Write a privacy policy for my website."
 8. "Design a cloud network topology."

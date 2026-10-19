@@ -20,10 +20,12 @@ The import path must resolve relative to the file's location inside `validationS
 
 1. Scan the file for any of the custom method names listed above.
 2. If any are used and the side-effect import is **absent**, add it directly below the `yup` import line:
+
    ```ts
    import * as yup from 'yup';
    import '../../validationSchemas/yupExtensions'; // ← add this
    ```
+
 3. If none of the custom methods are used, the import is not required — do not add it unnecessarily.
 4. When **adding** a new custom method call to an existing file, check for the import first and add it if missing.
 

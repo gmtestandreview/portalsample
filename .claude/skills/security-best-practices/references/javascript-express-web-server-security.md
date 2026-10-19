@@ -365,7 +365,7 @@ Notes:
 
 Severity: High
 
-- IMPORTANT NOTE: If cookies are not being used for auth (ie auth is via Authentication header or other passed token), then there is no CSRF risk.
+* IMPORTANT NOTE: If cookies are not being used for auth (ie auth is via Authentication header or other passed token), then there is no CSRF risk.
 
 Required:
 
@@ -376,7 +376,7 @@ Required:
 
 IMPORTANT NOTE:
 
-* If authentication is done via `Authorization: Bearer ...` headers (and not cookies), classic browser CSRF is typically not applicable; 
+* If authentication is done via `Authorization: Bearer ...` headers (and not cookies), classic browser CSRF is typically not applicable;
 
 Insecure patterns:
 

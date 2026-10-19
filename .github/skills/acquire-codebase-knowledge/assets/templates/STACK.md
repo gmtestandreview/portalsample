@@ -5,7 +5,7 @@
 ### 1) Runtime Summary
 
 | Area | Value | Evidence |
-|------|-------|----------|
+| ------ | ------- | ---------- |
 | Primary language | [VALUE] | [FILE_PATH] |
 | Runtime + version | [VALUE] | [FILE_PATH] |
 | Package manager | [VALUE] | [FILE_PATH] |

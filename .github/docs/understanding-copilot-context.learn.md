@@ -104,7 +104,7 @@ Copilot: Here's a general approach to validation...
 
 **With #-mention**:
 
-```
+```text
 You: How do I handle validation in #user-service.ts?
 
 Copilot: Based on your UserService class, you can add validation like this...
@@ -153,6 +153,7 @@ A: In GitHub Copilot Chat, you can see which files are being referenced in respo
 **Q: Can I control what context is included?**
 
 A: Yes, you have several ways to control context:
+
 - Open/close files to change what's available to Copilot
 - Use `#` mentions to explicitly reference specific files, symbols or functions
 - Configure `.gitignore` to exclude files from workspace context

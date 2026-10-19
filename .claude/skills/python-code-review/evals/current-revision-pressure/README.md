@@ -31,13 +31,14 @@ real, separately captured agent execution supplies the result.
    evidence blocks `deploy`. Report separately the historical 2026-10-05
    campaign; it is not equivalent to this revision.
 
-The 44 cases in `run-record.json` include pressure, positive, near-miss,
+The 47 cases in `run-record.json` include pressure, positive, near-miss,
 task-path, branch, reference-loading, and structural-edit type-check regression
 cases. Use `cases.json` as the immutable expectation source and record a new run
 file when changing that contract. Never write PASS solely because the
 instruction text matches the expected behavior.
 
 The [prior-revision plan](../prior-revision-pressure/run-record.json) is
-preserved unchanged for its original candidate hash and 43-case contract. The
-current plan binds the structural-edit gate and added regression case to the
-current hash; every arm remains `NHR`, with no behavioral run claimed.
+preserved unchanged for its original candidate hash and 43-case contract. The archived 2026-10-11 plan preserves the 44-case pre-change contract. The
+current 47-case plan adds bounded-review, reference-loading and unchanged-
+environment reuse branches. Both `SKILL.md` and active supporting resources
+are hash-bound; every arm remains `NHR` with no behavioral run claimed.

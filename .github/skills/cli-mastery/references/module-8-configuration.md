@@ -3,7 +3,7 @@
 ## Key files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `~/.copilot/config.json` | Main settings (model, theme, logging, experimental flags) |
 | `~/.copilot/mcp-config.json` | MCP servers |
 | `~/.copilot/lsp-config.json` | Language servers (user-level) |
@@ -14,7 +14,7 @@
 ## Environment variables
 
 | Variable | Purpose |
-|----------|---------|
+| ---------- | --------- |
 | `EDITOR` | Text editor for `Ctrl+G` (edit prompt in external editor) |
 | `COPILOT_LOG_LEVEL` | Logging verbosity (error/warn/info/debug/trace) |
 | `GH_TOKEN` / `GITHUB_TOKEN` | GitHub authentication token (checked in order) |

@@ -27,7 +27,7 @@ This article explains what plugins contain, how to find and install them, and ho
 A plugin bundles one or more of the following components:
 
 | Component | What It Does | File Location |
-|-----------|-------------|---------------|
+| ----------- | ------------- | --------------- |
 | **Custom Agents** | Specialized AI assistants with tailored expertise | `agents/*.agent.md` |
 | **Skills** | Discrete callable capabilities with bundled resources | `skills/*/SKILL.md` |
 | **Hooks** | Event handlers that intercept agent behavior | `hooks.json` or `hooks/` |
@@ -78,7 +78,7 @@ The `plugin.json` manifest declares what the plugin contains:
 You might wonder: why not just copy agent files into your project manually? Plugins provide several advantages:
 
 | Feature | Manual Configuration | Plugin |
-|---------|---------------------|--------|
+| --------- | --------------------- | -------- |
 | **Scope** | Single repository | Any project |
 | **Sharing** | Manual copy/paste | `copilot plugin install` command |
 | **Versioning** | Git history | Marketplace versions |

@@ -45,7 +45,7 @@ cargo audit
 ## Immediate Flag Patterns
 
 | Pattern | Severity | Fix |
-|---------|----------|-----|
+| --------- | ---------- | ----- |
 | Hardcoded secrets | CRITICAL | Use env vars |
 | Shell command with user input | CRITICAL | Use safe APIs or execFile |
 | String-concatenated SQL | CRITICAL | Parameterized queries |
@@ -66,6 +66,7 @@ cargo audit
 ## Emergency Response
 
 If CRITICAL vulnerability found:
+
 1. Document with full report
 2. Alert project owner immediately
 3. Provide secure code example

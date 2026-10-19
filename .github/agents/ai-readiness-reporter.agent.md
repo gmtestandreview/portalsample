@@ -23,9 +23,11 @@ Your job is the **Measure** step, surfaced as a beautiful static HTML report tha
 1. **Detect any policy file** the user wants applied. If they reference one (e.g. `policies/strict.json`, `examples/policies/ai-only.json`, `--policy @org/agentrc-policy-strict`), capture it. Otherwise default to no policy.
 
 2. **Run the readiness assessment** in the repo root. Always use `--json` so output is parseable:
+
    ```bash
    npx -y github:microsoft/agentrc readiness --json [--policy <path-or-pkg>] [--per-area]
    ```
+
    Capture the entire `CommandResult<T>` JSON envelope.
 
 3. **Read repo context** — load `.github/copilot-instructions.md`, `AGENTS.md`, `CLAUDE.md`, `agentrc.config.json`, and any policy JSON referenced. This lets you describe the *current state* per pillar precisely (e.g. "AGENTS.md present, 412 lines, last modified 3 weeks ago").
@@ -54,7 +56,7 @@ Your job is the **Measure** step, surfaced as a beautiful static HTML report tha
 ## AgentRC Maturity Model
 
 | Level | Name | What it means |
-|---|---|---|
+| --- | --- | --- |
 | 1 | **Functional** | Builds, tests, basic tooling in place |
 | 2 | **Documented** | README, CONTRIBUTING, custom instructions exist |
 | 3 | **Standardized** | CI/CD, security policies, CODEOWNERS, observability |
@@ -76,7 +78,7 @@ Every pillar carries an **AI relevance** rating shown as a badge on its card in 
 ### Repo Health (8 pillars)
 
 | Pillar | AI relevance | What it checks | Why it matters for AI (full explanation) |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Style** | Medium | Linter config (ESLint/Biome/Prettier), type-checking (TypeScript/Mypy) | Lint and type rules are the most explicit form of "house style" an agent can read. With them in place, Copilot generates code that passes review on the first try; without them, the agent has to guess at conventions and PRs churn on style nits. |
 | **Build** | High | Build script in package.json, CI workflow config | An agent without a build command cannot self-verify. A canonical `npm run build` (and a CI workflow that mirrors it) lets the agent compile, catch type errors, and iterate before opening a PR — the difference between "works on my machine" and a clean check run. |
 | **Testing** | High | Test script, area-scoped test scripts | Tests are the agent's automated quality gate. With a `test` script the agent can run TDD loops and prove behaviour; with area-scoped tests it can run only what's relevant and stay fast. No tests = no objective signal for the agent to know when it's done. |
@@ -101,7 +103,7 @@ At Level 2+, AgentRC also checks **instruction consistency** — flag any diverg
 Extras are lightweight, optional checks reported separately:
 
 | Extra | What it checks |
-|---|---|
+| --- | --- |
 | `agents-doc` | `AGENTS.md` is present |
 | `pr-template` | Pull request template exists |
 | `pre-commit` | Pre-commit hooks configured (Husky, etc.) |
@@ -127,7 +129,7 @@ If no policy is set, label the section "Default policy (built-in defaults)" and 
 ## Severity / Bucketing
 
 | Bucket | Rule of thumb |
-|---|---|
+| --- | --- |
 | 🔴 **Fix First** | impact ∈ {critical, high} **and** the fix is small (single file or config) |
 | 🟡 **Fix Next** | impact = medium **and** the fix is small |
 | 🔵 **Plan** | impact = medium **and** larger refactor required |
@@ -140,7 +142,7 @@ When in doubt, prefer the higher bucket if the pillar is `Docs`, `Testing`, `Bui
 ## Scoring reference
 
 | Impact | Weight |
-|---|---|
+| --- | --- |
 | critical | 5 |
 | high | 4 |
 | medium | 3 |
@@ -181,7 +183,7 @@ Hard rules — do **not** deviate:
 Placeholders the template uses (all required unless marked optional):
 
 | Placeholder | Source |
-|---|---|
+| --- | --- |
 | `{{repoName}}` | repository name (folder name or git remote) |
 | `{{date}}` | ISO date the report was generated |
 | `{{level}}` / `{{levelName}}` | AgentRC maturity level number + name |
@@ -193,7 +195,7 @@ Placeholders the template uses (all required unless marked optional):
 Per-pillar placeholders (repeat the `.pillar` block once per pillar):
 
 | Placeholder | Source |
-|---|---|
+| --- | --- |
 | `{{pillarName}}` | "Style", "Build", "Testing", … |
 | `{{pillarScore}}` | integer percent for this pillar |
 | `{{pillarStatus}}` | `good` / `warn` / `bad` (drives the bar + dot colour) |

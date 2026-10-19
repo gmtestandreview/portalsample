@@ -11,6 +11,7 @@
 ## Well-Architected Framework Alignment
 
 Map selected patterns to Well-Architected Framework pillars:
+
 - **Reliability**: Circuit Breaker, Bulkhead, Retry, Health Endpoint Monitoring
 - **Security**: Federated Identity, Valet Key, Gateway Offloading, Quarantine
 - **Cost Optimization**: Compute Resource Consolidation, Static Content Hosting, Throttling
@@ -20,6 +21,7 @@ Map selected patterns to Well-Architected Framework pillars:
 ## Pattern Documentation
 
 When implementing patterns, document:
+
 - Which pattern is being used and why
 - Trade-offs accepted
 - Configuration and tuning parameters

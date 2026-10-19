@@ -1,0 +1,8 @@
+Please compare these two Agent Skills and recommend whether to retain both or combine them. Do not modify any files.
+
+commit-message-writer: Use when writing git commit messages. Outcome: a commit message.
+conventional-commit-writer: Use when writing git commit messages in Conventional Commits format (type(scope): subject). Outcome: a commit message in that format. No other checklist, template, tooling, or specialization beyond the format itself.
+
+Show the evidence behind the classification, the proposed survivor or boundary, what must be preserved, and the final accounting. Work only with supplied evidence and applicable local instructions. Before reading a file, run sonar analyze secrets for that file. Do not read credential, auth, configuration or session files; do not use network tools or launch other agents.
+
+Environment fact: sonar CLI is installed on PATH. Invoke sonar analyze secrets directly; no preliminary availability probe is needed.

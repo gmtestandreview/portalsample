@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import { MemoryRouter, Route, Routes } from 'react-router';
@@ -13,6 +13,7 @@ import {
 import { summaryAndAcceptOwnHidingFields } from '@/routes/acceptQuote/summaryAndAcceptProps';
 import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
+import ErrorSummary from '@/components/forms/ErrorSummary';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => {
@@ -118,6 +119,7 @@ function StepHarness({
               }
             >
               <Form noValidate>
+                <ErrorSummary />
                 <SummaryAndAccept
                   cRMQuoteRequestId='CRM-1'
                   isSubmitted={false}
@@ -225,6 +227,58 @@ describe('SummaryAndAccept behavior', () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
     expect(submittedValues(onSubmit)).toEqual({
+      associatedDisputes: 'No',
+      acceptanceOfQuote: true,
+    });
+  });
+
+  it('links the error summary to the dispute and acceptance fields', async () => {
+    const user = userEvent.setup();
+    renderStep({
+      values: {
+        associatedDisputes: YesNo.Yes,
+        associatedDispute: '',
+        acceptanceOfQuote: false,
+      },
+    });
+    await waitForLoad();
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    const summary = await screen.findByTestId('form-error-summary');
+    const targetIdOf = (name: RegExp) =>
+      within(summary)
+        .getByRole('link', { name })
+        .getAttribute('href')
+        ?.replace(/^#/, '');
+    const disputeId = targetIdOf(/Associated dispute/);
+    const acceptanceId = targetIdOf(/Acceptance of quote/);
+    expect(disputeId).toBe('associatedDispute');
+    expect(acceptanceId).toBe('acceptanceOfQuote');
+    expect(document.getElementById(defined(disputeId, 'dispute id'))).toBe(
+      screen.getByLabelText(DISPUTE_LABEL)
+    );
+    expect(document.getElementById(defined(acceptanceId, 'accept id'))).toBe(
+      screen.getByLabelText(ACCEPT_LABEL)
+    );
+  });
+
+  it('strips dispute details typed before switching to No', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    renderStep({ onSubmit });
+    await waitForLoad();
+
+    await user.type(screen.getByLabelText(DISPUTE_LABEL), 'Typed then dropped');
+    await user.click(screen.getByRole('radio', { name: 'No' }));
+    // Precondition: the textarea hides on No, so the typed text is now stale.
+    expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
+
+    await user.click(screen.getByLabelText(ACCEPT_LABEL));
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
     });

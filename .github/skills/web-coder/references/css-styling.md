@@ -31,7 +31,7 @@ The algorithm that determines which CSS rules apply when multiple rules target t
 ### CSS Selectors
 
 | Selector | Example | Description |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | Element | `p` | Selects all `<p>` elements |
 | Class | `.button` | Selects elements with `class="button"` |
 | ID | `#header` | Selects element with `id="header"` |
@@ -229,7 +229,7 @@ Two-dimensional layout system (rows and columns):
 ### Grid vs Flexbox
 
 | Use Case | Best Choice |
-|----------|-------------|
+| ---------- | ------------- |
 | One-dimensional layout (row or column) | Flexbox |
 | Two-dimensional layout (rows and columns) | Grid |
 | Align items along one axis | Flexbox |
@@ -358,7 +358,7 @@ Apply styles based on device characteristics:
 ### Responsive Units
 
 | Unit | Description | Example |
-|------|-------------|---------|
+| ------ | ------------- | --------- |
 | `px` | Pixels (absolute) | `16px` |
 | `em` | Relative to parent font-size | `1.5em` |
 | `rem` | Relative to root font-size | `1.5rem` |

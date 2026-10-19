@@ -27,6 +27,7 @@ Purpose: route the agent to the **smallest sufficient set of references** for th
 | Mandatory `SKILL.md` format, frontmatter, directory/resource rules | `specification.md` | `SKILL-testing-checklist.md` at final validation |
 | General skill authoring and information architecture | `best practices-for-skill-creators.md` | `anthropic-best-practices.md` only for Claude/Anthropic targets |
 | Static quality audit or optimization | `best-practices-evaluations.md` | `audit-scoring.md` for scoring; `../assets/templates/skill-audit.md` only for report shape |
+| Iterative optimisation, comparative campaigns or interrupted closeout | `bounded-optimisation.md` | Scoring/testing references only for the acceptance question being evaluated |
 | Full scored audit | `best-practices-evaluations.md` | `audit-scoring.md`; `SKILL-testing-checklist.md` for final validation |
 | Classify as Discipline, Technique, Pattern, Reference, or Hybrid | `skill-classification.md` | Testing reference selected from the resulting class |
 | Fix activation or description wording | `description-optimization.md` | Use for rigorous description evaluation testing. |
@@ -37,8 +38,8 @@ Purpose: route the agent to the **smallest sufficient set of references** for th
 | Persistent evidence model, audit records, or evaluation storage design | `skill-testing-data-model.md` | no secondary file unless a schema is explicitly supplied or requested |
 | Agent Skills runtime/client support | `adding-skills-support.md` | `specification.md` for format rules; local client policy only when target environment requires it |
 | Compare two skills for merge viability | `best-practices-evaluations.md` | `skill-classification.md` if scope/type differs; `../assets/templates/swot-analysis.md` only when SWOT output helps |
-| Quick merge plan for supplied skills | `prompt-1-quick-merge-plan.md` | `best-practices-evaluations.md` only when quality criteria must be applied; `skill-classification.md` only when type affects the recommendation |
-| Full audit and conditional merge of supplied skills | `prompt-2-full-audit+conditional-merge.md` | `specification.md` for mandatory format; `SKILL-testing-checklist.md` before deployment/readiness claims |
+| Quick merge plan for supplied skills | `../assets/prompt-1-quick-merge-plan.md` | `best-practices-evaluations.md` only when quality criteria must be applied; `skill-classification.md` only when type affects the recommendation |
+| Full audit and conditional merge of supplied skills | `../assets/prompt-2-full-audit+conditional-merge.md` | `specification.md` for mandatory format; `SKILL-testing-checklist.md` before deployment/readiness claims |
 | Final validation before deployment | `SKILL-testing-checklist.md` | Specification plus any specialist reference needed to execute unresolved checks |
 | Claude/Anthropic-specific authoring decisions | `anthropic-best-practices.md` | Generic specification still controls universal compliance claims |
 | A Team repository registration policy | `a-team-local-policy.md` | Only when the target is explicitly an A Team repository |
@@ -155,13 +156,13 @@ Use only for Claude/Anthropic-specific authoring guidance. Do not promote Anthro
 
 These files are executable workflow prompts for skill consolidation tasks. They are references only for merge-planning or merge-execution requests and should not be loaded for ordinary audits, description tuning, or validation.
 
-#### `prompt-1-quick-merge-plan.md`
+#### `../assets/prompt-1-quick-merge-plan.md`
 
 Use when the user asks for an early merge plan, overlap analysis, preservation inventory, conflict list, or recommendation before deciding whether to run a full merge audit.
 
 It produces a concise plan and recommendation only. It must not produce a final merged `SKILL.md`.
 
-#### `prompt-2-full-audit+conditional-merge.md`
+#### `../assets/prompt-2-full-audit+conditional-merge.md`
 
 Use when the user asks for a full audit and conditional merge of supplied `SKILL.md` files and supporting resources.
 
@@ -259,7 +260,7 @@ After a merge is implemented, use `SKILL-testing-checklist.md` for regression an
 Load:
 
 1. supplied skill files and directly relevant supporting resources;
-2. `prompt-1-quick-merge-plan.md`.
+2. `../assets/prompt-1-quick-merge-plan.md`.
 
 Add `best-practices-evaluations.md` only when the plan needs explicit quality criteria. Add `skill-classification.md` only when the source skills' type affects merge viability or testing emphasis.
 
@@ -270,7 +271,7 @@ Do not produce the final merged `SKILL.md` from the quick-plan workflow.
 Load:
 
 1. supplied skill files and directly relevant supporting resources;
-2. `prompt-2-full-audit+conditional-merge.md`;
+2. `../assets/prompt-2-full-audit+conditional-merge.md`;
 3. `specification.md` when a final `SKILL.md` may be produced;
 4. `SKILL-testing-checklist.md` before deployment/readiness claims.
 

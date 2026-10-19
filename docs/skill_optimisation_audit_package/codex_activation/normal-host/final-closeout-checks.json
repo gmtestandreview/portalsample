@@ -1,0 +1,37 @@
+{
+  "active_policy_sha256": "98a6201d27ddec48d77ee19d2ae54eb48bb64c56d6ed7ae182b0034d27dcf246",
+  "requested_docs": 10,
+  "normal_host_cases": 14,
+  "installed_hash_checks": 82,
+  "json_parse_count": 11,
+  "canonical_report": "V3_NORMAL_HOST_ACCEPTANCE.md",
+  "transient_stderr_files": 0,
+  "diff_check_exit": 0,
+  "protected_hooks_unchanged": 2,
+  "prettier_exit": 0,
+  "historical_document_snapshots_unchanged": 10,
+  "evidence_records": [
+    {
+      "exit_code": 0,
+      "sha256": "33436df8e090c322978cd551593218b9cc72003ddf5fd7e9c8b366f61959963f",
+      "path": "docs/skill_optimisation_audit_package/v3_normal_host_run.json",
+      "output": "Evidence consistent: deploy (not an acceptance verdict)"
+    },
+    {
+      "exit_code": 0,
+      "sha256": "b510a410331a05f6184bae7ab0d79fe3937250990a64ac6a531318fea6ab7916",
+      "path": "docs/skill_optimisation_audit_package/v3_codex_runtime_run.json",
+      "output": "Evidence consistent: deploy (not an acceptance verdict)"
+    },
+    {
+      "exit_code": 0,
+      "sha256": "b81ae84df68b581e3840493e553f90f1e1b81b45c0b6ddce17b5b59bdf17f1a7",
+      "path": "docs/skill_optimisation_audit_package/v3_implementation_run.json",
+      "output": "Evidence consistent: deploy (not an acceptance verdict)"
+    }
+  ],
+  "acceptance": "PASS scoped",
+  "independent_review": "APPROVE scoped",
+  "installed_mismatches": 0,
+  "date": "2026-10-17"
+}

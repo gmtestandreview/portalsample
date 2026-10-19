@@ -1,0 +1,10 @@
+[
+  {
+    "Path": "C:\\Users\\gregm\\.claude\\hooks\\sonar-secrets\\build-scripts\\pretool-secrets.ps1",
+    "Hash": "86051BFF2278E061D79FDA5306862A8884EBAC4F8EAE0E11F7D22BC47DEFE621"
+  },
+  {
+    "Path": "C:\\Users\\gregm\\.claude\\hooks\\sonar-secrets\\build-scripts\\prompt-secrets.ps1",
+    "Hash": "D0426FFD985BC55DC6D9CFA5178A8A9F4DF2E96C155DF22EA4615F05DD7BBF7E"
+  }
+]

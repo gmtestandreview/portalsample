@@ -3,6 +3,7 @@
 ## Repository Pattern
 
 Encapsulate data access behind a consistent interface:
+
 - Define standard operations: `findAll`, `findById`, `create`, `update`, `delete`
 - Concrete implementations handle storage details (database, API, file, etc.)
 - Business logic depends on the abstract interface, not the storage mechanism
@@ -11,6 +12,7 @@ Encapsulate data access behind a consistent interface:
 ## API Response Envelope
 
 Use a consistent envelope for all API responses:
+
 ```typescript
 {
   success: boolean
@@ -23,6 +25,7 @@ Use a consistent envelope for all API responses:
 ## Skeleton Projects
 
 When implementing new functionality:
+
 1. Search for battle-tested skeleton projects first
 2. Evaluate options on: security, extensibility, relevance, maintenance activity
 3. Clone best match as foundation
@@ -55,7 +58,7 @@ async function fetchUser(id: string): Promise<Result<User>> {
 ## A Team Primitive Responsibilities
 
 | Primitive | Owns | Does NOT |
-|---|---|---|
+| --- | --- | --- |
 | **Skill** (`skills/**`) | Reusable methodology, decision structure, gates. Model-invoked via `Skill` tool; user-invocable as `/<name>`. | Persona, tool restriction, model tier. |
 | **Agent** (`.claude/agents/**`) | A persona that *executes* a methodology under a fixed tool + model-tier budget (e.g. `debugger` runs `systematic-debugging`). Dispatched via `Agent`/`Task`. | Define the methodology itself — it cites the skill. |
 | **Command** (`.claude/commands/**`) | A user entry point that composes skills + agents into a workflow (`/feature`, `/quality-gate`) or is a thin alias to one skill/agent (`/debug`, `/adr`). | Contain methodology — it points at skills/agents. |

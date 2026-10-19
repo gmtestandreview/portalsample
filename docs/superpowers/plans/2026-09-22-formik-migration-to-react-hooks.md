@@ -82,17 +82,35 @@ by an import of `summaryAndAcceptOwnHidingFields` (`b9713c93`).
 Known unresolved, not fixed here:
 
 - **Pre-existing, not fixed:** `acceptanceOfQuote` validation rejects only an
-  explicit `false`; an untouched checkbox stays `undefined` and can submit. The
-  schemas are shared with the server, so changing this needs its own decision.
+  explicit `false`; an untouched checkbox stays `undefined` and can submit.
+  `validation.ts:178-180` is `yup.boolean().oneOf([true], …)` with no
+  `.required()`. **Proposed change (not made, needs approval):** add
+  `.required()` to `summaryAndAcceptSubmitValidation` only, in its own commit,
+  with a test that an untouched box blocks submit, an update to the pinned
+  "submits an untouched acceptance" test, and a RULE-040 spec update in
+  `analysis/BUSINESS_RULES.md` (it only states the `=== false` case). Checked
+  2026-10-12: `summaryAndAcceptSaveValidation` is a separate schema with no
+  `acceptanceOfQuote` rule, so save-and-exit drafts are unaffected. **Open
+  risk:** no server code is in this workspace, and the generated client types
+  the field as optional (`web-api-client.ts:5102`). Before shipping, the .NET
+  owner must confirm the accept-quote handler's behavior for a missing value, or
+  a staging submit must confirm it.
 - **Pre-existing, not fixed:** the dispute textarea shows while the Yes/No
   question is unanswered and hides only on `No`.
-- Bridge cleanup remains open: the hand-written touched-path and mirrored-name
-  lists are repeated in each step bridge and should be shared.
-- Splitting the large summary function in `deliveryAndReturn.tsx` remains open.
-- `deliveryAndReturn.behavior.test.tsx` still copies its hide rule locally.
-- Test gaps (optional): no assertion pins the error-summary target ids
-  `associatedDispute` and `acceptanceOfQuote`; no test types text, switches to
-  `No` and submits.
+- **Agreed follow-up cleanup (approved 2026-10-12, not started).** Each item is
+  its own commit, none changes behavior, and each is verified by the existing
+  behavior suites plus the new tests below:
+  1. Share the hand-written touched-path and mirrored-name lists across the step
+     bridges (`paymentDetails`, `reportRecipient`, `deliveryAndReturn`,
+     `summaryAndAccept`) instead of repeating them in each bridge.
+  2. Split the large summary function in `deliveryAndReturn.tsx`.
+  3. Import the real hide rule in `deliveryAndReturn.behavior.test.tsx` instead
+     of copying it, as `summaryAndAccept` now does through
+     `summaryAndAcceptOwnHidingFields` (`b9713c93`).
+  4. Add two `summaryAndAccept` tests: one pinning the error-summary target ids
+     `associatedDispute` and `acceptanceOfQuote` to real DOM elements, and one
+     that types into the dispute textarea, switches to `No` and submits,
+     asserting the stale value is stripped from the payload.
 - Full `npm run test:ci` and the Storybook BDD e2e suite were not run.
 
 What landed:
@@ -299,6 +317,46 @@ Open decisions: whether `RhfSelectInput` should gain `readOnly`,
 `displayHorizontally` and `inlineHelp` now or with their first consumer (it
 currently omits them), and whether the form-free summary pattern should become
 the default for every read-only page.
+
+### Next item 3: request-for-quote form-free summary (tasks, 2026-10-12)
+
+Scope: the two `isSummary` branches that `requestForQuoteSummary.tsx` renders
+(`OrganisationAndContact`, `InstrumentAndRequest` in `routes/requestForQuote/`).
+The editable steps stay Formik. Facts from the code:
+
+- The summary page runs inside the wizard's Formik context.
+  `requestForQuoteSummaryProps.ts` loads `getSummary(id)` and supplies the
+  hiding rules (`branchOrLocationName`, `principalContactHide`,
+  `contact.titleOther`), so the form-free sections take `values` and `hidden` as
+  the TA ones do (`routes/ta/summary/types.ts`).
+- `InstrumentAndRequest` in summary mode also fetches two CRM lookups
+  (measurement category, artefact type) to turn ids into labels. The form-free
+  section needs the same lookups, loaded once, with the same sort and the same
+  "No measurement"/"No instrument" ordering (`sortList`).
+- The summary wrapper is reached from the route and
+  `RequestForQuote.stories.tsx`.
+
+Tasks, each its own commit, reviewed in two stages:
+
+1. **Parity baseline.** Add a behavior/snapshot suite that renders the current
+   Formik summary branches from fixtures (hidden and shown branch, `Other`
+   title, no branch name, recalibration prefill, empty answers) and records the
+   markup. No source change. Mirrors `summaryParity.test.tsx`.
+2. **`RfqOrganisationSummary`.** Form-free twin in
+   `routes/requestForQuote/summary/`, reusing `SummaryDisplay` and
+   `ContactSummary`. The parity test must pass against the Task 1 fixtures;
+   differences are listed and approved.
+3. **`RfqInstrumentSummary`.** Same, plus the lookup loading. Cover lookup
+   failure (the Formik branch logs and shows the spinner forever; decide and
+   record whether to keep that).
+4. **Swap in `requestForQuoteSummary.tsx`.** Read values from `useFormikContext`
+   once at the page edge, pass them down. Run the RFQ unit, Storybook and
+   `npm run test:e2e:app -- -g request` suites.
+5. **Remove dead summary branches** from the Formik steps only after a search
+   shows no `isSummary` caller; keep the editable path byte-identical.
+
+Risks: the page-edge Formik read keeps one Formik dependency until the wizard
+shell moves (item 6); label lookups are the only async part.
 
 ### Lessons learned
 

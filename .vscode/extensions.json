@@ -1,10 +1,11 @@
 {
-    "recommendations": [
-        "ms-playwright.playwright",
-        "alexkrechik.cucumberautocomplete",
-        "charliermarsh.ruff",
-        "dbaeumer.vscode-eslint",
-        "sonarsource.sonarlint-vscode"
-    ],
-    "unwantedRecommendations": ["biomejs.biome"]
+  "recommendations": [
+    "ms-playwright.playwright",
+    "alexkrechik.cucumberautocomplete",
+    "charliermarsh.ruff",
+    "dbaeumer.vscode-eslint",
+    "sonarsource.sonarlint-vscode",
+    "codacy-app.codacy"
+  ],
+  "unwantedRecommendations": ["biomejs.biome"]
 }

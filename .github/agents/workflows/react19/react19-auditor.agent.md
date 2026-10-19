@@ -113,16 +113,21 @@ Do NOT treat forwardRef as a mandatory removal. Refactor ONLY if:
 - `useImperativeHandle` is used (both patterns work)
 
 # 10. defaultProps on function components
+
 grep -rn "\.defaultProps\s*=" static/js/ --include="*.ts" --include="*.tsx" 2>/dev/null
 
 # 11. useRef() without initial value
+
 grep -rn "useRef()\|useRef( )" static/js/ --include="*.ts" --include="*.tsx" 2>/dev/null
 
 # 12. propTypes (runtime validation silently dropped in React 19)
+
 grep -rn "\.propTypes\s*=" static/js/ --include="*.ts" --include="*.tsx" | grep -v "\.test\." | wc -l
 
 # 13. Unnecessary React default imports
+
 grep -rn "^import React from 'react'" static/js/ --include="*.ts" --include="*.tsx" | grep -v "\.test\." 2>/dev/null
+
 ```
 
 Record in memory: `#tool:memory write repository "react19-audit-progress" "phase3-complete"`

@@ -13,6 +13,7 @@ Finish a branch by verifying the repository's required checks, reviewing the fin
 Use this skill when implementation is substantially complete and the next goal is to make the branch review- or merge-ready.
 
 Do not use it to:
+
 - implement the feature itself;
 - bypass project-defined review, test, security, or release requirements;
 - merge, push, commit, or open a PR unless the user requested that action and the environment permits it.
@@ -26,6 +27,7 @@ Do not use it to:
 ### 1. Discover the repository's completion requirements
 
 Before running commands, inspect the repository for its authoritative guidance and available scripts, such as:
+
 - contributor or agent instructions;
 - package, build, and task configuration;
 - CI workflows;
@@ -40,6 +42,7 @@ If a required check is referenced but unavailable, report it as blocked rather t
 ### 2. Verify the working state
 
 Identify:
+
 - the current branch;
 - the intended base branch, if known;
 - staged, unstaged, and untracked changes;
@@ -50,6 +53,7 @@ Do not discard, reset, overwrite, or rewrite changes as part of cleanup unless t
 ### 3. Run required validation
 
 Run the repository's applicable checks in a sensible dependency order. Typical categories are:
+
 1. focused tests for the changed area;
 2. required full test suite;
 3. coverage check, if the project defines one;
@@ -63,12 +67,14 @@ A required check passes only when its command completes successfully and its pro
 **When repository policy is silent:** run the strongest non-destructive validation exposed by the changed component's normal project configuration. At minimum, run relevant tests plus available build, type-check, or lint checks that can materially detect defects in the change. Absence of an explicit policy is not permission to skip available verification. Disclose checks that cannot be run.
 
 If a required check fails:
+
 - capture the failing command and relevant result;
 - fix it only when the user requested implementation or remediation;
 - rerun the affected check after the last relevant change;
 - do not declare the branch ready while the required failure remains.
 
 Do not dismiss a failing required check as flaky, pre-existing, or unrelated without evidence such as:
+
 - a documented known issue;
 - the project's accepted retry or quarantine policy;
 - reproduction against an appropriate unchanged baseline.
@@ -82,6 +88,7 @@ Do not treat skipped tests, warnings, TODOs, or coverage as blockers unless proj
 Review the complete branch diff against the intended base.
 
 Check for:
+
 - accidental or unrelated changes;
 - debug-only output or temporary instrumentation;
 - commented-out code that should not ship;
@@ -101,6 +108,7 @@ After the final relevant edit, rerun the checks affected by that edit. Do not cl
 ### 6. Prepare the review summary
 
 Prepare a PR-ready summary containing:
+
 - what changed and why;
 - important implementation or behavior notes;
 - validation actually run and its results;
@@ -113,6 +121,7 @@ Distinguish verified results from checks that were not run.
 ### 7. Perform requested repository actions
 
 Only when requested and permitted:
+
 - stage intended files;
 - create a commit using the repository's commit convention;
 - update the branch from its base using the project's preferred method;
@@ -122,6 +131,7 @@ Only when requested and permitted:
 For git-worktree detection and cleanup mechanics, see [references/worktree-cleanup.md](references/worktree-cleanup.md).
 
 Before destructive or history-rewriting Git operations:
+
 - state the action;
 - obtain any required authorization;
 - preserve a practical recovery point when possible, such as a backup branch or tag, stash, or recorded commit/ref;
@@ -145,6 +155,7 @@ Never merge directly to the protected or default branch when the project require
 ## Completion Gate
 
 The branch is ready only when:
+
 - all project-required checks have fresh passing evidence;
 - no unresolved blocking review or security findings remain;
 - the final diff has been reviewed for accidental changes;

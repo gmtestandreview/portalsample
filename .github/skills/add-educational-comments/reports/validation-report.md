@@ -5,7 +5,7 @@
 The revised skill passes all targeted checks from the judgment criteria.
 
 | Check | Previous | Revised |
-|---|---:|---:|
+| --- | ---: | ---: |
 | SKILL.md line count | 657 | 216 |
 | Under 500 lines | Fail | Pass |
 | Static package checks | 1/12 | 12/12 |
@@ -14,7 +14,7 @@ The revised skill passes all targeted checks from the judgment criteria.
 ## Revised Package Checks
 
 | Criterion | Result | Evidence |
-|---|---|---|
+| --- | --- | --- |
 | `SKILL.md` below 500 lines | Pass | 216 lines. |
 | Examples moved to references | Pass | `references/examples.md` exists and `SKILL.md` has a load trigger. |
 | Extended validation moved | Pass | `references/validation-matrix.md` exists and `SKILL.md` has a load trigger. |

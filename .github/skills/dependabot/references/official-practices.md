@@ -15,7 +15,7 @@ or self-hosted Dependabot runners. The linked GitHub documentation is authoritat
 - Agentic analysis may assist with summaries/recommendations, but keep security enforcement and merge gating deterministic.
 
 Official source:
-https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/automate-dependabot-with-actions
+<https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/automate-dependabot-with-actions>
 
 ## Dependency Review Action
 
@@ -26,7 +26,7 @@ Do not assume a repository has dependency review merely because Dependabot is en
 required-check/ruleset configuration before treating it as a gate.
 
 Official source:
-https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/customize-dependency-review-action
+<https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/customize-dependency-review-action>
 
 ## Self-hosted Dependabot with ARC
 
@@ -34,6 +34,7 @@ Dependabot can run on self-hosted GitHub Actions runners managed by Actions Runn
 environment-specific deployment workflow, not a normal `dependabot.yml` option.
 
 For the documented ARC setup:
+
 - Kubernetes and Helm are prerequisites.
 - The Dependabot runner scale-set installation name must be `dependabot`.
 - The documented runner uses `containerMode.type="dind"`.
@@ -43,11 +44,12 @@ For the documented ARC setup:
 Do not generate or expose PAT values. Verify current ARC installation commands and versions from GitHub before execution.
 
 Official source:
-https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/setting-dependabot-to-run-on-self-hosted-runners-using-arc
+<https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/setting-dependabot-to-run-on-self-hosted-runners-using-arc>
 
 ## Configuration and PR Optimization
 
 Current GitHub guidance emphasizes:
+
 - schedule controls for update timing;
 - a default 3-day cooldown for version updates, not security updates;
 - `groups` to reduce PR volume;
@@ -55,6 +57,6 @@ Current GitHub guidance emphasizes:
 - security updates always target the default branch; an entry using `target-branch` applies its configuration to version updates only.
 
 Official sources:
-https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates
-https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/customizing-dependabot-prs
-https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/dependabot-quickstart
+<https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates>
+<https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/customizing-dependabot-prs>
+<https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/dependabot-quickstart>

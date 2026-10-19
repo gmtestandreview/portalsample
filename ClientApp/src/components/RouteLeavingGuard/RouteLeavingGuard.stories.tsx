@@ -53,8 +53,8 @@ const meta = {
     docs: {
       description: {
         component:
-          'Guards SPA navigation when a Formik form has unsaved changes. ' +
-          'Requires both a React Router v6 context (`useBlocker`) and a Formik context (`useFormikContext`). ' +
+          'Guards SPA navigation when a form has unsaved changes. ' +
+          'Requires a React Router data router context (`useBlocker`) and no form library: callers pass `when` and an optional `onProceed`. ' +
           'The guard is inactive when `when={false}`. When `when={true}`, any in-app link click ' +
           'or programmatic navigation is intercepted and the confirmation modal is shown. ' +
           'Browser refresh/close is not covered — that path requires a separate `onbeforeunload` handler.',

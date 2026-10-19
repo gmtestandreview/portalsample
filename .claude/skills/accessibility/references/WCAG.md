@@ -5,7 +5,7 @@
 ### Level A (minimum)
 
 | Criterion | Description |
-|-----------|-------------|
+| ----------- | ------------- |
 | **1.1.1** Non-text Content | All images, icons have text alternatives |
 | **1.2.1** Audio-only/Video-only | Provide transcript or audio description |
 | **1.2.2** Captions | Video with audio has captions |
@@ -40,7 +40,7 @@
 ### Level AA (standard)
 
 | Criterion | Description |
-|-----------|-------------|
+| ----------- | ------------- |
 | **1.2.4** Captions (Live) | Live audio has captions |
 | **1.2.5** Audio Description | Pre-recorded video has audio description |
 | **1.3.4** Orientation | Content doesn't restrict orientation |
@@ -65,7 +65,7 @@
 ### Level AAA (enhanced)
 
 | Criterion | Description |
-|-----------|-------------|
+| ----------- | ------------- |
 | **1.4.6** Contrast (Enhanced) | 7:1 for normal text, 4.5:1 for large text |
 | **1.4.8** Visual Presentation | Foreground/background colors can be selected |
 | **1.4.9** Images of Text (No Exception) | No images of text |
@@ -90,6 +90,7 @@
 ## Common ARIA patterns
 
 ### Buttons
+
 ```html
 <button>Label</button>
 <!-- or -->
@@ -97,6 +98,7 @@
 ```
 
 ### Links
+
 ```html
 <a href="/page">Descriptive link text</a>
 <!-- External links -->
@@ -107,6 +109,7 @@
 ```
 
 ### Form fields
+
 ```html
 <label for="email">Email address</label>
 <input type="email" id="email" aria-describedby="email-hint">
@@ -114,6 +117,7 @@
 ```
 
 ### Error states
+
 ```html
 <label for="email">Email</label>
 <input type="email" id="email" aria-invalid="true" aria-describedby="email-error">
@@ -121,6 +125,7 @@
 ```
 
 ### Navigation
+
 ```html
 <nav aria-label="Main">
   <ul>
@@ -131,6 +136,7 @@
 ```
 
 ### Modals
+
 ```html
 <div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
   <h2 id="dialog-title">Confirm Action</h2>
@@ -139,6 +145,7 @@
 ```
 
 ### Live regions
+
 ```html
 <!-- Polite (waits for pause in speech) -->
 <div aria-live="polite">Status update here</div>
@@ -153,7 +160,7 @@
 ## Testing tools
 
 | Tool | Type | URL |
-|------|------|-----|
+| ------ | ------ | ----- |
 | axe DevTools | Browser extension | [deque.com/axe](https://www.deque.com/axe/) |
 | WAVE | Browser extension | [wave.webaim.org](https://wave.webaim.org/) |
 | Lighthouse | Built into Chrome | DevTools → Lighthouse |

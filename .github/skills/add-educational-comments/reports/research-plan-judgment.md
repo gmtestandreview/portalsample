@@ -24,7 +24,7 @@
 ## Judgment Criteria
 
 | Criterion | Pass Standard |
-|---|---|
+| --- | --- |
 | SKILL.md size | Fewer than 500 lines. |
 | Progressive disclosure | Examples, extended validation, regression details, and long gotchas live outside `SKILL.md`. |
 | Explicit load triggers | `SKILL.md` says exactly when to read each reference or asset. |
