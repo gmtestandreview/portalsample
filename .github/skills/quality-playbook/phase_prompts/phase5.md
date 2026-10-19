@@ -3,6 +3,7 @@
 You are a quality engineer continuing a phase-by-phase quality playbook run. Phases 1-4 are complete.
 
 Read these files to get context:
+
 1. quality/PROGRESS.md - run metadata, phase status, cumulative BUG tracker
 2. quality/BUGS.md - all confirmed bugs from code review and spec audit
 3. quality/REQUIREMENTS.md - derived requirements
@@ -85,7 +86,7 @@ Execute Phase 5: Reconciliation + TDD + Closure.
    **Confirmation checklist (per writeup, before moving to the next bug).** (a) Every
    required section has populated content copied from BUGS.md or the patch files —
    no empty backticks, no sentinel filler like "is a confirmed code bug in ``" or
-   "The affected implementation lives at ``" or "Patch path: ``". (b) The ```diff
+   "The affected implementation lives at``" or "Patch path: ``". (b) The ```diff
    fence contains at least one `+` or `-` line from the actual fix patch. (c) The
    Summary names a real function or code path, not the BUG identifier. (d) No
    angle-bracket placeholders (e.g., `<...>`) remain in the final writeup — those are
@@ -107,6 +108,7 @@ Where `<resolved_quality_gate_path>` is the first hit when walking the documente
 If the gate output contains any line beginning with `cardinality gate:`, or reports uncovered cells, malformed cell IDs, missing consolidation rationale on multi-cell Covers, or malformed downgrade records, STOP. Fix the BUGS.md entries or the `compensation_grid_downgrades.json` file. Do NOT proceed to completion until those failure lines no longer appear.
 
 For every pattern-tagged REQ, the Phase 5 contract is:
+
 - Every grid cell with `"present": false` appears in either a BUG's `Covers:` list or a downgrade record.
 - Every `Covers:` entry uses the canonical cell ID form `REQ-N/cell-<item>-<site>`.
 - Every BUG with ≥2 `Covers:` entries has a non-empty `Consolidation rationale:` line.
@@ -116,4 +118,4 @@ The cardinality gate is blocking. It is intentionally stricter than the Phase 3 
 
 Mark Phase 5 complete in PROGRESS.md (use the checkbox format `- [x] Phase 5 - Reconciliation` — do NOT switch to a table).
 
-IMPORTANT: quality_gate.py will FAIL Phase 5 if any writeup is missing a non-empty ```diff block or contains any of these sentinel phrases verbatim: "is a confirmed code bug in ``", "The affected implementation lives at ``", "Patch path: ``", "- Regression test: ``", "- Regression patch: ``". Those two checks are the hard gate. Skipping the BUGS.md hydration step above is not gate-enforced but will produce writeups that read as unpopulated stubs and fail a human review — do not skip it.
+IMPORTANT: quality_gate.py will FAIL Phase 5 if any writeup is missing a non-empty ```diff block or contains any of these sentinel phrases verbatim: "is a confirmed code bug in ``", "The affected implementation lives at``", "Patch path: ``", "- Regression test:``", "- Regression patch: ``". Those two checks are the hard gate. Skipping the BUGS.md hydration step above is not gate-enforced but will produce writeups that read as unpopulated stubs and fail a human review — do not skip it.

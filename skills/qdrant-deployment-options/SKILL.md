@@ -7,7 +7,6 @@ description: "Guides Qdrant deployment selection. Use when someone asks 'how to 
 
 Start with what you need: managed ops or full control? Network latency acceptable or not? Production or prototyping? The answer narrows to one of four options.
 
-
 ## Getting Started or Prototyping
 
 Use when: building a prototype, running tests, CI/CD pipelines, or learning Qdrant.
@@ -15,7 +14,6 @@ Use when: building a prototype, running tests, CI/CD pipelines, or learning Qdra
 - Use local mode (Python only): zero-dependency, in-memory or disk-persisted, no server needed [Local mode](https://skills.qdrant.tech/md/documentation/quickstart/)
 - Local mode data format is NOT compatible with server. Do not use for production or benchmarking.
 - For a real server locally, use Docker [Quick start](https://skills.qdrant.tech/md/documentation/quickstart/?s=download-and-run)
-
 
 ## Going to Production (Self-Hosted, You Own Ops)
 
@@ -26,7 +24,6 @@ Use when: you need full control over infrastructure or custom configuration, and
 - Must set up distributed mode manually for multi-node clusters [Distributed deployment](https://skills.qdrant.tech/md/documentation/scaling/distributed_deployment/)
 - Have a data-residency or compliance requirement but don't want to own that ops burden? That combination is Hybrid Cloud (next section), not self-hosted Docker.
 
-
 ## Going to Production (Zero-Ops)
 
 Use when: you want managed infrastructure with zero-downtime updates, automatic backups, and resharding without operating clusters yourself — including when data-residency or compliance rules mean the data can't sit on Qdrant-operated infrastructure.
@@ -36,7 +33,6 @@ Use when: you want managed infrastructure with zero-downtime updates, automatic 
 - Supports multi-version upgrades automatically
 - Provides features not available in self-hosted: `/sys_metrics`, managed resharding, pre-configured alerts
 
-
 ## Need Lowest Possible Latency
 
 Use when: network round-trip to a server is unacceptable. Edge devices, in-process search, or latency-critical applications.
@@ -45,7 +41,6 @@ Use when: network round-trip to a server is unacceptable. Edge devices, in-proce
 - Same data format as server. Can sync with server via shard snapshots.
 - Single-node feature set only. No distributed mode.
 - Chose EDGE and want to build on it? See the `qdrant-edge` skill (BM25, snapshot sync, app-side fusion).
-
 
 ## What NOT to Do
 

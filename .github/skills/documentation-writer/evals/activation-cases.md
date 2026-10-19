@@ -75,4 +75,3 @@ These are test definitions, not execution evidence.
   - Expected: do not pretend one depth fits both. If no primary audience is supplied, use only shared assumptions that preserve correctness and mark unresolved audience-specific guidance.
 - Near-miss: "Write one guide for senior SREs, but include a short prerequisite note for new team members."
   - Expected: keep senior SREs as the primary audience; a supporting prerequisite note does not create an unresolved audience conflict.
-

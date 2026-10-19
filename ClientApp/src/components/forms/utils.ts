@@ -1,12 +1,6 @@
+import { removeEmptyKeys } from '../../utils';
 import { getIn, isObject, setIn } from './formPath';
-import {
-  entriesIn,
-  fromPairs,
-  isArray,
-  isBoolean,
-  isFunction,
-  toPath,
-} from 'lodash';
+import { entriesIn, fromPairs, isBoolean, isFunction, toPath } from 'lodash';
 import type { ValidationError } from 'yup';
 import type {
   FormErrors,
@@ -57,7 +51,7 @@ export const removeHidden = <T extends FormValues>(
           : !isHidden(key, hide, values)
       )
       .map(([key, value]) => {
-        if (isArray(value)) {
+        if (Array.isArray(value)) {
           const newValues: any[] = [];
           value.forEach((x) => {
             if (isObject(x)) {
@@ -126,3 +120,12 @@ export const validateForm =
     }
     return errors;
   };
+
+/**
+ * The payload the wizard sends: hidden fields stripped, then empty values
+ * dropped. Shared by the form shells so both submit the same shape.
+ */
+export const normalizeSubmitValues = <T extends FormValues>(
+  values: T,
+  hidden: Hideable<Partial<T>, Partial<T>>
+): T => removeEmptyKeys(removeHidden(values, values, hidden));

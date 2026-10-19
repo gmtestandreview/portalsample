@@ -11,6 +11,7 @@
 Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`
 
 Examples:
+
 ```
 feat: add Stripe subscription billing with three tiers
 fix: resolve N+1 query in user posts endpoint

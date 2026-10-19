@@ -9,7 +9,6 @@ import sys
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, List, Optional
 
 class FullstackScaffolder:
     """Main class for fullstack scaffolder functionality"""
@@ -19,7 +18,7 @@ class FullstackScaffolder:
         self.verbose = verbose
         self.results = {}
     
-    def run(self) -> Dict:
+    def run(self) -> dict:
         """Execute the main functionality"""
         print(f"🚀 Running {self.__class__.__name__}...")
         print(f"📁 Target: {self.target_path}")

@@ -169,7 +169,7 @@ If implementation that changes behavior was written before a meaningful RED test
 ## Common Rationalizations
 
 | Excuse | Reality |
-|--------|---------|
+| -------- | --------- |
 | "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
 | "I'll test after" | Tests written after pass immediately — which proves nothing. They may test the wrong thing, test the implementation instead of the behavior, or miss the edge case you forgot. You never watched it fail, so you never proved it can catch the bug. Test-first forces that failure. |
 | "Tests after achieve same goals (spirit not ritual)" | Tests-after answer "what does this do?"; tests-first answer "what should this do?" Tests written after are biased by the code you already wrote — you verify the cases you remembered, not the ones you'd have discovered. Coverage without proof the tests work. |
@@ -185,7 +185,7 @@ If implementation that changes behavior was written before a meaningful RED test
 ## When Stuck
 
 | Problem | Solution |
-|---------|----------|
+| --------- | ---------- |
 | Don't know how to test | Write wished-for API. Write assertion first. Ask the user. |
 | Test too complicated | Design too complicated. Simplify interface. |
 | Must mock everything | Code too coupled. Use dependency injection. |

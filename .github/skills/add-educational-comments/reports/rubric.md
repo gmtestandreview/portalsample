@@ -3,7 +3,7 @@
 Total: 100 points.
 
 | Criterion | Points | Full Credit Requires | Common Failure Modes | Evidence to Inspect |
-|---|---:|---|---|---|
+| --- | ---: | --- | --- | --- |
 | Frontmatter compliance | 10 | Valid YAML frontmatter with spec-compliant `name` and a non-empty description under 1024 characters. | Invalid YAML, missing description, description too vague or too long. | Parse result, description length, frontmatter fields. |
 | Activation precision | 10 | Description starts with “Use this skill when...” and names source code, educational inline comments, learner levels, and runnable behavior. | Broad activation, grammar issues, unclear target task. | Frontmatter description. |
 | Scope boundaries | 12 | Explicit supported, conditional, and unsupported file categories; covers JSON, binaries, lockfiles, generated, minified, vendored, and secret-bearing files. | Directly comments JSON, secrets, lockfiles, binary/generated files. | Supported/Unsupported section. |

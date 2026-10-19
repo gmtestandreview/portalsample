@@ -5,7 +5,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Getting Started
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/login` | Authenticate with GitHub | First launch or expired session |
 | `/logout` | Sign out | Switching accounts |
 | `/help` | Show all commands | When lost |
@@ -16,7 +16,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Models & Agents
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/model` | Switch AI model | Need different capability/speed |
 | `/agent` | Browse/select agents | Delegate to specialist |
 | `/fleet` | Enable parallel subagents | Complex multi-part tasks |
@@ -25,7 +25,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Code & Review
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/diff` | Review changes in current dir | Before committing |
 | `/review` | Run code review agent | Get feedback on changes |
 | `/lsp` | Manage language servers | Need go-to-def, diagnostics |
@@ -34,7 +34,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Session & Context
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/context` | Show token usage visualization | Context getting large |
 | `/usage` | Display session metrics | Check premium request count |
 | `/compact` | Compress conversation history | Near context limit |
@@ -48,7 +48,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Permissions & Directories
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/allow-all` | Enable all permissions | Trusted environment, move fast |
 | `/add-dir` | Add trusted directory | Working across projects |
 | `/list-dirs` | Show allowed directories | Check access scope |
@@ -58,7 +58,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Configuration & Customization
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/instructions` | View active instruction files | Debug custom behavior |
 | `/experimental` | Toggle experimental features | Try autopilot mode |
 | `/theme` | Change terminal theme | Personalize |
@@ -70,7 +70,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Extensibility
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/skills` | Manage skills | Browse/enable capabilities |
 | `/mcp` | Manage MCP servers | Add external tools |
 | `/plugin` | Manage plugins | Extend functionality |
@@ -78,7 +78,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 ## Workflows & Research
 
 | Command | What it does | When to use |
-|---------|-------------|-------------|
+| --------- | ------------- | ------------- |
 | `/plan` | Create implementation plan | Before complex changes |
 | `/research` | Run deep research investigation | Need thorough analysis with sources |
 | `/user` | Manage GitHub user list | Team context |

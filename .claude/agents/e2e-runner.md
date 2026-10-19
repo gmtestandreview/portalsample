@@ -38,16 +38,19 @@ npx playwright show-report
 ## Workflow
 
 ### 1. Plan
+
 - Identify critical journeys: auth, core features, payments, CRUD
 - Prioritize by risk: HIGH (financial, auth), MEDIUM (search, nav), LOW (UI polish)
 
 ### 2. Create
+
 - Use Page Object Model (POM) pattern
 - Prefer `data-testid` locators over CSS/XPath
 - Add assertions at key steps
 - Use proper waits (never `waitForTimeout`)
 
 ### 3. Execute
+
 - Run locally 3-5 times to check for flakiness
 - Quarantine flaky tests with `test.fixme()`
 - Upload artifacts to CI

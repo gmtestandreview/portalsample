@@ -23,6 +23,7 @@ Each separation reduces complexity. Each coupling increases it.
 ## Building from Simple Parts
 
 Once you have simple, independent pieces:
+
 - They compose freely
 - They test trivially
 - They change safely
@@ -30,6 +31,7 @@ Once you have simple, independent pieces:
 Inheritance complects. Composition liberates.
 
 A system built from small, focused functions that transform data is:
+
 - Easier to understand (each piece does one thing)
 - Easier to test (pure functions, clear inputs/outputs)
 - Easier to change (modify one piece without touching others)
@@ -43,6 +45,7 @@ Every helper method you add to a class is a small step toward the kitchen sink. 
 ## Practical Application
 
 Before adding a method, wrapper, or abstraction:
+
 - Does this *separate* concerns, or *combine* them?
 - Am I making pieces more independent, or more coupled?
 - Could I solve this with a function that takes data and returns data?

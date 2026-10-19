@@ -25,16 +25,20 @@ def test_validate_directory_success(tmp_path: Path) -> None:
     skill_dir = tmp_path / "my-skill"
     _write_skill(skill_dir)
     result = CliRunner().invoke(main, ["validate", str(skill_dir)])
-    assert result.exit_code == 0
-    assert "Valid skill:" in result.output
+    if result.exit_code != 0:
+        pytest.fail(f"Expected exit code 0, got {result.exit_code}: {result.output!r}")
+    if "Valid skill:" not in result.output:
+        pytest.fail(f"Expected 'Valid skill:' in output, got: {result.output!r}")
 
 
 def test_validate_direct_skill_file_success(tmp_path: Path) -> None:
     skill_dir = tmp_path / "my-skill"
     _write_skill(skill_dir)
     result = CliRunner().invoke(main, ["validate", str(skill_dir / "SKILL.md")])
-    assert result.exit_code == 0
-    assert "Valid skill:" in result.output
+    if result.exit_code != 0:
+        pytest.fail(f"Expected exit code 0, got {result.exit_code}: {result.output!r}")
+    if "Valid skill:" not in result.output:
+        pytest.fail(f"Expected 'Valid skill:' in output, got: {result.output!r}")
 
 
 def test_validate_lowercase_skill_file_is_not_treated_as_skill_file(tmp_path: Path) -> None:
@@ -46,7 +50,8 @@ def test_validate_lowercase_skill_file_is_not_treated_as_skill_file(tmp_path: Pa
         encoding="utf-8",
     )
     result = CliRunner().invoke(main, ["validate", str(lower)])
-    assert result.exit_code == 1
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
 
 
 def test_validate_invalid_skill_returns_exit_one(tmp_path: Path) -> None:
@@ -57,43 +62,55 @@ def test_validate_invalid_skill_returns_exit_one(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     result = CliRunner().invoke(main, ["validate", str(skill_dir)])
-    assert result.exit_code == 1
-    assert "Validation failed" in result.output
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if "Validation failed" not in result.output:
+        pytest.fail(f"Expected 'Validation failed' in output, got: {result.output!r}")
 
 
 def test_read_properties_outputs_json(tmp_path: Path) -> None:
     skill_dir = tmp_path / "my-skill"
     _write_skill(skill_dir)
     result = CliRunner().invoke(main, ["read-properties", str(skill_dir)])
-    assert result.exit_code == 0
+    if result.exit_code != 0:
+        pytest.fail(f"Expected exit code 0, got {result.exit_code}: {result.output!r}")
     payload = json.loads(result.output)
-    assert payload["name"] == "my-skill"
-    assert payload["description"] == "A test skill"
+    if payload["name"] != "my-skill":
+        pytest.fail(f"Expected name 'my-skill', got {payload['name']!r}")
+    if payload["description"] != "A test skill":
+        pytest.fail(f"Expected description 'A test skill', got {payload['description']!r}")
 
 
 def test_read_properties_error_path(tmp_path: Path) -> None:
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     result = CliRunner().invoke(main, ["read-properties", str(skill_dir)])
-    assert result.exit_code == 1
-    assert "SKILL.md not found" in result.output
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if "SKILL.md not found" not in result.output:
+        pytest.fail(f"Expected 'SKILL.md not found' in output, got: {result.output!r}")
 
 
 def test_to_prompt_outputs_xml(tmp_path: Path) -> None:
     skill_dir = tmp_path / "my-skill"
     _write_skill(skill_dir)
     result = CliRunner().invoke(main, ["to-prompt", str(skill_dir)])
-    assert result.exit_code == 0
-    assert "<available_skills>" in result.output
-    assert "<name>\nmy-skill\n</name>" in result.output
+    if result.exit_code != 0:
+        pytest.fail(f"Expected exit code 0, got {result.exit_code}: {result.output!r}")
+    if "<available_skills>" not in result.output:
+        pytest.fail(f"Expected '<available_skills>' in output, got: {result.output!r}")
+    if "<name>\nmy-skill\n</name>" not in result.output:
+        pytest.fail(f"Expected '<name>\\nmy-skill\\n</name>' in output, got: {result.output!r}")
 
 
 def test_to_prompt_error_path(tmp_path: Path) -> None:
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     result = CliRunner().invoke(main, ["to-prompt", str(skill_dir)])
-    assert result.exit_code == 1
-    assert "SKILL.md not found" in result.output
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if "SKILL.md not found" not in result.output:
+        pytest.fail(f"Expected 'SKILL.md not found' in output, got: {result.output!r}")
 
 
 @pytest.mark.parametrize("command", ["validate", "read-properties", "to-prompt"])
@@ -101,9 +118,12 @@ def test_raw_control_error_is_reported_without_traceback(tmp_path: Path, command
     skill_dir = tmp_path / "my-skill"
     _write_skill(skill_dir, description="bad\x01text")
     result = CliRunner().invoke(main, [command, str(skill_dir)])
-    assert result.exit_code == 1
-    assert isinstance(result.exception, SystemExit)
-    assert "Invalid YAML" in result.output
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if not isinstance(result.exception, SystemExit):
+        pytest.fail(f"Expected a SystemExit exception, got {type(result.exception).__name__}")
+    if "Invalid YAML" not in result.output:
+        pytest.fail(f"Expected 'Invalid YAML' in output, got: {result.output!r}")
 
 
 def test_read_properties_reports_malformed_optional_metadata(tmp_path: Path):
@@ -114,10 +134,14 @@ def test_read_properties_reports_malformed_optional_metadata(tmp_path: Path):
         encoding="utf-8",
     )
     result = CliRunner().invoke(main, ["read-properties", str(skill_dir)])
-    assert result.exit_code == 1
-    assert isinstance(result.exception, SystemExit)
-    assert "Error:" in result.output
-    assert "metadata" in result.output
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if not isinstance(result.exception, SystemExit):
+        pytest.fail(f"Expected a SystemExit exception, got {type(result.exception).__name__}")
+    if "Error:" not in result.output:
+        pytest.fail(f"Expected 'Error:' in output, got: {result.output!r}")
+    if "metadata" not in result.output:
+        pytest.fail(f"Expected 'metadata' in output, got: {result.output!r}")
 
 
 @pytest.mark.parametrize("command", ["validate", "read-properties", "to-prompt"])
@@ -128,9 +152,12 @@ def test_out_of_range_unicode_error_is_a_controlled_cli_error(
     skill_dir = tmp_path / "my-skill"
     _write_skill(skill_dir, description=f'"{escape}"')
     result = CliRunner().invoke(main, [command, str(skill_dir)])
-    assert result.exit_code == 1
-    assert isinstance(result.exception, SystemExit)
-    assert "Invalid YAML" in result.output
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if not isinstance(result.exception, SystemExit):
+        pytest.fail(f"Expected a SystemExit exception, got {type(result.exception).__name__}")
+    if "Invalid YAML" not in result.output:
+        pytest.fail(f"Expected 'Invalid YAML' in output, got: {result.output!r}")
 
 
 @pytest.mark.parametrize("command", ["validate", "read-properties", "to-prompt"])
@@ -147,7 +174,11 @@ def test_deep_yaml_is_reported_as_a_controlled_cli_error(tmp_path: Path, command
         encoding="utf-8",
     )
     result = CliRunner().invoke(main, [command, str(skill_dir)])
-    assert result.exit_code == 1
-    assert isinstance(result.exception, SystemExit)
-    assert "Invalid YAML" in result.stderr
-    assert result.stdout == ""
+    if result.exit_code != 1:
+        pytest.fail(f"Expected exit code 1, got {result.exit_code}: {result.output!r}")
+    if not isinstance(result.exception, SystemExit):
+        pytest.fail(f"Expected a SystemExit exception, got {type(result.exception).__name__}")
+    if "Invalid YAML" not in result.stderr:
+        pytest.fail(f"Expected 'Invalid YAML' in stderr, got: {result.stderr!r}")
+    if result.stdout != "":
+        pytest.fail(f"Expected no stdout, got: {result.stdout!r}")

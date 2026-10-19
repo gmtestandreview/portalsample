@@ -339,9 +339,12 @@ export const formatTradingBranch = (accountDetails: AccountDetails): string => {
 };
 
 export const formatTradingBranchFromStrings = (
-  tradingName: string,
-  branchName: string
+  tradingNameInput: string | null | undefined,
+  branchNameInput: string | null | undefined
 ): string => {
+  // A missing (undefined) name is the same as an empty one; null still yields ''.
+  const tradingName = tradingNameInput === undefined ? '' : tradingNameInput;
+  const branchName = branchNameInput === undefined ? '' : branchNameInput;
   if (tradingName !== null && branchName !== null) {
     let result = '';
 

@@ -144,7 +144,7 @@ flowchart TD
 ## Quick Reference — Mandatory Sequences
 
 | Situation | Required sequence |
-|-----------|------------------|
+| ----------- | ------------------ |
 | New feature | `brainstorming` → `writing-plans` → `using-git-worktrees` → `TDD` → `subagent-driven-dev` → `code-reviewer` → `/quality-gate` |
 | Bug fix | `debugger` (Phase 1) → `TDD` → `verification-before-completion` → `code-reviewer` |
 | New API | `api-contract-first` (contract approved) → `writing-plans` → implement |

@@ -22,6 +22,7 @@ Activate this skill when you:
 - Have course notes and want to **start practicing immediately**
 
 **Trigger phrases**:
+
 - "Turn this into a plan"
 - "Make this actionable"
 - "I watched this video, now what?"
@@ -53,6 +54,7 @@ This cycle repeats, with each "rep" building on the previous one.
 ### What Makes a Good Rep
 
 Each rep should be:
+
 - **Concrete and specific** - "Ship one landing page by Friday" not "Learn web development"
 - **Completable in 1-7 days** - Small enough to not be intimidating
 - **Produces real evidence** - An artifact you can show

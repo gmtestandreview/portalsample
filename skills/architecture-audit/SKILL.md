@@ -47,7 +47,7 @@ If the as-built map contradicts existing architecture docs, record every diverge
 List the architectural decisions the system depends on, whether or not anyone made them deliberately:
 
 | Decision | Where visible | Deliberate or accidental? |
-|----------|--------------|--------------------------|
+| ---------- | -------------- | -------------------------- |
 | Monolith vs services | repo layout, deploy config | |
 | Sync vs async processing | queue usage, HTTP call chains | |
 | Data ownership | which modules write which tables | |
@@ -59,7 +59,7 @@ List the architectural decisions the system depends on, whether or not anyone ma
 Use the **dispatching-parallel-agents** skill. Each specialist gets the Step 1 system map plus a scoped question:
 
 | Agent / skill | Scoped question |
-|-------|----------------|
+| ------- | ---------------- |
 | **architect** agent, applying the **architecture-review** skill's lenses to the as-built system | Do module boundaries and coupling direction support the next 12 months of planned work? |
 | **security-reviewer** | Are trust boundaries enforced at every entry point in the system map? |
 | **performance-profiler** | Which architectural choices (N+1 patterns, sync chains, missing caches) cap throughput? |
@@ -88,7 +88,7 @@ Findings without evidence are deleted, not softened.
 ### Step 5: Classify Severity
 
 | Severity | Criteria | Action |
-|----------|---------|--------|
+| ---------- | --------- | -------- |
 | **CRITICAL** | Data loss, security boundary bypass, or scaling wall within one milestone | Block feature work until addressed |
 | **HIGH** | Change amplification — routine features require touching 3+ modules | Schedule before next major feature |
 | **MEDIUM** | Coupling or duplication that slows work but doesn't block it | Backlog with owner |
@@ -108,7 +108,7 @@ Findings without evidence are deleted, not softened.
 ```
 
 | Verdict | Criteria |
-|---------|---------|
+| --------- | --------- |
 | **SOUND** | No critical or high findings — proceed with planned work |
 | **SOUND-WITH-RISKS** | High findings exist with agreed mitigation dates |
 | **INTERVENTION-REQUIRED** | Any critical finding — architecture work precedes feature work |

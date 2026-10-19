@@ -28,7 +28,7 @@ Receive instruction -> Search memory -> Then proceed
 ## Commands
 
 | Command | Description |
-|---------|-------------|
+| --------- | ------------- |
 | `memory-search.sh "<query>"` | Hybrid search (recommended) |
 | `memory-search.sh "<query>" --mode semantic` | Find conceptually related |
 | `memory-search.sh "<query>" --mode term` | Exact text matching |
@@ -39,7 +39,7 @@ Receive instruction -> Search memory -> Then proceed
 ## Search Modes
 
 | Mode | Best For |
-|------|----------|
+| ------ | ---------- |
 | `hybrid` (default) | General search, most cases |
 | `semantic` | Related concepts, different wording |
 | `term` | Exact function/class names |
@@ -64,6 +64,7 @@ memory-search.sh "processPayment" --mode symbol
 ## Combining with Other Skills
 
 For complete context, pair with docs-search and graph-query:
+
 ```bash
 memory-search.sh "feature"       # What did we discuss?
 docs-search.sh "feature"         # What do docs say?

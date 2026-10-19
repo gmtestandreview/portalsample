@@ -7,6 +7,7 @@ import {
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
   ReturnMethodValues,
+  type AddressDetailsDto,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
 import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
@@ -143,6 +144,41 @@ describe('DeliveryAndReturnFormikBridge', () => {
         postcode: '2070',
         state: 'NSW',
       },
+    });
+  });
+
+  it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{
+          returnAddressType: ReturnAddressTypeValues.Other,
+          returnAddress: {
+            isManuallyEntered: true,
+            line1: '9 Test Street',
+            suburb: 'Lindfield',
+            postcode: '2070',
+            state: 'NSW' as AddressDetailsDto['state'],
+          },
+          returnOrganisationName: 'Loaded return organisation',
+        }}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const organisationName = screen.getByLabelText(
+      'Return organisation name (optional)'
+    );
+    expect(organisationName).toHaveValue('Loaded return organisation');
+
+    await user.clear(organisationName);
+    await user.type(organisationName, 'Edited return organisation');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(submitted(onSubmit)).toMatchObject({
+      returnOrganisationName: 'Edited return organisation',
     });
   });
 

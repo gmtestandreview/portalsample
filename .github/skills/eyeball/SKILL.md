@@ -23,11 +23,13 @@ Then follow the workflow below.
 ## Tool Location
 
 The Eyeball Python utility is located at:
+
 ```
 <plugin_dir>/skills/eyeball/tools/eyeball.py
 ```
 
 To find the actual path, run:
+
 ```bash
 find ~/.copilot/installed-plugins -name "eyeball.py" -path "*/eyeball/*" 2>/dev/null
 ```
@@ -43,12 +45,14 @@ python3 <path-to>/eyeball.py setup-check
 ```
 
 If anything is missing, install the required dependencies:
+
 ```bash
 pip3 install pymupdf pillow python-docx playwright
 python3 -m playwright install chromium
 ```
 
 On Windows, also install pywin32 for Word automation:
+
 ```bash
 pip install pywin32
 ```
@@ -82,11 +86,13 @@ For each point in your analysis, you must:
 This is the most important step. Anchors determine what gets highlighted in the screenshots.
 
 **DO:**
+
 - Use verbatim phrases from the source text that directly support your assertion
 - Use multiple anchors to span the full range of text the reader should see
 - Use specific, uncommon phrases that appear only where you intend
 
 **DO NOT:**
+
 - Use generic topic labels (e.g., "Confidentiality") that appear throughout the document
 - Use section titles alone when they appear as cross-references elsewhere
 - Use single common words that match in many places
@@ -94,21 +100,25 @@ This is the most important step. Anchors determine what gets highlighted in the 
 **Examples:**
 
 WRONG -- uses a generic topic label that matches everywhere:
+
 ```json
 {"anchors": ["User-Generated Content"], "target_page": 8}
 ```
 
 RIGHT -- uses the specific language that supports the claim:
+
 ```json
 {"anchors": ["retain ownership", "Ownership of Content, Right to Post"], "target_page": 8}
 ```
 
 WRONG -- section title appears as a cross-reference on earlier pages:
+
 ```json
 {"anchors": ["LIMITATION OF LIABILITY"]}
 ```
 
 RIGHT -- includes the section number for precision, targets the correct page:
+
 ```json
 {"anchors": ["12. LIMITATION OF LIABILITY", "INDIRECT", "CONSEQUENTIAL"], "target_page": 13}
 ```
@@ -142,6 +152,7 @@ python3 <path-to>/eyeball.py build \
 ```
 
 Section object fields:
+
 - `heading` (required): Section heading in the output document
 - `analysis` (required): Your analysis text
 - `anchors` (required): List of verbatim phrases from the source to search for and highlight

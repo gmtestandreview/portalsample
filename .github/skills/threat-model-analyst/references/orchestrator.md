@@ -9,6 +9,7 @@ It is the primary workflow document for the `/threat-model-analyst` skill.
 
 **Phase 1 (context gathering):** Read this file (`orchestrator.md`) + `analysis-principles.md` + `tmt-element-taxonomy.md`
 **Phase 2 (writing reports):** Read the relevant skeleton from `skeletons/` BEFORE writing each file. Read `output-formats.md` + `diagram-conventions.md` for rules — but use the skeleton as the structural template.
+
 - Before `0.1-architecture.md`: read `skeletons/skeleton-architecture.md`
 - Before `1.1-threatmodel.mmd`: read `skeletons/skeleton-dfd.md`
 - Before `1-threatmodel.md`: read `skeletons/skeleton-threatmodel.md`
@@ -66,6 +67,7 @@ These are the required behaviors for every threat model report. Follow each rule
 ### Rule Precedence (when guidance conflicts)
 
 Apply rules in this order:
+
 1. Literal skeletons in `skeletons/skeleton-*.md` — exact section/table headers and attribute rows
 2. Mandatory Rules in `orchestrator.md` (this list)
 3. Examples in `output-formats.md` (examples are illustrative, not authoritative when they differ from literal skeletons)
@@ -79,6 +81,7 @@ If any conflict is detected, follow the highest-precedence item.
 ## Workflow
 
 **Exclusions:** Skip these directories:
+
 - `threat-model-*` (previous reports)
 - `node_modules`, `.git`, `dist`, `build`, `vendor`, `__pycache__`
 
@@ -91,12 +94,14 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 **Rule 1 — Parent owns ALL file creation.** The parent agent is the ONLY agent that calls `create_file` for report files (0.1-architecture.md, stride-analysis.md, findings.md, etc.). Sub-agents NEVER write report files.
 
 **Rule 2 — Sub-agents are READ-ONLY helpers.** Sub-agents may:
+
 - Search source code for specific patterns (e.g., "find all auth-related code")
 - Read and analyze files, then return structured data to the parent
 - Run verification checks and return PASS/FAIL results
 - Execute terminal commands (git diff, grep) and return output
 
 **Rule 3 — Sub-agent prompts must be NARROW and SPECIFIC.** Never tell a sub-agent to "perform threat model analysis" or "generate the report." Instead:
+
 - ✅ "Read these 5 Go files and list every function that handles credentials. Return a table of function name, file, line number."
 - ✅ "Run the verification checklist against the files in {folder}. Return PASS/FAIL for each check."
 - ✅ "Read threat-inventory.json from {path} and verify all array lengths match metrics. Return mismatches."
@@ -121,7 +126,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    This table is the **single source of truth** for prerequisite floors. No threat or finding may have a lower prerequisite than what the exposure table permits for its component.
 
    **⛔ DETERMINISTIC NAMING — Apply BEFORE writing any files:**
-   
+
    When identifying components, assign each a canonical PascalCase `id`. The naming MUST be deterministic — two independent runs on the same codebase MUST produce the same component IDs.
 
    **⛔ ABSOLUTE RULE: Every component ID MUST be anchored to a real code artifact.**
@@ -159,7 +164,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - `config_keys` → the env vars / config keys for the service connection (e.g., `["AZURE_OPENAI_ENDPOINT", "RESPONSES_API_DEPLOYMENT"]`). These are the most stable anchors for external services.
    - `api_routes` → leave empty (external services expose their own routes, not yours)
    - `dependencies` → the SDK package used (e.g., `["Azure.AI.OpenAI"]` for NuGet, `["pymilvus"]` for pip)
-   
+
    **Why this matters:** External services frequently change display names across LLM runs (e.g., "Azure OpenAI" vs "GPT-4 Endpoint" vs "LLM Backend"). The `config_keys` and `dependencies` fields are what make them matchable across runs.
 
    **⛔ FORBIDDEN naming patterns — NEVER use these:**
@@ -172,12 +177,14 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 
    **⛔ COMPONENT ANCHOR VERIFICATION (MANDATORY — do this BEFORE Step 2):**
    After identifying all components, create a mental checklist:
+
    ```
    For EACH component:
      Q: What is the EXACT filename or class that anchors this component?
      A: [must cite a real file path, e.g., "src/Core/TaskProcessor.cs"]
      If you cannot cite a real file → DELETE the component from your list
    ```
+
    This verification catches invented components like `WindowsRegistry` (no registry code exists), `ConfigurationStore` (no such class), `LocalFileSystem` (abstract concept, not a class).
 
    **⛔ COMPONENT SELECTION STABILITY (when multiple related classes exist):**
@@ -206,7 +213,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    1. **It crosses a trust boundary OR handles security-sensitive data** (credentials, user input, network I/O, file I/O, process execution)
    2. **It is a top-level service**, not an internal helper (registered in DI, or the main entry point, or an agent with its own responsibility)
    3. **It would appear in a deployment diagram** — you could point to it and say "this runs here, talks to that"
-   
+
    **ALWAYS include these component types (if they exist in the code):**
    - ALL agent classes (HealthAgent, InfrastructureAgent, InvestigatorAgent, SupportabilityAgent, etc.)
    - ALL MCP server classes (HealthServer, InfrastructureServer, etc.)
@@ -218,14 +225,14 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - ALL session/state persistence services
    - ALL LLM service classes (ResponsesAPIService, LLMService — if they are separate classes, they are separate components)
    - External actors (Operator, EndUser)
-   
+
    **NEVER include these as separate components:**
    - Loggers (LocalFileLogger, TelemetryLogger) — these are cross-cutting concerns, not threat model components
    - Static helper classes
    - Model/DTO classes
    - Configuration builders (unless they handle secrets)
    - Infrastructure-as-code classes that don't exist at runtime (AzureStackHCI cluster reference, deployment scripts)
-   
+
    **The goal:** Every run on the same code should identify the SAME set of ~12-20 components. If you're including a logger or excluding an agent, you're doing it wrong.
 
    **Boundary naming rules:**
@@ -265,7 +272,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 
    **⛔ DATA FLOW COMPLETENESS (MANDATORY — ensures consistent flow enumeration across runs):**
    Data flows MUST be enumerated exhaustively. Two independent analyses of the same codebase MUST produce the same set of flows. To achieve this:
-   
+
    **⛔ RETURN FLOW MODELING RULE (addresses 24% variance in flow counts):**
    - **DO NOT model separate return flows.** A request-response pair is ONE bidirectional flow (use `<-->` in Mermaid).
    - Example: `DF01: Operator <--> TUI` (one flow for input and output)
@@ -273,28 +280,28 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - **DO model separate flows ONLY when the two directions use different protocols or semantics** (e.g., HTTP request vs WebSocket push-back).
    - **Why:** When runs independently decide whether to create 1 flow or 2 flows per interaction, the flow count varies by 20-30%. This rule eliminates that variance.
    - **Flow count formula:** `# flows ≈ # unique component-to-component interactions`. If component A talks to component B, that is 1 flow, not 2.
-   
+
    **Flow completeness checklist (use `<-->` bidirectional flows per the return flow rule above):**
    1. **Ingress/reverse proxy flows**: `DF_EndUser_to_NginxIngress` (bidirectional `<-->`), `DF_NginxIngress_to_Backend` (bidirectional `<-->`). Each is ONE flow, not two.
    2. **Database/datastore flows**: `DF_Service_to_Redis` (bidirectional `<-->`). ONE flow per service-datastore pair.
    3. **Auth provider flows**: `DF_Service_to_AzureAD` (bidirectional `<-->`). ONE flow per service-auth pair.
    4. **Admin access flows**: `DF_Operator_to_Service` (bidirectional `<-->`). ONE per admin interaction.
    5. **Flow count locking**: After enumerating flows, LOCK the count. Two runs on the same code MUST produce the same number of flows (±3 acceptable). A difference of >5 flows indicates incomplete enumeration.
-   
+
    **⛔ EXTERNAL ENTITY INCLUSION RULES (addresses variance in which externals are modeled):**
    - **ALWAYS include `AzureAD` (or `EntraID`) as an external entity** if the code acquires tokens from Azure AD / Microsoft Entra ID (look for `ChainedTokenCredential`, `ManagedIdentityCredential`, `AzureCliCredential`, MSAL, or any OAuth2/OIDC flow).
    - **ALWAYS include the infrastructure target** (e.g., `OnPremInfra`, `HCICluster`) as an external entity if the code sends commands to external infrastructure via PowerShell, REST, or WMI.
    - **ALWAYS include `AzureOpenAI`** (or equivalent LLM endpoint) if the code calls a cloud LLM API.
    - **ALWAYS include `Operator`** as an external actor for CLI/TUI tools, admin tools, or operator consoles.
    - **Rule of thumb:** If the code has a client class or config for a service, that service is an external entity.
-   
+
    **⛔ TMT CATEGORY RULES (addresses category inconsistency across runs):**
    - **Tool servers** that expose APIs callable by agents → `SE.P.TMCore.WebSvc` (NOT `SE.P.TMCore.NetApp`)
    - **Network-level services** that handle connections/sockets → `SE.P.TMCore.NetApp`
    - **Services that execute OS commands** (PowerShell, bash) → `SE.P.TMCore.OSProcess`
    - **Services that store data to disk** (SessionStore, FileLogger) → `SE.DS.TMCore.FS` (classify as Data Store, NOT Process)
    - **Rule:** If a class's primary purpose is persisting data, it is a Data Store. If it does computation or orchestration, it is a Process. Never switch between runs.
-   
+
    **⛔ DFD DIRECTION (MANDATORY — addresses layout variance):**
    - ALL DFDs MUST use `flowchart LR` (left-to-right). NEVER use `flowchart TB`.
    - ALL summary DFDs MUST also use `flowchart LR`.
@@ -315,7 +322,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - Azure OpenAI: `AzureOpenAI` (never `OpenAIService`, `LLMEndpoint`)
    - NFS: `NFSServer` (never `NfsServer`, `FileShare`)
    - If two LLM models are separate deployments, keep them separate (never merge `MistralLLM` + `PhiLLM` into `LocalLlm`)
-   
+
    **BUT: for application-specific classes, use the EXACT class name from the code, NOT a technology label:**
    - `ResponsesAPIService.cs` → `ResponsesAPIService` (NOT `OpenAIService` — the class IS named ResponsesAPIService)
    - `TaskProcessor.cs` → `TaskProcessor` (NOT `LocalLLM` — the class IS named TaskProcessor)
@@ -384,11 +391,12 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    - **Reference:** `analysis-principles.md` Finding Validation Checklist
 
 7b. **Technology sweep** — Run the Technology-Specific Security Checklist from `analysis-principles.md`
-   - For every technology found in the repo (Redis, Milvus, PostgreSQL, Docker, K8s, ML models, LLMs, NFS, CI/CD, etc.), verify you have at least one finding or explicit mitigation
-   - This step catches gaps that component-level STRIDE misses (e.g., database auth defaults, container hardening, key management)
-   - Add any missing findings before proceeding to Step 8
 
-8. **Compile findings** (`3-findings.md`)
+- For every technology found in the repo (Redis, Milvus, PostgreSQL, Docker, K8s, ML models, LLMs, NFS, CI/CD, etc.), verify you have at least one finding or explicit mitigation
+- This step catches gaps that component-level STRIDE misses (e.g., database auth defaults, container hardening, key management)
+- Add any missing findings before proceeding to Step 8
+
+1. **Compile findings** (`3-findings.md`)
    - **Reference:** `output-formats.md` for findings template and Related Threats link format
    - **Reference:** `skeletons/skeleton-findings.md` — read this skeleton, copy VERBATIM, fill in `[FILL]` placeholders for each finding
 
@@ -425,62 +433,68 @@ Sub-agents are **independent execution contexts** — they have no memory of the
    6. **This loop is the ENTIRE POINT of the Coverage table** — it's not documentation, it's a self-check that forces complete coverage. If you write the table and don't act on gaps, you've wasted the effort.
 
 8b. **Generate threat inventory** (`threat-inventory.json`)
-   - **Read `skeletons/skeleton-inventory.md` first** — use exact field names and schema structure
-   - After writing all markdown reports, compile a structured JSON inventory of all components, boundaries, data flows, threats, and findings
+
+- **Read `skeletons/skeleton-inventory.md` first** — use exact field names and schema structure
+- After writing all markdown reports, compile a structured JSON inventory of all components, boundaries, data flows, threats, and findings
     - Use canonical PascalCase IDs for components (derived from class/file names) and keep display labels separate
-   - Use canonical flow IDs: `DF_{Source}_to_{Target}`
+- Use canonical flow IDs: `DF_{Source}_to_{Target}`
     - Include identity keys on every threat and finding for future matching
     - Include deterministic identity fields for component and boundary matching across runs:
-       - Component: `aliases`, `boundary_kind`, `fingerprint`
-       - Boundary: `kind`, `aliases`, `contains_fingerprint`
+  - Component: `aliases`, `boundary_kind`, `fingerprint`
+  - Boundary: `kind`, `aliases`, `contains_fingerprint`
     - Build `fingerprint` from stable evidence (source files, endpoint neighbors, protocols, type) — never from prose wording
     - Normalize synonyms to the same canonical component ID (example: `SupportAgent` and `SupportabilityAgent` → `SupportabilityAgent`) and store alternate names in `aliases`
     - Sort arrays deterministically before writing JSON:
-       - `components` by `id`
-       - `boundaries` by `id`
-       - `flows` by `id`
-       - `threats` by `id` then `identity_key.component_id`
-       - `findings` by `id` then `identity_key.component_id`
-   - Extract metrics (totals, per-tier counts, per-STRIDE-category counts)
-   - Include git metadata (commit SHA, branch, date) and analysis metadata (model, timestamps)
-   - **Reference:** `output-formats.md` for the `threat-inventory.json` schema
-   - **This file is NOT linked in 0-assessment.md** but is always present in the output folder
+  - `components` by `id`
+  - `boundaries` by `id`
+  - `flows` by `id`
+  - `threats` by `id` then `identity_key.component_id`
+  - `findings` by `id` then `identity_key.component_id`
+- Extract metrics (totals, per-tier counts, per-STRIDE-category counts)
+- Include git metadata (commit SHA, branch, date) and analysis metadata (model, timestamps)
+- **Reference:** `output-formats.md` for the `threat-inventory.json` schema
+- **This file is NOT linked in 0-assessment.md** but is always present in the output folder
 
    ⛔ **PRE-WRITE SIZE CHECK (MANDATORY — before calling `create_file` for JSON):**
    Before writing `threat-inventory.json`, count the data you plan to include:
-   - Count total threats from `2-stride-analysis.md` (grep `^\| T\d+\.`)
-   - Count total findings from `3-findings.md` (grep `### FIND-`)
-   - Count total components from `0.1-architecture.md`
-   - **If threats > 50 OR findings > 15:** DO NOT use a single `create_file` call.
+
+- Count total threats from `2-stride-analysis.md` (grep `^\| T\d+\.`)
+- Count total findings from `3-findings.md` (grep `### FIND-`)
+- Count total components from `0.1-architecture.md`
+- **If threats > 50 OR findings > 15:** DO NOT use a single `create_file` call.
      Instead, use one of: (a) delegate to sub-agent, (b) Python extraction script, (c) chunked write strategy.
-   - **If threats ≤ 50 AND findings ≤ 15:** single `create_file` is acceptable, but keep entries minimal (1-sentence description/mitigation fields).
+- **If threats ≤ 50 AND findings ≤ 15:** single `create_file` is acceptable, but keep entries minimal (1-sentence description/mitigation fields).
 
    ⛔ **POST-WRITE VALIDATION (MANDATORY — JSON Array Completeness):**
    After writing `threat-inventory.json`, immediately verify:
-   - `threats.length == metrics.total_threats` — if mismatch, the threats array was truncated during generation. Rebuild by re-reading `2-stride-analysis.md` and extracting every threat row.
-   - `findings.length == metrics.total_findings` — if mismatch, rebuild from `3-findings.md`.
-   - `components.length == metrics.total_components` — if mismatch, rebuild from architecture/element tables.
-   
+
+- `threats.length == metrics.total_threats` — if mismatch, the threats array was truncated during generation. Rebuild by re-reading `2-stride-analysis.md` and extracting every threat row.
+- `findings.length == metrics.total_findings` — if mismatch, rebuild from `3-findings.md`.
+- `components.length == metrics.total_components` — if mismatch, rebuild from architecture/element tables.
+
    ⛔ **CROSS-FILE THREAT COUNT VERIFICATION (MANDATORY — catches dropped threats):**
    The JSON `threats.length` can match `metrics.total_threats` but BOTH can be wrong if threats were dropped during JSON generation. To catch this:
-   - Count threat rows in `2-stride-analysis.md`: grep for `^\| T\d+\.` and count unique threat IDs
-   - Compare this count to `threats.length` in the JSON
-   - If the markdown has MORE threats than the JSON → the JSON dropped threats. Rebuild the JSON by re-extracting ALL threats from `2-stride-analysis.md`.
-   - This is the #2 quality issue observed in testing (after truncation). Large repos (114+ threats) frequently have 1-3 threats dropped when sub-agents write the JSON from memory instead of re-reading the STRIDE file.
+
+- Count threat rows in `2-stride-analysis.md`: grep for `^\| T\d+\.` and count unique threat IDs
+- Compare this count to `threats.length` in the JSON
+- If the markdown has MORE threats than the JSON → the JSON dropped threats. Rebuild the JSON by re-extracting ALL threats from `2-stride-analysis.md`.
+- This is the #2 quality issue observed in testing (after truncation). Large repos (114+ threats) frequently have 1-3 threats dropped when sub-agents write the JSON from memory instead of re-reading the STRIDE file.
 
    ⛔ **FIELD NAME COMPLIANCE GATE (MANDATORY — run immediately after array check):**
    Read the first component and first threat from the JSON just written and verify these EXACT field names:
-   - `components[0]` has key `"display"` (NOT `"display_name"`, NOT `"name"`) → if wrong, find-replace ALL occurrences
-   - `threats[0]` has key `"stride_category"` (NOT `"category"`) → if wrong, find-replace ALL occurrences
-   - `threats[0].identity_key` has key `"component_id"` (threat→component link must be INSIDE `identity_key`, NOT a top-level `component_id` field on the threat) → if wrong, restructure
-   - `threats[0]` has BOTH `"title"` (short name, e.g., "Information Disclosure — Redis unencrypted traffic") AND `"description"` (longer prose). If only `description` exists without `title`, create `title` from the first sentence of `description`. If `name` or `threat_name` exists instead of `title`, find-replace to `title`
-   - **Why this matters:** Downstream tooling depends on these exact field names. Wrong names cause zero-value heatmaps, broken component matching, and empty display labels in comparison reports.
-   - **If ANY field name is wrong:** fix it NOW with find-replace on the JSON file before proceeding. Do NOT leave it for verification.
 
-   - **This is the #1 quality issue observed in testing.** Large repos (20+ components, 80+ threats) frequently have truncated JSON arrays because the model runs out of output tokens. If ANY array is truncated, you MUST rebuild it before proceeding. Do NOT finalize with mismatched counts.
+- `components[0]` has key `"display"` (NOT `"display_name"`, NOT `"name"`) → if wrong, find-replace ALL occurrences
+- `threats[0]` has key `"stride_category"` (NOT `"category"`) → if wrong, find-replace ALL occurrences
+- `threats[0].identity_key` has key `"component_id"` (threat→component link must be INSIDE `identity_key`, NOT a top-level `component_id` field on the threat) → if wrong, restructure
+- `threats[0]` has BOTH `"title"` (short name, e.g., "Information Disclosure — Redis unencrypted traffic") AND `"description"` (longer prose). If only `description` exists without `title`, create `title` from the first sentence of `description`. If `name` or `threat_name` exists instead of `title`, find-replace to `title`
+- **Why this matters:** Downstream tooling depends on these exact field names. Wrong names cause zero-value heatmaps, broken component matching, and empty display labels in comparison reports.
+- **If ANY field name is wrong:** fix it NOW with find-replace on the JSON file before proceeding. Do NOT leave it for verification.
+
+- **This is the #1 quality issue observed in testing.** Large repos (20+ components, 80+ threats) frequently have truncated JSON arrays because the model runs out of output tokens. If ANY array is truncated, you MUST rebuild it before proceeding. Do NOT finalize with mismatched counts.
 
    ⛔ **HARD GATE — TRUNCATION RECOVERY (MANDATORY):**
    If post-write validation detects ANY array mismatch:
+
    1. **DELETE** the truncated `threat-inventory.json` immediately
    2. **DO NOT attempt to patch** the truncated file — partial JSON is unreliable
    3. **Regenerate using one of these strategies** (in preference order):
@@ -489,21 +503,23 @@ Sub-agents are **independent execution contexts** — they have no memory of the
       c. **Chunked write** — use the Large Repo Strategy below.
    4. **Re-validate** after regeneration — if still mismatched, repeat with the next strategy
    5. **NEVER proceed to Step 9 (assessment) or Step 10 (verification) with mismatched counts**
-   
+
    ⛔ **LARGE REPO STRATEGY (MANDATORY for repos with >60 threats):**
    For repos producing more than ~60 threats, the JSON file can exceed output token limits if generated in one pass. Use this chunked approach:
+
    1. **Write metadata + components + boundaries + flows + metrics first** — these are small arrays
    2. **Append threats in batches** — write threats array with ~20 threats per append operation. Use `replace_string_in_file` to add batches to the existing file rather than writing the entire JSON in one `create_file` call.
    3. **Append findings** — similarly batch if >15 findings
    4. **Final validation** — read the completed file and verify all array lengths match metrics
-   
-   **Alternative approach:** If chunked writing is not feasible, keep each threat/finding entry minimal:
-   - `description` field: max 1 sentence (not full prose paragraphs)
-   - `mitigation` field: max 1 sentence
-   - Remove redundant fields that duplicate markdown content
-   - The JSON is for MATCHING, not for reading — brevity is key
 
-9. **Write assessment** (`0-assessment.md`)
+   **Alternative approach:** If chunked writing is not feasible, keep each threat/finding entry minimal:
+
+- `description` field: max 1 sentence (not full prose paragraphs)
+- `mitigation` field: max 1 sentence
+- Remove redundant fields that duplicate markdown content
+- The JSON is for MATCHING, not for reading — brevity is key
+
+1. **Write assessment** (`0-assessment.md`)
    - **Reference:** `output-formats.md` for assessment template
    - **Reference:** `skeletons/skeleton-assessment.md` — read this skeleton, copy VERBATIM, fill in `[FILL]` placeholders
    - ⚠️ **ALL 7 sections are MANDATORY:** Report Files, Executive Summary, Action Summary (with Quick Wins), Analysis Context & Assumptions (with Needs Verification + Finding Overrides), References Consulted, Report Metadata, Classification Reference
@@ -511,7 +527,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 
    ⛔ **PRE-WRITE GATE — Verify before calling `create_file` for `0-assessment.md`:**
    1. Exactly 7 sections: Report Files, Executive Summary, Action Summary, Analysis Context & Assumptions (with `&`), References Consulted, Report Metadata, Classification Reference
-   2. `---` horizontal rules between EVERY pair of `## ` sections (minimum 6)
+   2. `---` horizontal rules between EVERY pair of `##` sections (minimum 6)
    3. `### Quick Wins`, `### Needs Verification`, `### Finding Overrides` all present
    4. References: TWO subsections (`### Security Standards` + `### Component Documentation`) with 3-column tables and full URLs
    5. ALL metadata values wrapped in backticks; ALL fields present (Model, Analysis Started, Analysis Completed, Duration)
@@ -519,7 +535,7 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 
    ⛔ **Fail-fast gate:** Immediately after writing, run the Inline Quick-Checks for `0-assessment.md` from `verification-checklist.md`. Fix before proceeding.
 
-10. **Final verification** — iterative correction loop
+2. **Final verification** — iterative correction loop
 
     This step runs verification and fixes in a loop until all checks pass. Do NOT finalize with any failures remaining.
 
@@ -547,12 +563,15 @@ Sub-agents are **independent execution contexts** — they have no memory of the
 ## Tool Usage
 
 ### Progress Tracking (todo)
+
 - Create todos at start for each major phase
 - Mark in-progress before starting each phase
 - Mark completed immediately after finishing each phase
 
 ### Sub-task Delegation (agent)
+
 Delegate NARROW, READ-ONLY tasks to sub-agents (see Sub-Agent Governance above). Allowed delegations:
+
 - **Context gathering:** "Search for auth patterns in these directories and return a summary"
 - **Code analysis:** "Read these files and identify security-relevant APIs, credentials, and trust boundaries"
 - **Verification:** Hand the verification sub-agent the content of `verification-checklist.md` and the output folder path. It reads the files and returns PASS/FAIL results. The PARENT fixes any failures.
@@ -581,6 +600,7 @@ The full verification checklist is in `verification-checklist.md`. It contains 9
 **Inline Quick-Checks:** `verification-checklist.md` also contains Inline Quick-Checks that MUST be run immediately after writing each file (before Step 10). These catch errors while content is still in active context.
 
 **Two-pass usage:**
+
 - **Before writing (Workflow pre-work):** Scan Phase 1 and Phase 2 to internalize structural and diagram quality gates. This prevents rework.
 - **After writing (Step 10):** Run ALL Phase 0–4 checks comprehensively against the completed output. Phase 0 is the most critical — it catches the deviations that persist across runs. Fix any failures before finalizing.
 

@@ -40,6 +40,7 @@ Ensure every feature addresses a real user need with measurable success criteria
 **CRITICAL**: Every code change MUST have a GitHub issue. No exceptions.
 
 ### Issue Size Guidelines (MANDATORY)
+
 - **Small** (1-3 days): Label `size: small` - Single component, clear scope
 - **Medium** (4-7 days): Label `size: medium` - Multiple changes, some complexity
 - **Large** (8+ days): Label `epic` + `size: large` - Create Epic with sub-issues
@@ -47,16 +48,19 @@ Ensure every feature addresses a real user need with measurable success criteria
 **Rule**: If >1 week of work, create Epic and break into sub-issues.
 
 ### Required Labels (MANDATORY - Every Issue Needs 3 Minimum)
+
 1. **Component**: `frontend`, `backend`, `ai-services`, `infrastructure`, `documentation`
 2. **Size**: `size: small`, `size: medium`, `size: large`, or `epic`
 3. **Phase**: `phase-1-mvp`, `phase-2-enhanced`, etc.
 
 **Optional but Recommended:**
+
 - Priority: `priority: high/medium/low`
 - Type: `bug`, `enhancement`, `good first issue`
 - Team: `team: frontend`, `team: backend`
 
 ### Complete Issue Template
+
 ```markdown
 ## Overview
 [1-2 sentence description - what is being built]
@@ -110,6 +114,7 @@ So that [measurable outcome from step 3]
 ```
 
 ### Epic Structure (For Large Features >1 Week)
+
 ```markdown
 Issue Title: [EPIC] Feature Name
 
@@ -155,16 +160,18 @@ Labels: epic, size: large, [component], [phase]
 Ask these questions to help prioritize:
 
 **Impact vs Effort:**
+
 - "How many users does this affect?" (impact)
 - "How complex is this to build?" (effort)
 
 **Business Alignment:**
+
 - "Does this help us [achieve business goal]?"
 - "What happens if we don't build this?" (urgency)
 
 ## Document Creation & Management
 
-### For Every Feature Request, CREATE:
+### For Every Feature Request, CREATE
 
 1. **Product Requirements Document** - Save to `docs/product/[feature-name]-requirements.md`
 2. **GitHub Issues** - Using template above
@@ -173,6 +180,7 @@ Ask these questions to help prioritize:
 ## Product Discovery & Validation
 
 ### Hypothesis-Driven Development
+
 1. **Hypothesis Formation**: What we believe and why
 2. **Experiment Design**: Minimal approach to test assumptions
 3. **Success Criteria**: Specific metrics that prove or disprove hypotheses
@@ -180,6 +188,7 @@ Ask these questions to help prioritize:
 5. **Iteration Planning**: How to build on learnings and pivot if necessary
 
 ## Escalate to Human When
+
 - Business strategy unclear
 - Budget decisions needed
 - Conflicting requirements

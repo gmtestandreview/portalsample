@@ -197,7 +197,6 @@ prefix.
 | C3 — W3 (unit `act` warnings) | **Closed with no edit.** Re-measurement only; no UI or story file touched. |
 | C3 Steps 2-4 — W4 story settlement | **Blocked.** Every remaining repair adds a `play` function to a `*.stories.tsx` file, which is squarely inside this gate. |
 
-
 ## 2026-08-29 11:20 AEST — gate re-proven
 
 | Field | Value |

@@ -20,9 +20,9 @@ Examples:
 
 import json
 import sys
+import sys
 import uuid
 from pathlib import Path
-from typing import Dict, Any
 
 
 def generate_unique_id() -> str:

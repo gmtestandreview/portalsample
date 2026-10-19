@@ -1,0 +1,101 @@
+{
+  "candidate_sha256": "5db3e9c9c8da6048289a6c94834c84dae360943dab23351b01c20005db00fe37",
+  "date": "2026-10-17",
+  "family": "deterministic-static",
+  "scope": "Current authoring package static checks; no target-host/activation run",
+  "checks": [
+    {
+      "id": "SPEC-frontmatter",
+      "status": "PASS",
+      "observation": "name=python-code-review, description_chars=534"
+    },
+    {
+      "id": "spec-body",
+      "status": "PASS",
+      "observation": "body_lines=184"
+    },
+    {
+      "id": "resource-links",
+      "status": "PASS",
+      "observation": "32 local links; failures=[]"
+    },
+    {
+      "id": "no-literal-escapes",
+      "status": "PASS",
+      "observation": "main skill contains no literal newline escape sequence"
+    },
+    {
+      "id": "json-parse",
+      "status": "PASS",
+      "observation": "30 JSON files; failures=[]"
+    },
+    {
+      "id": "python-syntax",
+      "status": "PASS",
+      "observation": "1 Python script(s), errors=[]"
+    },
+    {
+      "id": "record-validator",
+      "status": "PASS",
+      "observation": "VALID schema, resource hashes, and trace pointers: 47 cases; SKILL hash 5db3e9c9c8da6048289a6c94834c84dae360943dab23351b01c20005db00fe37\nRequired cases without behavioral PASS: 47\nBehavioral assessment and deployment approval: NOT established by this validator"
+    },
+    {
+      "id": "reference-hash-tamper-rejected",
+      "status": "PASS",
+      "observation": [
+        "INVALID evidence record:",
+        " - Changed/missing supporting resource: references/completion-contract.md"
+      ]
+    },
+    {
+      "id": "case-contract-tamper-rejected",
+      "status": "PASS",
+      "observation": [
+        "INVALID evidence record:",
+        " - Changed/missing supporting resource: evals/cases.json"
+      ]
+    },
+    {
+      "id": "evaluation-unexecuted-truthfulness",
+      "status": "PASS",
+      "observation": "47/47 without+with-skill remain NHR"
+    },
+    {
+      "id": "historical-plan-retained",
+      "status": "PASS",
+      "observation": "archived 44-case 2026-10-11 candidate hash unchanged"
+    }
+  ],
+  "required_behavioral_cases": 47,
+  "behavioral_status": "NHR",
+  "runtime_readiness": "NOT VERIFIED",
+  "deployment_recommendation": "hold",
+  "final_recheck": {
+    "status": "PASS",
+    "command": "python scripts/validate_evidence.py",
+    "stdout": "VALID schema, resource hashes, and trace pointers: 47 cases; SKILL hash 5db3e9c9c8da6048289a6c94834c84dae360943dab23351b01c20005db00fe37\nRequired cases without behavioral PASS: 47\nBehavioral assessment and deployment approval: NOT established by this validator",
+    "note": "Current SKILL and all 12 active resource hashes verified after final evidence-applicability edit."
+  },
+  "source_preservation": {
+    "baseline_files": 52,
+    "unchanged_files": 42,
+    "changed_files": [
+      "SKILL.md",
+      "SOURCE-ATTRIBUTION.md",
+      "evals/cases.json",
+      "evals/current-revision-pressure/README.md",
+      "evals/current-revision-pressure/run-record.json",
+      "evals/evidence-applicability.md",
+      "evals/qaq-rmi.md",
+      "references/python-guidelines.md",
+      "references/review-reporting.md",
+      "scripts/validate_evidence.py"
+    ],
+    "added_files": [
+      "evals/prior-revision-pressure/run-record-2026-10-11.json",
+      "evals/static-validation-2026-10-17.json",
+      "references/completion-contract.md"
+    ],
+    "removed_files": []
+  }
+}

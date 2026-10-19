@@ -1,0 +1,8 @@
+﻿atom_id,issue,correction,confidence_limit,fix
+D0001,Historical approximate 90-94 estimates,Treat as self-estimate; no independent baseline score,Score remains NOT VERIFIED as fresh audit,F02
+D0085,Original grade 5 on five-point rubric,Convert grade 5 to 4; scoped path existence/check only,Does not validate whole package or runtime,F09
+D0172,Candidate changed while review was pending,Treat version-stability risk as evidenced; exact evaluator snapshot is unproven,No assertion that agent actually read mixed versions,F03
+E052,Three-iteration cap reached at 7:50,Record a legitimate stop; later expansion followed user request,Do not misattribute continuation as unilateral scope drift,F01
+E202,Session limit at transcript end,Grade 0 and record unfinished acceptance,Usage/token figures unavailable,F10
+E001,Earlier numerical grade 0-5,"Map to V3 0-4, unknown where evidence thin",Do not claim prior 253 grades were already V3 compliant,F02
+D2909,v1.1 audit reported 82/100,Retain as one partial hostile audit with omitted required reference,Do not label final quality score or independently verified rubric,F02 F06

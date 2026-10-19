@@ -17,10 +17,12 @@ In Qdrant this is powered by the Query API via `prefetch`: each `prefetch` runs 
 Prefetches can be nested and searches can be multi-stage, all pipeline happening in one request through Query API. See [Universal Query API](https://skills.qdrant.tech/md/course/essentials/day-5/universal-query-api/) for examples.
 
 Identify the user's problem and pick building blocks:
+
 - What can go into one prefetch, e.g. power one search, in [Search Types](https://skills.qdrant.tech/qdrant-search-quality/search-strategies/hybrid-search/search-types/SKILL.md)
 - How to combine results of these searches (RRF, DBSF, FormulaQuery, reranking) in [Combining Searches](https://skills.qdrant.tech/qdrant-search-quality/search-strategies/hybrid-search/combining-searches/SKILL.md)
 
 Based on what you've picked, test your approach:
+
 1. Configure Qdrant collection with [named vectors](https://skills.qdrant.tech/md/documentation/manage-data/vectors/?s=named-vectors), where each named vector usually corresponds to one representation (different embedding models or different vector types) of a data point.
 2. Construct a hybrid search request with Query API from your building blocks. You can search independently among one type of vectors, with `prefetch` + `using`, like shown in examples in [Hybrid Queries documentation](https://skills.qdrant.tech/md/documentation/search/hybrid-queries).
 3. Evaluate hybrid search quality on real user data and provide user with improvements and tradeoffs (speed/resources).

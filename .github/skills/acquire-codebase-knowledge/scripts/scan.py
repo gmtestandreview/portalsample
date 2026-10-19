@@ -19,9 +19,8 @@ import sys
 import argparse
 import subprocess
 import json
-from pathlib import Path
-from typing import List, Set
 import re
+from pathlib import Path
 
 TREE_LIMIT = 200
 TREE_MAX_DEPTH = 3
@@ -204,7 +203,7 @@ def should_exclude(path: Path) -> bool:
     return any(part in EXCLUDE_DIRS for part in path.parts)
 
 
-def get_directory_tree(max_depth: int = TREE_MAX_DEPTH) -> List[str]:
+def get_directory_tree(max_depth: int = TREE_MAX_DEPTH) -> list[str]:
     """Get directory tree up to max_depth."""
     files = []
 
@@ -226,7 +225,7 @@ def get_directory_tree(max_depth: int = TREE_MAX_DEPTH) -> List[str]:
     return files[:TREE_LIMIT]
 
 
-def find_manifest_files() -> List[str]:
+def find_manifest_files() -> list[str]:
     """Find manifest files matching patterns."""
     found = []
     for pattern in MANIFESTS:
@@ -259,7 +258,7 @@ def read_file_preview(filepath: Path, max_lines: int = MANIFEST_PREVIEW_LINES) -
         return f"[Error reading file: {e}]"
 
 
-def find_entry_points() -> List[str]:
+def find_entry_points() -> list[str]:
     """Find entry point candidates.
 
     ENTRY_CANDIDATES may include glob patterns such as ``cmd/*/main.go``.
@@ -283,7 +282,7 @@ def find_entry_points() -> List[str]:
     return found
 
 
-def find_lint_config() -> List[str]:
+def find_lint_config() -> list[str]:
     """Find linting and formatting config files."""
     found = []
     for filename in LINT_FILES:
@@ -292,7 +291,7 @@ def find_lint_config() -> List[str]:
     return found
 
 
-def find_env_templates() -> List[tuple]:
+def find_env_templates() -> list[tuple]:
     """Find environment variable templates."""
     found = []
     for filename in ENV_TEMPLATES:
@@ -302,7 +301,7 @@ def find_env_templates() -> List[tuple]:
     return found
 
 
-def search_todos() -> List[str]:
+def search_todos() -> list[str]:
     """Search for TODO/FIXME/HACK comments."""
     todos = []
     patterns = ["TODO", "FIXME", "HACK"]
@@ -335,7 +334,7 @@ def search_todos() -> List[str]:
     return todos[:TODO_LIMIT]
 
 
-def get_git_commits() -> List[str]:
+def get_git_commits() -> list[str]:
     """Get recent git commits."""
     try:
         result = subprocess.run(
@@ -351,7 +350,7 @@ def get_git_commits() -> List[str]:
         return []
 
 
-def get_git_churn() -> List[str]:
+def get_git_churn() -> list[str]:
     """Get high-churn files from last 90 days."""
     try:
         result = subprocess.run(
@@ -386,7 +385,7 @@ def is_git_repo() -> bool:
         return False
 
 
-def detect_monorepo() -> List[str]:
+def detect_monorepo() -> list[str]:
     """Detect monorepo signals."""
     signals = []
 
@@ -411,7 +410,7 @@ def detect_monorepo() -> List[str]:
     return signals
 
 
-def detect_ci_cd_pipelines() -> List[str]:
+def detect_ci_cd_pipelines() -> list[str]:
     """Detect CI/CD pipeline configurations."""
     pipelines = []
 
@@ -430,7 +429,7 @@ def detect_ci_cd_pipelines() -> List[str]:
     return pipelines
 
 
-def detect_containers() -> List[str]:
+def detect_containers() -> list[str]:
     """Detect containerization and orchestration configs.
 
     CONTAINER_FILES may include glob patterns such as ``Dockerfile.*``.
@@ -475,7 +474,7 @@ def detect_containers() -> List[str]:
     return containers
 
 
-def detect_security_configs() -> List[str]:
+def detect_security_configs() -> list[str]:
     """Detect security and compliance configurations."""
     security = []
 
@@ -487,7 +486,7 @@ def detect_security_configs() -> List[str]:
     return security
 
 
-def detect_performance_markers() -> List[str]:
+def detect_performance_markers() -> list[str]:
     """Detect performance testing and profiling markers."""
     performance = []
 
@@ -571,7 +570,7 @@ def collect_code_metrics() -> dict:
     return metrics
 
 
-def print_section(title: str, content: List[str], output_file=None) -> None:
+def print_section(title: str, content: list[str], output_file=None) -> None:
     """Print a section with title and content."""
     lines = [f"\n=== {title} ==="]
 

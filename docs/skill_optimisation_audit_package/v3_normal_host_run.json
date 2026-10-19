@@ -1,0 +1,319 @@
+{
+  "release_scope": "Authorized installed native Codex packages and active exact-path policy; no web publication or already-running IDE/Claude claim",
+  "run_id": "2026-10-17-v3-installed-normal-codex-acceptance",
+  "controller": "writing-skills",
+  "recommendation": "deploy",
+  "summary": {
+    "AMBER": 0,
+    "PASS": 14,
+    "NHR": 0,
+    "N/A": 0,
+    "FAIL": 0
+  },
+  "revision": "Verified repository candidate bytes, installed/source manifest and active policy hash",
+  "target": "Installed duplication v1.3 and writing-skills 2026-10-17-bounded-evidence",
+  "score": null,
+  "evaluation": {
+    "expected_case_ids": [
+      "H1-installed-identity",
+      "N1-discovery",
+      "N2-loading",
+      "N3-application",
+      "N4-artifact",
+      "N5-runtime",
+      "M1-near-miss",
+      "C1-controller-discovery",
+      "C2-controller-loading",
+      "C3-controller-application",
+      "C4-controller-closeout",
+      "S1-supplementary-scan",
+      "P1-active-policy",
+      "P2-protected-hooks"
+    ],
+    "kind": "runtime",
+    "scope": "Final target, near-miss, scenario-correct controller closeout, direct supplementary scan and installation preservation; unrelated configured integration diagnostics not treated as skill failures",
+    "cases": [
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "H1-installed-identity",
+        "evidence": "install"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "N1-discovery",
+        "evidence": "positive"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "N2-loading",
+        "evidence": "positive"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "N3-application",
+        "evidence": "positive"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "N4-artifact",
+        "evidence": "positive"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "N5-runtime",
+        "evidence": "positive"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "M1-near-miss",
+        "evidence": "near"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "C1-controller-discovery",
+        "evidence": "controller-raw"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "C2-controller-loading",
+        "evidence": "controller-raw"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "C3-controller-application",
+        "evidence": "controller-raw"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "C4-controller-closeout",
+        "evidence": "controller-raw"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "S1-supplementary-scan",
+        "evidence": "scan"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "P1-active-policy",
+        "evidence": "verification"
+      },
+      {
+        "passed": true,
+        "status": "PASS",
+        "id": "P2-protected-hooks",
+        "evidence": "verification"
+      }
+    ],
+    "evaluator": "Parent public transcript and identity inspection; focused independent closeout review"
+  },
+  "telemetry": {
+    "elapsed_seconds": 2.3488441,
+    "cached_tokens": 723328,
+    "counter_scope": "Five CLI attempts including initial supplementary failure; per-run actual counters retained; no whole-session billing or savings",
+    "agent_invocations": 5,
+    "elapsed_scope": "Installed structural-validation/checker subprocess wall time only; native provider durations not measured",
+    "tokens": 843316
+  },
+  "gates": {
+    "loading": "PASS",
+    "discovery": "PASS",
+    "artifact": "PASS",
+    "application": "PASS",
+    "runtime": "PASS",
+    "static": "PASS",
+    "behavioral": "PASS",
+    "delivery": "PASS"
+  },
+  "acceptance_owner": "Greg (human skill owner)",
+  "budget": {
+    "uncertainty": "",
+    "unit": "percent of planned deployment-closeout effort",
+    "remaining_capacity": null,
+    "scope": "User-requested installation/acceptance and required closeout; not optional score optimisation",
+    "acceptance_impact": "",
+    "optional_waves": 0,
+    "closeout_reserve": 20,
+    "max_optional_waves": 2
+  },
+  "environment": {
+    "tool": "Codex CLI / Sonar CLI / local skills-ref",
+    "tool_version": "Codex 0.162.0-alpha.17.2; Sonar 1.7.0; skills-ref 0.1.0",
+    "rules": "C:/Users/gregm/.codex/rules/v3-installed-skills.rules; exact nine installed instruction paths",
+    "config": "codex exec --ephemeral -C . --json; no ignore-user-config, sandbox/approval override, fixture, skill disable or bypass",
+    "file_count": 9,
+    "interpreter": "PowerShell 7; source structure validator uses repository Python 3.14.7 environment",
+    "host": "Fresh native Codex CLI in real repository; actual user installed skills and normal user/project configuration"
+  },
+  "artifacts": [
+    {
+      "role": "candidate",
+      "sha256": "85502296b0563e3967556b54cbec863521734568359effff71c6620b6c7f3642",
+      "id": "candidate",
+      "path": "skills/skill-duplication-audit/SKILL.md"
+    },
+    {
+      "role": "candidate",
+      "sha256": "5f0a9b3481fc9e13541ef7a094abaf6a9840bafa489707b4e6dceeb93ba50602",
+      "id": "controller",
+      "path": "skills/writing-skills/SKILL.md"
+    },
+    {
+      "role": "candidate",
+      "sha256": "e4e5eafcf3f4ee735cd74260a44b300e03945b13f8e65abc650a191d16910139",
+      "id": "controller-bounded",
+      "path": "skills/writing-skills/references/bounded-optimisation.md"
+    },
+    {
+      "role": "oracle",
+      "sha256": "7da2f599e1545258fcbebeb066c534c0e7cac9f4796b421cc0af558377198526",
+      "id": "oracle",
+      "path": "skills/skill-duplication-audit/evals/expected.md"
+    },
+    {
+      "role": "rubric",
+      "sha256": "827932d211f518bcd8818786bd1c6a55b43b8115927bacb365f5705858f828db",
+      "id": "rubric",
+      "path": "skills/skill-duplication-audit/references/validation-cases.md"
+    },
+    {
+      "role": "checkpoint",
+      "sha256": "4a8b70c1ee08b471ed2cb8ca166601c025a23b895b39b10cc66f75ba9bf2d548",
+      "id": "checkpoint",
+      "path": "docs/skill_optimisation_audit_package/V3_CONTINUATION_CHECKPOINT.md"
+    },
+    {
+      "role": "candidate",
+      "sha256": "1027ab86d0f84a46b5f4f48ba94d5ca74de05b56c466285e11311180592721c0",
+      "id": "report",
+      "path": "docs/skill_optimisation_audit_package/V3_NORMAL_HOST_ACCEPTANCE.md"
+    },
+    {
+      "role": "candidate",
+      "sha256": "98a6201d27ddec48d77ee19d2ae54eb48bb64c56d6ed7ae182b0034d27dcf246",
+      "id": "rules",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/scanner-installed.rules"
+    },
+    {
+      "role": "raw",
+      "sha256": "95526a3431848e7f130063cc2fe30a5e206e3ef5dae7e64bf7ded0af1ffbf420",
+      "id": "install",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/install-manifest.json"
+    },
+    {
+      "role": "raw",
+      "sha256": "d6783380cb3747cfc26ddcb58420355f64b18d3c3b8dd72aef44341d957123d1",
+      "id": "positive",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/positive-final-public.jsonl"
+    },
+    {
+      "role": "raw",
+      "sha256": "b72041a9d7514d456be0bf04162644a43bd3516be0e0793d92749c74e5d8ce7c",
+      "id": "near",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/near-miss-public.jsonl"
+    },
+    {
+      "role": "raw",
+      "sha256": "5a5d362a0c0c2db4b0735809209f484c024ff9d8e1a66e81d1f2d516a1f56732",
+      "id": "controller-raw",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/controller-public.jsonl"
+    },
+    {
+      "role": "raw",
+      "sha256": "c47df048cf42db3f4c6c4a4df0b870bfb739347ddf121133aa957979df763f74",
+      "id": "scan",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/supplementary-scan-public.jsonl"
+    },
+    {
+      "role": "raw",
+      "sha256": "5c2862d0e770a1021de301798e4788c2349a7521b6c370be65dd2d279d1ef880",
+      "id": "results",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/results.json"
+    },
+    {
+      "role": "raw",
+      "sha256": "06efa3d69d6ead728bccd251f2c5fcad6dd23ac60db683f3a861f5d5848ae4fb",
+      "id": "verification",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/verification.json"
+    },
+    {
+      "role": "raw",
+      "sha256": "c896402b2074d9f13b1569dc7c8913d757519c242f3d991ee6b15f3eeb49c3e0",
+      "id": "policy-checks",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/policy-checks.json"
+    },
+    {
+      "role": "raw",
+      "sha256": "feb2f807b6bb0333acddbd2a79b92ab3b5fdb9af57fb6683528ed5e95581b290",
+      "path": "docs/skill_optimisation_audit_package/DEVILS_ADVOCATE_V3_REPORT.md",
+      "id": "normal-closeout-DEVILS_ADVOCATE_V3_REPORT"
+    },
+    {
+      "role": "raw",
+      "sha256": "bcd79e2056bb29d992f093ec45eb59dae2dce6d17cbf01e134c761b9f3a52809",
+      "path": "docs/skill_optimisation_audit_package/V3_CODEX_ACTIVATION.md",
+      "id": "normal-closeout-V3_CODEX_ACTIVATION"
+    },
+    {
+      "role": "raw",
+      "sha256": "893a72d2839f2882b2b9c90eaa1f8ef95e3c5da917cd3e245fa40b2a3fb72280",
+      "path": "docs/skill_optimisation_audit_package/V3_COLLECTION_FIX.md",
+      "id": "normal-closeout-V3_COLLECTION_FIX"
+    },
+    {
+      "role": "raw",
+      "sha256": "f06ff9c3197729e6d67f0173f97e9086732cb77948a501214f938c444cb1c6c8",
+      "path": "docs/skill_optimisation_audit_package/v3_continuation_review.md",
+      "id": "normal-closeout-v3_continuation_review"
+    },
+    {
+      "role": "raw",
+      "sha256": "b034c8f6576d1c4837a1c4bbc7ad0b840b3ff336d33edc0699441a1097755028",
+      "path": "docs/skill_optimisation_audit_package/V3_IMPLEMENTATION.md",
+      "id": "normal-closeout-V3_IMPLEMENTATION"
+    },
+    {
+      "role": "raw",
+      "sha256": "9ed74f60071017a45a37fc67b8c2e44a9c6648dc81f5617387048114ad877e07",
+      "path": "docs/skill_optimisation_audit_package/V3_POLICY_CONTINUATION.md",
+      "id": "normal-closeout-V3_POLICY_CONTINUATION"
+    },
+    {
+      "role": "raw",
+      "sha256": "510e4eaf681c243d194d31388466c6f013bfcbd6a7fe4b74aa46632ef7922eab",
+      "path": "docs/skill_optimisation_audit_package/v3_pressure_raw.md",
+      "id": "normal-closeout-v3_pressure_raw"
+    },
+    {
+      "role": "raw",
+      "sha256": "6e78425daa608d5ab27c657e04fe5046e339eb4b96925f64397a2e400db0de32",
+      "path": "docs/skill_optimisation_audit_package/v3_review_evidence.md",
+      "id": "normal-closeout-v3_review_evidence"
+    },
+    {
+      "role": "raw",
+      "sha256": "c75f3643d0b2e88d4cc131ba4fc61310c7c42865322c2eaa581d44ce65cfa378",
+      "path": "docs/skill_optimisation_audit_package/v3_review_raw.md",
+      "id": "normal-closeout-v3_review_raw"
+    },
+    {
+      "role": "raw",
+      "sha256": "b8ed2a882377708bc44ec9e4e35f660988927dc9a2f6bfdb0ff5b9fc894f8899",
+      "path": "docs/skill_optimisation_audit_package/codex_activation/normal-host/prior-documents-manifest.json",
+      "id": "normal-closeout-prior-documents-manifest"
+    }
+  ]
+}

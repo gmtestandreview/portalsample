@@ -336,6 +336,14 @@ describe('route common helper functions', () => {
     ).toBe('');
   });
 
+  it('treats an undefined trading or branch name as empty', () => {
+    expect(formatTradingBranchFromStrings(undefined, undefined)).toBe('');
+    expect(formatTradingBranchFromStrings('Trading', undefined)).toBe(
+      'Trading'
+    );
+    expect(formatTradingBranchFromStrings(undefined, 'Branch')).toBe('Branch');
+  });
+
   it('creates file URLs, delegates secure open helpers, and triggers downloads', () => {
     const createObjectUrl = vi
       .spyOn(URL, 'createObjectURL')
