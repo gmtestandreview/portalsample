@@ -73,7 +73,7 @@ export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
       if (isArray(v)) {
         const newValues: any[] = [];
         v.forEach((x) => {
-          if (x === Object(x)) {
+          if (x !== null && x !== undefined && x === Object(x)) {
             newValues.push(nullOrUndefinedToEmpty(x));
           } else {
             newValues.push(x);
