@@ -23,7 +23,7 @@ describe('AppInsightsService', () => {
     }));
     vi.doMock('@/env', () => ({
       env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING:
+        VITE_APPINSIGHTS_CONN_STRING:
           'InstrumentationConnectionString=test-value',
       },
     }));
@@ -64,7 +64,8 @@ describe('AppInsightsService', () => {
     }));
     vi.doMock('@/env', () => ({
       env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: undefined,
+        VITE_APPINSIGHTS_CONN_STRING: undefined,
+        VITE_ENVIRONMENT: 'development',
       },
     }));
 
@@ -87,8 +88,8 @@ describe('AppInsightsService', () => {
     }));
     vi.doMock('@/env', () => ({
       env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: undefined,
-        REACT_APP_ENVIRONMENT: 'development',
+        VITE_APPINSIGHTS_CONN_STRING: undefined,
+        VITE_ENVIRONMENT: 'development',
       },
     }));
 
@@ -113,8 +114,8 @@ describe('AppInsightsService', () => {
     // Storybook suite - and it drowns out warnings that mean something.
     vi.doMock('@/env', () => ({
       env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
-        REACT_APP_ENVIRONMENT: 'development',
+        VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
+        VITE_ENVIRONMENT: 'development',
       },
     }));
 
@@ -136,8 +137,8 @@ describe('AppInsightsService', () => {
     }));
     vi.doMock('@/env', () => ({
       env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
-        REACT_APP_ENVIRONMENT: 'production',
+        VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
+        VITE_ENVIRONMENT: 'production',
       },
     }));
 

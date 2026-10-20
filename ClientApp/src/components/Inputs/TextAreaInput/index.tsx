@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 import type { ChangeEvent } from 'react';
 import Form from 'react-bootstrap/Form';
-import { trim } from 'lodash';
+import trim from 'lodash/trim';
 import type { TextAreaInputProps } from './types';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';

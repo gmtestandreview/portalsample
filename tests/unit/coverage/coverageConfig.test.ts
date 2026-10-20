@@ -46,7 +46,7 @@ describe('unit coverage configuration', () => {
         // tests/unit/config/coverageRemapPolicy.test.ts for the remap policy.
         expect(coverageConfig.include).toEqual([
             'ClientApp/src/**/*.{ts,tsx}',
-            'vite.config.ts',
+            'vite.config.mts',
         ]);
         expect(coverageConfig.exclude).toEqual(expect.arrayContaining([
             '**/*.d.ts',

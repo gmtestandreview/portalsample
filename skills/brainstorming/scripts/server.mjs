@@ -1,7 +1,12 @@
-const crypto = require('node:crypto');
-const http = require('node:http');
-const fs = require('node:fs');
-const path = require('node:path');
+import cp from 'node:child_process';
+import crypto from 'node:crypto';
+import http from 'node:http';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // stdout is the server's machine-readable protocol channel: start-server.sh
 // greps it for "server-started" and the agent reads user-event lines from the
@@ -349,7 +354,7 @@ function browserLauncherForPlatform(
   url,
   {
     platform = process.platform,
-    osRelease = require('node:os').release(),
+    osRelease = os.release(),
     env = process.env,
   } = {}
 ) {
@@ -632,7 +637,6 @@ function maybeOpenBrowser() {
   if (HOST !== '127.0.0.1' && HOST !== 'localhost') return;
   if (clients.size > 0) return; // the user already opened it
   const url = companionUrl(); // must carry the key or the gate 403s it
-  const cp = require('node:child_process');
   // Operator-provided launcher: run as given (this env var is trusted operator input).
   if (process.env.BRAINSTORM_OPEN_CMD) {
     try {
@@ -864,11 +868,15 @@ function startServer() {
   server.listen(PORT, HOST, onListen);
 }
 
-if (require.main === module) {
+// ESM has no require.main; compare this module's URL with the entry script.
+const isEntrypoint =
+  process.argv[1] !== undefined &&
+  import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isEntrypoint) {
   startServer();
 }
 
-module.exports = {
+export {
   computeAcceptKey,
   encodeFrame,
   decodeFrame,

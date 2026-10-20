@@ -41,9 +41,9 @@ describe('Storybook coverage drift', () => {
     ).toHaveLength(0);
   });
 
-  it('Phase 4 is marked Complete in the phase status table', () => {
+  it('Phase 4 remains open until closure evidence passes', () => {
     expect(coverageDoc).toContain('Phase 4: Closure');
-    expect(coverageDoc).toContain("['Phase 4: Closure', 'Complete'");
+    expect(coverageDoc).toMatch(/'Phase 4: Closure',\s*'Open'/);
   });
 
   it('RouteLeavingGuard is registered with a non-Docs-only status', () => {

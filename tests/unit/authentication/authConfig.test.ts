@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/env', () => ({
   env: {
-    REACT_APP_B2C_CLIENTID: 'test-client-id',
-    REACT_APP_B2C_AUTHORITY: 'https://example.test/authority',
-    REACT_APP_B2C_KNOWN_AUTHORITIES: 'example.test',
-    REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
-    REACT_APP_B2C_READ_SCOPE: 'read',
-    REACT_APP_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
-    REACT_APP_B2C_REDIRECT_URL: 'https://example.test/redirect',
+    VITE_B2C_CLIENTID: 'test-client-id',
+    VITE_B2C_AUTHORITY: 'https://example.test/authority',
+    VITE_B2C_KNOWN_AUTHORITIES: 'example.test',
+    VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
+    VITE_B2C_READ_SCOPE: 'read',
+    VITE_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
+    VITE_B2C_REDIRECT_URL: 'https://example.test/redirect',
   },
 }));
 
@@ -104,13 +104,13 @@ describe('auth configuration', () => {
     vi.resetModules();
     vi.doMock('@/env', () => ({
       env: {
-        REACT_APP_B2C_CLIENTID: undefined,
-        REACT_APP_B2C_AUTHORITY: 'https://example.test/authority',
-        REACT_APP_B2C_KNOWN_AUTHORITIES: undefined,
-        REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
-        REACT_APP_B2C_READ_SCOPE: undefined,
-        REACT_APP_B2C_USER_IMPERSONATION_SCOPE: undefined,
-        REACT_APP_B2C_REDIRECT_URL: undefined,
+        VITE_B2C_CLIENTID: undefined,
+        VITE_B2C_AUTHORITY: 'https://example.test/authority',
+        VITE_B2C_KNOWN_AUTHORITIES: undefined,
+        VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
+        VITE_B2C_READ_SCOPE: undefined,
+        VITE_B2C_USER_IMPERSONATION_SCOPE: undefined,
+        VITE_B2C_REDIRECT_URL: undefined,
       },
     }));
 

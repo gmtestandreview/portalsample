@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useFormikContext } from 'formik';
+import { useLocation } from 'react-router';
 import { expect, within } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import FormBanner from '.';
@@ -14,6 +16,20 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const FormikSubmissionProbe = () => {
+  const { values } = useFormikContext<Record<string, unknown>>();
+  return (
+    <output aria-label='Form submission state'>
+      saveAndExit={String(values['saveAndExit'] ?? false)}
+    </output>
+  );
+};
+
+const DiscardLocationProbe = () => {
+  const location = useLocation();
+  return <output aria-label='Discard destination'>{location.pathname}</output>;
+};
 
 /**
  * SaveAndExit — shows the Save and Exit button in the form navbar.
@@ -31,6 +47,12 @@ export const SaveAndExit: Story = {
     refTitle: 'RFQ-2024-001',
     showSaveAndExitButton: true,
   },
+  render: (args) => (
+    <>
+      <FormBanner {...args} />
+      <FormikSubmissionProbe />
+    </>
+  ),
   play: async ({
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
@@ -38,6 +60,10 @@ export const SaveAndExit: Story = {
     // The form actions toolbar should render
     const toolbar = canvas.getByRole('toolbar', { name: /form actions/i });
     await expect(toolbar).toBeInTheDocument();
+    canvas.getByRole('button', { name: 'Save and exit' }).click();
+    await expect(
+      await canvas.findByLabelText('Form submission state')
+    ).toHaveTextContent('saveAndExit=true');
   },
 };
 
@@ -75,6 +101,12 @@ export const WithDiscard: Story = {
       discardButtonTitle: 'Discard changes',
     },
   },
+  render: (args) => (
+    <>
+      <FormBanner {...args} />
+      <DiscardLocationProbe />
+    </>
+  ),
   play: async ({
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
@@ -82,6 +114,10 @@ export const WithDiscard: Story = {
     const discardButton = canvas.getByTestId('discard-changes-button');
     await expect(discardButton).toBeInTheDocument();
     await expect(discardButton).toHaveTextContent(/discard changes/i);
+    discardButton.click();
+    await expect(
+      await canvas.findByLabelText('Discard destination')
+    ).toHaveTextContent('/');
   },
 };
 

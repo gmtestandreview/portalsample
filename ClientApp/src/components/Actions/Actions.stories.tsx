@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 import Actions from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
@@ -37,11 +38,30 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const TextButton: Story = {};
+export const TextButton: Story = {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await canvas.getByRole('button', { name: 'Actions' }).click();
+    await expect(
+      canvas.getByRole('menuitem', { name: 'View details' })
+    ).toBeVisible();
+  },
+};
 
 export const IconButton: Story = {
   args: {
     as: 'icon',
     buttonAriaTitle: 'for request RFQ-2024-001234',
+  },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await canvas
+      .getByRole('button', { name: 'Actions for request RFQ-2024-001234' })
+      .click();
+    await expect(
+      canvas.getByRole('menuitem', { name: 'Delete draft' })
+    ).toBeVisible();
   },
 };

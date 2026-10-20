@@ -53,8 +53,8 @@ describe('GoogleAnalytics', () => {
   });
 
   it('does not initialize ReactGA when no tracking ID is configured', async () => {
-    const originalTrackingId = env.REACT_APP_GA_TRACKINGID;
-    env.REACT_APP_GA_TRACKINGID = '';
+    const originalTrackingId = env.VITE_GA_TRACKINGID;
+    env.VITE_GA_TRACKINGID = '';
     const { default: GoogleAnalytics } =
       await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
@@ -63,7 +63,7 @@ describe('GoogleAnalytics', () => {
 
       expect(reactGaMock.initialize).not.toHaveBeenCalled();
     } finally {
-      env.REACT_APP_GA_TRACKINGID = originalTrackingId;
+      env.VITE_GA_TRACKINGID = originalTrackingId;
     }
   });
 

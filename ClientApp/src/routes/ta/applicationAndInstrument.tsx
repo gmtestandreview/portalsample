@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
-import { forEach } from 'lodash';
+import forEach from 'lodash/forEach';
 import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
 import TextAreaInput from '../../components/Inputs/TextAreaInput';

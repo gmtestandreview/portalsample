@@ -1,6 +1,6 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Checkbox } from './Checkbox';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
 const meta = {
@@ -13,37 +13,38 @@ const meta = {
 } satisfies Meta<typeof Checkbox>;
 
 export default meta;
-type Story = StoryFn<typeof Checkbox>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <Checkbox {...args}>Unsubscribe</Checkbox>
-);
-
-export const Indeterminate: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <Checkbox {...args}>Unsubscribe</Checkbox>
-);
-
-Indeterminate.args = {
-  isIndeterminate: true,
+export const Example: Story = {
+  render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('checkbox', { name: 'Unsubscribe' })
+    ).toBeInTheDocument();
+  },
 };
 
-Indeterminate.play = async ({ canvas }) => {
-  // The indeterminate state draws a dash rather than a tick, so it renders a different mark.
-  await expect(
-    canvas.getByRole('checkbox', { name: 'Unsubscribe' })
-  ).toBePartiallyChecked();
+export const Indeterminate: Story = {
+  render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
+  args: {
+    isIndeterminate: true,
+  },
+  play: async ({ canvas }) => {
+    // The indeterminate state draws a dash rather than a tick, so it renders a different mark.
+    await expect(
+      canvas.getByRole('checkbox', { name: 'Unsubscribe' })
+    ).toBePartiallyChecked();
+  },
 };
 
-export const WithDescription: Story = (
-  args: Readonly<Parameters<Story>[0]>
-) => <Checkbox {...args}>Unsubscribe</Checkbox>;
-
-WithDescription.args = {
-  description: 'You can resubscribe at any time.',
-};
-
-WithDescription.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('You can resubscribe at any time.')
-  ).toBeVisible();
+export const WithDescription: Story = {
+  render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
+  args: {
+    description: 'You can resubscribe at any time.',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('You can resubscribe at any time.')
+    ).toBeVisible();
+  },
 };

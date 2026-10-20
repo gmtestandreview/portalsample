@@ -1,6 +1,7 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
-import { startCase, capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
+import startCase from 'lodash/startCase';
 import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useFormState } from 'react-hook-form';

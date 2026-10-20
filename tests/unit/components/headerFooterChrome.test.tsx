@@ -339,9 +339,9 @@ describe('Actions callback behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    await user.click(screen.getByRole('button', { name: 'Copy request' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Copy request' }));
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    await user.click(screen.getByRole('button', { name: 'Archive request' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Archive request' }));
 
     expect(itemClick).toHaveBeenCalledTimes(1);
     expect(sharedClick).toHaveBeenCalledTimes(1);

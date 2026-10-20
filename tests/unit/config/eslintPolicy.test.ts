@@ -60,6 +60,13 @@ describe('the resolved config actually applies to application files', () => {
   it('loads the plugin whose rule surface these assertions describe', () => {
     expect(pluginRuleNames.length).toBeGreaterThan(100);
   });
+
+  it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
+    const eslint = new ESLint();
+    const config = await eslint.calculateConfigForFile('vite.config.mts');
+
+    expect(Object.keys(config.rules ?? {}).length).toBeGreaterThan(100);
+  });
 });
 
 describe('eslint-plugin-react-hooks owns the hook rules alone', () => {

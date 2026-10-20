@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorSlider } from './ColorSlider';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -12,14 +13,18 @@ const meta = {
 } satisfies Meta<typeof ColorSlider>;
 
 export default meta;
-type Story = StoryFn<typeof ColorSlider>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorSlider {...args} style={{ width: 200 }} />
-);
-
-Example.args = {
-  label: 'Red Opacity',
-  defaultValue: '#f00',
-  channel: 'alpha',
+export const Example: Story = {
+  render: (args) => <ColorSlider {...args} style={{ width: 200 }} />,
+  args: {
+    label: 'Red Opacity',
+    defaultValue: '#f00',
+    channel: 'alpha',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('slider', { name: 'Red Opacity' })
+    ).toBeInTheDocument();
+  },
 };

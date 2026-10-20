@@ -42,6 +42,33 @@ const storybook = testOptions(storybookConfig, 'vitest.storybook.config.ts');
 const unit = testOptions(unitConfig, 'vitest.unit.config.ts');
 const packageScripts = (): Record<string, string> =>
   (JSON.parse(readFileSync('package.json', 'utf8')) as PackageScripts).scripts;
+const vitestConfigContents: Record<string, string> = {
+  'vitest.config.ts': readFileSync('vitest.config.ts', 'utf8'),
+  'vitest.unit.config.ts': readFileSync('vitest.unit.config.ts', 'utf8'),
+};
+const modularLodashEntryPoints = [
+  'lodash/capitalize',
+  'lodash/clone',
+  'lodash/entriesIn',
+  'lodash/forEach',
+  'lodash/fromPairs',
+  'lodash/get',
+  'lodash/isArray',
+  'lodash/isBoolean',
+  'lodash/isEmpty',
+  'lodash/isEqual',
+  'lodash/isFunction',
+  'lodash/isNil',
+  'lodash/isString',
+  'lodash/keys',
+  'lodash/map',
+  'lodash/omit',
+  'lodash/replace',
+  'lodash/set',
+  'lodash/startCase',
+  'lodash/toPath',
+  'lodash/trim',
+] as const;
 
 /** Paths that belong to Playwright, never to a Vitest leaf. */
 const foreignTestPaths = [
@@ -89,7 +116,7 @@ describe('Vitest config loading stays explicit and shim-free', () => {
   it.each(['vitest.config.ts', 'vitest.unit.config.ts'])(
     "does not rely on the bundled config loader's __dirname shim in %s",
     (configFile) => {
-      expect(readFileSync(configFile, 'utf8')).not.toContain('__dirname');
+      expect(vitestConfigContents[configFile]).not.toContain('__dirname');
     }
   );
 });
@@ -112,6 +139,12 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
   it('owns its own name and setup file', () => {
     expect(storybook.name).toBe('storybook');
     expect(storybook.setupFiles).toEqual(['./vitest.storybook.setup.ts']);
+  });
+
+  it('prebundles modular Lodash entry points before Browser Mode starts', () => {
+    expect(storybookConfig.optimizeDeps?.include).toEqual(
+      expect.arrayContaining([...modularLodashEntryPoints])
+    );
   });
 
   it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {

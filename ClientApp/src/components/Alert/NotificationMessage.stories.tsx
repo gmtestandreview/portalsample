@@ -37,6 +37,9 @@ export const Success: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const status = canvas.getByRole('status');
+    await expect(
+      canvas.getByText('Your request was submitted successfully.')
+    ).toBeVisible();
     await expect(status).toHaveAttribute('aria-live', 'polite');
   },
 };
@@ -48,6 +51,13 @@ export const Information: Story = {
     ariaLive: 'polite',
     role: 'status',
   },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await expect(
+      canvas.getByText('Your profile will be updated within 24 hours.')
+    ).toBeVisible();
+  },
 };
 
 export const Warning: Story = {
@@ -56,6 +66,13 @@ export const Warning: Story = {
     message: 'Please review this warning before continuing.',
     ariaLive: 'polite',
     role: 'alert',
+  },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await expect(
+      canvas.getByText('Please review this warning before continuing.')
+    ).toBeVisible();
   },
 };
 
@@ -66,6 +83,13 @@ export const ErrorMessage: Story = {
     message: 'Something went wrong. Please try again.',
     ariaLive: 'assertive',
     role: 'alert',
+  },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await expect(
+      canvas.getByText('Something went wrong. Please try again.')
+    ).toBeVisible();
   },
 };
 
@@ -82,7 +106,7 @@ export const DismissibleError: Story = {
   play: async ({
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    const closeButton = canvas.getByRole('button', { name: /close/i });
+    const closeButton = canvas.getByRole('button', { name: 'Close alert' });
     await expect(closeButton).toBeVisible();
   },
 };

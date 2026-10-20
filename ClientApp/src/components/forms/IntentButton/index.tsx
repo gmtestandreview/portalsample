@@ -1,4 +1,5 @@
-import { isFunction, isString } from 'lodash';
+import isFunction from 'lodash/isFunction';
+import isString from 'lodash/isString';
 import type { MouseEventHandler, ReactNode } from 'react';
 import PrimaryButton from '../../Buttons/PrimaryButton';
 

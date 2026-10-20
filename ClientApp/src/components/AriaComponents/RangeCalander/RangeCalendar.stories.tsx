@@ -1,6 +1,6 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { RangeCalendar } from './RangeCalendar';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
 const meta = {
@@ -14,23 +14,32 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof RangeCalendar>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <RangeCalendar aria-label='Trip dates' {...args} />
-);
+export const Example: Story = {
+  args: {
+    'aria-label': 'Trip dates',
+  },
+  play: async ({ canvas }) => {
+    const label = 'Trip dates';
+    const rangeCalendar = canvas.getByRole('application', {
+      name: new RegExp(label),
+    });
+    const cells = canvas.getAllByRole('gridcell');
 
-export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <RangeCalendar aria-label='Trip dates' {...args} />
-);
-
-Invalid.args = {
-  isInvalid: true,
-  errorMessage: 'Choose a range that starts today or later.',
+    await expect(rangeCalendar).toBeInTheDocument();
+    await expect(cells.length).toBeGreaterThan(0);
+  },
 };
-
-Invalid.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('Choose a range that starts today or later.')
-  ).toBeVisible();
+export const Invalid: Story = {
+  args: {
+    'aria-label': 'Trip dates',
+    isInvalid: true,
+    errorMessage: 'Choose a range that starts today or later.',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('Choose a range that starts today or later.')
+    ).toBeVisible();
+  },
 };

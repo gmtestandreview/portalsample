@@ -1,4 +1,1101 @@
 {
   "schemaVersion": 1,
-  "records": []
+  "records": [
+    {
+      "source": "ClientApp/src/components/Accordion/index.tsx",
+      "export": "CustomAccordion",
+      "classification": "direct",
+      "owner": "CustomAccordion",
+      "reason": "The export is rendered by the Single Section story, which displays the default accordion section and asserts its visible heading.",
+      "docsOwnerId": "components-accordion--documentation",
+      "states": [
+        {
+          "name": "default-visible-section",
+          "applicability": "required",
+          "outcome": "The default accordion section exposes the visible Quote request details heading.",
+          "storyFile": "ClientApp/src/components/Accordion/Accordion.stories.tsx",
+          "storyExport": "SingleSection",
+          "storyId": "components-accordion--single-section",
+          "assertionFile": "ClientApp/src/components/Accordion/Accordion.stories.tsx",
+          "assertionExport": "SingleSection.play",
+          "assertionMarker": "Quote request details",
+          "rationale": "The story renders CustomAccordion with a CustomAccordionBody and the play function asserts the semantic visible heading."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies CustomAccordion as the accordion container, and the exact generated index entry and passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:253109a329e0ebfca2399bdb67a6c592c247ad31247944f5aa689245d6cb5f29"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Accordion/index.tsx",
+      "export": "CustomAccordionBody",
+      "classification": "direct",
+      "owner": "CustomAccordionBody",
+      "reason": "The export is rendered as the visible accordion item in the Single Section story, whose play function asserts the item's visible heading.",
+      "docsOwnerId": "components-accordion--documentation",
+      "states": [
+        {
+          "name": "default-visible-item",
+          "applicability": "required",
+          "outcome": "The accordion item displays the visible Quote request details heading and content.",
+          "storyFile": "ClientApp/src/components/Accordion/Accordion.stories.tsx",
+          "storyExport": "SingleSection",
+          "storyId": "components-accordion--single-section",
+          "assertionFile": "ClientApp/src/components/Accordion/Accordion.stories.tsx",
+          "assertionExport": "SingleSection.play",
+          "assertionMarker": "Quote request details",
+          "rationale": "The story directly composes CustomAccordionBody inside CustomAccordion and the play function asserts the rendered item's visible heading."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation explicitly describes CustomAccordionBody as the item demonstrated by the Accordion stories; the exact generated index entry and passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:253109a329e0ebfca2399bdb67a6c592c247ad31247944f5aa689245d6cb5f29"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/index.tsx",
+      "export": "AlertInfo",
+      "classification": "direct",
+      "owner": "AlertInfo",
+      "reason": "The export is the informational alert rendered by the documented Info story, which asserts its visible guidance text.",
+      "docsOwnerId": "components-alert--documentation",
+      "states": [
+        {
+          "name": "default-visible-message",
+          "applicability": "required",
+          "outcome": "The informational alert displays its visible guidance message.",
+          "storyFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "storyExport": "Info",
+          "storyId": "components-alert--info",
+          "assertionFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "assertionExport": "Info.play",
+          "assertionMarker": "This is informational guidance for users.",
+          "rationale": "The story renders AlertInfo with realistic guidance text and its play function asserts the visible content."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the Info story as the informational Alert variant, and the generated index entry plus passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:f725da5204b2a8c0b78ea5b69fd46011af3478e8cfe9770d433a8b283e6d9d01"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/index.tsx",
+      "export": "AlertSuccess",
+      "classification": "direct",
+      "owner": "AlertSuccess",
+      "reason": "The export is the success alert rendered by the documented Success story, which asserts its visible confirmation text.",
+      "docsOwnerId": "components-alert--documentation",
+      "states": [
+        {
+          "name": "default-visible-message",
+          "applicability": "required",
+          "outcome": "The success alert displays its visible confirmation message.",
+          "storyFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "storyExport": "Success",
+          "storyId": "components-alert--success",
+          "assertionFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "assertionExport": "Success.play",
+          "assertionMarker": "Saved successfully.",
+          "rationale": "The story renders AlertSuccess with a realistic success message and its play function asserts the visible content."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the Success story as the success Alert variant, and the generated index entry plus passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:f725da5204b2a8c0b78ea5b69fd46011af3478e8cfe9770d433a8b283e6d9d01"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/index.tsx",
+      "export": "AlertWarning",
+      "classification": "direct",
+      "owner": "AlertWarning",
+      "reason": "The export is the warning alert rendered by the documented Warning story, which asserts its visible caution text.",
+      "docsOwnerId": "components-alert--documentation",
+      "states": [
+        {
+          "name": "default-visible-message",
+          "applicability": "required",
+          "outcome": "The warning alert displays its visible caution message.",
+          "storyFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "storyExport": "Warning",
+          "storyId": "components-alert--warning",
+          "assertionFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "assertionExport": "Warning.play",
+          "assertionMarker": "Please review this warning before you continue.",
+          "rationale": "The story renders AlertWarning with a realistic caution message and its play function asserts the visible content."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the Warning story as the warning Alert variant, and the generated index entry plus passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:f725da5204b2a8c0b78ea5b69fd46011af3478e8cfe9770d433a8b283e6d9d01"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/index.tsx",
+      "export": "AlertError",
+      "classification": "direct",
+      "owner": "AlertError",
+      "reason": "The export is the dismissible error alert rendered by the documented Error Dismissible story, which asserts the visible close control.",
+      "docsOwnerId": "components-alert--documentation",
+      "states": [
+        {
+          "name": "dismissible-error",
+          "applicability": "required",
+          "outcome": "The dismissible error alert exposes a visible Close alert button.",
+          "storyFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "storyExport": "ErrorDismissible",
+          "storyId": "components-alert--error-dismissible",
+          "assertionFile": "ClientApp/src/components/Alert/Alert.stories.tsx",
+          "assertionExport": "ErrorDismissible.play",
+          "assertionMarker": "Close alert",
+          "rationale": "The story renders AlertError with canClose enabled and its play function asserts the accessible dismissal control."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies Error Dismissible as the error Alert variant, and the generated index entry plus passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:f725da5204b2a8c0b78ea5b69fd46011af3478e8cfe9770d433a8b283e6d9d01"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/NotificationMessage.tsx",
+      "export": "default",
+      "classification": "direct",
+      "owner": "NotificationMessage",
+      "reason": "The default export maps notification severity and message props to the documented alert variants, and the Success story asserts its visible notification output.",
+      "docsOwnerId": "components-alert-notificationmessage--documentation",
+      "states": [
+        {
+          "name": "success-notification",
+          "applicability": "required",
+          "outcome": "The notification message displays the submitted-successfully text with its documented status presentation.",
+          "storyFile": "ClientApp/src/components/Alert/NotificationMessage.stories.tsx",
+          "storyExport": "Success",
+          "storyId": "components-alert-notificationmessage--success",
+          "assertionFile": "ClientApp/src/components/Alert/NotificationMessage.stories.tsx",
+          "assertionExport": "Success.play",
+          "assertionMarker": "Your request was submitted successfully.",
+          "rationale": "The story supplies NotificationMessage with Success severity and the play function asserts the rendered notification text and polite live-region behavior."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the Success story as a NotificationMessage variant, and the generated index entry plus passing MCP receipt identify the reviewed story.",
+        "reviewedSourceDigest": "sha256:c3a7572053178a14a8977c64633ea9ed5aed67b90994f79f50216e9e4137a084"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Actions/index.tsx",
+      "export": "default",
+      "classification": "direct",
+      "owner": "Actions",
+      "reason": "The export renders the documented text and icon dropdown variants, including route and callback action items exposed through the menu.",
+      "docsOwnerId": "components-actions--documentation",
+      "states": [
+        {
+          "name": "text-button-menu-open",
+          "applicability": "required",
+          "outcome": "The text Actions button opens a menu containing the View details action.",
+          "storyFile": "ClientApp/src/components/Actions/Actions.stories.tsx",
+          "storyExport": "TextButton",
+          "storyId": "components-actions--text-button",
+          "assertionFile": "ClientApp/src/components/Actions/Actions.stories.tsx",
+          "assertionExport": "TextButton.play",
+          "assertionMarker": "View details",
+          "rationale": "The story opens the documented text-button variant and asserts that a representative menu item is visible."
+        },
+        {
+          "name": "icon-button-menu-open",
+          "applicability": "required",
+          "outcome": "The icon Actions button opens a menu containing the Delete draft action.",
+          "storyFile": "ClientApp/src/components/Actions/Actions.stories.tsx",
+          "storyExport": "IconButton",
+          "storyId": "components-actions--icon-button",
+          "assertionFile": "ClientApp/src/components/Actions/Actions.stories.tsx",
+          "assertionExport": "IconButton.play",
+          "assertionMarker": "Delete draft",
+          "rationale": "The story opens the documented icon-button variant and asserts that a representative menu item is visible."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the text and icon variants, and the generated index entries plus passing MCP receipts identify the reviewed stories.",
+        "reviewedSourceDigest": "sha256:627812cdac115b4ed5597180088dbc5a8a1d31fd765eae254cdea218cfd3f4e6"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Actions/index.tsx",
+      "export": "DropdownActionItem",
+      "classification": "nonvisual",
+      "owner": "DropdownActionItem",
+      "reason": "This export is an interface-only data contract for Actions.dropDownActions; it has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is an interface used to type dropdown item data, while MCP documentation demonstrates the data through the Actions component rather than exposing it as a standalone UI export.",
+        "reviewedSourceDigest": "sha256:627812cdac115b4ed5597180088dbc5a8a1d31fd765eae254cdea218cfd3f4e6"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/AriaButton/Button.tsx",
+      "export": "Button",
+      "classification": "direct",
+      "owner": "Button",
+      "reason": "The export is rendered by the documented Primary story, which demonstrates the primary button's user-visible label and press behavior.",
+      "docsOwnerId": "components-ariacomponents-ariabutton",
+      "states": [
+        {
+          "name": "primary-press",
+          "applicability": "required",
+          "outcome": "The primary button displays Save changes and invokes its onPress callback when clicked.",
+          "storyFile": "ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx",
+          "storyExport": "Primary",
+          "storyId": "components-ariacomponents-ariabutton--primary",
+          "assertionFile": "ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx",
+          "assertionExport": "Primary.play",
+          "assertionMarker": "Save changes",
+          "rationale": "The Primary story clicks the accessible button and asserts that the supplied onPress callback is called exactly once."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the AriaButton Button component and its Primary story; the story's semantic interaction assertion and exact generated story ID provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:13aff1e5ea077160a15f66e6db9415aac4c4c8cdbf36e5855ba33dca9762cf48"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.tsx",
+      "export": "Breadcrumbs",
+      "classification": "direct",
+      "owner": "Breadcrumbs",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the component's visible breadcrumb trail and current location.",
+      "docsOwnerId": "evaluation-react-aria-breadcrumbs--documentation",
+      "states": [
+        {
+          "name": "example-trail",
+          "applicability": "required",
+          "outcome": "The breadcrumb list displays the Home, React Aria, and Breadcrumbs trail.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-breadcrumbs--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Breadcrumbs",
+          "rationale": "The Example story renders a named breadcrumb list and its play function asserts that the trail is present with the current crumb visible."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies Breadcrumbs and the Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:e5f4799f6b14b3bd8fa977438fc0c1f7e0e40c83ae87418552b516676c6375eb"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.tsx",
+      "export": "Breadcrumb",
+      "classification": "direct",
+      "owner": "Breadcrumb",
+      "reason": "The export is rendered by the documented Example story, which demonstrates linked ancestor crumbs and the non-navigable current crumb.",
+      "docsOwnerId": "evaluation-react-aria-breadcrumbs--documentation",
+      "states": [
+        {
+          "name": "ancestor-and-current-crumbs",
+          "applicability": "required",
+          "outcome": "The Home breadcrumb links to the root path and the final Breadcrumbs crumb is exposed as the current page without an href.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-breadcrumbs--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Home",
+          "rationale": "The Example story supplies both linked ancestor Breadcrumbs and a current Breadcrumb, while the play function verifies the root href and visible current label."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the Breadcrumb export in the Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:e5f4799f6b14b3bd8fa977438fc0c1f7e0e40c83ae87418552b516676c6375eb"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Button/Button.tsx",
+      "export": "Button",
+      "classification": "direct",
+      "owner": "Button",
+      "reason": "The export is rendered by the documented Primary story, which demonstrates its accessible label and press behavior.",
+      "docsOwnerId": "evaluation-react-aria-button--documentation",
+      "states": [
+        {
+          "name": "primary-press",
+          "applicability": "required",
+          "outcome": "The primary button displays Save changes and invokes its onPress callback when clicked.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Button/Button.stories.tsx",
+          "storyExport": "Primary",
+          "storyId": "evaluation-react-aria-button--primary",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Button/Button.stories.tsx",
+          "assertionExport": "Primary.play",
+          "assertionMarker": "Save changes",
+          "rationale": "The Primary story uses the documented Button API, clicks the accessible button, and asserts the supplied onPress callback."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies the React Aria Button and its Primary story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:b7b2d1d9072170da979806cc546a7b3b122bb2cf1e399a5d08f93946e5b83b22"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx",
+      "export": "Calendar",
+      "classification": "direct",
+      "owner": "Calendar",
+      "reason": "The export is rendered by the documented Default story, which demonstrates the accessible calendar surface and its date grid.",
+      "docsOwnerId": "evaluation-react-aria-calendar--documentation",
+      "states": [
+        {
+          "name": "default-calendar-grid",
+          "applicability": "required",
+          "outcome": "The Appointment date calendar renders its accessible grid and at least one date cell.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
+          "storyExport": "Default",
+          "storyId": "evaluation-react-aria-calendar--default",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
+          "assertionExport": "Default.play",
+          "assertionMarker": "Appointment date, April 2024",
+          "rationale": "The Default story renders the documented accessible Calendar and the play function asserts the named grid and rendered date cells."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies Calendar and its Default story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:267baf0042ef7fcb11e20d7683cd68d859d89ea4e1705c9087df029349138689"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx",
+      "export": "CalendarCell",
+      "classification": "direct",
+      "owner": "CalendarCell",
+      "reason": "The export is rendered by Calendar's Default story as each accessible date cell in the documented date grid.",
+      "docsOwnerId": "evaluation-react-aria-calendar--documentation",
+      "states": [
+        {
+          "name": "default-date-cells",
+          "applicability": "required",
+          "outcome": "The calendar renders one or more accessible date cells inside the Appointment date grid.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
+          "storyExport": "Default",
+          "storyId": "evaluation-react-aria-calendar--default",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
+          "assertionExport": "Default.play",
+          "assertionMarker": "Appointment date, April 2024",
+          "rationale": "Calendar composes CalendarCell for each date and the Default story play function asserts that date cells are rendered in the accessible grid."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source export is the CalendarCell used by the documented Calendar story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:267baf0042ef7fcb11e20d7683cd68d859d89ea4e1705c9087df029349138689"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx",
+      "export": "CalendarGrid",
+      "classification": "direct",
+      "owner": "CalendarGrid",
+      "reason": "The export is rendered by Calendar's Default story as the accessible date grid containing the calendar cells.",
+      "docsOwnerId": "evaluation-react-aria-calendar--documentation",
+      "states": [
+        {
+          "name": "default-date-grid",
+          "applicability": "required",
+          "outcome": "The Appointment date calendar exposes its accessible date grid with rendered date cells.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
+          "storyExport": "Default",
+          "storyId": "evaluation-react-aria-calendar--default",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
+          "assertionExport": "Default.play",
+          "assertionMarker": "Appointment date, April 2024",
+          "rationale": "Calendar composes CalendarGrid for the date table and the Default story play function asserts the named grid and its cells."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source export is the CalendarGrid used by the documented Calendar story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:267baf0042ef7fcb11e20d7683cd68d859d89ea4e1705c9087df029349138689"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx",
+      "export": "CalendarProps",
+      "classification": "nonvisual",
+      "owner": "CalendarProps",
+      "reason": "This export is a TypeScript interface-only props contract for Calendar and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is an interface extending the underlying calendar props and is not emitted as a runtime export; the documented Calendar story covers the runtime component instead.",
+        "reviewedSourceDigest": "sha256:267baf0042ef7fcb11e20d7683cd68d859d89ea4e1705c9087df029349138689"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.tsx",
+      "export": "RangeCalendarProps",
+      "classification": "nonvisual",
+      "owner": "RangeCalendarProps",
+      "reason": "This export is a TypeScript interface-only props contract for RangeCalendar and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is an interface extending the underlying range calendar props and is not emitted as a runtime export; the documented RangeCalendar stories cover the runtime component instead.",
+        "reviewedSourceDigest": "sha256:c51b8d6aefdef25118eb56ddb56a116696148a75d143e225f4f40301c92f153d"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.tsx",
+      "export": "RangeCalendar",
+      "classification": "direct",
+      "owner": "RangeCalendar",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the accessible Trip dates range-calendar surface and its date grid.",
+      "docsOwnerId": "evaluation-react-aria-rangecalendar--documentation",
+      "states": [
+        {
+          "name": "example-range-calendar",
+          "applicability": "required",
+          "outcome": "The Trip dates range calendar renders its accessible application surface and date cells.",
+          "storyFile": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-rangecalendar--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Trip dates",
+          "rationale": "The Example story renders the documented RangeCalendar and its play function asserts the named range-calendar surface and rendered date cells."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies RangeCalendar and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:c51b8d6aefdef25118eb56ddb56a116696148a75d143e225f4f40301c92f153d"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.tsx",
+      "export": "CalendarCell",
+      "classification": "direct",
+      "owner": "CalendarCell",
+      "reason": "The export is rendered by RangeCalendar's documented Example story as each accessible date cell in the range-calendar grid.",
+      "docsOwnerId": "evaluation-react-aria-rangecalendar--documentation",
+      "states": [
+        {
+          "name": "example-date-cells",
+          "applicability": "required",
+          "outcome": "The Trip dates range calendar renders one or more accessible date cells.",
+          "storyFile": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-rangecalendar--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Trip dates",
+          "rationale": "RangeCalendar composes its CalendarCell export for each date and the Example play function asserts that date cells are rendered."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source export is the CalendarCell used by the documented RangeCalendar story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:c51b8d6aefdef25118eb56ddb56a116696148a75d143e225f4f40301c92f153d"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Accordion/types.ts",
+      "export": "CustomAccordionProps",
+      "classification": "nonvisual",
+      "owner": "CustomAccordionProps",
+      "reason": "This export is an interface-only props contract for CustomAccordion and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface used to type the rendered accordion component; the runtime component is separately covered by the reviewed CustomAccordion claim.",
+        "reviewedSourceDigest": "sha256:9222f195cffc40625c5ebb133319ce618271e2c87b09a8b9c557417d3fcadc61"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Accordion/types.ts",
+      "export": "CustomAccordionBodyProps",
+      "classification": "nonvisual",
+      "owner": "CustomAccordionBodyProps",
+      "reason": "This export is an interface-only props contract for CustomAccordionBody and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface used to type the rendered accordion body; the runtime component is separately covered by the reviewed CustomAccordionBody claim.",
+        "reviewedSourceDigest": "sha256:9222f195cffc40625c5ebb133319ce618271e2c87b09a8b9c557417d3fcadc61"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/types.ts",
+      "export": "BaseAlertProps",
+      "classification": "nonvisual",
+      "owner": "BaseAlertProps",
+      "reason": "This export is an interface-only props contract shared by alert components and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by the runtime Alert implementation; the documented alert variants are separately covered by renderable claims.",
+        "reviewedSourceDigest": "sha256:8188ad1b1a27336a19966b4f77dbe8295951464a9d9298956352e8044725b5e6"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/types.ts",
+      "export": "AlertProps",
+      "classification": "nonvisual",
+      "owner": "AlertProps",
+      "reason": "This export is a type alias for the Alert props contract and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript Omit type alias consumed by the runtime Alert implementation; the documented alert variants are separately covered by renderable claims.",
+        "reviewedSourceDigest": "sha256:8188ad1b1a27336a19966b4f77dbe8295951464a9d9298956352e8044725b5e6"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/Alert/types.ts",
+      "export": "NotificationMessageProps",
+      "classification": "nonvisual",
+      "owner": "NotificationMessageProps",
+      "reason": "This export is an interface-only props contract for NotificationMessage and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by NotificationMessage; the runtime notification component is separately covered by its reviewed renderable claim.",
+        "reviewedSourceDigest": "sha256:8188ad1b1a27336a19966b4f77dbe8295951464a9d9298956352e8044725b5e6"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Checkbox/Checkbox.tsx",
+      "export": "Checkbox",
+      "classification": "direct",
+      "owner": "Checkbox",
+      "reason": "The export is rendered by the documented Example, Indeterminate, and With Description stories, which demonstrate its accessible label, indeterminate state, and description text.",
+      "docsOwnerId": "evaluation-react-aria-checkbox--documentation",
+      "states": [
+        {
+          "name": "example-checkbox",
+          "applicability": "required",
+          "outcome": "The Unsubscribe checkbox is present with its accessible label.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Checkbox/Checkbox.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-checkbox--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Checkbox/Checkbox.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Unsubscribe",
+          "rationale": "The Example story renders the documented Checkbox and its play function asserts the accessible checkbox label."
+        },
+        {
+          "name": "indeterminate-checkbox",
+          "applicability": "required",
+          "outcome": "The Unsubscribe checkbox exposes its indeterminate state.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Checkbox/Checkbox.stories.tsx",
+          "storyExport": "Indeterminate",
+          "storyId": "evaluation-react-aria-checkbox--indeterminate",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Checkbox/Checkbox.stories.tsx",
+          "assertionExport": "Indeterminate.play",
+          "assertionMarker": "Unsubscribe",
+          "rationale": "The documented Indeterminate story supplies isIndeterminate and its play function asserts the partially checked state."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies Checkbox and its Example and Indeterminate stories; exact generated story IDs and passing MCP accessibility runs provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:910eda9ddb7116cb1bdef7385fb5fe567a6239de06277ed184c6eeec49513f28"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/CheckboxGroup/CheckboxGroup.tsx",
+      "export": "CheckboxGroupProps",
+      "classification": "nonvisual",
+      "owner": "CheckboxGroupProps",
+      "reason": "This export is an interface-only props contract for CheckboxGroup and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by the runtime CheckboxGroup implementation; the documented group stories cover the runtime component instead.",
+        "reviewedSourceDigest": "sha256:9ee13b06e79117aff800373cd5d14c6d768e46d4475b0ecddf027a6c242ff664"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/CheckboxGroup/CheckboxGroup.tsx",
+      "export": "CheckboxGroup",
+      "classification": "direct",
+      "owner": "CheckboxGroup",
+      "reason": "The export is rendered by the documented With Label And Description story, which demonstrates its group label, description, and selection behavior.",
+      "docsOwnerId": "evaluation-react-aria-checkboxgroup--documentation",
+      "states": [
+        {
+          "name": "label-description-selection",
+          "applicability": "required",
+          "outcome": "The NMI services group shows its label and description, and selecting Pattern approval checks that option without checking Testing and calibration.",
+          "storyFile": "ClientApp/src/components/AriaComponents/CheckboxGroup/CheckboxGroup.stories.tsx",
+          "storyExport": "WithLabelAndDescription",
+          "storyId": "evaluation-react-aria-checkboxgroup--with-label-and-description",
+          "assertionFile": "ClientApp/src/components/AriaComponents/CheckboxGroup/CheckboxGroup.stories.tsx",
+          "assertionExport": "WithLabelAndDescription.play",
+          "assertionMarker": "Pattern approval",
+          "rationale": "The documented group story asserts the visible label and description, clicks Pattern approval, and verifies the resulting selection state."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies CheckboxGroup and its With Label And Description story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:9ee13b06e79117aff800373cd5d14c6d768e46d4475b0ecddf027a6c242ff664"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorArea/ColorArea.tsx",
+      "export": "ColorArea",
+      "classification": "direct",
+      "owner": "ColorArea",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the color area surface with a default HSL color.",
+      "docsOwnerId": "evaluation-react-aria-colorarea--documentation",
+      "states": [
+        {
+          "name": "example-color-area",
+          "applicability": "required",
+          "outcome": "The color area renders as an accessible group with its interactive color surface.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorArea/ColorArea.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorarea--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorArea/ColorArea.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "group",
+          "rationale": "The documented Example story supplies a default color and the play function asserts the rendered accessible group surface."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorArea and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:93f052049f142a4c703a82a504b8a2106f8ec0cee9b6030005d8143593a0bef0"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorField/ColorField.tsx",
+      "export": "ColorFieldProps",
+      "classification": "nonvisual",
+      "owner": "ColorFieldProps",
+      "reason": "This export is an interface-only props contract for ColorField and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by the runtime ColorField implementation; the documented field stories cover the runtime component instead.",
+        "reviewedSourceDigest": "sha256:73d09b3f6eb097ec9196754e9c83c9707f66bd3024a700a464db5105c9e1226c"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorField/ColorField.tsx",
+      "export": "ColorField",
+      "classification": "direct",
+      "owner": "ColorField",
+      "reason": "The export is rendered by the documented Example and With Description stories, which demonstrate its accessible label, input, and descriptive guidance.",
+      "docsOwnerId": "evaluation-react-aria-colorfield--documentation",
+      "states": [
+        {
+          "name": "example-labeled-field",
+          "applicability": "required",
+          "outcome": "The Color field exposes a textbox with the accessible Color label.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorField/ColorField.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorfield--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorField/ColorField.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Color",
+          "rationale": "The documented Example story supplies the Color label and the play function asserts the accessible textbox."
+        },
+        {
+          "name": "described-field",
+          "applicability": "required",
+          "outcome": "The Color field displays the documented hex, rgb, or hsl guidance text.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorField/ColorField.stories.tsx",
+          "storyExport": "WithDescription",
+          "storyId": "evaluation-react-aria-colorfield--with-description",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorField/ColorField.stories.tsx",
+          "assertionExport": "WithDescription.play",
+          "assertionMarker": "Accepts hex, rgb or hsl notation.",
+          "rationale": "The documented With Description story supplies realistic guidance and the play function asserts its visible text."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorField and its Example and With Description stories; exact generated story IDs and passing MCP accessibility runs provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:73d09b3f6eb097ec9196754e9c83c9707f66bd3024a700a464db5105c9e1226c"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorPicker/ColorPicker.tsx",
+      "export": "ColorPickerProps",
+      "classification": "nonvisual",
+      "owner": "ColorPickerProps",
+      "reason": "This export is an interface-only props contract for ColorPicker and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by the runtime ColorPicker implementation; the documented picker story covers the runtime component instead.",
+        "reviewedSourceDigest": "sha256:24e15550ff808803ed6ef3beef4cabf3e70b760f3215207dc6af56afe401eafc"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorPicker/ColorPicker.tsx",
+      "export": "ColorPicker",
+      "classification": "direct",
+      "owner": "ColorPicker",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the labeled color trigger and its open interaction.",
+      "docsOwnerId": "evaluation-react-aria-colorpicker--documentation",
+      "states": [
+        {
+          "name": "open-picker",
+          "applicability": "required",
+          "outcome": "The vibrant red Fill color trigger opens the color picker and exposes its expanded state.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorPicker/ColorPicker.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorpicker--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorPicker/ColorPicker.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "vibrant red Fill color",
+          "rationale": "The documented Example story supplies the Fill color label and default red value; its play function clicks the trigger and asserts aria-expanded becomes true."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorPicker and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:24e15550ff808803ed6ef3beef4cabf3e70b760f3215207dc6af56afe401eafc"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorSlider/ColorSlider.tsx",
+      "export": "ColorSliderProps",
+      "classification": "nonvisual",
+      "owner": "ColorSliderProps",
+      "reason": "This export is an interface-only props contract for ColorSlider and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by the runtime ColorSlider implementation; the documented slider story covers the runtime component instead.",
+        "reviewedSourceDigest": "sha256:c5d846a8e28b009a7ee889385cdb10b71728e4fd9f06595af95594a7ef60fa46"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorSlider/ColorSlider.tsx",
+      "export": "ColorSlider",
+      "classification": "direct",
+      "owner": "ColorSlider",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the labeled Red Opacity slider.",
+      "docsOwnerId": "evaluation-react-aria-colorslider--documentation",
+      "states": [
+        {
+          "name": "example-slider",
+          "applicability": "required",
+          "outcome": "The Red Opacity color slider exposes an accessible slider control.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorSlider/ColorSlider.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorslider--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorSlider/ColorSlider.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Red Opacity",
+          "rationale": "The documented Example story supplies the Red Opacity label and the play function asserts the accessible slider control."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorSlider and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:c5d846a8e28b009a7ee889385cdb10b71728e4fd9f06595af95594a7ef60fa46"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorSwatch/ColorSwatch.tsx",
+      "export": "ColorSwatch",
+      "classification": "direct",
+      "owner": "ColorSwatch",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the accessible red color swatch.",
+      "docsOwnerId": "evaluation-react-aria-colorswatch--documentation",
+      "states": [
+        {
+          "name": "example-swatch",
+          "applicability": "required",
+          "outcome": "The red color swatch is exposed as an accessible image with its color description.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorSwatch/ColorSwatch.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorswatch--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorSwatch/ColorSwatch.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "vibrant red, 33% transparent",
+          "rationale": "The documented Example story supplies the red alpha color and the play function asserts the resulting accessible swatch name."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorSwatch and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:c62ab8e10f03f802b97737e103641e78f4167141800defbc9e980e38199113a3"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.tsx",
+      "export": "ColorSwatchPicker",
+      "classification": "direct",
+      "owner": "ColorSwatchPicker",
+      "reason": "The export is rendered by the documented Example story, which demonstrates a named listbox of selectable color swatches.",
+      "docsOwnerId": "evaluation-react-aria-colorswatchpicker--documentation",
+      "states": [
+        {
+          "name": "example-swatch-picker",
+          "applicability": "required",
+          "outcome": "The color swatch picker exposes a named listbox containing selectable options.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorswatchpicker--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Color swatches",
+          "rationale": "The documented Example story renders the picker and the play function asserts its accessible listbox and option collection."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorSwatchPicker and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:b81cee9203c7b3d30b9b435e292693625a853e073d70fa8d2d7eb1931bd31c9e"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.tsx",
+      "export": "ColorSwatchPickerItem",
+      "classification": "direct",
+      "owner": "ColorSwatchPickerItem",
+      "reason": "The export is rendered by the documented Example story as each selectable color option in the picker.",
+      "docsOwnerId": "evaluation-react-aria-colorswatchpicker--documentation",
+      "states": [
+        {
+          "name": "example-swatch-options",
+          "applicability": "required",
+          "outcome": "The color swatch picker renders one or more selectable color options.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorswatchpicker--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Color swatches",
+          "rationale": "The documented Example story renders six ColorSwatchPickerItem exports and the play function asserts that selectable options exist."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source export is the item rendered by the documented ColorSwatchPicker story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:b81cee9203c7b3d30b9b435e292693625a853e073d70fa8d2d7eb1931bd31c9e"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.tsx",
+      "export": "ColorWheelProps",
+      "classification": "nonvisual",
+      "owner": "ColorWheelProps",
+      "reason": "This export is a type-only props alias for ColorWheel and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript Omit type alias consumed by the runtime ColorWheel implementation; the documented wheel story covers the runtime component instead.",
+        "reviewedSourceDigest": "sha256:476b183d29d15a9a25df5b84d0cffab3991d5275ed79296a878674828baa6463"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.tsx",
+      "export": "ColorWheel",
+      "classification": "direct",
+      "owner": "ColorWheel",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the HSL color wheel and its accessible Hue control.",
+      "docsOwnerId": "evaluation-react-aria-colorwheel--documentation",
+      "states": [
+        {
+          "name": "example-color-wheel",
+          "applicability": "required",
+          "outcome": "The color wheel exposes an accessible Hue slider control.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorwheel--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Hue",
+          "rationale": "The documented Example story supplies an HSL default value and the play function asserts the accessible Hue slider."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ColorWheel and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:476b183d29d15a9a25df5b84d0cffab3991d5275ed79296a878674828baa6463"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ColorThumb/ColorThumb.tsx",
+      "export": "ColorThumb",
+      "classification": "forwarding",
+      "owner": "ColorThumb",
+      "reason": "The export is a pure forwarding wrapper around react-aria-components ColorThumb with no owned behavior; the reviewed ColorWheel story exercises it through the wheel's accessible Hue control.",
+      "docsOwnerId": "evaluation-react-aria-colorwheel--documentation",
+      "states": [
+        {
+          "name": "forwarded-hue-thumb",
+          "applicability": "required",
+          "outcome": "The ColorWheel's forwarded ColorThumb participates in the accessible Hue slider surface.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-colorwheel--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Hue",
+          "rationale": "ColorThumb forwards all props without additional behavior; the documented ColorWheel story renders the wrapper and asserts its resulting Hue slider surface."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "Source inspection confirms a pure ColorThumb prop forwarder, while MCP documentation and the passing ColorWheel story provide the target evidence for the forwarded runtime surface.",
+        "reviewedSourceDigest": "sha256:ac056ae1b8f26960c7ff8030b90276e4eac2bb1ea5f742ca957b1dbcc892e0c6"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx",
+      "export": "ComboBoxProps",
+      "classification": "nonvisual",
+      "owner": "ComboBoxProps",
+      "reason": "This export is an interface-only props contract for ComboBox and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source declaration is a TypeScript interface consumed by the runtime ComboBox implementation; the documented combo-box stories cover the runtime component instead.",
+        "reviewedSourceDigest": "sha256:ef9546f5abb843d2dec6a6e83005e44561d39b7c5af58cbd75d0fbc44266fa37"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx",
+      "export": "ComboBox",
+      "classification": "direct",
+      "owner": "ComboBox",
+      "reason": "The export is rendered by the documented Example story, which demonstrates the labeled flavor field and its suggestion-opening behavior.",
+      "docsOwnerId": "evaluation-react-aria-combobox--documentation",
+      "states": [
+        {
+          "name": "open-suggestions",
+          "applicability": "required",
+          "outcome": "The Ice cream flavor combo box opens its suggestions and exposes the Chocolate option.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-combobox--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Chocolate",
+          "rationale": "The documented Example story supplies the flavor label and options; its play function opens the semantic suggestions trigger, asserts aria-expanded, and finds Chocolate in the option collection."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "MCP documentation identifies ComboBox and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:ef9546f5abb843d2dec6a6e83005e44561d39b7c5af58cbd75d0fbc44266fa37"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx",
+      "export": "ComboBoxListBox",
+      "classification": "direct",
+      "owner": "ComboBoxListBox",
+      "reason": "The export is rendered by ComboBox's documented Example story as the option collection opened by the flavor field.",
+      "docsOwnerId": "evaluation-react-aria-combobox--documentation",
+      "states": [
+        {
+          "name": "opened-option-list",
+          "applicability": "required",
+          "outcome": "Opening the Ice cream flavor field exposes the Chocolate option in the listbox collection.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-combobox--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Chocolate",
+          "rationale": "The Example story renders ComboBoxListBox through ComboBox and its play function asserts the opened option collection contains Chocolate."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source export is the listbox wrapper rendered by the documented ComboBox story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:ef9546f5abb843d2dec6a6e83005e44561d39b7c5af58cbd75d0fbc44266fa37"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx",
+      "export": "ComboBoxItem",
+      "classification": "direct",
+      "owner": "ComboBoxItem",
+      "reason": "The export is rendered by ComboBox's documented Example story as each selectable flavor option.",
+      "docsOwnerId": "evaluation-react-aria-combobox--documentation",
+      "states": [
+        {
+          "name": "opened-flavor-option",
+          "applicability": "required",
+          "outcome": "The opened flavor list contains the Chocolate selectable option.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-combobox--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ComboBox/ComboBox.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Chocolate",
+          "rationale": "The Example story renders ComboBoxItem values and its play function asserts the Chocolate option is present after opening suggestions."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source export is the item rendered by the documented ComboBox story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
+        "reviewedSourceDigest": "sha256:ef9546f5abb843d2dec6a6e83005e44561d39b7c5af58cbd75d0fbc44266fa37"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/CommandPalette/CommandPalette.tsx",
+      "export": "CommandPalette",
+      "classification": "direct",
+      "owner": "CommandPalette",
+      "reason": "The export is rendered by the documented Example story, which opens the command palette and asserts the component-local disableVirtualFocus focus model.",
+      "docsOwnerId": "evaluation-react-aria-commandpalette--documentation",
+      "states": [
+        {
+          "name": "open-command-palette-focus",
+          "applicability": "required",
+          "outcome": "Opening the command palette removes virtual focus from the search input and allows Tab to focus the first suggestion.",
+          "storyFile": "ClientApp/src/components/AriaComponents/CommandPalette/CommandPalette.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-commandpalette--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/CommandPalette/CommandPalette.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "aria-activedescendant",
+          "rationale": "The Example story opens the palette, asserts the search input no longer exposes aria-activedescendant, verifies the menu is focusable, and verifies Tab focuses the first menu item."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "Storybook documentation identifies the CommandPalette Example story; the browser trace and passing MCP accessibility receipt support the documented disableVirtualFocus focus model without changing the shared Menu or Modal contract.",
+        "reviewedSourceDigest": "sha256:d410b2d321f5177453eaf15cfffd4a37b3c0a9fb53c9e99c9b9215b802274385"
+      }
+    }
+  ]
 }

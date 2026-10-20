@@ -10,7 +10,7 @@ const GoogleAnalytics = ({
   sendPageView: _sendPageView,
 }: Readonly<GoogleAnalyticsProps>) => {
   useEffect(() => {
-    const trackId = env.REACT_APP_GA_TRACKINGID;
+    const trackId = env.VITE_GA_TRACKINGID;
     if (trackId && ReactGA.isInitialized === false) {
       ReactGA.initialize([
         {

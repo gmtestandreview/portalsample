@@ -1,6 +1,10 @@
 import { removeEmptyKeys } from '../../utils';
 import { getIn, isObject, setIn } from './formPath';
-import { entriesIn, fromPairs, isBoolean, isFunction, toPath } from 'lodash';
+import entriesIn from 'lodash/entriesIn';
+import fromPairs from 'lodash/fromPairs';
+import isBoolean from 'lodash/isBoolean';
+import isFunction from 'lodash/isFunction';
+import toPath from 'lodash/toPath';
 import type { ValidationError } from 'yup';
 import type {
   FormErrors,

@@ -5,8 +5,8 @@
 Date: 2026-10-14 (Australia/Sydney). Active execution-state amendment:
 2026-10-19 (Australia/Sydney). Branch: `feat/storybook-coverage-remediation`.
 Original branch point: `aae45ca18284d8bb5d289a73ab423649fa05f4fb`; recovery
-parent: `b64b58c84a8535d5fbc45db6b34f4abd916a9390`; current checkout:
-`5855da341871fcd0c0ef86f00c23ff49071a13de`. Revised planning contracts were
+parent: `5855da341871fcd0c0ef86f00c23ff49071a13de`; current checkout:
+`030af69c18e5468ee0f3a2df215bb41755f4df0c`. Revised planning contracts were
 applied on 2026-10-15; the earlier 99/100 review is historical. The scorecard,
 pressure retest and this amendment are planning/evidence records, not runtime
 closure proof.
@@ -15,11 +15,14 @@ Current status: Gate 3 package-specific approval is explicitly recorded from the
 user. The HEAD commit contains the T1a endpoint-target slice and T2a
 manifest/recursive-validator slice. The approved T4a contract packet and seven
 T4 story files are present as current worktree changes, and the Sheet internal
-composition fix is present as a current worktree change. T1b/T1c, T2b/T2c/T2d,
-T3 verification, T5, T6, T7 and T8 remain incomplete unless the evidence ledger
-below says otherwise. This amendment supersedes stale statements below that say
-implementation has not started, while preserving the original contracts, stable
-package IDs and historical review narrative.
+composition fix is present as a current worktree change. The T1b receipt and
+producer-identity validators, T2b freshness/freeze/reference helpers, and T3
+focused verification have now been implemented in the current worktree, but
+T1/T2/T3 package exits remain partial. T1c, T2c/T2d, T5, T6, T7 and T8 remain
+incomplete unless the evidence ledger below says otherwise. This amendment
+supersedes stale statements below that say implementation has not started, while
+preserving the original contracts, stable package IDs and historical review
+narrative.
 
 ## Goal and confirmed premise
 
@@ -92,13 +95,54 @@ package closure. Evidence marked as reported remains attributable to the
 conversation but must be reproduced by the T8 frozen closure before it is a
 final claim.
 
+### Latest execution update — 2026-10-19
+
+The following implementation slices were executed after the prior
+reconciliation without changing the approved T1–T8 acceptance boundaries:
+
+- T1b added `normalizeMcpReceipt` and `validateProducerIdentity` coverage for
+  exact requested IDs, duplicate/unknown/missing results, per-ID accessibility
+  parity, counts, cancellation/unhandled errors, freeze binding, producer
+  binding, child provenance, PID reuse and native URL mismatch.
+- T2b added canonical `computeInputDigest` freshness checks, including the
+  required canonical coverage manifest, plus freeze and generated-reference
+  validation. The canonical manifest requirement has a focused regression test.
+- T1 runtime diagnostics now write a redacted child record only when both
+  closure identity variables are present; they do not perform diagnostic IO by
+  default.
+- The MCP BDD step now parses JSON/SSE responses and fails closed when the
+  native response lacks the structured completion and accessibility evidence
+  required by this plan. It does not substitute CLI Vitest or an HTTP GET for
+  native MCP execution.
+- T3 documentation-ownership scenarios passed against the owned Storybook
+  server, and the MCP initialization scenario passed. The new MCP execution
+  scenario did not qualify because the installed endpoint returned text-only
+  passing-story output without `structuredContent`, per-ID accessibility status,
+  or structured counts.
+- The root `AGENTS.md` now mandates English for assistant responses and all new
+  or modified authored repository text, and instructs agents to ignore
+  localized runtime/tool status text when selecting the language. This is a
+  repository governance correction; it does not alter the Storybook acceptance
+  gates.
+
+Validation reproduced for this update: `npm run type-check`, `npm run lint`,
+`npm run test:unit -- tests/unit/storybook tests/unit/config/storybookRuntimePolicy.test.ts tests/unit/config/storybookEndpoint.test.ts`
+(16 files, 140 tests), `git diff --check`, and the targeted secret scan all
+passed. The owned Storybook server was stopped and port 6006 was confirmed
+free. No commit was created and no unrelated dirty file was staged, reset or
+overwritten.
+
+The native MCP execution limitation, missing cold/warm/repeat producer
+receipts, incomplete T5–T7 evidence, and missing T8 closure launcher remain
+blocking conditions. Focused local passes do not qualify as package closure.
+
 ### Checkout and preservation boundary
 
 The exact checkout is
 `C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\.worktrees\feat-storybook-coverage-remediation`,
 branch `feat/storybook-coverage-remediation`, HEAD
-`5855da341871fcd0c0ef86f00c23ff49071a13de`, with parent
-`b64b58c84a8535d5fbc45db6b34f4abd916a9390` and original branch point
+`030af69c18e5468ee0f3a2df215bb41755f4df0c`, with parent
+`5855da341871fcd0c0ef86f00c23ff49071a13de` and original branch point
 `aae45ca18284d8bb5d289a73ab423649fa05f4fb`. Existing dirty files are user-owned
 unless explicitly attributable to the remediation; they must not be stashed,
 reset, staged, overwritten, or committed as part of this plan.
@@ -164,9 +208,9 @@ over the current checkout when it conflicts with current repository evidence.
 
 | Package | Planned exit                                                                                                                                                         | Current observation                                                                                                                                                                                                                                                                           | Status                                                                                   |
 | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| T1      | Exact validated endpoint, native protocol, child/producer identity, cold/warm/repeat and diagnostic closure                                                          | T1a target resolver and endpoint unit tests are in HEAD; focused native T4 execution passed, but T1b/T1c receipts, cold/warm/repeat and wrong-producer/URL negatives are not closed                                                                                                           | Partial; next closure work remains                                                       |
-| T2      | Recursive v1 manifest, canonical exports/classifications, meaningful baseline, freshness, patch/freeze and lint contracts                                            | Manifest, recursive discovery, schema/claim validator, guarded CLI and RED fixtures are in HEAD; T2b freshness/freeze, T2c docs wiring and T2d lint/closure remain                                                                                                                            | Partial; next closure work remains                                                       |
-| T3      | Correct owners, five AcceptQuote APIs, Guard type/default presentation, IDs and version attribution                                                                  | HEAD changes AutoSuggest, AcceptQuote, RouteLeavingGuard and the component documentation guide; current evidence does not close rendered five-step ownership, Guard table/default, stable-ID and version checks                                                                               | Partial; verification remains                                                            |
+| T1      | Exact validated endpoint, native protocol, child/producer identity, cold/warm/repeat and diagnostic closure                                                          | T1a target resolver and endpoint unit tests are in HEAD; T1b receipt/producer validators and BDD response checks are implemented, but native structured execution, cold/warm/repeat receipts and T1c diagnostic closure remain open                                                                                                           | Partial; next closure work remains                                                       |
+| T2      | Recursive v1 manifest, canonical exports/classifications, meaningful baseline, freshness, patch/freeze and lint contracts                                            | Manifest, recursive discovery, schema/claim validator, guarded CLI, T2b digest/freeze/reference helpers and RED fixtures are present; T2c docs wiring, T2d lint/closure and frozen integration remain open                                                                                                                            | Partial; next closure work remains                                                       |
+| T3      | Correct owners, five AcceptQuote APIs, Guard type/default presentation, IDs and version attribution                                                                  | HEAD changes AutoSuggest, AcceptQuote, RouteLeavingGuard and the component documentation guide; three ownership scenarios and MCP initialization passed, but full rendered five-step ownership, Guard table/default, stable-ID and version checks remain open                                                                               | Partial; verification remains                                                            |
 | T4      | Seven approved contracts with direct semantic/interaction/a11y evidence, inherited-prop negatives where applicable, responsive/focus evidence and legacy distinction | Seven stories are present; 20 focused native IDs passed with a11y enabled; CLI is reported at 149/344; docs verification is reported at 504 entries (160 docs + 344 stories), 149 components and 9 accepted docgen exceptions; Sheet composition is fixed and typecheck/contract tests passed | T4 story slice evidenced; package closure remains subject to T4 acceptance and T8 freeze |
 | T5      | Sufficient indirect consumer evidence for forms, inputs, modals, buttons and conditional states                                                                      | No current attributable closure evidence for all T5 claims                                                                                                                                                                                                                                    | Incomplete                                                                               |
 | T6      | Ten route bootstrap obligations plus RT5/RT6 fail-closed MSW and concurrent Docs ownership                                                                           | No current attributable closure evidence                                                                                                                                                                                                                                                      | Incomplete                                                                               |
@@ -242,17 +286,19 @@ route/bootstrap and RT5/RT6 isolation; T7 shell boundaries and forwarding
 equivalence; and T8 frozen local closure. The separate 22-scenario BDD standard
 is not substituted for these groups.
 
-The next implementation authorization is the T1b receipt/producer-identity slice
-below. It must not redo the T1a/T2a files already present in HEAD. T2b
-freshness/receipt work follows its T1b contract; T3 verification and T4
-completion checks may then close their current partial lanes before T5, T6/T7
-and T8. A green baseline, the 97/100 planning score, the BDD-standard “Complete”
-label or the focused T4 review does not waive any package exit criterion.
+The T1b receipt/producer-identity slice below is now an executed slice and must
+not be repeated except to reproduce a regression. It did not redo the T1a/T2a
+files already present in HEAD. T2b freshness/receipt work and focused T3
+verification followed its contract. The next implementation work is the
+remaining T5–T7 evidence lanes, followed by T8a closure orchestration; those
+lanes must preserve the native MCP, freeze and identity boundaries below. A
+green baseline, the 97/100 planning score, the BDD-standard “Complete” label or
+the focused T4 review does not waive any package exit criterion.
 
-### Next atomic task: T1b receipt and producer identity
+### Executed atomic task: T1b receipt and producer identity
 
-This is the next reviewable task after the current T1a/T2a slices. It is not a
-request to repair the runner speculatively. The exact targets are
+This was the reviewable task after the T1a/T2a slices. It was not a request to
+repair the runner speculatively. The exact targets were
 `tests/unit/storybook/mcpExecutionReceipt.test.ts`,
 `tests/unit/storybook/producerIdentity.test.ts`,
 `tests/e2e/features/storybook/integrations/mcp.feature`,
@@ -282,9 +328,10 @@ contract regresses, and preserve all current dirty user files.
 
 ## Assumptions, boundaries, and unknowns
 
-This plan amendment performs no app implementation, dependency upgrade, server
-restart, commit or publishing. Existing implementation evidence is recorded for
-planning purposes only. At intake the worktree contained user changes in
+This plan amendment records partial implementation and verification, but does
+not authorize app feature redesign, dependency upgrades, publishing, or commits.
+Any server used for verification must be owned and stopped after the run.
+At intake the worktree contained user changes in
 `WizardRoutedStep.tsx`, new `useWizardStepController.ts`, and
 `package-lock.json`. During review the wizard extraction was committed
 externally as `15f82afa`; only the lockfile remained dirty at the final planning

@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 
 import * as Yup from 'yup';
-import { NotEmpty } from '../common';
+import { NotEmpty } from '../stringPredicates';
 
 const buildErrMsg = (
   label: string | undefined,

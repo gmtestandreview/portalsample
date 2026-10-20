@@ -16,9 +16,12 @@ function collectFiles(directory: string): string[] {
 }
 
 const evaluationFiles = evaluationDirectories.flatMap(collectFiles);
-const storyFiles = evaluationFiles.filter((file) =>
-  file.endsWith('.stories.tsx')
-);
+const storyFiles = evaluationFiles.filter((file) => {
+  if (!file.endsWith('.stories.tsx')) return false;
+  return /title:\s*['"]Evaluation\/React Aria\//.test(
+    readFileSync(file, 'utf8')
+  );
+});
 const sourceFiles = evaluationFiles.filter(
   (file) =>
     /\.(?:css|ts|tsx)$/.test(file) &&

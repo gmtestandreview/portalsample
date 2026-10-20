@@ -26,6 +26,13 @@ export const Info: Story = {
   args: {
     children: 'This is informational guidance for users.',
   },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await expect(
+      canvas.getByText('This is informational guidance for users.')
+    ).toBeVisible();
+  },
 };
 
 export const Success: Story = {
@@ -35,6 +42,11 @@ export const Success: Story = {
   args: {
     children: 'Saved successfully.',
   },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await expect(canvas.getByText('Saved successfully.')).toBeVisible();
+  },
 };
 
 export const Warning: Story = {
@@ -43,6 +55,13 @@ export const Warning: Story = {
   ),
   args: {
     children: 'Please review this warning before you continue.',
+  },
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    await expect(
+      canvas.getByText('Please review this warning before you continue.')
+    ).toBeVisible();
   },
 };
 
@@ -57,7 +76,7 @@ export const ErrorDismissible: Story = {
   play: async ({
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    const closeButton = canvas.getByRole('button', { name: /close/i });
+    const closeButton = canvas.getByRole('button', { name: 'Close alert' });
     await expect(closeButton).toBeVisible();
   },
 };

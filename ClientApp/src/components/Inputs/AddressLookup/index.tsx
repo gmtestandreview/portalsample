@@ -1,5 +1,5 @@
 import { useField } from 'formik';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import type { FieldHookConfig } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';

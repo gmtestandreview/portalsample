@@ -122,7 +122,7 @@ describe('unit coverage denominator', () => {
   it('measures handwritten runtime source and the vite config', () => {
     expect(coverage.include).toEqual([
       'ClientApp/src/**/*.{ts,tsx}',
-      'vite.config.ts',
+      'vite.config.mts',
     ]);
   });
 

@@ -2,7 +2,7 @@ import { Alert, Col, Row } from 'react-bootstrap';
 import { useEffect, useState, useRef } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { type TASupportingDocumentsProps, ValidationMessages } from './types';
 import {

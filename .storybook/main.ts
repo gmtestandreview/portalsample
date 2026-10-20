@@ -10,6 +10,29 @@ const sassDeprecationsToSilence = [
   'if-function',
 ];
 
+const applicationVendorGroups = [
+  {
+    name: 'react-runtime',
+    test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
+  },
+  {
+    name: 'auth',
+    test: /[\\/]node_modules[\\/]@azure[\\/]/,
+  },
+  {
+    name: 'forms',
+    test: /[\\/]node_modules[\\/](formik|yup)[\\/]/,
+  },
+  {
+    name: 'ui',
+    test: /[\\/]node_modules[\\/]react-bootstrap[\\/]/,
+  },
+  {
+    name: 'utilities',
+    test: /[\\/]node_modules[\\/](lodash|date-fns)[\\/]/,
+  },
+];
+
 const config = {
   framework: '@storybook/react-vite',
 
@@ -105,6 +128,7 @@ const config = {
             strictExecutionOrder: true,
             codeSplitting: {
               groups: [
+                ...applicationVendorGroups,
                 {
                   name: 'storybook-runtime',
                   test: /[\\/]node_modules[\\/]storybook[\\/]dist[\\/]preview[\\/]runtime\.js$/,

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { ReactElement } from 'react';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import { ErrorType } from './types';
 import type { WizardStepError, WizardStepProps } from './types';
@@ -267,7 +267,7 @@ export const useWizardStepController = (
     }
     const discardLocation = discard?.locationOnDiscard;
     if (discardLocation?.startsWith('https://')) {
-      globalThis.location.replace(env.EXTERNAL_REDIRECT_URL);
+      globalThis.location.replace(env.VITE_EXTERNAL_REDIRECT_URL);
       return;
     }
     void navigate(discard?.locationOnCancel || discardLocation || '/');

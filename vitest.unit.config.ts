@@ -29,7 +29,7 @@ const coverageConfig: CoverageOptions = {
   // state until Child Plan B1 lands, so coverage evidence has to survive it.
   reportOnFailure: true,
   reportsDirectory: './reports/coverage/unit',
-  include: ['ClientApp/src/**/*.{ts,tsx}', 'vite.config.ts'],
+  include: ['ClientApp/src/**/*.{ts,tsx}', 'vite.config.mts'],
   exclude: [
     '**/*.d.ts',
     'ClientApp/src/api/web-api-client.ts',

@@ -149,10 +149,10 @@ describe('PaRequestItem', () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     expect(
-      await screen.findByRole('link', { name: 'View application details' })
+      await screen.findByRole('menuitem', { name: 'View application details' })
     ).toHaveAttribute('href', '/ta/PA-2024-0001/manage');
     await user.click(
-      screen.getByRole('link', { name: 'View application details' })
+      screen.getByRole('menuitem', { name: 'View application details' })
     );
     expect(mocks.trackGAEvent).toHaveBeenCalledWith('Viewapplicationdetails');
   });
@@ -175,10 +175,12 @@ describe('PaRequestItem', () => {
       await user.click(screen.getByRole('button', { name: 'Actions' }));
 
       expect(
-        await screen.findByRole('link', { name: 'View application details' })
+        await screen.findByRole('menuitem', {
+          name: 'View application details',
+        })
       ).toHaveAttribute('href', `/ta/PA-${status}/manage`);
       expect(
-        screen.getByRole('button', { name: 'View messages' })
+        screen.getByRole('menuitem', { name: 'View messages' })
       ).toBeInTheDocument();
     }
   );
@@ -220,7 +222,7 @@ describe('PaRequestItem', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    const resumeAction = await screen.findByRole('link', {
+    const resumeAction = await screen.findByRole('menuitem', {
       name: 'Resume application',
     });
     expect(resumeAction).toHaveAttribute('href', '/ta/PA-2024-0001');
@@ -229,7 +231,7 @@ describe('PaRequestItem', () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      screen.getByRole('button', { name: 'Delete application' })
+      screen.getByRole('menuitem', { name: 'Delete application' })
     );
 
     expect(
@@ -273,7 +275,7 @@ describe('PaRequestItem', () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      await screen.findByRole('button', { name: 'Delete application' })
+      await screen.findByRole('menuitem', { name: 'Delete application' })
     );
     await user.click(
       screen.getByRole('button', { name: 'Yes, delete application' })
@@ -318,7 +320,7 @@ describe('PaRequestItem', () => {
 
       await user.click(screen.getByRole('button', { name: 'Actions' }));
       await user.click(
-        screen.getByRole('button', { name: 'Delete application' })
+        screen.getByRole('menuitem', { name: 'Delete application' })
       );
 
       expect(
@@ -364,10 +366,10 @@ describe('PaRequestItem', () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     expect(
-      screen.queryByRole('link', { name: 'View application details' })
+      screen.queryByRole('menuitem', { name: 'View application details' })
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Delete application' })
+      screen.queryByRole('menuitem', { name: 'Delete application' })
     ).not.toBeInTheDocument();
   });
 });

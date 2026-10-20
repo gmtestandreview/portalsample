@@ -22,35 +22,8 @@
     />
     <link rel="apple-touch-icon" href="/NMI-tile.png" />
 
-    <!--
-    Runtime configuration — injected before the bundle loads.
-    In development (vite dev), the envTemplatePlugin in vite.config.ts
-    replaces the EJS tags with dev defaults. In CI/production, supply real
-    values via environment variables.
-
-    NEVER use process.env in source code — these globalThis.* values are the
-    only runtime config mechanism. See ClientApp/src/env.ts.
-  -->
-    <script>
-      'use strict';
-      globalThis.REACT_APP_B2C_CLIENTID = '<%= REACT_APP_B2C_CLIENTID %>';
-      globalThis.REACT_APP_B2C_AUTHORITY = '<%= REACT_APP_B2C_AUTHORITY %>';
-      globalThis.REACT_APP_B2C_KNOWN_AUTHORITIES =
-        '<%= REACT_APP_B2C_KNOWN_AUTHORITIES %>';
-      globalThis.REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL =
-        '<%= REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL %>';
-      globalThis.REACT_APP_B2C_READ_SCOPE = '<%= REACT_APP_B2C_READ_SCOPE %>';
-      globalThis.REACT_APP_B2C_USER_IMPERSONATION_SCOPE =
-        '<%= REACT_APP_B2C_USER_IMPERSONATION_SCOPE %>';
-      globalThis.REACT_APP_B2C_REDIRECT_URL =
-        '<%= REACT_APP_B2C_REDIRECT_URL %>';
-      globalThis.EXTERNAL_REDIRECT_URL = '<%= EXTERNAL_REDIRECT_URL %>';
-      globalThis.REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY =
-        '<%= REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY %>';
-      globalThis.REACT_APP_APPINSIGHTS_CONN_STRING =
-        '<%= REACT_APP_APPINSIGHTS_CONN_STRING %>';
-      globalThis.REACT_APP_GA_TRACKINGID = '<%= REACT_APP_GA_TRACKINGID %>';
-    </script>
+    <!-- Vite replaces this build-time signal through envTemplatePlugin. -->
+    <meta name="nmi-environment" content="<%= VITE_ENVIRONMENT %>" />
   </head>
   <body>
     <div id="root"></div>

@@ -1,4 +1,4 @@
-import { keys } from 'lodash';
+import keys from 'lodash/keys';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useWatch } from 'react-hook-form';
 import { Title } from '../../../../api/web-api-client';

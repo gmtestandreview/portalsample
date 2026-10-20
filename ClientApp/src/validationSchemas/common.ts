@@ -1,15 +1,9 @@
 /* eslint-disable no-useless-escape */
-import { isEmpty, trim } from 'lodash';
 import './yupExtensions';
 import * as yup from 'yup';
 import { isAfter, startOfDay } from 'date-fns';
 import { containsWhitespace, parseDate } from '../utils';
-
-export const NotEmpty = (value: string | undefined | null) =>
-  value !== undefined && value !== null && !isEmpty(trim(value));
-
-export const IsEmpty = (value: string | undefined | null) =>
-  value === undefined || value === null || isEmpty(trim(value));
+export { IsEmpty, NotEmpty } from './stringPredicates';
 
 export const isEmptyDate = (value: unknown) => {
   if (value === undefined || value === null) {

@@ -1,5 +1,5 @@
 import Form from 'react-bootstrap/Form';
-import { trim } from 'lodash';
+import trim from 'lodash/trim';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
 import { omitUndefined } from '../../../utils/omitUndefined';

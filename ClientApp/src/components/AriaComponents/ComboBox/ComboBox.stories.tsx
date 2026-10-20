@@ -1,7 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ComboBox, ComboBoxItem } from './ComboBox';
-import type { Meta, StoryFn } from '@storybook/react-vite';
-import { expect, userEvent } from 'storybook/test';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -17,18 +17,36 @@ const meta = {
 
 export default meta;
 type Story = StoryFn<typeof ComboBox>;
+type ObjectStory = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ComboBox {...args}>
-    <ComboBoxItem>Chocolate</ComboBoxItem>
-    <ComboBoxItem>Mint</ComboBoxItem>
-    <ComboBoxItem>Strawberry</ComboBoxItem>
-    <ComboBoxItem>Vanilla</ComboBoxItem>
-  </ComboBox>
-);
+export const Example: ObjectStory = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <ComboBoxItem>Chocolate</ComboBoxItem>
+      <ComboBoxItem>Mint</ComboBoxItem>
+      <ComboBoxItem>Strawberry</ComboBoxItem>
+      <ComboBoxItem>Vanilla</ComboBoxItem>
+    </ComboBox>
+  ),
+  args: {
+    label: 'Ice cream flavor',
+    children: null,
+  },
+  play: async ({ canvas, canvasElement }) => {
+    const input = canvas.getByRole('combobox', { name: 'Ice cream flavor' });
+    const suggestions = canvas.getByRole('button', {
+      name: /Show suggestions/,
+    });
 
-Example.args = {
-  label: 'Ice cream flavor',
+    await expect(input).toBeInTheDocument();
+    await userEvent.click(suggestions);
+    await expect(suggestions).toHaveAttribute('aria-expanded', 'true');
+    await expect(
+      within(canvasElement.ownerDocument.body).getByRole('option', {
+        name: 'Chocolate',
+      })
+    ).toBeInTheDocument();
+  },
 };
 
 const flavours = (

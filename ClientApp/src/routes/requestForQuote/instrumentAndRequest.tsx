@@ -1,6 +1,6 @@
 import { useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { forEach } from 'lodash';
+import forEach from 'lodash/forEach';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';

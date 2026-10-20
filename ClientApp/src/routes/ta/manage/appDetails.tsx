@@ -1,6 +1,14 @@
 import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useMsal } from '@azure/msal-react';
 import { FormProvider, useForm } from 'react-hook-form';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
@@ -27,9 +35,10 @@ import appDetailsProps from './appDetailsProps';
 import OrganisationSummary from '../summary/OrganisationSummary';
 import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import ApplicationDocuments from './appDocuments';
-import ApplicationMessages from './appMessages';
 import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
+
+const ApplicationMessages = lazy(() => import('./appMessages'));
 
 const POLL_MS = 5000;
 
@@ -496,7 +505,15 @@ const ApplicationDetails = () => {
             </Tab.Pane>
             <Tab.Pane eventKey='messages' tabIndex={0}>
               {loadMessagesTab ? (
-                <ApplicationMessages key={messagesRefreshKey} />
+                <Suspense
+                  fallback={
+                    <BlockUISpinner partial>
+                      <p>Loading messages...</p>
+                    </BlockUISpinner>
+                  }
+                >
+                  <ApplicationMessages key={messagesRefreshKey} />
+                </Suspense>
               ) : null}
             </Tab.Pane>
             <Tab.Pane eventKey='documents' tabIndex={0}>

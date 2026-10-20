@@ -28,7 +28,7 @@ export const SingleSection: Story = {
   play: async ({
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    await expect(canvas.getByText(/quote request details/i)).toBeVisible();
+    await expect(canvas.getByText('Quote request details')).toBeVisible();
   },
 };
 

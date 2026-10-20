@@ -7,6 +7,7 @@ import { onLog } from '../../../.storybook/rollupOnLog';
 
 const main = readFileSync('.storybook/main.ts', 'utf8');
 const preview = readFileSync('.storybook/preview.ts', 'utf8');
+const previewHead = readFileSync('.storybook/preview-head.html', 'utf8');
 const componentDocsGuide = readFileSync(
   '.storybook/component-docs-guide.mdx',
   'utf8'
@@ -380,7 +381,14 @@ describe('Storybook documentation architecture', () => {
       banner: '"use client";',
       strictExecutionOrder: true,
       codeSplitting: {
-        groups: [{ name: 'storybook-runtime', test: expect.any(RegExp) }],
+        groups: expect.arrayContaining([
+          { name: 'react-runtime', test: expect.any(RegExp) },
+          { name: 'auth', test: expect.any(RegExp) },
+          { name: 'forms', test: expect.any(RegExp) },
+          { name: 'ui', test: expect.any(RegExp) },
+          { name: 'utilities', test: expect.any(RegExp) },
+          { name: 'storybook-runtime', test: expect.any(RegExp) },
+        ]),
       },
     });
   });
@@ -462,6 +470,12 @@ describe('Storybook documentation architecture', () => {
     );
 
     expect(legacyMswParameters.map(({ path }) => path)).toEqual([]);
+  });
+
+  it('references public font assets at Vite root URLs', () => {
+    expect(previewHead).toContain('href="/fonts/fonts.css"');
+    expect(previewHead).toContain('href="/fonts/nmi-iconfonts.css"');
+    expect(preview).not.toContain('ClientApp/public/fonts');
   });
 
   it('composes the Docs preview annotations required by definePreview', () => {

@@ -50,6 +50,15 @@ type CoverageModule = {
     manifest: unknown,
     discovery: Discovery
   ): ValidationResult;
+  generateInventory(input: { manifest: unknown }): {
+    ok: boolean;
+    errors: ValidationResult['errors'];
+    regions?: {
+      components: string;
+      routes: string;
+      matrix: string;
+    };
+  };
 };
 
 // The maintained CLI is JavaScript; this local contract keeps the test typed
@@ -59,8 +68,13 @@ const untypedCoverageModule =
   await import('../../../scripts/storybook-coverage.mjs');
 const coverageModule = untypedCoverageModule as unknown as CoverageModule;
 
-const { discoverSourceExports, main, validateManifest, validateSourceClaims } =
-  coverageModule;
+const {
+  discoverSourceExports,
+  generateInventory,
+  main,
+  validateManifest,
+  validateSourceClaims,
+} = coverageModule;
 
 const validState: CoverageState = {
   name: 'default',
@@ -224,6 +238,59 @@ describe('recursive canonical source/export discovery', () => {
       expect.objectContaining({ export: 'Field' })
     );
   });
+
+  it('canonicalises local imported re-exports and ignores package re-exports', () => {
+    const result = discoverSourceExports({
+      files: [
+        {
+          path: 'ClientApp/src/components/Content.tsx',
+          content: 'export const Text = () => null;\n',
+        },
+        {
+          path: 'ClientApp/src/components/ReExports.tsx',
+          content:
+            "import { Text } from './Content';\nexport { Text };\nexport { Heading } from 'react-aria-components';\n",
+        },
+      ],
+    });
+
+    expect(result.unresolved).toEqual([]);
+    expect(result.exports).toContainEqual({
+      source: 'ClientApp/src/components/Content.tsx',
+      export: 'Text',
+      kind: 'renderable',
+    });
+    expect(result.exports).not.toContainEqual(
+      expect.objectContaining({ export: 'Heading' })
+    );
+    expect(
+      result.exports.filter((entry) => entry.export === 'Text')
+    ).toHaveLength(1);
+  });
+
+  it('limits discovery to component and route source trees', () => {
+    const result = discoverSourceExports({
+      files: [
+        {
+          path: 'ClientApp/src/components/Field.tsx',
+          content: 'export const Field = () => null;\n',
+        },
+        {
+          path: 'ClientApp/src/validationSchemas/contactValidation.ts',
+          content: 'export const emailSchema = {};\n',
+        },
+      ],
+    });
+
+    expect(result.exports).toContainEqual({
+      source: 'ClientApp/src/components/Field.tsx',
+      export: 'Field',
+      kind: 'renderable',
+    });
+    expect(result.exports).not.toContainEqual(
+      expect.objectContaining({ export: 'emailSchema' })
+    );
+  });
 });
 
 describe('renderable evidence and claim validation', () => {
@@ -317,6 +384,32 @@ describe('renderable evidence and claim validation', () => {
     });
   });
 
+  it('rejects discovered exports that have no manifest claim', () => {
+    const result = validateSourceClaims(validManifest, {
+      exports: [
+        {
+          source: validRecord.source,
+          export: validRecord.export,
+          kind: 'renderable',
+        },
+        {
+          source: 'ClientApp/src/components/Unclaimed.tsx',
+          export: 'Unclaimed',
+          kind: 'renderable',
+        },
+      ],
+      unresolved: [],
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.errors).toContainEqual(
+      expect.objectContaining({
+        code: 'EVIDENCE_MISSING',
+        path: 'ClientApp/src/components/Unclaimed.tsx',
+      })
+    );
+  });
+
   it('rejects unresolved source/export claims', () => {
     expect(
       validateSourceClaims(validManifest, {
@@ -364,7 +457,9 @@ describe('renderable evidence and claim validation', () => {
       )
     ).toMatchObject({
       ok: false,
-      errors: [expect.objectContaining({ code: 'SOURCE_UNRESOLVED' })],
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'SOURCE_UNRESOLVED' }),
+      ]),
     });
   });
 });
@@ -389,5 +484,67 @@ describe('guarded Storybook coverage CLI', () => {
         sourceModeFixtureDirectory,
       ])
     ).toMatchObject({ exitCode: 0, errors: [] });
+  });
+});
+
+describe('deterministic inventory generation', () => {
+  it('renders sorted source rows and a count summary without runtime metadata', () => {
+    const result = generateInventory({
+      manifest: {
+        ...validManifest,
+        records: [
+          validRecord,
+          {
+            ...validRecord,
+            source: 'ClientApp/src/components/Zed.tsx',
+            export: 'Zed',
+            owner: 'Zed component',
+            docsOwnerId: 'components-zed',
+          },
+          {
+            ...validRecord,
+            source: 'ClientApp/src/routes/Example.tsx',
+            export: 'ExampleRoute',
+            owner: 'Example route',
+            docsOwnerId: 'routes-example',
+            states: [
+              {
+                ...validState,
+                storyFile: 'ClientApp/src/routes/Example.stories.tsx',
+                storyExport: 'Default',
+                storyId: 'routes-example--default',
+                assertionFile: 'ClientApp/src/routes/Example.stories.tsx',
+                assertionExport: 'Default.play',
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(result).toMatchObject({ ok: true, errors: [] });
+    expect(result.regions?.components).toContain(
+      'ClientApp/src/components/Field.tsx#Field'
+    );
+    expect(result.regions?.routes).toContain(
+      'ClientApp/src/routes/Example.tsx#ExampleRoute'
+    );
+    expect(result.regions?.matrix).toContain('Renderable records: 3');
+    expect(result.regions?.matrix).not.toMatch(
+      /generatedAt|receiptId|timestamp/u
+    );
+    const componentRegion = result.regions?.components ?? '';
+    expect(componentRegion.indexOf('Field.tsx#Field')).toBeLessThan(
+      componentRegion.indexOf('Zed.tsx#Zed')
+    );
+  });
+
+  it('refuses to generate regions from an invalid manifest', () => {
+    expect(
+      generateInventory({ manifest: { schemaVersion: 2, records: [] } })
+    ).toMatchObject({
+      ok: false,
+      errors: [expect.objectContaining({ code: 'MANIFEST_SCHEMA_INVALID' })],
+    });
   });
 });

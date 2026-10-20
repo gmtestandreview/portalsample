@@ -161,7 +161,7 @@ describe('installUnexpectedConsoleGuard', () => {
     ['warn', ARIA_LABEL_WARNING],
     [
       'error',
-      '[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID',
+      '[env] Missing required environment variable: VITE_GA_TRACKINGID',
     ],
   ] as const)(
     'treats the known %s signature as unexpected when unconsumed',

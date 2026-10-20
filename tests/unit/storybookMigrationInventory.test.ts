@@ -76,9 +76,15 @@ describe('Storybook migration inventory', () => {
       })
       .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
       .map((entry) => entry.name);
+    const componentTableRows = componentDoc
+      .split(/\r?\n/)
+      .map((line) => line.split('|').map((cell) => cell.trim()));
 
     componentDirectories.forEach((directory) => {
-      expect(componentDoc).toContain(`| \`${directory}\` |`);
+      expect(
+        componentTableRows.some((cells) => cells.includes(`\`${directory}\``)),
+        `"${directory}" not documented in ComponentInventory.docs.mdx`
+      ).toBe(true);
     });
   });
 

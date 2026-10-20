@@ -6,19 +6,19 @@ afterEach(() => {
   cleanup();
 });
 
-Object.assign(globalThis, {
-  REACT_APP_B2C_CLIENTID: 'test-client-id',
-  REACT_APP_B2C_AUTHORITY: 'https://login.microsoftonline.com/common',
-  REACT_APP_B2C_KNOWN_AUTHORITIES: 'login.microsoftonline.com',
-  REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: 'http://localhost:3000',
-  REACT_APP_B2C_READ_SCOPE: 'openid',
-  REACT_APP_B2C_USER_IMPERSONATION_SCOPE: 'openid',
-  REACT_APP_B2C_REDIRECT_URL: 'http://localhost:3000',
-  REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: 'test-instrumentation-key',
-  REACT_APP_APPINSIGHTS_CONN_STRING:
-    'InstrumentationKey=test-instrumentation-key',
-  REACT_APP_GA_TRACKINGID: 'test-ga-id',
-  EXTERNAL_REDIRECT_URL: 'http://localhost:3000',
+Object.assign(import.meta.env, {
+  VITE_B2C_CLIENTID: 'test-client-id',
+  VITE_B2C_AUTHORITY: 'https://login.microsoftonline.com/common',
+  VITE_B2C_KNOWN_AUTHORITIES: 'login.microsoftonline.com',
+  VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'http://localhost:3000',
+  VITE_B2C_READ_SCOPE: 'openid',
+  VITE_B2C_USER_IMPERSONATION_SCOPE: 'openid',
+  VITE_B2C_REDIRECT_URL: 'http://localhost:3000',
+  VITE_APPINSIGHTS_INSTRUMENTATIONKEY: 'test-instrumentation-key',
+  VITE_APPINSIGHTS_CONN_STRING: 'InstrumentationKey=test-instrumentation-key',
+  VITE_GA_TRACKINGID: 'test-ga-id',
+  VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:3000',
+  VITE_ENVIRONMENT: 'development',
 });
 
 if (!globalThis.matchMedia) {

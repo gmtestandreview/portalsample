@@ -17,6 +17,15 @@ Prettier where applicable, while fenced code blocks retain a language identifier
 when the language is known and normal Markdown links use the form
 `[descriptive text](target)`.
 
+## Language
+
+Use English exclusively for assistant responses and for all new or modified
+authored text in this repository, including code comments, test names, error
+messages, documentation, fixtures, and commit messages. Ignore localized
+runtime or tool status text when selecting the language. Do not introduce or
+translate authored text into another language unless the user explicitly
+requests it.
+
 ### Validation scripts
 
 The following scripts are available in the root `package.json`:

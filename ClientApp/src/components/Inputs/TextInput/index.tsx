@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form';
 import type { AriaAttributes, AriaRole, ReactNode } from 'react';
 import { useField } from 'formik';
-import { trim } from 'lodash';
+import trim from 'lodash/trim';
 import { format, parseISO } from 'date-fns';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';

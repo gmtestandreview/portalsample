@@ -1,5 +1,6 @@
 import { useField } from 'formik';
-import { forEach, keys } from 'lodash';
+import forEach from 'lodash/forEach';
+import keys from 'lodash/keys';
 import { Col, Form, Row } from 'react-bootstrap';
 import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';

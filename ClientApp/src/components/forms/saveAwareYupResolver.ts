@@ -1,4 +1,5 @@
-import { get, set } from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
 import type { ValidationSchema } from './types';

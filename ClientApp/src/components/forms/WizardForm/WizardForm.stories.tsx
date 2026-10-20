@@ -31,6 +31,8 @@ const stateOptions = [
   { value: 'NT', displayText: 'Northern Territory' },
 ];
 
+const WizardCompleteDestination = () => <p>Wizard completed</p>;
+
 const meta = {
   title: 'Forms/WizardForm',
   parameters: { layout: 'fullscreen' },
@@ -98,7 +100,14 @@ export const Step1ContactDetails: Story = {
 };
 
 export const Step2WithPreviousCompleted: Story = {
-  parameters: { portal: { initialEntries: ['/step-2'] } },
+  parameters: {
+    portal: {
+      initialEntries: ['/step-2'],
+      destinationRoutes: [
+        { path: '/dashboard', element: <WizardCompleteDestination /> },
+      ],
+    },
+  },
   render: () => (
     <WizardForm
       locationOnCompletion='/dashboard'
@@ -137,6 +146,7 @@ export const Step2WithPreviousCompleted: Story = {
         loadStepValues={async () => ({
           stepValues: { state: '', notes: '' },
         })}
+        onSaveAndNext={async () => undefined}
         bannerTitle='Instrument details'
       >
         <SelectInput<string>
@@ -149,6 +159,22 @@ export const Step2WithPreviousCompleted: Story = {
       </WizardStep>
     </WizardForm>
   ),
+  play: async ({
+    canvasElement,
+    userEvent,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('heading', { level: 1, name: 'Organisation details' })
+    ).toBeVisible();
+    const state = canvas.getByRole('combobox', {
+      name: 'State or territory',
+    });
+    await userEvent.selectOptions(state, 'ACT');
+    await expect(state).toHaveValue('ACT');
+    await userEvent.click(canvas.getByRole('button', { name: 'Submit' }));
+    await expect(await canvas.findByText('Wizard completed')).toBeVisible();
+  },
 };
 
 export const ThreeStepSummaryPage: Story = {

@@ -1,13 +1,11 @@
 import { format, isValid, parse } from 'date-fns';
 import { enAU } from 'date-fns/locale';
-import {
-  entriesIn,
-  fromPairs,
-  isArray,
-  isNil,
-  isString,
-  replace,
-} from 'lodash';
+import entriesIn from 'lodash/entriesIn';
+import fromPairs from 'lodash/fromPairs';
+import isArray from 'lodash/isArray';
+import isNil from 'lodash/isNil';
+import isString from 'lodash/isString';
+import replace from 'lodash/replace';
 import type { FilterKeys } from '../types';
 
 const DATE_TIME_LOCALE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxx";
@@ -199,11 +197,11 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
     return '0 Bytes';
   }
   const k = 1024;
-  const decimals = decimalPoints < 0 ? 0 : decimalPoints;
+  const decimals = Math.max(decimalPoints, 0);
   const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
   const index = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes[index]}`;
+  return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes[index]}`;
 };
 
 export const formatDate = (
@@ -289,16 +287,15 @@ export const splitPascalCase = (word: string, casing: SplitCase) => {
 export const base64toBlob = (
   base64Data: string,
   contentType: string,
-  sliceSizeIn?: number
+  sliceSize = 512
 ) => {
-  const sliceSize = sliceSizeIn || 512;
   const byteCharacters = atob(base64Data);
   const byteArrays = [];
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice = byteCharacters.slice(offset, offset + sliceSize);
     const byteNumbers = new Array(slice.length);
     for (let i = 0; i < slice.length; i += 1) {
-      byteNumbers[i] = slice.charCodeAt(i);
+      byteNumbers[i] = slice.codePointAt(i);
     }
     const byteArray = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);

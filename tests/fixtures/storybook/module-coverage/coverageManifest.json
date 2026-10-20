@@ -25,7 +25,7 @@
       "review": {
         "reviewer": "storybook-remediation",
         "rationale": "The source export and asserted story are reviewed together.",
-        "reviewedSourceDigest": "sha256:field-source"
+        "reviewedSourceDigest": "sha256:a1ed0936e5baa2065bd6b941340928f9008ba0bb10e06156d8a4fe553f86ce6f"
       }
     }
   ]

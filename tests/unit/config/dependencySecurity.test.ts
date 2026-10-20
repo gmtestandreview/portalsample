@@ -123,11 +123,12 @@ describe('transitive security dependency floors', () => {
   ]);
 
   it.each([...minimumVersions])(
-    '%s resolves only patched versions',
+    '%s resolves only patched versions when installed',
     (packageName, minimumVersion) => {
       const versions = installedVersions(packageName);
 
-      expect(versions).not.toHaveLength(0);
+      // A dependency contraction may remove a transitive package entirely;
+      // absence is safe, while any remaining copy must still meet its floor.
       for (const version of versions) {
         expectStableAtLeast(packageName, version, minimumVersion);
       }

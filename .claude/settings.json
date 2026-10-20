@@ -218,7 +218,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"require((process.env.CLAUDE_PROJECT_DIR || process.cwd()) + '/scripts/pre_tool_use_wrapper.cjs')\""
+            "command": "node -e \"import(require('url').pathToFileURL(require('path').join(process.env.CLAUDE_PROJECT_DIR||process.cwd(),'scripts','pre_tool_use_wrapper.mjs')).href).catch(()=>process.exit(2))\""
           }
         ]
       },
@@ -245,7 +245,7 @@
           },
           {
             "type": "command",
-            "command": "if test -f scripts/watcher.py; then (node scripts/python314.cjs scripts/watcher.py >/dev/null 2>&1) & fi"
+            "command": "if test -f scripts/watcher.py; then (node scripts/python314.mjs scripts/watcher.py >/dev/null 2>&1) & fi"
           }
         ]
       }

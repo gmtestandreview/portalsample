@@ -1,69 +1,53 @@
-declare global {
-  // Runtime config injected into the global scope by the HTML template.
-
-  var REACT_APP_B2C_CLIENTID: string | undefined;
-  var REACT_APP_B2C_AUTHORITY: string | undefined;
-  var REACT_APP_B2C_KNOWN_AUTHORITIES: string | undefined;
-  var REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: string | undefined;
-  var REACT_APP_B2C_READ_SCOPE: string | undefined;
-  var REACT_APP_B2C_USER_IMPERSONATION_SCOPE: string | undefined;
-  var REACT_APP_B2C_REDIRECT_URL: string | undefined;
-  var EXTERNAL_REDIRECT_URL: string | undefined;
-  var REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: string | undefined;
-  var REACT_APP_APPINSIGHTS_CONN_STRING: string | undefined;
-  var REACT_APP_GA_TRACKINGID: string | undefined;
-  var REACT_APP_ENVIRONMENT: string | undefined;
-}
-
 type EnvType = {
-  REACT_APP_B2C_CLIENTID: string;
-  REACT_APP_B2C_AUTHORITY: string;
-  REACT_APP_B2C_KNOWN_AUTHORITIES: string;
-  REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: string;
-  REACT_APP_B2C_READ_SCOPE: string;
-  REACT_APP_B2C_USER_IMPERSONATION_SCOPE: string;
-  REACT_APP_B2C_REDIRECT_URL: string;
-  EXTERNAL_REDIRECT_URL: string;
-  REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: string;
-  REACT_APP_APPINSIGHTS_CONN_STRING: string;
-  REACT_APP_GA_TRACKINGID: string;
-  REACT_APP_ENVIRONMENT: string;
+  VITE_B2C_CLIENTID: string;
+  VITE_B2C_AUTHORITY: string;
+  VITE_B2C_KNOWN_AUTHORITIES: string;
+  VITE_B2C_POST_LOGOUT_REDIRECT_URL: string;
+  VITE_B2C_READ_SCOPE: string;
+  VITE_B2C_USER_IMPERSONATION_SCOPE: string;
+  VITE_B2C_REDIRECT_URL: string;
+  VITE_EXTERNAL_REDIRECT_URL: string;
+  VITE_APPINSIGHTS_INSTRUMENTATIONKEY: string;
+  VITE_APPINSIGHTS_CONN_STRING: string;
+  VITE_GA_TRACKINGID: string;
+  VITE_ENVIRONMENT: string;
 };
 
-const requiredVars: (keyof EnvType)[] = [
-  'REACT_APP_B2C_CLIENTID',
-  'REACT_APP_B2C_AUTHORITY',
-  'REACT_APP_B2C_KNOWN_AUTHORITIES',
-  'REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL',
-  'REACT_APP_B2C_READ_SCOPE',
-  'REACT_APP_B2C_USER_IMPERSONATION_SCOPE',
-  'REACT_APP_B2C_REDIRECT_URL',
-  'EXTERNAL_REDIRECT_URL',
-  'REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY',
-  'REACT_APP_APPINSIGHTS_CONN_STRING',
-  'REACT_APP_GA_TRACKINGID',
+const requiredVars: readonly (keyof EnvType)[] = [
+  'VITE_B2C_CLIENTID',
+  'VITE_B2C_AUTHORITY',
+  'VITE_B2C_KNOWN_AUTHORITIES',
+  'VITE_B2C_POST_LOGOUT_REDIRECT_URL',
+  'VITE_B2C_READ_SCOPE',
+  'VITE_B2C_USER_IMPERSONATION_SCOPE',
+  'VITE_B2C_REDIRECT_URL',
+  'VITE_EXTERNAL_REDIRECT_URL',
+  'VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
+  'VITE_APPINSIGHTS_CONN_STRING',
+  'VITE_GA_TRACKINGID',
+  'VITE_ENVIRONMENT',
 ];
 
 // Telemetry is reported as missing only outside development. Local dev and
-// Storybook have no instrumentation backend to point these at - Storybook stubs
-// both as empty strings - and the app degrades cleanly without them, so an
-// absent key there is a deliberate configuration, not a misconfiguration.
-// Everywhere else they stay required, so a genuinely unconfigured deployment
-// still says so.
+// Storybook have no instrumentation backend to point these at, so the app
+// degrades cleanly without them. Production builds still report missing
+// telemetry configuration rather than silently accepting an incomplete setup.
 const developmentOptionalVars = new Set<keyof EnvType>([
-  'REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY',
-  'REACT_APP_GA_TRACKINGID',
+  'VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
+  'VITE_GA_TRACKINGID',
 ]);
 
-const isDevelopment = globalThis.REACT_APP_ENVIRONMENT === 'development';
-
 requiredVars.forEach((key) => {
-  if (isDevelopment && developmentOptionalVars.has(key)) {
+  if (
+    import.meta.env.DEV === true &&
+    import.meta.env.MODE !== 'production' &&
+    developmentOptionalVars.has(key)
+  ) {
     return;
   }
 
-  if (!globalThis[key]) {
-    console.error(`[env] Missing required runtime variable: ${key}`);
+  if (!import.meta.env[key]) {
+    console.error(`[env] Missing required environment variable: ${key}`);
   }
 });
 
@@ -73,36 +57,35 @@ const isAllowedRedirectHost = (urlStr: string): boolean => {
   try {
     const { hostname } = new URL(urlStr);
     return ALLOWED_REDIRECT_HOSTS.some(
-      (h) => hostname === h || hostname.endsWith(`.${h}`)
+      (host) => hostname === host || hostname.endsWith(`.${host}`)
     );
   } catch {
     return false;
   }
 };
 
-const externalRedirectUrl = globalThis.EXTERNAL_REDIRECT_URL ?? '';
+const externalRedirectUrl = import.meta.env.VITE_EXTERNAL_REDIRECT_URL ?? '';
 if (externalRedirectUrl && !isAllowedRedirectHost(externalRedirectUrl)) {
   throw new Error(
-    `[env] EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`
+    `[env] VITE_EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`
   );
 }
 
 export const env: EnvType = {
-  REACT_APP_B2C_CLIENTID: globalThis.REACT_APP_B2C_CLIENTID ?? '',
-  REACT_APP_B2C_AUTHORITY: globalThis.REACT_APP_B2C_AUTHORITY ?? '',
-  REACT_APP_B2C_KNOWN_AUTHORITIES:
-    globalThis.REACT_APP_B2C_KNOWN_AUTHORITIES ?? '',
-  REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL:
-    globalThis.REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL ?? '',
-  REACT_APP_B2C_READ_SCOPE: globalThis.REACT_APP_B2C_READ_SCOPE ?? '',
-  REACT_APP_B2C_USER_IMPERSONATION_SCOPE:
-    globalThis.REACT_APP_B2C_USER_IMPERSONATION_SCOPE ?? '',
-  REACT_APP_B2C_REDIRECT_URL: globalThis.REACT_APP_B2C_REDIRECT_URL ?? '',
-  EXTERNAL_REDIRECT_URL: globalThis.EXTERNAL_REDIRECT_URL ?? '',
-  REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY:
-    globalThis.REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY ?? '',
-  REACT_APP_APPINSIGHTS_CONN_STRING:
-    globalThis.REACT_APP_APPINSIGHTS_CONN_STRING ?? '',
-  REACT_APP_GA_TRACKINGID: globalThis.REACT_APP_GA_TRACKINGID ?? '',
-  REACT_APP_ENVIRONMENT: globalThis.REACT_APP_ENVIRONMENT ?? '',
+  VITE_B2C_CLIENTID: import.meta.env.VITE_B2C_CLIENTID ?? '',
+  VITE_B2C_AUTHORITY: import.meta.env.VITE_B2C_AUTHORITY ?? '',
+  VITE_B2C_KNOWN_AUTHORITIES: import.meta.env.VITE_B2C_KNOWN_AUTHORITIES ?? '',
+  VITE_B2C_POST_LOGOUT_REDIRECT_URL:
+    import.meta.env.VITE_B2C_POST_LOGOUT_REDIRECT_URL ?? '',
+  VITE_B2C_READ_SCOPE: import.meta.env.VITE_B2C_READ_SCOPE ?? '',
+  VITE_B2C_USER_IMPERSONATION_SCOPE:
+    import.meta.env.VITE_B2C_USER_IMPERSONATION_SCOPE ?? '',
+  VITE_B2C_REDIRECT_URL: import.meta.env.VITE_B2C_REDIRECT_URL ?? '',
+  VITE_EXTERNAL_REDIRECT_URL: externalRedirectUrl,
+  VITE_APPINSIGHTS_INSTRUMENTATIONKEY:
+    import.meta.env.VITE_APPINSIGHTS_INSTRUMENTATIONKEY ?? '',
+  VITE_APPINSIGHTS_CONN_STRING:
+    import.meta.env.VITE_APPINSIGHTS_CONN_STRING ?? '',
+  VITE_GA_TRACKINGID: import.meta.env.VITE_GA_TRACKINGID ?? '',
+  VITE_ENVIRONMENT: import.meta.env.VITE_ENVIRONMENT ?? '',
 };

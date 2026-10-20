@@ -42,13 +42,13 @@ export default defineConfig(
   },
   {
     name: 'nmi/javascript-recommended',
-    files: ['**/*.{js,ts,tsx}'],
+    files: ['**/*.{js,ts,tsx,mts}'],
     extends: [js.configs.recommended],
   },
 
   {
     name: 'nmi/typescript-parser',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     extends: [tseslint.configs.recommended],
     languageOptions: {
       parser: tseslint.parser,
@@ -64,7 +64,7 @@ export default defineConfig(
   },
   {
     name: 'nmi/react',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     ...eslintReact.configs['recommended-typescript'],
   },
 
@@ -105,7 +105,7 @@ export default defineConfig(
 
   {
     name: 'nmi/base',
-    files: ['**/*.{ts,tsx,js,jsx,cjs,mjs}'],
+    files: ['**/*.{ts,tsx,js,jsx,cjs,mjs,mts}'],
     plugins: { '@stylistic': stylistic, '@typescript-eslint': tseslint.plugin },
     languageOptions: {
       ecmaVersion: 'latest',
@@ -128,7 +128,7 @@ export default defineConfig(
 
   {
     name: 'nmi/typescript-rules',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     rules: {
       '@typescript-eslint/consistent-type-imports': [
         'error',
@@ -248,7 +248,7 @@ export default defineConfig(
 
   {
     name: 'nmi/node-config-files',
-    files: ['*.config.{ts,js}', 'vitest*.ts', 'playwright.config.ts'],
+    files: ['*.config.{ts,js,mts}', 'vitest*.ts', 'playwright.config.ts'],
     languageOptions: {
       globals: { ...globals.node },
     },

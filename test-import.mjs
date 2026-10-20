@@ -1,5 +1,6 @@
 try {
-  const mod = require('./ClientApp/src/components/forms/WizardForm/errorState.ts');
+  const mod =
+    await import('./ClientApp/src/components/forms/WizardForm/errorState.ts');
   process.stdout.write(
     `Import succeeded: ${JSON.stringify(Object.keys(mod))}\n`
   );

@@ -1,4 +1,5 @@
-import { clone, toPath } from 'lodash';
+import clone from 'lodash/clone';
+import toPath from 'lodash/toPath';
 
 /** True for non-null objects, including arrays. Functions are not objects here. */
 export const isObject = (value: unknown): value is object =>

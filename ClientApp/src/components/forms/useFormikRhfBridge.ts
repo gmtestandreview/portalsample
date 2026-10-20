@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFormikContext } from 'formik';
 import { useForm } from 'react-hook-form';

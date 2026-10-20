@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:
-      VITE_APP_ENVIRONMENT: production
+      VITE_ENVIRONMENT: production
       VITE_ENTRA_CLIENT_ID:
         ${{ secrets.VITE_ENTRA_CLIENT_ID ||
         '12345678-1234-4321-a432-123456789abc' }}

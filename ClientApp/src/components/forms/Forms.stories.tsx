@@ -139,6 +139,11 @@ export const TextInputDisabled: Story = {
       <TextInput name='email' label='Email address' disabled type='email' />
     </FormikWrapper>
   ),
+  play: async ({ canvas }) => {
+    const email = canvas.getByLabelText('Email address');
+    await expect(email).toBeDisabled();
+    await expect(email).toHaveValue('user@example.com');
+  },
 };
 
 export const TextInputReadOnly: Story = {
@@ -147,6 +152,11 @@ export const TextInputReadOnly: Story = {
       <TextInput name='referenceId' label='Reference ID' readonly />
     </FormikWrapper>
   ),
+  play: async ({ canvas }) => {
+    const reference = canvas.getByLabelText('Reference ID');
+    await expect(reference).toHaveAttribute('readonly');
+    await expect(reference).toHaveValue('RFQ-2024-001234');
+  },
 };
 
 export const SelectInputDefault: Story = {

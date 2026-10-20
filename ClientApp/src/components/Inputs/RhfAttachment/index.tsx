@@ -1,4 +1,4 @@
-import { map } from 'lodash';
+import map from 'lodash/map';
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';

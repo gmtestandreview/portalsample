@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorArea } from './ColorArea';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -12,12 +13,18 @@ const meta = {
 } satisfies Meta<typeof ColorArea>;
 
 export default meta;
-type Story = StoryFn<typeof ColorArea>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorArea {...args} style={{ width: 200 }} />
-);
+export const Example: Story = {
+  render: (args) => <ColorArea {...args} style={{ width: 200 }} />,
+  args: {
+    defaultValue: 'hsl(30, 100%, 50%)',
+  },
+  play: async ({ canvas }) => {
+    const colorArea = canvas.getByRole('group');
+    const marker = 'group';
 
-Example.args = {
-  defaultValue: 'hsl(30, 100%, 50%)',
+    await expect(colorArea).toBeInTheDocument();
+    await expect(colorArea).toHaveAttribute('role', marker);
+  },
 };

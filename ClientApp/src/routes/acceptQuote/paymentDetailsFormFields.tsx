@@ -1,4 +1,4 @@
-import { trim } from 'lodash';
+import trim from 'lodash/trim';
 import type { ReactNode } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
