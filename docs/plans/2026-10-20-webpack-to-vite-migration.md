@@ -30,6 +30,7 @@ Production builds require an explicit non-secret `VITE_ENVIRONMENT` value.
 | Audit findings                               | PASS                 | Removed unused direct `@codacy/codacy-cloud-cli`; `npm audit --audit-level=moderate` now reports 0 vulnerabilities.              |
 | CI/deployment environment                    | PASS (static)        | PR jobs use `VITE_ENVIRONMENT=local`; release uses `VITE_ENVIRONMENT=production`; hosted workflow execution remains pending.     |
 | Indirect Storybook helper                    | REVIEWED — RETAIN    | `webpack-virtual-modules` is only `@storybook/addon-docs` → `unplugin` → helper; no direct application use was found.            |
+| Review commit and PR                         | OPEN                 | Commit `e38fe71d`; PR [#92](https://github.com/gmtestandreview/portalsample/pull/92) is open against `main`.                     |
 
 ## Evidence baseline and current implementation
 
@@ -271,8 +272,9 @@ retained by decision.
 3. Keep `webpack-virtual-modules` under observation as an indirect Storybook
    dependency; no separate migration review is required unless the dependency
    chain changes or receives a relevant advisory.
-4. Create and review the commit/PR from this worktree, then monitor hosted CI
-   and deployment smoke checks.
+4. Monitor hosted CI on
+   [PR #92](https://github.com/gmtestandreview/portalsample/pull/92), complete
+   the review/merge path, and run deployment smoke checks after merge.
 
 ## Completion criteria
 

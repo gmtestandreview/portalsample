@@ -46,6 +46,7 @@ explicit production environment contract are in place.
 | Moderate audit findings              | PASS               | Removed unused `@codacy/codacy-cloud-cli`; `npm audit --audit-level=moderate` reports zero vulnerabilities.          |
 | CI/release environment contract      | PASS (static)      | PR jobs use `VITE_ENVIRONMENT=local`; release uses `VITE_ENVIRONMENT=production`; hosted execution remains pending.  |
 | Indirect Storybook dependency        | RETAIN             | `webpack-virtual-modules` is only in the Storybook addon-docs dependency chain, not the application build.           |
+| Review commit and PR                 | OPEN               | Commit `e38fe71d`; [PR #92](https://github.com/gmtestandreview/portalsample/pull/92) is open against `main`.         |
 
 ## Environment variable policy
 
@@ -182,5 +183,6 @@ Storybook's toolchain and is not part of the application build.
 3. Revisit `webpack-virtual-modules` only on a Storybook dependency upgrade or a
    relevant security advisory; no separate migration review is currently
    required.
-4. Create and review the commit/PR, then monitor hosted CI and deployment smoke
-   checks.
+4. Monitor hosted CI on
+   [PR #92](https://github.com/gmtestandreview/portalsample/pull/92), complete
+   review/merge, and run deployment smoke checks after merge.
