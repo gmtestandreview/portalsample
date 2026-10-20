@@ -11,18 +11,21 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-WRAPPER = ROOT / "scripts/pre_tool_use_wrapper.cjs"
-LAUNCHER = ROOT / "scripts/python314.cjs"
+WRAPPER = ROOT / "scripts/pre_tool_use_wrapper.mjs"
+LAUNCHER = ROOT / "scripts/python314.mjs"
 
-# Execute the real wrapper in a VM; only interpreter subprocess calls are stubbed.
-# Every filesystem read is limited to the maintained CJS source/dependency.
+# Execute the real ESM launcher in a VM; only interpreter subprocess calls are
+# stubbed. Every filesystem read is limited to maintained source/dependencies.
 PROBE = """
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 const fs = require('node:fs'), vm = require('node:vm'), path = require('node:path');
 const scenario = JSON.parse(process.argv[2]), calls = [];
 let code = 0, stderr = '';
 const stop = {};
 const fakeProcess = {
   platform: scenario.platform || 'win32',
+  argv: [],
   env: {CLAUDE_PROJECT_DIR: '/owned-project'},
   cwd: () => '/owned-project',
   stderr: {write: text => { stderr += text; }},
@@ -33,27 +36,32 @@ const child = {spawnSync(command, args, options) {
   const version = scenario.versions[key];
   calls.push({command, args, options});
   if (scenario.failures?.[key]) return {status: null, error: {code: scenario.failures[key]}};
-  if (args.includes('--version')) return {status: version ? 0 : 1};
   if (args.includes('-c')) return {status: version === '3.14' ? 0 : 1};
   return {status: 0};
 }};
-function load(file) {
-  const module = {exports: {}};
-  const sandbox = {
-    module, exports: module.exports, __filename: file, __dirname: path.dirname(file),
-    process: fakeProcess, Buffer, require(id) {
-      if (id === 'node:child_process') return child;
-      if (id === 'node:fs') return {existsSync: () => true, readFileSync: () => Buffer.from('')};
-      if (id.startsWith('.')) return load(path.resolve(path.dirname(file), id));
-      return require(id);
-    }
-  };
-  vm.runInNewContext(fs.readFileSync(file, 'utf8'), sandbox, {filename: file});
-  return module.exports;
+const thisContext = vm.createContext({process: fakeProcess, Buffer, console});
+function syntheticModule(identifier, exports) {
+  return new vm.SyntheticModule(Object.keys(exports), function () {
+    for (const [key, value] of Object.entries(exports)) this.setExport(key, value);
+  }, {context: thisContext, identifier});
 }
+const module = new vm.SourceTextModule(fs.readFileSync(process.argv[1], 'utf8'), {
+  context: thisContext,
+  identifier: process.argv[1],
+});
+await module.link(async specifier => {
+  if (specifier === 'node:child_process') return syntheticModule(specifier, {spawnSync: child.spawnSync});
+  if (specifier === 'node:path') return syntheticModule(specifier, {resolve: path.resolve});
+  if (specifier === 'node:url') return syntheticModule(specifier, {fileURLToPath: () => process.argv[1]});
+  throw new Error(`Unexpected import: ${specifier}`);
+});
 try {
-  const loaded = load(process.argv[1]);
-  if (scenario.launch) code = loaded.runPython314(['owned.py']);
+  await module.evaluate();
+  if (scenario.launch) {
+    code = module.namespace.runPython314(['owned.py']);
+  } else {
+    module.namespace.findPython314();
+  }
 } catch (error) { if (error !== stop) throw error; }
 console.log(JSON.stringify({code, stderr, calls}));
 """
@@ -77,7 +85,14 @@ def test_guard_selects_only_python314(
     node = shutil.which("node")
     assert node is not None
     result = subprocess.run(
-        [node, "-e", PROBE, str(WRAPPER), json.dumps({"versions": versions})],
+        [
+            node,
+            "--experimental-vm-modules",
+            "-e",
+            PROBE,
+            str(LAUNCHER),
+            json.dumps({"versions": versions}),
+        ],
         capture_output=True,
         text=True,
         timeout=20,
@@ -85,25 +100,26 @@ def test_guard_selects_only_python314(
     assert result.returncode == 0, result.stderr
     outcome = json.loads(result.stdout)
     if expected_command is None:
-        assert outcome["code"] == 2, "unsupported Python must not execute the guard"
-        assert "3.14" in outcome["stderr"]
+        assert outcome["code"] == 0, "selection must not execute a guard script"
+        assert outcome["calls"]
+        assert all("-c" in call["args"] for call in outcome["calls"])
     else:
         assert outcome["code"] == 0
         execution = outcome["calls"][-1]
         assert execution["command"] == expected_command
-        assert execution["args"][:-1] == [*expected_prefix, "-I", "-S"]
+        assert execution["args"][:-2] == [*expected_prefix, "-I", "-S"]
 
 
 def test_settings_use_python314_for_post_tool_and_watcher() -> None:
     settings = json.loads((ROOT / ".claude/settings.json").read_text(encoding="utf-8"))
     hooks = settings["hooks"]
     post = hooks["PostToolUse"][0]["hooks"][0]["command"]
-    assert "python314.cjs" in post
+    assert "python314.mjs" in post
     startup = [hook["command"] for group in hooks["SessionStart"] for hook in group["hooks"]]
     watcher = next(
         command for command in startup if "scripts/watcher.py" in command and "&" in command
     )
-    assert "python314.cjs" in watcher
+    assert "python314.mjs" in watcher
 
 
 @pytest.mark.parametrize("failure", ["ETIMEDOUT", "ENOENT"])
@@ -111,9 +127,10 @@ def test_failed_probe_falls_back_with_bounded_timeout(failure: str) -> None:
     result = subprocess.run(
         [
             "node",
+            "--experimental-vm-modules",
             "-e",
             PROBE,
-            str(WRAPPER),
+            str(LAUNCHER),
             json.dumps(
                 {
                     "versions": {"python": "3.14"},
@@ -135,7 +152,14 @@ def test_failed_probe_falls_back_with_bounded_timeout(failure: str) -> None:
 
 def test_launcher_reports_missing_python314() -> None:
     result = subprocess.run(
-        ["node", "-e", PROBE, str(LAUNCHER), json.dumps({"versions": {}, "launch": True})],
+        [
+            "node",
+            "--experimental-vm-modules",
+            "-e",
+            PROBE,
+            str(LAUNCHER),
+            json.dumps({"versions": {}, "launch": True}),
+        ],
         capture_output=True,
         text=True,
         timeout=20,

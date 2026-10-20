@@ -256,7 +256,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node scripts/python314.cjs scripts/post_tool_use.py"
+            "command": "node scripts/python314.mjs scripts/post_tool_use.py"
           }
         ]
       }

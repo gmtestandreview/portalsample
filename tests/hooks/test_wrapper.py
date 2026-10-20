@@ -24,8 +24,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 SETTINGS = ROOT / ".claude" / "settings.json"
 GUARD = ROOT / "scripts" / "pre_tool_use.py"
-WRAPPER = ROOT / "scripts" / "pre_tool_use_wrapper.cjs"
-LAUNCHER = ROOT / "scripts" / "python314.cjs"
+WRAPPER = ROOT / "scripts" / "pre_tool_use_wrapper.mjs"
+LAUNCHER = ROOT / "scripts" / "python314.mjs"
 
 
 class ToolCall(TypedDict):

@@ -129,7 +129,7 @@ def test_claude_settings_registers_the_cross_platform_hook() -> None:
 
     assert registration["matcher"] == "Write|Edit|MultiEdit"
     assert (
-        registration["hooks"][0]["command"] == "node scripts/python314.cjs scripts/post_tool_use.py"
+        registration["hooks"][0]["command"] == "node scripts/python314.mjs scripts/post_tool_use.py"
     )
 
 
@@ -144,12 +144,12 @@ def test_codex_settings_registers_the_post_tool_hook() -> None:
     assert registration["matcher"] == "apply_patch"
     assert hook["type"] == "command"
     assert hook["command"] == (
-        f'node "{root_expr}/scripts/python314.cjs" "{root_expr}/scripts/post_tool_use.py"'
+        f'node "{root_expr}/scripts/python314.mjs" "{root_expr}/scripts/post_tool_use.py"'
     )
     assert hook["commandWindows"] == (
         'powershell -NoProfile -Command '
         '"$root = (git rev-parse --show-toplevel).Trim(); '
-        '& node (Join-Path $root \'scripts/python314.cjs\') '
+        '& node (Join-Path $root \'scripts/python314.mjs\') '
         '(Join-Path $root \'scripts/post_tool_use.py\'); '
         'exit $LASTEXITCODE"'
     )
