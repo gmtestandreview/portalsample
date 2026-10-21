@@ -4,7 +4,10 @@ import { fileURLToPath } from 'node:url';
 
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
-export const localPatches = ['patches/html-react-parser+6.1.4.patch'];
+export const localPatches = [
+  'patches/html-react-parser+6.1.4.patch',
+  'patches/storybook-addon-mcp+10.6.3.patch',
+];
 
 const trustedGitPath = (
   process.platform === 'win32'

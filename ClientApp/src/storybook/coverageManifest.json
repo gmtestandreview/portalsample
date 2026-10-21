@@ -7855,7 +7855,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:32a8741fc81146e5fec35b4cb9b9cc94547f816575a5506514de216fb75f69c6"
+        "reviewedSourceDigest": "sha256:7dcb66fb919ebd4ed9f2cb5c1846d32f9d78b159dad25290106277f6a85fdc8a"
       }
     },
     {
@@ -7869,7 +7869,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:32a8741fc81146e5fec35b4cb9b9cc94547f816575a5506514de216fb75f69c6"
+        "reviewedSourceDigest": "sha256:7dcb66fb919ebd4ed9f2cb5c1846d32f9d78b159dad25290106277f6a85fdc8a"
       }
     },
     {

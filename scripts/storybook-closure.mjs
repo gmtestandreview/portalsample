@@ -35,13 +35,25 @@ const FAILURE_CODES = {
 
 const STORYBOOK_INPUT_ROOTS = [
   'ClientApp/src',
+  'ClientApp/public',
+  'ClientApp/media',
   '.storybook',
   'scripts',
   'tests',
+  'patches',
+];
+
+const STORYBOOK_ROOT_INPUT_PATTERNS = [
+  /^.*\.config\..+$/,
+  /^vitest.*\..+$/,
+  /^tsconfig.*\.json$/,
+  /^\.prettierrc.*$/,
+  /^\.env(?:\..*)?$/,
 ];
 
 const collectInputFiles = (checkout) => {
   const files = [];
+  const includedFiles = new Set();
   const resolvedCheckout = realpathSync(checkout);
   const visit = (absolutePath) => {
     const resolvedPath = realpathSync(absolutePath);
@@ -63,15 +75,24 @@ const collectInputFiles = (checkout) => {
     const relativePath = path
       .relative(checkout, absolutePath)
       .replaceAll(path.sep, '/');
-    files.push({ path: relativePath, content: readFileSync(absolutePath) });
+    if (!includedFiles.has(relativePath)) {
+      includedFiles.add(relativePath);
+      files.push({ path: relativePath, content: readFileSync(absolutePath) });
+    }
   };
   for (const inputRoot of STORYBOOK_INPUT_ROOTS) {
     const absolutePath = path.resolve(checkout, inputRoot);
     visit(absolutePath);
   }
+  const rootInputFiles = new Set(
+    readdirSync(checkout).filter((inputFile) =>
+      STORYBOOK_ROOT_INPUT_PATTERNS.some((pattern) => pattern.test(inputFile))
+    )
+  );
   for (const inputFile of [
     'package.json',
     'package-lock.json',
+    'npm-shrinkwrap.json',
     'pnpm-lock.yaml',
     'yarn.lock',
     'vite.config.ts',
@@ -79,7 +100,9 @@ const collectInputFiles = (checkout) => {
     'vitest.unit.config.ts',
     'vitest.storybook.config.ts',
     'vitest.storybook.runtime.ts',
-  ]) {
+  ])
+    rootInputFiles.add(inputFile);
+  for (const inputFile of rootInputFiles) {
     const absolutePath = path.resolve(checkout, inputFile);
     try {
       files.push({
@@ -561,6 +584,25 @@ const createProductionAdapters = async () => {
     });
   };
 
+  const assertFreezeIdentityNotDenied = async (target, identity) => {
+    const { stdout, stderr } = await execFileAsync(
+      'icacls.exe',
+      [target, '/t', '/c'],
+      { maxBuffer: 2 * 1024 * 1024 }
+    );
+    const output = `${stdout}\n${stderr}`;
+    if (
+      output
+        .split(/\r?\n/u)
+        .some((line) => line.includes(identity) && line.includes('(DENY)'))
+    ) {
+      throw Object.assign(
+        new Error(`ACL freeze deny entry remains for ${identity}`),
+        { code: FAILURE_CODES.EXECUTION_INCOMPLETE }
+      );
+    }
+  };
+
   const waitForServer = async (url, timeout, signal) => {
     const started = Date.now();
     while (Date.now() - started < timeout) {
@@ -843,6 +885,15 @@ const createProductionAdapters = async () => {
             rm(probePath, { force: true }).catch(() => undefined)
           )
         );
+      }
+      if (firstError) {
+        for (const frozenTarget of [...frozenTargets].reverse()) {
+          await assertFreezeIdentityNotDenied(
+            frozenTarget.target,
+            activeFreeze.ownerIdentity ?? freezeIdentity
+          );
+        }
+        firstError = undefined;
       }
       await rm(activeFreeze.aclBackupDirectory, {
         recursive: true,

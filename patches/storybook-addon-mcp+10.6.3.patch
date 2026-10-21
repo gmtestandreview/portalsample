@@ -1,0 +1,49 @@
+diff --git a/node_modules/@storybook/addon-mcp/dist/preset.js b/node_modules/@storybook/addon-mcp/dist/preset.js
+index af63cd32..66df162a 100644
+--- a/node_modules/@storybook/addon-mcp/dist/preset.js
++++ b/node_modules/@storybook/addon-mcp/dist/preset.js
+@@ -463,6 +463,31 @@ async function toStructuredContent(outputSchema, data) {
+     throw new OpenServiceToolsetOutputMismatchError({ issues: result.issues });
+   return result.value;
+ }
++function normalizeTestRunData(data) {
++  if (!data || typeof data !== "object" || !data.result || typeof data.result !== "object")
++    return data;
++  let result = data.result;
++  let storyOrder = new Map((Array.isArray(result.storyIds) ? result.storyIds : []).map((storyId, index) => [storyId, index]));
++  let mapStatuses = (statuses) => Array.isArray(statuses) ? statuses.map((entry) => entry && typeof entry === "object" ? { ...entry, status: entry.status ?? entry.value } : entry).toSorted((left, right) => (storyOrder.get(left?.storyId) ?? Number.MAX_SAFE_INTEGER) - (storyOrder.get(right?.storyId) ?? Number.MAX_SAFE_INTEGER)) : statuses;
++  let componentTestStatuses = mapStatuses(result.componentTestStatuses);
++  let a11yStatuses = mapStatuses(result.a11yStatuses);
++  let requested = Array.isArray(result.storyIds) ? result.storyIds.length : componentTestStatuses?.length ?? 0;
++  return {
++    ...data,
++    result: {
++      ...result,
++      componentTestStatuses,
++      a11yStatuses,
++      counts: {
++        requested,
++        executed: componentTestStatuses?.length ?? 0,
++        component: componentTestStatuses?.length ?? 0,
++        a11y: a11yStatuses?.length ?? 0
++      },
++      unhandledErrors: result.unhandledErrors ?? []
++    }
++  };
++}
+ function buildContext(server) {
+   return {
+     transport: "mcp",
+@@ -482,7 +506,11 @@ async function callToolsetMethod(server, options, input) {
+   try {
+     let outcome = await invokeToolsetMethod(toolset, methodName, input, buildContext(server));
++    if (!outcome.ok && methodName === "test.run" && outcome.data?.status === "error") {
++      await new Promise((resolve) => setTimeout(resolve, 1000));
++      outcome = await invokeToolsetMethod(toolset, methodName, input, buildContext(server));
++    }
+     await reportToolsetTelemetry(server, options.mcpEventName, outcome.telemetry);
+-    let structuredContent = await toStructuredContent(method.output, outcome.data);
++    let structuredContent = options.method === "test.run" ? normalizeTestRunData(outcome.data) : await toStructuredContent(method.output, outcome.data);
+     return {
+       content: (Array.isArray(outcome.markdown) ? outcome.markdown : [outcome.markdown]).map((text) => ({ type: "text", text })),
+       ...structuredContent !== void 0 ? { structuredContent } : {},

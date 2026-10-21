@@ -9,9 +9,9 @@ Review staged and recent code changes for quality, security, and correctness.
 **Usage:**
 
 ```text
-/code-review
-/code-review --staged-only
-/code-review --commit HEAD~3..HEAD
+/code-reviewer
+/code-reviewer --staged-only
+/code-reviewer --commit HEAD~3..HEAD
 ```
 
 **What it checks:**

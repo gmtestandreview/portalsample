@@ -11,7 +11,7 @@ metadata:
 
 ## Purpose
 
-Compare two or more Agent Skills by activation scope, intended outcome, and material specialization. Classify overlap and recommend the smallest action that removes ambiguity without losing specialized value.
+Compare two or more Agent Skills by activation scope, intended outcome, and material specialization. Classify overlap and recommend to merge or keep separate that includes the smallest action that removes ambiguity without losing specialized value.
 
 ## Use When
 
