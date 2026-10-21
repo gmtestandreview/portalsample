@@ -36,7 +36,7 @@ export const loadContactDetails =
 
     return {
       stepValues: {
-        ...(await client.getUserContact(abortSignal)),
+        ...(await client.getUserContact(undefined, abortSignal)),
       },
     };
   };

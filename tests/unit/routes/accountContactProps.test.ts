@@ -364,6 +364,16 @@ describe('account and contact wizard prop factories', () => {
     await expect(updateProps.loadStepValues?.(abortSignal)).resolves.toEqual({
       stepValues: { contact: { title: 'Other' } },
     });
+    expect(mocks.getUserContact).toHaveBeenNthCalledWith(
+      1,
+      undefined,
+      abortSignal
+    );
+    expect(mocks.getUserContact).toHaveBeenNthCalledWith(
+      2,
+      undefined,
+      abortSignal
+    );
     expect(createProps.hidingFields?.contact?.titleOther?.(values)).toBe(true);
     expect(
       updateProps.hidingFields?.contact?.titleOther?.({

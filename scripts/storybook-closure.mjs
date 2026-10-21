@@ -371,6 +371,7 @@ export async function runClosure(options, adapters) {
       );
       receipts.push(normalized.receipt);
     }
+    context.childEpoch = receipts[0]?.childEpoch;
 
     for (const [name] of GATES.slice(5)) {
       throwIfAborted(signal);
@@ -962,6 +963,13 @@ const createProductionAdapters = async () => {
               ...process.env,
               STORYBOOK_TEST_URL: context.target.baseURL,
               STORYBOOK_TEST_SERVER_MODE: 'external',
+              STORYBOOK_CLOSURE_FREEZE_ID: context.freezeId,
+              STORYBOOK_CLOSURE_PRODUCER_ID: context.producerId,
+              STORYBOOK_CLOSURE_INPUT_DIGEST: context.inputDigest,
+              STORYBOOK_CLOSURE_PRODUCER_IDENTITY_DIGEST:
+                context.producerIdentityDigest,
+              STORYBOOK_CLOSURE_CHILD_PID: String(context.childEpoch.pid),
+              STORYBOOK_CLOSURE_CHILD_CREATED_AT: context.childEpoch.createdAt,
             }
           : process.env;
       await runCommand(
