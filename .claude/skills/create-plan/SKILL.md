@@ -42,6 +42,8 @@ Throughout the entire workflow, operate in read-only mode. Do not write or updat
 ```markdown
 # Plan
 
+## Approach
+
 <1–3 sentences: what we're doing, why, and the high-level approach.>
 
 ## Scope
@@ -56,6 +58,9 @@ Throughout the entire workflow, operate in read-only mode. Do not write or updat
 [ ] <Step 5>
 [ ] <Step 6>
 
+## Validation
+- <At least one testing or verification step>
+
 ## Open questions
 - <Question 1>
 - <Question 2>
@@ -66,9 +71,11 @@ Throughout the entire workflow, operate in read-only mode. Do not write or updat
 
 Good checklist items:
 
-- Point to likely files/modules: src/..., app/..., services/...
-- Name concrete validation: "Run npm test", "Add unit tests for X"
-- Include safe rollout when relevant: feature flag, migration plan, rollback note
+- **Atomic**: Each step is a single logical unit of work.
+- **Verb-first**: "Add…", "Refactor…", "Verify…", "Ship…".
+- **Concrete**: Name specific files/modules: `src/...`, `app/...`, `services/...`.
+- Name concrete validation: "Run npm test", "Add unit tests for X".
+- Include safe rollout when relevant: feature flag, migration plan, rollback note.
 
 Avoid:
 
