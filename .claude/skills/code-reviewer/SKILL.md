@@ -10,8 +10,10 @@ description:
 
 # Code Review
 
-Use the narrowest applicable mode. Do not mix review-only behavior with code
-editing unless the user explicitly requests both.
+Treat review as knowledge sharing, not gatekeeping: pair every finding with
+actionable, rationale-backed feedback. Use the narrowest applicable mode. Do not
+mix review-only behavior with code editing unless the user explicitly requests
+both.
 
 ## Route the request
 
@@ -63,6 +65,18 @@ explicitly includes posting and that action is authorized.
 - **Nit / suggestion:** non-blocking readability, style, or optional
   improvement.
 - Praise and educational notes are allowed when useful.
+
+## Escalate to senior review
+
+Flag for a senior engineer when a change involves:
+
+- database schema modifications;
+- API contract changes;
+- new framework or library adoption;
+- performance-critical code paths;
+- security-sensitive functionality.
+
+Reference: [Sentry Code Review Guidelines](https://develop.sentry.dev/engineering-practices/code-review/).
 
 ## Progressive reference loading
 
@@ -131,6 +145,17 @@ When GitHub PR interaction applies:
 
 Treat named-model/subagent behavior as environment-specific. If the required
 orchestration is unavailable, say so rather than inventing equivalent runs.
+
+## Related review skills (boundaries)
+
+Two neighboring skills overlap with this one. Route by the specialized
+condition; otherwise stay in this skill:
+
+- **find-bugs** — use for a dedicated, exhaustive security/bug audit of branch
+  changes (attack-surface mapping, per-file security checklist, pre-conclusion
+  audit). Use this skill for general multi-dimensional review.
+- **codex-review** — use only when you specifically want a Codex-CLI-driven
+  review that also generates a CHANGELOG. Use this skill otherwise.
 
 ## Output
 

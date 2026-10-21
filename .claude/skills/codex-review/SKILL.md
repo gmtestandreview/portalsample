@@ -12,6 +12,10 @@ description:
 Professional code review with auto CHANGELOG generation, integrated with Codex
 AI
 
+> Boundary: use **codex-review** only when you want a Codex-CLI-driven review
+> that also generates a CHANGELOG. For general code review without the Codex CLI
+> or CHANGELOG step, use the **code-reviewer** skill.
+
 ## When to Use
 
 - When you want professional code review before commits

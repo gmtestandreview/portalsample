@@ -276,7 +276,7 @@ Skills are stored in a `skills/` subdirectory, with each skill in its own folder
 ```
 ~/.agents/
 └── skills/
-    └── code-review-checklist/
+    └── code-reviewer/
         └── SKILL.md
 ```
 
