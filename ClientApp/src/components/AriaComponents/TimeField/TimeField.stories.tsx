@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { TimeField } from './TimeField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -13,12 +14,15 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof TimeField>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <TimeField {...args} />
-);
-
-Example.args = {
-  label: 'Event time',
+export const Example: Story = {
+  args: {
+    label: 'Event time',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('group', { name: 'Event time' })
+    ).toBeVisible();
+  },
 };

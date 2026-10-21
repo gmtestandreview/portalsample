@@ -73,7 +73,7 @@ export const NoError: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText(/All good/)).toBeVisible();
+    await expect(canvas.getByRole('alert')).toHaveTextContent('All good!');
   },
 };
 

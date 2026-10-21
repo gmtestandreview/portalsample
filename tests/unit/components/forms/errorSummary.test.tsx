@@ -113,6 +113,30 @@ describe('ErrorSummary', () => {
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 
+  it('formats camel-case and separator-based validation keys as sentences', () => {
+    render(
+      <TestRouter>
+        <ErrorSummary
+          serverErrors={
+            {
+              errors: {
+                ContactName: ['Required'],
+                'Phone-number': ['Invalid'],
+              },
+            } as any
+          }
+        />
+      </TestRouter>
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'Contact name: Required' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Phone number: Invalid' })
+    ).toBeInTheDocument();
+  });
+
   it('falls through when validation problem details has no errors collection', () => {
     render(
       <TestRouter>

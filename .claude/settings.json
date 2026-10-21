@@ -207,10 +207,6 @@
       "Write(storybook-static/**)"
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "python scripts/status.py 2>/dev/null || python3 scripts/status.py 2>/dev/null || py scripts/status.py 2>/dev/null || echo '⚡ A Team'"
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -218,18 +214,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"import(require('url').pathToFileURL(require('path').join(process.env.CLAUDE_PROJECT_DIR||process.cwd(),'scripts','pre_tool_use_wrapper.mjs')).href).catch(()=>process.exit(2))\""
+            "command": "node --experimental-strip-types scripts/pre_tool_use_wrapper.mts"
           }
         ]
       },
       {
+        "matcher": "Agent|Grep|Bash|Glob",
         "hooks": [
           {
             "type": "command",
             "command": "TS=$(command -v tokensave 2>/dev/null || echo \"$HOME/.local/bin/tokensave\"); if test -x \"$TS\"; then \"$TS\" hook-pre-tool-use; else exit 0; fi"
           }
-        ],
-        "matcher": "Agent|Grep|Bash|Glob"
+        ]
       }
     ],
     "SessionStart": [
@@ -293,5 +289,14 @@
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python scripts/status.py 2>/dev/null || python3 scripts/status.py 2>/dev/null || py scripts/status.py 2>/dev/null || echo '⚡ A Team'"
+  },
+  "enabledPlugins": {
+    "pr-review-toolkit@claude-plugins-official": true,
+    "modern-web-guidance@claude-plugins-official": true,
+    "project-artifact@claude-plugins-official": true
   }
 }

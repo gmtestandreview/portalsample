@@ -1,11 +1,5 @@
 import { format, isValid, parse } from 'date-fns';
 import { enAU } from 'date-fns/locale';
-import entriesIn from 'lodash/entriesIn';
-import fromPairs from 'lodash/fromPairs';
-import isArray from 'lodash/isArray';
-import isNil from 'lodash/isNil';
-import isString from 'lodash/isString';
-import replace from 'lodash/replace';
 import type { FilterKeys } from '../types';
 
 const DATE_TIME_LOCALE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxx";
@@ -17,11 +11,11 @@ export const sleep = (milliseconds: number) =>
   });
 
 const trimIfString = (value: unknown) =>
-  isString(value) ? value.trim() : value;
+  typeof value === 'string' ? value.trim() : value;
 
 export const removeAllWhitespaces = (value: string) => {
-  const noSpaceString = replace(value, /\s+/g, '');
-  return replace(noSpaceString, /\t+/g, '');
+  const noSpaceString = value.replace(/\s+/g, '');
+  return noSpaceString.replace(/\t+/g, '');
 };
 
 export const containsWhitespace = (value: string) => /\s/.test(value);
@@ -30,15 +24,15 @@ export const removeEmptyKeys = <T extends Record<string, unknown>>(
   obj: T,
   filter?: FilterKeys
 ): T =>
-  fromPairs(
-    entriesIn(obj)
+  Object.fromEntries(
+    Object.entries(obj)
       .filter(
         ([_, v]) =>
           v !== null && v !== '' && v !== undefined && trimIfString(v) !== ''
       )
       .filter((keyValue) => (filter ? filter(keyValue) : true))
       .map(([k, v]) => {
-        if (isArray(v)) {
+        if (Array.isArray(v)) {
           const newValues: any[] = [];
           v.forEach((x) => {
             if (x === Object(x)) {
@@ -68,9 +62,9 @@ export function prefixedPropertyOf<T>(prefix: string) {
 export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
   obj: T
 ): T =>
-  fromPairs(
-    entriesIn(obj).map(([k, v]) => {
-      if (isArray(v)) {
+  Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => {
+      if (Array.isArray(v)) {
         const newValues: any[] = [];
         v.forEach((x) => {
           if (x !== null && x !== undefined && x === Object(x)) {
@@ -98,7 +92,7 @@ export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
 export const parseDate = (value: Date | string): Date | undefined => {
   let parsedDate: Date | undefined;
 
-  if (isString(value)) {
+  if (typeof value === 'string') {
     let dateFormat;
     if (value.length === 10) {
       dateFormat = DATE_DDMMYYY_FORMAT;
@@ -126,7 +120,7 @@ export const parseDate = (value: Date | string): Date | undefined => {
 export const parseDateWithTime = (value: Date | string): Date | undefined => {
   let parsedDate: Date | undefined;
 
-  if (isString(value)) {
+  if (typeof value === 'string') {
     const dateFormat =
       value.length === 10 ? DATE_DDMMYYY_FORMAT : DATE_TIME_LOCALE_FORMAT;
     parsedDate = parse(value, dateFormat, new Date(), { locale: enAU });
@@ -142,7 +136,7 @@ export const parseDateWithTime = (value: Date | string): Date | undefined => {
 export const parseDateUTC = (value: Date | string): Date | undefined => {
   let parsedDate: Date | undefined;
 
-  if (isString(value)) {
+  if (typeof value === 'string') {
     parsedDate = parse(value, DATE_TIME_LOCALE_FORMAT, new Date(), {
       locale: enAU,
     });
@@ -165,11 +159,11 @@ export const parseDateUTC = (value: Date | string): Date | undefined => {
 export const isDateValid = (
   value: Date | string | null | undefined
 ): boolean => {
-  if (isNil(value) || value.toString().trim() === '') {
+  if (value === null || value === undefined || value.toString().trim() === '') {
     return false;
   }
 
-  return isString(value) ? isValid(parseDate(value)) : isValid(value);
+  return typeof value === 'string' ? isValid(parseDate(value)) : isValid(value);
 };
 
 export const formatDateToUTC = (value: Date | string | null): string | null => {

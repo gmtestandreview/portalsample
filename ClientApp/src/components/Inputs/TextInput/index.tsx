@@ -1,7 +1,6 @@
 import Form from 'react-bootstrap/Form';
 import type { AriaAttributes, AriaRole, ReactNode } from 'react';
 import { useField } from 'formik';
-import trim from 'lodash/trim';
 import { format, parseISO } from 'date-fns';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
@@ -90,7 +89,7 @@ const TextInput = ({
       type === 'date' && _meta.value
         ? format(getDate(_meta.value), 'yyyy-MM-dd')
         : _meta.value;
-    newValue = trim(newValue as string);
+    newValue = (newValue as string | null | undefined)?.trim() ?? '';
     void _fieldHelper.setValue(newValue);
     void _fieldHelper.setTouched(true);
   };

@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ToggleButton } from './ToggleButton';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -13,8 +14,14 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof ToggleButton>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ToggleButton {...args}>Pin</ToggleButton>
-);
+export const Example: Story = {
+  render: (args) => <ToggleButton {...args}>Pin</ToggleButton>,
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: 'Pin' });
+    await expect(button).toBeVisible();
+    await button.click();
+    await expect(button).toHaveAttribute('aria-pressed', 'true');
+  },
+};

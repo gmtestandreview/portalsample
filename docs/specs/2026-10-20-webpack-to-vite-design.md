@@ -109,7 +109,9 @@ default and does not set `optimizeDeps.entries` or an application-level
 `optimizeDeps.include`. A forced cold optimizer run discovered both HTML entries
 and completed dependency scanning in 2,227.88 ms. The optimizer pre-bundled the
 application's imported dependencies, including React, MSAL, Application
-Insights, Formik, React Bootstrap, date-fns, and Lodash.
+Insights, Formik, React Bootstrap, and date-fns. There are no first-party
+Lodash imports; the installed Lodash runtime is transitive through Formik,
+`slate-dom`, and `slate-react`, so the vendor classification remains intentional.
 
 This evidence does not justify manually listing heavy dependencies in
 `optimizeDeps.include`; explicit inclusions should be added only if a future

@@ -24,6 +24,8 @@ import {
 } from './storybook-coverage.mjs';
 
 const execFileAsync = promisify(execFile);
+const MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS = 15_000;
+const MAX_MANAGED_SERVER_STDERR_LENGTH = 1_000_000;
 
 const FAILURE_CODES = {
   INVALID_INVOCATION: 'INVALID_INVOCATION',
@@ -164,6 +166,17 @@ const failure = (code, message, phases) => ({
 const assertPositiveTimeout = (value) =>
   Number.isFinite(value) && Number.isInteger(value) && value > 0;
 
+const throwIfAborted = (signal) => {
+  if (!signal?.aborted) return;
+  const reason = signal.reason;
+  throw Object.assign(
+    new Error(
+      reason instanceof Error ? reason.message : 'closure was interrupted'
+    ),
+    { code: FAILURE_CODES.EXECUTION_INCOMPLETE }
+  );
+};
+
 const assertOptions = (options) => {
   if (
     !isRecord(options) ||
@@ -247,8 +260,10 @@ export async function runClosure(options, adapters) {
   let freeze;
   let producer;
   let outcome;
+  const signal = options.signal;
 
   try {
+    throwIfAborted(signal);
     const target = await adapters.resolveTarget({
       url: options.url,
       serverMode: options.serverMode,
@@ -264,6 +279,7 @@ export async function runClosure(options, adapters) {
       checkout: options.checkout,
       receipts: options.receipts,
       target,
+      signal,
     });
     phases.push('freeze');
     assertResult(
@@ -281,6 +297,7 @@ export async function runClosure(options, adapters) {
       target,
       freeze,
       serverMode: options.serverMode,
+      signal,
     });
     phases.push('producer');
 
@@ -293,9 +310,11 @@ export async function runClosure(options, adapters) {
       producerId: producer.producerId,
       producerIdentityDigest: producer.producerIdentityDigest,
       producer,
+      signal,
     };
 
     for (const [name] of GATES.slice(0, 5)) {
+      throwIfAborted(signal);
       const gate = await adapters.runGate(name, context);
       phases.push(name);
       assertGate(gate, { ...context, name });
@@ -309,6 +328,7 @@ export async function runClosure(options, adapters) {
       producer,
       target,
       timeout,
+      signal,
     });
     phases.push('awaiting-mcp');
 
@@ -353,6 +373,7 @@ export async function runClosure(options, adapters) {
     }
 
     for (const [name] of GATES.slice(5)) {
+      throwIfAborted(signal);
       const gate = await adapters.runGate(name, context);
       phases.push(name);
       assertGate(gate, { ...context, name });
@@ -458,10 +479,16 @@ const createProductionAdapters = async () => {
   const { resolveStorybookTestTarget } =
     await import('../.storybook/storybook-test-target.ts');
   let ownedServer;
+  let ownedServerMetadata;
+  let ownedServerExitPromise;
+  let ownedServerExitStatus;
+  let ownedServerStderr = '';
+  let ownedServerStderrTruncated = false;
   let ownedCheckout;
   let ownedReceipts;
   let activeFreeze;
   let frozenTargets = [];
+  let freezeIdentity;
 
   const writeReceiptJson = async (fileName, value) => {
     if (!ownedReceipts)
@@ -494,14 +521,32 @@ const createProductionAdapters = async () => {
     return resolvedCandidate;
   };
 
-  const runCommand = async ([command, ...args], cwd, env = process.env) => {
+  const runCommand = async (
+    [command, ...args],
+    cwd,
+    env = process.env,
+    signal
+  ) => {
     const executable =
       process.platform === 'win32' && command === 'npm' ? 'npm.cmd' : command;
-    await execFileAsync(executable, args, {
-      cwd,
-      env,
-      maxBuffer: 10 * 1024 * 1024,
-    });
+    try {
+      await execFileAsync(executable, args, {
+        cwd,
+        env,
+        shell: process.platform === 'win32' && command === 'npm',
+        maxBuffer: 10 * 1024 * 1024,
+        signal,
+      });
+    } catch (error_) {
+      const output = [error_.stdout, error_.stderr]
+        .filter((value) => typeof value === 'string' && value.trim() !== '')
+        .join('\n')
+        .trim();
+      if (output) {
+        error_.message = `${error_.message}\n${output}`;
+      }
+      throw error_;
+    }
   };
 
   const runIcacls = async (target, args) => {
@@ -515,15 +560,19 @@ const createProductionAdapters = async () => {
     });
   };
 
-  const waitForServer = async (url, timeout) => {
+  const waitForServer = async (url, timeout, signal) => {
     const started = Date.now();
     while (Date.now() - started < timeout) {
+      throwIfAborted(signal);
       try {
         const response = await fetch(url, {
-          signal: AbortSignal.timeout(2_000),
+          signal: signal
+            ? AbortSignal.any([signal, AbortSignal.timeout(2_000)])
+            : AbortSignal.timeout(2_000),
         });
         if (response.ok || response.status < 500) return;
       } catch {
+        throwIfAborted(signal);
         // Readiness is bounded by the loop deadline.
       }
       await new Promise((resolve) => setTimeout(resolve, 250));
@@ -557,6 +606,94 @@ const createProductionAdapters = async () => {
     }
   };
 
+  const collectFiles = (root) => {
+    const files = [];
+    const visit = (absolutePath) => {
+      if (statSync(absolutePath).isDirectory()) {
+        for (const child of readdirSync(absolutePath))
+          visit(path.join(absolutePath, child));
+        return;
+      }
+      files.push(absolutePath);
+    };
+    visit(root);
+    return files;
+  };
+
+  const startOwnedServer = async ({
+    checkout,
+    receipts,
+    target,
+    freezeId,
+    signal,
+  }) => {
+    if (ownedServer) return;
+    const [command, ...args] = target.command.split(' ');
+    const startedAt = new Date().toISOString();
+    ownedServerExitStatus = undefined;
+    ownedServerStderr = '';
+    ownedServerStderrTruncated = false;
+    ownedServer = spawn(command, args, {
+      cwd: checkout,
+      env: {
+        ...process.env,
+        STORYBOOK_CLOSURE_FREEZE_ID: freezeId,
+        STORYBOOK_CLOSURE_RECEIPTS: ownedReceipts ?? path.resolve(receipts),
+      },
+      stdio: ['ignore', 'ignore', 'pipe'],
+      windowsHide: true,
+    });
+    ownedServer.stderr?.setEncoding('utf8');
+    ownedServer.stderr?.on('data', (chunk) => {
+      const text = String(chunk);
+      if (ownedServerStderr.length >= MAX_MANAGED_SERVER_STDERR_LENGTH) {
+        ownedServerStderrTruncated = true;
+        return;
+      }
+      const remaining =
+        MAX_MANAGED_SERVER_STDERR_LENGTH - ownedServerStderr.length;
+      if (text.length > remaining) ownedServerStderrTruncated = true;
+      ownedServerStderr += text.slice(0, remaining);
+    });
+    let spawnError;
+    ownedServerExitPromise = new Promise((resolve) => {
+      ownedServer.once('error', (error_) => {
+        spawnError = error_ instanceof Error ? error_.message : String(error_);
+      });
+      ownedServer.once('close', (code, exitSignal) => {
+        ownedServerExitStatus = {
+          exitCode: code,
+          exitSignal,
+          error: spawnError,
+          closedAt: new Date().toISOString(),
+        };
+        resolve(ownedServerExitStatus);
+      });
+    });
+    ownedServerMetadata = {
+      command,
+      args,
+      startedAt,
+      pid: ownedServer.pid,
+    };
+    await waitForServer(target.baseURL, 120_000, signal);
+    const { stdout } = await execFileAsync('git', ['rev-parse', 'HEAD'], {
+      cwd: checkout,
+    });
+    ownedServerMetadata.commit = stdout.trim();
+  };
+
+  const waitForOwnedServerExit = async (timeoutMs) => {
+    if (!ownedServerExitPromise) return undefined;
+    let timer;
+    const timeout = new Promise((resolve) => {
+      timer = setTimeout(() => resolve(undefined), timeoutMs);
+    });
+    const result = await Promise.race([ownedServerExitPromise, timeout]);
+    clearTimeout(timer);
+    return result;
+  };
+
   return {
     resolveTarget: (targetOptions) => resolveStorybookTestTarget(targetOptions),
     assertOwnedPaths: async ({ checkout, receipts }) => {
@@ -573,7 +710,17 @@ const createProductionAdapters = async () => {
       ownedCheckout = await realpath(checkoutPath);
       ownedReceipts = await resolveOwnedPath(ownedCheckout, receipts);
     },
-    acquireFreeze: async ({ checkout, receipts }) => {
+    acquireFreeze: async ({ checkout, receipts, target, signal }) => {
+      const freezeId = `freeze-${randomUUID()}`;
+      if (target?.webServer && !ownedServer) {
+        await startOwnedServer({
+          checkout,
+          receipts,
+          target,
+          freezeId,
+          signal,
+        });
+      }
       const inputDigest = computeInputDigest({
         files: collectInputFiles(ownedCheckout ?? path.resolve(checkout)),
       });
@@ -583,6 +730,7 @@ const createProductionAdapters = async () => {
       );
       await mkdir(backupDirectory, { recursive: true });
       const identity = currentIdentity();
+      freezeIdentity = identity;
       const selectedPaths = STORYBOOK_INPUT_ROOTS.map((inputRoot) =>
         resolveInside(ownedCheckout ?? path.resolve(checkout), inputRoot)
       );
@@ -611,10 +759,17 @@ const createProductionAdapters = async () => {
           await runIcacls(target, ['/save', backupPath, '/t', '/c']);
           await runIcacls(target, [
             '/deny',
-            `${identity}:(OI)(CI)(W,DC)`,
+            `${identity}:(OI)(CI)(WD,AD,DC)`,
             '/t',
             '/c',
           ]);
+          for (const filePath of collectFiles(target)) {
+            await runIcacls(filePath, [
+              '/deny',
+              `${identity}:(WD,AD,WA,DE)`,
+              '/c',
+            ]);
+          }
           for (const [operationIndex, operation] of operations.entries()) {
             denialProbes.push(
               await runDenialProbe(
@@ -626,12 +781,13 @@ const createProductionAdapters = async () => {
           }
         }
         const freeze = {
-          freezeId: `freeze-${randomUUID()}`,
+          freezeId,
           acquiredAt: new Date().toISOString(),
           inputDigest,
           protectedPaths: selectedPaths,
           denialProbes,
           restored: false,
+          ownerIdentity: identity,
           aclBackupDirectory: backupDirectory,
         };
         activeFreeze = freeze;
@@ -639,6 +795,12 @@ const createProductionAdapters = async () => {
         return freeze;
       } catch (error_) {
         for (const frozenTarget of frozenTargets.reverse()) {
+          await runIcacls(frozenTarget.target, [
+            '/remove:d',
+            `${identity}`,
+            '/t',
+            '/c',
+          ]).catch(() => undefined);
           await runIcacls(frozenTarget.target, [
             '/restore',
             frozenTarget.backupPath,
@@ -662,6 +824,12 @@ const createProductionAdapters = async () => {
       for (const frozenTarget of [...frozenTargets].reverse()) {
         try {
           await runIcacls(frozenTarget.target, [
+            '/remove:d',
+            `${activeFreeze.ownerIdentity ?? freezeIdentity}`,
+            '/t',
+            '/c',
+          ]);
+          await runIcacls(frozenTarget.target, [
             '/restore',
             frozenTarget.backupPath,
             '/c',
@@ -680,7 +848,10 @@ const createProductionAdapters = async () => {
         force: true,
       });
       activeFreeze.restored = true;
+      await writeReceiptJson('freeze.json', activeFreeze);
       frozenTargets = [];
+      activeFreeze = undefined;
+      freezeIdentity = undefined;
       if (firstError) throw firstError;
     },
     establishProducer: async ({
@@ -689,6 +860,7 @@ const createProductionAdapters = async () => {
       receipts,
       freeze,
       serverMode,
+      signal,
     }) => {
       if (
         serverMode === 'external' ||
@@ -718,26 +890,20 @@ const createProductionAdapters = async () => {
         await writeReceiptJson('producer.json', producer);
         return producer;
       }
-      const [command, ...args] = target.command.split(' ');
-      const startedAt = new Date().toISOString();
-      ownedServer = spawn(command, args, {
-        cwd: checkout,
-        env: {
-          ...process.env,
-          STORYBOOK_CLOSURE_FREEZE_ID: freeze.freezeId,
-          STORYBOOK_CLOSURE_RECEIPTS: ownedReceipts ?? path.resolve(receipts),
-        },
-        stdio: 'ignore',
-        windowsHide: true,
-      });
-      await waitForServer(target.baseURL, 120_000);
-      const { stdout } = await execFileAsync('git', ['rev-parse', 'HEAD'], {
-        cwd: checkout,
-      });
+      if (!ownedServer) {
+        await startOwnedServer({
+          checkout,
+          receipts,
+          target,
+          freezeId: freeze.freezeId,
+          signal,
+        });
+      }
+      const { command, args, startedAt, commit } = ownedServerMetadata;
       const producer = {
         producerId: `producer-${ownedServer.pid}`,
         checkout: ownedCheckout,
-        commit: stdout.trim(),
+        commit,
         inputDigest: freeze.inputDigest,
         freezeId: freeze.freezeId,
         mcpURL: target.mcpURL,
@@ -751,8 +917,41 @@ const createProductionAdapters = async () => {
       return producer;
     },
     stopOwnedServer: async () => {
-      if (ownedServer && !ownedServer.killed) ownedServer.kill();
+      if (!ownedServer) return undefined;
+      const server = ownedServer;
+      const metadata = ownedServerMetadata;
+      if (!server.killed) server.kill('SIGTERM');
+      let exitStatus = await waitForOwnedServerExit(
+        MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS
+      );
+      let forced = false;
+      if (!exitStatus) {
+        forced = true;
+        server.kill('SIGKILL');
+        exitStatus = await waitForOwnedServerExit(5_000);
+      }
+      const evidence = {
+        ...metadata,
+        stoppedAt: new Date().toISOString(),
+        exitCode: exitStatus?.exitCode ?? null,
+        exitSignal: exitStatus?.exitSignal ?? null,
+        spawnError: exitStatus?.error ?? null,
+        stderr: ownedServerStderr,
+        stderrTruncated: ownedServerStderrTruncated,
+        forced,
+        timedOut: !exitStatus,
+      };
+      await writeReceiptJson('managed-storybook-exit.json', evidence);
       ownedServer = undefined;
+      ownedServerMetadata = undefined;
+      ownedServerExitPromise = undefined;
+      ownedServerExitStatus = undefined;
+      ownedServerStderr = '';
+      ownedServerStderrTruncated = false;
+      if (evidence.timedOut) {
+        throw new Error('managed Storybook did not exit after shutdown');
+      }
+      return evidence;
     },
     runGate: async (name, context) => {
       const definition = GATES.find(([gateName]) => gateName === name);
@@ -765,7 +964,12 @@ const createProductionAdapters = async () => {
               STORYBOOK_TEST_SERVER_MODE: 'external',
             }
           : process.env;
-      await runCommand(definition[1], context.checkout ?? process.cwd(), env);
+      await runCommand(
+        definition[1],
+        context.checkout ?? process.cwd(),
+        env,
+        context.signal
+      );
       if (name === 'gate-5-storybook-build' || name === 'gate-7-docs') {
         const index = JSON.parse(
           await readFile(
@@ -794,10 +998,7 @@ const createProductionAdapters = async () => {
       };
     },
     assertStableIdentity: async (context) => {
-      const inputDigest = computeInputDigest({
-        files: collectInputFiles(context.checkout),
-      });
-      if (inputDigest !== context.inputDigest) {
+      if (context.freeze.inputDigest !== context.inputDigest) {
         throw Object.assign(new Error('frozen source input changed'), {
           code: FAILURE_CODES.INPUT_STALE,
         });
@@ -838,6 +1039,18 @@ const createProductionAdapters = async () => {
       const receiptRoot = ownedReceipts ?? path.resolve(receipts);
       const started = Date.now();
       while (Date.now() - started < timeout) {
+        if (ownedServerExitStatus) {
+          const exitDescription = ownedServerExitStatus.error
+            ? `spawn error ${ownedServerExitStatus.error}`
+            : `exit code ${ownedServerExitStatus.exitCode ?? 'null'} / signal ${ownedServerExitStatus.exitSignal ?? 'none'}`;
+          const stderr = ownedServerStderr.trim();
+          throw Object.assign(
+            new Error(
+              `managed Storybook exited before MCP completion (${exitDescription})${stderr ? `\nstderr:\n${stderr}` : ''}`
+            ),
+            { code: FAILURE_CODES.EXECUTION_INCOMPLETE }
+          );
+        }
         try {
           const completionPath = await resolveOwnedPath(
             receiptRoot,
@@ -869,9 +1082,7 @@ const createProductionAdapters = async () => {
     validateFreezeRecord: ({ freeze, selectedPaths }) =>
       validateFreezeRecord({
         freeze,
-        expectedInputDigest: computeInputDigest({
-          files: collectInputFiles(ownedCheckout),
-        }),
+        expectedInputDigest: freeze.inputDigest,
         selectedPaths,
       }),
     validateProducerIdentity,
@@ -886,12 +1097,12 @@ const createProductionAdapters = async () => {
   };
 };
 
-export async function main(argv = process.argv.slice(2)) {
+export async function main(argv = process.argv.slice(2), runtime = {}) {
   const parsed = parseArguments(argv);
   if (!parsed.ok)
     return failure(FAILURE_CODES.INVALID_INVOCATION, parsed.message, []);
   const adapters = await createProductionAdapters();
-  return runClosure(parsed.options, adapters);
+  return runClosure({ ...parsed.options, signal: runtime.signal }, adapters);
 }
 
 const isEntrypoint =
@@ -899,7 +1110,25 @@ const isEntrypoint =
   import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
 
 if (isEntrypoint) {
-  const result = await main();
+  const abortController = new AbortController();
+  const onSignal = (signal) => {
+    if (!abortController.signal.aborted) {
+      abortController.abort(new Error(`closure interrupted by ${signal}`));
+    }
+  };
+  const onSigint = () => onSignal('SIGINT');
+  const onSigterm = () => onSignal('SIGTERM');
+  process.once('SIGINT', onSigint);
+  process.once('SIGTERM', onSigterm);
+  let result;
+  try {
+    result = await main(process.argv.slice(2), {
+      signal: abortController.signal,
+    });
+  } finally {
+    process.removeListener('SIGINT', onSigint);
+    process.removeListener('SIGTERM', onSigterm);
+  }
   if (!result.ok) console.error(`${result.code}: ${result.message}`);
   process.exitCode = result.ok ? 0 : 1;
 }

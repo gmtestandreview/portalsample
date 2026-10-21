@@ -1,7 +1,6 @@
-import get from 'lodash/get';
-import set from 'lodash/set';
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
+import { getIn, setIn } from './formPath';
 import type { ValidationSchema } from './types';
 
 type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
@@ -9,20 +8,23 @@ type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
 function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
   error: ValidationError
 ): FieldErrors<TFieldValues> {
-  const fieldErrors = {};
+  let fieldErrors = {};
   const innerErrors = error.inner ?? [];
 
   if (innerErrors.length > 0) {
     innerErrors.forEach((innerError) => {
-      if (innerError.path && get(fieldErrors, innerError.path) === undefined) {
-        set(fieldErrors, innerError.path, {
+      if (
+        innerError.path &&
+        getIn(fieldErrors, innerError.path) === undefined
+      ) {
+        fieldErrors = setIn(fieldErrors, innerError.path, {
           type: 'validation',
           message: innerError.message,
         });
       }
     });
   } else if (error.path) {
-    set(fieldErrors, error.path, {
+    fieldErrors = setIn(fieldErrors, error.path, {
       type: 'validation',
       message: error.message,
     });

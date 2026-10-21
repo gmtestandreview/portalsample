@@ -1,6 +1,6 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Switch } from './Switch';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent } from 'storybook/test';
 
 const meta = {
@@ -14,10 +14,15 @@ const meta = {
 
 export default meta;
 type Story = StoryFn<typeof Switch>;
+type ObjectStory = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <Switch {...args}>Wi-Fi</Switch>
-);
+export const Example: ObjectStory = {
+  args: { children: 'Wi-Fi' },
+  render: (args) => <Switch {...args}>Wi-Fi</Switch>,
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('switch', { name: 'Wi-Fi' })).toBeVisible();
+  },
+};
 
 export const Selected: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Switch {...args}>Wi-Fi</Switch>

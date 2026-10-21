@@ -29,34 +29,6 @@ export default defineConfig({
     storybookTest({ configDir: path.join(dirname, '.storybook') }),
     storybookVitestRuntimePlugin,
   ],
-  // Browser Mode must know these entry points before the first story import.
-  // Otherwise Vite discovers them mid-run, reloads the page, and can abort a
-  // dynamically imported story module on a clean dependency cache.
-  optimizeDeps: {
-    include: [
-      'lodash/capitalize',
-      'lodash/clone',
-      'lodash/entriesIn',
-      'lodash/forEach',
-      'lodash/fromPairs',
-      'lodash/get',
-      'lodash/isArray',
-      'lodash/isBoolean',
-      'lodash/isEmpty',
-      'lodash/isEqual',
-      'lodash/isFunction',
-      'lodash/isNil',
-      'lodash/isString',
-      'lodash/keys',
-      'lodash/map',
-      'lodash/omit',
-      'lodash/replace',
-      'lodash/set',
-      'lodash/startCase',
-      'lodash/toPath',
-      'lodash/trim',
-    ],
-  },
   test: {
     name: 'storybook',
     // Single run unless `--watch` is passed (see `test:storybook:watch`).

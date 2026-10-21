@@ -33,7 +33,11 @@ export function Meter({ label, ...props }: Readonly<MeterProps>) {
   });
 
   return (
-    <AriaMeter {...props} ref={meterRef}>
+    <AriaMeter
+      {...props}
+      {...(label === undefined ? {} : { 'aria-label': label })}
+      ref={meterRef}
+    >
       {({ percentage, valueText }) => (
         <>
           <Label>{label}</Label>

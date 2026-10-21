@@ -46,30 +46,6 @@ const vitestConfigContents: Record<string, string> = {
   'vitest.config.ts': readFileSync('vitest.config.ts', 'utf8'),
   'vitest.unit.config.ts': readFileSync('vitest.unit.config.ts', 'utf8'),
 };
-const modularLodashEntryPoints = [
-  'lodash/capitalize',
-  'lodash/clone',
-  'lodash/entriesIn',
-  'lodash/forEach',
-  'lodash/fromPairs',
-  'lodash/get',
-  'lodash/isArray',
-  'lodash/isBoolean',
-  'lodash/isEmpty',
-  'lodash/isEqual',
-  'lodash/isFunction',
-  'lodash/isNil',
-  'lodash/isString',
-  'lodash/keys',
-  'lodash/map',
-  'lodash/omit',
-  'lodash/replace',
-  'lodash/set',
-  'lodash/startCase',
-  'lodash/toPath',
-  'lodash/trim',
-] as const;
-
 /** Paths that belong to Playwright, never to a Vitest leaf. */
 const foreignTestPaths = [
   '.github/migration-verifier/tests/runtime/checklist.runtime.spec.ts',
@@ -141,10 +117,13 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
     expect(storybook.setupFiles).toEqual(['./vitest.storybook.setup.ts']);
   });
 
-  it('prebundles modular Lodash entry points before Browser Mode starts', () => {
-    expect(storybookConfig.optimizeDeps?.include).toEqual(
-      expect.arrayContaining([...modularLodashEntryPoints])
-    );
+  it('does not explicitly prebundle modular Lodash entry points', () => {
+    const include = storybookConfig.optimizeDeps?.include ?? [];
+    expect(
+      include.some(
+        (entry) => typeof entry === 'string' && entry.startsWith('lodash/')
+      )
+    ).toBe(false);
   });
 
   it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {

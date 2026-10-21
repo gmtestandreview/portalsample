@@ -1,6 +1,6 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Slider } from './Slider';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
 const meta = {
@@ -15,15 +15,18 @@ const meta = {
 export default meta;
 
 type Story = StoryFn<typeof Slider>;
+type ObjectStory = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <Slider {...args} style={{ width: 200 }} />
-);
-
-Example.args = {
-  label: 'Range',
-  defaultValue: [30, 60],
-  thumbLabels: ['start', 'end'],
+export const Example: ObjectStory = {
+  args: {
+    label: 'Range',
+    defaultValue: [30, 60],
+    thumbLabels: ['start', 'end'],
+  },
+  render: (args) => <Slider {...args} style={{ width: 200 }} />,
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('group', { name: 'Range' })).toBeVisible();
+  },
 };
 
 export const Unlabelled: Story = (args: Readonly<Parameters<Story>[0]>) => (

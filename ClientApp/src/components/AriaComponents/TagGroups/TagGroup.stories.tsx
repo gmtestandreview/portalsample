@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Tag, TagGroup } from './TagGroup';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -13,18 +14,25 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof TagGroup>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <TagGroup {...args}>
-    <Tag>Chocolate</Tag>
-    <Tag>Mint</Tag>
-    <Tag>Strawberry</Tag>
-    <Tag>Vanilla</Tag>
-  </TagGroup>
-);
-
-Example.args = {
-  label: 'Ice cream flavor',
-  selectionMode: 'single',
+export const Example: Story = {
+  render: (args) => (
+    <TagGroup {...args}>
+      <Tag>Chocolate</Tag>
+      <Tag>Mint</Tag>
+      <Tag>Strawberry</Tag>
+      <Tag>Vanilla</Tag>
+    </TagGroup>
+  ),
+  args: {
+    label: 'Ice cream flavor',
+    selectionMode: 'single',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('grid', { name: 'Ice cream flavor' })
+    ).toBeVisible();
+    await expect(canvas.getByText('Chocolate')).toBeVisible();
+  },
 };

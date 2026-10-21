@@ -1,0 +1,11 @@
+{
+  "include": ["scripts", "tests"],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.venv",
+    "skills/writing-skills/scripts"
+  ],
+  "pythonVersion": "3.14",
+  "typeCheckingMode": "strict"
+}

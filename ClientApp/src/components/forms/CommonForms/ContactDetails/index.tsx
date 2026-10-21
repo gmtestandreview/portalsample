@@ -1,6 +1,4 @@
 import { useField } from 'formik';
-import forEach from 'lodash/forEach';
-import keys from 'lodash/keys';
 import { Col, Form, Row } from 'react-bootstrap';
 import { Title } from '../../../../api/web-api-client';
 import type { ContactDto } from '../../../../api/web-api-client';
@@ -24,6 +22,177 @@ export interface ContactDetailsProps {
   emailAddressLabel?: string;
 }
 
+interface ContactDetailsLabels {
+  title: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  businessPhone: string;
+  mobilePhone: string;
+  email: string;
+}
+
+const getTitles = (): SelectInputOption<string>[] => {
+  const options: SelectInputOption<string>[] = [];
+  for (const key of Object.keys(Title)) {
+    options.push({
+      displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
+      value: key,
+    });
+  }
+  return options;
+};
+
+interface ContactDetailsSummaryViewProps {
+  getName: (name: keyof ContactDto) => string;
+  titleFieldValue: string;
+  labels: ContactDetailsLabels;
+}
+
+const ContactDetailsSummaryView = ({
+  getName,
+  titleFieldValue,
+  labels,
+}: Readonly<ContactDetailsSummaryViewProps>) => (
+  <>
+    <SelectInput<string>
+      key={`${getName('title')}`}
+      name={`${getName('title')}`}
+      label={labels.title}
+      options={getTitles()}
+      isSummary
+      addBlank
+    />
+    {titleFieldValue === '' ? (
+      <TextInput name='titleEmpty' label={labels.title} isSummary />
+    ) : null}
+    <HidableField name={`${getName('titleOther')}`}>
+      <TextInput
+        name={`${getName('titleOther')}`}
+        label='Title, if "Other"'
+        isSummary
+      />
+    </HidableField>
+    <TextInput
+      name={`${getName('firstName')}`}
+      label={labels.firstName}
+      isSummary
+    />
+    <TextInput
+      name={`${getName('lastName')}`}
+      label={labels.lastName}
+      isSummary
+    />
+    <TextInput name={`${getName('role')}`} label={labels.role} isSummary />
+    <NumberInput
+      name={`${getName('phone')}`}
+      label={labels.businessPhone}
+      type='Phone'
+      isSummary
+      format='checkPhoneFormat'
+    />
+    <NumberInput
+      name={`${getName('mobile')}`}
+      label={labels.mobilePhone}
+      type='Mobile'
+      isSummary
+      format='#### ### ###'
+    />
+    <TextInput name={`${getName('email')}`} label={labels.email} isSummary />
+  </>
+);
+
+interface ContactDetailsEditViewProps {
+  getName: (name: keyof ContactDto) => string;
+  labels: ContactDetailsLabels;
+}
+
+const ContactDetailsEditView = ({
+  getName,
+  labels,
+}: Readonly<ContactDetailsEditViewProps>) => (
+  <Form.Group>
+    <Row>
+      <Col md={6}>
+        <SelectInput<string>
+          key={`${getName('title')}`}
+          name={`${getName('title')}`}
+          label={labels.title}
+          options={getTitles()}
+          addBlank
+        />
+      </Col>
+      <Col md={6}>
+        <HidableField name={`${getName('titleOther')}`}>
+          <TextInput
+            key={`${getName('titleOther')}`}
+            name={`${getName('titleOther')}`}
+            label='If "Other"'
+            placeholder='Please enter title'
+          />
+        </HidableField>
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <TextInput
+          key={`${getName('firstName')}`}
+          name={`${getName('firstName')}`}
+          label={labels.firstName}
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <TextInput
+          key={`${getName('lastName')}`}
+          name={`${getName('lastName')}`}
+          label={labels.lastName}
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <TextInput
+          key={`${getName('role')}`}
+          name={`${getName('role')}`}
+          label={labels.role}
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <NumberInput
+          key={`${getName('phone')}`}
+          name={`${getName('phone')}`}
+          label={labels.businessPhone}
+          type='Phone'
+          format='checkPhoneFormat'
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <NumberInput
+          name={`${getName('mobile')}`}
+          label={labels.mobilePhone}
+          type='Mobile'
+          format='#### ### ###'
+        />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <TextInput
+          key={`${getName('email')}`}
+          name={`${getName('email')}`}
+          label={labels.email}
+        />
+      </Col>
+    </Row>
+  </Form.Group>
+);
+
 const ContactDetailsInput = ({
   name,
   isSummary,
@@ -39,177 +208,30 @@ const ContactDetailsInput = ({
   const [_contact] = useField(name);
   const [_title] = useField('organisationAndContact.contact.title');
 
-  const pTitleLabel = titleLabel ?? 'Title (optional)';
-  const pFirstNameLabel = firstNameLabel ?? 'First name';
-  const pLastNameLabel = lastNameLabel ?? 'Last name';
-  const pRoleLabel = roleLabel ?? 'Role (optional)';
-  const pBusinessPhoneLabel = businessPhoneLabel ?? 'Business phone';
-  const pMobilePhoneLabel = mobilePhoneLabel ?? 'Mobile phone';
-  const pEmailAddressLabel = emailAddressLabel ?? 'Email address';
-
-  const getTitles = () => {
-    const options: SelectInputOption<string>[] = [];
-    forEach(keys(Title), (key) => {
-      options.push({
-        displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
-        value: key,
-      });
-    });
-    return options;
+  const labels: ContactDetailsLabels = {
+    title: titleLabel ?? 'Title (optional)',
+    firstName: firstNameLabel ?? 'First name',
+    lastName: lastNameLabel ?? 'Last name',
+    role: roleLabel ?? 'Role (optional)',
+    businessPhone: businessPhoneLabel ?? 'Business phone',
+    mobilePhone: mobilePhoneLabel ?? 'Mobile phone',
+    email: emailAddressLabel ?? 'Email address',
   };
 
   if (isSummary) {
     if (_contact.value === '') {
       return <span>No details added</span>;
     }
-
     return (
-      <>
-        <SelectInput<string>
-          key={`${getName('title')}`}
-          name={`${getName('title')}`}
-          label={pTitleLabel}
-          options={getTitles()}
-          isSummary={isSummary}
-          addBlank
-        />
-        {_title.value === '' ? (
-          <TextInput
-            name='titleEmpty'
-            label={pTitleLabel}
-            isSummary={isSummary}
-          />
-        ) : null}
-        <HidableField name={`${getName('titleOther')}`}>
-          <TextInput
-            name={`${getName('titleOther')}`}
-            label='Title, if "Other"'
-            isSummary={isSummary}
-          />
-        </HidableField>
-        <TextInput
-          name={`${getName('firstName')}`}
-          label={pFirstNameLabel}
-          isSummary={isSummary}
-        />
-        <TextInput
-          name={`${getName('lastName')}`}
-          label={pLastNameLabel}
-          isSummary={isSummary}
-        />
-        <TextInput
-          name={`${getName('role')}`}
-          label={pRoleLabel}
-          isSummary={isSummary}
-        />
-        <NumberInput
-          name={`${getName('phone')}`}
-          label={pBusinessPhoneLabel}
-          type='Phone'
-          isSummary={isSummary}
-          format='checkPhoneFormat'
-        />
-        <NumberInput
-          name={`${getName('mobile')}`}
-          label={pMobilePhoneLabel}
-          type='Mobile'
-          isSummary={isSummary}
-          format='#### ### ###'
-        />
-        <TextInput
-          name={`${getName('email')}`}
-          label={pEmailAddressLabel}
-          isSummary={isSummary}
-        />
-      </>
+      <ContactDetailsSummaryView
+        getName={getName}
+        titleFieldValue={_title.value as string}
+        labels={labels}
+      />
     );
   }
 
-  return (
-    <Form.Group>
-      <Row>
-        <Col md={6}>
-          <SelectInput<string>
-            key={`${getName('title')}`}
-            name={`${getName('title')}`}
-            label={pTitleLabel}
-            options={getTitles()}
-            addBlank
-          />
-        </Col>
-        <Col md={6}>
-          <HidableField name={`${getName('titleOther')}`}>
-            <TextInput
-              key={`${getName('titleOther')}`}
-              name={`${getName('titleOther')}`}
-              label='If "Other"'
-              placeholder='Please enter title'
-            />
-          </HidableField>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col>
-          <TextInput
-            key={`${getName('firstName')}`}
-            name={`${getName('firstName')}`}
-            label={pFirstNameLabel}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <TextInput
-            key={`${getName('lastName')}`}
-            name={`${getName('lastName')}`}
-            label={pLastNameLabel}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <TextInput
-            key={`${getName('role')}`}
-            name={`${getName('role')}`}
-            label={pRoleLabel}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <NumberInput
-            key={`${getName('phone')}`}
-            name={`${getName('phone')}`}
-            label={pBusinessPhoneLabel}
-            type='Phone'
-            isSummary={isSummary}
-            format='checkPhoneFormat'
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <NumberInput
-            name={`${getName('mobile')}`}
-            label={pMobilePhoneLabel}
-            type='Mobile'
-            isSummary={isSummary}
-            format='#### ### ###'
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <TextInput
-            key={`${getName('email')}`}
-            name={`${getName('email')}`}
-            label={pEmailAddressLabel}
-          />
-        </Col>
-      </Row>
-    </Form.Group>
-  );
+  return <ContactDetailsEditView getName={getName} labels={labels} />;
 };
 
 export default ContactDetailsInput;

@@ -1,6 +1,6 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { DateField } from './DateField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
 const meta = {
@@ -15,13 +15,15 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof DateField>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <DateField {...args} />
-);
-
-Example.args = {
-  label: 'Event date',
-};
+export const Example = {
+  render: (args: Readonly<Parameters<Story>[0]>) => <DateField {...args} />,
+  args: {
+    label: 'Event date',
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Event date')).toBeVisible();
+  },
+} satisfies StoryObj<typeof meta>;
 
 export const WithDescription: Story = (
   args: Readonly<Parameters<Story>[0]>

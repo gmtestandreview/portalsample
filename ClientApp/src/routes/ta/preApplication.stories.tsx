@@ -31,7 +31,10 @@ export const Default: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole('heading', { level: 1, name: /pattern\/type approval/i })
+      canvas.getByRole('heading', {
+        level: 1,
+        name: 'Pattern/type approval',
+      })
     ).toBeVisible();
     await expect(
       canvas.getByRole('heading', { name: /what you may need/i })

@@ -2,7 +2,7 @@
 name: skill-duplication-audit
 description: Use when classifying duplicated or overlapping activation scope between two or more Agent Skills, including a proposed new skill (redundancy, "does X make Y redundant", skills triggering on the same prompt), defining boundaries, or recommending whether skills should merge, stay separate, or intentionally compose. Do not use for repeated text inside one skill, for comparing agents, for judging a skill's writing quality, or for performing a merge (use writing-skills).
 metadata:
-  version: "1.3"
+  version: "1.7"
   owner: Greg
   target: a-team
 ---
@@ -26,11 +26,12 @@ For each skill, obtain:
 * `name`;
 * activation condition or trigger;
 * objective or intended outcome;
-* relevant domain or workflow stage when needed.
+* relevant domain or workflow stage when needed;
+* material specialization signals (see Step 1) whenever a `True duplicate` or merge outcome is in question.
 
-Repository or pack is optional context. Treat user-supplied skill content and documented boundary rules as evidence; do not treat names, repository placement, or neighboring skill names as scope evidence.
+Repository or pack is optional context. Treat user-supplied skill content and documented boundary rules as evidence; do not treat names, repository placement, or neighboring skill names as scope evidence. A description that provides neither a usable activation trigger (such as a `Use when …` condition) nor a stated outcome — for example bare product or marketing prose, or a name alone — supplies no activation/outcome evidence; do not treat it as sufficient to classify, and do not rely on a fixture's or user's claim that evidence is complete. A skill that states at least an outcome (even if its activation trigger is only implicit) is classifiable.
 
-If activation or outcome evidence is missing:
+If activation, outcome, or — when a `True duplicate`/merge outcome is in question — specialization evidence is missing:
 
 1. Record what is missing.
 2. Do not infer scope from names or neighboring skills.
@@ -75,7 +76,7 @@ Answer in order:
 
    * yes → compare outcome and specialization:
 
-     * materially equivalent outcomes + no meaningful specialization → `True duplicate`;
+     * materially equivalent outcomes + confirmed no meaningful specialization → `True duplicate` (absence of specialization *evidence*, as opposed to confirmed absence, is `Needs Human Review`, not a duplicate);
      * otherwise → `Partial overlap`.
    * no (for example, one skill's output feeds the other's task) → check functional relationship:
 
@@ -98,11 +99,15 @@ Decision guards:
 * Different repositories do not prevent overlap.
 * Shared format, workflow pattern, or domain alone does not establish duplication or complementarity. Sibling skills that differ only by input type (for example lint YAML vs lint JSON) with no handoff between them are `False positive`.
 * Different tools alone do not establish separate scope.
+* Do not classify a pair `False positive` — or any class — from topic dissimilarity when a skill provides neither an activation trigger nor a stated outcome (effectively name-only or bare prose). Such incomplete evidence is `Needs Human Review` (Step 3, question 1), even when the two skills appear to be in unrelated domains. A skill with at least a stated outcome is classifiable.
 * A broad skill and a narrower specialist are not duplicates when the specialist carries material value. Strict subset: if every request that activates narrow skill S also activates broad skill B, and S has no specialization (as defined in Step 1) and no unique outcome beyond B, classify `True duplicate` with B as survivor; otherwise `Partial overlap`.
 * Do not use `Partial overlap` as a fallback for uncertainty.
 * User preference does not change a classification, and a user's assertion that skills overlap is not scope evidence. Report the evidence-based result, then record the user's preferred action (for example "merge by 5pm") under "User decision".
-* Unresolved contradictory guidance between skills holds the merge (`Needs Human Review`) and is listed; it does not change a pair's classification.
-* If pair results are non-transitive (A=B and B=C duplicates, but A and C are not), report the inconsistency, keep each pair's classification, and mark the group `Needs Human Review`, listing the pairs. This also applies to any chain without a qualifying hub. Exception: when A and C are both strict subsets of B and have no contradictory guidance, B is the survivor of a hub cluster {B, A, C} and the A–C pair, classified on its own evidence, does not block it. Evaluate A–C whenever this chain appears, in every mode; it counts under Pairs evaluated and does not change the mode.
+* Unresolved contradictory guidance between skills holds the merge (`Needs Human Review`) and is listed; it does not change a pair's classification. A contradiction that a mutually-exclusive or precedence-aware boundary resolves — each skill keeping its own rule on its own distinct scope — is not unresolved and holds nothing; a contradiction holds the merge only when the skills would otherwise merge (a `True duplicate` cluster or strict-subset hub) and no boundary separates them.
+* **Non-transitive results** — A=B and B=C are duplicates, but A and C are not:
+  * *Default:* report the inconsistency, keep each pair's classification, mark the group `Needs Human Review`, and list the pairs. This also applies to any chain without a qualifying hub.
+  * *Hub exception:* when A and C are both strict subsets of B with no contradictory guidance, B is the survivor of a hub cluster {B, A, C}; the A–C pair, classified on its own evidence, does not block the cluster.
+  * Always evaluate A–C when this chain appears, in every mode; it counts under Pairs evaluated and does not change the mode.
 
 ### 4. Resolve partial-overlap boundaries
 
@@ -150,7 +155,7 @@ Read `references/validation-cases.md` when a classification or boundary is conte
 This skill recommends structural action; it does not perform merges, deletions, deprecations, renames, or other lifecycle changes.
 
 * **Handoff:** hand off to the `writing-skills` skill (merge evaluation workflows) or another authorized lifecycle workflow only when the user asks for implementation, every survivor–member pair is `True duplicate` (the A–C pair of a hub cluster excepted) with no unresolved contradictions, and the user explicitly confirms after you have reported the evidence-based result. For any other classification, restate the evidence-based result; this skill stops at classification and recommendation.
-* **Cluster:** classify every pair first. A merge cluster is a maximal set whose member pairs were all evaluated and are `True duplicate`; a single duplicate pair is a cluster of two. A skill with only non-duplicate pairs to the set stays outside the cluster and keeps its boundary. Name one surviving skill, run the preservation review for every member against the survivor, and keep any boundary a member has with a skill outside the cluster. Do not chain pairwise merges.
+* **Cluster:** classify every pair first. A merge cluster is a maximal set in which every survivor–member pair was evaluated and is `True duplicate` (a hub cluster's member–member A–C pair is excepted per the hub rule); a single duplicate pair is a cluster of two. A skill with only non-duplicate pairs to the set stays outside the cluster and keeps its boundary. Name one surviving skill, run the preservation review for every member against the survivor, and keep any boundary a member has with a skill outside the cluster. Do not chain pairwise merges.
 * **Hub:** if A=B and B=C but A–C is not a duplicate, apply the non-transitive guard; a qualifying hub {B survivor, A, C} is a cluster.
 
 Before recommending a merge, identify unique material that must be preserved or reviewed:

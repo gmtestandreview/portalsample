@@ -26,10 +26,14 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   outputDir: 'reports/test-results/storybook',
-  fullyParallel: true,
+  // The first MCP test-run can cold-start Vitest and compile browser tests.
+  timeout: 180_000,
+  // Storybook's preview compiler and MCP test runner share one browser state;
+  // parallel BDD workers make docs and MCP scenarios race that state.
+  fullyParallel: false,
   forbidOnly: isCi,
   retries: isCi ? 2 : 0,
-  ...(isCi ? { workers: 1 } : {}),
+  workers: 1,
   reporter: [
     ['html', { open: 'never', outputFolder: 'reports/playwright/storybook' }],
     ['list'],

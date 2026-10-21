@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { NumberField } from './NumberField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -12,13 +13,16 @@ const meta = {
 } satisfies Meta<typeof NumberField>;
 
 export default meta;
-type Story = StoryFn<typeof NumberField>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <NumberField {...args} />
-);
-
-Example.args = {
-  label: 'Cookies',
-  placeholder: '-',
+export const Example: Story = {
+  args: {
+    label: 'Cookies',
+    placeholder: '-',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('textbox', { name: 'Cookies' })
+    ).toBeVisible();
+  },
 };

@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Column, Row, Table, TableHeader, TableBody, Cell } from './Table';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -13,35 +14,40 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof Table>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <Table aria-label='Files' {...args}>
-    <TableHeader>
-      <Column isRowHeader>Name</Column>
-      <Column>Type</Column>
-      <Column>Date Modified</Column>
-    </TableHeader>
-    <TableBody>
-      <Row>
-        <Cell>Games</Cell>
-        <Cell>File folder</Cell>
-        <Cell>6/7/2020</Cell>
-      </Row>
-      <Row>
-        <Cell>Program Files</Cell>
-        <Cell>File folder</Cell>
-        <Cell>4/7/2021</Cell>
-      </Row>
-      <Row>
-        <Cell>bootmgr</Cell>
-        <Cell>System file</Cell>
-        <Cell>11/20/2010</Cell>
-      </Row>
-    </TableBody>
-  </Table>
-);
-
-Example.args = {
-  selectionMode: 'multiple',
+export const Example: Story = {
+  render: (args) => (
+    <Table aria-label='Files' {...args}>
+      <TableHeader>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+        <Column>Date Modified</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>Games</Cell>
+          <Cell>File folder</Cell>
+          <Cell>6/7/2020</Cell>
+        </Row>
+        <Row>
+          <Cell>Program Files</Cell>
+          <Cell>File folder</Cell>
+          <Cell>4/7/2021</Cell>
+        </Row>
+        <Row>
+          <Cell>bootmgr</Cell>
+          <Cell>System file</Cell>
+          <Cell>11/20/2010</Cell>
+        </Row>
+      </TableBody>
+    </Table>
+  ),
+  args: {
+    selectionMode: 'multiple',
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('grid', { name: 'Files' })).toBeVisible();
+    await expect(canvas.getByText('Games')).toBeVisible();
+  },
 };

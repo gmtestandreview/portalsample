@@ -316,6 +316,10 @@ reach Resolved only when closure evidence is recorded.
 Versions are **as installed**. "Used by" is the count of files under
 `ClientApp/src` importing the package, excluding vendored trees.
 
+Lodash has no direct application dependency or first-party import. It remains
+installed transitively through Formik, `slate-dom`, and `slate-react`; the
+Lodash type package remains transitive through `slate-react`.
+
 | Dependency                                | Installed  | Used by | Role                                                                                                           |
 | ----------------------------------------- | ---------- | ------: | -------------------------------------------------------------------------------------------------------------- |
 | `react`                                   | 18.3.1     |       — | UI rendering (`createRoot`)                                                                                    |
@@ -328,7 +332,6 @@ Versions are **as installed**. "Used by" is the count of files under
 | `@azure/msal-react`                       | 5.7.2      |       — | React bindings (`MsalProvider`, hooks)                                                                         |
 | `bootstrap`                               | 5.3.8      |       — | CSS framework (custom NMI theme)                                                                               |
 | `react-bootstrap`                         | 2.10.10    |       — | Bootstrap React bindings                                                                                       |
-| `lodash`                                  | 4.18.1     |      12 | Object/array utilities                                                                                         |
 | `date-fns`                                | 3.6.0      |       6 | Date parsing and formatting                                                                                    |
 | `react-number-format`                     | 5.4.5      |       4 | ABN / number pattern display                                                                                   |
 | `dompurify`                               | **3.4.14** |       3 | HTML sanitisation behind the Trusted Types policy                                                              |

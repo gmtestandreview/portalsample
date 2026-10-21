@@ -2,7 +2,6 @@ import { Alert, Col, Row } from 'react-bootstrap';
 import { useEffect, useState, useRef } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
-import get from 'lodash/get';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { type TASupportingDocumentsProps, ValidationMessages } from './types';
 import {
@@ -26,6 +25,7 @@ import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
 import RhfAttachment from '../../components/Inputs/RhfAttachment';
 import InstrumentInfoPanel from './instrumentInfoPanel';
+import { getIn } from '../../components/forms/formPath';
 
 const ALLOWED_FILE_TYPES =
   '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';
@@ -77,7 +77,7 @@ const RhfSupportingDocuments = (
       err !== ValidationMessages.RequiredTag
   );
 
-  const validationMessage: unknown = get(formErrors, name)?.message;
+  const validationMessage: unknown = getIn(formErrors, name)?.message;
   const formFieldErrors =
     typeof validationMessage === 'string' ? [validationMessage] : [];
   const fileErrors = getFailedFileErrors(progress);

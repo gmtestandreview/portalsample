@@ -92,7 +92,7 @@ to avoid fixing a heading.
 | CSS          | Bootstrap 5 (custom NMI theme) + SCSS partials               |
 | API client   | Auto-generated `web-api-client.ts` (NSwag/OpenAPI)           |
 | Analytics    | Azure Application Insights + Google Analytics                |
-| Bundler      | Webpack 5 (config lives in `webpack.config.js`)              |
+| Bundler      | Vite 8 (`vite.config.mts`; migrated from Webpack 5)         |
 | CSP          | Trusted Types policy via `trustedtypes.ts` + DOMPurify       |
 
 ## Storybook
@@ -191,8 +191,8 @@ that is their explicit runtime contract:
 
 ```ts
 import { env } from '../env';
-env.REACT_APP_B2C_CLIENTID; // correct
-process.env.REACT_APP_B2C_CLIENTID; // wrong — undefined at runtime
+env.VITE_B2C_CLIENTID; // correct
+process.env.VITE_B2C_CLIENTID; // wrong — undefined at runtime
 ```
 
 ### Global object usage

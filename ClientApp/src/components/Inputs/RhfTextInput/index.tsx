@@ -1,5 +1,4 @@
 import Form from 'react-bootstrap/Form';
-import trim from 'lodash/trim';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
 import { omitUndefined } from '../../../utils/omitUndefined';
@@ -49,7 +48,7 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
   const handleBlur = () => {
     onBlur?.();
     if (typeof field.value === 'string') {
-      const trimmed = trim(field.value);
+      const trimmed = field.value.trim();
       if (trimmed !== field.value) {
         field.onChange(trimmed);
       }

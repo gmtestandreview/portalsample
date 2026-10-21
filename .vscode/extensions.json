@@ -3,6 +3,8 @@
     "ms-playwright.playwright",
     "alexkrechik.cucumberautocomplete",
     "charliermarsh.ruff",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
     "dbaeumer.vscode-eslint",
     "sonarsource.sonarlint-vscode",
     "codacy-app.codacy"

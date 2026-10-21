@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { Alert, Card, Col, Container } from 'react-bootstrap';
-import forEach from 'lodash/forEach';
 import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
 import TextAreaInput from '../../components/Inputs/TextAreaInput';
@@ -83,15 +82,15 @@ const ApplicationAndInstrument = (
   ): SelectInputOption<string>[] => {
     const options: SelectInputOption<string>[] = [];
     if (parentId !== undefined && parentId !== '') {
-      forEach(values, (l) => {
+      for (const l of values) {
         if (l.parentId === parentId) {
           options.push({ displayText: l.label!, value: l.id! });
         }
-      });
+      }
     } else if (isSummary) {
-      forEach(values, (l) => {
+      for (const l of values) {
         options.push({ displayText: l.label!, value: l.id! });
-      });
+      }
     }
     const [sorted, lastId] = sortList(options, 'No instrument', 'displayText');
     noInstrumentTypeId.current = lastId;
@@ -171,9 +170,9 @@ const ApplicationAndInstrument = (
 
   const getInstrumentCategories = () => {
     const options: SelectInputOption<string>[] = [];
-    forEach(instrumentCategories, (l) => {
+    for (const l of instrumentCategories ?? []) {
       options.push({ displayText: l.label!, value: l.id! });
-    });
+    }
     return options;
   };
 

@@ -35,12 +35,12 @@ export const DashboardStatuses: Story = {
 
     // Wait for useEffect to flush and badges to become visible
     const quoteAvailableBadge = await canvas.findByText(
-      DashboardItemStatus.QuoteAvailable
+      'Quote offer is available'
     );
     await expect(quoteAvailableBadge).toBeVisible();
 
     const quoteAcceptedBadge = await canvas.findByText(
-      DashboardItemStatus.QuoteAccepted
+      'Quote offer is accepted'
     );
     await expect(quoteAcceptedBadge).toBeVisible();
   },

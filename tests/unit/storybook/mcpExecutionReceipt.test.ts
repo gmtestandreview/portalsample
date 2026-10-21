@@ -89,6 +89,35 @@ describe('normalizeMcpReceipt', () => {
     });
   });
 
+  it('normalizes a complete markdown report returned by the native MCP endpoint', () => {
+    const result = moduleUnderTest.normalizeMcpReceipt({
+      requestId: 10,
+      requestedStoryIds,
+      response: {
+        content: [
+          {
+            type: 'text',
+            text: `## Passing Stories\n\n- ${requestedStoryIds[0]}\n- ${requestedStoryIds[1]}`,
+          },
+        ],
+      },
+      ...identity,
+    });
+
+    expect(result).toMatchObject({ ok: true });
+    expect(result.receipt).toMatchObject({
+      requestedStoryIds,
+      executedStoryIds: requestedStoryIds,
+      verdict: 'passed',
+      report: {
+        passingStoryIds: requestedStoryIds,
+        failingStoryIds: [],
+        accessibilityViolationStoryIds: [],
+        unhandledErrors: [],
+      },
+    });
+  });
+
   it.each([
     [
       'one-of-two results',

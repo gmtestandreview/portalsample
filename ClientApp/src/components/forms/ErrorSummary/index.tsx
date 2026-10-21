@@ -1,7 +1,5 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
-import capitalize from 'lodash/capitalize';
-import startCase from 'lodash/startCase';
 import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useFormState } from 'react-hook-form';
@@ -58,14 +56,22 @@ const renderErrorListItem = (
 };
 
 const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
+  const formatKeyPart = (keyPart: string) => {
+    const formatted = keyPart
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+      .replace(/([a-z\d])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .trim();
+    return formatted
+      ? `${formatted.charAt(0).toUpperCase()}${formatted.slice(1).toLowerCase()}`
+      : formatted;
+  };
   const keyParts = key.split(separator);
   let sentenceBuilder = '';
   keyParts.forEach((keyPart, i) => {
     if (Number.isNaN(+keyPart)) {
       if ((depth && i < depth) || !depth) {
-        sentenceBuilder = sentenceBuilder.concat(
-          `${capitalize(startCase(keyPart))}: `
-        );
+        sentenceBuilder = sentenceBuilder.concat(`${formatKeyPart(keyPart)}: `);
       }
     } else {
       sentenceBuilder = sentenceBuilder.concat(`(#${+keyPart + 1}): `);

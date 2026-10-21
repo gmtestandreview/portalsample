@@ -1,4 +1,3 @@
-import trim from 'lodash/trim';
 import type { ReactNode } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
@@ -55,7 +54,7 @@ const RhfTextField = ({
         isInvalid={!!showError}
         aria-describedby={showError ? validationMessageId : helpId}
         onBlur={() => {
-          field.onChange(trim(field.value ?? ''));
+          field.onChange((field.value ?? '').trim());
           field.onBlur();
         }}
       />

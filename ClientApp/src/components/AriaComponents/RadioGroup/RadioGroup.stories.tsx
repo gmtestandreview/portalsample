@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { RadioGroup, Radio } from './RadioGroup';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -13,16 +14,23 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof RadioGroup>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <RadioGroup {...args}>
-    <Radio value='soccer'>Soccer</Radio>
-    <Radio value='baseball'>Baseball</Radio>
-    <Radio value='basketball'>Basketball</Radio>
-  </RadioGroup>
-);
-
-Example.args = {
-  label: 'Favorite sport',
+export const Example: Story = {
+  render: (args) => (
+    <RadioGroup {...args}>
+      <Radio value='soccer'>Soccer</Radio>
+      <Radio value='baseball'>Baseball</Radio>
+      <Radio value='basketball'>Basketball</Radio>
+    </RadioGroup>
+  ),
+  args: {
+    label: 'Favorite sport',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('radiogroup', { name: 'Favorite sport' })
+    ).toBeVisible();
+    await expect(canvas.getByRole('radio', { name: 'Soccer' })).toBeVisible();
+  },
 };

@@ -43,7 +43,7 @@ export const EditStep: Story = {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('heading', {
-        name: /upload one or more supporting documents/i,
+        name: 'Upload one or more supporting documents',
       })
     ).toBeVisible();
   },

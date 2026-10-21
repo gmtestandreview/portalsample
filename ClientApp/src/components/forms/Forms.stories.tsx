@@ -246,6 +246,11 @@ export const CheckboxDefault: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole('checkbox');
+    await expect(
+      canvas.getByLabelText(
+        'I agree to the terms and conditions of the NMI Services portal.'
+      )
+    ).toBeVisible();
     await expect(checkbox).not.toBeChecked();
     await userEvent.click(checkbox);
     await expect(checkbox).toBeChecked();

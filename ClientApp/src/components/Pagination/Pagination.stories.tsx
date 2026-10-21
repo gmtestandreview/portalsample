@@ -102,7 +102,7 @@ export const CustomStyleVariant: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
-    const pageText = canvas.getByText(/page 3 of 8/i);
+    const pageText = canvas.getByText('Page 3 of 8');
     await expect(pageText).toBeVisible();
     const user = userEvent.setup();
     const page4Btn = canvas.getByRole('button', { name: /page 4/i });

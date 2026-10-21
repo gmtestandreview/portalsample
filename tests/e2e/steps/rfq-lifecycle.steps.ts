@@ -84,7 +84,7 @@ When('the user opens the draft RFQ', async ({ page, scenarioState }) => {
     exact: true,
   });
   await actions.dispatchEvent('click');
-  const editRequest = draft.getByRole('link', {
+  const editRequest = draft.getByRole('menuitem', {
     name: 'Edit request',
     exact: true,
   });

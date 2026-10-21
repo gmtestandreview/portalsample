@@ -12,9 +12,18 @@
  */
 
 import process from 'node:process';
-import { expect, type APIResponse, type Page } from '@playwright/test';
+import {
+  expect,
+  type APIRequestContext,
+  type APIResponse,
+  type Page,
+} from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
+import {
+  parseMcpMarkdownReport,
+  type StorybookMcpMarkdownReport,
+} from '../support/storybookMcpReport';
 
 const { Given, When, Then } = createBdd();
 
@@ -44,6 +53,7 @@ const MCP_HEADERS = {
   accept: 'application/json, text/event-stream',
   'content-type': 'application/json',
 };
+const MCP_TRANSPORT_RETRY_DELAYS_MS = [1_000, 2_000] as const;
 
 type McpEnvelope = {
   id?: number | string;
@@ -55,6 +65,87 @@ type McpEnvelope = {
     content?: Array<{ type?: string; text?: string }>;
   };
 };
+
+const isTransientMcpTransportError = (error: unknown): boolean =>
+  /ECONNRESET|ECONNREFUSED|socket hang up/i.test(
+    error instanceof Error ? error.message : String(error)
+  );
+
+async function executeMcpTestRun(
+  request: APIRequestContext,
+  storyIds: string[]
+): Promise<APIResponse> {
+  let lastError: unknown;
+
+  for (
+    let attempt = 0;
+    attempt <= MCP_TRANSPORT_RETRY_DELAYS_MS.length;
+    attempt += 1
+  ) {
+    try {
+      const initialize = await request.post(STORYBOOK_MCP, {
+        headers: MCP_HEADERS,
+        data: {
+          jsonrpc: '2.0',
+          id: 10,
+          method: 'initialize',
+          params: {
+            protocolVersion: '2025-03-26',
+            capabilities: {},
+            clientInfo: {
+              name: 'storybook-coverage-remediation',
+              version: '1.0.0',
+            },
+          },
+        },
+      });
+      expect(initialize.status()).toBe(200);
+      const sessionId = initialize.headers()['mcp-session-id'];
+      if (sessionId === undefined) {
+        throw new Error('MCP initialize response did not provide a session ID');
+      }
+      await readMcpEvent(initialize, 10);
+
+      const sessionHeaders = {
+        ...MCP_HEADERS,
+        'mcp-session-id': sessionId,
+      };
+      const initialized = await request.post(STORYBOOK_MCP, {
+        headers: sessionHeaders,
+        data: { jsonrpc: '2.0', method: 'notifications/initialized' },
+      });
+      expect(initialized.status()).toBe(202);
+
+      return await request.post(STORYBOOK_MCP, {
+        headers: sessionHeaders,
+        timeout: 150_000,
+        data: {
+          jsonrpc: '2.0',
+          id: 11,
+          method: 'tools/call',
+          params: {
+            name: 'test-run',
+            arguments: {
+              a11y: true,
+              stories: storyIds.map((storyId) => ({ storyId })),
+            },
+          },
+        },
+      });
+    } catch (error) {
+      lastError = error;
+      const delay = MCP_TRANSPORT_RETRY_DELAYS_MS[attempt];
+      if (!isTransientMcpTransportError(error) || delay === undefined) {
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('MCP test-run failed without a transport error');
+}
 
 async function readMcpEvent(
   response: APIResponse,
@@ -80,6 +171,14 @@ async function readMcpEvent(
     expectedId === undefined
       ? events
       : events.filter((candidate) => candidate.id === expectedId);
+  const errorEvent = matchingEvents.find(
+    (candidate) => candidate.error !== undefined
+  );
+  if (errorEvent !== undefined) {
+    throw new Error(
+      `MCP JSON-RPC response contained an error: ${JSON.stringify(errorEvent.error)}`
+    );
+  }
   const event =
     matchingEvents.find(
       (candidate) => candidate.result?.structuredContent !== undefined
@@ -140,7 +239,7 @@ function visibleSource(page: Page) {
 // MCP protocol compatibility
 // ---------------------------------------------------------------------------
 
-Given('the Storybook MCP server is running', async ({ request }) => {
+Given('the Storybook MCP server is running', async ({ page, request }) => {
   const response = await request.get(STORYBOOK_MCP, {
     headers: { accept: 'text/html' },
   });
@@ -149,6 +248,12 @@ Given('the Storybook MCP server is running', async ({ request }) => {
   expect(await response.text()).toContain(
     'Storybook MCP server successfully running'
   );
+
+  await page.goto(STORYBOOK_BASE);
+  await expect(page.getByRole('heading', { name: 'Storybook' })).toBeVisible({
+    timeout: 15_000,
+  });
+  await loadStoryIframe(page, REPRESENTATIVE_STORY_ID);
 });
 
 Then(
@@ -211,6 +316,7 @@ Then(
 type NormalizedReceipt = {
   ok: boolean;
   errors: Array<{ code: string; message: string }>;
+  report?: StorybookMcpMarkdownReport;
   receipt?: {
     requestedStoryIds: string[];
     executedStoryIds: string[];
@@ -240,57 +346,14 @@ When(
       .split(',')
       .map((storyId) => storyId.trim())
       .filter(Boolean);
-    const initialize = await request.post(STORYBOOK_MCP, {
-      headers: MCP_HEADERS,
-      data: {
-        jsonrpc: '2.0',
-        id: 10,
-        method: 'initialize',
-        params: {
-          protocolVersion: '2025-03-26',
-          capabilities: {},
-          clientInfo: {
-            name: 'storybook-coverage-remediation',
-            version: '1.0.0',
-          },
-        },
-      },
-    });
-    expect(initialize.status()).toBe(200);
-    const sessionId = initialize.headers()['mcp-session-id'];
-    if (sessionId === undefined) {
-      throw new Error('MCP initialize response did not provide a session ID');
-    }
-    await readMcpEvent(initialize, 10);
-
-    const sessionHeaders = {
-      ...MCP_HEADERS,
-      'mcp-session-id': sessionId,
-    };
-    const initialized = await request.post(STORYBOOK_MCP, {
-      headers: sessionHeaders,
-      data: { jsonrpc: '2.0', method: 'notifications/initialized' },
-    });
-    expect(initialized.status()).toBe(202);
-
-    const testRun = await request.post(STORYBOOK_MCP, {
-      headers: sessionHeaders,
-      timeout: 150_000,
-      data: {
-        jsonrpc: '2.0',
-        id: 11,
-        method: 'tools/call',
-        params: {
-          name: 'test-run',
-          arguments: {
-            a11y: true,
-            stories: storyIds.map((storyId) => ({ storyId })),
-          },
-        },
-      },
-    });
+    const testRun = await executeMcpTestRun(request, storyIds);
     expect(testRun.status()).toBe(200);
     const envelope = await readMcpEvent(testRun, 11);
+    expect(envelope.error).toBeUndefined();
+    const contentText = envelope.result?.content
+      ?.filter((block) => block.type === 'text' && block.text !== undefined)
+      .map((block) => block.text as string)
+      .join('\n');
     const contentStructured = envelope.result?.content
       ?.filter((block) => block.type === 'text' && block.text !== undefined)
       .map((block) => {
@@ -309,52 +372,71 @@ When(
       );
     const structuredContent =
       envelope.result?.structuredContent ?? contentStructured;
-    const completedContent = structuredContent as
-      | {
-          status?: string;
-          result?: {
-            componentTestStatuses?: McpStatus[];
-            a11yStatuses?: McpStatus[];
-            counts?: {
-              requested?: number;
-              executed?: number;
-              component?: number;
-              a11y?: number;
-            };
-            unhandledErrors?: unknown[];
+    let componentTestStatuses: McpStatus[];
+    let a11yStatuses: McpStatus[];
+    let reportEvidence: StorybookMcpMarkdownReport | undefined;
+
+    if (structuredContent !== undefined) {
+      const completedContent = structuredContent as {
+        status?: string;
+        result?: {
+          componentTestStatuses?: McpStatus[];
+          a11yStatuses?: McpStatus[];
+          counts?: {
+            requested?: number;
+            executed?: number;
+            component?: number;
+            a11y?: number;
           };
-        }
-      | undefined;
-    const execution = completedContent?.result;
-    const componentTestStatuses = execution?.componentTestStatuses ?? [];
-    const a11yStatuses = execution?.a11yStatuses ?? [];
-    const componentStoryIds = componentTestStatuses.map(
-      ({ storyId }) => storyId
-    );
-    const a11yStoryIds = a11yStatuses.map(({ storyId }) => storyId);
-    if (completedContent === undefined) {
-      throw new Error(
-        `MCP test-run response did not contain structured completion data; result keys: ${Object.keys(envelope.result ?? {}).join(',')}; content: ${JSON.stringify(envelope.result?.content ?? []).slice(0, 1000)}`
+          unhandledErrors?: unknown[];
+        };
+      };
+      const execution = completedContent.result;
+      componentTestStatuses = execution?.componentTestStatuses ?? [];
+      a11yStatuses = execution?.a11yStatuses ?? [];
+      expect(completedContent.status).toBe('completed');
+      expect(
+        componentTestStatuses.map(({ storyId }) => storyId).sort()
+      ).toEqual([...storyIds].sort());
+      expect(a11yStatuses.map(({ storyId }) => storyId).sort()).toEqual(
+        [...storyIds].sort()
       );
+      expect(
+        componentTestStatuses.every(
+          ({ status }) => status === 'status-value:success'
+        )
+      ).toBe(true);
+      expect(
+        a11yStatuses.every(({ status }) => status === 'status-value:success')
+      ).toBe(true);
+      expect(execution?.counts).toEqual({
+        requested: storyIds.length,
+        executed: storyIds.length,
+        component: storyIds.length,
+        a11y: storyIds.length,
+      });
+      expect(execution?.unhandledErrors).toEqual([]);
+    } else {
+      const report = parseMcpMarkdownReport(contentText ?? '');
+      reportEvidence = report;
+      const passingStoryIds = [...new Set(report.passingStoryIds)].sort();
+      const requestedStoryIds = [...storyIds].sort();
+
+      expect(report.missingSections).not.toContain('Passing Stories');
+      expect(passingStoryIds).toEqual(requestedStoryIds);
+      expect(
+        report.failingStoryIds.filter((storyId) => storyIds.includes(storyId))
+      ).toEqual([]);
+      expect(report.accessibilityViolationStoryIds).toEqual([]);
+      expect(report.unhandledErrors).toEqual([]);
+
+      componentTestStatuses = [];
+      a11yStatuses = [];
     }
-    expect(completedContent?.status).toBe('completed');
-    expect([...componentStoryIds].sort()).toEqual([...storyIds].sort());
-    expect([...a11yStoryIds].sort()).toEqual([...storyIds].sort());
-    expect(
-      componentTestStatuses.every(
-        ({ status }) => status === 'status-value:success'
-      )
-    ).toBe(true);
-    expect(
-      a11yStatuses.every(({ status }) => status === 'status-value:success')
-    ).toBe(true);
-    expect(execution?.counts).toEqual({
-      requested: storyIds.length,
-      executed: storyIds.length,
-      component: storyIds.length,
-      a11y: storyIds.length,
-    });
-    expect(execution?.unhandledErrors).toEqual([]);
+
+    const componentStoryIds =
+      reportEvidence?.passingStoryIds ??
+      componentTestStatuses.map(({ storyId }) => storyId);
     const childPid = Number(
       requiredClosureValue('STORYBOOK_CLOSURE_CHILD_PID')
     );
@@ -364,6 +446,7 @@ When(
     latestMcpExecution = {
       ok: true,
       errors: [],
+      ...(reportEvidence === undefined ? {} : { report: reportEvidence }),
       receipt: {
         requestedStoryIds: storyIds,
         executedStoryIds: componentStoryIds,
@@ -380,9 +463,20 @@ When(
 );
 
 Then(
-  'the native MCP receipt should contain exact component and a11y results',
+  'the native MCP report should list exact passing stories without accessibility violations',
   async () => {
     expect(latestMcpExecution).toMatchObject({ ok: true });
+    if (latestMcpExecution?.report !== undefined) {
+      expect(latestMcpExecution.report.missingSections).not.toContain(
+        'Passing Stories'
+      );
+      expect(latestMcpExecution.report.failingStoryIds).toEqual([]);
+      expect(latestMcpExecution.report.accessibilityViolationStoryIds).toEqual(
+        []
+      );
+      expect(latestMcpExecution.report.unhandledErrors).toEqual([]);
+      return;
+    }
     expect(latestMcpExecution?.receipt?.requestedStoryIds).toEqual(
       latestMcpExecution?.receipt?.executedStoryIds
     );

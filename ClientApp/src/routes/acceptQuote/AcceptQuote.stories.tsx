@@ -322,7 +322,9 @@ export const DeliveryAndReturnStep: Story = {
     // DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
     // so this text is the settled-state contract for the four setters in the effect.
     await expect(
-      await canvas.findByText(/loading dock at the rear of the building/)
+      await canvas.findByText(
+        'Please deliver to the loading dock at the rear of the building.'
+      )
     ).toBeVisible();
   },
 };

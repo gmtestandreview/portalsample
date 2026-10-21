@@ -1,6 +1,7 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { TextField } from './TextField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -16,12 +17,16 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof TextField>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <TextField {...args} />
-);
-
-Example.args = {
-  label: 'Name',
+export const Example: Story = {
+  args: {
+    label: 'Name',
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('textbox', { name: 'Name' })).toBeVisible();
+    await expect(
+      canvas.getByPlaceholderText('Enter your full name')
+    ).toBeVisible();
+  },
 };

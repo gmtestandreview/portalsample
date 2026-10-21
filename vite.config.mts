@@ -283,6 +283,7 @@ export default defineConfig(({ command, mode }) => {
               },
               {
                 name: 'utilities',
+                // Lodash remains a transitive runtime dependency of Formik and Slate.
                 test: /node_modules[\\/](lodash|date-fns)[\\/]/,
               },
             ],

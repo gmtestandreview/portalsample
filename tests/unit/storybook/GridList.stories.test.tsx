@@ -6,7 +6,7 @@ import {
 
 describe('GridList stories', () => {
   test('provides alt text for every image in the example story', () => {
-    render(<>{Example({}, {} as never)}</>);
+    render(<>{Example.render?.(Example.args as never, {} as never)}</>);
 
     for (const image of screen.getAllByRole('img')) {
       expect(image).toHaveAttribute('alt');

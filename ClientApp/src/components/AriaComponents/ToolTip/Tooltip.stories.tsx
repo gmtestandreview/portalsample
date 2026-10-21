@@ -2,7 +2,8 @@ import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluat
 import { Tooltip, TooltipTrigger } from './Tooltip';
 import { Button } from '../Button/Button';
 import { Save } from '../NmiIcon';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect, userEvent } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
@@ -15,13 +16,21 @@ const meta = {
 
 export default meta;
 
-type Story = StoryFn<typeof Tooltip>;
+type Story = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <TooltipTrigger>
-    <Button aria-label='Save'>
-      <Save size={18} />
-    </Button>
-    <Tooltip {...args}>Save</Tooltip>
-  </TooltipTrigger>
-);
+export const Example: Story = {
+  args: { children: 'Save' },
+  render: (args) => (
+    <TooltipTrigger>
+      <Button aria-label='Save'>
+        <Save size={18} />
+      </Button>
+      <Tooltip {...args}>Save</Tooltip>
+    </TooltipTrigger>
+  ),
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: 'Save' });
+    await userEvent.hover(button);
+    await expect(button).toHaveAttribute('data-hovered', 'true');
+  },
+};

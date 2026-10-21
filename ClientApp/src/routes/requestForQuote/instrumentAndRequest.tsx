@@ -1,6 +1,5 @@
 import { useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import forEach from 'lodash/forEach';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
@@ -46,11 +45,11 @@ const measurementReportInlineHelp = (
 const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   const options: SelectInputOption<string>[] = [];
   if (parentId !== undefined && parentId !== '') {
-    forEach(values, (l) => {
+    for (const l of values) {
       if (l.parentId === parentId) {
         options.push({ displayText: l.label ?? '', value: l.id ?? '' });
       }
-    });
+    }
   }
   const [sorted, noInstrumentId] = sortList(
     options,
@@ -134,9 +133,9 @@ const useInstrumentAndRequestLookups = () => {
 
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
-    forEach(measurementCategories, (l) => {
+    for (const l of measurementCategories ?? []) {
       options.push({ displayText: l.label!, value: l.id! });
-    });
+    }
     return options;
   };
 

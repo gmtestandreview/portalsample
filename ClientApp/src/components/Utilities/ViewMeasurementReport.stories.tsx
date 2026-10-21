@@ -39,10 +39,12 @@ export const Default: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
-      name: /view measurement report/i,
+      name: 'View measurement report',
     });
     await expect(button).toBeVisible();
-    await expect(canvas.getByText(/PDF file size 2\.00Kb/i)).toBeVisible();
+    await expect(
+      canvas.getByText(/Requires Acrobat PDF reader - PDF file size 2\.00Kb/)
+    ).toBeVisible();
 
     await userEvent.click(button);
 

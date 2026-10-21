@@ -111,7 +111,9 @@ describe('Storybook Playwright step quality', () => {
     expect(actionStep).toBeTruthy();
     expect(actionStep).toContain("page.goto('/dashboard')");
     expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/);
-    expect(actionStep).toMatch(/getByRole\('link', \{\s+name: 'Edit request'/);
+    expect(actionStep).toMatch(
+      /getByRole\('menuitem', \{\s+name: 'Edit request'/
+    );
   });
 
   it('asserts the accessible measurement report history table', () => {

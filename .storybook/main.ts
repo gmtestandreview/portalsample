@@ -29,6 +29,7 @@ const applicationVendorGroups = [
   },
   {
     name: 'utilities',
+    // Lodash remains a transitive runtime dependency of Formik and Slate.
     test: /[\\/]node_modules[\\/](lodash|date-fns)[\\/]/,
   },
 ];

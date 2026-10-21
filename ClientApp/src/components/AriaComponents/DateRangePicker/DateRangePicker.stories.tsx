@@ -1,6 +1,6 @@
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { DateRangePicker } from './DateRangePicker';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
 const meta = {
@@ -14,13 +14,17 @@ const meta = {
 
 export default meta;
 type Story = StoryFn<typeof DateRangePicker>;
+type ObjectStory = StoryObj<typeof meta>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <DateRangePicker {...args} />
-);
-
-Example.args = {
-  label: 'Event date',
+export const Example: ObjectStory = {
+  args: {
+    label: 'Event date',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('group', { name: 'Event date' })
+    ).toBeVisible();
+  },
 };
 
 export const WithDescription: Story = (

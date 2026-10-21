@@ -467,6 +467,124 @@ const statusEntries = (value, label, requestedIds, errors) => {
   return value;
 };
 
+const markdownSectionEntries = (markdown, heading) => {
+  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const headingMatch = new RegExp(`^## ${escapedHeading}\\s*$`, 'm').exec(
+    markdown
+  );
+  if (headingMatch === null) return [];
+
+  const sectionStart = headingMatch.index + headingMatch[0].length;
+  const nextHeading = /^## .+$/m.exec(markdown.slice(sectionStart));
+  const section = markdown.slice(
+    sectionStart,
+    nextHeading === null ? markdown.length : sectionStart + nextHeading.index
+  );
+  return section
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith('- ') || line.startsWith('### '))
+    .map((line) => line.slice(line.startsWith('- ') ? 2 : 4).trim())
+    .filter(Boolean);
+};
+
+const normalizeMarkdownMcpReport = (response, requestedIds, errors) => {
+  const markdown = Array.isArray(response?.content)
+    ? response.content
+        .filter(
+          (block) => block?.type === 'text' && typeof block.text === 'string'
+        )
+        .map((block) => block.text)
+        .join('\n')
+    : '';
+  if (!markdown) return undefined;
+
+  const passingStoryIds = markdownSectionEntries(markdown, 'Passing Stories');
+  if (passingStoryIds.length === 0) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP markdown response is missing Passing Stories'
+      )
+    );
+  }
+  const failingStoryIds = markdownSectionEntries(markdown, 'Failing Stories');
+  const accessibilityViolationStoryIds = markdownSectionEntries(
+    markdown,
+    'Accessibility Violations'
+  );
+  const unhandledErrors = markdownSectionEntries(markdown, 'Unhandled Errors');
+  if (failingStoryIds.length > 0) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP markdown response contains failing stories'
+      )
+    );
+  }
+  if (accessibilityViolationStoryIds.length > 0) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP markdown response contains accessibility violations'
+      )
+    );
+  }
+  if (unhandledErrors.length > 0) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP markdown response contains unhandled errors'
+      )
+    );
+  }
+
+  const statuses = passingStoryIds.map((storyId) => ({
+    storyId,
+    status: 'status-value:success',
+  }));
+  const componentTestStatuses = statusEntries(
+    statuses,
+    'componentTestStatuses',
+    requestedIds,
+    errors
+  );
+  const a11yStatuses = statusEntries(
+    statuses,
+    'a11yStatuses',
+    requestedIds,
+    errors
+  );
+  return {
+    status: 'completed',
+    result: {
+      componentTestStatuses,
+      a11yStatuses,
+      counts: {
+        requested: passingStoryIds.length,
+        executed: passingStoryIds.length,
+        component: passingStoryIds.length,
+        a11y: passingStoryIds.length,
+      },
+      unhandledErrors,
+    },
+    report: {
+      passingStoryIds,
+      failingStoryIds,
+      accessibilityViolationStoryIds,
+      unhandledErrors,
+      missingSections: [
+        'Passing Stories',
+        'Failing Stories',
+        'Accessibility Violations',
+        'Unhandled Errors',
+      ].filter(
+        (heading) => markdownSectionEntries(markdown, heading).length === 0
+      ),
+    },
+  };
+};
+
 const validChildEpoch = (value) =>
   isRecord(value) &&
   Number.isInteger(value.pid) &&
@@ -558,15 +676,7 @@ export function normalizeMcpReceipt({
 
   const structuredContent = isRecord(response?.structuredContent)
     ? response.structuredContent
-    : undefined;
-  if (structuredContent === undefined) {
-    errors.push(
-      error(
-        FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP response is missing structuredContent'
-      )
-    );
-  }
+    : normalizeMarkdownMcpReport(response, requestedIds, errors);
   if (structuredContent?.status !== 'completed') {
     errors.push(
       error(
@@ -649,6 +759,7 @@ export function normalizeMcpReceipt({
       inputDigest,
       producerIdentityDigest,
       childEpoch,
+      ...(structuredContent.report ? { report: structuredContent.report } : {}),
       verdict: 'passed',
     },
   };

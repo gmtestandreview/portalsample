@@ -23,6 +23,7 @@ type ClosureModule = {
       serverMode: 'managed' | 'external';
       receipts: string;
       mcpTimeoutMs?: number;
+      signal?: AbortSignal;
     },
     adapters: Record<string, unknown>
   ): Promise<ClosureResult>;
@@ -243,6 +244,35 @@ describe('runClosure', () => {
       'gate-3-unit',
       expect.any(Object)
     );
+  });
+
+  it('releases the freeze and owned server when cancellation is signalled', async () => {
+    const controller = new AbortController();
+    const { adapters, calls, producer } = makeAdapters();
+    adapters.establishProducer = vi.fn(async () => {
+      calls.push('producer');
+      controller.abort(new Error('closure interrupted by SIGTERM'));
+      return producer;
+    });
+
+    const result = await moduleUnderTest.runClosure(
+      { ...options, signal: controller.signal },
+      adapters
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'EXECUTION_INCOMPLETE',
+      message: 'closure interrupted by SIGTERM',
+    });
+    expect(calls).toEqual([
+      'paths',
+      'freeze',
+      'producer',
+      'release-freeze',
+      'stop-server',
+    ]);
+    expect(adapters.runGate).not.toHaveBeenCalled();
   });
 
   it('rejects invalid timeout values without touching the checkout', async () => {

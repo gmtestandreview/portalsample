@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { ReactElement } from 'react';
-import isEqual from 'lodash/isEqual';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import { ErrorType } from './types';
 import type { WizardStepError, WizardStepProps } from './types';
@@ -20,6 +19,7 @@ import {
 } from '../../../authentication/hooks';
 import { env } from '../../../env';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { areFormValuesEqual } from '../../../utils/areFormValuesEqual';
 
 // The controller is form-library neutral: it loads a step, saves it, maps
 // failures to a view decision and navigates. The form shell (Formik today, React
@@ -183,7 +183,7 @@ export const useWizardStepController = (
       abortSignal();
       setErrorState({ kind: 'none' });
       try {
-        const isDirty = !isEqual(stepValues, values);
+        const isDirty = !areFormValuesEqual(stepValues, values);
         const result = await onSaveAndNext(
           values,
           isDirty,
@@ -228,7 +228,7 @@ export const useWizardStepController = (
       abortSignal();
       setErrorState({ kind: 'none' });
       try {
-        const isDirty = !isEqual(stepValues, values);
+        const isDirty = !areFormValuesEqual(stepValues, values);
         await onSaveAndExit(values, isDirty, controllerRef.current?.signal);
         void navigate(locationAfterExit || '/');
       } catch (error) {

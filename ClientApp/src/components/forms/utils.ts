@@ -1,10 +1,5 @@
 import { removeEmptyKeys } from '../../utils';
 import { getIn, isObject, setIn } from './formPath';
-import entriesIn from 'lodash/entriesIn';
-import fromPairs from 'lodash/fromPairs';
-import isBoolean from 'lodash/isBoolean';
-import isFunction from 'lodash/isFunction';
-import toPath from 'lodash/toPath';
 import type { ValidationError } from 'yup';
 import type {
   FormErrors,
@@ -14,8 +9,10 @@ import type {
 } from './types';
 export const isFieldPathHidden = <TValues>(hidden: any, values: TValues) =>
   hidden !== undefined &&
-  ((isBoolean(hidden) && hidden === true) ||
-    (isFunction(hidden) && hidden(values)));
+  (hidden === true || (typeof hidden === 'function' && hidden(values)));
+
+const parentPath = (path: string): string =>
+  path.replace(/(?:\.[^.[]+|\[[^\]]+\])$/, '');
 
 export const isHidden = <T, TValues>(
   fieldPath: string,
@@ -31,13 +28,12 @@ export const isHidden = <T, TValues>(
     return true;
   }
 
-  const pathArray = toPath(fieldPath);
+  const path = parentPath(fieldPath);
 
-  if (pathArray.length === 0) {
+  if (path === fieldPath) {
     return false;
   }
 
-  const path = pathArray.slice(0, -1).join('.');
   return isHidden(path, hidden, values);
 };
 
@@ -47,8 +43,8 @@ export const removeHidden = <T extends FormValues>(
   hide: Hideable<Partial<T>, Partial<T>>,
   path?: string
 ): any =>
-  fromPairs(
-    entriesIn(fieldValue)
+  Object.fromEntries(
+    Object.entries(fieldValue ?? {})
       .filter(([key, _]) =>
         path
           ? !isHidden(`${path}.${key}`, hide, values)
