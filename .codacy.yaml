@@ -6,3 +6,5 @@ exclude_paths:
   - '.github/instructions/**'
   - '.agents/**'
   - '.agent-sync/**'
+  - 'tests/hooks/**'
+  - 'skills/writing-skills/scripts/tests/**'
