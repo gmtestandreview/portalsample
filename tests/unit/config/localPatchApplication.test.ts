@@ -36,6 +36,10 @@ async function createPatchFixture() {
       'node_modules/html-react-parser/package.json',
       'node_modules/html-react-parser/package.json',
     ],
+    [
+      'node_modules/@storybook/addon-mcp/dist/preset.js',
+      'node_modules/@storybook/addon-mcp/dist/preset.js',
+    ],
   ];
 
   for (const [source, destination] of packageFiles) {
@@ -77,6 +81,12 @@ describe('repository-owned local patches', () => {
         'utf8'
       )
     ).toContain('"default": "./esm/index.mjs"');
+    expect(
+      await readFile(
+        join(root, 'node_modules/@storybook/addon-mcp/dist/preset.js'),
+        'utf8'
+      )
+    ).toContain('function normalizeTestRunData(data)');
     const firstRun = await Promise.all([
       readFile(
         join(root, 'node_modules/html-react-parser/package.json'),
