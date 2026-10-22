@@ -30,9 +30,13 @@ const ErrorBoundary = ({
     onError={(error, info) => {
       // The boundary is the last line of defence - it must render its
       // fallback even when there is nowhere to report the exception.
+      // react-error-boundary v6 types the caught value as `unknown`, but
+      // trackException requires an Error, so normalise non-Error throws.
+      const exception =
+        error instanceof Error ? error : new Error(String(error));
       appInsights?.getAppInsights().trackException({
-        error,
-        exception: error,
+        error: exception,
+        exception,
         severityLevel: SeverityLevel.Error,
         properties: { ...info },
       });

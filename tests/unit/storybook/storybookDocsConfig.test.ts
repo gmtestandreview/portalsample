@@ -344,7 +344,7 @@ describe('Storybook documentation architecture', () => {
     }
 
     expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.3');
-    expect(declaredVersion('@chromatic-com/storybook')).toBe('5.5.0');
+    expect(declaredVersion('@chromatic-com/storybook')).toBe('5.6.0');
     expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
   });
 

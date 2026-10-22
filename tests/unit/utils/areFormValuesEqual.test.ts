@@ -56,4 +56,12 @@ describe('areFormValuesEqual', () => {
     expect(areFormValuesEqual(1, '1')).toBe(false);
     expect(areFormValuesEqual([], {})).toBe(false);
   });
+
+  it('does not treat objects with a non-plain prototype as equal', () => {
+    class Point {
+      constructor(public readonly x: number) {}
+    }
+    expect(areFormValuesEqual(new Point(1), { x: 1 })).toBe(false);
+    expect(areFormValuesEqual(new Point(1), new Point(1))).toBe(false);
+  });
 });
