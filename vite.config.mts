@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
@@ -5,6 +6,7 @@ import { defineConfig, loadEnv, type Plugin } from 'vite';
 import type { DeprecationOrId } from 'sass';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+const RUNTIME_ENVIRONMENT_FILE = path.resolve(dirname, 'ClientApp/env.js');
 
 const VITE_ENV_KEYS = [
   'VITE_B2C_CLIENTID',
@@ -121,6 +123,45 @@ function envTemplatePlugin(envVars: Record<string, string>): Plugin {
   };
 }
 
+function runtimeEnvironmentPlugin(command: 'build' | 'serve'): Plugin {
+  const readRuntimeEnvironment = () =>
+    readFileSync(RUNTIME_ENVIRONMENT_FILE, 'utf8');
+
+  return {
+    name: 'runtime-environment',
+    transformIndexHtml: {
+      order: 'post',
+      handler: (html, context) => {
+        if (command !== 'build' || !context.filename.endsWith('index.html')) {
+          return;
+        }
+
+        return {
+          html,
+          tags: [
+            {
+              tag: 'script',
+              attrs: { src: '/env.js' },
+              injectTo: 'head-prepend',
+            },
+          ],
+        };
+      },
+    },
+    generateBundle() {
+      if (command !== 'build') {
+        return;
+      }
+
+      this.emitFile({
+        type: 'asset',
+        fileName: 'env.js',
+        source: readRuntimeEnvironment(),
+      });
+    },
+  };
+}
+
 const BLOCKED_RESOLUTION_PREFIXES = [
   'ClientApp/src/main',
   'ClientApp/src/parent/node_modules',
@@ -205,6 +246,7 @@ export default defineConfig(({ command, mode }) => {
       react(),
       blockedGeneratedPathsPlugin(),
       envTemplatePlugin(envVars),
+      runtimeEnvironmentPlugin(command),
       msalRedirectCspPlugin(),
     ],
 

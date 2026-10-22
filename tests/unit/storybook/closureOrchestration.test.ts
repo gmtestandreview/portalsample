@@ -92,8 +92,8 @@ const makeAdapters = (overrides: Record<string, unknown> = {}) => {
     }),
     assertStableIdentity: vi.fn(async () => undefined),
     writeAwaitingMcp: vi.fn(async () => calls.push('awaiting-mcp')),
-    waitForMcpCompletion: vi.fn(async () => {
-      calls.push('mcp-complete');
+    produceMcpReceipts: vi.fn(async () => {
+      calls.push('mcp-receipts');
       return {
         freezeId: freeze.freezeId,
         producerId: producer.producerId,
@@ -143,7 +143,7 @@ describe('runClosure', () => {
         'gate-4-source',
         'gate-5-storybook-build',
         'awaiting-mcp',
-        'mcp-complete',
+        'mcp-receipts',
         'gate-6-storybook-bdd',
         'gate-7-docs',
         'gate-8-closure',
@@ -173,7 +173,7 @@ describe('runClosure', () => {
       'gate-4-source',
       'gate-5-storybook-build',
       'awaiting-mcp',
-      'mcp-complete',
+      'mcp-receipts',
       'gate-6-storybook-bdd',
       'gate-7-docs',
       'gate-8-closure',
@@ -184,7 +184,7 @@ describe('runClosure', () => {
 
   it('fails before qualifying gates when the handoff is stale', async () => {
     const { adapters, calls } = makeAdapters({
-      waitForMcpCompletion: vi.fn(async () => ({
+      produceMcpReceipts: vi.fn(async () => ({
         freezeId: 'old-freeze',
         producerId: 'producer-1',
         receiptFiles: ['receipt-cold.json'],
@@ -211,7 +211,7 @@ describe('runClosure', () => {
       'release-freeze',
       'stop-server',
     ]);
-    expect(adapters.waitForMcpCompletion).toHaveBeenCalledOnce();
+    expect(adapters.produceMcpReceipts).toHaveBeenCalledOnce();
   });
 
   it('fails closed when a pre-freeze gate is reported', async () => {

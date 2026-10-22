@@ -43,6 +43,15 @@ describe('areFormValuesEqual', () => {
     );
   });
 
+  it('does not equate a Date with a non-Date value', () => {
+    expect(areFormValuesEqual(new Date('2026-01-01'), '2026-01-01')).toBe(
+      false
+    );
+    expect(areFormValuesEqual('2026-01-01', new Date('2026-01-01'))).toBe(
+      false
+    );
+  });
+
   it('does not treat different value types as equal', () => {
     expect(areFormValuesEqual(1, '1')).toBe(false);
     expect(areFormValuesEqual([], {})).toBe(false);

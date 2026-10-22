@@ -13,6 +13,7 @@ const dispatcherPath = path.join(
   'dispatcher.js'
 );
 
+process.env.VITE_ENVIRONMENT ??= 'storybook';
 process.argv = [process.argv[0], dispatcherPath, ...process.argv.slice(2)];
 
 await import(pathToFileURL(dispatcherPath).href);

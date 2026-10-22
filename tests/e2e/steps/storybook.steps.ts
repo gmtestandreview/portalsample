@@ -11,15 +11,19 @@
  * project's baseURL setting.
  */
 
-import process from 'node:process';
-import {
-  expect,
-  type APIRequestContext,
-  type APIResponse,
-  type Page,
-} from '@playwright/test';
+import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
-import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
+import {
+  STORYBOOK_BASE,
+  STORYBOOK_MCP,
+  STORY_RENDER_TIMEOUT_MS,
+  MCP_HEADERS,
+  executeMcpTestRun,
+  readMcpEvent,
+  loadStoryIframe,
+  loadDocsIframe,
+  visibleSource,
+} from '../support/storybookHelpers';
 import {
   parseMcpMarkdownReport,
   type StorybookMcpMarkdownReport,
@@ -27,17 +31,6 @@ import {
 
 const { Given, When, Then } = createBdd();
 
-const storybookTestURL = process.env['STORYBOOK_TEST_URL'];
-const storybookServerMode = process.env['STORYBOOK_TEST_SERVER_MODE'];
-const storybookTarget = resolveStorybookTestTarget({
-  ...(storybookTestURL === undefined ? {} : { url: storybookTestURL }),
-  ...(storybookServerMode === undefined
-    ? {}
-    : { serverMode: storybookServerMode }),
-  ci: Boolean(process.env['CI']),
-});
-const STORYBOOK_BASE = storybookTarget.baseURL;
-const STORYBOOK_MCP = storybookTarget.mcpURL;
 const REPRESENTATIVE_DOCS_ID = 'components-pill--documentation';
 const REPRESENTATIVE_STORY_ID = 'components-pill--dashboard-statuses';
 const STYLE_GUIDE_DOCS_ID = 'documentation-style-guide--documentation';
@@ -45,195 +38,6 @@ const AUTOSUGGEST_DOCS_ID = 'components-inputs-autosuggest--documentation';
 const ACCEPT_QUOTE_DOCS_ID = 'routes-acceptquote--documentation';
 const ROUTE_LEAVING_GUARD_DOCS_ID =
   'components-routeleavingguard--documentation';
-
-/** Ceiling for waiting on a story bundle to compile and render on first hit. */
-const STORY_RENDER_TIMEOUT_MS = 15_000;
-
-const MCP_HEADERS = {
-  accept: 'application/json, text/event-stream',
-  'content-type': 'application/json',
-};
-const MCP_TRANSPORT_RETRY_DELAYS_MS = [1_000, 2_000] as const;
-
-type McpEnvelope = {
-  id?: number | string;
-  error?: unknown;
-  result?: {
-    serverInfo?: { name?: string };
-    tools?: Array<{ name: string }>;
-    structuredContent?: unknown;
-    content?: Array<{ type?: string; text?: string }>;
-  };
-};
-
-const isTransientMcpTransportError = (error: unknown): boolean =>
-  /ECONNRESET|ECONNREFUSED|socket hang up/i.test(
-    error instanceof Error ? error.message : String(error)
-  );
-
-async function executeMcpTestRun(
-  request: APIRequestContext,
-  storyIds: string[]
-): Promise<APIResponse> {
-  let lastError: unknown;
-
-  for (
-    let attempt = 0;
-    attempt <= MCP_TRANSPORT_RETRY_DELAYS_MS.length;
-    attempt += 1
-  ) {
-    try {
-      const initialize = await request.post(STORYBOOK_MCP, {
-        headers: MCP_HEADERS,
-        data: {
-          jsonrpc: '2.0',
-          id: 10,
-          method: 'initialize',
-          params: {
-            protocolVersion: '2025-03-26',
-            capabilities: {},
-            clientInfo: {
-              name: 'storybook-coverage-remediation',
-              version: '1.0.0',
-            },
-          },
-        },
-      });
-      expect(initialize.status()).toBe(200);
-      const sessionId = initialize.headers()['mcp-session-id'];
-      if (sessionId === undefined) {
-        throw new Error('MCP initialize response did not provide a session ID');
-      }
-      await readMcpEvent(initialize, 10);
-
-      const sessionHeaders = {
-        ...MCP_HEADERS,
-        'mcp-session-id': sessionId,
-      };
-      const initialized = await request.post(STORYBOOK_MCP, {
-        headers: sessionHeaders,
-        data: { jsonrpc: '2.0', method: 'notifications/initialized' },
-      });
-      expect(initialized.status()).toBe(202);
-
-      return await request.post(STORYBOOK_MCP, {
-        headers: sessionHeaders,
-        timeout: 150_000,
-        data: {
-          jsonrpc: '2.0',
-          id: 11,
-          method: 'tools/call',
-          params: {
-            name: 'test-run',
-            arguments: {
-              a11y: true,
-              stories: storyIds.map((storyId) => ({ storyId })),
-            },
-          },
-        },
-      });
-    } catch (error) {
-      lastError = error;
-      const delay = MCP_TRANSPORT_RETRY_DELAYS_MS[attempt];
-      if (!isTransientMcpTransportError(error) || delay === undefined) {
-        throw error;
-      }
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-
-  throw lastError instanceof Error
-    ? lastError
-    : new Error('MCP test-run failed without a transport error');
-}
-
-async function readMcpEvent(
-  response: APIResponse,
-  expectedId?: number | string
-): Promise<McpEnvelope> {
-  const body = await response.text();
-  const contentType = response.headers()['content-type'] ?? '';
-  if (contentType.includes('application/json')) {
-    const envelope = JSON.parse(body) as McpEnvelope;
-    if (expectedId !== undefined && envelope.id !== expectedId) {
-      throw new Error(
-        `MCP JSON-RPC response ID ${String(envelope.id)} did not match ${String(expectedId)}`
-      );
-    }
-    return envelope;
-  }
-  const events = body
-    .split(/\r?\n/)
-    .filter((line) => line.startsWith('data: '))
-    .map((line) => JSON.parse(line.slice('data: '.length)) as McpEnvelope);
-
-  const matchingEvents =
-    expectedId === undefined
-      ? events
-      : events.filter((candidate) => candidate.id === expectedId);
-  const errorEvent = matchingEvents.find(
-    (candidate) => candidate.error !== undefined
-  );
-  if (errorEvent !== undefined) {
-    throw new Error(
-      `MCP JSON-RPC response contained an error: ${JSON.stringify(errorEvent.error)}`
-    );
-  }
-  const event =
-    matchingEvents.find(
-      (candidate) => candidate.result?.structuredContent !== undefined
-    ) ?? matchingEvents.at(-1);
-
-  if (event === undefined) {
-    throw new Error(
-      expectedId === undefined
-        ? `MCP response did not contain an SSE data event: ${body}`
-        : `MCP response did not contain JSON-RPC response ID ${String(expectedId)}`
-    );
-  }
-
-  return event;
-}
-
-/** Navigate to a Storybook story iframe and wait for the story to actually render. */
-async function loadStoryIframe(page: Page, storyId: string) {
-  await page.goto(`${STORYBOOK_BASE}/iframe.html?id=${storyId}&viewMode=story`);
-  // #storybook-root exists in the iframe shell immediately; the story bundle is
-  // compiled lazily on first hit, so waiting only for 'attached' lets assertions
-  // race a story that has not mounted yet. Storybook toggles body.sb-show-main
-  // once the story has rendered (sb-show-preparing before, sb-show-errordisplay
-  // on failure) — a portal-safe signal, unlike #storybook-root content which
-  // stays empty for modal/toast stories. Best-effort: the step's own assertion
-  // keeps its own timeout and remains the source of truth for a broken story.
-  await page
-    .waitForFunction(
-      () => document.body.classList.contains('sb-show-main'),
-      undefined,
-      {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-        polling: 100,
-      }
-    )
-    .catch(() => {
-      // Slow cold compile — fall through to the assertion's own wait.
-    });
-  // Let late XHRs (MSW handlers, lazy assets) settle; best-effort as before.
-  await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {
-    // networkidle can be flaky with MSW; continue after domcontentloaded
-  });
-}
-
-/** Navigate directly to a Storybook docs iframe and wait for Docs to render. */
-async function loadDocsIframe(page: Page, docsId: string) {
-  await page.goto(`${STORYBOOK_BASE}/iframe.html?id=${docsId}&viewMode=docs`);
-  await expect(page.locator('#storybook-docs')).toBeVisible({
-    timeout: 15_000,
-  });
-}
-
-function visibleSource(page: Page) {
-  return page.locator('pre:visible');
-}
 
 // ---------------------------------------------------------------------------
 // MCP protocol compatibility
@@ -329,16 +133,6 @@ type McpStatus = { storyId: string; status: string };
 
 let latestMcpExecution: NormalizedReceipt | undefined;
 
-const requiredClosureValue = (name: string): string => {
-  const value = process.env[name];
-  if (value === undefined || value.trim() === '') {
-    throw new Error(
-      `MCP execution requires ${name}; run it from the owned closure handoff`
-    );
-  }
-  return value;
-};
-
 When(
   'I execute the native MCP test-run for stories {string}',
   async ({ request }, storyIdsText: string) => {
@@ -396,11 +190,15 @@ When(
       a11yStatuses = execution?.a11yStatuses ?? [];
       expect(completedContent.status).toBe('completed');
       expect(
-        componentTestStatuses.map(({ storyId }) => storyId).sort()
-      ).toEqual([...storyIds].sort());
-      expect(a11yStatuses.map(({ storyId }) => storyId).sort()).toEqual(
-        [...storyIds].sort()
-      );
+        componentTestStatuses
+          .map(({ storyId }) => storyId)
+          .sort((a, b) => a.localeCompare(b))
+      ).toEqual([...storyIds].sort((a, b) => a.localeCompare(b)));
+      expect(
+        a11yStatuses
+          .map(({ storyId }) => storyId)
+          .sort((a, b) => a.localeCompare(b))
+      ).toEqual([...storyIds].sort((a, b) => a.localeCompare(b)));
       expect(
         componentTestStatuses.every(
           ({ status }) => status === 'status-value:success'
@@ -419,8 +217,12 @@ When(
     } else {
       const report = parseMcpMarkdownReport(contentText ?? '');
       reportEvidence = report;
-      const passingStoryIds = [...new Set(report.passingStoryIds)].sort();
-      const requestedStoryIds = [...storyIds].sort();
+      const passingStoryIds = [...new Set(report.passingStoryIds)].sort(
+        (a, b) => a.localeCompare(b)
+      );
+      const requestedStoryIds = [...storyIds].sort((a, b) =>
+        a.localeCompare(b)
+      );
 
       expect(report.missingSections).not.toContain('Passing Stories');
       expect(passingStoryIds).toEqual(requestedStoryIds);
@@ -437,12 +239,6 @@ When(
     const componentStoryIds =
       reportEvidence?.passingStoryIds ??
       componentTestStatuses.map(({ storyId }) => storyId);
-    const childPid = Number(
-      requiredClosureValue('STORYBOOK_CLOSURE_CHILD_PID')
-    );
-    if (!Number.isInteger(childPid) || childPid <= 0) {
-      throw new Error('STORYBOOK_CLOSURE_CHILD_PID must be a positive integer');
-    }
     latestMcpExecution = {
       ok: true,
       errors: [],
@@ -454,11 +250,6 @@ When(
         a11yStatuses,
       },
     };
-    requiredClosureValue('STORYBOOK_CLOSURE_FREEZE_ID');
-    requiredClosureValue('STORYBOOK_CLOSURE_PRODUCER_ID');
-    requiredClosureValue('STORYBOOK_CLOSURE_INPUT_DIGEST');
-    requiredClosureValue('STORYBOOK_CLOSURE_PRODUCER_IDENTITY_DIGEST');
-    requiredClosureValue('STORYBOOK_CLOSURE_CHILD_CREATED_AT');
   }
 );
 

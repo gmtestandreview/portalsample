@@ -34,19 +34,24 @@ const validEnv: Record<EnvKey, string> = {
 
 async function importEnv(
   overrides: Partial<Record<EnvKey, string>> = {},
-  isDevelopment = true
+  isDevelopment = true,
+  runtimeOverrides: Record<string, string> = {}
 ) {
   vi.resetModules();
   envKeys.forEach((key) => {
     vi.stubEnv(key, overrides[key] ?? validEnv[key]);
   });
   vi.stubEnv('MODE', isDevelopment ? 'development' : 'production');
+  Object.assign(globalThis, runtimeOverrides);
 
   return import('../../../ClientApp/src/env');
 }
 
 describe('Vite environment contract', () => {
   afterEach(() => {
+    for (const key of envKeys) {
+      Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
+    }
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
@@ -60,6 +65,16 @@ describe('Vite environment contract', () => {
       ...validEnv,
       VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:5173/return',
     });
+  });
+
+  it('prefers the deployed runtime configuration over build-time defaults', async () => {
+    const module = await importEnv(
+      { VITE_B2C_CLIENTID: 'build-client-id' },
+      true,
+      { REACT_APP_B2C_CLIENTID: 'runtime-client-id' }
+    );
+
+    expect(module.env.VITE_B2C_CLIENTID).toBe('runtime-client-id');
   });
 
   it('allows measurement.gov.au and its subdomains as redirect hosts', async () => {

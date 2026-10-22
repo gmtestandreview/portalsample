@@ -37,6 +37,36 @@ const developmentOptionalVars = new Set<keyof EnvType>([
   'VITE_GA_TRACKINGID',
 ]);
 
+const buildTimeEnv: EnvType = {
+  VITE_B2C_CLIENTID: import.meta.env.VITE_B2C_CLIENTID ?? '',
+  VITE_B2C_AUTHORITY: import.meta.env.VITE_B2C_AUTHORITY ?? '',
+  VITE_B2C_KNOWN_AUTHORITIES: import.meta.env.VITE_B2C_KNOWN_AUTHORITIES ?? '',
+  VITE_B2C_POST_LOGOUT_REDIRECT_URL:
+    import.meta.env.VITE_B2C_POST_LOGOUT_REDIRECT_URL ?? '',
+  VITE_B2C_READ_SCOPE: import.meta.env.VITE_B2C_READ_SCOPE ?? '',
+  VITE_B2C_USER_IMPERSONATION_SCOPE:
+    import.meta.env.VITE_B2C_USER_IMPERSONATION_SCOPE ?? '',
+  VITE_B2C_REDIRECT_URL: import.meta.env.VITE_B2C_REDIRECT_URL ?? '',
+  VITE_EXTERNAL_REDIRECT_URL: import.meta.env.VITE_EXTERNAL_REDIRECT_URL ?? '',
+  VITE_APPINSIGHTS_INSTRUMENTATIONKEY:
+    import.meta.env.VITE_APPINSIGHTS_INSTRUMENTATIONKEY ?? '',
+  VITE_APPINSIGHTS_CONN_STRING:
+    import.meta.env.VITE_APPINSIGHTS_CONN_STRING ?? '',
+  VITE_GA_TRACKINGID: import.meta.env.VITE_GA_TRACKINGID ?? '',
+  VITE_ENVIRONMENT: import.meta.env.VITE_ENVIRONMENT ?? '',
+};
+
+const runtimeEnv = globalThis as Record<string, unknown>;
+
+const getEnvValue = (key: keyof EnvType): string => {
+  const runtimeKey = key.replace('VITE_', 'REACT_APP_');
+  const runtimeValue = runtimeEnv[runtimeKey];
+
+  return typeof runtimeValue === 'string' && runtimeValue.length > 0
+    ? runtimeValue
+    : buildTimeEnv[key];
+};
+
 requiredVars.forEach((key) => {
   if (
     import.meta.env.DEV === true &&
@@ -46,7 +76,7 @@ requiredVars.forEach((key) => {
     return;
   }
 
-  if (!import.meta.env[key]) {
+  if (!getEnvValue(key)) {
     console.error(`[env] Missing required environment variable: ${key}`);
   }
 });
@@ -64,7 +94,7 @@ const isAllowedRedirectHost = (urlStr: string): boolean => {
   }
 };
 
-const externalRedirectUrl = import.meta.env.VITE_EXTERNAL_REDIRECT_URL ?? '';
+const externalRedirectUrl = getEnvValue('VITE_EXTERNAL_REDIRECT_URL');
 if (externalRedirectUrl && !isAllowedRedirectHost(externalRedirectUrl)) {
   throw new Error(
     `[env] VITE_EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`
@@ -72,20 +102,22 @@ if (externalRedirectUrl && !isAllowedRedirectHost(externalRedirectUrl)) {
 }
 
 export const env: EnvType = {
-  VITE_B2C_CLIENTID: import.meta.env.VITE_B2C_CLIENTID ?? '',
-  VITE_B2C_AUTHORITY: import.meta.env.VITE_B2C_AUTHORITY ?? '',
-  VITE_B2C_KNOWN_AUTHORITIES: import.meta.env.VITE_B2C_KNOWN_AUTHORITIES ?? '',
-  VITE_B2C_POST_LOGOUT_REDIRECT_URL:
-    import.meta.env.VITE_B2C_POST_LOGOUT_REDIRECT_URL ?? '',
-  VITE_B2C_READ_SCOPE: import.meta.env.VITE_B2C_READ_SCOPE ?? '',
-  VITE_B2C_USER_IMPERSONATION_SCOPE:
-    import.meta.env.VITE_B2C_USER_IMPERSONATION_SCOPE ?? '',
-  VITE_B2C_REDIRECT_URL: import.meta.env.VITE_B2C_REDIRECT_URL ?? '',
+  VITE_B2C_CLIENTID: getEnvValue('VITE_B2C_CLIENTID'),
+  VITE_B2C_AUTHORITY: getEnvValue('VITE_B2C_AUTHORITY'),
+  VITE_B2C_KNOWN_AUTHORITIES: getEnvValue('VITE_B2C_KNOWN_AUTHORITIES'),
+  VITE_B2C_POST_LOGOUT_REDIRECT_URL: getEnvValue(
+    'VITE_B2C_POST_LOGOUT_REDIRECT_URL'
+  ),
+  VITE_B2C_READ_SCOPE: getEnvValue('VITE_B2C_READ_SCOPE'),
+  VITE_B2C_USER_IMPERSONATION_SCOPE: getEnvValue(
+    'VITE_B2C_USER_IMPERSONATION_SCOPE'
+  ),
+  VITE_B2C_REDIRECT_URL: getEnvValue('VITE_B2C_REDIRECT_URL'),
   VITE_EXTERNAL_REDIRECT_URL: externalRedirectUrl,
-  VITE_APPINSIGHTS_INSTRUMENTATIONKEY:
-    import.meta.env.VITE_APPINSIGHTS_INSTRUMENTATIONKEY ?? '',
-  VITE_APPINSIGHTS_CONN_STRING:
-    import.meta.env.VITE_APPINSIGHTS_CONN_STRING ?? '',
-  VITE_GA_TRACKINGID: import.meta.env.VITE_GA_TRACKINGID ?? '',
-  VITE_ENVIRONMENT: import.meta.env.VITE_ENVIRONMENT ?? '',
+  VITE_APPINSIGHTS_INSTRUMENTATIONKEY: getEnvValue(
+    'VITE_APPINSIGHTS_INSTRUMENTATIONKEY'
+  ),
+  VITE_APPINSIGHTS_CONN_STRING: getEnvValue('VITE_APPINSIGHTS_CONN_STRING'),
+  VITE_GA_TRACKINGID: getEnvValue('VITE_GA_TRACKINGID'),
+  VITE_ENVIRONMENT: getEnvValue('VITE_ENVIRONMENT'),
 };

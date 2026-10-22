@@ -7,7 +7,7 @@ import {
 } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { storybookVitestRuntimePlugin } from '../../../vitest.storybook.runtime';
 
@@ -87,7 +87,12 @@ describe('Storybook closure child diagnostics', () => {
 
   it('does not write diagnostic files unless both closure values are supplied', () => {
     const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'storybook-runtime-'));
-    const receiptRoot = path.join(tempRoot, 'reports', 'storybook-coverage');
+    const receiptRoot = path.join(
+      tempRoot,
+      'reports',
+      'storybook-coverage',
+      'closure-run'
+    );
     mkdirSync(receiptRoot, { recursive: true });
     const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
     const previousFreezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
@@ -116,10 +121,16 @@ describe('Storybook closure child diagnostics', () => {
 
   it('writes a redacted child record to the validated receipt directory', () => {
     const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'storybook-runtime-'));
-    const receiptRoot = path.join(tempRoot, 'reports', 'storybook-coverage');
+    const receiptRoot = path.join(
+      tempRoot,
+      'reports',
+      'storybook-coverage',
+      'closure-run'
+    );
     mkdirSync(receiptRoot, { recursive: true });
     const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
     const previousFreezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
+    const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(tempRoot);
 
     try {
       process.env['STORYBOOK_CLOSURE_RECEIPTS'] = receiptRoot;
@@ -140,6 +151,7 @@ describe('Storybook closure child diagnostics', () => {
       });
       expect(record).not.toHaveProperty('env');
     } finally {
+      cwdSpy.mockRestore();
       if (previousReceiptRoot === undefined) {
         delete process.env['STORYBOOK_CLOSURE_RECEIPTS'];
       } else {

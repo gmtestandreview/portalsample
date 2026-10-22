@@ -1,10 +1,9 @@
 ---
 name: dependabot
-description: >-
-  Use when creating, reviewing, troubleshooting, or optimizing GitHub Dependabot configuration
+description: 'Use when creating, reviewing, troubleshooting, or optimizing GitHub Dependabot configuration
   and workflows, including .github/dependabot.yml, version or security updates, dependency
   grouping, monorepos, multi-ecosystem groups, private registries, schedules, ignore/allow rules,
-  Dependabot pull-request commands, and reviewing or merging open Dependabot pull requests.
+  Dependabot pull-request commands, and reviewing or merging open Dependabot pull requests.'
 ---
 
 # Dependabot Configuration & Management

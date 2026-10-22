@@ -1,10 +1,7 @@
 ---
 name: debugger
 description: 'Debugging specialist for errors, test failures, and unexpected
-
-  behavior. Use proactively when encountering any issues.
-
-  '
+  behavior. Use proactively when encountering any issues. Includes root cause analysis, reproduction steps, failure isolation, minimal fixes, and verification strategies.'
 risk: safe
 source: community
 date_added: '2026-02-27'

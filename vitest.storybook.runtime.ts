@@ -31,14 +31,14 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
   const freezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
   if (receiptDirectory === undefined || freezeId === undefined) return;
 
+  const cwd = process.cwd();
   const resolvedReceiptDirectory = path.resolve(receiptDirectory);
-  const ownedReceiptSuffix = path.join('reports', 'storybook-coverage');
-  if (!resolvedReceiptDirectory.endsWith(ownedReceiptSuffix)) {
+  const ownedReceiptRoot = path.resolve(cwd, 'reports', 'storybook-coverage');
+  if (!isInside(ownedReceiptRoot, resolvedReceiptDirectory)) {
     throw new Error(
-      'STORYBOOK_CLOSURE_RECEIPTS must be an owned reports/storybook-coverage directory'
+      'STORYBOOK_CLOSURE_RECEIPTS must be inside the owned reports/storybook-coverage directory'
     );
   }
-  const cwd = process.cwd();
   const selectedInputRoots = [
     path.resolve(cwd, 'ClientApp/src'),
     path.resolve(cwd, 'ClientApp/public'),

@@ -18,6 +18,7 @@ import { pathToFileURL } from 'node:url';
 import {
   computeInputDigest,
   computeIndexDigest,
+  deriveExecutableStorySet,
   normalizeMcpReceipt,
   validateFreezeRecord,
   validateProducerIdentity,
@@ -26,6 +27,7 @@ import {
 const execFileAsync = promisify(execFile);
 const MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS = 15_000;
 const MAX_MANAGED_SERVER_STDERR_LENGTH = 1_000_000;
+const MCP_STORY_BATCH_SIZE = 50;
 
 const FAILURE_CODES = {
   INVALID_INVOCATION: 'INVALID_INVOCATION',
@@ -171,7 +173,7 @@ const GATES = [
       '--docs-index',
       'reports/storybook-coverage/frozen-docs-index.json',
       '--receipts',
-      'reports/storybook-coverage',
+      'reports/storybook-coverage/closure-run',
     ],
   ],
 ];
@@ -355,13 +357,13 @@ export async function runClosure(options, adapters) {
     });
     phases.push('awaiting-mcp');
 
-    const completion = await adapters.waitForMcpCompletion({
+    const completion = await adapters.produceMcpReceipts({
       receipts: options.receipts,
       freeze,
       producer,
       timeout,
     });
-    phases.push('mcp-complete');
+    phases.push('mcp-receipts');
     assertHandoff(completion, freeze, producer);
 
     const receipts = [];
@@ -501,7 +503,11 @@ const parseArguments = (argv) => {
 
 const createProductionAdapters = async () => {
   const { resolveStorybookTestTarget } =
-    await import('../.storybook/storybook-test-target.ts');
+    await import('../.storybook/storybook-test-target.mjs').then(
+      ({ resolveStorybookTestTargetImplementation }) => ({
+        resolveStorybookTestTarget: resolveStorybookTestTargetImplementation,
+      })
+    );
   let ownedServer;
   let ownedServerMetadata;
   let ownedServerExitPromise;
@@ -551,13 +557,26 @@ const createProductionAdapters = async () => {
     env = process.env,
     signal
   ) => {
-    const executable =
-      process.platform === 'win32' && command === 'npm' ? 'npm.cmd' : command;
+    const [executable, executableArgs] =
+      process.platform === 'win32' && command === 'npm'
+        ? [
+            process.execPath,
+            [
+              path.join(
+                path.dirname(process.execPath),
+                'node_modules',
+                'npm',
+                'bin',
+                'npm-cli.js'
+              ),
+              ...args,
+            ],
+          ]
+        : [command, args];
     try {
-      await execFileAsync(executable, args, {
+      await execFileAsync(executable, executableArgs, {
         cwd,
         env,
-        shell: process.platform === 'win32' && command === 'npm',
         maxBuffer: 10 * 1024 * 1024,
         signal,
       });
@@ -737,6 +756,103 @@ const createProductionAdapters = async () => {
     return result;
   };
 
+  const parseMcpEnvelope = async (response, expectedId) => {
+    const body = await response.text();
+    const contentType = response.headers.get('content-type') ?? '';
+    const envelopes = contentType.includes('application/json')
+      ? [JSON.parse(body)]
+      : body
+          .split(/\r?\n/u)
+          .filter((line) => line.startsWith('data: '))
+          .map((line) => JSON.parse(line.slice('data: '.length)));
+    const matching = envelopes.filter(
+      (envelope) => expectedId === undefined || envelope.id === expectedId
+    );
+    const error = matching.find((envelope) => envelope.error !== undefined);
+    if (error) {
+      throw new Error(
+        `MCP response contained an error: ${JSON.stringify(error.error)}`
+      );
+    }
+    const envelope =
+      matching.find(
+        (candidate) => candidate.result?.structuredContent !== undefined
+      ) ?? matching.at(-1);
+    if (!envelope) {
+      throw new Error(
+        `MCP response did not contain JSON-RPC response ID ${String(expectedId)}`
+      );
+    }
+    return envelope;
+  };
+
+  const executeMcpTestRun = async ({ mcpURL, storyIds, requestId, signal }) => {
+    const request = async (body, headers = {}, expectedStatus = 200) => {
+      const response = await fetch(mcpURL, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json, text/event-stream',
+          'content-type': 'application/json',
+          ...headers,
+        },
+        body: JSON.stringify(body),
+        signal: signal
+          ? AbortSignal.any([signal, AbortSignal.timeout(150_000)])
+          : AbortSignal.timeout(150_000),
+      });
+      if (response.status !== expectedStatus) {
+        throw new Error(
+          `MCP ${body.method} returned HTTP ${response.status}, expected ${expectedStatus}`
+        );
+      }
+      return response;
+    };
+
+    const initialize = await request({
+      jsonrpc: '2.0',
+      id: requestId,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2025-03-26',
+        capabilities: {},
+        clientInfo: {
+          name: 'storybook-closure',
+          version: '1.0.0',
+        },
+      },
+    });
+    const sessionId = initialize.headers.get('mcp-session-id');
+    if (!sessionId)
+      throw new Error('MCP initialize response did not provide a session ID');
+    await parseMcpEnvelope(initialize, requestId);
+
+    const sessionHeaders = { 'mcp-session-id': sessionId };
+    await request(
+      { jsonrpc: '2.0', method: 'notifications/initialized' },
+      sessionHeaders,
+      202
+    );
+    const testRun = await request(
+      {
+        jsonrpc: '2.0',
+        id: requestId + 1,
+        method: 'tools/call',
+        params: {
+          name: 'test-run',
+          arguments: {
+            a11y: true,
+            stories: storyIds.map((storyId) => ({ storyId })),
+          },
+        },
+      },
+      sessionHeaders
+    );
+    const envelope = await parseMcpEnvelope(testRun, requestId + 1);
+    if (!envelope.result)
+      throw new Error('MCP test-run response is missing a result');
+    return envelope.result;
+  };
+
   return {
     resolveTarget: (targetOptions) => resolveStorybookTestTarget(targetOptions),
     assertOwnedPaths: async ({ checkout, receipts }) => {
@@ -837,7 +953,7 @@ const createProductionAdapters = async () => {
         await writeReceiptJson('freeze.json', freeze);
         return freeze;
       } catch (error_) {
-        for (const frozenTarget of frozenTargets.reverse()) {
+        for (const frozenTarget of frozenTargets.toReversed()) {
           await runIcacls(frozenTarget.target, [
             '/remove:d',
             `${identity}`,
@@ -1094,42 +1210,103 @@ const createProductionAdapters = async () => {
         )
       );
     },
-    waitForMcpCompletion: async ({ receipts, timeout }) => {
-      const receiptRoot = ownedReceipts ?? path.resolve(receipts);
-      const started = Date.now();
-      while (Date.now() - started < timeout) {
-        if (ownedServerExitStatus) {
-          const exitDescription = ownedServerExitStatus.error
-            ? `spawn error ${ownedServerExitStatus.error}`
-            : `exit code ${ownedServerExitStatus.exitCode ?? 'null'} / signal ${ownedServerExitStatus.exitSignal ?? 'none'}`;
-          const stderr = ownedServerStderr.trim();
-          throw Object.assign(
-            new Error(
-              `managed Storybook exited before MCP completion (${exitDescription})${stderr ? `\nstderr:\n${stderr}` : ''}`
-            ),
-            { code: FAILURE_CODES.EXECUTION_INCOMPLETE }
-          );
-        }
-        try {
-          const completionPath = await resolveOwnedPath(
-            receiptRoot,
-            'mcp-complete.json'
-          );
-          return JSON.parse(await readFile(completionPath, 'utf8'));
-        } catch (error_) {
-          if (error_.code !== 'ENOENT') throw error_;
-          await new Promise((resolve) => setTimeout(resolve, 250));
-        }
+    produceMcpReceipts: async ({
+      receipts,
+      freeze,
+      producer,
+      timeout,
+      signal,
+    }) => {
+      if (ownedServerExitStatus) {
+        throw new Error(
+          'managed Storybook exited before MCP receipt production'
+        );
       }
-      throw new Error('timed out waiting for mcp-complete.json');
+      const receiptRoot = ownedReceipts ?? path.resolve(receipts);
+      const index = JSON.parse(
+        await readFile(path.join(receiptRoot, 'frozen-full-index.json'), 'utf8')
+      );
+      const storyIds = deriveExecutableStorySet({ index }).storyIds;
+      if (storyIds.length === 0) {
+        throw new Error('MCP receipt production has no executable stories');
+      }
+      const childEpoch = {
+        pid: producer.serverPid,
+        createdAt: producer.serverStartedAt,
+      };
+      const receiptFiles = [];
+      for (
+        let offset = 0;
+        offset < storyIds.length;
+        offset += MCP_STORY_BATCH_SIZE
+      ) {
+        const requestedStoryIds = storyIds.slice(
+          offset,
+          offset + MCP_STORY_BATCH_SIZE
+        );
+        const requestId = offset / MCP_STORY_BATCH_SIZE + 1;
+        const response = await executeMcpTestRun({
+          mcpURL: producer.mcpURL,
+          storyIds: requestedStoryIds,
+          requestId: requestId * 10,
+          signal,
+        });
+        await writeReceiptJson(`mcp-response-${requestId}.json`, response);
+        const normalized = normalizeMcpReceipt({
+          requestId,
+          requestedStoryIds,
+          response,
+          freezeId: freeze.freezeId,
+          producerId: producer.producerId,
+          inputDigest: freeze.inputDigest,
+          producerIdentityDigest: producer.producerIdentityDigest,
+          mcpURL: producer.mcpURL,
+          childEpoch,
+          expectedInputDigest: freeze.inputDigest,
+          expectedProducerIdentityDigest: producer.producerIdentityDigest,
+        });
+        assertResult(
+          normalized,
+          `MCP receipt is invalid for request ${requestId}`
+        );
+        const receiptFile = `receipt-mcp-${requestId}.json`;
+        await writeReceiptJson(receiptFile, {
+          ...normalized.receipt,
+          observedChildEpoch: childEpoch,
+        });
+        receiptFiles.push(receiptFile);
+      }
+      const completion = {
+        freezeId: freeze.freezeId,
+        producerId: producer.producerId,
+        receiptFiles,
+        completedAt: new Date().toISOString(),
+        timeout,
+      };
+      await writeReceiptJson('mcp-complete.json', completion);
+      return completion;
     },
-    readReceipt: async ({ receipts, receiptFile }) =>
-      JSON.parse(
-        await readFile(
-          await resolveOwnedPath(ownedReceipts ?? receipts, receiptFile),
-          'utf8'
-        )
-      ),
+    readReceipt: async ({ receipts, receiptFile }) => {
+      const receiptRoot = ownedReceipts ?? receipts;
+      const receipt = JSON.parse(
+        await readFile(await resolveOwnedPath(receiptRoot, receiptFile), 'utf8')
+      );
+      const responseFile = `mcp-response-${String(receipt.requestId)}.json`;
+      try {
+        return {
+          ...receipt,
+          response: JSON.parse(
+            await readFile(
+              await resolveOwnedPath(receiptRoot, responseFile),
+              'utf8'
+            )
+          ),
+        };
+      } catch (error_) {
+        if (error_.code !== 'ENOENT') throw error_;
+        return receipt;
+      }
+    },
     normalizeReceipt: ({ value, freeze, producer }) =>
       normalizeMcpReceipt({
         ...value,
