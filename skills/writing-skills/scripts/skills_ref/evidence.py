@@ -5,6 +5,7 @@ import json
 from collections import Counter
 from decimal import Decimal
 from pathlib import Path
+from typing import cast
 
 STATUSES = ("PASS", "AMBER", "FAIL", "NHR", "N/A")
 GATES = (
@@ -21,15 +22,20 @@ KINDS = ("static", "lifecycle", "comparative", "behavioral", "runtime", "process
 
 
 def _mapping(value: object, label: str) -> dict[str, object]:
-    if not isinstance(value, dict) or any(not isinstance(k, str) for k in value):
+    if not isinstance(value, dict):
         raise ValueError(f"{label}: expected an object")
-    return {str(k): v for k, v in value.items()}
+    # cast to dict[object, object] so iteration yields 'object' keys, not Unknown,
+    # allowing isinstance narrowing to work inside the any() generator.
+    raw = cast(dict[object, object], value)
+    if any(not isinstance(k, str) for k in raw):
+        raise ValueError(f"{label}: expected an object")
+    return cast(dict[str, object], value)
 
 
 def _items(value: object, label: str) -> list[object]:
     if not isinstance(value, list):
         raise ValueError(f"{label}: expected a list")
-    return list(value)
+    return cast(list[object], value)
 
 
 def _text(value: object, label: str) -> str:
@@ -85,6 +91,20 @@ def _artifacts(record: dict[str, object], root: Path) -> dict[str, str]:
     return roles
 
 
+def _validate_case(
+    case: dict[str, object], key: str, status: str, roles: dict[str, str]
+) -> None:
+    passed = case.get("passed")
+    if "passed" not in case or (
+        (status == "PASS" and passed is not True)
+        or (status == "FAIL" and passed is not False)
+        or (status in ("AMBER", "NHR", "N/A") and passed is not None)
+    ):
+        raise ValueError(f"case {key}: status and Boolean passed disagree")
+    if roles.get(_text(case.get("evidence"), "case.evidence")) != "raw":
+        raise ValueError(f"case {key}: raw evidence reference missing")
+
+
 def _evaluation(record: dict[str, object], roles: dict[str, str]) -> Counter[str]:
     evaluation = _mapping(record.get("evaluation"), "evaluation")
     _text(evaluation.get("evaluator"), "evaluation.evaluator")
@@ -105,15 +125,7 @@ def _evaluation(record: dict[str, object], roles: dict[str, str]) -> Counter[str
         if key in seen or status not in STATUSES:
             raise ValueError(f"case {key}: duplicate ID or invalid status")
         seen.add(key)
-        passed = case.get("passed")
-        if "passed" not in case or (
-            (status == "PASS" and passed is not True)
-            or (status == "FAIL" and passed is not False)
-            or (status in ("AMBER", "NHR", "N/A") and passed is not None)
-        ):
-            raise ValueError(f"case {key}: status and Boolean passed disagree")
-        if roles.get(_text(case.get("evidence"), "case.evidence")) != "raw":
-            raise ValueError(f"case {key}: raw evidence reference missing")
+        _validate_case(case, key, status, roles)
         counts[status] += 1
     if seen != set(expected):
         raise ValueError("cases: IDs do not match frozen expected_case_ids")
@@ -160,6 +172,22 @@ def _budget(record: dict[str, object], dispatch: bool) -> None:
         _text(budget.get("acceptance_impact"), "dispatch.acceptance_impact")
 
 
+def _check_deploy_gate(
+    recommendation: str,
+    meets_threshold: bool,
+    gates: dict[str, object],
+    counts: Counter[str],
+) -> None:
+    if recommendation != "deploy":
+        return
+    if (
+        not meets_threshold
+        or any(gates[g] != "PASS" for g in gates)
+        or any(counts[s] for s in ("AMBER", "FAIL", "NHR"))
+    ):
+        raise ValueError("deploy: numeric threshold, case outcomes or independent gates block it")
+
+
 def validate_evidence(path: Path, root: Path | None = None, dispatch: bool = False) -> str:
     """Raise ValueError/OSError on invalid evidence; return the recorded disposition."""
     record = _mapping(
@@ -188,12 +216,7 @@ def validate_evidence(path: Path, root: Path | None = None, dispatch: bool = Fal
     recommendation = _text(record.get("recommendation"), "recommendation")
     if recommendation not in ("deploy", "revise", "split", "merge", "deprecate", "hold"):
         raise ValueError("recommendation: unsupported disposition")
-    if recommendation == "deploy" and (
-        not meets_threshold
-        or any(gates[g] != "PASS" for g in gates)
-        or any(counts[s] for s in ("AMBER", "FAIL", "NHR"))
-    ):
-        raise ValueError("deploy: numeric threshold, case outcomes or independent gates block it")
+    _check_deploy_gate(recommendation, meets_threshold, gates, counts)
     _budget(record, dispatch)
     telemetry = _mapping(record.get("telemetry"), "telemetry")
     for field in ("tokens", "cached_tokens"):
