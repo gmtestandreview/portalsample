@@ -346,6 +346,10 @@ describe('form utility helpers', () => {
     expect(removeHidden({ tags: ['visible'] }, values, {})).toEqual({
       tags: ['visible'],
     });
+
+    // A nullish field value falls back to an empty object rather than throwing
+    // when Object.entries is called.
+    expect(removeHidden(undefined, values, {})).toEqual({});
   });
 
   it('validates forms and filters Yup errors for hidden fields', async () => {

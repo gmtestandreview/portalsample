@@ -480,6 +480,28 @@ describe('RhfAttachment', () => {
     ).toBeInTheDocument();
   });
 
+  it('recovers without listing errors when a failed upload has no errors collection', async () => {
+    const user = userEvent.setup();
+    // A rejection whose problem details carry no `errors` map exercises the
+    // `?? {}` fallback: Object.values({}).flat() yields nothing to display.
+    const onUploadFiles = vi
+      .fn()
+      .mockRejectedValue({ title: 'Server exploded' });
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10)
+    );
+
+    await waitFor(() => expect(onUploadFiles).toHaveBeenCalled());
+    expect(
+      within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(
+        'listitem'
+      )
+    ).not.toBeInTheDocument();
+  });
+
   it('renders active upload progress with cancellable file rows', async () => {
     const user = userEvent.setup();
     const handleCancelFile = vi.fn().mockResolvedValue(undefined);

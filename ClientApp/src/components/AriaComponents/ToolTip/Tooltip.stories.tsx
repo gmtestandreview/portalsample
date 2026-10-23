@@ -2,7 +2,7 @@ import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluat
 import { Tooltip, TooltipTrigger } from './Tooltip';
 import { Button } from '../Button/Button';
 import { Save } from '../NmiIcon';
-import { expect, userEvent } from 'storybook/test';
+import { expect, userEvent, waitFor } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
@@ -31,6 +31,9 @@ export const Example: Story = {
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: 'Save' });
     await userEvent.hover(button);
-    await expect(button).toHaveAttribute('data-hovered', 'true');
+    // React Aria sets `data-hovered` synchronously on pointer enter, but the
+    // one-shot attribute read can run before that commit is observable under CI
+    // load; waitFor retries the read until the hovered state has landed.
+    await waitFor(() => expect(button).toHaveAttribute('data-hovered', 'true'));
   },
 };

@@ -295,7 +295,11 @@ jobs:
 
   e2e-node24:
     name: e2e-node24
-    runs-on: ubuntu-26.04
+    # The Storybook closure gate (test:e2e:storybook:closure) enforces input
+    # immutability with a Windows icacls ACL freeze and reads the Windows
+    # USERNAME/USERDOMAIN identity. That contract is Windows-only by design
+    # (never downgraded on other platforms), so this job must run on Windows.
+    runs-on: windows-2025
     timeout-minutes: 45
     env:
       VITE_ENVIRONMENT: local

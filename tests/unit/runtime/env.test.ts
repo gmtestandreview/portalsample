@@ -159,6 +159,29 @@ describe('Vite environment contract', () => {
     );
   });
 
+  it('falls back to empty-string build-time defaults when Vite env vars are undefined', async () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    vi.resetModules();
+    for (const key of envKeys) {
+      vi.stubEnv(key, undefined);
+    }
+    // Production MODE keeps the telemetry-optional branch inactive, so every
+    // required variable is evaluated through the build-time `?? ''` fallback.
+    vi.stubEnv('MODE', 'production');
+
+    const module = await import('../../../ClientApp/src/env');
+
+    for (const key of envKeys) {
+      expect(module.env[key]).toBe('');
+    }
+    expect(consoleError).toHaveBeenCalledWith(
+      '[env] Missing required environment variable: VITE_B2C_CLIENTID'
+    );
+  });
+
   it('rejects malformed or disallowed external redirect hosts', async () => {
     await expect(
       importEnv({ VITE_EXTERNAL_REDIRECT_URL: 'https://evil.example/redirect' })

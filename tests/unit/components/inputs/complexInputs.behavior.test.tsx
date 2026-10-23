@@ -244,6 +244,29 @@ describe('complex input behavior slice', () => {
     ).toBeInTheDocument();
   });
 
+  it('switches to manual entry from an undefined field value without throwing', async () => {
+    const user = userEvent.setup();
+
+    render(
+      // No address object yet: the manual-sync effect reads an undefined field
+      // value and falls back to {} before writing the manual flag.
+      <FormikHarness initialValues={{ address: undefined }}>
+        <AddressLookup name='address' label='Service address' />
+        <ValuesProbe />
+      </FormikHarness>
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: /Enter it manually/i })
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"isManuallyEntered":true'
+      );
+    });
+  });
+
   it('searches AddressLookup and writes selected address details into Formik', async () => {
     const user = userEvent.setup();
 

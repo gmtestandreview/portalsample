@@ -137,6 +137,26 @@ describe('ErrorSummary', () => {
     ).toBeInTheDocument();
   });
 
+  it('renders a key whose segment reduces to an empty label after stripping separators', () => {
+    render(
+      <TestRouter>
+        <ErrorSummary
+          serverErrors={
+            {
+              errors: {
+                // The single "_" segment collapses to '' once separators are
+                // stripped, so formatKeyPart returns the empty string unchanged.
+                _: ['Required'],
+              },
+            } as any
+          }
+        />
+      </TestRouter>
+    );
+
+    expect(screen.getByRole('link', { name: /Required/ })).toBeInTheDocument();
+  });
+
   it('falls through when validation problem details has no errors collection', () => {
     render(
       <TestRouter>

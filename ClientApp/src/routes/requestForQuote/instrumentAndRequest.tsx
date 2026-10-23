@@ -60,7 +60,10 @@ const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   return { options: sorted, noInstrumentId };
 };
 
-const useInstrumentAndRequestLookups = () => {
+// Exported for unit testing: the measurement-category options builder falls
+// back to an empty list before the lookups resolve, a path unreachable through
+// the rendered component because `isLoading` gates the only call site.
+export const useInstrumentAndRequestLookups = () => {
   const { accounts, instance } = useMsal();
   const context = useFormikContext<InstrumentAndRequestStep>();
   const isLoadingMeasurementCategories = useRef(false);

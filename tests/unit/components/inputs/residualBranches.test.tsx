@@ -228,6 +228,21 @@ describe('residual input branches', () => {
     expect(screen.getByLabelText('Date')).toHaveValue('2026-06-13');
   });
 
+  it('normalizes a nullish TextInput value to an empty string on blur', async () => {
+    render(
+      <Harness initialValues={{ nickname: null }}>
+        <TextInput name='nickname' label='Nickname' />
+      </Harness>
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Nickname' });
+    await act(async () => {
+      fireEvent.blur(input);
+    });
+
+    expect(input).toHaveValue('');
+  });
+
   it('keeps AutoSuggest keyboard movement inert while closed and uses fallback ids', async () => {
     const user = userEvent.setup();
     const onCancel = vi.fn();
