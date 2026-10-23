@@ -333,6 +333,43 @@ jobs:
       - name: Install Playwright Chromium
         run: ./node_modules/.bin/playwright install --with-deps chromium
 
+      # TEMPORARY DIAGNOSTIC (remove once the closure ACL-freeze root cause on
+      # hosted Windows runners is found). The closure's icacls /deny freeze is
+      # enforced under a non-elevated token locally but not on this runner, so
+      # test:e2e:storybook:closure fails its denial probes. Capture the step's
+      # token identity, integrity level, privileges, the identity the closure
+      # would deny, and a live deny-probe under the workspace - this tells an
+      # identity mismatch apart from a privilege/elevation bypass. Best-effort:
+      # never fails the job (runs before the closure step either way).
+      - name: Diagnose ACL freeze enforcement
+        shell: pwsh
+        run: |
+          Write-Output '--- token identity (whoami /user) ---'
+          whoami /user
+          Write-Output '--- integrity level + admin group ---'
+          whoami /groups | Select-String -Pattern 'S-1-5-32-544|High Mandatory|Medium Mandatory|System Mandatory'
+          Write-Output '--- backup/restore/takeownership privileges ---'
+          whoami /priv | Select-String -Pattern 'SeRestore|SeBackup|SeTakeOwnership'
+          $id = "$env:USERDOMAIN\$env:USERNAME"
+          Write-Output "--- identity the closure would deny: $id ---"
+          $dir = Join-Path $env:GITHUB_WORKSPACE ('acl-probe-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $dir | Out-Null
+          $f = Join-Path $dir 'probe.txt'
+          'original' | Set-Content -Path $f
+          icacls $f /deny "${id}:(WD,AD,WA,DE)" /c | Out-Null
+          try {
+            'overwrite' | Set-Content -Path $f -ErrorAction Stop
+            Write-Output 'PROBE_OVERWRITE: SUCCEEDED (deny NOT enforced - matches the CI failure)'
+          } catch {
+            Write-Output 'PROBE_OVERWRITE: DENIED (deny enforced)'
+          }
+          Write-Output '--- effective ACL on probe file ---'
+          icacls $f
+          icacls $f /remove:d "$id" /c | Out-Null
+          Remove-Item $f -Force
+          Remove-Item $dir -Force
+          exit 0
+
       - name: Run app and Storybook BDD suites
         run: npm run test:e2e
 
