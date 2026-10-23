@@ -82,7 +82,7 @@
     "react-router": "^7.18.4",
     "slate": "^0.133.3",
     "slate-dom": "^0.133.1",
-    "slate-react": "^0.133.4",
+    "slate-react": "^0.146.1",
     "yup": "^1.7.1"
   },
   "devDependencies": {
