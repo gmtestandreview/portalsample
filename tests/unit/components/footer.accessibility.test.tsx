@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { readFileSync } from 'node:fs';
@@ -6,11 +7,11 @@ import Footer from '@/components/Footer';
 import Privacy from '@/components/Footer/privacy';
 import TermsOfUse from '@/components/Footer/termsOfUse';
 
-vi.mock('@/assets/GovCrest.svg', () => ({
+vi.mock(import('@/assets/GovCrest.svg'), () => ({
   default: 'gov-crest.svg',
 }));
 
-describe('Footer accessibility', () => {
+describe('footer accessibility', () => {
   it('uses real buttons for footer modal triggers', async () => {
     render(<Footer />);
 
@@ -44,11 +45,13 @@ describe('Footer accessibility', () => {
       const labelledSections = Array.from(
         container.querySelectorAll('section[aria-labelledby]')
       );
+
       expect(labelledSections.length).toBeGreaterThan(0);
 
       for (const section of labelledSections) {
         const labelId = section.getAttribute('aria-labelledby');
-        expect(labelId).toBeTruthy();
+
+        expect(labelId).toBe(true);
         expect(container.querySelectorAll(`#${labelId}`)).toHaveLength(1);
       }
     }

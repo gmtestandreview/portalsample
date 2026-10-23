@@ -37,7 +37,7 @@ const accountHolder: RfqCurrentContact = {
   email: 'grace@example.com',
 };
 
-describe('RfqOrganisationSummary', () => {
+describe(RfqOrganisationSummary, () => {
   it('shows the trading name, branch, organisation name and spaced ABN', () => {
     const container = renderOrganisation(populated);
 
@@ -91,6 +91,7 @@ describe('RfqOrganisationSummary', () => {
     );
 
     const descriptor = container.querySelector('#q-currentContact');
+
     expect(descriptor).toHaveTextContent('Grace Hopper');
     expect(descriptor).toHaveTextContent('grace@example.com');
     expect(container).toHaveTextContent('Use my contact details');

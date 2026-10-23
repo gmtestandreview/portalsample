@@ -169,7 +169,7 @@ const evidenceJobs = [
   'lower-bound-node24',
 ];
 
-describe('PR workflow runs each test environment as its own partition', () => {
+describe('pR workflow runs each test environment as its own partition', () => {
   it('declares the partition matrix without fail-fast', () => {
     expect(occurrences('fail-fast: false')).toBeGreaterThanOrEqual(1);
   });
@@ -598,6 +598,7 @@ describe('no partition may mask a failure', () => {
       expect(contents).toContain('run: corepack enable');
       expect(contents).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
     }
+
     // One corepack activation per PR job that installs dependencies.
     expect(occurrences('run: corepack enable')).toBe(4);
   });
@@ -632,7 +633,7 @@ describe('no partition may mask a failure', () => {
   });
 });
 
-describe('Storybook documentation is a CI quality gate', () => {
+describe('storybook documentation is a CI quality gate', () => {
   it.each([
     ['pull request', workflow],
     ['release', releaseWorkflow],
@@ -648,7 +649,7 @@ describe('Storybook documentation is a CI quality gate', () => {
   });
 });
 
-describe("CI uses the repository's enforced Node runtime", () => {
+describe("cI uses the repository's enforced Node runtime", () => {
   it('keeps engines and devEngines on the same Node 24 floor', () => {
     expect(packageJson.engines.node).toBe('>=24.21.0');
     expect(packageJson.devEngines.runtime.version).toBe('>=24.21.0');
@@ -680,7 +681,7 @@ describe("CI uses the repository's enforced Node runtime", () => {
   );
 });
 
-describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () => {
+describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () => {
   const workflows = [
     ['pull request', workflow],
     ['release', releaseWorkflow],
@@ -713,13 +714,14 @@ describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
   });
 });
 
-describe('Dependabot owns the lint cohort as one reviewable group', () => {
+describe('dependabot owns the lint cohort as one reviewable group', () => {
   it('keeps the weekly GitHub Actions ecosystem entry', () => {
     expect(dependabot).toContain('package-ecosystem: github-actions');
   });
 
   it('groups the whole ESLint family into a single pull request', () => {
     expect(dependabot).toContain('eslint-family:');
+
     for (const pattern of [
       "'eslint'",
       "'@eslint/js'",
@@ -738,7 +740,7 @@ describe('Dependabot owns the lint cohort as one reviewable group', () => {
   });
 });
 
-describe('Chromatic publishing reports asynchronously through GitHub', () => {
+describe('chromatic publishing reports asynchronously through GitHub', () => {
   it('publishes every pushed branch with complete Git history', () => {
     expect(chromaticWorkflow).toContain('push:');
     expect(chromaticWorkflow).toContain('fetch-depth: 0');

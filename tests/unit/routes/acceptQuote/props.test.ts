@@ -43,7 +43,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -65,25 +65,28 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
+vi.mock(import('../../../../ClientApp/src/storage/notification'), () => ({
   setDashboardNotification: mocks.setDashboardNotification,
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.appLoggerError,
   },
 }));
 
-vi.mock('../../../../ClientApp/src/storage/sessionStorageCache', () => ({
-  default: () => ({
-    setItem: mocks.sessionSetItem,
-  }),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/storage/sessionStorageCache'),
+  () => ({
+    default: () => ({
+      setItem: mocks.sessionSetItem,
+    }),
+  })
+);
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
 const emptyAccounts = [] as AccountInfo[];
@@ -156,6 +159,7 @@ describe('accept quote wizard prop factories', () => {
       true,
       abortSignal
     );
+
     expect(mocks.saveDeliveryAndReturn).toHaveBeenCalledWith(
       'Q-1',
       {
@@ -245,6 +249,7 @@ describe('accept quote wizard prop factories', () => {
       invoiceSentTo: InvoiceSentToValues.DifferentPerson,
     };
     await props.onSaveAndExit?.(paymentValues, false, abortSignal);
+
     expect(mocks.savePaymentDetails).toHaveBeenCalledWith(
       'Q-2',
       {
@@ -256,6 +261,7 @@ describe('accept quote wizard prop factories', () => {
     );
 
     mocks.savePaymentDetails.mockRejectedValueOnce(new Error('save failed'));
+
     await expect(
       props.onSaveAndNext?.(paymentValues, true, abortSignal)
     ).rejects.toThrow('save failed');
@@ -266,6 +272,7 @@ describe('accept quote wizard prop factories', () => {
     );
 
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('load failed'));
+
     await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
       'There was an error retrieving your details.'
     );
@@ -330,6 +337,7 @@ describe('accept quote wizard prop factories', () => {
       reportAddressType: ReportAddressTypeValues.Other,
     };
     await props.onSaveAndNext?.(recipientValues, true, abortSignal);
+
     expect(mocks.saveReportRecipient).toHaveBeenCalledWith(
       'Q-3',
       {
@@ -341,6 +349,7 @@ describe('accept quote wizard prop factories', () => {
     );
 
     mocks.saveReportRecipient.mockRejectedValueOnce(new Error('save failed'));
+
     await expect(
       props.onSaveAndExit?.(recipientValues, false, abortSignal)
     ).rejects.toThrow('save failed');
@@ -417,9 +426,11 @@ describe('accept quote wizard prop factories', () => {
     ).toBe(true);
 
     await props.onSaveAndExit?.(summary, false, abortSignal);
+
     expect(mocks.sessionSetItem).not.toHaveBeenCalled();
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
+
     expect(mocks.saveSummaryAndAccept).toHaveBeenLastCalledWith(
       'Q-4',
       {

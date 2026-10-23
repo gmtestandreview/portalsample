@@ -50,14 +50,14 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -81,26 +81,29 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
   default: () => mocks.accountContext(),
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 
-vi.mock('../../../../ClientApp/src/components/forms/WizardForm', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <section data-testid='wizard-form'>{children}</section>
-  ),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/forms/WizardForm'),
+  () => ({
+    default: ({ children }: { children: React.ReactNode }) => (
+      <section data-testid='wizard-form'>{children}</section>
+    ),
+  })
+);
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () => ({
     default: ({ children }: { children: React.ReactNode }) => (
       <article data-testid='wizard-step'>{children}</article>
@@ -108,32 +111,41 @@ vi.mock(
   })
 );
 
-vi.mock('../../../../ClientApp/src/routes/ta/organisationAndContact', () => ({
-  default: () => <div>Organisation and contact step</div>,
-}));
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/organisationAndContact'),
+  () => ({
+    default: () => <div>Organisation and contact step</div>,
+  })
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/applicationAndInstrument', () => ({
-  default: () => <div>Application and instrument step</div>,
-}));
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/applicationAndInstrument'),
+  () => ({
+    default: () => <div>Application and instrument step</div>,
+  })
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/summaryAndSubmit', () => ({
+vi.mock(import('../../../../ClientApp/src/routes/ta/summaryAndSubmit'), () => ({
   default: () => <div>Summary and submit step</div>,
 }));
 
-vi.mock('../../../../ClientApp/src/routes/ta/supportingDocuments', () => ({
-  default: (props: typeof documentsStep.props) => {
-    documentsStep.props = props;
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  () => ({
+    default: (props: typeof documentsStep.props) => {
+      documentsStep.props = props;
 
-    return (
-      <div
-        data-testid='supporting-documents'
-        data-uploading={String(props.uploading)}
-        data-percent={props.progress?.percent ?? ''}
-        data-errors={props.externalErrors.join('|')}
-      />
-    );
-  },
-}));
+      return (
+        <div
+          data-testid='supporting-documents'
+          data-uploading={String(props.uploading)}
+          data-percent={props.progress?.percent ?? ''}
+          data-errors={props.externalErrors.join('|')}
+        />
+      );
+    },
+  })
+);
 
 const statuses = [{ name: 'Organisation and contact', status: 'current' }];
 
@@ -247,6 +259,7 @@ describe('application for type approval', () => {
       const { currentPath } = await renderRoute();
 
       await waitFor(() => expect(currentPath()).toBe('/not-found'));
+
       expect(screen.getByTestId(NOT_FOUND_TEST_ID)).toBeInTheDocument();
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application steps',
@@ -357,6 +370,7 @@ describe('application for type approval', () => {
           'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.'
         )
       );
+
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
         expect.anything(),
@@ -462,7 +476,7 @@ describe('application for type approval', () => {
       await waitFor(() =>
         expect(
           clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
     });
 
@@ -502,9 +516,10 @@ describe('application for type approval', () => {
         () =>
           expect(
             clients.progress.methods.deleteProgressStatistics
-          ).toHaveBeenCalled(),
+          ).toHaveBeenCalledWith(),
         { timeout: 10000 }
       );
+
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
     }, 20000);
 
@@ -523,7 +538,7 @@ describe('application for type approval', () => {
       });
 
       await waitFor(() =>
-        expect(clients.progress.methods.getProgress).toHaveBeenCalled()
+        expect(clients.progress.methods.getProgress).toHaveBeenCalledWith()
       );
 
       // Unmount aborts the controller, so the in-flight poll's rejection must break the loop
@@ -538,6 +553,7 @@ describe('application for type approval', () => {
       await act(async () => {
         await Promise.resolve();
       });
+
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(
         callsAfterUnmount
       );
@@ -602,7 +618,7 @@ describe('application for type approval', () => {
       });
 
       expect(clients.progress.methods.cancelFile).not.toHaveBeenCalled();
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalled();
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith();
     });
   });
 });

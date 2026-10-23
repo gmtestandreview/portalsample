@@ -18,20 +18,23 @@ const containerState = vi.hoisted(() => ({
   props: undefined as MockContainerProps | undefined,
 }));
 
-vi.mock('@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer', () => ({
-  default: (props: MockContainerProps) => {
-    containerState.props = props;
-    return (
-      <div>
-        <span data-testid='search-term'>{props.searchTerm}</span>
-        <span data-testid='loading'>{String(props.loading)}</span>
-        <span data-testid='error'>{String(props.error)}</span>
-        <span data-testid='no-result'>{String(props.noResult)}</span>
-        <span data-testid='option-count'>{String(props.options.length)}</span>
-      </div>
-    );
-  },
-}));
+vi.mock(
+  import('@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer'),
+  () => ({
+    default: (props: MockContainerProps) => {
+      containerState.props = props;
+      return (
+        <div>
+          <span data-testid='search-term'>{props.searchTerm}</span>
+          <span data-testid='loading'>{String(props.loading)}</span>
+          <span data-testid='error'>{String(props.error)}</span>
+          <span data-testid='no-result'>{String(props.noResult)}</span>
+          <span data-testid='option-count'>{String(props.options.length)}</span>
+        </div>
+      );
+    },
+  })
+);
 
 const options: AutoSuggestOption<string>[] = [
   { id: 'sydney', displayText: 'Sydney', value: 'sydney' },
@@ -57,7 +60,7 @@ const renderAutoSuggest = (
   return { getOptions, onSelectedOption };
 };
 
-describe('RhfAutoSuggest parent state', () => {
+describe('rhfAutoSuggest parent state', () => {
   it('loads options, reports no results and reports lookup failures', async () => {
     const getOptions = vi
       .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
@@ -69,18 +72,21 @@ describe('RhfAutoSuggest parent state', () => {
     await act(async () => {
       await containerState.props?.onSearchTermChange('syd');
     });
+
     expect(screen.getByTestId('option-count')).toHaveTextContent('1');
     expect(screen.getByTestId('no-result')).toHaveTextContent('false');
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('sydney');
     });
+
     expect(screen.getByTestId('option-count')).toHaveTextContent('0');
     expect(screen.getByTestId('no-result')).toHaveTextContent('true');
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('sydney nsw');
     });
+
     expect(screen.getByTestId('error')).toHaveTextContent('true');
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
   });
@@ -96,12 +102,14 @@ describe('RhfAutoSuggest parent state', () => {
     await act(async () => {
       await containerState.props?.onSearchTermChange('s');
     });
+
     expect(getOptions).not.toHaveBeenCalled();
     expect(screen.getByTestId('option-count')).toHaveTextContent('0');
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('');
     });
+
     expect(onSelectedOption).toHaveBeenCalledWith();
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
   });
@@ -181,12 +189,14 @@ describe('RhfAutoSuggest parent state', () => {
     await act(async () => {
       selectionPromise = containerState.props?.onSelectedOption(selectedOption);
     });
+
     expect(screen.getByTestId('loading')).toHaveTextContent('true');
 
     resolveSelection();
     await act(async () => {
       await selectionPromise;
     });
+
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
   });
 });

@@ -35,14 +35,14 @@ const editor = vi.hoisted(() => ({
   lastKey: null as string | null,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -60,16 +60,16 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions'),
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
@@ -77,19 +77,22 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/components/SlateEditor/SlateEditor', () => ({
-  default: (props: typeof editor.props) => {
-    editor.props = props;
-    editor.renderCount += 1;
+vi.mock(
+  import('../../../../ClientApp/src/components/SlateEditor/SlateEditor'),
+  () => ({
+    default: (props: typeof editor.props) => {
+      editor.props = props;
+      editor.renderCount += 1;
 
-    return (
-      <div data-testid='slate-editor' data-placeholder={props.placeholder} />
-    );
-  },
-  serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
-}));
+      return (
+        <div data-testid='slate-editor' data-placeholder={props.placeholder} />
+      );
+    },
+    serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
+  })
+);
 
-vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
+vi.mock(import('../../../../ClientApp/src/components/Pagination'), () => ({
   default: ({
     currentPage,
     totalPages,
@@ -111,21 +114,24 @@ vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
   ),
 }));
 
-vi.mock('../../../../ClientApp/src/components/PaginationHeader', () => ({
-  default: ({
-    currentPage,
-    totalCount,
-  }: {
-    currentPage: number;
-    totalCount: number;
-  }) => (
-    <span
-      data-testid='pagination-header'
-      data-current={currentPage}
-      data-total-count={totalCount}
-    />
-  ),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/PaginationHeader'),
+  () => ({
+    default: ({
+      currentPage,
+      totalCount,
+    }: {
+      currentPage: number;
+      totalCount: number;
+    }) => (
+      <span
+        data-testid='pagination-header'
+        data-current={currentPage}
+        data-total-count={totalCount}
+      />
+    ),
+  })
+);
 
 const messageItem = (overrides: Record<string, unknown> = {}) => ({
   id: 'msg-1',
@@ -240,6 +246,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('No messages to display')).toBeInTheDocument()
       );
+
       // The count header is for a populated list only.
       expect(screen.queryByTestId('pagination-header')).not.toBeInTheDocument();
     });
@@ -261,6 +268,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Assessment update')).toBeInTheDocument()
       );
+
       expect(screen.getByTestId('pagination')).toHaveAttribute(
         'data-current',
         '1'
@@ -285,6 +293,7 @@ describe('application messages', { timeout: 15_000 }, () => {
           { Id: 'APP-1' }
         )
       );
+
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
 
@@ -343,6 +352,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Safe body')).toBeInTheDocument()
       );
+
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(
         '<p>Safe body</p><script>evil()</script>'
       );
@@ -360,6 +370,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Empty body')).toBeInTheDocument()
       );
+
       expect(mocks.sanitiseHtml).not.toHaveBeenCalled();
     });
 
@@ -376,6 +387,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('The NMI team')).toBeInTheDocument()
       );
+
       expect(screen.getAllByText('Regards,')).toHaveLength(1);
     });
 
@@ -394,23 +406,22 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute();
 
       await waitFor(() => expect(screen.getByText('NMI')).toBeInTheDocument());
+
       expect(screen.getByText('GM')).toBeInTheDocument();
     });
 
     it('marks read and unread messages differently', async () => {
-      clients.patternApproval.methods.getAppMessages.mockImplementation(() =>
-        Promise.resolve(
-          messagesResponse(
-            [
-              messageItem({ id: 'seen', messageRead: true }),
-              messageItem({
-                id: 'unseen',
-                subject: 'Action required',
-                messageRead: false,
-              }),
-            ],
-            { currentPage: 1 }
-          )
+      clients.patternApproval.methods.getAppMessages.mockResolvedValue(
+        messagesResponse(
+          [
+            messageItem({ id: 'seen', messageRead: true }),
+            messageItem({
+              id: 'unseen',
+              subject: 'Action required',
+              messageRead: false,
+            }),
+          ],
+          { currentPage: 1 }
         )
       );
 
@@ -419,6 +430,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Action required')).toBeInTheDocument()
       );
+
       expect(container.querySelectorAll('.read')).toHaveLength(1);
       expect(container.querySelectorAll('.unread')).toHaveLength(1);
     });
@@ -463,14 +475,18 @@ describe('application messages', { timeout: 15_000 }, () => {
       });
 
       await waitFor(() =>
-        expect(clients.patternApproval.methods.addAppMessage).toHaveBeenCalled()
+        expect(
+          clients.patternApproval.methods.addAppMessage
+        ).toHaveBeenCalledWith()
       );
       const [applicationId, html] = defined(
         clients.patternApproval.methods.addAppMessage.mock.calls[0],
         'addAppMessage call'
       );
+
       expect(applicationId).toBe('APP-1');
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(html);
+
       // A changed key remounts Slate, which is how the composer is cleared.
       await waitFor(() =>
         expect(editor.renderCount).toBeGreaterThan(rendersBefore)
@@ -638,6 +654,7 @@ describe('application messages', { timeout: 15_000 }, () => {
           'APP-1'
         )
       );
+
       expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',
         block: 'start',

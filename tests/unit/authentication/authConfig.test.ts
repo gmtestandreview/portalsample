@@ -1,7 +1,7 @@
 import { LogLevel } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/env', () => ({
+vi.mock(import('@/env'), () => ({
   env: {
     VITE_B2C_CLIENTID: 'test-client-id',
     VITE_B2C_AUTHORITY: 'https://example.test/authority',
@@ -65,6 +65,7 @@ describe('auth configuration', () => {
     );
 
     expect(consoleError).not.toHaveBeenCalled();
+
     consoleError.mockRestore();
   });
 
@@ -81,6 +82,7 @@ describe('auth configuration', () => {
     );
 
     expect(consoleError).toHaveBeenCalledWith('visible error');
+
     consoleError.mockRestore();
   });
 
@@ -97,12 +99,13 @@ describe('auth configuration', () => {
     );
 
     expect(consoleError).not.toHaveBeenCalled();
+
     consoleError.mockRestore();
   });
 
   it('falls back to empty strings when optional runtime auth env values are missing', async () => {
     vi.resetModules();
-    vi.doMock('@/env', () => ({
+    vi.doMock(import('@/env'), () => ({
       env: {
         VITE_B2C_CLIENTID: undefined,
         VITE_B2C_AUTHORITY: 'https://example.test/authority',

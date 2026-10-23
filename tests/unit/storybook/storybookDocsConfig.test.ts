@@ -1,9 +1,15 @@
-import { existsSync, readFileSync } from 'node:fs';
 import ts from 'typescript';
 import type { UserConfig } from 'vite';
 import { describe, expect, it } from 'vitest';
 import storybookConfig from '../../../.storybook/main';
 import { onLog } from '../../../.storybook/rollupOnLog';
+import { pathExists, readTextFileSync } from '../../helpers/safeTestFilesystem';
+
+const testRoot = process.cwd();
+const readFileSync = (filePath: string, _encoding: 'utf8'): string =>
+  readTextFileSync(filePath, testRoot);
+const existsSync = (filePath: string): boolean =>
+  pathExists(filePath, testRoot);
 
 const main = readFileSync('.storybook/main.ts', 'utf8');
 const preview = readFileSync('.storybook/preview.ts', 'utf8');
@@ -133,7 +139,7 @@ const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
   },
 ];
 
-describe('Storybook documentation architecture', () => {
+describe('storybook documentation architecture', () => {
   it('keeps AutoSuggest ownership and Loading controls truthful', () => {
     const autoSuggestStory = readFileSync(
       'ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx',
@@ -163,6 +169,7 @@ describe('Storybook documentation architecture', () => {
     expect(acceptQuoteStory).toMatch(
       /subcomponents:\s*\{[\s\S]*PaymentDetails,[\s\S]*DeliveryAndReturn,[\s\S]*QuotationSummary,[\s\S]*SummaryAndAccept[\s\S]*\}/
     );
+
     for (const storyExport of [
       'ReportRecipientStep',
       'PaymentDetailsStep',
@@ -249,11 +256,19 @@ describe('Storybook documentation architecture', () => {
 
     for (const { path, exports } of requiredStories) {
       expect(existsSync(path), path).toBe(true);
+
       const storyContents = readFileSync(path, 'utf8');
       for (const storyExport of exports) {
-        expect(storyContents, `${path}: ${storyExport}`).toMatch(
-          new RegExp(`export\\s+const\\s+${storyExport}\\s*:\\s*Story\\b`)
-        );
+        expect(
+          storyContents
+            .split(/\r?\n/)
+            .some(
+              (line) =>
+                line.includes(`export const ${storyExport}`) &&
+                line.includes(': Story')
+            ),
+          `${path}: ${storyExport}`
+        ).toBe(true);
       }
     }
 

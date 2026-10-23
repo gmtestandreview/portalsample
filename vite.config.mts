@@ -40,9 +40,11 @@ const DEVELOPMENT_DEFAULTS: Readonly<Record<string, string>> = {
 
 function resolveEnvVars(mode: string, command: string): Record<string, string> {
   const loadedEnv = loadEnv(mode, dirname, '');
+  const loadedEnvValues = new Map(Object.entries(loadedEnv));
+  const developmentDefaults = new Map(Object.entries(DEVELOPMENT_DEFAULTS));
   const isDevelopment = command === 'serve';
 
-  if (command === 'build' && !loadedEnv['VITE_ENVIRONMENT']) {
+  if (command === 'build' && !loadedEnvValues.get('VITE_ENVIRONMENT')) {
     throw new Error(
       'VITE_ENVIRONMENT must be provided explicitly for production builds'
     );
@@ -51,23 +53,25 @@ function resolveEnvVars(mode: string, command: string): Record<string, string> {
   return Object.fromEntries(
     VITE_ENV_KEYS.map((key) => [
       key,
-      loadedEnv[key] ?? (isDevelopment ? DEVELOPMENT_DEFAULTS[key] : '') ?? '',
+      loadedEnvValues.get(key) ??
+        (isDevelopment ? developmentDefaults.get(key) : '') ??
+        '',
     ])
   );
 }
 
-const HTML_ATTRIBUTE_ESCAPE_REPLACEMENTS: Readonly<Record<string, string>> = {
-  '&': '&amp;',
-  '"': '&quot;',
-  "'": '&#39;',
-  '<': '&lt;',
-  '>': '&gt;',
-};
+const HTML_ATTRIBUTE_ESCAPE_REPLACEMENTS = new Map([
+  ['&', '&amp;'],
+  ['"', '&quot;'],
+  ["'", '&#39;'],
+  ['<', '&lt;'],
+  ['>', '&gt;'],
+]);
 
 const HTML_ATTRIBUTE_UNSAFE_CHARACTER_PATTERN = /[&"'<>]/gu;
 
 function escapeHtmlAttributeCharacter(character: string): string {
-  return HTML_ATTRIBUTE_ESCAPE_REPLACEMENTS[character] ?? character;
+  return HTML_ATTRIBUTE_ESCAPE_REPLACEMENTS.get(character) ?? character;
 }
 
 function escapeHtmlAttributeValue(value: string): string {
@@ -230,10 +234,11 @@ const sassDeprecationsToSilence: DeprecationOrId[] = [
 
 export default defineConfig(({ command, mode }) => {
   const envVars = resolveEnvVars(mode, command);
+  const envValues = new Map(Object.entries(envVars));
   const define = Object.fromEntries(
     VITE_ENV_KEYS.map((key) => [
       `import.meta.env.${key}`,
-      JSON.stringify(envVars[key]),
+      JSON.stringify(envValues.get(key)),
     ])
   );
 

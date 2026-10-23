@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     instance: { acquireTokenSilent: mocks.acquireTokenSilent },
     accounts: [mocks.account],
@@ -36,7 +36,7 @@ vi.mock('@azure/msal-react', () => ({
   useAccount: () => mocks.account,
 }));
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -47,7 +47,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   };
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
+vi.mock(import('@/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
@@ -110,7 +110,7 @@ function Harness({
 const submitted = (onSubmit: ReturnType<typeof vi.fn>) =>
   defined(onSubmit.mock.calls[0], 'submit call')[0];
 
-describe('DeliveryAndReturnFormikBridge', () => {
+describe(DeliveryAndReturnFormikBridge, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
@@ -134,7 +134,8 @@ describe('DeliveryAndReturnFormikBridge', () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submitted(onSubmit)).toMatchObject({
       returnAddressType: ReturnAddressTypeValues.Other,
       returnAddress: {
@@ -170,13 +171,15 @@ describe('DeliveryAndReturnFormikBridge', () => {
     const organisationName = screen.getByLabelText(
       'Return organisation name (optional)'
     );
+
     expect(organisationName).toHaveValue('Loaded return organisation');
 
     await user.clear(organisationName);
     await user.type(organisationName, 'Edited return organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submitted(onSubmit)).toMatchObject({
       returnOrganisationName: 'Edited return organisation',
     });
@@ -213,7 +216,8 @@ describe('DeliveryAndReturnFormikBridge', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submitted(onSubmit)).toMatchObject({
       returnAddress: {
         isManuallyEntered: false,
@@ -235,13 +239,14 @@ describe('DeliveryAndReturnFormikBridge', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
+
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/Address line 1 is required/i)
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/Address line 1 is required/i)
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -258,9 +263,9 @@ describe('DeliveryAndReturnFormikBridge', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText('Carrier name is required')
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText('Carrier name is required')
+    ).resolves.toBeInTheDocument();
     expect(screen.getByText('First name is required')).toBeInTheDocument();
     expect(screen.getByLabelText('Carrier name')).toBeInvalid();
     expect(screen.getByLabelText('Carrier name')).toHaveAccessibleDescription(
@@ -283,6 +288,7 @@ describe('DeliveryAndReturnFormikBridge', () => {
     await screen.findByText(/is required/i);
 
     const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+
     expect(probe.dirty).toBe(false);
     expect(probe.address).toBeUndefined();
   });
@@ -303,7 +309,8 @@ describe('DeliveryAndReturnFormikBridge', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
 
@@ -313,14 +320,17 @@ describe('DeliveryAndReturnFormikBridge', () => {
         values={{ returnContactType: ReturnContactTypeValues.SamePerson }}
       />
     );
+
     expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
     expect(
       screen.queryByRole('combobox', { name: /Return address/ })
     ).not.toBeInTheDocument();
+
     unmount();
 
     render(<Harness withHiddenRules={false} />);
+
     expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
     expect(screen.getByLabelText('First name')).toBeInTheDocument();
     expect(
@@ -347,10 +357,12 @@ describe('DeliveryAndReturnFormikBridge', () => {
     const keys = within(summary)
       .getAllByRole('link')
       .map((link) => link.getAttribute('href')?.replace(/^#/, '') ?? '');
+
     expect(keys).toEqual(
       expect.arrayContaining(['carrierName', 'contact.firstName'])
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
+
     keys.forEach((key) =>
       expect(document.getElementById(key), key).not.toBeNull()
     );

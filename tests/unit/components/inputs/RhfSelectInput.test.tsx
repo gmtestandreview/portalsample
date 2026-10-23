@@ -56,7 +56,7 @@ const failingResolver: Resolver<Values> = async () => ({
   },
 });
 
-describe('RhfSelectInput', () => {
+describe(RhfSelectInput, () => {
   it('renders the label, a blank option and the given options', () => {
     render(
       <Harness>
@@ -72,6 +72,7 @@ describe('RhfSelectInput', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(select).toHaveClass('form-select-sm');
     expect(screen.getByRole('option', { name: 'Please select' })).toHaveValue(
       ''
@@ -119,6 +120,7 @@ describe('RhfSelectInput', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(select).toHaveValue('cert');
     expect(select).toHaveAttribute('id', 'category-select');
     expect(select).toBeDisabled();
@@ -227,6 +229,7 @@ describe('RhfSelectInput', () => {
       </Harness>
     );
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(screen.queryByText('Select a category')).not.toBeInTheDocument();
 
     await act(async () => {
@@ -253,6 +256,7 @@ describe('RhfSelectInput', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
+
     expect(select).not.toHaveAttribute('aria-describedby');
     expect(select).not.toHaveAttribute('aria-invalid');
   });
@@ -287,6 +291,7 @@ describe('RhfSelectInput', () => {
     );
 
     const help = screen.getByText('Pick the closest match');
+
     expect(help).toHaveAttribute('id', 'help-category');
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
       'aria-describedby',

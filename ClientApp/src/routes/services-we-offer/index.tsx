@@ -195,7 +195,9 @@ const ServicesWeOffer = () => {
       const serviceType = service.serviceType!;
       return {
         service: serviceType, // or serviceType.toString() if needed
-        isActive: !!checkedServices[serviceType],
+        isActive:
+          Object.hasOwn(checkedServices, serviceType) &&
+          Boolean(Reflect.get(checkedServices, serviceType)),
         isDefault: defaultService === serviceType,
       };
     });

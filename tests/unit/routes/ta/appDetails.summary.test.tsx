@@ -16,14 +16,14 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -40,16 +40,16 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
 }));
 
 // The real accordion collapses its body; the summary inside it is what is under test.
-vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
+vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
   CustomAccordion: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -62,13 +62,19 @@ vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
   }) => <section aria-label={name}>{children}</section>,
 }));
 
-vi.mock('../../../../ClientApp/src/routes/ta/manage/appDocuments', () => ({
-  default: () => <div data-testid='application-documents' />,
-}));
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/manage/appDocuments'),
+  () => ({
+    default: () => <div data-testid='application-documents' />,
+  })
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/manage/appMessages', () => ({
-  default: () => <div data-testid='application-messages' />,
-}));
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/manage/appMessages'),
+  () => ({
+    default: () => <div data-testid='application-messages' />,
+  })
+);
 
 const details = {
   applicationDetails: { referenceId: 'PA-001', title: 'Balance approval' },
@@ -116,11 +122,13 @@ describe('application details summary', () => {
     const organisation = await screen.findByRole('region', {
       name: 'Organisation details',
     });
+
     expect(within(organisation).getByText('Acme Pty Ltd')).toBeInTheDocument();
 
     const application = screen.getByRole('region', {
       name: 'Application details',
     });
+
     expect(
       within(application).getByText('Provisional please')
     ).toBeInTheDocument();
@@ -128,9 +136,12 @@ describe('application details summary', () => {
     const documents = screen.getByRole('region', {
       name: 'Supporting documents',
     });
+
     // Documents come from the form state, which useForm({ values }) fills one
     // render after the props-driven regions above, so await them.
-    expect(await within(documents).findByText('spec.pdf')).toBeInTheDocument();
+    await expect(
+      within(documents).findByText('spec.pdf')
+    ).resolves.toBeInTheDocument();
     // Read-only here: the category is text, not a select.
     expect(within(documents).getByText('Manuals')).toBeInTheDocument();
     expect(within(documents).queryByRole('combobox')).not.toBeInTheDocument();

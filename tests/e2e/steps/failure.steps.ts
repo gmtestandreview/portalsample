@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import { failureKey } from '../support/mock-failure';

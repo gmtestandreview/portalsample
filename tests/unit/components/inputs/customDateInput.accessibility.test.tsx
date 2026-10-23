@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
@@ -24,7 +25,7 @@ const renderInput = (
     </Formik>
   );
 
-describe('CustomDateInput accessibility', () => {
+describe('customDateInput accessibility', () => {
   it('keeps the calendar picker button in the keyboard tab order', () => {
     renderInput();
 
@@ -89,24 +90,29 @@ describe('CustomDateInput accessibility', () => {
     );
 
     fireEvent.focus(input, { relatedTarget: null });
+
     expect(input.closest('.input-group')).toHaveClass('custom-focus');
 
     fireEvent.blur(input, { relatedTarget: calendarButton });
+
     expect(handleEnsureCalendarClosed).not.toHaveBeenCalled();
     expect(onBlur).not.toHaveBeenCalled();
 
     await user.click(calendarButton);
+
     expect(handleOpenCalendar).toHaveBeenCalledTimes(1);
 
     fireEvent.blur(calendarButton, { relatedTarget: outside });
+
     expect(handleEnsureCalendarClosed).toHaveBeenCalledTimes(1);
     expect(onBlur).toHaveBeenCalledTimes(1);
     expect(input.closest('.input-group')).not.toHaveClass('custom-focus');
 
     fireEvent.change(input, { target: { value: '18/05/2026' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(onChange).toHaveBeenCalled();
-    expect(onKeyDown).toHaveBeenCalled();
+
+    expect(onChange).toHaveBeenCalledWith();
+    expect(onKeyDown).toHaveBeenCalledWith();
   });
 
   it('disables the calendar button for disabled and read-only inputs', () => {

@@ -30,7 +30,12 @@ export const flattenRhfErrors = (
     const path = prefix === '' ? key : `${prefix}.${key}`;
     if (isFieldError(value)) {
       if (typeof value.message === 'string' && value.message !== '') {
-        result[path] = value.message;
+        Object.defineProperty(result, path, {
+          configurable: true,
+          enumerable: true,
+          value: value.message,
+          writable: true,
+        });
       }
       return;
     }

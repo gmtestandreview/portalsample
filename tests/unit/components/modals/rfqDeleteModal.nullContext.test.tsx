@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import RFQDeleteModal from '@/components/modals/RFQDeleteModal';
 
@@ -8,25 +9,25 @@ const mocks = vi.hoisted(() => ({
   setShowRFQDeleteModal: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: [],
     instance: { acquireTokenSilent: mocks.acquireTokenSilent },
   }),
 }));
 
-vi.mock('react-router', () => ({
+vi.mock(import('react-router'), () => ({
   useNavigate: () => mocks.navigate,
 }));
 
-vi.mock('@/components/modals/ModalContext', () => ({
+vi.mock(import('@/components/modals/ModalContext'), () => ({
   useModalState: () => null,
   useModalDispatch: () => ({
     setShowRFQDeleteModal: mocks.setShowRFQDeleteModal,
   }),
 }));
 
-vi.mock('@/api/web-api-client', () => ({
+vi.mock(import('@/api/web-api-client'), () => ({
   ApplicationType: { QuoteRequest: 'QuoteRequest' },
   ApplicationClient: vi.fn(function ApplicationClientMock() {
     return {
@@ -36,19 +37,19 @@ vi.mock('@/api/web-api-client', () => ({
   }),
 }));
 
-vi.mock('@/authentication/authConfig', () => ({
+vi.mock(import('@/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock('@/instrumentation/AppLogger', () => ({
+vi.mock(import('@/instrumentation/AppLogger'), () => ({
   default: { error: vi.fn() },
 }));
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock('react-bootstrap', () => {
+vi.mock(import('react-bootstrap'), () => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );
@@ -90,13 +91,14 @@ vi.mock('react-bootstrap', () => {
   };
 });
 
-describe('RFQDeleteModal null context', () => {
+describe('rFQDeleteModal null context', () => {
   it('skips deletion and still closes and navigates', async () => {
     render(<RFQDeleteModal />);
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
     await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+
     expect(mocks.deleteApplication).not.toHaveBeenCalled();
     expect(mocks.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
   });

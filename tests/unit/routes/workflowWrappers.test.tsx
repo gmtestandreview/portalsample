@@ -23,61 +23,64 @@ const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: mocks.msalAccounts,
     instance: mocks.msalInstance,
   }),
 }));
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
   useAccountState: mocks.useAccountState,
 }));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock(
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
-  return {
-    ...actual,
-    ApplicationType: {
-      QuoteAccept: 'QuoteAccept',
-      QuoteRequest: 'QuoteRequest',
-    },
-    RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getStepStatuses: mocks.requestForQuoteGetStepStatuses,
-      };
-    }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getStepStatuses: mocks.acceptQuoteGetStepStatuses,
-        getPaymentDetails: mocks.getPaymentDetails,
-      };
-    }),
-    ApplicationClient: vi.fn(function ApplicationClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        createApplication: mocks.createApplication,
-        copyApplication: mocks.copyApplication,
-      };
-    }),
-    QuoteClient: vi.fn(function QuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteRequestDetails: mocks.getQuoteRequestDetails,
-        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-      };
-    }),
-  };
-});
+    return {
+      ...actual,
+      ApplicationType: {
+        QuoteAccept: 'QuoteAccept',
+        QuoteRequest: 'QuoteRequest',
+      },
+      RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getStepStatuses: mocks.requestForQuoteGetStepStatuses,
+        };
+      }),
+      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getStepStatuses: mocks.acceptQuoteGetStepStatuses,
+          getPaymentDetails: mocks.getPaymentDetails,
+        };
+      }),
+      ApplicationClient: vi.fn(function ApplicationClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          createApplication: mocks.createApplication,
+          copyApplication: mocks.copyApplication,
+        };
+      }),
+      QuoteClient: vi.fn(function QuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteRequestDetails: mocks.getQuoteRequestDetails,
+          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+        };
+      }),
+    };
+  }
+);
 
-vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
+vi.mock(import('../../../ClientApp/src/components/forms/WizardForm'), () => ({
   default: ({
     children,
     locationOnCompletion,
@@ -98,7 +101,7 @@ vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
 }));
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () => ({
     default: ({
       children,
@@ -120,7 +123,7 @@ vi.mock(
   })
 );
 
-vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
+vi.mock(import('../../../ClientApp/src/components/forms/FormBanner'), () => ({
   default: ({
     title,
     refTitle,
@@ -140,75 +143,93 @@ vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
+vi.mock(import('../../../ClientApp/src/components/BlockUISpinner'), () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
+vi.mock(import('../../../ClientApp/src/components/HeaderIntroText'), () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <p data-testid='header-intro'>{children}</p>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  () => ({
+    default: () => {},
+  })
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  () => ({
+    default: () => {},
+  })
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.appLoggerError,
     verbose: mocks.appLoggerVerbose,
   },
 }));
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
+vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
   setDashboardNotification: vi.fn(),
 }));
 
 vi.mock(
-  '../../../ClientApp/src/routes/requestForQuote/organisationAndContact',
+  import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact'),
   () => ({
     default: () => <div>Organisation and contact step</div>,
   })
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest',
+  import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest'),
   () => ({
     default: () => <div>Instrument and request step</div>,
   })
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary',
+  import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary'),
   () => ({
     default: () => <div>Request summary step</div>,
   })
 );
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/reportRecipient', () => ({
-  default: () => <div>Report recipient step</div>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  () => ({
+    default: () => <div>Report recipient step</div>,
+  })
+);
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn', () => ({
-  default: () => <div>Delivery and return step</div>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
+  () => ({
+    default: () => <div>Delivery and return step</div>,
+  })
+);
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/paymentDetails', () => ({
-  default: () => <div>Payment details step</div>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  () => ({
+    default: () => <div>Payment details step</div>,
+  })
+);
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept', () => ({
-  default: () => <div>Summary and accept step</div>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
+  () => ({
+    default: () => <div>Summary and accept step</div>,
+  })
+);
 
-vi.mock('../../../ClientApp/src/routes/quotation/quoteDetails', () => ({
+vi.mock(import('../../../ClientApp/src/routes/quotation/quoteDetails'), () => ({
   default: ({
     quotationData,
     fileError,
@@ -222,20 +243,26 @@ vi.mock('../../../ClientApp/src/routes/quotation/quoteDetails', () => ({
   ),
 }));
 
-vi.mock('../../../ClientApp/src/routes/quotation/nMIContactDetails', () => ({
-  default: () => <div>NMI contact details</div>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/routes/quotation/nMIContactDetails'),
+  () => ({
+    default: () => <div>NMI contact details</div>,
+  })
+);
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
+  import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
   () => ({
     default: () => <div>Quote terms</div>,
   })
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/ViewPdfQuote', () => ({
-  default: () => <div>Detailed quote PDF</div>,
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
+  () => ({
+    default: () => <div>Detailed quote PDF</div>,
+  })
+);
 
 const accountDetails = {
   organisation: 'National Measurement Institute',
@@ -365,6 +392,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
     );
+
     expect(screen.getAllByTestId('wizard-step')).toHaveLength(3);
   });
 
@@ -380,6 +408,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('not-found')).toBeInTheDocument();
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     unmount();
 
     mocks.requestForQuoteGetStepStatuses.mockRejectedValueOnce(
@@ -394,6 +423,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('not-found')).toBeInTheDocument()
     );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load application steps',
       expect.any(Error),
@@ -456,7 +486,9 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*'
     );
 
-    await waitFor(() => expect(mocks.acquireTokenSilent).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mocks.acquireTokenSilent).toHaveBeenCalledWith()
+    );
     unmount();
 
     rejectToken(new Error('interaction_required'));
@@ -530,6 +562,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     unmount();
 
     const AcceptQuote = (
@@ -543,6 +576,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
     expect(mocks.acceptQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     mocks.msalAccounts.push({ homeAccountId: 'account-1' });
   });
 
@@ -564,9 +598,11 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument()
     );
+
     expect(mocks.createApplication).toHaveBeenCalledWith({
       applicationType: 'QuoteRequest',
     });
+
     unmount();
 
     renderWithNavigationDestinations(
@@ -580,6 +616,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument()
     );
+
     expect(mocks.copyApplication).toHaveBeenCalledWith('RFQ-1', {
       applicationType: 'QuoteRequest',
     });
@@ -603,6 +640,7 @@ describe('workflow route wrappers', () => {
         expect.any(Error)
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
 
@@ -624,6 +662,7 @@ describe('workflow route wrappers', () => {
         expect.any(Error)
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
 
@@ -669,6 +708,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
     );
+
     expect(mocks.requestForQuoteGetStepStatuses).toHaveBeenCalledWith(
       'RFQ-123'
     );
@@ -700,6 +740,7 @@ describe('workflow route wrappers', () => {
         { Id: 'RFQ-FAIL' }
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
 
@@ -719,6 +760,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     mocks.msalAccounts.push({ homeAccountId: 'account-1' });
   });
 
@@ -767,6 +809,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('not-found')).toBeInTheDocument()
     );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
       expect.any(Error),
@@ -792,6 +835,7 @@ describe('workflow route wrappers', () => {
         screen.getByTestId('accept-created-destination')
       ).toBeInTheDocument()
     );
+
     expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith(
       'QuoteRequest',
       'RFQ-123'
@@ -823,6 +867,7 @@ describe('workflow route wrappers', () => {
         { Id: 'RFQ-FAIL' }
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
   });
 
@@ -841,9 +886,11 @@ describe('workflow route wrappers', () => {
       'data-ref-title',
       'Quotation ID: AQ-3'
     );
+
     await waitFor(() =>
       expect(screen.getByText('Prepayment required')).toBeInTheDocument()
     );
+
     expect(mocks.getPaymentDetails).toHaveBeenCalledWith('AQ-3');
   });
 
@@ -868,6 +915,7 @@ describe('workflow route wrappers', () => {
         )
       ).toBeInTheDocument()
     );
+
     expect(screen.queryByText('Prepayment required')).not.toBeInTheDocument();
   });
 
@@ -906,9 +954,11 @@ describe('workflow route wrappers', () => {
     );
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
+
     await waitFor(() =>
       expect(screen.getByTestId('quotation-details')).toHaveTextContent('Q-500')
     );
+
     expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-500');
     expect(screen.getByText('Quote terms')).toBeInTheDocument();
     expect(screen.getByText('Detailed quote PDF')).toBeInTheDocument();
@@ -934,6 +984,7 @@ describe('workflow route wrappers', () => {
         'true'
       )
     );
+
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to get Quotedetails: CRM-FAIL',

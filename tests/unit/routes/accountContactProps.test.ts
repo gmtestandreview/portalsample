@@ -36,44 +36,47 @@ const mocks = vi.hoisted(() => ({
   setBranchModalNotification: vi.fn(),
 }));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal();
-  if (typeof actual !== 'object' || actual === null) {
-    throw new TypeError('Expected module exports object');
+vi.mock(
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const actual = await importOriginal();
+    if (typeof actual !== 'object' || actual === null) {
+      throw new TypeError('Expected module exports object');
+    }
+    return {
+      ...actual,
+      AccountsClient: vi.fn(function AccountsClientMock() {
+        return {
+          setAuthToken: mocks.accountSetAuthToken,
+          getNewAccountDetails: mocks.getNewAccountDetails,
+          completeAccountDetails: mocks.completeAccountDetails,
+          getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
+          getBranchDetails: mocks.getBranchDetails,
+          completeBranchAdd: mocks.completeBranchAdd,
+        };
+      }),
+      ContactClient: vi.fn(function ContactClientMock() {
+        return {
+          setAuthToken: mocks.contactSetAuthToken,
+          getUserContact: mocks.getUserContact,
+          saveContactDetails: mocks.saveContactDetails,
+        };
+      }),
+      UsersClient: vi.fn(function UsersClientMock() {
+        return {
+          setAuthToken: mocks.userSetAuthToken,
+          signIn: mocks.signIn,
+        };
+      }),
+    };
   }
-  return {
-    ...actual,
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return {
-        setAuthToken: mocks.accountSetAuthToken,
-        getNewAccountDetails: mocks.getNewAccountDetails,
-        completeAccountDetails: mocks.completeAccountDetails,
-        getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
-        getBranchDetails: mocks.getBranchDetails,
-        completeBranchAdd: mocks.completeBranchAdd,
-      };
-    }),
-    ContactClient: vi.fn(function ContactClientMock() {
-      return {
-        setAuthToken: mocks.contactSetAuthToken,
-        getUserContact: mocks.getUserContact,
-        saveContactDetails: mocks.saveContactDetails,
-      };
-    }),
-    UsersClient: vi.fn(function UsersClientMock() {
-      return {
-        setAuthToken: mocks.userSetAuthToken,
-        signIn: mocks.signIn,
-      };
-    }),
-  };
-});
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
+vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
   setDashboardNotification: mocks.setDashboardNotification,
   setBranchModalNotification: mocks.setBranchModalNotification,
 }));
@@ -166,7 +169,7 @@ describe('account and contact wizard prop factories', () => {
       'Trading',
       'Branch'
     );
-    expect(accountContext.setCompleted).toHaveBeenCalled();
+    expect(accountContext.setCompleted).toHaveBeenCalledWith();
   });
 
   it('loads and completes update-account details with success and error notifications', async () => {
@@ -218,6 +221,7 @@ describe('account and contact wizard prop factories', () => {
     ).toBeUndefined();
 
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Updated org',
       '',
@@ -233,6 +237,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.PreconditionFailed,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
@@ -243,6 +248,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your organisation.',
@@ -295,7 +301,9 @@ describe('account and contact wizard prop factories', () => {
     ).toBeUndefined();
 
     const saveResult = props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(saveResult).toBeInstanceOf(Promise);
+
     await saveResult;
 
     expect(mocks.completeBranchAdd).toHaveBeenCalledWith(
@@ -317,12 +325,13 @@ describe('account and contact wizard prop factories', () => {
         message: 'Your branch/location details have been successfully saved.',
       })
     );
-    expect(onShowBranchSelector).toHaveBeenCalled();
+    expect(onShowBranchSelector).toHaveBeenCalledWith();
 
     mocks.completeBranchAdd.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
@@ -333,6 +342,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your branch/location details.',
@@ -419,6 +429,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.PreconditionFailed,
     });
     await createProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message:
@@ -430,6 +441,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await updateProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
@@ -440,6 +452,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await createProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
@@ -450,6 +463,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.PreconditionFailed,
     });
     await updateProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message:
@@ -663,16 +677,19 @@ describe('account and contact wizard prop factories', () => {
     );
 
     mocks.completeAccountDetails.mockRejectedValueOnce(null);
+
     await expect(
       updateProps.onSaveAndNext?.({ id: 1, name: 'Organisation' }, true)
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
+
     await expect(
       createContact.onSaveAndNext?.({ contact: {} }, true)
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
+
     await expect(
       updateContact.onSaveAndNext?.({ contact: {} }, true)
     ).resolves.toBeUndefined();

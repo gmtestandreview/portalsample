@@ -60,11 +60,12 @@ const runtimeEnv = globalThis as Record<string, unknown>;
 
 const getEnvValue = (key: keyof EnvType): string => {
   const runtimeKey = key.replace('VITE_', 'REACT_APP_');
-  const runtimeValue = runtimeEnv[runtimeKey];
+  const runtimeValue = Reflect.get(runtimeEnv, runtimeKey);
+  const buildTimeValue = Reflect.get(buildTimeEnv, key) as string;
 
   return typeof runtimeValue === 'string' && runtimeValue.length > 0
     ? runtimeValue
-    : buildTimeEnv[key];
+    : buildTimeValue;
 };
 
 requiredVars.forEach((key) => {

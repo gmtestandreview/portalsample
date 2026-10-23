@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { areFormValuesEqual } from '@/utils/areFormValuesEqual';
 
-describe('areFormValuesEqual', () => {
+describe(areFormValuesEqual, () => {
   it('compares primitive, null and undefined values', () => {
     expect(areFormValuesEqual('same', 'same')).toBe(true);
     expect(areFormValuesEqual('same', 'different')).toBe(false);
@@ -61,6 +61,7 @@ describe('areFormValuesEqual', () => {
     class Point {
       constructor(public readonly x: number) {}
     }
+
     expect(areFormValuesEqual(new Point(1), { x: 1 })).toBe(false);
     expect(areFormValuesEqual(new Point(1), new Point(1))).toBe(false);
   });

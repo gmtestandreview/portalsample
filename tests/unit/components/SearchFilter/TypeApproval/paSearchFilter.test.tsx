@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import PaSearchFilter from '@/components/SearchFilter/TypeApproval/paSearchFilter';
 
-vi.mock('@/components/SearchFilter/TypeApproval/paFilterMenu', () => ({
+vi.mock(import('@/components/SearchFilter/TypeApproval/paFilterMenu'), () => ({
   default: ({
     initialFilters,
     setCurrentPage,
@@ -26,7 +26,7 @@ vi.mock('@/components/SearchFilter/TypeApproval/paFilterMenu', () => ({
   ),
 }));
 
-describe('PaSearchFilter', () => {
+describe(PaSearchFilter, () => {
   it('renders the filter menu with default Bootstrap layout classes', () => {
     const initialFilters = { currentPage: 3 } as PatternApprovalDashboardDto;
 
@@ -75,6 +75,7 @@ describe('PaSearchFilter', () => {
     );
 
     const menu = screen.getByRole('button', { name: 'Filter applications' });
+
     expect(menu.closest('.container')).toHaveClass('outer-filter');
     expect(menu.closest('.row')).toHaveClass('inner-filter');
 

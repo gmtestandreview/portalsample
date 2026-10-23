@@ -1,4 +1,4 @@
-import { globSync, readFileSync } from 'node:fs';
+import { globSync } from 'node:fs';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { CRMLookupTypes } from '../../../ClientApp/src/api/web-api-client';
@@ -7,6 +7,7 @@ import {
   lookupResponsesByType,
   mswHandlers,
 } from '../../../.storybook/msw-handlers';
+import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const server = setupServer(...mswHandlers);
 
@@ -24,7 +25,7 @@ const requestedLookupTypes = [
       .filter((file) => !file.includes('web-api-client'))
       .flatMap((file) =>
         [
-          ...readFileSync(file, 'utf8').matchAll(
+          ...readTextFileSync(file, process.cwd()).matchAll(
             /getLookup\(\s*CRMLookupTypes\.(\w+)/g
           ),
         ].map((match) => match[1])
@@ -33,10 +34,12 @@ const requestedLookupTypes = [
 ];
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
+
 afterEach(() => server.resetHandlers());
+
 afterAll(() => server.close());
 
-describe('Storybook MSW handlers', () => {
+describe('storybook MSW handlers', () => {
   it('finds the lookup call sites it is supposed to cover', () => {
     // Guards the enumeration itself: a regex that matched nothing would make
     // every case below vacuous.
@@ -105,6 +108,7 @@ describe('Storybook MSW handlers', () => {
       const payload = await response.json();
 
       expect(response.status).toBe(200);
+
       if (request.path.includes('get-quote-request-details-byrefid')) {
         expect(payload).toEqual(
           expect.objectContaining({ crmQuoteRequestId: expect.any(String) })
@@ -161,15 +165,16 @@ describe('Storybook MSW handlers', () => {
     async (lookupTypeName) => {
       const lookupType =
         CRMLookupTypes[lookupTypeName as keyof typeof CRMLookupTypes];
+      const lookupResponse = Object.entries(lookupResponsesByType)
+        .find(([name]) => name === lookupType)
+        ?.at(1);
       const url = apiUrl('/api/lookup');
       url.searchParams.set('LookupType', lookupType);
 
       const response = await fetch(url);
 
       expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toEqual(
-        lookupResponsesByType[lookupType]
-      );
+      await expect(response.json()).resolves.toEqual(lookupResponse);
     }
   );
 

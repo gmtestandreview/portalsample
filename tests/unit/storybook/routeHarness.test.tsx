@@ -12,7 +12,7 @@ const Destination = () => {
   return <p>Destination reference: {reference}</p>;
 };
 
-describe('PortalStoryRouter', () => {
+describe(PortalStoryRouter, () => {
   it('matches an exact destination ahead of the story wildcard and reports destination params', async () => {
     const observations: PortalLocationObservation[] = [];
 
@@ -30,9 +30,10 @@ describe('PortalStoryRouter', () => {
 
     fireEvent.click(screen.getByRole('link', { name: 'Complete request' }));
 
-    expect(
-      await screen.findByText('Destination reference: returned-42')
-    ).toBeVisible();
+    await expect(
+      screen.findByText('Destination reference: returned-42')
+    ).resolves.toBeVisible();
+
     await waitFor(() =>
       expect(observations).toContainEqual({
         pathname: '/complete/returned-42',
@@ -56,6 +57,7 @@ describe('PortalStoryRouter', () => {
     );
 
     expect(screen.getByText('Current value: first')).toBeVisible();
+
     await waitFor(() =>
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/request/123',
@@ -73,7 +75,9 @@ describe('PortalStoryRouter', () => {
       />
     );
 
-    expect(await screen.findByText('Current value: second')).toBeVisible();
+    await expect(
+      screen.findByText('Current value: second')
+    ).resolves.toBeVisible();
     expect(observeLocation).not.toHaveBeenCalledWith({
       pathname: '/request/999',
       params: { requestId: '999' },
@@ -100,9 +104,10 @@ describe('PortalStoryRouter', () => {
 
     fireEvent.click(screen.getByRole('link', { name: 'Open unmatched path' }));
 
-    expect(
-      await screen.findByText('Wildcard story remains mounted')
-    ).toBeVisible();
+    await expect(
+      screen.findByText('Wildcard story remains mounted')
+    ).resolves.toBeVisible();
+
     await waitFor(() =>
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/unmatched/path',

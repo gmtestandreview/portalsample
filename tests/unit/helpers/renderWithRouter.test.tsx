@@ -67,6 +67,7 @@ describe('renderWithRouter harness', () => {
     await user.click(screen.getByRole('button', { name: 'leave' }));
 
     await waitFor(() => expect(currentPath()).toBe('/not-found'));
+
     expect(screen.getByTestId(NOT_FOUND_TEST_ID)).toBeInTheDocument();
   });
 
@@ -79,6 +80,7 @@ describe('renderWithRouter harness', () => {
     await waitFor(() =>
       expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument()
     );
+
     expect(screen.queryByTestId(NOT_FOUND_TEST_ID)).not.toBeInTheDocument();
     expect(currentPath()).toBe('/somewhere-else');
   });

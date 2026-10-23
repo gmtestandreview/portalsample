@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import type { ViteUserConfig } from 'vitest/config';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@storybook/addon-vitest/vitest-plugin', () => ({
+vi.mock(import('@storybook/addon-vitest/vitest-plugin'), () => ({
   storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
 }));
 
@@ -73,7 +73,7 @@ describe('root Vitest config is composition only', () => {
   });
 });
 
-describe('Vitest config loading stays explicit and shim-free', () => {
+describe('vitest config loading stays explicit and shim-free', () => {
   it('pins every package script that invokes Vitest to the runner config loader', () => {
     const vitestScripts = Object.entries(packageScripts()).filter(
       ([, command]) => command.includes('./node_modules/vitest/vitest.mjs')
@@ -92,12 +92,16 @@ describe('Vitest config loading stays explicit and shim-free', () => {
   it.each(['vitest.config.ts', 'vitest.unit.config.ts'])(
     "does not rely on the bundled config loader's __dirname shim in %s",
     (configFile) => {
-      expect(vitestConfigContents[configFile]).not.toContain('__dirname');
+      const configContents = Object.entries(vitestConfigContents)
+        .find(([name]) => name === configFile)
+        ?.at(1);
+
+      expect(configContents).not.toContain('__dirname');
     }
   );
 });
 
-describe('Storybook leaf is a directly runnable Browser Mode project', () => {
+describe('storybook leaf is a directly runnable Browser Mode project', () => {
   it('is a leaf rather than another nested project container', () => {
     expect(storybook.projects).toBeUndefined();
   });
@@ -119,6 +123,7 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
 
   it('does not explicitly prebundle modular Lodash entry points', () => {
     const include = storybookConfig.optimizeDeps?.include ?? [];
+
     expect(
       include.some(
         (entry) => typeof entry === 'string' && entry.startsWith('lodash/')
@@ -200,7 +205,7 @@ describe('unit leaf owns jsdom, unit discovery and unit coverage', () => {
   });
 });
 
-describe('Playwright files stay out of both Vitest leaves', () => {
+describe('playwright files stay out of both Vitest leaves', () => {
   it.each(foreignTestPaths)('does not discover %s', (foreignPath) => {
     for (const pattern of unit.include ?? []) {
       expect(

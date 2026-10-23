@@ -25,11 +25,7 @@ export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
       <Dialog {...args}>
         <form>
           <Heading slot='title'>Sign up</Heading>
-          <TextField
-            autoFocus
-            label='First Name'
-            placeholder='Enter your first name'
-          />
+          <TextField label='First Name' placeholder='Enter your first name' />
           <TextField label='Last Name' placeholder='Enter your last name' />
           <Button slot='close' style={{ marginTop: 8 }}>
             Submit

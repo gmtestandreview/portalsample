@@ -33,7 +33,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     instance: mocks.instance,
     accounts: mocks.accounts,
@@ -42,14 +42,14 @@ vi.mock('@azure/msal-react', () => ({
   useAccount: () => ({ homeAccountId: 'mock-id' }),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
+vi.mock(import('@/authentication/hooks'), () => ({
   useAccountState: () => ({
     isLoading: false,
     details: { homeAccountId: 'mock-id' },
   }),
 }));
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -63,18 +63,18 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   };
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
+vi.mock(import('@/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: mocks.error },
 }));
 
 // The lookup talks to the address service; stand in a marker element. The edit
 // form renders the RHF twin once migrated; the summary keeps the Formik one.
-vi.mock('@/components/Inputs/AddressLookup', () => ({
+vi.mock(import('@/components/Inputs/AddressLookup'), () => ({
   default: ({ label }: { label: string }) => (
     <div data-testid='address-lookup'>{label}</div>
   ),
 }));
-vi.mock('@/components/Inputs/RhfAddressLookup', () => ({
+vi.mock(import('@/components/Inputs/RhfAddressLookup'), () => ({
   default: ({ label }: { label: string }) => (
     <div data-testid='address-lookup'>{label}</div>
   ),
@@ -141,7 +141,7 @@ const submittedValues = (onSubmit: ReturnType<typeof vi.fn>) =>
 
 const waitForLoad = () => screen.findByText(/1 Street Road/);
 
-describe('DeliveryAndReturn behavior: visibility', () => {
+describe('deliveryAndReturn behavior: visibility', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -161,9 +161,9 @@ describe('DeliveryAndReturn behavior: visibility', () => {
     });
     renderStep();
 
-    expect(
-      await screen.findByText(/does not require the delivery or return/i)
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/does not require the delivery or return/i)
+    ).resolves.toBeInTheDocument();
     expect(screen.queryByRole('radio')).not.toBeInTheDocument();
     expect(
       screen.queryByRole('heading', { name: /Instrument\/artefact return/ })
@@ -195,11 +195,13 @@ describe('DeliveryAndReturn behavior: visibility', () => {
     await user.click(
       screen.getByRole('radio', { name: /A different return contact person/ })
     );
+
     expect(screen.getByLabelText('First name')).toBeInTheDocument();
 
     await user.click(
       screen.getByRole('radio', { name: /The main contact person/ })
     );
+
     expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
   });
 
@@ -211,11 +213,13 @@ describe('DeliveryAndReturn behavior: visibility', () => {
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: /Other/ }));
+
     expect(screen.getByTestId('address-lookup')).toBeInTheDocument();
 
     await user.click(
       screen.getByRole('radio', { name: /Business postal address/ })
     );
+
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 
@@ -229,12 +233,14 @@ describe('DeliveryAndReturn behavior: visibility', () => {
     await user.click(
       screen.getByRole('radio', { name: /Client will provide carrier/ })
     );
+
     expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
     expect(screen.getByLabelText(/Packaging notes/)).toBeInTheDocument();
 
     await user.click(
       screen.getByRole('radio', { name: /Client to arrange when completed/ })
     );
+
     expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
   });
 
@@ -242,12 +248,13 @@ describe('DeliveryAndReturn behavior: visibility', () => {
     mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalled());
+    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
+
     expect(screen.getByTestId('info-summary')).toBeInTheDocument();
   });
 });
 
-describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
+describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -299,7 +306,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submittedValues(onSubmit)).toEqual({
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
@@ -339,7 +347,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submittedValues(onSubmit)).toEqual({
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
@@ -368,7 +377,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     await user.type(screen.getByLabelText('Email address'), 'jane@example.com');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submittedValues(onSubmit)).toMatchObject({
       contact: {
         firstName: 'Jane',
@@ -394,11 +404,12 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     await waitForLoad();
 
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText('Carrier name is required')
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText('Carrier name is required')
+    ).resolves.toBeInTheDocument();
     expect(screen.getByText('First name is required')).toBeInTheDocument();
     expect(screen.getByLabelText('Carrier name')).toHaveClass('is-invalid');
     expect(onSubmit).not.toHaveBeenCalled();
@@ -424,9 +435,9 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' })
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -446,9 +457,9 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/phone/i, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/phone/i, { selector: '.invalid-feedback' })
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -467,7 +478,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
 
@@ -485,9 +497,9 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' })
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 

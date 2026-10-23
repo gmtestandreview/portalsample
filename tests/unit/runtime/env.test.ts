@@ -32,6 +32,11 @@ const validEnv: Record<EnvKey, string> = {
   VITE_ENVIRONMENT: 'test',
 };
 
+const valueFor = <Value>(record: Record<string, Value>, key: string) =>
+  Object.entries(record)
+    .find(([name]) => name === key)
+    ?.at(1);
+
 async function importEnv(
   overrides: Partial<Record<EnvKey, string>> = {},
   isDevelopment = true,
@@ -39,7 +44,7 @@ async function importEnv(
 ) {
   vi.resetModules();
   envKeys.forEach((key) => {
-    vi.stubEnv(key, overrides[key] ?? validEnv[key]);
+    vi.stubEnv(key, valueFor(overrides, key) ?? valueFor(validEnv, key));
   });
   vi.stubEnv('MODE', isDevelopment ? 'development' : 'production');
   Object.assign(globalThis, runtimeOverrides);
@@ -47,7 +52,7 @@ async function importEnv(
   return import('../../../ClientApp/src/env');
 }
 
-describe('Vite environment contract', () => {
+describe('vite environment contract', () => {
   afterEach(() => {
     for (const key of envKeys) {
       Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
@@ -81,6 +86,7 @@ describe('Vite environment contract', () => {
     const exactHost = await importEnv({
       VITE_EXTERNAL_REDIRECT_URL: 'https://measurement.gov.au/return',
     });
+
     expect(exactHost.env.VITE_EXTERNAL_REDIRECT_URL).toBe(
       'https://measurement.gov.au/return'
     );
@@ -88,6 +94,7 @@ describe('Vite environment contract', () => {
     const subdomain = await importEnv({
       VITE_EXTERNAL_REDIRECT_URL: 'https://portal.measurement.gov.au/return',
     });
+
     expect(subdomain.env.VITE_EXTERNAL_REDIRECT_URL).toBe(
       'https://portal.measurement.gov.au/return'
     );
@@ -116,7 +123,7 @@ describe('Vite environment contract', () => {
         expect(consoleError).toHaveBeenCalledWith(
           `[env] Missing required environment variable: ${key}`
         );
-        expect(module.env[key]).toBe('');
+        expect(valueFor(module.env, key)).toBe('');
       });
   });
 
@@ -175,8 +182,9 @@ describe('Vite environment contract', () => {
     const module = await import('../../../ClientApp/src/env');
 
     for (const key of envKeys) {
-      expect(module.env[key]).toBe('');
+      expect(valueFor(module.env, key)).toBe('');
     }
+
     expect(consoleError).toHaveBeenCalledWith(
       '[env] Missing required environment variable: VITE_B2C_CLIENTID'
     );

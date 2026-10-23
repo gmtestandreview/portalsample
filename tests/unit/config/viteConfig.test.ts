@@ -1,6 +1,7 @@
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { vi } from 'vitest';
+import { vi, beforeAll, afterAll, describe, it, expect } from 'vitest';
+
+import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 interface VitePlugin {
   name: string;
@@ -58,9 +59,18 @@ let config: ViteConfig;
 let configFn: (env: { command: string; mode: string }) => ViteConfig;
 const previousTestEnvironment = new Map<string, string | undefined>();
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
-const migrationDesign = readFileSync(
+const readEnv = (key: string): string | undefined =>
+  Reflect.get(process.env, key) as string | undefined;
+const writeEnv = (key: string, value: string): void => {
+  Reflect.set(process.env, key, value);
+};
+const deleteEnv = (key: string): void => {
+  Reflect.deleteProperty(process.env, key);
+};
+
+const migrationDesign = readTextFileSync(
   path.join(repositoryRoot, 'docs/specs/2026-10-20-webpack-to-vite-design.md'),
-  'utf8'
+  repositoryRoot
 );
 const legacyToViteMapping = [
   ...migrationDesign.matchAll(/^\|\s*`([^`]+)`\s*\|\s*(.*?)\s*\|$/gmu),
@@ -71,12 +81,12 @@ const legacyToViteMapping = [
 const viteEnvironmentNames = legacyToViteMapping
   .map(({ viteName }) => viteName)
   .filter((name) => name?.startsWith('VITE_'));
-const envSource = readFileSync(
+const envSource = readTextFileSync(
   path.join(repositoryRoot, 'ClientApp/src/env.ts'),
-  'utf8'
+  repositoryRoot
 );
 const tsconfig = JSON.parse(
-  readFileSync(path.join(repositoryRoot, 'tsconfig.json'), 'utf8')
+  readTextFileSync(path.join(repositoryRoot, 'tsconfig.json'), repositoryRoot)
 ) as { exclude: string[] };
 const CLIENT_ID_WITH_REPLACEMENT_TOKENS = "literal-$&-$'-$`";
 const ESCAPED_CLIENT_ID = 'literal-$&amp;-$&#39;-$`';
@@ -111,8 +121,8 @@ const ENVIRONMENT_TEMPLATE_HTML = [
 
 beforeAll(async () => {
   for (const [key, value] of Object.entries(TEST_ENVIRONMENT)) {
-    previousTestEnvironment.set(key, process.env[key]);
-    process.env[key] = value;
+    previousTestEnvironment.set(key, readEnv(key));
+    writeEnv(key, value);
   }
   const mod = await import('../../../vite.config.mts');
   configFn = mod.default as (env: {
@@ -124,8 +134,8 @@ beforeAll(async () => {
 
 afterAll(() => {
   for (const [key, value] of previousTestEnvironment) {
-    if (value === undefined) delete process.env[key];
-    else process.env[key] = value;
+    if (value === undefined) deleteEnv(key);
+    else writeEnv(key, value);
   }
 });
 
@@ -218,7 +228,7 @@ describe('vite config', () => {
 
     expect(output.entryFileNames).toContain('[hash');
     expect(output.chunkFileNames).toContain('[hash');
-    expect(typeof output.assetFileNames).toBe('function');
+    expect(output.assetFileNames).toBeTypeOf('function');
   });
 
   it('routes generated assets to compatibility directories', () => {
@@ -324,9 +334,7 @@ describe('vite config', () => {
     ]);
 
     for (const viteName of viteEnvironmentNames) {
-      expect(envSource).toMatch(
-        new RegExp(`import\\.meta\\.env\\.${viteName}`, 'u')
-      );
+      expect(envSource).toContain(`import.meta.env.${viteName}`);
     }
   });
 
@@ -339,6 +347,7 @@ describe('vite config', () => {
     expect(envPlugin?.transformIndexHtml).toEqual(expect.any(Function));
 
     const result = envPlugin?.transformIndexHtml?.('<%= VITE_B2C_CLIENTID %>');
+
     expect(result !== undefined).toBe(true);
     expect(result === ESCAPED_CLIENT_ID).toBe(true);
   });
@@ -398,7 +407,7 @@ describe('vite config', () => {
       'development'
     );
 
-    process.env['VITE_ENVIRONMENT'] = 'production';
+    writeEnv('VITE_ENVIRONMENT', 'production');
     const explicitConfig = configFn({ command: 'build', mode: 'production' });
     const explicitEnvPlugin = explicitConfig.plugins.find(
       (plugin) => plugin.name === 'env-template'
@@ -407,21 +416,20 @@ describe('vite config', () => {
     expect(
       explicitEnvPlugin?.transformIndexHtml?.('<%= VITE_ENVIRONMENT %>')
     ).toBe('production');
-    process.env['VITE_ENVIRONMENT'] = TEST_ENVIRONMENT.VITE_ENVIRONMENT;
+
+    writeEnv('VITE_ENVIRONMENT', TEST_ENVIRONMENT.VITE_ENVIRONMENT);
   });
 
   it('uses development defaults only for serve mode and requires production environment input', () => {
     const requiredKeys = Object.keys(TEST_ENVIRONMENT);
-    const previous = new Map(
-      requiredKeys.map((key) => [key, process.env[key]])
-    );
+    const previous = new Map(requiredKeys.map((key) => [key, readEnv(key)]));
 
     try {
       for (const [key, value] of Object.entries(TEST_ENVIRONMENT)) {
-        process.env[key] = value;
+        writeEnv(key, value);
       }
-      delete process.env['VITE_ENVIRONMENT'];
-      delete process.env['STORYBOOK_BUILD'];
+      deleteEnv('VITE_ENVIRONMENT');
+      deleteEnv('STORYBOOK_BUILD');
 
       const serveConfig = configFn({
         command: 'serve',
@@ -445,11 +453,11 @@ describe('vite config', () => {
       );
     } finally {
       for (const [key, value] of previous) {
-        if (value === undefined) delete process.env[key];
-        else process.env[key] = value;
+        if (value === undefined) deleteEnv(key);
+        else writeEnv(key, value);
       }
       for (const [key, value] of Object.entries(TEST_ENVIRONMENT)) {
-        process.env[key] = value;
+        writeEnv(key, value);
       }
     }
   });
@@ -472,7 +480,9 @@ describe('vite config', () => {
     const server = { middlewares };
 
     const postConfigure = cspPlugin?.configureServer?.(server);
+
     expect(postConfigure).toEqual(expect.any(Function));
+
     postConfigure?.();
 
     expect(middlewares.use).toHaveBeenCalledWith(expect.any(Function));
@@ -496,7 +506,7 @@ describe('vite config', () => {
     expect(response.removeHeader).toHaveBeenCalledWith(
       'Cross-Origin-Opener-Policy'
     );
-    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith();
 
     setHeader.mockClear();
     response.removeHeader.mockClear();

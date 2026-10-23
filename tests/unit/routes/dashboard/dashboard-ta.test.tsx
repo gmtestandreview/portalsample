@@ -72,7 +72,7 @@ const {
 
 let mockAccountDetails: AccountDetails | null;
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   PatternApprovalClient: vi.fn().mockImplementation(function (
     this: Record<string, unknown>
   ) {
@@ -86,39 +86,39 @@ vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   },
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => mockMsalContext,
 }));
 
-vi.mock('@azure/msal-browser', () => ({
+vi.mock(import('@azure/msal-browser'), () => ({
   InteractionStatus: { None: 'none' },
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
   default: () => mockAccountContextState.value,
   useAccountDispatch: () => mockAccountDispatchState.value,
 }));
 
-vi.mock('../../../../ClientApp/src/hooks/useUserServices', () => ({
+vi.mock(import('../../../../ClientApp/src/hooks/useUserServices'), () => ({
   default: () => mockServicesState.value,
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['openid'] },
 }));
 
-vi.mock('../../../../ClientApp/src/components/Welcome', () => ({
+vi.mock(import('../../../../ClientApp/src/components/Welcome'), () => ({
   default: () => <div data-testid='welcome' />,
 }));
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
+vi.mock(import('../../../../ClientApp/src/components/BlockUISpinner'), () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/components/Alert/NotificationMessage',
+  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
   () => ({
     default: ({
       id,
@@ -136,24 +136,36 @@ vi.mock(
   })
 );
 
-vi.mock('../../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
-vi.mock('../../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-vi.mock('../../../../ClientApp/src/components/tiles/StandardPathway', () => ({
-  default: ({ title }: { title: string }) => (
-    <div data-testid='standard-pathway'>{title}</div>
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/RequestList/noRequests', () => ({
-  default: () => <div data-testid='no-requests' />,
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  () => ({
+    default: () => {},
+  })
+);
+vi.mock(
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  () => ({
+    default: () => {},
+  })
+);
+vi.mock(
+  import('../../../../ClientApp/src/components/tiles/StandardPathway'),
+  () => ({
+    default: ({ title }: { title: string }) => (
+      <div data-testid='standard-pathway'>{title}</div>
+    ),
+  })
+);
 
 vi.mock(
-  '../../../../ClientApp/src/components/RequestList/paRequestItem',
+  import('../../../../ClientApp/src/components/RequestList/noRequests'),
+  () => ({
+    default: () => <div data-testid='no-requests' />,
+  })
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/RequestList/paRequestItem'),
   () => ({
     default: ({ request, setDeleteSuccess, tab }: any) => (
       <div data-testid='request-item' data-tab={tab}>
@@ -167,7 +179,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter',
+  import('../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter'),
   () => ({
     default: ({ initialFilters, setCurrentPage, setInitialFilters }: any) => (
       <div
@@ -197,7 +209,7 @@ vi.mock(
   })
 );
 
-vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
+vi.mock(import('../../../../ClientApp/src/components/Pagination'), () => ({
   default: ({ currentPage, onPageChange, totalPages }: any) => (
     <button
       data-testid='pagination'
@@ -211,18 +223,21 @@ vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
   ),
 }));
 
-vi.mock('../../../../ClientApp/src/components/PaginationHeader', () => ({
-  default: ({ currentPage, pageSize, totalCount }: any) => (
-    <div
-      data-testid='pagination-header'
-      data-current={currentPage}
-      data-size={pageSize}
-      data-total={totalCount}
-    />
-  ),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/PaginationHeader'),
+  () => ({
+    default: ({ currentPage, pageSize, totalCount }: any) => (
+      <div
+        data-testid='pagination-header'
+        data-current={currentPage}
+        data-size={pageSize}
+        data-total={totalCount}
+      />
+    ),
+  })
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mockAppLoggerError,
     info: mockAppLoggerInfo,
@@ -230,12 +245,12 @@ vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   },
 }));
 
-vi.mock('../../../../ClientApp/src/routes/common/errorRoutes', () => ({
+vi.mock(import('../../../../ClientApp/src/routes/common/errorRoutes'), () => ({
   default: (status: number) => `/server-error/${status}`,
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/dashboardNotifications',
+  import('../../../../ClientApp/src/routes/common/dashboardNotifications'),
   () => ({
     DashBoardNotifications: {
       getForbiddenNotification: () => ({
@@ -254,7 +269,7 @@ vi.mock(
   })
 );
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
+vi.mock(import('../../../../ClientApp/src/storage/notification'), () => ({
   getDashboardNotification: mockGetDashboardNotification,
   clearDashboardNotification: mockClearDashboardNotification,
   setDashboardNotification: mockSetDashboardNotification,
@@ -263,18 +278,21 @@ vi.mock('../../../../ClientApp/src/storage/notification', () => ({
   clearDashboardInfoNotification: mockClearDashboardInfoNotification,
 }));
 
-vi.mock('../../../../ClientApp/src/storage/sessionStorageCache', () => ({
-  default: () => ({
-    getItem: mockSessionGetItem,
-    removeItem: mockSessionRemoveItem,
-  }),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/storage/sessionStorageCache'),
+  () => ({
+    default: () => ({
+      getItem: mockSessionGetItem,
+      removeItem: mockSessionRemoveItem,
+    }),
+  })
+);
 
-vi.mock('../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
+vi.mock(import('../../../../ClientApp/src/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: mockTrackGAEvent,
 }));
 
-vi.mock('react-number-format', () => ({
+vi.mock(import('react-number-format'), () => ({
   PatternFormat: ({ value }: { value: string }) => <span>{value}</span>,
 }));
 
@@ -350,7 +368,7 @@ function renderDashboard(Dashboard: React.ComponentType) {
   );
 }
 
-describe('Pattern/type approval dashboard', () => {
+describe('pattern/type approval dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -423,7 +441,7 @@ describe('Pattern/type approval dashboard', () => {
   it('applies non-default year, status, and search filters to the request', async () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply filters' }));
 
@@ -444,11 +462,11 @@ describe('Pattern/type approval dashboard', () => {
   it('loads applications, persists the selected tab after the debounce, and records analytics', async () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
 
     fireEvent.click(screen.getByRole('tab', { name: 'Applications' }));
 
-    await waitFor(() => expect(mockGetApplications).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
     await waitFor(
       () =>
         expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -459,6 +477,7 @@ describe('Pattern/type approval dashboard', () => {
         }),
       { timeout: 1_000 }
     );
+
     expect(mockTrackGAEvent).toHaveBeenCalledWith('requests');
   });
 
@@ -466,11 +485,12 @@ describe('Pattern/type approval dashboard', () => {
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetApplications).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
 
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
       'true'
@@ -483,7 +503,8 @@ describe('Pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetApplications).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+
     expect(screen.getByRole('tab', { name: 'Applications' })).toHaveAttribute(
       'aria-selected',
       'true'
@@ -494,7 +515,7 @@ describe('Pattern/type approval dashboard', () => {
   it('persists page changes, scrolls to the title, and records analytics', async () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
@@ -506,6 +527,7 @@ describe('Pattern/type approval dashboard', () => {
         }),
       })
     );
+
     expect(mockScrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: 'start',
@@ -530,6 +552,7 @@ describe('Pattern/type approval dashboard', () => {
     const view = renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
+
     expect(mockSetUserProfile).toHaveBeenCalledWith({
       patternApprovalDashboard: expect.objectContaining({
         filterCurrentPage: 1,
@@ -561,6 +584,7 @@ describe('Pattern/type approval dashboard', () => {
         '1'
       )
     );
+
     expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
   });
 
@@ -569,7 +593,7 @@ describe('Pattern/type approval dashboard', () => {
     mockSetUserProfile.mockRejectedValueOnce(saveError);
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
@@ -579,6 +603,7 @@ describe('Pattern/type approval dashboard', () => {
         saveError
       )
     );
+
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
   });
 
@@ -589,7 +614,9 @@ describe('Pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    expect(await screen.findByTestId('services-page')).toBeInTheDocument();
+    await expect(
+      screen.findByTestId('services-page')
+    ).resolves.toBeInTheDocument();
     expect(mockGetDrafts).not.toHaveBeenCalled();
   });
 
@@ -652,6 +679,7 @@ describe('Pattern/type approval dashboard', () => {
       renderDashboard(Dashboard);
 
       await screen.findByTestId('welcome');
+
       expect(mockGetDrafts).not.toHaveBeenCalled();
       expect(mockGetApplications).not.toHaveBeenCalled();
     }
@@ -662,7 +690,9 @@ describe('Pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    expect(await screen.findByTestId('error-page')).toBeInTheDocument();
+    await expect(
+      screen.findByTestId('error-page')
+    ).resolves.toBeInTheDocument();
     expect(mockAppLoggerError).toHaveBeenCalledWith(
       'Failed to load dashboard.',
       { status: 500, title: 'Server Error' }
@@ -680,6 +710,7 @@ describe('Pattern/type approval dashboard', () => {
         severity: 'error',
       })
     );
+
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
   });
 
@@ -697,6 +728,7 @@ describe('Pattern/type approval dashboard', () => {
         severity: 'error',
       })
     );
+
     expect(mockSetTargetOrganisation).toHaveBeenCalledWith(
       '12345678901',
       'Acme Metrology'
@@ -724,6 +756,7 @@ describe('Pattern/type approval dashboard', () => {
     await waitFor(() =>
       expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', '')
     );
+
     expect(mockSetDashboardNotification).toHaveBeenCalledWith({
       message: 'no-third-party:undefined',
       severity: 'error',
@@ -747,7 +780,8 @@ describe('Pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
     expect(screen.queryByText('TA-HIDDEN')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('no-requests').length).toBeGreaterThan(0);
     expect(document.querySelectorAll('[inert]').length).toBeGreaterThan(0);
@@ -767,10 +801,12 @@ describe('Pattern/type approval dashboard', () => {
 
     fireEvent.click(await screen.findByTestId('notif-message-1'));
     fireEvent.click(screen.getByTestId('notif-info-message-2'));
+
     expect(mockClearDashboardNotification).toHaveBeenCalledTimes(1);
-    expect(mockClearDashboardInfoNotification).toHaveBeenCalled();
+    expect(mockClearDashboardInfoNotification).toHaveBeenCalledWith();
 
     view.unmount();
+
     expect(mockClearDashboardNotification).toHaveBeenCalledTimes(2);
   });
 
@@ -789,6 +825,7 @@ describe('Pattern/type approval dashboard', () => {
     });
 
     expect(mockSetUserProfile).not.toHaveBeenCalled();
+
     vi.useRealTimers();
   });
 
@@ -808,6 +845,7 @@ describe('Pattern/type approval dashboard', () => {
     await waitFor(() =>
       expect(mockGetDrafts.mock.calls.length).toBeGreaterThanOrEqual(2)
     );
+
     expect(screen.getAllByTestId('request-item')[0]).toHaveAttribute(
       'data-tab',
       'drafts'
@@ -840,7 +878,9 @@ describe('Pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    expect(await screen.findByText('Acme Metrology')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Acme Metrology')
+    ).resolves.toBeInTheDocument();
     expect(screen.getByText('Acme Trading - Sydney')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Change' })).toHaveAttribute(
       'href',
@@ -848,6 +888,7 @@ describe('Pattern/type approval dashboard', () => {
     );
 
     fireEvent.click(screen.getByTestId('new-application-button'));
+
     expect(mockTrackGAEvent).toHaveBeenCalledWith('New TA application');
   });
 
@@ -856,7 +897,9 @@ describe('Pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    expect(await screen.findByTestId('error-page')).toBeInTheDocument();
+    await expect(
+      screen.findByTestId('error-page')
+    ).resolves.toBeInTheDocument();
     expect(mockAppLoggerError).toHaveBeenCalledWith(
       'Failed to load dashboard.',
       expect.objectContaining({ message: 'Unsupported tab: instruments' })

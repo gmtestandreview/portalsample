@@ -12,7 +12,7 @@ const createLinter = () =>
     overrideConfigFile: lintConfigPath,
   });
 
-describe('Storybook coverage script lint contract', () => {
+describe('storybook coverage script lint contract', () => {
   it('loads the task-scoped ESM lint configuration for coverage scripts', async () => {
     const linter = createLinter();
     const [result] = await linter.lintText(
@@ -21,6 +21,7 @@ describe('Storybook coverage script lint contract', () => {
     );
 
     if (!result) throw new Error('ESLint returned no result');
+
     expect(result.messages).toEqual([]);
   });
 
@@ -31,6 +32,7 @@ describe('Storybook coverage script lint contract', () => {
     });
 
     if (!result) throw new Error('ESLint returned no result');
+
     expect(result.messages.map(({ ruleId }) => ruleId)).toContain('no-undef');
   });
 

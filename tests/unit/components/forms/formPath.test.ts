@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getIn, isObject, setIn } from '@/components/forms/formPath';
 
-describe('isObject', () => {
+describe(isObject, () => {
   it('is true for plain objects and arrays', () => {
     expect(isObject({})).toBe(true);
     expect(isObject([])).toBe(true);
@@ -16,7 +16,7 @@ describe('isObject', () => {
   });
 });
 
-describe('getIn', () => {
+describe(getIn, () => {
   const values = { a: { b: [{ c: 'deep' }] }, empty: null, zero: 0 };
 
   it('reads dotted and bracketed paths', () => {
@@ -41,7 +41,7 @@ describe('getIn', () => {
   });
 });
 
-describe('setIn', () => {
+describe(setIn, () => {
   it('sets a nested value without mutating the source', () => {
     const source = { a: { b: 1, keep: true } };
     const result = setIn(source, 'a.b', 2);

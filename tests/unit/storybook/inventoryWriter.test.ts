@@ -1,8 +1,13 @@
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
+import {
+  makeDirectory,
+  readTextFile,
+  writeTextFile,
+} from '../../helpers/safeTestFilesystem';
 
 type CoverageModule = {
   writeInventoryRegions(input: {
@@ -15,14 +20,14 @@ const moduleUnderTest =
   // @ts-expect-error The maintained writer is JavaScript and has no declaration file.
   (await import('../../../scripts/storybook-coverage.mjs')) as CoverageModule;
 
-describe('Storybook inventory writer', () => {
+describe('storybook inventory writer', () => {
   it('replaces exactly the generated region in all inventory documents', async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), 'storybook-inventory-'));
     try {
       await Promise.all([
-        mkdir(path.join(root, 'ClientApp/src/components'), { recursive: true }),
-        mkdir(path.join(root, 'ClientApp/src/routes'), { recursive: true }),
-        mkdir(path.join(root, 'ClientApp/src/storybook'), { recursive: true }),
+        makeDirectory(path.join(root, 'ClientApp/src/components'), root),
+        makeDirectory(path.join(root, 'ClientApp/src/routes'), root),
+        makeDirectory(path.join(root, 'ClientApp/src/storybook'), root),
       ]);
       const documents = [
         'ClientApp/src/components/ComponentInventory.docs.mdx',
@@ -31,7 +36,7 @@ describe('Storybook inventory writer', () => {
       ];
       await Promise.all(
         documents.map((document) =>
-          writeFile(
+          writeTextFile(
             path.join(root, document),
             [
               'before',
@@ -39,7 +44,8 @@ describe('Storybook inventory writer', () => {
               'old generated content',
               '<!-- storybook-coverage:generated:end -->',
               'after',
-            ].join('\n')
+            ].join('\n'),
+            root
           )
         )
       );
@@ -56,24 +62,24 @@ describe('Storybook inventory writer', () => {
       });
 
       await expect(
-        readFile(
+        readTextFile(
           path.join(
             root,
             'ClientApp/src/components/ComponentInventory.docs.mdx'
           ),
-          'utf8'
+          root
         )
       ).resolves.toContain('component generated content');
       await expect(
-        readFile(
+        readTextFile(
           path.join(root, 'ClientApp/src/routes/RouteInventory.docs.mdx'),
-          'utf8'
+          root
         )
       ).resolves.toContain('route generated content');
       await expect(
-        readFile(
+        readTextFile(
           path.join(root, 'ClientApp/src/storybook/CoverageMatrix.docs.mdx'),
-          'utf8'
+          root
         )
       ).resolves.toContain('matrix generated content');
     } finally {

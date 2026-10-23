@@ -33,35 +33,38 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getServices'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const { createClientMockFor, webApiClientModuleMock } =
-    await import('../helpers/mockApiClient');
-  const original = await importOriginal<typeof WebApiClient>();
+vi.mock(
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const { createClientMockFor, webApiClientModuleMock } =
+      await import('../helpers/mockApiClient');
+    const original = await importOriginal<typeof WebApiClient>();
 
-  clients.lookup = createClientMockFor('getServices');
+    clients.lookup = createClientMockFor('getServices');
 
-  // Spreading the original keeps ServiceType a real enum. The component compares
-  // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
-  // every branch down the default arm and the redirect tests would pass for the wrong reason.
-  return webApiClientModuleMock(original, { LookupClient: clients.lookup });
-});
+    // Spreading the original keeps ServiceType a real enum. The component compares
+    // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
+    // every branch down the default arm and the redirect tests would pass for the wrong reason.
+    return webApiClientModuleMock(original, { LookupClient: clients.lookup });
+  }
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['api://services/.default'] },
 }));
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
   default: () => mocks.accountContext(),
   useAccountDispatch: () => ({ setUserProfile: mocks.setUserProfile }),
 }));
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: mocks.appLoggerError, info: mocks.appLoggerInfo },
 }));
 
@@ -161,6 +164,7 @@ describe('services we offer', () => {
       const [testing, pattern] = screen.getAllByRole('checkbox', {
         hidden: true,
       });
+
       expect(testing).toBeChecked();
       expect(pattern).not.toBeChecked();
     });
@@ -184,6 +188,7 @@ describe('services we offer', () => {
       const [testingRadio, patternRadio] = screen.getAllByRole('radio', {
         hidden: true,
       });
+
       expect(patternRadio).toBeChecked();
       expect(testingRadio).not.toBeChecked();
     });
@@ -207,6 +212,7 @@ describe('services we offer', () => {
       await waitFor(() =>
         expect(screen.getByText('Testing and calibration')).toBeInTheDocument()
       );
+
       expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
     });
 
@@ -220,8 +226,9 @@ describe('services we offer', () => {
       await renderRoute();
 
       await waitFor(() =>
-        expect(msalMocks.acquireTokenSilent).toHaveBeenCalled()
+        expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith()
       );
+
       expect(screen.getByText('Loading data...')).toBeInTheDocument();
       expect(
         screen.queryByText('Testing and calibration')
@@ -241,6 +248,7 @@ describe('services we offer', () => {
           expect.any(Error)
         )
       );
+
       expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
     });
 
@@ -255,6 +263,7 @@ describe('services we offer', () => {
           expect.any(Error)
         )
       );
+
       expect(clients.lookup.methods.getServices).not.toHaveBeenCalled();
     });
 
@@ -269,6 +278,7 @@ describe('services we offer', () => {
           screen.getByRole('heading', { name: 'Services we offer', level: 1 })
         ).toBeInTheDocument()
       );
+
       expect(msalMocks.acquireTokenSilent).not.toHaveBeenCalled();
       expect(clients.lookup.methods.getServices).not.toHaveBeenCalled();
     });
@@ -295,6 +305,7 @@ describe('services we offer', () => {
       const [testing, pattern] = screen.getAllByRole('checkbox', {
         hidden: true,
       });
+
       expect(testing).toBeChecked();
       expect(pattern).not.toBeChecked();
     });
@@ -311,7 +322,9 @@ describe('services we offer', () => {
         expect(screen.getByText('Testing and calibration')).toBeInTheDocument()
       );
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true });
+
       expect(checkboxes).toHaveLength(2);
+
       for (const checkbox of checkboxes) {
         expect(checkbox).not.toBeChecked();
       }
@@ -378,6 +391,7 @@ describe('services we offer', () => {
       const { currentPath } = await renderRoute();
 
       await waitFor(() => expect(currentPath()).toBe('/services-we-offer'));
+
       // shouldRedirect makes the component render null, so the heading proves which arm ran.
       expect(
         screen.queryByRole('heading', { name: 'Services we offer', level: 1 })
@@ -402,6 +416,7 @@ describe('services we offer', () => {
       await waitFor(() =>
         expect(screen.getByText('Testing and calibration')).toBeInTheDocument()
       );
+
       expect(currentPath()).toBe('/services-we-offer');
     });
   });
@@ -442,6 +457,7 @@ describe('services we offer', () => {
       });
 
       await user.click(defined(patternRadio));
+
       expect(patternRadio).toBeChecked();
 
       await user.click(defined(patternCheckbox));
@@ -549,6 +565,7 @@ describe('services we offer', () => {
         })
       );
       await waitFor(() => expect(currentPath()).toBe('/dashboard'));
+
       expect(mocks.appLoggerInfo).toHaveBeenCalledWith(
         'Services offered updated successfully in user profile.'
       );
@@ -573,6 +590,7 @@ describe('services we offer', () => {
           expect.any(Error)
         )
       );
+
       expect(currentPath()).toBe('/services-we-offer');
     });
   });

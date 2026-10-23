@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import * as yup from 'yup';
 
 describe('build regression smoke coverage', () => {
@@ -34,10 +35,10 @@ describe('build regression smoke coverage', () => {
       const module = await import(modulePath);
 
       expect(module).toBeDefined();
-      expect(typeof yup.string().allowedFormat).toBe('function');
-      expect(typeof yup.string().fixedDigits).toBe('function');
-      expect(typeof yup.string().maxLength).toBe('function');
-      expect(typeof yup.string().minEntered).toBe('function');
+      expect(yup.string().allowedFormat).toBeTypeOf('function');
+      expect(yup.string().fixedDigits).toBeTypeOf('function');
+      expect(yup.string().maxLength).toBeTypeOf('function');
+      expect(yup.string().minEntered).toBeTypeOf('function');
     }
   );
 });

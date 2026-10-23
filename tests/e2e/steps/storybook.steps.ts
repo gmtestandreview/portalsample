@@ -11,6 +11,7 @@
  * project's baseURL setting.
  */
 
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import {
@@ -54,9 +55,11 @@ Given('the Storybook MCP server is running', async ({ page, request }) => {
   );
 
   await page.goto(STORYBOOK_BASE);
+
   await expect(page.getByRole('heading', { name: 'Storybook' })).toBeVisible({
     timeout: 15_000,
   });
+
   await loadStoryIframe(page, REPRESENTATIVE_STORY_ID);
 });
 
@@ -78,11 +81,13 @@ Then(
     });
 
     expect(initialize.status()).toBe(200);
+
     const sessionId = initialize.headers()['mcp-session-id'];
     if (sessionId === undefined) {
       throw new Error('MCP initialize response did not provide a session ID');
     }
     const initializeEnvelope = await readMcpEvent(initialize, 1);
+
     expect(initializeEnvelope.result?.serverInfo?.name).toBe(
       '@storybook/addon-mcp'
     );
@@ -95,13 +100,16 @@ Then(
       headers: sessionHeaders,
       data: { jsonrpc: '2.0', method: 'notifications/initialized' },
     });
+
     expect(initialized.status()).toBe(202);
 
     const toolsList = await request.post(STORYBOOK_MCP, {
       headers: sessionHeaders,
       data: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
     });
+
     expect(toolsList.status()).toBe(200);
+
     const toolsEnvelope = await readMcpEvent(toolsList, 2);
     const toolNames =
       toolsEnvelope.result?.tools?.map(({ name }) => name) ?? [];
@@ -141,9 +149,13 @@ When(
       .map((storyId) => storyId.trim())
       .filter(Boolean);
     const testRun = await executeMcpTestRun(request, storyIds);
+
     expect(testRun.status()).toBe(200);
+
     const envelope = await readMcpEvent(testRun, 11);
+
     expect(envelope.error).toBeUndefined();
+
     const contentText = envelope.result?.content
       ?.filter((block) => block.type === 'text' && block.text !== undefined)
       .map((block) => block.text as string)
@@ -188,6 +200,7 @@ When(
       const execution = completedContent.result;
       componentTestStatuses = execution?.componentTestStatuses ?? [];
       a11yStatuses = execution?.a11yStatuses ?? [];
+
       expect(completedContent.status).toBe('completed');
       expect(
         componentTestStatuses
@@ -257,6 +270,7 @@ Then(
   'the native MCP report should list exact passing stories without accessibility violations',
   async () => {
     expect(latestMcpExecution).toMatchObject({ ok: true });
+
     if (latestMcpExecution?.report !== undefined) {
       expect(latestMcpExecution.report.missingSections).not.toContain(
         'Passing Stories'
@@ -266,8 +280,10 @@ Then(
         []
       );
       expect(latestMcpExecution.report.unhandledErrors).toEqual([]);
+
       return;
     }
+
     expect(latestMcpExecution?.receipt?.requestedStoryIds).toEqual(
       latestMcpExecution?.receipt?.executedStoryIds
     );
@@ -334,6 +350,7 @@ When(
 
 When('I open a representative component story', async ({ page }) => {
   await page.goto(`${STORYBOOK_BASE}/?path=/story/${REPRESENTATIVE_STORY_ID}`);
+
   await expect(page.getByRole('heading', { name: 'Addon panel' })).toBeVisible({
     timeout: 15_000,
   });
@@ -378,6 +395,7 @@ Then(
   'the story iframe should contain {string}',
   async ({ page }, text: string) => {
     const root = page.locator('#storybook-root');
+
     await expect(root).toContainText(text, { timeout: 10_000 });
   }
 );
@@ -438,7 +456,9 @@ Then('the Storybook Code Panel is available', async ({ page }) => {
   const codeTab = page.getByRole('tab', { name: 'Code' });
 
   await expect(codeTab).toBeVisible();
+
   await codeTab.click();
+
   await expect(codeTab).toHaveAttribute('aria-selected', 'true');
 });
 
@@ -523,9 +543,11 @@ Then(
   'the AcceptQuote owner and four peer APIs are visible',
   async ({ page }) => {
     const docs = page.locator('#storybook-docs');
+
     await expect(
       page.getByRole('heading', { name: 'AcceptQuote', exact: true })
     ).toBeVisible();
+
     await Promise.all(
       [
         'PaymentDetails',
@@ -543,6 +565,7 @@ Then(
   'the RouteLeavingGuard type and default cells are visible',
   async ({ page }) => {
     const apiTable = page.getByRole('table').filter({ hasText: 'when' });
+
     await expect(apiTable).toContainText('boolean');
     await expect(apiTable).toContainText('false');
     await expect(apiTable).toContainText("'Unsaved changes'");
@@ -561,6 +584,7 @@ Then(
     const portalContent = page.locator(
       '.modal, [role="dialog"], [role="alert"], [id^="notif-"]'
     );
+
     await expect(portalContent.filter({ hasText: text }).first()).toBeVisible({
       timeout: 10_000,
     });
@@ -575,6 +599,7 @@ Then(
   'the story iframe should have a button with accessible name {string}',
   async ({ page }, name: string) => {
     const btn = page.getByRole('button', { name });
+
     await expect(btn.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -583,6 +608,7 @@ Then(
   'the story iframe should have a link with accessible name {string}',
   async ({ page }, name: string) => {
     const link = page.getByRole('link', { name });
+
     await expect(link.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -591,6 +617,7 @@ Then(
   'the story iframe should have a dialog with accessible name {string}',
   async ({ page }, name: string) => {
     const dialog = page.getByRole('dialog', { name });
+
     await expect(dialog.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -599,6 +626,7 @@ Then(
   'the story iframe should have a disabled button with accessible name {string}',
   async ({ page }, name: string) => {
     const btn = page.getByRole('button', { name });
+
     await expect(btn.first()).toBeDisabled({ timeout: 10_000 });
   }
 );
@@ -609,6 +637,7 @@ Then(
 
 Then('the story iframe should have a navigation landmark', async ({ page }) => {
   const nav = page.getByRole('navigation');
+
   await expect(nav.first()).toBeVisible({ timeout: 10_000 });
 });
 
@@ -616,6 +645,7 @@ Then(
   'the story iframe should have a contentinfo landmark',
   async ({ page }) => {
     const footer = page.getByRole('contentinfo');
+
     await expect(footer.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -624,6 +654,7 @@ Then(
   'the story iframe should have a content info landmark',
   async ({ page }) => {
     const footer = page.getByRole('contentinfo');
+
     await expect(footer.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -639,6 +670,7 @@ Then(
     const searchInput = page.locator(
       'input[type="search"], input[type="text"]'
     );
+
     await expect(searchInput.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -652,11 +684,14 @@ Then(
   async ({ page }) => {
     // The pill renders status text; assert at least one span/badge is visible
     const root = page.locator('#storybook-root');
+
     await expect(root).toBeVisible({ timeout: 10_000 });
+
     // At least one pill should be rendered
     const pills = root.locator(
       'span, .badge, [class*="pill"], [class*="status"]'
     );
+
     await expect(pills.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -665,10 +700,13 @@ Then(
   'the story iframe should contain text matching a quote status label',
   async ({ page }) => {
     const root = page.locator('#storybook-root');
+
     await expect(root).toBeVisible({ timeout: 10_000 });
+
     const pills = root.locator(
       'span, .badge, [class*="pill"], [class*="status"]'
     );
+
     await expect(pills.first()).toBeVisible({ timeout: 10_000 });
   }
 );
@@ -727,5 +765,6 @@ When(
 Then('the story should not throw a JavaScript error', async ({ page }) => {
   // Check that #storybook-root is still present (not replaced by error UI)
   const root = page.locator('#storybook-root');
+
   await expect(root).toBeVisible({ timeout: 5_000 });
 });

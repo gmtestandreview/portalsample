@@ -1,3 +1,4 @@
+import { describe, beforeEach, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
@@ -7,7 +8,7 @@ import RequestItem from '@/components/RequestList/requestItem';
 import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
 
-vi.mock('@/components/Actions', () => ({
+vi.mock(import('@/components/Actions'), () => ({
   default: ({
     onItemClick,
   }: {
@@ -45,7 +46,7 @@ const renderItem = (item: React.ReactNode) =>
     </MemoryRouter>
   );
 
-describe('RequestList fallback action wiring', () => {
+describe('requestList fallback action wiring', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

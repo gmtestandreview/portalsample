@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { FormStepStatus } from '../../../ClientApp/src/api/web-api-client';
 import { DashboardItemStatus } from '../../../ClientApp/src/routes/common/enums';
@@ -48,6 +49,7 @@ Then(
         name: /Instrument and request/i,
       })
       .click();
+
     await expect(page.getByText(value, { exact: true })).toBeVisible();
   }
 );
@@ -61,6 +63,7 @@ Given(
   async ({ page, scenarioState }, id: string) => {
     prepareDraft(scenarioState, id);
     await page.goto(`/request-for-quote/${id}/instrument-and-request`);
+
     await expect(
       page.getByRole('heading', {
         name: /Instrument and request/i,
@@ -78,7 +81,9 @@ When('the user opens the draft RFQ', async ({ page, scenarioState }) => {
       exact: true,
     })
     .locator(`#RefId-${scenarioState.activeReferenceId}`);
+
   await expect(draft).toBeVisible();
+
   const actions = draft.getByRole('button', {
     name: 'Actions',
     exact: true,
@@ -88,8 +93,11 @@ When('the user opens the draft RFQ', async ({ page, scenarioState }) => {
     name: 'Edit request',
     exact: true,
   });
+
   await expect(editRequest).toBeVisible();
+
   await editRequest.click();
+
   await expect(
     page.getByRole('heading', {
       name: /Instrument and request/i,

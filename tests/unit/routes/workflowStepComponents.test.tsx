@@ -120,6 +120,7 @@ describe('workflow step components', () => {
     expect(
       screen.getByText(/This "Recalibration Request" is prefilled/)
     ).toBeInTheDocument();
+
     fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
 
     expect(mocks.setShowRFQSelectModal).toHaveBeenCalledWith(
@@ -181,6 +182,7 @@ describe('workflow step components', () => {
         screen.getByText('Instrument/artefact details')
       ).toBeInTheDocument()
     );
+
     expect(
       screen.getByText('Testing/calibration requirements')
     ).toBeInTheDocument();
@@ -195,6 +197,7 @@ describe('workflow step components', () => {
         'no-instrument'
       )
     );
+
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
       'instrumentOrArtefactType',
       ''
@@ -220,10 +223,12 @@ describe('workflow step components', () => {
     );
 
     const editLinks = screen.getAllByTestId('edit-button');
+
     expect(editLinks.map((link) => link.getAttribute('href'))).toEqual([
       '/request-for-quote/RFQ-1/organisation-and-contact',
       '/request-for-quote/RFQ-1/instrument-and-request',
     ]);
+
     await screen.findByText('Request details');
   });
 
@@ -263,6 +268,7 @@ describe('workflow step components', () => {
         screen.getByText('Instrument/artefact details')
       ).toBeInTheDocument()
     );
+
     expect(
       screen.getByTestId('select-instrumentOrArtefactType')
     ).toBeInTheDocument();
@@ -367,6 +373,7 @@ describe('workflow step components', () => {
 
     expect(screen.getByTestId('header-intro')).toBeInTheDocument();
     expect(screen.getAllByTestId('edit-button')).toHaveLength(2);
+
     await screen.findByText('Request details');
     unmount();
 
@@ -381,6 +388,7 @@ describe('workflow step components', () => {
       'href',
       '/dashboard'
     );
+
     await screen.findByText('Request details');
   });
 
@@ -399,6 +407,7 @@ describe('workflow step components', () => {
         screen.getByText('Report recipient organisation')
       ).toBeInTheDocument()
     );
+
     expect(
       screen.getByText('Organisation address for report')
     ).toBeInTheDocument();
@@ -406,6 +415,7 @@ describe('workflow step components', () => {
       'data-name',
       'businessStreetAddress'
     );
+
     unmount();
 
     mocks.getReportRecipient.mockResolvedValueOnce({
@@ -444,10 +454,12 @@ describe('workflow step components', () => {
         screen.getByText('Instrument/artefact delivery')
       ).toBeInTheDocument()
     );
+
     expect(screen.getByTestId('mailing-label')).toHaveTextContent('Q-100');
     expect(screen.getByTestId('delivery-instructions')).toHaveTextContent(
       'Use the loading dock.'
     );
+
     unmount();
 
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
@@ -485,6 +497,7 @@ describe('workflow step components', () => {
         screen.getByText(/does not require the delivery or return/)
       ).toBeInTheDocument()
     );
+
     expect(screen.getByRole('status')).toHaveClass('alert-info');
   });
 
@@ -607,9 +620,11 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(screen.getByText(/Prepayment required/)).toBeInTheDocument()
     );
+
     expect(
       screen.getByText('Purchase Order (PO) number (optional)')
     ).toBeInTheDocument();
+
     unmount();
 
     mocks.getPaymentDetails.mockResolvedValueOnce({
@@ -624,6 +639,7 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(screen.getAllByText('Invoice contact person')).toHaveLength(2)
     );
+
     expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
   });
 
@@ -737,6 +753,7 @@ describe('workflow step components', () => {
         screen.getByText('Quotation terms and conditions')
       ).toBeInTheDocument()
     );
+
     expect(screen.getByText('Saved draft')).toBeInTheDocument();
     expect(screen.getByText('Alex Tester')).toBeInTheDocument();
     expect(screen.getByText('Request Owner')).toBeInTheDocument();
@@ -751,6 +768,7 @@ describe('workflow step components', () => {
         true
       )
     );
+
     expect(mocks.openPdfPageInNewTab).toHaveBeenCalledWith(
       expect.stringContaining('blob:'),
       '2'
@@ -817,7 +835,7 @@ describe('workflow step components', () => {
     fireEvent.click(secondTermsButton);
 
     await waitFor(() =>
-      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalled()
+      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith()
     );
   });
 
@@ -855,15 +873,19 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(screen.getByText('Trading only')).toBeInTheDocument()
     );
+
     expect(screen.getByText('Level 2')).toBeInTheDocument();
     expect(screen.getByText('Building A')).toBeInTheDocument();
+
     const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
     if (!termsButton) throw new Error('expected a Terms button to be rendered');
     fireEvent.click(termsButton);
     await waitFor(() =>
-      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalled()
+      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith()
     );
+
     expect(mocks.openPdfPageInNewTab).not.toHaveBeenCalled();
+
     unmount();
 
     mocks.getSummaryAndAccept.mockResolvedValueOnce({

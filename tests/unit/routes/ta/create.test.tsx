@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: mocks.accounts,
     instance: {
@@ -26,11 +26,11 @@ vi.mock('@azure/msal-react', () => ({
   }),
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['type-approval.scope'] },
 }));
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   ApplicationType: {
     PatternApproval: 'PatternApproval',
   },
@@ -42,13 +42,13 @@ vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   }),
 }));
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
+vi.mock(import('../../../../ClientApp/src/components/BlockUISpinner'), () => ({
   default: ({ children }: { children: ReactNode }) => (
     <div data-testid='block-ui-spinner'>{children}</div>
   ),
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.appLoggerError,
   },
@@ -67,7 +67,7 @@ const renderCreateRoute = () =>
     </MemoryRouter>
   );
 
-describe('CreateRequestForTypeApproval', () => {
+describe(CreateRequestForTypeApproval, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -87,6 +87,7 @@ describe('CreateRequestForTypeApproval', () => {
         screen.getByText('Organisation details destination')
       ).toBeInTheDocument();
     });
+
     expect(mocks.acquireTokenSilent).toHaveBeenCalledWith({
       scopes: ['type-approval.scope'],
       account: mocks.accounts[0],
@@ -109,6 +110,7 @@ describe('CreateRequestForTypeApproval', () => {
         error
       );
     });
+
     expect(screen.getByTestId('block-ui-spinner')).toHaveTextContent(
       'Loading...'
     );

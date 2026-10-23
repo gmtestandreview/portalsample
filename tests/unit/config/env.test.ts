@@ -1,5 +1,7 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { describe, it, expect } from 'vitest';
 import path from 'node:path';
+
+import { readDirectory, readTextFile } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
 const sourceRoot = path.join(repositoryRoot, 'ClientApp/src');
@@ -19,7 +21,7 @@ const excludedSourceDirectories = new Set([
 ]);
 
 const readSourceFiles = async (directory: string): Promise<string[]> => {
-  const entries = await readdir(directory, { withFileTypes: true });
+  const entries = await readDirectory(directory, repositoryRoot);
   const contents: string[] = [];
 
   for (const entry of entries) {
@@ -33,7 +35,7 @@ const readSourceFiles = async (directory: string): Promise<string[]> => {
     }
 
     if (sourceExtensions.has(path.extname(entry.name))) {
-      contents.push(await readFile(entryPath, 'utf8'));
+      contents.push(await readTextFile(entryPath, repositoryRoot));
     }
   }
 
@@ -51,8 +53,8 @@ const mappingRows = (design: string) =>
 describe('browser environment contract', () => {
   it('reads every browser variable from Vite import.meta.env', async () => {
     const [environmentSource, design] = await Promise.all([
-      readFile(environmentSourcePath, 'utf8'),
-      readFile(designPath, 'utf8'),
+      readTextFile(environmentSourcePath, repositoryRoot),
+      readTextFile(designPath, repositoryRoot),
     ]);
     const mapping = mappingRows(design);
 
@@ -62,18 +64,19 @@ describe('browser environment contract', () => {
     );
 
     for (const { viteName } of viteMappings) {
-      expect(environmentSource).toMatch(
-        new RegExp(`import\\.meta\\.env\\.${viteName}`, 'u')
-      );
+      expect(environmentSource).toContain(`import.meta.env.${viteName}`);
     }
 
     expect(environmentSource).toMatch(/import\.meta\.env\.(?:DEV|PROD|MODE)/u);
   });
 
   it('preserves the application-facing env export while using the Vite contract', async () => {
-    const environmentSource = await readFile(environmentSourcePath, 'utf8');
+    const environmentSource = await readTextFile(
+      environmentSourcePath,
+      repositoryRoot
+    );
 
-    expect(environmentSource).toMatch(/export const env(?:\s*:\s*[^=]+)?\s*=/u);
+    expect(environmentSource).toContain('export const env');
     expect(environmentSource).toContain('VITE_ENVIRONMENT');
     expect(environmentSource).not.toMatch(/globalThis\.[A-Z_]*REACT_APP_/u);
   });

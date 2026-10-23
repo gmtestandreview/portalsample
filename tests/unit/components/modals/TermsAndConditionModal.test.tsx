@@ -10,7 +10,7 @@ const mockMsal = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn().mockResolvedValue({ accessToken: 'mock-token' }),
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     inProgress: mockMsal.inProgress,
     accounts: mockMsal.accounts,
@@ -23,7 +23,7 @@ vi.mock('@azure/msal-react', () => ({
 const mockSetAgree = vi.fn();
 const mockDispatch = { setAgree: mockSetAgree };
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
   useAccountState: vi.fn(),
   useAccountDispatch: vi.fn(),
 }));
@@ -33,18 +33,18 @@ vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
 const mockAcceptTermsAndCondition = vi.fn().mockResolvedValue(undefined);
 const mockSetAuthToken = vi.fn();
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   UsersClient: vi.fn(function (this: any) {
     this.setAuthToken = mockSetAuthToken;
     this.acceptTermsAndCondition = mockAcceptTermsAndCondition;
   }),
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['api://mock/.default'] },
 }));
 
-vi.mock('../../../../ClientApp/src/terms-config.json', () => ({
+vi.mock(import('../../../../ClientApp/src/terms-config.json'), () => ({
   default: { TermsVersion: '2' },
 }));
 
@@ -55,7 +55,7 @@ import {
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
-describe('TermsAndConditionModal', () => {
+describe(TermsAndConditionModal, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockMsal.inProgress = 'none';
@@ -116,7 +116,7 @@ describe('TermsAndConditionModal', () => {
     );
 
     await waitFor(() => {
-      expect(mockSetAgree).toHaveBeenCalledOnce();
+      expect(mockSetAgree).toHaveBeenCalledExactlyOnceWith();
     });
   });
 
@@ -230,6 +230,7 @@ describe('TermsAndConditionModal', () => {
         termsVersion: 2,
       });
     });
+
     expect(mockSetAgree).not.toHaveBeenCalled();
   });
 

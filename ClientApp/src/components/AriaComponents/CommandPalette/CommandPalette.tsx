@@ -9,7 +9,7 @@ import { Dialog } from 'react-aria-components/Dialog';
 import { Menu } from '../Menu/Menu';
 import { SearchField } from '../SearchField/SearchField';
 import { Modal } from '../modal/Modal';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import './CommandPalette.css';
 
 export interface CommandPaletteProps<T>
@@ -21,6 +21,11 @@ export interface CommandPaletteProps<T>
 export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
   const { isOpen, onOpenChange } = props;
   const { contains } = useFilter({ sensitivity: 'base' });
+  const focusSearchInput = useCallback((input: HTMLInputElement | null) => {
+    if (input) {
+      queueMicrotask(() => input.focus());
+    }
+  }, []);
 
   useEffect(() => {
     const isMacUA = /mac(os|intosh)/i.test(navigator.userAgent);
@@ -43,7 +48,7 @@ export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
       <Dialog className='command-palette-dialog'>
         <AriaAutocomplete disableVirtualFocus filter={contains} {...props}>
           <SearchField
-            autoFocus
+            ref={focusSearchInput}
             aria-label='Search commands'
             placeholder='Search commands'
           />

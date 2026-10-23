@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import type { ReactElement } from 'react';
 
 import App from '../../../ClientApp/src/App';
@@ -111,12 +112,14 @@ describe('application route loading', () => {
 
       if (layoutPaths.has(path)) {
         expect(element.type).toBe(Layout);
+
         return;
       }
 
       if (path === '/sign-out') {
         expect(element.type).not.toBe(AuthenticatedElement);
         expect(element.type).not.toBe(Layout);
+
         return;
       }
 

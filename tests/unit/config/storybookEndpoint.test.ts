@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
 
-describe('resolveStorybookTestTarget', () => {
+describe(resolveStorybookTestTarget, () => {
   it('derives the managed default target on port 6006', () => {
     expect(resolveStorybookTestTarget({ ci: false })).toEqual({
       baseURL: 'http://localhost:6006',

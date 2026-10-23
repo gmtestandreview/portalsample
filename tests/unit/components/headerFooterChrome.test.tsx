@@ -23,34 +23,34 @@ const msalState = vi.hoisted(() => ({
   authenticated: false,
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
     msalState.authenticated ? children : null,
   UnauthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
     msalState.authenticated ? null : children,
 }));
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
+vi.mock(import('@/authentication/hooks'), () => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock('@/components/modals/ModalContext', () => ({
+vi.mock(import('@/components/modals/ModalContext'), () => ({
   useModalDispatch: vi.fn(),
 }));
 
-vi.mock('@/routes/common/helperFunctions', () => ({
+vi.mock(import('@/routes/common/helperFunctions'), () => ({
   getEnvironment: vi.fn(),
 }));
 
-vi.mock('@/assets/GovCrest.svg', () => ({
+vi.mock(import('@/assets/GovCrest.svg'), () => ({
   default: 'gov-crest.svg',
 }));
 
-vi.mock('@/components/modals/ContentModal', () => ({
+vi.mock(import('@/components/modals/ContentModal'), () => ({
   default: ({
     showModal,
     onCancelModal,
@@ -88,7 +88,7 @@ const accountState = {
   },
 };
 
-describe('Header chrome', () => {
+describe('header chrome', () => {
   beforeEach(() => {
     msalState.authenticated = false;
     vi.mocked(getEnvironment).mockReturnValue('');
@@ -167,6 +167,7 @@ describe('Header chrome', () => {
     );
 
     await user.click(screen.getByRole('link', { name: 'Manage organisation' }));
+
     expect(trackGAEvent).toHaveBeenCalledWith('Manage organisation');
 
     await user.click(
@@ -183,12 +184,14 @@ describe('Header chrome', () => {
       screen.getByRole('button', { name: /Current user settings menu/i })
     );
     await user.click(screen.getByRole('link', { name: 'My contact details' }));
+
     expect(trackGAEvent).toHaveBeenCalledWith('Manage contact');
 
     await user.click(
       screen.getByRole('button', { name: /Current user settings menu/i })
     );
     await user.click(screen.getByRole('link', { name: 'Log out' }));
+
     expect(trackGAEvent).toHaveBeenCalledWith('sign out');
   });
 
@@ -214,12 +217,13 @@ describe('Header chrome', () => {
     const survey = screen.getByRole('link', {
       name: /quick survey\s*Opens in a new tab/i,
     });
+
     expect(survey).toHaveAttribute('target', '_blank');
     expect(survey).toHaveAttribute('rel', 'external noopener noreferrer');
   });
 });
 
-describe('Footer chrome', () => {
+describe('footer chrome', () => {
   it('renders static footer landmarks, links, and government crest', () => {
     renderWithRouter(<Footer />);
 
@@ -240,25 +244,33 @@ describe('Footer chrome', () => {
     renderWithRouter(<Footer />);
 
     await user.click(screen.getByRole('button', { name: 'Terms of use' }));
+
     expect(
       screen.getByRole('dialog', { name: 'Portal Terms of Use' })
     ).toHaveTextContent('1. General');
+
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
+
     expect(
       screen.queryByRole('dialog', { name: 'Portal Terms of Use' })
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Privacy' }));
+
     expect(
       screen.getByRole('dialog', { name: 'Privacy collection statement' })
     ).toHaveTextContent('The Privacy Act and your personal information');
+
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
 
     await user.click(screen.getByRole('button', { name: 'Accessibility' }));
+
     expect(
       screen.getByRole('dialog', { name: 'Accessibility' })
     ).toHaveTextContent('Portable Document Format');
+
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
+
     expect(
       screen.queryByRole('dialog', { name: 'Accessibility' })
     ).not.toBeInTheDocument();
@@ -273,6 +285,7 @@ describe('Footer chrome', () => {
     expect(screen.getByText('9 July, 2024')).toBeInTheDocument();
 
     rerender(<Privacy />);
+
     expect(
       screen.getByRole('heading', {
         name: 'Types of personal information collected',
@@ -283,6 +296,7 @@ describe('Footer chrome', () => {
     ).toHaveAttribute('href', 'mailto:privacy@industry.gov.au');
 
     rerender(<Accessibility />);
+
     expect(
       screen.getByRole('heading', { name: 'JavaScript' })
     ).toBeInTheDocument();
@@ -306,6 +320,7 @@ describe('small static display components', () => {
     );
 
     rerender(<BodyText className='text-muted'>Body copy</BodyText>);
+
     expect(screen.getByText('Body copy')).toHaveClass(
       'body-text',
       'text-muted'
@@ -316,13 +331,14 @@ describe('small static display components', () => {
     const { container } = render(<ExternalLinkIcon className='ms-1' />);
 
     const icon = container.querySelector('svg');
+
     expect(icon).toHaveClass('ms-1');
     expect(icon).toHaveAttribute('aria-hidden', 'true');
     expect(icon).toHaveAttribute('focusable', 'false');
   });
 });
 
-describe('Actions callback behavior', () => {
+describe('actions callback behavior', () => {
   it('uses item-specific click handlers before falling back to the shared item handler', async () => {
     const user = userEvent.setup();
     const itemClick = vi.fn();

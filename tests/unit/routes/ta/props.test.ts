@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -72,11 +72,11 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.appLoggerError,
     verbose: mocks.appLoggerVerbose,
@@ -206,6 +206,7 @@ describe('pattern approval wizard prop factories', () => {
       true,
       abortSignal
     );
+
     expect(mocks.saveApplicationAndInstrument).toHaveBeenCalledWith(
       'PA-1',
       {
@@ -227,6 +228,7 @@ describe('pattern approval wizard prop factories', () => {
       false,
       abortSignal
     );
+
     expect(mocks.saveApplicationAndInstrument).toHaveBeenLastCalledWith(
       'PA-1',
       {
@@ -327,6 +329,7 @@ describe('pattern approval wizard prop factories', () => {
       false,
       abortSignal
     );
+
     expect(mocks.saveOrganisationAndContact).toHaveBeenCalledWith(
       'PA-2',
       {
@@ -336,11 +339,13 @@ describe('pattern approval wizard prop factories', () => {
       },
       abortSignal
     );
+
     await props.onSaveAndNext?.(
       { isManufacturer: YesNo.Yes },
       true,
       abortSignal
     );
+
     expect(mocks.saveOrganisationAndContact).toHaveBeenLastCalledWith(
       'PA-2',
       {
@@ -389,6 +394,7 @@ describe('pattern approval wizard prop factories', () => {
       },
     };
     await props.onSaveAndNext?.(documents, true, abortSignal);
+
     expect(mocks.saveSupportingDocuments).toHaveBeenCalledWith(
       'PA-3',
       {
@@ -401,6 +407,7 @@ describe('pattern approval wizard prop factories', () => {
 
     const withoutDocuments: SupportingDocumentsStep = { form: {} };
     await props.onSaveAndExit?.(withoutDocuments, false, abortSignal);
+
     expect(mocks.saveSupportingDocuments).toHaveBeenLastCalledWith(
       'PA-3',
       {
@@ -572,6 +579,7 @@ describe('pattern approval wizard prop factories', () => {
       acceptDeclaration: true,
     };
     await props.onSaveAndNext?.(summary, true, abortSignal);
+
     expect(mocks.submit).toHaveBeenCalledWith(
       'PA-4',
       {
@@ -588,6 +596,7 @@ describe('pattern approval wizard prop factories', () => {
     mocks.getApplicationAndInstrument.mockRejectedValueOnce(
       new Error('load application failed')
     );
+
     await expect(
       applicationAndInstrumentProps(
         'PA-5',
@@ -609,6 +618,7 @@ describe('pattern approval wizard prop factories', () => {
     mocks.saveApplicationAndInstrument.mockRejectedValueOnce(
       new Error('save application failed')
     );
+
     await expect(
       applicationAndInstrumentProps(
         'PA-6',
@@ -630,6 +640,7 @@ describe('pattern approval wizard prop factories', () => {
     mocks.getOrganisationAndContact.mockRejectedValueOnce(
       new Error('load organisation failed')
     );
+
     await expect(
       organisationAndContactProps(
         'PA-7',
@@ -649,6 +660,7 @@ describe('pattern approval wizard prop factories', () => {
     mocks.saveOrganisationAndContact.mockRejectedValueOnce(
       new Error('save organisation failed')
     );
+
     await expect(
       organisationAndContactProps(
         'PA-8',
@@ -668,6 +680,7 @@ describe('pattern approval wizard prop factories', () => {
     mocks.getSupportingDocuments.mockRejectedValueOnce(
       new Error('load documents failed')
     );
+
     await expect(
       supportingDocumentsProps(
         'PA-9',
@@ -687,6 +700,7 @@ describe('pattern approval wizard prop factories', () => {
     mocks.saveSupportingDocuments.mockRejectedValueOnce(
       new Error('save documents failed')
     );
+
     await expect(
       supportingDocumentsProps(
         'PA-10',
@@ -704,6 +718,7 @@ describe('pattern approval wizard prop factories', () => {
     );
 
     mocks.getSummary.mockRejectedValueOnce(new Error('load summary failed'));
+
     await expect(
       summaryAndSubmitProps(
         'PA-11',
@@ -721,6 +736,7 @@ describe('pattern approval wizard prop factories', () => {
     );
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
+
     await expect(
       summaryAndSubmitProps(
         'PA-12',

@@ -39,7 +39,7 @@ const failingResolver: Resolver<Values> = async () => ({
   },
 });
 
-describe('RhfTextInput', () => {
+describe(RhfTextInput, () => {
   it('renders a labelled text box showing the form value', () => {
     render(
       <Harness defaultValue='Acme'>
@@ -48,6 +48,7 @@ describe('RhfTextInput', () => {
     );
 
     const input = screen.getByRole('textbox', { name: 'Organisation' });
+
     expect(input).toHaveValue('Acme');
     expect(input).toHaveAttribute('id', 'organisationName');
     expect(input).toHaveClass('form-field', 'form-text-input');
@@ -59,7 +60,9 @@ describe('RhfTextInput', () => {
         <RhfTextInput name='organisationName' label='Organisation' />
       </Harness>
     );
+
     expect(screen.getByRole('textbox')).toHaveValue('');
+
     unmount();
 
     render(
@@ -67,6 +70,7 @@ describe('RhfTextInput', () => {
         <RhfTextInput name='organisationName' label='Organisation' />
       </Harness>
     );
+
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
@@ -88,6 +92,7 @@ describe('RhfTextInput', () => {
     );
 
     const input = screen.getByRole('textbox', { name: 'Organisation' });
+
     expect(input).toHaveAttribute('id', 'org');
     expect(input).toHaveClass('extra');
     expect(input).toHaveAttribute('placeholder', 'Name');
@@ -205,6 +210,7 @@ describe('RhfTextInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox', { name: 'Organisation' });
+
     expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
 
     await form.submit();
@@ -250,6 +256,7 @@ describe('RhfTextInput', () => {
     await form.submit();
 
     const input = screen.getByRole('textbox');
+
     expect(input).toHaveAttribute(
       'aria-describedby',
       'help-organisationName organisationName-validation-msg'
@@ -326,6 +333,7 @@ describe('RhfTextInput', () => {
     await form.submit();
 
     const input = screen.getByRole('textbox');
+
     expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
     expect(input).not.toHaveClass('is-invalid');
     expect(input).not.toHaveAttribute('aria-invalid');

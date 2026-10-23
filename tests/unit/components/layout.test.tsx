@@ -3,37 +3,37 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import Layout from '@/components/Layout';
 
-vi.mock('@/components/Header', () => ({
+vi.mock(import('@/components/Header'), () => ({
   default: () => <header>Mock header</header>,
 }));
 
-vi.mock('@/components/Footer', () => ({
+vi.mock(import('@/components/Footer'), () => ({
   default: () => <footer>Mock footer</footer>,
 }));
 
-vi.mock('@/components/Utilities/skipLinks', () => ({
+vi.mock(import('@/components/Utilities/skipLinks'), () => ({
   default: () => <a href='#main'>Skip to main content</a>,
 }));
 
-vi.mock('@/components/Utilities/backToTopButton', () => ({
+vi.mock(import('@/components/Utilities/backToTopButton'), () => ({
   default: () => <nav aria-label='Back to top'>Back to top</nav>,
 }));
 
-vi.mock('@/components/Utilities/routeChangeScrollTop', () => ({
+vi.mock(import('@/components/Utilities/routeChangeScrollTop'), () => ({
   default: () => null,
 }));
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/hooks/useRouteAccessibility', () => ({
+vi.mock(import('@/hooks/useRouteAccessibility'), () => ({
   useRouteAccessibility: () => ({
     announcement: 'Navigated to Dashboard page.',
   }),
 }));
 
-describe('Layout', () => {
+describe(Layout, () => {
   it('renders page chrome, main content, and the route announcement region', () => {
     render(
       <MemoryRouter>

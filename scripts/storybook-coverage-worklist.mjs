@@ -141,8 +141,13 @@ export function buildWorklist({ files, candidateFiles = [] }) {
 }
 
 const writeJson = (filePath, value) => {
-  mkdirSync(path.dirname(filePath), { recursive: true });
-  writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  const resolvedPath = path.resolve(filePath);
+  // --out and --summary are caller-selected CLI destinations. Keep their
+  // existing path contract while making the dynamic filesystem boundary clear.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  mkdirSync(path.dirname(resolvedPath), { recursive: true });
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  writeFileSync(resolvedPath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 };
 
 const readCandidateFiles = (root) => {

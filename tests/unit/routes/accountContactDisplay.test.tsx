@@ -1,32 +1,35 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../../ClientApp/src/components/Inputs/TextInput', () => ({
+vi.mock(import('../../../ClientApp/src/components/Inputs/TextInput'), () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid={`text-${name}`}>{label}</div>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/Inputs/NumberInput', () => ({
+vi.mock(import('../../../ClientApp/src/components/Inputs/NumberInput'), () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid={`number-${name}`}>{label}</div>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/Inputs/Checkbox', () => ({
+vi.mock(import('../../../ClientApp/src/components/Inputs/Checkbox'), () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid={`checkbox-${name}`}>{label}</div>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/Inputs/AddressLookup', () => ({
-  default: ({ label, name }: { label: string; name: string }) => (
-    <div data-testid={`address-${name}`}>{label}</div>
-  ),
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Inputs/AddressLookup'),
+  () => ({
+    default: ({ label, name }: { label: string; name: string }) => (
+      <div data-testid={`address-${name}`}>{label}</div>
+    ),
+  })
+);
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/OrganisationNameLookup',
+  import('../../../ClientApp/src/components/Inputs/OrganisationNameLookup'),
   () => ({
     default: ({ label, name }: { label: string; name: string }) => (
       <div data-testid={`organisation-${name}`}>{label}</div>
@@ -34,7 +37,7 @@ vi.mock(
   })
 );
 
-vi.mock('../../../ClientApp/src/components/forms/HidableField', () => ({
+vi.mock(import('../../../ClientApp/src/components/forms/HidableField'), () => ({
   default: ({
     children,
     name,
@@ -45,7 +48,7 @@ vi.mock('../../../ClientApp/src/components/forms/HidableField', () => ({
 }));
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
+  import('../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
   () => ({
     default: ({ name, roleLabel }: { name: string; roleLabel: string }) => (
       <div data-testid='contact-details-input' data-name={name}>

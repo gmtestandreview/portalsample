@@ -9,6 +9,7 @@ import {
 import { Label, FieldError, Description } from '../Form/Form';
 import { Search, X } from '../NmiIcon';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { forwardRef } from 'react';
 import './SearchField.css';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
@@ -18,26 +19,32 @@ export interface SearchFieldProps extends AriaSearchFieldProps {
   placeholder?: string;
 }
 
-export function SearchField({
-  label,
-  description,
-  errorMessage,
-  placeholder,
-  ...props
-}: Readonly<SearchFieldProps>) {
-  return (
-    <AriaSearchField {...props}>
-      {label && <Label>{label}</Label>}
-      <Search size={18} />
-      <Input
-        {...omitUndefined({ placeholder })}
-        className='react-aria-Input inset'
-      />
-      <Button className='clear-button'>
-        <X size={14} />
-      </Button>
-      {description && <Description>{description}</Description>}
-      <FieldError>{errorMessage}</FieldError>
-    </AriaSearchField>
-  );
-}
+export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
+  function SearchField(
+    {
+      label,
+      description,
+      errorMessage,
+      placeholder,
+      ...props
+    }: Readonly<SearchFieldProps>,
+    ref
+  ) {
+    return (
+      <AriaSearchField {...props}>
+        {label && <Label>{label}</Label>}
+        <Search size={18} />
+        <Input
+          ref={ref}
+          {...omitUndefined({ placeholder })}
+          className='react-aria-Input inset'
+        />
+        <Button className='clear-button'>
+          <X size={14} />
+        </Button>
+        {description && <Description>{description}</Description>}
+        <FieldError>{errorMessage}</FieldError>
+      </AriaSearchField>
+    );
+  }
+);

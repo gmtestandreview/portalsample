@@ -54,6 +54,9 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
     );
   }
 
+  // The directory is validated against the owned reports root and source roots
+  // above before the child diagnostic is created.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   mkdirSync(resolvedReceiptDirectory, { recursive: true });
   const diagnostic = {
     type: 'storybook-vitest-child',
@@ -68,6 +71,8 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
     },
   };
   const fileName = `child-${process.pid}-${Date.now()}-${process.hrtime.bigint()}.json`;
+  // The filename is generated locally and joined to the validated receipt root.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
   writeFileSync(
     path.join(resolvedReceiptDirectory, fileName),
     `${JSON.stringify(diagnostic, null, 2)}\n`,

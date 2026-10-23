@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Field, Form, Formik, useFormikContext } from 'formik';
@@ -12,7 +13,7 @@ import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
 import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 
-vi.mock('@/components/RouteLeavingGuard', () => ({
+vi.mock(import('@/components/RouteLeavingGuard'), () => ({
   default: ({
     when,
     title,
@@ -85,6 +86,7 @@ describe('form helper components', () => {
     );
 
     const disclosure = screen.getByText('Why we ask').closest('details');
+
     expect(disclosure).toHaveAttribute('id', 'details-help');
     expect(disclosure).not.toHaveAttribute('open');
 
@@ -157,7 +159,9 @@ describe('form helper components', () => {
     expect(
       screen.getByRole('button', { name: /Discard changes/i })
     ).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: /Discard changes/i }));
+
     expect(screen.getByTestId('location')).toHaveTextContent('/dashboard');
   });
 
@@ -215,6 +219,7 @@ describe('form helper components', () => {
     await user.type(screen.getByLabelText('Name'), 'Alex');
 
     const guard = screen.getByTestId('route-leaving-guard');
+
     expect(guard).toHaveAttribute('data-when', 'true');
     expect(guard).toHaveAttribute(
       'data-title',

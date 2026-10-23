@@ -1,3 +1,4 @@
+import { describe, afterEach, it, expect } from 'vitest';
 import {
   openInternalRouteInNewTab,
   openPdfPageInSecureNewTab,

@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import type { TextAreaInputProps } from './types';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { removeSupplementaryPlaneCharacters } from '../../../utils/removeSupplementaryPlaneCharacters';
 
 const TextAreaInput = ({
   label,
@@ -35,10 +36,7 @@ const TextAreaInput = ({
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Strip supplementary-plane characters (emoji etc.) which the API rejects.
-    const sanitised = event.target.value.replace(
-      /[\u{10000}-\u{10FFFF}]/gu,
-      ''
-    );
+    const sanitised = removeSupplementaryPlaneCharacters(event.target.value);
     void _fieldHelper.setValue(sanitised);
   };
 

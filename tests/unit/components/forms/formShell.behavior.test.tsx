@@ -1,3 +1,4 @@
+import { describe, beforeEach, it, expect } from 'vitest';
 import {
   act,
   fireEvent,
@@ -14,11 +15,11 @@ import ContactDetailsInput from '@/components/forms/CommonForms/ContactDetails';
 import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
-vi.mock('@/components/forms/UnsavedFormPrompt', () => ({
+vi.mock(import('@/components/forms/UnsavedFormPrompt'), () => ({
   default: () => <div data-testid='unsaved-form-prompt' />,
 }));
 
-vi.mock('@/components/BlockUISpinner', () => ({
+vi.mock(import('@/components/BlockUISpinner'), () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <output>{children}</output>
   ),
@@ -48,7 +49,7 @@ describe('form shell behavior slice', () => {
     vi.clearAllMocks();
   });
 
-  it('FormikForm validates hard, renders function children, and submits normalized values', async () => {
+  it('formikForm validates hard, renders function children, and submits normalized values', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     const validateHard = vi
@@ -88,9 +89,9 @@ describe('form shell behavior slice', () => {
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-    expect(
-      await screen.findByText('First name is required')
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText('First name is required')
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: 'Fill name' }));
@@ -104,7 +105,7 @@ describe('form shell behavior slice', () => {
     );
   });
 
-  it('FormikForm uses soft validation and onSaveAndExit for draft saves', async () => {
+  it('formikForm uses soft validation and onSaveAndExit for draft saves', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
@@ -143,10 +144,11 @@ describe('form shell behavior slice', () => {
         expect.objectContaining({ setSubmitting: expect.any(Function) })
       );
     });
+
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it('FormikForm shows loading and custom banner branches', () => {
+  it('formikForm shows loading and custom banner branches', () => {
     render(
       <MemoryRouter>
         <FormikForm
@@ -168,7 +170,7 @@ describe('form shell behavior slice', () => {
     expect(screen.getByTestId('unsaved-form-prompt')).toBeInTheDocument();
   });
 
-  it('FormikForm validates soft and hard Yup schemas and supports empty children', async () => {
+  it('formikForm validates soft and hard Yup schemas and supports empty children', async () => {
     const softSchema = Yup.object({
       draftName: Yup.string().required('Draft name required'),
     });
@@ -196,9 +198,10 @@ describe('form shell behavior slice', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Validate soft' })
     );
-    expect(
-      await screen.findByRole('button', { name: 'Draft name required' })
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByRole('button', { name: 'Draft name required' })
+    ).resolves.toBeInTheDocument();
 
     rerender(
       <MemoryRouter>
@@ -220,9 +223,10 @@ describe('form shell behavior slice', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Validate hard' })
     );
-    expect(
-      await screen.findByRole('button', { name: 'Final name required' })
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByRole('button', { name: 'Final name required' })
+    ).resolves.toBeInTheDocument();
 
     rerender(
       <MemoryRouter>
@@ -231,10 +235,11 @@ describe('form shell behavior slice', () => {
         </FormikForm>
       </MemoryRouter>
     );
+
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('FormikForm renders the saving spinner while submission is pending', async () => {
+  it('formikForm renders the saving spinner while submission is pending', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
@@ -254,11 +259,13 @@ describe('form shell behavior slice', () => {
     );
 
     expect(screen.getByText('Pending form')).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Start save' }));
-    expect(await screen.findByText('Saving...')).toBeInTheDocument();
+
+    await expect(screen.findByText('Saving...')).resolves.toBeInTheDocument();
   });
 
-  it('ErrorSummary renders remaining server error branches and Formik nested errors', async () => {
+  it('errorSummary renders remaining server error branches and Formik nested errors', async () => {
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
@@ -310,7 +317,7 @@ describe('form shell behavior slice', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(
+    await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
       'Contacts: (#1): Required'
     );
     expect(
@@ -318,7 +325,7 @@ describe('form shell behavior slice', () => {
     ).toHaveAttribute('href', '#contacts.0.firstName');
   });
 
-  it('ErrorSummary ignores empty nested errors instead of stringifying them', async () => {
+  it('errorSummary ignores empty nested errors instead of stringifying them', async () => {
     vi.useFakeTimers();
     const scrollIntoView = vi.fn();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
@@ -365,7 +372,7 @@ describe('form shell behavior slice', () => {
     }
   });
 
-  it('ContactDetails renders editable labels and summary fallback/details branches', async () => {
+  it('contactDetails renders editable labels and summary fallback/details branches', async () => {
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>

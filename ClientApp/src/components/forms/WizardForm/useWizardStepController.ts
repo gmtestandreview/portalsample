@@ -170,7 +170,7 @@ export const useWizardStepController = (
 
   const nextStep =
     currentStepIndex < allSteps.length - 1
-      ? allSteps[currentStepIndex + 1]
+      ? allSteps.at(currentStepIndex + 1)
       : false;
 
   const goToStep = (step: StepElement, baseUrl?: string) =>
@@ -191,10 +191,13 @@ export const useWizardStepController = (
         );
         // Immutable update: replace the DTO at currentStepIndex with a new
         // object, rather than mutating the existing one in place.
-        stepStatuses[currentStepIndex] = {
-          ...stepStatuses[currentStepIndex],
-          status: FormStepStatus.Completed,
-        };
+        const currentStatus = stepStatuses.at(currentStepIndex);
+        if (currentStatus !== undefined) {
+          stepStatuses.splice(currentStepIndex, 1, {
+            ...currentStatus,
+            status: FormStepStatus.Completed,
+          });
+        }
         if (nextStep) {
           void goToStep(nextStep, result?.baseUrl);
         } else {
@@ -335,7 +338,7 @@ const resolveView = ({
     ) {
       return {
         kind: 'navigate',
-        to: `${url}${allSteps[firstIncompleteStepIndex]?.props.location}`,
+        to: `${url}${allSteps.at(firstIncompleteStepIndex)?.props.location}`,
       };
     }
   }

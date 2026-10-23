@@ -11,17 +11,17 @@ const mocks = vi.hoisted(() => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
+vi.mock(import('@/authentication/hooks'), () => ({
   useAccountDispatch: () => ({
     setUserProfile: mocks.setUserProfile,
   }),
 }));
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: mocks.trackGAEvent,
 }));
 
-vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
+vi.mock(import('@/components/Inputs/RadioButtonGroup'), () => ({
   default: ({
     legend,
     name,
@@ -77,7 +77,7 @@ const openMenu = async () => {
   return user;
 };
 
-describe('PaFilterMenu', () => {
+describe(PaFilterMenu, () => {
   beforeEach(() => {
     mocks.setUserProfile.mockReset();
     mocks.trackGAEvent.mockReset();
@@ -87,6 +87,7 @@ describe('PaFilterMenu', () => {
     renderMenu(undefined);
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
     expect(toggle).toHaveAttribute('title', 'No filters applied');
     expect(within(toggle).getByRole('status')).toHaveTextContent('');
 
@@ -108,6 +109,7 @@ describe('PaFilterMenu', () => {
     });
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
     expect(toggle).toHaveAttribute('title', '3 filters have been applied');
     expect(within(toggle).getByRole('status')).toHaveTextContent('3');
   });
@@ -139,6 +141,7 @@ describe('PaFilterMenu', () => {
       filterActiveTab: DashboardTab.Requests,
       filterSearchText: 'pattern',
     };
+
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expectedFilters);
     expect(mocks.setUserProfile).toHaveBeenCalledWith({
@@ -160,6 +163,7 @@ describe('PaFilterMenu', () => {
     });
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
     expect(toggle).toHaveAttribute('title', '0 filters have been applied');
     expect(within(toggle).getByRole('status')).toHaveTextContent('0');
   });
@@ -212,6 +216,7 @@ describe('PaFilterMenu', () => {
       filterActiveTab: DashboardTab.Instruments,
       filterSearchText: 'certificate',
     };
+
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expectedFilters);
     expect(mocks.setUserProfile).toHaveBeenCalledWith({

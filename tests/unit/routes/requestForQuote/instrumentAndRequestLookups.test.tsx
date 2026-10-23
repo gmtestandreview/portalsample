@@ -7,7 +7,7 @@ import { useInstrumentAndRequestLookups } from '@/routes/requestForQuote/instrum
 // No signed-in account: the lookup effect's guard (`accounts.length > 0`) never
 // runs, so measurementCategories stays undefined and the options builder has to
 // use its empty-list fallback.
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: [],
     instance: { acquireTokenSilent: vi.fn() },
@@ -20,7 +20,7 @@ const wrapper = ({ children }: { readonly children: ReactNode }) => (
   </Formik>
 );
 
-describe('useInstrumentAndRequestLookups', () => {
+describe(useInstrumentAndRequestLookups, () => {
   it('returns no measurement category options before the lookups resolve', () => {
     const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
       wrapper,

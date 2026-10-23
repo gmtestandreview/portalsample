@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal();
     if (typeof actual !== 'object' || actual === null) {
@@ -53,11 +53,11 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.appLoggerError,
   },
@@ -147,6 +147,7 @@ describe('request for quote wizard prop factories', () => {
       false,
       abortSignal
     );
+
     expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith(
       'APP-1',
       {
@@ -289,6 +290,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
+
     expect(mocks.submit).toHaveBeenCalledWith(
       'APP-3',
       {
@@ -300,6 +302,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
+
     await expect(
       props.onSaveAndNext?.(summary, true, abortSignal)
     ).resolves.toBeUndefined();
@@ -310,6 +313,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     mocks.getSummary.mockRejectedValueOnce(new Error('load failed'));
+
     await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
       'There was an error retrieving your details.'
     );
@@ -357,6 +361,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     await props.onSaveAndNext?.(summary, false, abortSignal);
+
     expect(mocks.submit).toHaveBeenCalledWith(
       'APP-4',
       {

@@ -25,14 +25,14 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: mocks.msalAccounts,
     instance: mocks.instance,
   }),
 }));
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -40,16 +40,16 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
   useAccountState: mocks.useAccountState,
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -70,31 +70,37 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.appLoggerError,
     verbose: mocks.appLoggerVerbose,
   },
 }));
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
+vi.mock(import('../../../../ClientApp/src/components/BlockUISpinner'), () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
-vi.mock('../../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-
-vi.mock('../../../../ClientApp/src/components/forms/WizardForm', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='wizard-form'>{children}</div>
-  ),
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  () => ({
+    default: () => {},
+  })
+);
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../ClientApp/src/components/forms/WizardForm'),
+  () => ({
+    default: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid='wizard-form'>{children}</div>
+    ),
+  })
+);
+
+vi.mock(
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () => ({
     default: ({ children }: { children: React.ReactNode }) => (
       <div data-testid='wizard-step'>{children}</div>
@@ -102,45 +108,51 @@ vi.mock(
   })
 );
 
-vi.mock('../../../../ClientApp/src/routes/acceptQuote/reportRecipient', () => ({
-  default: () => <div data-testid='step-report-recipient' />,
-}));
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  () => ({
+    default: () => <div data-testid='step-report-recipient' />,
+  })
+);
+vi.mock(
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
   () => ({
     default: () => <div data-testid='step-delivery-and-return' />,
   })
 );
-vi.mock('../../../../ClientApp/src/routes/acceptQuote/paymentDetails', () => ({
-  default: () => <div data-testid='step-payment-details' />,
-}));
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  () => ({
+    default: () => <div data-testid='step-payment-details' />,
+  })
+);
+vi.mock(
+  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
   () => ({
     default: () => <div data-testid='step-summary-and-accept' />,
   })
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps'),
   () => ({
     default: () => ({}),
   })
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps'),
   () => ({
     default: () => ({}),
   })
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps'),
   () => ({
     default: () => ({}),
   })
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps'),
   () => ({
     default: () => ({}),
   })
@@ -153,7 +165,7 @@ const accountDetails = {
 } as AccountDetails;
 const stepStatus = [{ crmQuoteRequestId: 'CRM-Q-42', status: 'Saved' }];
 
-describe('AcceptQuote container', () => {
+describe('acceptQuote container', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.msalAccounts.splice(0, mocks.msalAccounts.length, {
@@ -211,6 +223,7 @@ describe('AcceptQuote container', () => {
     await waitFor(() =>
       expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42')
     );
+
     expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
   });
 
@@ -221,6 +234,7 @@ describe('AcceptQuote container', () => {
     await waitFor(() =>
       expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
     );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
       expect.any(Error),
@@ -235,6 +249,7 @@ describe('AcceptQuote container', () => {
     await waitFor(() =>
       expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
     );
+
     expect(mocks.getQuoteRequestDetails).not.toHaveBeenCalled();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
@@ -254,6 +269,7 @@ describe('AcceptQuote container', () => {
     await waitFor(() =>
       expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
     );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
       expect.any(Error),
@@ -266,10 +282,12 @@ describe('AcceptQuote container', () => {
     await renderAcceptQuote();
 
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
+
     // Drain microtasks so any effect that could have fired has had its chance
     await new Promise<void>((r) => {
       setTimeout(r, 0);
     });
+
     expect(mocks.getStepStatuses).not.toHaveBeenCalled();
   });
 });

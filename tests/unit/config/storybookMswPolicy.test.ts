@@ -22,10 +22,12 @@ type UnhandledFrameCallbackArgs = Parameters<
 >[0];
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'bypass' }));
+
 afterEach(() => server.resetHandlers());
+
 afterAll(() => server.close());
 
-describe('Storybook dashboard API contracts', () => {
+describe('storybook dashboard API contracts', () => {
   it('does not use a dashboard wildcard for incompatible response types', () => {
     expect(handlerSource).not.toContain('/api/dashboard/*');
   });
@@ -101,7 +103,7 @@ describe('Storybook dashboard API contracts', () => {
   });
 });
 
-describe('Storybook unhandled-request policy', () => {
+describe('storybook unhandled-request policy', () => {
   it('fails an unhandled same-origin API request at its owner', () => {
     const defaults = { error: vi.fn(), warn: vi.fn() };
 
@@ -115,7 +117,7 @@ describe('Storybook unhandled-request policy', () => {
       defaults,
     });
 
-    expect(defaults.error).toHaveBeenCalledOnce();
+    expect(defaults.error).toHaveBeenCalledExactlyOnceWith();
     expect(defaults.warn).not.toHaveBeenCalled();
   });
 

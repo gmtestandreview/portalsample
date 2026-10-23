@@ -86,7 +86,7 @@ const probe = () =>
     dirty: boolean;
   };
 
-describe('SummaryAndAcceptFormikBridge', () => {
+describe(SummaryAndAcceptFormikBridge, () => {
   it('renders its children between the bridged fields', () => {
     render(<Harness />);
 
@@ -101,10 +101,13 @@ describe('SummaryAndAcceptFormikBridge', () => {
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
     await user.type(screen.getByLabelText(DISPUTE_LABEL), 'Late delivery');
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
+
     expect(probe()).toEqual({ acceptance: true, dirty: true });
+
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submitted(onSubmit)).toEqual({
       associatedDisputes: 'Yes',
       associatedDispute: 'Late delivery',
@@ -127,6 +130,7 @@ describe('SummaryAndAcceptFormikBridge', () => {
     );
 
     const dispute = screen.getByLabelText(DISPUTE_LABEL);
+
     expect(screen.getByRole('radio', { name: 'Yes' })).toBeChecked();
     expect(dispute).toHaveValue('Existing dispute');
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked();
@@ -135,7 +139,8 @@ describe('SummaryAndAcceptFormikBridge', () => {
     await user.type(dispute, 'Edited dispute');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(submitted(onSubmit)).toEqual({
       associatedDisputes: YesNo.Yes,
       associatedDispute: 'Edited dispute',
@@ -161,7 +166,9 @@ describe('SummaryAndAcceptFormikBridge', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(ACCEPT_MESSAGE)).toBeInTheDocument();
+    await expect(
+      screen.findByText(ACCEPT_MESSAGE)
+    ).resolves.toBeInTheDocument();
     expect(
       screen.getByText('Associated dispute is a required field')
     ).toBeInTheDocument();
@@ -195,7 +202,8 @@ describe('SummaryAndAcceptFormikBridge', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
     expect(screen.queryByText(/is a required field/)).not.toBeInTheDocument();
   });
@@ -216,9 +224,9 @@ describe('SummaryAndAcceptFormikBridge', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' })
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -226,7 +234,9 @@ describe('SummaryAndAcceptFormikBridge', () => {
     const { unmount } = render(
       <Harness values={{ associatedDisputes: YesNo.No }} />
     );
+
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
+
     unmount();
 
     render(
@@ -235,6 +245,7 @@ describe('SummaryAndAcceptFormikBridge', () => {
         values={{ associatedDisputes: YesNo.No }}
       />
     );
+
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
   });
 });

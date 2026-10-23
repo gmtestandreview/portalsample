@@ -74,7 +74,7 @@ const baseProps = {
   onDeleteFile: vi.fn(async () => {}),
 };
 
-describe('AttachmentNew', () => {
+describe(AttachmentNew, () => {
   it('treats a field holding a single object as empty rather than throwing', () => {
     // The field is typed `AttachmentDto[] | AttachmentDto | null`, so a form is free to hand
     // over a bare object. AttachmentItemNew addresses its field as `name[index]`, which reads

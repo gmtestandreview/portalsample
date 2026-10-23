@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -5,7 +6,7 @@ import DatePicker from '@/components/Inputs/DatePicker';
 import type { CustomDatePickerProps } from '@/components/Inputs/DatePicker/types';
 import { parseDateOnlyInput } from '@/utils/dateOnly';
 
-vi.mock('@/components/Inputs/DatePicker/CustomDatePicker', () => ({
+vi.mock(import('@/components/Inputs/DatePicker/CustomDatePicker'), () => ({
   default: ({
     currentDate,
     dateOnBlur,
@@ -88,7 +89,7 @@ function ValuesProbe() {
   );
 }
 
-describe('DatePicker wrapper', () => {
+describe('datePicker wrapper', () => {
   it('parses initial Formik values, forwards validation state, and normalizes date changes', async () => {
     const user = userEvent.setup();
 
@@ -103,6 +104,7 @@ describe('DatePicker wrapper', () => {
     );
 
     const input = screen.getByLabelText('Due date');
+
     expect(parseDateOnlyInput((input as HTMLInputElement).value)).toBe(
       '2026-06-11'
     );

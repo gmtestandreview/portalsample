@@ -48,14 +48,14 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -80,28 +80,31 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 
-vi.mock('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments', () => ({
-  default: (props: typeof documentsStep.props) => {
-    documentsStep.props = props;
+vi.mock(
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
+  () => ({
+    default: (props: typeof documentsStep.props) => {
+      documentsStep.props = props;
 
-    return (
-      <div
-        data-testid='supporting-documents'
-        data-uploading={String(props.uploading)}
-        data-disable-upload={String(props.disableUpload)}
-        data-errors={props.externalErrors.join('|')}
-      />
-    );
-  },
-}));
+      return (
+        <div
+          data-testid='supporting-documents'
+          data-uploading={String(props.uploading)}
+          data-disable-upload={String(props.disableUpload)}
+          data-errors={props.externalErrors.join('|')}
+        />
+      );
+    },
+  })
+);
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
   id: 'doc-1',
@@ -295,6 +298,7 @@ describe('application documents', () => {
           { Id: 'APP-1' }
         )
       );
+
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
 
@@ -324,6 +328,7 @@ describe('application documents', () => {
       );
 
       await renderLoaded();
+
       expect(
         screen.queryByRole('button', { name: 'Commit' })
       ).not.toBeInTheDocument();
@@ -345,6 +350,7 @@ describe('application documents', () => {
         id: 'doc-2',
         documentReference: 'doc-2',
       });
+
       await waitFor(() =>
         expect(
           screen.getByRole('button', { name: 'Commit' })
@@ -439,7 +445,7 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(
           clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
     });
 
@@ -479,9 +485,10 @@ describe('application documents', () => {
         () =>
           expect(
             clients.progress.methods.deleteProgressStatistics
-          ).toHaveBeenCalled(),
+          ).toHaveBeenCalledWith(),
         { timeout: 10000 }
       );
+
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
     }, 20000);
 
@@ -499,7 +506,7 @@ describe('application documents', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
       await waitFor(() =>
-        expect(clients.progress.methods.getProgress).toHaveBeenCalled()
+        expect(clients.progress.methods.getProgress).toHaveBeenCalledWith()
       );
 
       unmount();
@@ -512,6 +519,7 @@ describe('application documents', () => {
       await act(async () => {
         await Promise.resolve();
       });
+
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(
         callsAfterUnmount
       );
@@ -573,11 +581,12 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.commitAppDocuments
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
       const [applicationId, values] = defined(
         clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
       );
+
       expect(applicationId).toBe('APP-1');
       // Bytes are cleared so the commit payload stays small.
       expect(values.form.documents[0].documentBytes).toBeUndefined();
@@ -615,6 +624,7 @@ describe('application documents', () => {
           'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.'
         )
       );
+
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
         expect.anything(),

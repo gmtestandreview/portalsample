@@ -61,7 +61,7 @@ declare module 'slate' {
 
 const isMarkActive = (editor: Editor, format: keyof CustomText) => {
   const marks = Editor.marks(editor) as Partial<CustomText> | null;
-  return marks ? marks[format] === true : false;
+  return marks ? Reflect.get(marks, format) === true : false;
 };
 
 const toggleMark = (editor: Editor, format: keyof CustomText) => {
@@ -72,6 +72,56 @@ const toggleMark = (editor: Editor, format: keyof CustomText) => {
     Editor.addMark(editor, format, true);
   }
 };
+
+const EMPTY_PARAGRAPH_PATTERN = /<p>[\s\S]*?<\/p>/gi;
+
+export const isBreakTag = (value: string) => {
+  const normalized = value.toLowerCase();
+  if (!normalized.startsWith('<br') || !normalized.endsWith('>')) {
+    return false;
+  }
+
+  const tagContent = normalized.slice(3, -1).trim();
+  return tagContent === '' || tagContent === '/';
+};
+
+export const isEmptyParagraphContent = (content: string) => {
+  let cursor = 0;
+  while (cursor < content.length) {
+    const remainder = content.slice(cursor);
+    if (remainder.startsWith('&nbsp;')) {
+      cursor += '&nbsp;'.length;
+      continue;
+    }
+    if (remainder.toLowerCase().startsWith('&#xfeff;')) {
+      cursor += '&#xfeff;'.length;
+      continue;
+    }
+    if (/\s/.test(content.charAt(cursor))) {
+      cursor += 1;
+      continue;
+    }
+    if (remainder.toLowerCase().startsWith('<br')) {
+      const tagEnd = remainder.indexOf('>');
+      if (tagEnd === -1 || !isBreakTag(remainder.slice(0, tagEnd + 1))) {
+        return false;
+      }
+      cursor += tagEnd + 1;
+      continue;
+    }
+    return false;
+  }
+  return true;
+};
+
+const removeEmptyParagraphs = (html: string) =>
+  html.replace(EMPTY_PARAGRAPH_PATTERN, (block) => {
+    const contentStart = block.indexOf('>') + 1;
+    const contentEnd = block.lastIndexOf('<');
+    return isEmptyParagraphContent(block.slice(contentStart, contentEnd))
+      ? ''
+      : block;
+  });
 
 const renderHtmlBody = (html: string) => {
   const safeHtml = DOMPurify.sanitize(html);
@@ -119,9 +169,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
     const serializedHtml = serializeToHtml(v);
 
     // Treat editor scaffolding as empty
-    const htmlWithoutEmptyBlocks = serializedHtml
-      .replace(/<p>(?:(?:&nbsp;|&#xfeff;|<br\s*\/?>)|\s)*<\/p>/gi, '')
-      .trim();
+    const htmlWithoutEmptyBlocks = removeEmptyParagraphs(serializedHtml).trim();
 
     if (!htmlWithoutEmptyBlocks) return 0;
 

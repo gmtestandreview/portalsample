@@ -50,7 +50,7 @@ const contactDetails = {
   phoneNumber: '0400000000',
 };
 
-describe('organisationAndContactSubmitValidation', () => {
+describe(organisationAndContactSubmitValidation, () => {
   it('requires the organisation type', async () => {
     const errors = await errorsFor(organisationAndContactSubmitValidation, {});
 
@@ -115,7 +115,7 @@ describe('organisationAndContactSubmitValidation', () => {
   });
 });
 
-describe('organisationAndContactSaveValidation', () => {
+describe(organisationAndContactSaveValidation, () => {
   it('applies the soft contact schema when the user is not the principal contact', async () => {
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       isPrincipalContact: YesNo.No,
@@ -210,7 +210,7 @@ const allPrincipal = {
   authorisedAgent: {},
 };
 
-describe('patternApprovalOrgAndContactSubmitValidation', () => {
+describe(patternApprovalOrgAndContactSubmitValidation, () => {
   it('skips every nominated party when the principal is used throughout', async () => {
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
@@ -235,7 +235,7 @@ describe('patternApprovalOrgAndContactSubmitValidation', () => {
   });
 });
 
-describe('patternApprovalOrgAndContactSaveValidation', () => {
+describe(patternApprovalOrgAndContactSaveValidation, () => {
   it('skips every nominated party when the principal is used throughout', async () => {
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
@@ -255,7 +255,7 @@ describe('patternApprovalOrgAndContactSaveValidation', () => {
   });
 });
 
-describe('applicationAndInstrumentSubmitValidation', () => {
+describe(applicationAndInstrumentSubmitValidation, () => {
   const newCertificate = {
     patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
   };
@@ -458,7 +458,7 @@ describe('applicationAndInstrumentSubmitValidation', () => {
   });
 });
 
-describe('applicationAndInstrumentSaveValidation', () => {
+describe(applicationAndInstrumentSaveValidation, () => {
   it('allows empty instrument details for a new certificate', async () => {
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
@@ -506,7 +506,7 @@ describe('applicationAndInstrumentSaveValidation', () => {
   });
 });
 
-describe('summaryAndSubmitValidation', () => {
+describe(summaryAndSubmitValidation, () => {
   it.each([
     ['acceptNMIP106', 'NMI P 106'],
     ['acceptTermsAndConditions', 'terms and conditions'],
@@ -536,7 +536,7 @@ describe('summaryAndSubmitValidation', () => {
   });
 });
 
-describe('summaryAndSaveValidation', () => {
+describe(summaryAndSaveValidation, () => {
   it('accepts an unfinished declaration on save', async () => {
     const errors = await errorsFor(summaryAndSaveValidation, {
       acceptNMIP106: false,

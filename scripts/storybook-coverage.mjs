@@ -92,7 +92,7 @@ const result = (errors = []) => ({
 
 const skipJsonWhitespace = (text, index) => {
   let next = index;
-  while (/\s/u.test(text[next] ?? '')) next += 1;
+  while (/\s/u.test(text.charAt(next))) next += 1;
   return next;
 };
 
@@ -100,7 +100,7 @@ const parseJsonString = (text, start) => {
   let index = start + 1;
   let escaped = false;
   while (index < text.length) {
-    const character = text[index];
+    const character = text.charAt(index);
     if (escaped) {
       escaped = false;
       index += 1;
@@ -127,7 +127,7 @@ const assertUniqueJsonKeys = (text) => {
 
   const parseValue = () => {
     index = skipJsonWhitespace(text, index);
-    const character = text[index];
+    const character = text.charAt(index);
     if (character === '"') {
       const parsed = parseJsonString(text, index);
       index = parsed.next;
@@ -137,17 +137,17 @@ const assertUniqueJsonKeys = (text) => {
       index += 1;
       index = skipJsonWhitespace(text, index);
       const keys = new Set();
-      if (text[index] === '}') {
+      if (text.charAt(index) === '}') {
         index += 1;
         return;
       }
       while (index < text.length) {
         index = skipJsonWhitespace(text, index);
-        if (text[index] !== '"')
+        if (text.charAt(index) !== '"')
           throw new Error('manifest JSON object key is invalid');
         const key = parseJsonString(text, index);
         index = skipJsonWhitespace(text, key.next);
-        if (text[index] !== ':')
+        if (text.charAt(index) !== ':')
           throw new Error('manifest JSON object is missing a colon');
         if (keys.has(key.value)) {
           throw new Error(`duplicate manifest JSON key: ${key.value}`);
@@ -156,11 +156,11 @@ const assertUniqueJsonKeys = (text) => {
         index += 1;
         parseValue();
         index = skipJsonWhitespace(text, index);
-        if (text[index] === '}') {
+        if (text.charAt(index) === '}') {
           index += 1;
           return;
         }
-        if (text[index] !== ',')
+        if (text.charAt(index) !== ',')
           throw new Error('manifest JSON object is missing a comma');
         index += 1;
       }
@@ -169,30 +169,58 @@ const assertUniqueJsonKeys = (text) => {
     if (character === '[') {
       index += 1;
       index = skipJsonWhitespace(text, index);
-      if (text[index] === ']') {
+      if (text.charAt(index) === ']') {
         index += 1;
         return;
       }
       while (index < text.length) {
         parseValue();
         index = skipJsonWhitespace(text, index);
-        if (text[index] === ']') {
+        if (text.charAt(index) === ']') {
           index += 1;
           return;
         }
-        if (text[index] !== ',')
+        if (text.charAt(index) !== ',')
           throw new Error('manifest JSON array is missing a comma');
         index += 1;
       }
       throw new Error('manifest JSON array is unterminated');
     }
 
-    const literal =
-      /^(?:true|false|null|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)/u.exec(
-        text.slice(index)
-      );
-    if (literal === null) throw new Error('manifest JSON value is invalid');
-    index += literal[0].length;
+    for (const literal of ['true', 'false', 'null']) {
+      if (text.startsWith(literal, index)) {
+        index += literal.length;
+        return;
+      }
+    }
+
+    const isDigit = (value) => value >= '0' && value <= '9';
+    if (text.charAt(index) === '-') index += 1;
+    const firstDigit = text.charAt(index);
+    if (firstDigit === '0') {
+      index += 1;
+    } else if (firstDigit >= '1' && firstDigit <= '9') {
+      while (isDigit(text.charAt(index))) index += 1;
+    } else {
+      throw new Error('manifest JSON value is invalid');
+    }
+
+    const decimalMarker = index;
+    if (text.charAt(index) === '.') {
+      index += 1;
+      const decimalStart = index;
+      while (isDigit(text.charAt(index))) index += 1;
+      if (index === decimalStart) index = decimalMarker;
+    }
+
+    const exponentMarker = index;
+    if (text.charAt(index) === 'e' || text.charAt(index) === 'E') {
+      index += 1;
+      if (text.charAt(index) === '+' || text.charAt(index) === '-') index += 1;
+      const exponentStart = index;
+      while (isDigit(text.charAt(index))) index += 1;
+      if (index === exponentStart) index = exponentMarker;
+    }
   };
 
   parseValue();
@@ -218,10 +246,10 @@ const canonicaliseJson = (value, segments = []) => {
   if (!isRecord(value)) return value;
 
   return Object.fromEntries(
-    Object.keys(value)
-      .sort()
+    Object.entries(value)
+      .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
       .filter(
-        (key) =>
+        ([key]) =>
           !(
             key === 'reviewedSourceDigest' &&
             segments.length === 3 &&
@@ -230,7 +258,10 @@ const canonicaliseJson = (value, segments = []) => {
             segments[2] === 'review'
           )
       )
-      .map((key) => [key, canonicaliseJson(value[key], [...segments, key])])
+      .map(([key, entryValue]) => [
+        key,
+        canonicaliseJson(entryValue, [...segments, key]),
+      ])
   );
 };
 
@@ -782,18 +813,6 @@ export function validateProducerIdentity({
   expectedChildEpoch,
 }) {
   const errors = [];
-  const requiredProducerFields = [
-    'producerId',
-    'producerIdentityDigest',
-    'checkout',
-    'commit',
-    'inputDigest',
-    'freezeId',
-    'mcpURL',
-    'serverStartedAt',
-    'cwd',
-  ];
-
   if (!isRecord(producer) || !isRecord(receipt)) {
     return result([
       error(
@@ -803,8 +822,19 @@ export function validateProducerIdentity({
     ]);
   }
 
-  for (const field of requiredProducerFields) {
-    if (!nonEmptyString(producer[field])) {
+  const producerFieldValues = [
+    ['producerId', producer.producerId],
+    ['producerIdentityDigest', producer.producerIdentityDigest],
+    ['checkout', producer.checkout],
+    ['commit', producer.commit],
+    ['inputDigest', producer.inputDigest],
+    ['freezeId', producer.freezeId],
+    ['mcpURL', producer.mcpURL],
+    ['serverStartedAt', producer.serverStartedAt],
+    ['cwd', producer.cwd],
+  ];
+  for (const [field, value] of producerFieldValues) {
+    if (!nonEmptyString(value)) {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
@@ -841,14 +871,18 @@ export function validateProducerIdentity({
     );
   }
 
-  for (const field of [
-    'producerId',
-    'producerIdentityDigest',
-    'inputDigest',
-    'freezeId',
-    'mcpURL',
+  for (const [field, receiptValue, producerValue] of [
+    ['producerId', receipt.producerId, producer.producerId],
+    [
+      'producerIdentityDigest',
+      receipt.producerIdentityDigest,
+      producer.producerIdentityDigest,
+    ],
+    ['inputDigest', receipt.inputDigest, producer.inputDigest],
+    ['freezeId', receipt.freezeId, producer.freezeId],
+    ['mcpURL', receipt.mcpURL, producer.mcpURL],
   ]) {
-    if (receipt[field] !== producer[field]) {
+    if (receiptValue !== producerValue) {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
@@ -2038,11 +2072,11 @@ export function validateClosure({
     );
   }
 
-  for (const [label, index, digestKey] of [
-    ['full', fullIndex, 'fullIndexDigest'],
-    ['docs', docsIndex, 'docsIndexDigest'],
+  for (const [label, index, digest] of [
+    ['full', fullIndex, freeze?.fullIndexDigest],
+    ['docs', docsIndex, freeze?.docsIndexDigest],
   ]) {
-    if (freeze?.[digestKey] !== computeIndexDigest(index)) {
+    if (digest !== computeIndexDigest(index)) {
       errors.push(
         error(
           FAILURE_CODES.INPUT_STALE,
@@ -2329,8 +2363,12 @@ export const writeInventoryRegions = ({ inventory, root = process.cwd() }) => {
       'ClientApp/src/storybook/CoverageMatrix.docs.mdx'
     ),
   };
-  for (const [region, filePath] of Object.entries(files)) {
-    replaceGeneratedRegion(filePath, inventory.regions[region]);
+  for (const [filePath, generatedRegion] of [
+    [files.components, inventory.regions.components],
+    [files.routes, inventory.regions.routes],
+    [files.matrix, inventory.regions.matrix],
+  ]) {
+    replaceGeneratedRegion(filePath, generatedRegion);
   }
 };
 
@@ -2519,8 +2557,13 @@ const runReferencesMode = (args, manifest) => {
   }
 };
 
-const readJsonFile = (filePath) =>
-  parseJsonDocument(readFileSync(path.resolve(filePath), 'utf8'));
+const readJsonFile = (filePath) => {
+  const resolvedPath = path.resolve(filePath);
+  // Closure mode intentionally reads caller-selected CLI evidence paths; the
+  // path is resolved here to preserve the existing --index/--docs-index contract.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  return parseJsonDocument(readFileSync(resolvedPath, 'utf8'));
+};
 
 const runClosureMode = (args, manifest) => {
   if (!args.index || !args.docsIndex || !args.receipts) {
@@ -2533,6 +2576,10 @@ const runClosureMode = (args, manifest) => {
   }
   try {
     const receiptDirectory = path.resolve(args.receipts);
+    // The receipt directory is an explicit --receipts CLI destination selected
+    // by the invoking closure job, so this dynamic path is an intentional I/O
+    // boundary rather than an application-controlled filename.
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     const receiptFiles = readdirSync(receiptDirectory)
       .filter((fileName) => /^receipt-.*\.json$/u.test(fileName))
       .toSorted();

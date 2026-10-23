@@ -12,7 +12,7 @@ const mockInstance = {
   getActiveAccount: vi.fn().mockReturnValue(null),
 };
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: vi.fn(() => ({
     inProgress: 'none',
     accounts: [
@@ -29,14 +29,14 @@ vi.mock('@azure/msal-react', () => ({
   })),
 }));
 
-vi.mock('@azure/msal-browser', () => ({
+vi.mock(import('@azure/msal-browser'), () => ({
   InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
 }));
 
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => {
+vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
   return {
     UsersClient: class {
       setAuthToken = vi.fn();
@@ -46,30 +46,30 @@ vi.mock('../../../ClientApp/src/api/web-api-client', () => {
   };
 });
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
 }));
 
-vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
+vi.mock(import('../../../ClientApp/src/storage/targetOrganisation'), () => ({
   default: vi.fn(),
   getTargetOrganisation: vi.fn().mockReturnValue(null),
 }));
 
-vi.mock('../../../ClientApp/src/terms-config.json', () => ({
+vi.mock(import('../../../ClientApp/src/terms-config.json'), () => ({
   default: { TermsVersion: '1' },
 }));
 
-vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
+vi.mock(import('../../../ClientApp/src/routes/common/helperFunctions'), () => ({
   mapToUserProfile: vi.fn().mockReturnValue(undefined),
 }));
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
   tokenRequest: { scopes: [] },
 }));
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('AccountProvider — errored state', () => {
+describe('accountProvider — errored state', () => {
   beforeEach(() => {
     // Clear all mock call histories
     vi.clearAllMocks();
@@ -103,7 +103,7 @@ describe('AccountProvider — errored state', () => {
       expect(screen.getByTestId('protected-content')).toBeInTheDocument()
     );
 
-    expect(mockSignIn).toHaveBeenCalled();
+    expect(mockSignIn).toHaveBeenCalledWith();
     expect(mockSignIn).toHaveBeenCalledWith({});
   });
 
@@ -117,7 +117,7 @@ describe('AccountProvider — errored state', () => {
     // Wait for the error state to be set (loading spinner disappears)
     await waitFor(() => {
       // Check if logoutRedirect was called (which happens in the error handler)
-      expect(mockInstance.logoutRedirect).toHaveBeenCalled();
+      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith();
     });
 
     // The error message should be displayed
@@ -129,7 +129,7 @@ describe('AccountProvider — errored state', () => {
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
 
     // Verify that logoutRedirect was called to handle the error
-    expect(mockInstance.logoutRedirect).toHaveBeenCalled();
+    expect(mockInstance.logoutRedirect).toHaveBeenCalledWith();
   });
 
   it('still requests logout when redirect response handling fails', async () => {
@@ -148,6 +148,7 @@ describe('AccountProvider — errored state', () => {
         account: null,
       })
     );
+
     expect(
       screen.getByText(/Unable to load account details/i)
     ).toBeInTheDocument();
@@ -170,6 +171,7 @@ describe('AccountProvider — errored state', () => {
         account: null,
       })
     );
+
     expect(
       screen.getByText(/Unable to load account details/i)
     ).toBeInTheDocument();

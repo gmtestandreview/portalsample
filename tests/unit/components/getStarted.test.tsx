@@ -10,7 +10,7 @@ import {
 } from '@/storage/notification';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useIsAuthenticated: vi.fn(),
 }));
 
@@ -28,7 +28,7 @@ const renderGetStarted = () =>
     </MemoryRouter>
   );
 
-describe('GetStarted', () => {
+describe(GetStarted, () => {
   beforeEach(() => {
     vi.mocked(useIsAuthenticated).mockReturnValue(false);
     clearGetStartedNotification();

@@ -16,24 +16,33 @@ import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  () => ({
+    default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+  })
+);
 
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () => ({
     default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
   })
 );
 
-vi.mock('../../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock(
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
+  () => ({
+    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+  })
+);
 
-vi.mock('../../../../../ClientApp/src/components/SteppedNavigation', () => ({
-  default: () => <div data-testid='stepped-navigation' />,
-}));
+vi.mock(
+  import('../../../../../ClientApp/src/components/SteppedNavigation'),
+  () => ({
+    default: () => <div data-testid='stepped-navigation' />,
+  })
+);
 
 // ── Shared mock context values ────────────────────────────────────────────────
 
@@ -190,7 +199,7 @@ function makeSplitSplatTwoStepRouter(
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('WizardForm — step navigation', () => {
+describe('wizardForm — step navigation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -206,6 +215,7 @@ describe('WizardForm — step navigation', () => {
     await waitFor(() =>
       expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
     );
+
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
   });
 
@@ -225,8 +235,24 @@ describe('WizardForm — step navigation', () => {
     await waitFor(() =>
       expect(screen.getByTestId('step-2-content')).toBeInTheDocument()
     );
+
     expect(screen.queryByTestId('step-1-content')).not.toBeInTheDocument();
     // Confirm form submission was triggered (navigation is driven by onSaveAndNext resolving)
+    expect(step1Save).toHaveBeenCalledTimes(1);
+  });
+
+  it('still navigates when the current step has no status entry', async () => {
+    const step1Save = vi.fn().mockResolvedValue({});
+    const router = makeTwoStepRouter([], step1Save);
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
+    await userEvent.click(screen.getByTestId('save-and-next-button'));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument()
+    );
+
     expect(step1Save).toHaveBeenCalledTimes(1);
   });
 
@@ -252,6 +278,7 @@ describe('WizardForm — step navigation', () => {
     await waitFor(() =>
       expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
     );
+
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
   });
 
@@ -271,6 +298,7 @@ describe('WizardForm — step navigation', () => {
     await waitFor(() =>
       expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
     );
+
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
   });
 

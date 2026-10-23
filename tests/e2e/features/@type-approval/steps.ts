@@ -1,13 +1,14 @@
+import { expect } from 'vitest';
 import { expect, type Page } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from '../../support/fixtures';
 
-const stepLocations: Record<string, string> = {
-  'Organisation details': 'organisation-details',
-  'Application details': 'application-details',
-  'Supporting documents': 'supporting-documents',
-  'Summary and submit': 'summary',
-};
+const stepLocations = new Map([
+  ['Organisation details', 'organisation-details'],
+  ['Application details', 'application-details'],
+  ['Supporting documents', 'supporting-documents'],
+  ['Summary and submit', 'summary'],
+]);
 
 const waitForAppReady = async (page: Page) => {
   await page.waitForLoadState('domcontentloaded');
@@ -21,6 +22,7 @@ Given(
   async ({ page }) => {
     await page.goto('/dashboard-ta');
     await waitForAppReady(page);
+
     await expect(page).toHaveURL(/\/dashboard-ta$/);
     await expect(
       page.getByRole('heading', { name: /manage pattern\/type approval/i })
@@ -59,15 +61,22 @@ When('the applicant begins the application', async ({ page }) => {
 Then(
   'the type-approval step {string} is displayed',
   async ({ page }, title: string) => {
-    const location = stepLocations[title];
+    const location = stepLocations.get(title);
     if (!location) {
       throw new Error(`Unsupported type-approval step: ${title}`);
     }
-    await expect(page).toHaveURL(new RegExp(`/ta/[^/]+/${location}$`));
+
+    await expect(page).toHaveURL((url) =>
+      url.pathname.endsWith(`/ta/${location}`)
+    );
     await expect(page.getByTestId('form')).toBeVisible();
-    await expect(
-      page.getByRole('heading', { level: 1, name: new RegExp(title, 'i') })
-    ).toBeVisible();
+    await expect
+      .poll(async () =>
+        (await page.getByRole('heading', { level: 1 }).allInnerTexts()).some(
+          (heading) => heading.toLowerCase().includes(title.toLowerCase())
+        )
+      )
+      .toBe(true);
   }
 );
 
@@ -125,7 +134,9 @@ When(
       mimeType: 'application/pdf',
       buffer: Buffer.from('%PDF-1.4 type approval evidence'),
     });
+
     await expect(page.getByText(fileName, { exact: true })).toBeVisible();
+
     await page.getByLabel('Category').selectOption(category);
     await page.getByTestId('save-and-next-button').click();
   }
@@ -183,6 +194,7 @@ Given(
   'submitted type-approval application {string} is available',
   async ({ page }, referenceId: string) => {
     await page.getByRole('tab', { name: 'Applications', exact: true }).click();
+
     await expect(
       page
         .getByRole('tabpanel', { name: 'Applications' })

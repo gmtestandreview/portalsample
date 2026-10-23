@@ -75,11 +75,12 @@ const renderItem = (
     </FormikHarness>
   );
 
-describe('AttachmentItemNew', () => {
+describe(AttachmentItemNew, () => {
   it('renders the file link, file size, category options, and validation message', () => {
     renderItem({}, { attachments: [{ attachmentCategory: true }] });
 
     const fileLink = screen.getByRole('link', { name: 'manual.pdf' });
+
     expect(fileLink).toHaveAttribute('download', 'manual.pdf');
     expect(fileLink.getAttribute('href')).toMatch(/^blob:/);
     expect(screen.getByText('2 kb')).toBeInTheDocument();
@@ -105,6 +106,7 @@ describe('AttachmentItemNew', () => {
     );
 
     expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Certificate"'
@@ -137,6 +139,7 @@ describe('AttachmentItemNew', () => {
 
     expect(onCategoryUpdate).not.toHaveBeenCalled();
     expect(screen.queryByText('2 kb')).not.toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Manuals"'
@@ -168,6 +171,7 @@ describe('AttachmentItemNew', () => {
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: 'Delete' }));
+
     expect(
       screen.getByRole('heading', { name: 'Confirm deletion' })
     ).toBeInTheDocument();
@@ -175,6 +179,7 @@ describe('AttachmentItemNew', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(onRemoveItem).not.toHaveBeenCalled();
+
     await waitFor(() =>
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' })
@@ -191,6 +196,7 @@ describe('AttachmentItemNew', () => {
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onRemoveItem).toHaveBeenCalledWith(attachment);
+
     await waitFor(() =>
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' })

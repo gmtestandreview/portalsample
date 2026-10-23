@@ -1,9 +1,34 @@
 import { access, readdir, readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { isAbsolute, relative, resolve } from 'node:path';
 import process from 'node:process';
 
 const root = process.cwd();
 const staticDir = resolve(root, 'storybook-static');
+
+const ownedPath = (parent, candidate) => {
+  const relativePath = relative(resolve(parent), resolve(candidate));
+  if (
+    relativePath !== '' &&
+    (relativePath.startsWith('..') || isAbsolute(relativePath))
+  ) {
+    throw new Error(`path escapes owned Storybook directory: ${candidate}`);
+  }
+  return resolve(candidate);
+};
+
+const readOwnedFile = async (parent, filePath) => {
+  const safePath = ownedPath(parent, filePath);
+  // safePath is confined to the generated/source tree selected by this verifier.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  return readFile(safePath, 'utf8');
+};
+
+const readOwnedDirectory = async (parent, directoryPath) => {
+  const safePath = ownedPath(parent, directoryPath);
+  // safePath is confined to the generated/source tree selected by this verifier.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  return readdir(safePath, { withFileTypes: true });
+};
 
 const requiredFiles = ['index.html', 'iframe.html', 'index.json'];
 
@@ -12,7 +37,7 @@ for (const file of requiredFiles) {
 }
 
 const index = JSON.parse(
-  await readFile(resolve(staticDir, 'index.json'), 'utf8')
+  await readOwnedFile(staticDir, resolve(staticDir, 'index.json'))
 );
 
 const entries = Object.values(index.entries ?? {});
@@ -52,7 +77,7 @@ const readDocsSources = async (dir) => {
 
   while (pending.length > 0) {
     const current = pending.pop();
-    const children = await readdir(current, { withFileTypes: true });
+    const children = await readOwnedDirectory(root, current);
 
     for (const child of children) {
       const childPath = resolve(current, child.name);
@@ -78,7 +103,7 @@ const internalDocsLinkFailures = [];
 for (const sourceFile of (
   await Promise.all(docsSourceDirs.map(readDocsSources))
 ).flat()) {
-  const source = await readFile(sourceFile, 'utf8');
+  const source = await readOwnedFile(root, sourceFile);
 
   for (const match of source.matchAll(markdownLinkPattern)) {
     const href = match[1] ?? match[2];
@@ -100,7 +125,10 @@ if (internalDocsLinkFailures.length > 0) {
 }
 
 const manifest = JSON.parse(
-  await readFile(resolve(staticDir, 'manifests/components.json'), 'utf8')
+  await readOwnedFile(
+    staticDir,
+    resolve(staticDir, 'manifests/components.json')
+  )
 );
 
 const components = Object.values(manifest.components ?? {});

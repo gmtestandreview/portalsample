@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { AlertInfo } from '@/components/Alert';
 import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
@@ -5,6 +6,7 @@ import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
 describe('runtime smoke coverage for restored local type modules', () => {
   it('renders AlertInfo', () => {
     render(<AlertInfo>Informational alert</AlertInfo>);
+
     expect(screen.getByText('Informational alert')).toBeInTheDocument();
   });
 

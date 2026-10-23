@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import RequestItem from '@/components/RequestList/requestItem';
@@ -6,7 +7,7 @@ import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import type { DashboardItemDto } from '@/api/web-api-client';
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: vi.fn(),
 }));
 
@@ -85,7 +86,7 @@ const instrumentRequest: DashboardItemDto = {
   },
 };
 
-describe('RequestList accessibility', () => {
+describe('requestList accessibility', () => {
   it('keeps RequestItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
     const { container } = renderDashboardItem(
       <RequestItem request={reportIssuedRequest} />
@@ -94,6 +95,7 @@ describe('RequestList accessibility', () => {
     const recalibrationLink = screen.getByRole('link', {
       name: 'Request recalibration',
     });
+
     expect(recalibrationLink).toHaveAttribute(
       'href',
       '/request-for-quote-copy/RFQ-2023-009012'
@@ -121,6 +123,7 @@ describe('RequestList accessibility', () => {
     const recalibrationLink = screen.getByRole('link', {
       name: 'Request recalibration',
     });
+
     expect(recalibrationLink).toHaveAttribute(
       'href',
       '/request-for-quote-copy/RFQ-2023-009012'

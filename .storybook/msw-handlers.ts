@@ -199,7 +199,8 @@ export const mswHandlers = [
     const fixture =
       lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
         ? undefined
-        : lookupResponsesByType[lookupType];
+        : (Reflect.get(lookupResponsesByType, lookupType) as
+            LookupResponse[] | undefined);
 
     if (fixture === undefined) {
       return HttpResponse.json(

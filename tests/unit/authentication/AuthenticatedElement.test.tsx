@@ -17,7 +17,7 @@ const authElementMocks = vi.hoisted(() => ({
   setActiveAccount: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   MsalAuthenticationTemplate: ({
     authenticationRequest,
     children,
@@ -55,13 +55,13 @@ vi.mock('@azure/msal-react', () => ({
   }),
 }));
 
-vi.mock('@azure/msal-browser', () => ({
+vi.mock(import('@azure/msal-browser'), () => ({
   InteractionType: {
     Redirect: 'Redirect',
   },
 }));
 
-vi.mock('react-router', () => ({
+vi.mock(import('react-router'), () => ({
   isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
   Navigate: ({ to }: { to: string }) => (
     <span data-testid='navigate'>{to}</span>
@@ -69,24 +69,27 @@ vi.mock('react-router', () => ({
   useRouteError: () => authElementMocks.routeError,
 }));
 
-vi.mock('../../../ClientApp/src/routes/preConditions/PreConditions', () => ({
-  default: ({
-    children,
-    displayHeaderAndFooter,
-  }: {
-    children: ReactNode;
-    displayHeaderAndFooter: boolean;
-  }) => (
-    <section
-      data-header-and-footer={String(displayHeaderAndFooter)}
-      data-testid='preconditions'
-    >
-      {children}
-    </section>
-  ),
-}));
+vi.mock(
+  import('../../../ClientApp/src/routes/preConditions/PreConditions'),
+  () => ({
+    default: ({
+      children,
+      displayHeaderAndFooter,
+    }: {
+      children: ReactNode;
+      displayHeaderAndFooter: boolean;
+    }) => (
+      <section
+        data-header-and-footer={String(displayHeaderAndFooter)}
+        data-testid='preconditions'
+      >
+        {children}
+      </section>
+    ),
+  })
+);
 
-vi.mock('../../../ClientApp/src/components/ErrorBoundary', () => ({
+vi.mock(import('../../../ClientApp/src/components/ErrorBoundary'), () => ({
   default: ({
     appInsights,
     children,
@@ -103,26 +106,29 @@ vi.mock('../../../ClientApp/src/components/ErrorBoundary', () => ({
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
+vi.mock(import('../../../ClientApp/src/components/BlockUISpinner'), () => ({
   default: ({ children }: { children: ReactNode }) => (
     <output>{children}</output>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/instrumentation/AppInsightsService', () => ({
-  ai: {
-    reactPlugin: { name: 'react-plugin' },
-  },
-}));
+vi.mock(
+  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
+  () => ({
+    ai: {
+      reactPlugin: { name: 'react-plugin' },
+    },
+  })
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
   authRequest: {
     redirectUri: '/redirect',
     scopes: ['read'],
   },
 }));
 
-describe('AuthenticatedElement', () => {
+describe('authenticatedElement', () => {
   afterEach(() => {
     vi.clearAllMocks();
     authElementMocks.isRouteErrorResponse.mockReset();

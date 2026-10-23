@@ -14,7 +14,7 @@ const manualAddress = {
   searchText: '',
 };
 
-describe('addressSchema', () => {
+describe(addressSchema, () => {
   it('accepts a manually entered address with required fields', async () => {
     await expect(
       addressSchema('Street address').validate(manualAddress)

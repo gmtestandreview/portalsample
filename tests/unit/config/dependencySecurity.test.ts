@@ -23,6 +23,15 @@ const rootPackage = JSON.parse(
   readFileSync('package.json', 'utf8')
 ) as RootPackage;
 
+const recordValue = <Value>(
+  record: Record<string, Value> | undefined,
+  key: string
+): Value | undefined =>
+  (
+    Object.entries(record ?? {}).find(([entryKey]) => entryKey === key) as
+      [string, Value] | undefined
+  )?.[1];
+
 const installedVersions = (packageName: string): string[] =>
   Object.entries(lock.packages)
     .filter(
@@ -33,7 +42,7 @@ const installedVersions = (packageName: string): string[] =>
     .map(([, metadata]) => metadata.version!);
 
 const exactDevDependency = (packageName: string): string => {
-  const declaredVersion = rootPackage.devDependencies?.[packageName];
+  const declaredVersion = recordValue(rootPackage.devDependencies, packageName);
 
   if (
     declaredVersion === undefined ||
@@ -82,6 +91,7 @@ describe('direct security dependency floors', () => {
       const versions = installedVersions(packageName);
 
       expect(versions).not.toHaveLength(0);
+
       for (const version of versions) {
         expectStableAtLeast(packageName, version, minimumVersion);
       }
@@ -144,6 +154,7 @@ describe('transitive security dependency floors', () => {
     const versions = installedVersions('brace-expansion');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       const floor = floors.get(major(version));
 
@@ -166,6 +177,7 @@ describe('transitive security dependency floors', () => {
     const versions = installedVersions('glob');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       expect(
         gte(version, '10.0.0'),
@@ -185,7 +197,7 @@ describe('transitive security dependency floors', () => {
 
     for (const owner of globOverrideOwners) {
       expect(
-        rootPackage.overrides?.[owner],
+        recordValue(rootPackage.overrides, owner),
         `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`
       ).toEqual({
         glob: '13.0.6',
@@ -217,6 +229,7 @@ describe('lint cohort', () => {
     const versions = installedVersions('eslint');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       expect(
         gte(version, '10.0.0'),
@@ -298,7 +311,7 @@ describe('install-script approvals', () => {
   it('records each review as an explicit allow', () => {
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
-        allowScripts?.[packageName],
+        recordValue(allowScripts, packageName),
         `${packageName} must be an explicit boolean allow, not a version string`
       ).toBe(true);
     }

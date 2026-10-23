@@ -8,8 +8,8 @@ import {
   ReportStatus,
 } from '../../../../ClientApp/src/routes/common/enums';
 
-describe('StatusPill', () => {
-  describe('DashboardItemStatus', () => {
+describe(StatusPill, () => {
+  describe(DashboardItemStatus, () => {
     it('renders QuoteAvailable text', async () => {
       render(<StatusPill status={DashboardItemStatus.QuoteAvailable} />);
       await waitFor(() => {
@@ -101,8 +101,8 @@ describe('StatusPill', () => {
     });
   });
 
-  describe('QuoteStatus — stacked cases resolve to DashboardItemStatus labels', () => {
-    it('QuoteStatus.QuoteAccepted resolves to DashboardItemStatus.QuoteAccepted text', async () => {
+  describe('quoteStatus — stacked cases resolve to DashboardItemStatus labels', () => {
+    it('quoteStatus.QuoteAccepted resolves to DashboardItemStatus.QuoteAccepted text', async () => {
       render(<StatusPill status={QuoteStatus.QuoteAccepted} />);
       await waitFor(() => {
         expect(
@@ -111,7 +111,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.QuoteAvailable resolves to DashboardItemStatus.QuoteAvailable text', async () => {
+    it('quoteStatus.QuoteAvailable resolves to DashboardItemStatus.QuoteAvailable text', async () => {
       render(<StatusPill status={QuoteStatus.QuoteAvailable} />);
       await waitFor(() => {
         expect(
@@ -120,7 +120,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.QuoteDeclined resolves to DashboardItemStatus.QuoteDeclined text', async () => {
+    it('quoteStatus.QuoteDeclined resolves to DashboardItemStatus.QuoteDeclined text', async () => {
       render(<StatusPill status={QuoteStatus.QuoteDeclined} />);
       await waitFor(() => {
         expect(
@@ -129,7 +129,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.QuoteExpired resolves to DashboardItemStatus.QuoteExpired text', async () => {
+    it('quoteStatus.QuoteExpired resolves to DashboardItemStatus.QuoteExpired text', async () => {
       render(<StatusPill status={QuoteStatus.QuoteExpired} />);
       await waitFor(() => {
         expect(
@@ -138,7 +138,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.QuoteSubmitted resolves to DashboardItemStatus.QuoteSubmitted text', async () => {
+    it('quoteStatus.QuoteSubmitted resolves to DashboardItemStatus.QuoteSubmitted text', async () => {
       render(<StatusPill status={QuoteStatus.QuoteSubmitted} />);
       await waitFor(() => {
         expect(
@@ -147,7 +147,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.ReportIssued resolves to DashboardItemStatus.ReportIssued text', async () => {
+    it('quoteStatus.ReportIssued resolves to DashboardItemStatus.ReportIssued text', async () => {
       render(<StatusPill status={QuoteStatus.ReportIssued} />);
       await waitFor(() => {
         expect(
@@ -156,7 +156,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.ReportInProgress resolves to DashboardItemStatus.ReportInProgress text', async () => {
+    it('quoteStatus.ReportInProgress resolves to DashboardItemStatus.ReportInProgress text', async () => {
       render(<StatusPill status={QuoteStatus.ReportInProgress} />);
       await waitFor(() => {
         expect(
@@ -165,7 +165,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.ReportWithdrawn resolves to DashboardItemStatus.ReportWithdrawn text', async () => {
+    it('quoteStatus.ReportWithdrawn resolves to DashboardItemStatus.ReportWithdrawn text', async () => {
       render(<StatusPill status={QuoteStatus.ReportWithdrawn} />);
       await waitFor(() => {
         expect(
@@ -174,7 +174,7 @@ describe('StatusPill', () => {
       });
     });
 
-    it('QuoteStatus.ArtifactReceived resolves to DashboardItemStatus.ArtifactReceived text', async () => {
+    it('quoteStatus.ArtifactReceived resolves to DashboardItemStatus.ArtifactReceived text', async () => {
       render(<StatusPill status={QuoteStatus.ArtifactReceived} />);
       await waitFor(() => {
         expect(
@@ -202,7 +202,7 @@ describe('StatusPill', () => {
     });
   });
 
-  describe('ReportStatus mappings', () => {
+  describe('reportStatus mappings', () => {
     it('maps ReportStatus.Issued to the dashboard report-issued label', async () => {
       render(<StatusPill status={ReportStatus.Issued} />);
 

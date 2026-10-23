@@ -94,10 +94,10 @@ export const formatConsoleArguments = (args: readonly unknown[]): string => {
 
   let consumedArgs = 0;
   const formatted = first.replace(/%[sdifjoO%]/gu, (token) => {
-    if (token === '%%') return '%';
+    if (token.startsWith('%%')) return '%';
     if (consumedArgs >= rest.length) return token;
 
-    const value = rest[consumedArgs];
+    const value = rest.at(consumedArgs);
     consumedArgs += 1;
 
     switch (token) {
@@ -174,7 +174,11 @@ const start = (): void => {
       active.captured.push({ level, text, consumed: claimed });
 
       // Re-emit so the original output still reaches the reporter.
-      original[level].apply(console, args);
+      if (level === 'warn') {
+        original.warn.apply(console, args);
+      } else {
+        original.error.apply(console, args);
+      }
     });
   });
 
@@ -189,7 +193,10 @@ const stop = (): {
 
   try {
     GUARDED_LEVELS.forEach((level) => {
-      setConsoleMethod(level, active.original[level]);
+      setConsoleMethod(
+        level,
+        level === 'warn' ? active.original.warn : active.original.error
+      );
     });
 
     return {

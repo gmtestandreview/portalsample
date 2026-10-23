@@ -31,14 +31,16 @@ const required = Yup.object({
   name: Yup.string().required('Name is required'),
 });
 
-describe('createWizardYupResolver', () => {
+describe(createWizardYupResolver, () => {
   it('passes values through when the mode has no schema', async () => {
     const result = await resolve({ hard: undefined });
+
     expect(result).toEqual({ values: { name: '' }, errors: {} });
   });
 
   it('uses the soft schema for saveAndExit and the hard schema for next', async () => {
     const soft = Yup.object({});
+
     expect(
       (await resolve({ soft, hard: required }, { mode: 'saveAndExit' })).errors
     ).toEqual({});
@@ -57,6 +59,7 @@ describe('createWizardYupResolver', () => {
       { hard: twoRules },
       { values: { name: 'a' } }
     );
+
     expect(errors).toMatchObject({ name: { message: 'Too short' } });
   });
 
@@ -67,6 +70,7 @@ describe('createWizardYupResolver', () => {
       },
     };
     const { errors } = await resolve({ hard: throwing });
+
     expect(errors).toMatchObject({ name: { message: 'Bad value' } });
   });
 
@@ -80,6 +84,7 @@ describe('createWizardYupResolver', () => {
       },
     };
     const { errors } = await resolve({ hard: throwing });
+
     expect(errors).toMatchObject({ name: { message: 'Odd error' } });
   });
 
@@ -89,7 +94,8 @@ describe('createWizardYupResolver', () => {
         throw new Yup.ValidationError('No path');
       },
     };
-    expect(await resolve({ hard: throwing })).toEqual({
+
+    await expect(resolve({ hard: throwing })).resolves.toEqual({
       values: { name: '' },
       errors: {},
     });
@@ -100,6 +106,7 @@ describe('createWizardYupResolver', () => {
       { hard: required },
       { hidden: { name: true } }
     );
+
     expect(result).toEqual({ values: { name: '' }, errors: {} });
   });
 
@@ -109,11 +116,12 @@ describe('createWizardYupResolver', () => {
         throw new TypeError('schema bug');
       },
     };
+
     await expect(resolve({ hard: broken })).rejects.toThrow('schema bug');
   });
 });
 
-describe('RhfForm api', () => {
+describe('rhfForm api', () => {
   it('throws when the api hook is used outside the form', () => {
     const expectedError = 'useRhfFormApi must be used inside RhfForm';
     const expectedReactError =
@@ -148,7 +156,7 @@ describe('RhfForm api', () => {
         expect.stringContaining(expectedReactError)
       );
       expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
-      expect(suppressExpectedError).toHaveBeenCalled();
+      expect(suppressExpectedError).toHaveBeenCalledWith();
       expect(
         suppressExpectedError.mock.calls.every(
           ([event]) =>
@@ -172,6 +180,7 @@ describe('RhfForm api', () => {
         )}
       </RhfForm>
     );
+
     expect(screen.getByTestId('probe').textContent).toBe('function function');
   });
 });

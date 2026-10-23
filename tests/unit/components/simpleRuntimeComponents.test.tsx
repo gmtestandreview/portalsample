@@ -22,11 +22,11 @@ import Welcome from '@/components/Welcome';
 import { useAccountState } from '@/authentication/hooks';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock('@/components/get-started/get-started', () => ({
+vi.mock(import('@/components/get-started/get-started'), () => ({
   default: () => <main>Get started content</main>,
 }));
 
-vi.mock('@/authentication/hooks', () => ({
+vi.mock(import('@/authentication/hooks'), () => ({
   useAccountState: vi.fn(),
 }));
 
@@ -38,7 +38,7 @@ describe('simple reusable runtime components', () => {
     vi.mocked(useAccountState).mockReturnValue(null);
   });
 
-  it('Home delegates to the get started entry content', () => {
+  it('home delegates to the get started entry content', () => {
     renderWithRouter(<Home />);
 
     expect(screen.getByRole('main')).toHaveTextContent('Get started content');
@@ -119,6 +119,7 @@ describe('simple reusable runtime components', () => {
     await user.click(screen.getByRole('button', { name: 'Close alert' }));
 
     rerender(<AlertInfo canClose>Second message</AlertInfo>);
+
     expect(screen.getByText('Second message')).toBeInTheDocument();
   });
 
@@ -133,6 +134,7 @@ describe('simple reusable runtime components', () => {
       render(<Component testId='alert-message'>{message}</Component>);
 
       const alert = screen.getByTestId('alert-message');
+
       expect(alert).toHaveTextContent(message);
       expect(alert).toHaveAttribute('aria-live', ariaLive);
       expect(alert).toHaveClass(className);
@@ -181,6 +183,7 @@ describe('simple reusable runtime components', () => {
       );
 
       const notification = screen.getByRole('status');
+
       expect(notification).toHaveAttribute('id', id);
       expect(notification).toHaveTextContent(message);
       expect(container.querySelector(`.${iconClassName}`)).toBeInTheDocument();
@@ -198,6 +201,7 @@ describe('simple reusable runtime components', () => {
     );
 
     const notification = container.querySelector('#custom-notification');
+
     expect(notification).toHaveTextContent('Saved with a custom id');
     expect(notification).toHaveAttribute('role', 'alert');
   });
@@ -206,6 +210,7 @@ describe('simple reusable runtime components', () => {
     render(<NotificationMessage message='Unknown failure' />);
 
     const notification = screen.getByRole('alert');
+
     expect(notification).toHaveAttribute('aria-live', 'assertive');
     expect(notification).toHaveTextContent('Unknown failure');
   });
@@ -219,6 +224,7 @@ describe('simple reusable runtime components', () => {
     expect(screen.getByText('Loading the page')).toBeInTheDocument();
 
     rerender(<BlockUISpinner partial>Loading this panel</BlockUISpinner>);
+
     expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('Loading this panel')).toBeInTheDocument();
   });
@@ -238,6 +244,7 @@ describe('simple reusable runtime components', () => {
     const navigation = screen.getByRole('navigation', {
       name: 'Request trail',
     });
+
     expect(navigation).toHaveClass('mt-3');
     expect(navigation.querySelector('.custom-breadcrumb')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
@@ -329,13 +336,16 @@ describe('simple reusable runtime components', () => {
     const externalButtonLink = screen.getByRole('link', {
       name: 'NMI website',
     });
+
     expect(externalButtonLink).toHaveAttribute(
       'href',
       'https://measurement.gov.au'
     );
     expect(externalButtonLink).toHaveAttribute('target', '_blank');
     expect(externalButtonLink).toHaveClass('btn-nmi-primary');
+
     await user.click(externalButtonLink);
+
     expect(onClick).toHaveBeenCalledTimes(1);
 
     rerender(
@@ -353,6 +363,7 @@ describe('simple reusable runtime components', () => {
     );
 
     const internalLink = screen.getByRole('link', { name: 'Dashboard' });
+
     expect(internalLink).toHaveAttribute('href', '/dashboard');
     expect(internalLink).toHaveClass('btn-secondary', 'dashboard-button');
   });
@@ -384,6 +395,7 @@ describe('simple reusable runtime components', () => {
     ).toHaveAttribute('rel', 'nofollow noreferrer noopener');
 
     rerender(<InTextLink href='/help'>Internal resource</InTextLink>);
+
     expect(
       screen.getByRole('link', { name: 'Internal resource' })
     ).not.toHaveAttribute('rel');
@@ -400,6 +412,7 @@ describe('simple reusable runtime components', () => {
     expect(screen.getByText('Results')).toHaveClass('visually-hidden');
 
     rerender(<PaginationHeader totalCount={0} pageSize={10} currentPage={1} />);
+
     expect(screen.getByText(/Displaying/i)).toHaveAttribute('hidden');
   });
 

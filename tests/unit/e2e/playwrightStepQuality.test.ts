@@ -44,19 +44,28 @@ const mockApi = fs.readFileSync(
 );
 
 const routeHandler = (routePattern: string) => {
-  const escapedPattern = routePattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const handler = new RegExp(
-    `await page\\.route\\(\\s*'${escapedPattern}'\\s*,[\\s\\S]+?(?=\\n\\s*await page\\.route\\(|\\n}\\s*$)`
-  ).exec(mockApi)?.[0];
+  const marker = `'${routePattern}',`;
+  const markerStart = mockApi.indexOf(marker);
+  const start =
+    markerStart === -1
+      ? -1
+      : mockApi.lastIndexOf('await page.route(', markerStart);
+  const nextRoute = mockApi.indexOf(
+    '\n    await page.route(',
+    markerStart + marker.length
+  );
+  const end = nextRoute === -1 ? mockApi.length : nextRoute;
+  const handler = start === -1 ? undefined : mockApi.slice(start, end);
 
-  expect(handler).toBeTruthy();
+  expect(handler).toBe(true);
+
   return handler ?? '';
 };
 
 const extractSection = (source: string, pattern: RegExp) =>
   pattern.exec(source)?.[0];
 
-describe('Storybook Playwright step quality', () => {
+describe('storybook Playwright step quality', () => {
   it('does not use body-wide text assertions', () => {
     expect(steps).not.toContain("page.locator('body')");
   });
@@ -75,7 +84,7 @@ describe('Storybook Playwright step quality', () => {
       /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/
     );
 
-    expect(completionSteps).toBeTruthy();
+    expect(completionSteps).toBe(true);
     expect(completionSteps).toContain('.click()');
     expect(completionSteps).toContain('.fill(');
     expect(completionSteps).not.toContain('toBeChecked()');
@@ -91,8 +100,8 @@ describe('Storybook Playwright step quality', () => {
       /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/
     );
 
-    expect(readinessHelper).toBeTruthy();
-    expect(numericStepAssertion).toBeTruthy();
+    expect(readinessHelper).toBe(true);
+    expect(numericStepAssertion).toBe(true);
     expect(readinessHelper).toContain('toHaveURL');
     expect(readinessHelper).toContain("getByTestId('form')");
     expect(numericStepAssertion).toContain('waitForRfqStep(page, step)');
@@ -108,7 +117,7 @@ describe('Storybook Playwright step quality', () => {
       /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/
     );
 
-    expect(actionStep).toBeTruthy();
+    expect(actionStep).toBe(true);
     expect(actionStep).toContain("page.goto('/dashboard')");
     expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/);
     expect(actionStep).toMatch(

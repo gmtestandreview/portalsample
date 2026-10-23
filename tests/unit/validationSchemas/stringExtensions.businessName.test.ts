@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 // Side-effect import registers all custom Yup methods including businessName
 import '../../../ClientApp/src/validationSchemas/yupExtensions';
 
-describe('Yup stringExtensions — businessName', () => {
+describe('yup stringExtensions — businessName', () => {
   const schema = Yup.string().businessName('Business name');
 
   it('accepts a valid ASIC-compliant business name', async () => {
@@ -28,7 +28,7 @@ describe('Yup stringExtensions — businessName', () => {
     await expect(schema.validate('')).resolves.toBeDefined();
   });
 
-  it('Yup.string() exposes .businessName as a function — declaration is present', () => {
-    expect(typeof Yup.string().businessName).toBe('function');
+  it('yup.string() exposes .businessName as a function — declaration is present', () => {
+    expect(Yup.string().businessName).toBeTypeOf('function');
   });
 });

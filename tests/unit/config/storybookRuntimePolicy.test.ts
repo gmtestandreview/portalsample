@@ -1,27 +1,36 @@
-import {
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  readdirSync,
-  rmSync,
-} from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 import { storybookVitestRuntimePlugin } from '../../../vitest.storybook.runtime';
+import {
+  makeDirectorySync,
+  readDirectorySync,
+  readTextFileSync,
+} from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
 const readRepositoryFile = (relativePath: string): string =>
-  readFileSync(path.join(repositoryRoot, relativePath), 'utf8');
+  readTextFileSync(path.join(repositoryRoot, relativePath), repositoryRoot);
 
 const previewSetup = readRepositoryFile('.storybook/preview-setup.ts');
 const browserSetup = readRepositoryFile('vitest.storybook.setup.ts');
 const preview = readRepositoryFile('.storybook/preview.ts');
 const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
-const runtimeFixtureValue = (source: string, key: string): string | undefined =>
-  new RegExp(`${key}\\s*:\\s*['"]([^'"]*)['"]`).exec(source)?.[1];
+const runtimeFixtureValue = (
+  source: string,
+  key: string
+): string | undefined => {
+  const line = source
+    .split(/\r?\n/)
+    .find((candidate) => candidate.trimStart().startsWith(`${key}:`));
+  if (line === undefined) return undefined;
+
+  const value = line.slice(line.indexOf(':') + 1).trim();
+  return value.endsWith(',') ? value.slice(1, -2) : value.slice(1, -1);
+};
 
 const requiredTelemetryFixtures = {
   VITE_APPINSIGHTS_INSTRUMENTATIONKEY: 'storybook-test-instrumentation-key',
@@ -29,7 +38,7 @@ const requiredTelemetryFixtures = {
   VITE_GA_TRACKINGID: 'storybook-test-ga-id',
 } as const;
 
-describe('Storybook runtime fixtures', () => {
+describe('storybook runtime fixtures', () => {
   it.each(Object.entries(requiredTelemetryFixtures))(
     'supplies the non-empty %s fixture in both browser entry paths',
     (key, expectedValue) => {
@@ -52,7 +61,7 @@ describe('Storybook runtime fixtures', () => {
   });
 });
 
-describe('Storybook MSW diagnostic policy', () => {
+describe('storybook MSW diagnostic policy', () => {
   it('enables detailed MSW output only for the explicit debug query', async () => {
     const policySpecifier = path
       .join(repositoryRoot, '.storybook/msw-policy.ts')
@@ -73,7 +82,7 @@ describe('Storybook MSW diagnostic policy', () => {
   });
 });
 
-describe('Storybook closure child diagnostics', () => {
+describe('storybook closure child diagnostics', () => {
   type RuntimeVitest = Parameters<
     typeof storybookVitestRuntimePlugin.configureVitest
   >[0]['vitest'];
@@ -93,7 +102,7 @@ describe('Storybook closure child diagnostics', () => {
       'storybook-coverage',
       'closure-run'
     );
-    mkdirSync(receiptRoot, { recursive: true });
+    makeDirectorySync(receiptRoot, tempRoot);
     const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
     const previousFreezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
 
@@ -103,7 +112,8 @@ describe('Storybook closure child diagnostics', () => {
       storybookVitestRuntimePlugin.configureVitest({
         vitest: createVitestFixture(),
       });
-      expect(readdirSync(receiptRoot)).toEqual([]);
+
+      expect(readDirectorySync(receiptRoot, tempRoot)).toEqual([]);
     } finally {
       if (previousReceiptRoot === undefined) {
         delete process.env['STORYBOOK_CLOSURE_RECEIPTS'];
@@ -127,7 +137,7 @@ describe('Storybook closure child diagnostics', () => {
       'storybook-coverage',
       'closure-run'
     );
-    mkdirSync(receiptRoot, { recursive: true });
+    makeDirectorySync(receiptRoot, tempRoot);
     const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
     const previousFreezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
     const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(tempRoot);
@@ -138,11 +148,14 @@ describe('Storybook closure child diagnostics', () => {
       storybookVitestRuntimePlugin.configureVitest({
         vitest: createVitestFixture(),
       });
-      const files = readdirSync(receiptRoot);
+      const files = readDirectorySync(receiptRoot, tempRoot);
+
       expect(files).toHaveLength(1);
+
       const record = JSON.parse(
-        readFileSync(path.join(receiptRoot, files[0] as string), 'utf8')
+        readTextFileSync(path.join(receiptRoot, files[0]!.name), tempRoot)
       ) as Record<string, unknown>;
+
       expect(record).toMatchObject({
         freezeId: 'freeze-1',
         pid: process.pid,

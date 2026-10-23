@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -101,7 +102,7 @@ const renderDetails = (
     </Harness>
   );
 
-describe('RhfContactDetails edit mode', () => {
+describe('rhfContactDetails edit mode', () => {
   it('renders the default labels and the "Other" title field', () => {
     renderDetails(EMPTY_CONTACT);
 
@@ -117,6 +118,7 @@ describe('RhfContactDetails edit mode', () => {
     ]) {
       expect(screen.getByLabelText(label)).toBeInTheDocument();
     }
+
     expect(screen.getByPlaceholderText('Please enter title')).toBeVisible();
   });
 
@@ -126,6 +128,7 @@ describe('RhfContactDetails edit mode', () => {
     for (const label of Object.values(CUSTOM_LABELS)) {
       expect(screen.getByLabelText(label)).toBeInTheDocument();
     }
+
     expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
   });
 
@@ -173,6 +176,7 @@ describe('RhfContactDetails edit mode', () => {
   it('shows the "Other" title field only while the hide rule allows it', async () => {
     const user = userEvent.setup();
     renderDetails(EMPTY_CONTACT, {}, hideTitleOtherUnlessOther);
+
     expect(screen.queryByLabelText('If "Other"')).not.toBeInTheDocument();
 
     await user.selectOptions(
@@ -184,7 +188,7 @@ describe('RhfContactDetails edit mode', () => {
   });
 });
 
-describe('RhfContactDetails summary mode', () => {
+describe('rhfContactDetails summary mode', () => {
   it('shows a placeholder when no contact has been added', () => {
     renderDetails('', { isSummary: true });
 
@@ -209,6 +213,7 @@ describe('RhfContactDetails summary mode', () => {
     for (const value of ['Dr', 'Alex', 'Smith', 'Scientist']) {
       expect(screen.getByText(value)).toBeInTheDocument();
     }
+
     expect(screen.getByText('alex@example.test')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
@@ -223,6 +228,7 @@ describe('RhfContactDetails summary mode', () => {
     for (const label of Object.values(CUSTOM_LABELS)) {
       expect(screen.getByText(label)).toBeInTheDocument();
     }
+
     expect(screen.getByText('Title, if "Other"')).toBeInTheDocument();
     expect(screen.getByText('Chief')).toBeInTheDocument();
   });

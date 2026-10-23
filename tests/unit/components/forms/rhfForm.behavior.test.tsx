@@ -6,7 +6,7 @@ import RhfTextInput from '../../../../ClientApp/src/components/Inputs/RhfTextInp
 import type { Hideable } from '../../../../ClientApp/src/components/forms/types';
 import { renderRhfShell } from '../../helpers/rhfShell';
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
 }));
 
@@ -65,14 +65,16 @@ const settle = () =>
     await new Promise((resolve) => setTimeout(resolve, 50));
   });
 
-describe('RhfForm shell behavior', () => {
+describe('rhfForm shell behavior', () => {
   it('shows an error after the first blur, not before, and clears it on change', async () => {
     const { user } = setup();
+
     expect(screen.queryByText('Name is required')).toBeNull();
 
     await user.click(screen.getByLabelText('Name'));
     await user.tab();
-    expect(await screen.findByText('Name is required')).toBeTruthy();
+
+    await expect(screen.findByText('Name is required')).resolves.toBe(true);
     expect(screen.queryByText('Other is required')).toBeNull();
 
     await user.type(screen.getByLabelText('Name'), 'a');
@@ -86,8 +88,8 @@ describe('RhfForm shell behavior', () => {
 
     await user.click(screen.getByTestId('next'));
 
-    expect(await screen.findByText('Name is required')).toBeTruthy();
-    expect(screen.getByText('Other is required')).toBeTruthy();
+    await expect(screen.findByText('Name is required')).resolves.toBe(true);
+    expect(screen.getByText('Other is required')).toBe(true);
     expect(onSubmit).not.toHaveBeenCalled();
     // shouldFocusError is off: the summary, not RHF, owns focus (D-2).
     expect(document.activeElement).toBe(screen.getByTestId('next'));
@@ -100,6 +102,7 @@ describe('RhfForm shell behavior', () => {
     await user.type(screen.getByLabelText('Other'), 'xyz{Enter}');
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(onSubmit).toHaveBeenCalledWith({ name: 'abc', other: 'xyz' });
   });
 
@@ -113,6 +116,7 @@ describe('RhfForm shell behavior', () => {
     await user.click(screen.getByTestId('next'));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(onSubmit).toHaveBeenCalledWith({ name: 'abc' });
   });
 
@@ -124,6 +128,7 @@ describe('RhfForm shell behavior', () => {
     await user.click(screen.getByTestId('save-and-exit'));
 
     await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+
     expect(onSaveAndExit).toHaveBeenCalledWith({ name: 'kept' });
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -141,7 +146,8 @@ describe('RhfForm shell behavior', () => {
     // Formik kept the soft schema here (quirk Q1); the shell does not.
     await user.click(screen.getByLabelText('Name'));
     await user.tab();
-    expect(await screen.findByText('Name is required')).toBeTruthy();
+
+    await expect(screen.findByText('Name is required')).resolves.toBe(true);
   });
 
   it('falls back to onSubmit for save and exit when no exit handler is given', async () => {
@@ -163,10 +169,11 @@ describe('RhfForm shell behavior', () => {
 
     rerenderShell({ ...baseProps });
     await settle();
+
     expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
       'typed'
     );
-    expect(screen.getByText('Other is required')).toBeTruthy();
+    expect(screen.getByText('Other is required')).toBe(true);
 
     rerenderShell({
       ...baseProps,
@@ -177,6 +184,7 @@ describe('RhfForm shell behavior', () => {
         'from server'
       )
     );
+
     expect(screen.queryByText('Other is required')).toBeNull();
   });
 
@@ -189,6 +197,7 @@ describe('RhfForm shell behavior', () => {
     await user.click(screen.getByTestId('next'));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(onSubmit).toHaveBeenCalledWith({});
   });
 });

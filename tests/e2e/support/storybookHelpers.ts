@@ -6,6 +6,7 @@
  * directory.
  */
 
+import { expect } from 'vitest';
 import process from 'node:process';
 import {
   expect,
@@ -81,7 +82,9 @@ export async function executeMcpTestRun(
           },
         },
       });
+
       expect(initialize.status()).toBe(200);
+
       const sessionId = initialize.headers()['mcp-session-id'];
       if (sessionId === undefined) {
         throw new Error('MCP initialize response did not provide a session ID');
@@ -96,6 +99,7 @@ export async function executeMcpTestRun(
         headers: sessionHeaders,
         data: { jsonrpc: '2.0', method: 'notifications/initialized' },
       });
+
       expect(initialized.status()).toBe(202);
 
       return await request.post(STORYBOOK_MCP, {
@@ -116,7 +120,7 @@ export async function executeMcpTestRun(
       });
     } catch (error) {
       lastError = error;
-      const delay = MCP_TRANSPORT_RETRY_DELAYS_MS[attempt];
+      const delay = MCP_TRANSPORT_RETRY_DELAYS_MS.at(attempt);
       if (!isTransientMcpTransportError(error) || delay === undefined) {
         throw error;
       }
@@ -210,6 +214,7 @@ export async function loadStoryIframe(page: Page, storyId: string) {
 /** Navigate directly to a Storybook docs iframe and wait for Docs to render. */
 export async function loadDocsIframe(page: Page, docsId: string) {
   await page.goto(`${STORYBOOK_BASE}/iframe.html?id=${docsId}&viewMode=docs`);
+
   await expect(page.locator('body')).toHaveClass(/\bsb-show-main\b/u, {
     timeout: STORY_RENDER_TIMEOUT_MS,
   });

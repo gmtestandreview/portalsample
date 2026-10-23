@@ -9,6 +9,8 @@ import pluginSecurity from 'eslint-plugin-security';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
+import vitest from '@vitest/eslint-plugin';
 
 const packageJsonPath = fileURLToPath(
   new URL('./package.json', import.meta.url)
@@ -280,5 +282,20 @@ export default defineConfig(
     },
   },
 
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    ...jsxA11yX.configs.recommended,
+    languageOptions: {
+      ...jsxA11yX.configs.recommended.languageOptions,
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
+    },
+  },
+  {
+    files: ['tests/**'], // or any other pattern
+    ...vitest.configs.all,
+  },
   eslintPluginPrettierRecommended
 );

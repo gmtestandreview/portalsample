@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RouteAccessibleNavigation from '@/components/Utilities/routeAccessibleNavigation';
 
-describe('RouteAccessibleNavigation', () => {
+describe(RouteAccessibleNavigation, () => {
   beforeEach(() => {
     vi.useFakeTimers();
     document.title = 'Dashboard';
@@ -34,7 +34,8 @@ describe('RouteAccessibleNavigation', () => {
     );
 
     unmount();
-    expect(clearTimeoutSpy).toHaveBeenCalled();
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith();
   });
 
   it('announces the root route immediately with the current document title', () => {
@@ -62,6 +63,7 @@ describe('RouteAccessibleNavigation', () => {
     expect(screen.getByRole('status').textContent).toBe('Navigated to  page.');
 
     unmount();
+
     expect(clearTimeoutSpy).not.toHaveBeenCalled();
   });
 });

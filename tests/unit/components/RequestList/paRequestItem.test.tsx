@@ -1,3 +1,4 @@
+import { describe, beforeEach, it, expect } from 'vitest';
 import {
   fireEvent,
   render,
@@ -27,7 +28,7 @@ const mocks = vi.hoisted(() => ({
   loggerError: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'account-id' }],
     instance: {
@@ -36,17 +37,17 @@ vi.mock('@azure/msal-react', () => ({
   }),
 }));
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: mocks.trackGAEvent,
 }));
 
-vi.mock('@/instrumentation/AppLogger', () => ({
+vi.mock(import('@/instrumentation/AppLogger'), () => ({
   default: {
     error: mocks.loggerError,
   },
 }));
 
-vi.mock('@/storage/notification', async (importOriginal) => {
+vi.mock(import('@/storage/notification'), async (importOriginal) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
@@ -54,7 +55,7 @@ vi.mock('@/storage/notification', async (importOriginal) => {
   };
 });
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -108,7 +109,7 @@ const renderPaRequestItem = (
     </MemoryRouter>
   );
 
-describe('PaRequestItem', () => {
+describe(PaRequestItem, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
@@ -132,6 +133,7 @@ describe('PaRequestItem', () => {
     await user.click(
       screen.getByRole('button', { name: 'View application details' })
     );
+
     expect(
       screen.getByRole('status', { name: 'Current route' })
     ).toHaveTextContent('/ta/PA-2024-0001/manage');
@@ -140,6 +142,7 @@ describe('PaRequestItem', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /messages/i }));
+
     expect(
       screen.getByRole('status', { name: 'Current route' })
     ).toHaveTextContent('/ta/PA-2024-0001/manage?tab=messages');
@@ -148,12 +151,15 @@ describe('PaRequestItem', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    expect(
-      await screen.findByRole('menuitem', { name: 'View application details' })
-    ).toHaveAttribute('href', '/ta/PA-2024-0001/manage');
+
+    await expect(
+      screen.findByRole('menuitem', { name: 'View application details' })
+    ).resolves.toHaveAttribute('href', '/ta/PA-2024-0001/manage');
+
     await user.click(
       screen.getByRole('menuitem', { name: 'View application details' })
     );
+
     expect(mocks.trackGAEvent).toHaveBeenCalledWith('Viewapplicationdetails');
   });
 
@@ -174,11 +180,11 @@ describe('PaRequestItem', () => {
 
       await user.click(screen.getByRole('button', { name: 'Actions' }));
 
-      expect(
-        await screen.findByRole('menuitem', {
+      await expect(
+        screen.findByRole('menuitem', {
           name: 'View application details',
         })
-      ).toHaveAttribute('href', `/ta/PA-${status}/manage`);
+      ).resolves.toHaveAttribute('href', `/ta/PA-${status}/manage`);
       expect(
         screen.getByRole('menuitem', { name: 'View messages' })
       ).toBeInTheDocument();
@@ -214,6 +220,7 @@ describe('PaRequestItem', () => {
     await user.click(
       screen.getByRole('button', { name: 'Resume application' })
     );
+
     expect(
       screen.getByRole('status', { name: 'Current route' })
     ).toHaveTextContent('/ta/PA-2024-0001');
@@ -225,8 +232,11 @@ describe('PaRequestItem', () => {
     const resumeAction = await screen.findByRole('menuitem', {
       name: 'Resume application',
     });
+
     expect(resumeAction).toHaveAttribute('href', '/ta/PA-2024-0001');
+
     await user.click(resumeAction);
+
     expect(mocks.trackGAEvent).toHaveBeenCalledWith('Editapplication');
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
@@ -237,11 +247,13 @@ describe('PaRequestItem', () => {
     expect(
       screen.getByRole('dialog', { name: 'Confirm deletion' })
     ).toHaveTextContent('PA-2024-0001');
+
     await user.click(
       screen.getByRole('button', { name: 'Yes, delete application' })
     );
 
     await waitFor(() => expect(setDeleteSuccess).toHaveBeenCalledWith(true));
+
     expect(mocks.acquireTokenSilent).toHaveBeenCalledWith(
       expect.objectContaining({
         account: { homeAccountId: 'account-id' },
@@ -287,6 +299,7 @@ describe('PaRequestItem', () => {
         deleteError
       )
     );
+
     expect(setDeleteSuccess).not.toHaveBeenCalled();
     expect(mocks.setDashboardNotification).not.toHaveBeenCalled();
 
@@ -344,6 +357,7 @@ describe('PaRequestItem', () => {
       'aria-labelledby',
       'card-summary-PA-2024-0001'
     );
+
     fireEvent.focus(card as HTMLElement);
     await waitFor(() => expect(card).toHaveAttribute('aria-labelledby', ''));
     fireEvent.blur(card as HTMLElement);
@@ -360,11 +374,13 @@ describe('PaRequestItem', () => {
     await user.click(
       screen.getByRole('button', { name: 'Resume application' })
     );
+
     expect(
       screen.getByRole('status', { name: 'Current route' })
     ).toHaveTextContent('/ta/PA-2024-0001/manage');
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
+
     expect(
       screen.queryByRole('menuitem', { name: 'View application details' })
     ).not.toBeInTheDocument();

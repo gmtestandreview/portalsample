@@ -214,7 +214,7 @@ describe('runClosure', () => {
       'release-freeze',
       'stop-server',
     ]);
-    expect(adapters.produceMcpReceipts).toHaveBeenCalledOnce();
+    expect(adapters.produceMcpReceipts).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('fails closed when a pre-freeze gate is reported', async () => {
@@ -275,7 +275,7 @@ describe('runClosure', () => {
   it('releases the freeze and owned server when cancellation is signalled', async () => {
     const controller = new AbortController();
     const { adapters, calls, producer } = makeAdapters();
-    adapters.establishProducer = vi.fn(async () => {
+    vi.spyOn(adapters, 'establishProducer').mockImplementation(async () => {
       calls.push('producer');
       controller.abort(new Error('closure interrupted by SIGTERM'));
       return producer;

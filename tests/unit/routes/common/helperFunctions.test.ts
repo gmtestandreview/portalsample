@@ -56,7 +56,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -75,16 +75,16 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
+vi.mock(import('../../../../ClientApp/src/storage/notification'), () => ({
   setDashboardNotification: mocks.setDashboardNotification,
 }));
 
-vi.mock('../../../../ClientApp/src/routes/common/openWindow', () => ({
+vi.mock(import('../../../../ClientApp/src/routes/common/openWindow'), () => ({
   openUrlInSecureNewTab: mocks.openUrlInSecureNewTab,
   openPdfPageInSecureNewTab: mocks.openPdfPageInSecureNewTab,
 }));
 
-vi.mock('react-ga4', () => ({
+vi.mock(import('react-ga4'), () => ({
   default: {
     send: vi.fn(),
   },
@@ -150,7 +150,7 @@ describe('route common helper functions', () => {
         true
       );
 
-      expect(DashboardClient).toHaveBeenCalled();
+      expect(DashboardClient).toHaveBeenCalledWith();
       expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
       expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalledWith(
         ...expectedArgs
@@ -165,6 +165,7 @@ describe('route common helper functions', () => {
       false,
       true
     );
+
     expect(mocks.getQuoteRequestAcceptedPDFByID).toHaveBeenCalledWith(
       'request-1',
       false
@@ -176,6 +177,7 @@ describe('route common helper functions', () => {
       true,
       false
     );
+
     expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith('request-1', true);
   });
 
@@ -213,7 +215,7 @@ describe('route common helper functions', () => {
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalled();
+    expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalledWith();
   });
 
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {
@@ -371,15 +373,15 @@ describe('route common helper functions', () => {
     triggerDownload('blob:unit-test', 'quote.pdf');
 
     expect(createElement).toHaveBeenCalledWith('a');
-    expect(click).toHaveBeenCalled();
+    expect(click).toHaveBeenCalledWith();
   });
 
   it('sets dashboard notifications for report and unexpected errors', () => {
     vi.useFakeTimers();
     const notification = document.createElement('button');
     notification.id = '#notif-test';
-    notification.scrollIntoView = vi.fn();
-    notification.focus = vi.fn();
+    vi.spyOn(notification, 'scrollIntoView').mockImplementation();
+    vi.spyOn(notification, 'focus').mockImplementation();
     document.body.append(notification);
     vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => {});
 
@@ -391,7 +393,7 @@ describe('route common helper functions', () => {
       behavior: 'smooth',
       block: 'start',
     });
-    expect(notification.focus).toHaveBeenCalled();
+    expect(notification.focus).toHaveBeenCalledWith();
     expect(setDashboardNotification).toHaveBeenCalledWith({
       message: expect.stringContaining(
         'unexpected error has occurred with downloading the PDF report'
@@ -400,6 +402,7 @@ describe('route common helper functions', () => {
     });
 
     handleUnexpectedError({ status: 500 });
+
     expect(setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         severity: NotificationSeverity.Error,
@@ -407,6 +410,7 @@ describe('route common helper functions', () => {
     );
 
     handleUnexpectedError({});
+
     expect(setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         severity: NotificationSeverity.Error,
@@ -456,6 +460,7 @@ describe('route common helper functions', () => {
 
     vi.mocked(ReactGA.send).mockClear();
     contentLoaded(false);
+
     expect(ReactGA.send).not.toHaveBeenCalledWith(
       expect.objectContaining({ hitType: 'pageview' })
     );
@@ -473,6 +478,7 @@ describe('route common helper functions', () => {
       'Ze',
       'displayText'
     );
+
     expect(sortedOptions.map((option) => option.displayText)).toEqual([
       'Alpha',
       'Beta',
@@ -489,6 +495,7 @@ describe('route common helper functions', () => {
       'missing',
       'displayText'
     );
+
     expect(
       sortedDisplayTextOptions.map((option) => option.displayText)
     ).toEqual(['Alpha', 'Beta', 'Zed']);
@@ -500,6 +507,7 @@ describe('route common helper functions', () => {
     ];
 
     const [sortedLookups, lastLookupId] = sortList(lookups, 'missing', 'name');
+
     expect(sortedLookups.map((lookup) => lookup.name)).toEqual([
       'Alpha',
       'Beta',

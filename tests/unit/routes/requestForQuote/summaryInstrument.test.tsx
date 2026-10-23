@@ -20,14 +20,14 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -39,7 +39,7 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
 }));
 
@@ -49,7 +49,7 @@ vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
  */
 const stateSetterCalls = vi.hoisted(() => ({ calls: [] as unknown[] }));
 
-vi.mock('react', async (importOriginal) => {
+vi.mock(import('react'), async (importOriginal) => {
   const actual = await importOriginal<typeof React>();
 
   return {
@@ -100,7 +100,7 @@ const renderLoaded = async (values: Values) => {
   return result.container;
 };
 
-describe('RfqInstrumentSummary', () => {
+describe(RfqInstrumentSummary, () => {
   beforeEach(() => {
     resetMsalMock();
     vi.mocked(AppLogger.error).mockClear();
@@ -119,7 +119,9 @@ describe('RfqInstrumentSummary', () => {
     expect(result.getByText('Loading...')).toBeInTheDocument();
     expect(result.queryByText('Request details')).not.toBeInTheDocument();
 
-    expect(await result.findByText('Request details')).toBeInTheDocument();
+    await expect(
+      result.findByText('Request details')
+    ).resolves.toBeInTheDocument();
     expect(result.getByText('Instrument/artefact details')).toBeInTheDocument();
     expect(result.queryByText('Loading...')).not.toBeInTheDocument();
   });
@@ -136,6 +138,7 @@ describe('RfqInstrumentSummary', () => {
         failure
       )
     );
+
     expect(result.getByText('Loading...')).toBeInTheDocument();
     expect(result.queryByText('Request details')).not.toBeInTheDocument();
   });
@@ -227,12 +230,14 @@ describe('RfqInstrumentSummary', () => {
     const hidden = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: 'SN-STALE' })
     );
+
     expect(hidden).not.toHaveTextContent('SN-STALE');
     expect(hidden).not.toHaveTextContent('Serial number');
 
     const shown = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: 'SN-0042' })
     );
+
     expect(shown).toHaveTextContent('Serial number');
     expect(shown).toHaveTextContent('SN-0042');
   });
@@ -241,9 +246,11 @@ describe('RfqInstrumentSummary', () => {
     const no = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: undefined })
     );
+
     expect(no).not.toHaveTextContent('Serial number');
 
     const unanswered = await renderLoaded({ instrumentAndRequest: {} });
+
     expect(unanswered).not.toHaveTextContent('Serial number');
   });
 
@@ -266,7 +273,9 @@ describe('RfqInstrumentSummary', () => {
 
     expect(container).not.toHaveTextContent('cat-unknown');
     expect(container).not.toHaveTextContent('type-unknown');
+
     const view = within(container);
+
     expect(
       view.getByText('Measurement category').parentElement
     ).toHaveTextContent('Measurement category- No details added');
@@ -292,6 +301,7 @@ describe('RfqInstrumentSummary', () => {
           'next week' as unknown as Date,
       })
     );
+
     expect(typed).toHaveTextContent('next week');
 
     const invalid = await renderLoaded(
@@ -299,6 +309,7 @@ describe('RfqInstrumentSummary', () => {
         preferredInstrumentOrArtefactAvailabilityDate: new Date(Number.NaN),
       })
     );
+
     expect(invalid).not.toHaveTextContent('Invalid');
   });
 
@@ -327,7 +338,7 @@ describe('RfqInstrumentSummary', () => {
   });
 });
 
-describe('useRfqInstrumentLookups', () => {
+describe(useRfqInstrumentLookups, () => {
   beforeEach(() => {
     resetMsalMock();
     clients.lookup.methods.getLookup.mockReset();

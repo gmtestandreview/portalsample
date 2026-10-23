@@ -60,7 +60,7 @@ const Submittable = ({
   );
 };
 
-describe('RhfRadioButtonGroup', () => {
+describe(RhfRadioButtonGroup, () => {
   it('checks the option matching the form value', () => {
     render(
       <Harness defaultValue='open'>
@@ -151,14 +151,17 @@ describe('RhfRadioButtonGroup', () => {
     render(<Invalid />);
 
     await userEvent.click(screen.getByText('validate'));
+
     expect(screen.queryByText('Choose a status')).not.toBeInTheDocument();
 
     // Tab into the group, then out of it, to blur without choosing an option.
     await userEvent.tab();
+
     expect(screen.getByLabelText('All')).toHaveFocus();
+
     await userEvent.tab();
 
-    expect(await screen.findByText('Choose a status')).toHaveAttribute(
+    await expect(screen.findByText('Choose a status')).resolves.toHaveAttribute(
       'id',
       'q-status-validation-msg'
     );
@@ -332,10 +335,12 @@ describe('RhfRadioButtonGroup', () => {
       render(<Submittable inlineHelp={inlineHelp} required={required} />);
       const group = screen.getByRole('radiogroup', { name: 'Status' });
       const radios = screen.getAllByRole('radio');
+
       expect(group).toBe(screen.getByTestId('fs-q-status'));
       expect(group.tagName).toBe('FIELDSET');
       expect(group.getAttribute('aria-describedby')).toBe(describedByBefore);
       expect(group.getAttribute('aria-invalid')).toBeNull();
+
       if (inlineHelp) {
         expect(screen.getByText(inlineHelp)).toHaveAttribute(
           'id',
@@ -346,10 +351,14 @@ describe('RhfRadioButtonGroup', () => {
       await userEvent.click(screen.getByText('submit'));
 
       if (required) {
-        expect(await screen.findByText('Choose a status')).toBeInTheDocument();
+        await expect(
+          screen.findByText('Choose a status')
+        ).resolves.toBeInTheDocument();
       }
+
       expect(group.getAttribute('aria-describedby')).toBe(describedByAfter);
       expect(group.getAttribute('aria-invalid')).toBe(invalidAfter);
+
       radios.forEach((radio) => {
         expect(radio).not.toHaveAttribute('aria-describedby');
         expect(radio).not.toHaveAttribute('aria-invalid');

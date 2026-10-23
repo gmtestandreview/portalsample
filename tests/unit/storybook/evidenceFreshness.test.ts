@@ -116,6 +116,7 @@ describe('computeInputDigest', () => {
         story: { id: 'components-app--default', type: 'story' },
       },
     };
+
     expect(
       moduleUnderTest.validateReferences(referenceManifest, index)
     ).toEqual({

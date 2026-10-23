@@ -26,14 +26,14 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -45,7 +45,7 @@ vi.mock(
   }
 );
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
 }));
 
@@ -113,7 +113,7 @@ const renderPage = async (
   return result;
 };
 
-describe('RequestForQuoteSummary', () => {
+describe(RequestForQuoteSummary, () => {
   beforeEach(() => {
     cleanup();
     resetMsalMock();
@@ -179,6 +179,7 @@ describe('RequestForQuoteSummary', () => {
     );
 
     const descriptor = document.querySelector('#q-currentContact');
+
     expect(descriptor).toHaveTextContent('Margaret Hamilton');
     expect(descriptor).toHaveTextContent('margaret@example.com');
   });
@@ -219,7 +220,7 @@ describe('RequestForQuoteSummary', () => {
   it.each([
     [0, 'organisation-and-contact'],
     [1, 'instrument-and-request'],
-  ])('Edit button %i leads to %s while editable', async (index, step) => {
+  ])('edit button %i leads to %s while editable', async (index, step) => {
     await renderPage(
       fixtureValues('fully populated with the principal contact')
     );
@@ -227,8 +228,10 @@ describe('RequestForQuoteSummary', () => {
     const editButtons = screen.getAllByRole('button', {
       name: 'Edit this section',
     });
+
     expect(editButtons).toHaveLength(2);
-    fireEvent.click(editButtons[index] as HTMLElement);
+
+    fireEvent.click(editButtons.at(index) as HTMLElement);
 
     expect(
       screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`)
@@ -245,7 +248,9 @@ describe('RequestForQuoteSummary', () => {
 
     expect(screen.queryByText(/before you submit your request/i)).toBeNull();
     expect(screen.queryByRole('button', { name: /edit/i })).toBeNull();
+
     const back = screen.getByTestId('back-button');
+
     expect(back).toHaveAttribute('href', '/dashboard');
     expect(within(back).getByText(/back to dashboard/i)).toBeInTheDocument();
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();

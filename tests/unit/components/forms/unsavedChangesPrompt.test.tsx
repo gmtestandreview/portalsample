@@ -8,17 +8,22 @@ const guardProps = vi.hoisted(() => ({
   last: undefined as undefined | { when?: boolean; onProceed?: () => void },
 }));
 
-vi.mock('../../../../ClientApp/src/components/RouteLeavingGuard', () => ({
-  default: (props: { when?: boolean; onProceed?: () => void }) => {
-    guardProps.last = props;
-    return <div data-testid='guard' data-when={String(Boolean(props.when))} />;
-  },
-}));
+vi.mock(
+  import('../../../../ClientApp/src/components/RouteLeavingGuard'),
+  () => ({
+    default: (props: { when?: boolean; onProceed?: () => void }) => {
+      guardProps.last = props;
+      return (
+        <div data-testid='guard' data-when={String(Boolean(props.when))} />
+      );
+    },
+  })
+);
 
 const base = { isDirty: false, isValid: true, submitCount: 0 };
 const whenOf = () => screen.getByTestId('guard').getAttribute('data-when');
 
-describe('UnsavedChangesPrompt', () => {
+describe(UnsavedChangesPrompt, () => {
   it.each([
     ['clean and unsubmitted', base, 'false'],
     ['dirty and unsubmitted', { ...base, isDirty: true }, 'true'],
@@ -44,6 +49,7 @@ describe('UnsavedChangesPrompt', () => {
     ],
   ])('when %s the guard is %s', (_name, state, expected) => {
     render(<UnsavedChangesPrompt {...state} />);
+
     expect(whenOf()).toBe(expected);
   });
 
@@ -52,6 +58,7 @@ describe('UnsavedChangesPrompt', () => {
     const { rerender } = render(
       <UnsavedChangesPrompt {...base} onProceed={onProceed} />
     );
+
     expect(guardProps.last?.onProceed).toBe(onProceed);
 
     rerender(
@@ -61,11 +68,12 @@ describe('UnsavedChangesPrompt', () => {
         onProceed={onProceed}
       />
     );
+
     expect(guardProps.last?.onProceed).toBe(onProceed);
   });
 });
 
-describe('UnsavedFormPrompt (Formik)', () => {
+describe('unsavedFormPrompt (Formik)', () => {
   const Probe = () => {
     const { errors } = useFormikContext();
     return <pre data-testid='errors'>{JSON.stringify(errors)}</pre>;
@@ -84,6 +92,7 @@ describe('UnsavedFormPrompt (Formik)', () => {
         </>
       </Formik>
     );
+
     expect(screen.getByTestId('errors')).toHaveTextContent('Required');
 
     await act(async () => {

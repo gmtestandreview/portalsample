@@ -119,7 +119,7 @@ const sourceModeManifestPath = join(
   'coverageManifest.json'
 );
 
-describe('Storybook coverage manifest schema v1', () => {
+describe('storybook coverage manifest schema v1', () => {
   it('accepts a reviewed renderable record with a meaningful required state', () => {
     expect(validateManifest(validManifest)).toEqual({
       ok: true,
@@ -595,7 +595,9 @@ describe('deterministic inventory generation', () => {
     expect(result.regions?.matrix).not.toMatch(
       /generatedAt|receiptId|timestamp/u
     );
+
     const componentRegion = result.regions?.components ?? '';
+
     expect(componentRegion.indexOf('Field.tsx#Field')).toBeLessThan(
       componentRegion.indexOf('Zed.tsx#Zed')
     );

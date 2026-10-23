@@ -176,6 +176,7 @@ describe('reviewed Storybook source and story evidence', () => {
         },
       ],
     };
+
     expect(
       moduleUnderTest.validateStoryEvidence({
         manifest: invalidAssertion,
@@ -217,6 +218,7 @@ describe('reviewed Storybook source and story evidence', () => {
         },
       ],
     };
+
     expect(
       moduleUnderTest.validateStoryEvidence({
         manifest: falsePositiveManifest,
@@ -237,6 +239,7 @@ describe('reviewed Storybook source and story evidence', () => {
       "    expect('expect-visible-label').toBe('expect-visible-label');",
       "    console.log('expect-visible-label');"
     );
+
     expect(
       moduleUnderTest.validateStoryEvidence({
         manifest,

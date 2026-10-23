@@ -1,6 +1,9 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+  readDirectorySync,
+  readTextFileSync,
+} from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const sourceRoot = path.join(repoRoot, 'ClientApp', 'src');
@@ -11,13 +14,12 @@ const coverageMatrixPath = path.join(
 );
 
 const readDirs = (dir: string) =>
-  fs
-    .readdirSync(dir, { withFileTypes: true })
+  readDirectorySync(dir, repoRoot)
     .filter((e) => e.isDirectory() && !e.name.startsWith('.'))
     .map((e) => e.name);
 
-describe('Storybook coverage drift', () => {
-  const coverageDoc = fs.readFileSync(coverageMatrixPath, 'utf8');
+describe('storybook coverage drift', () => {
+  const coverageDoc = readTextFileSync(coverageMatrixPath, repoRoot);
 
   it('every route family directory is registered in CoverageMatrix.docs.mdx', () => {
     const routesDir = path.join(sourceRoot, 'routes');
@@ -41,15 +43,16 @@ describe('Storybook coverage drift', () => {
     ).toHaveLength(0);
   });
 
-  it('Phase 4 remains open until closure evidence passes', () => {
+  it('phase 4 remains open until closure evidence passes', () => {
     expect(coverageDoc).toContain('Phase 4: Closure');
     expect(coverageDoc).toMatch(/'Phase 4: Closure',\s*'Open'/);
   });
 
-  it('RouteLeavingGuard is registered with a non-Docs-only status', () => {
+  it('routeLeavingGuard is registered with a non-Docs-only status', () => {
     const guardRow = coverageDoc
       .split('\n')
       .find((l) => l.includes('RouteLeavingGuard'));
+
     expect(
       guardRow,
       'RouteLeavingGuard row not found in CoverageMatrix'

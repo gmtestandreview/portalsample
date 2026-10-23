@@ -113,8 +113,10 @@ const OrganisationNameLookup = (
 
   // Auto-scroll to active item
   useEffect(() => {
-    if (activeIndex >= 0 && itemRefs.current[activeIndex]) {
-      itemRefs.current[activeIndex]?.scrollIntoView({
+    const activeItem =
+      activeIndex >= 0 ? itemRefs.current.at(activeIndex) : undefined;
+    if (activeItem) {
+      activeItem.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
@@ -159,7 +161,7 @@ const OrganisationNameLookup = (
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (activeIndex >= 0 && activeIndex < filteredSuggestions.length) {
-        handleSelect(filteredSuggestions[activeIndex]);
+        handleSelect(filteredSuggestions.at(activeIndex) ?? inputValue);
       } else {
         handleSelect(inputValue);
       }
@@ -257,7 +259,7 @@ const OrganisationNameLookup = (
                       handleSelect(item, () => setActiveIndex(index));
                     }}
                     ref={(el: any) => {
-                      itemRefs.current[index] = el;
+                      itemRefs.current.splice(index, 1, el);
                     }}
                   >
                     <span aria-hidden='true'>{item}</span>

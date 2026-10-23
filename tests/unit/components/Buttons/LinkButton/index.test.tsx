@@ -8,7 +8,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock('react-aria-components/Link', () => ({
+vi.mock(import('react-aria-components/Link'), () => ({
   Link: ({
     children,
     className,
@@ -44,7 +44,7 @@ vi.mock('react-aria-components/Link', () => ({
     ),
 }));
 
-describe('LinkButton React Aria render fallback', () => {
+describe('linkButton React Aria render fallback', () => {
   afterEach(() => {
     ariaLinkMockState.includeHref = false;
   });

@@ -26,7 +26,7 @@ const mocks = vi.hoisted(() => {
 
 // ─── module mocks ─────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     instance: mocks.instance,
     accounts: mocks.accounts,
@@ -35,7 +35,7 @@ vi.mock('@azure/msal-react', () => ({
   useAccount: () => ({ homeAccountId: 'mock-id' }),
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
   useAccountState: () => ({
     isLoading: false,
     details: { homeAccountId: 'mock-id' },
@@ -45,7 +45,7 @@ vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
 // AcceptQuoteClient, AccountsClient, Title, and State are all consumed by the
 // component or its children. Title must be a real-shaped object so that
 // ContactDetailsInput's getTitles() can iterate over it without crashing.
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   AcceptQuoteClient: class {
     setAuthToken = vi.fn();
     getDeliveryAndReturn = mocks.getDeliveryAndReturn;
@@ -75,7 +75,7 @@ vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   },
 }));
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
@@ -138,7 +138,7 @@ const baseApiResponse = {
 
 // ─── tests ────────────────────────────────────────────────────────────────────
 
-describe('DeliveryAndReturn', () => {
+describe(DeliveryAndReturn, () => {
   beforeEach(() => {
     mocks.getDeliveryAndReturn.mockReset();
   });
@@ -155,11 +155,13 @@ describe('DeliveryAndReturn', () => {
           screen.getByText(/does not require the delivery or return/i)
         ).toBeInTheDocument()
       );
+
       expect(
         screen.queryByRole('heading', {
           name: /Instrument\/artefact delivery/i,
         })
       ).not.toBeInTheDocument();
+
       // Drain setIsLoading(false) and any Formik re-renders still in the
       // microtask queue so they don't fire outside act() after the test ends.
       await act(async () => {});
@@ -175,18 +177,20 @@ describe('DeliveryAndReturn', () => {
           screen.getByText(/does not require the delivery or return/i)
         ).toBeInTheDocument()
       );
+
       expect(
         screen.queryByRole('heading', {
           name: /Instrument\/artefact delivery/i,
         })
       ).not.toBeInTheDocument();
+
       await act(async () => {});
     });
   });
 
   // 2. returnAddressType switch in summary mode ──────────────────────────────
   describe('returnAddressType address resolution in summary mode', () => {
-    it('BusinessAddress renders the street address', async () => {
+    it('businessAddress renders the street address', async () => {
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'BusinessAddress',
@@ -198,7 +202,7 @@ describe('DeliveryAndReturn', () => {
       await act(async () => {});
     });
 
-    it('PostalAddress with postalAddressSameAsStreetAddress=true falls back to street address', async () => {
+    it('postalAddress with postalAddressSameAsStreetAddress=true falls back to street address', async () => {
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         rfqOrganisation: {
@@ -214,7 +218,7 @@ describe('DeliveryAndReturn', () => {
       await act(async () => {});
     });
 
-    it('PostalAddress with postalAddressSameAsStreetAddress=false renders the postal address', async () => {
+    it('postalAddress with postalAddressSameAsStreetAddress=false renders the postal address', async () => {
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'PostalAddress',
@@ -230,9 +234,10 @@ describe('DeliveryAndReturn', () => {
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalled()
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith()
       );
       await act(async () => {});
+
       expect(
         screen.queryByRole('heading', {
           name: /Instrument\/artefact return address/i,
@@ -240,7 +245,7 @@ describe('DeliveryAndReturn', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('Other renders the custom returnAddress', async () => {
+    it('other renders the custom returnAddress', async () => {
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'Other',
@@ -268,23 +273,26 @@ describe('DeliveryAndReturn', () => {
       await waitFor(() =>
         expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2')
       );
+
       expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(2);
+
       await act(async () => {});
     });
   });
 
   // 4. API error — component must not crash ──────────────────────────────────
-  describe('API error', () => {
+  describe('aPI error', () => {
     it('renders the info banner and does not crash when getDeliveryAndReturn rejects', async () => {
       mocks.getDeliveryAndReturn.mockRejectedValue(new Error('Network error'));
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalled()
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith()
       );
       // Drain queued state updates (setIsLoading(false) from catch block,
       // plus any Formik re-renders) so they don't fire outside act().
       await act(async () => {});
+
       // Component must still be mounted with the info banner visible.
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });

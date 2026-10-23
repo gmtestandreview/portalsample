@@ -12,7 +12,7 @@ const guardedLeaf = (message: unknown, type = 'required') => {
   return leaf;
 };
 
-describe('flattenRhfErrors', () => {
+describe(flattenRhfErrors, () => {
   it('returns messages by dotted path without reading any ref', () => {
     const errors = {
       name: guardedLeaf('Name is required'),

@@ -26,17 +26,17 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => msalContext,
 }));
 
-vi.mock('@/routes/common/helperFunctions', () => helperMocks);
+vi.mock(import('@/routes/common/helperFunctions'), () => helperMocks);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock('@/instrumentation/AppLogger', () => ({
+vi.mock(import('@/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
@@ -56,7 +56,7 @@ const defaultProps = {
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('ViewPdfQuote', () => {
+describe(ViewPdfQuote, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Restore after clearAllMocks resets implementations (Vitest 4 behaviour)
@@ -120,6 +120,7 @@ describe('ViewPdfQuote', () => {
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
+
     expect(helperMocks.getFileSize).not.toHaveBeenCalled();
   });
 
@@ -212,6 +213,7 @@ describe('ViewPdfQuote', () => {
     await waitFor(() =>
       screen.getByRole('button', { name: /Download Quote/i })
     );
+
     expect(firstSetter).not.toHaveBeenCalledWith(true);
 
     // Re-render: quotationData changes (triggers effect re-run) and setter swaps
@@ -228,6 +230,7 @@ describe('ViewPdfQuote', () => {
     await waitFor(() => {
       expect(secondSetter).toHaveBeenCalledWith(true);
     });
+
     // firstSetter must not have been called with true at any point
     expect(firstSetter).not.toHaveBeenCalledWith(true);
   });

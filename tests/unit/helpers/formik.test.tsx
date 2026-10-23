@@ -11,7 +11,7 @@ const schema = yup.object({
   name: yup.string().label('Name').isRequired(),
 });
 
-describe('Formik harness', () => {
+describe('formik harness', () => {
   it('still renders children against initialValues', () => {
     // Backward compatibility. buttonControls.test.tsx uses the original three-prop signature and
     // the additions below must not disturb it.
@@ -62,6 +62,7 @@ describe('Formik harness', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(submit.submitCount()).toBe(1));
+
     expect(submit.lastValues()).toEqual({ name: 'Updated' });
   });
 
@@ -112,6 +113,7 @@ describe('Formik harness', () => {
     await waitFor(() =>
       expect(screen.getByTestId('name-error')).toBeInTheDocument()
     );
+
     expect(submit.submitCount()).toBe(0);
   });
 });

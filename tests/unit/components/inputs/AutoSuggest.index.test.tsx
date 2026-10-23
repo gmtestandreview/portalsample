@@ -7,7 +7,7 @@ const containerState = vi.hoisted(() => ({
   props: undefined as any,
 }));
 
-vi.mock('@/components/Inputs/AutoSuggest/AutoSuggestContainer', () => ({
+vi.mock(import('@/components/Inputs/AutoSuggest/AutoSuggestContainer'), () => ({
   default: (props: any) => {
     containerState.props = props;
     return (
@@ -42,7 +42,7 @@ const renderAutoSuggest = (
   return { getOptions, onSelectedOption };
 };
 
-describe('AutoSuggest parent state', () => {
+describe('autoSuggest parent state', () => {
   it('clears a selected option when the search term is emptied', async () => {
     const onSelectedOption = vi.fn().mockResolvedValue(undefined);
     renderAutoSuggest(undefined, onSelectedOption, 'Sydney');
@@ -72,6 +72,7 @@ describe('AutoSuggest parent state', () => {
     await act(async () => {
       await containerState.props.onSearchTermChange('syd');
     });
+
     expect(screen.getByTestId('option-count')).toHaveTextContent('1');
 
     await act(async () => {
@@ -101,11 +102,13 @@ describe('AutoSuggest parent state', () => {
     await act(async () => {
       searchPromise = containerState.props.onSearchTermChange('Sydney');
     });
+
     expect(screen.getByTestId('loading')).toHaveTextContent('true');
 
     await act(async () => {
       containerState.props.onCancel();
     });
+
     expect(screen.getByTestId('search-term')).toHaveTextContent('Original');
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
 

@@ -1,9 +1,11 @@
 import { spawnSync } from 'node:child_process';
-import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { cp, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
+
+import { readTextFile } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -51,11 +53,14 @@ async function createPatchFixture() {
     cwd: root,
     encoding: 'utf8',
   });
+
   expect(gitInit.status).toBe(0);
+
   const gitAdd = spawnSync('git', ['add', 'node_modules'], {
     cwd: root,
     encoding: 'utf8',
   });
+
   expect(gitAdd.status).toBe(0);
 
   return root;
@@ -75,22 +80,23 @@ describe('repository-owned local patches', () => {
 
     expect(runPatchApplicator(root).status).toBe(0);
 
-    expect(
-      await readFile(
+    await expect(
+      readTextFile(
         join(root, 'node_modules/html-react-parser/package.json'),
-        'utf8'
+        root
       )
-    ).toContain('"default": "./esm/index.mjs"');
-    expect(
-      await readFile(
+    ).resolves.toContain('"default": "./esm/index.mjs"');
+    await expect(
+      readTextFile(
         join(root, 'node_modules/@storybook/addon-mcp/dist/preset.js'),
-        'utf8'
+        root
       )
-    ).toContain('function normalizeTestRunData(data)');
+    ).resolves.toContain('function normalizeTestRunData(data)');
+
     const firstRun = await Promise.all([
-      readFile(
+      readTextFile(
         join(root, 'node_modules/html-react-parser/package.json'),
-        'utf8'
+        root
       ),
     ]);
 
@@ -98,9 +104,9 @@ describe('repository-owned local patches', () => {
 
     await expect(
       Promise.all([
-        readFile(
+        readTextFile(
           join(root, 'node_modules/html-react-parser/package.json'),
-          'utf8'
+          root
         ),
       ])
     ).resolves.toEqual(firstRun);

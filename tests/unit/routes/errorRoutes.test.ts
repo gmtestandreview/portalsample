@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import getUnexpectedErrorRoute from '../../../ClientApp/src/routes/common/errorRoutes';
 import { HttpStatusCode } from '../../../ClientApp/src/types';
 
-describe('getUnexpectedErrorRoute', () => {
+describe(getUnexpectedErrorRoute, () => {
   it('maps 403 Forbidden to /forbidden', () => {
     expect(getUnexpectedErrorRoute(HttpStatusCode.Forbidden)).toBe(
       '/forbidden'

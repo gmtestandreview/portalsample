@@ -53,6 +53,7 @@ describe('web-api-client GREEN: successful requests', () => {
   it('serializes application commands without changing the wire contract', async () => {
     const http = transport(Response.json({ id: 42, referenceId: 'RFQ-42' }));
     const client = new ApplicationClient('', http);
+
     await expect(
       client.createApplication({
         applicationType: ApplicationType.QuoteRequest,
@@ -72,6 +73,7 @@ describe('web-api-client GREEN: successful requests', () => {
 
   it('accepts a successful void response', async () => {
     const http = transport(new Response(null, { status: 200 }));
+
     await expect(
       new ContactClient('', http).saveContactDetails({})
     ).resolves.toBeUndefined();
@@ -97,6 +99,7 @@ describe('web-api-client RED: rejected requests', () => {
         errors: { email: ['Invalid email'] },
       };
       const http = transport(Response.json(problem, { status }));
+
       await expect(
         new ContactClient('', http).saveContactDetails({})
       ).rejects.toEqual(problem);
@@ -111,6 +114,7 @@ describe('web-api-client RED: rejected requests', () => {
       })
     );
     const result = new AddressClient('', http).search('Main');
+
     await expect(result).rejects.toBeInstanceOf(SwaggerException);
     await expect(result).rejects.toMatchObject({
       status: 503,
@@ -125,6 +129,7 @@ describe('web-api-client RED: rejected requests', () => {
   ])('propagates transport failure: $name', async (error) => {
     const http = transport(new Response());
     http.fetch.mockRejectedValue(error);
+
     await expect(new AddressClient('', http).search('Main')).rejects.toBe(
       error
     );
@@ -133,6 +138,7 @@ describe('web-api-client RED: rejected requests', () => {
 
   it('rejects malformed JSON rather than returning a successful empty result', async () => {
     const http = transport(new Response('not-json', { status: 200 }));
+
     await expect(
       new AddressClient('', http).search('Main')
     ).rejects.toBeInstanceOf(SyntaxError);
@@ -144,6 +150,7 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
     'omits an absent search parameter (%s) and auth headers',
     async (keyword) => {
       const http = transport(Response.json({ matches: [] }));
+
       await expect(
         new AddressClient('', http).search(keyword)
       ).resolves.toEqual({ matches: [] });
@@ -162,6 +169,7 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
     'preserves a null result for an empty %i response despite the generated non-null signature',
     async (status) => {
       const http = transport(new Response(null, { status }));
+
       await expect(
         new AddressClient('', http).search(undefined)
       ).resolves.toBeNull();
@@ -194,12 +202,13 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
       const result = await new FileClient('', http).fetchBytesFromUrl(
         'https://files.test/form.pdf?a=1&b=2'
       );
+
       expect(result).toMatchObject({
         status,
         fileName: name,
         headers: { 'content-disposition': disposition },
       });
-      expect(await result.data.text()).toBe('pdf-content');
+      await expect(result.data.text()).resolves.toBe('pdf-content');
       expect(http.fetch).toHaveBeenCalledWith(
         '/api/file/fetch-accessible-form?url=https%3A%2F%2Ffiles.test%2Fform.pdf%3Fa%3D1%26b%3D2',
         expect.objectContaining({

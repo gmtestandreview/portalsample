@@ -4,7 +4,7 @@ import {
   isWafError,
 } from '../../../ClientApp/src/types/wafError';
 
-describe('isWafError', () => {
+describe(isWafError, () => {
   it('returns true for Azure WAF server headers', () => {
     expect(
       isWafError({

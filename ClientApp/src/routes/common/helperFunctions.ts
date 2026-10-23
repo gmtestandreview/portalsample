@@ -389,7 +389,12 @@ export const contentLoaded = (sendPageView: boolean) => {
 
   piiFields.forEach((field) => {
     const key = field.dataset['pii'] as string;
-    redactedData[key] = '[REDACTED]';
+    Object.defineProperty(redactedData, key, {
+      configurable: true,
+      enumerable: true,
+      value: '[REDACTED]',
+      writable: true,
+    });
 
     // Send redacted data to GA
     ReactGA.send({
@@ -415,17 +420,23 @@ export function sortList<T>(
     return [list, lastId];
   }
 
-  const indexOfItemToRemove = list.findIndex((value, _index, _c) =>
-    (value[displayFieldName] as string)
+  const getDisplayField = (value: T): string =>
+    Reflect.get(value as object, displayFieldName) as string;
+
+  const indexOfItemToRemove = list.findIndex((value) =>
+    getDisplayField(value)
       .toLocaleLowerCase()
       .startsWith(lastItem.toLocaleLowerCase())
   );
 
   if (displayFieldName === 'displayText') {
-    removeId =
-      (list[indexOfItemToRemove] as SelectInputOption<string>)?.value ?? '';
+    const item =
+      indexOfItemToRemove >= 0 ? list.at(indexOfItemToRemove) : undefined;
+    removeId = (item as SelectInputOption<string> | undefined)?.value ?? '';
   } else {
-    removeId = (list[indexOfItemToRemove] as LookupResponse)?.id ?? '';
+    const item =
+      indexOfItemToRemove >= 0 ? list.at(indexOfItemToRemove) : undefined;
+    removeId = (item as LookupResponse | undefined)?.id ?? '';
   }
 
   lastId = removeId!;
@@ -435,7 +446,7 @@ export function sortList<T>(
   }
 
   const sortedList = [...list].sort((a, b) =>
-    (a[displayFieldName] as string).localeCompare(b[displayFieldName] as string)
+    getDisplayField(a).localeCompare(getDisplayField(b))
   );
   const [removedItem] = removedItems ?? [];
   if (removedItem !== undefined) {

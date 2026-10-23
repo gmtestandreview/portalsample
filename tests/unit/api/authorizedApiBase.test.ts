@@ -7,7 +7,7 @@ class TestClient extends AuthorizedApiBase {
   }
 }
 
-describe('AuthorizedApiBase', () => {
+describe(AuthorizedApiBase, () => {
   beforeEach(() => {
     globalThis.sessionStorage.clear();
   });

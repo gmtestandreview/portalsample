@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getFilteredSuggestions } from '@/components/Inputs/OrganisationNameLookup/suggestionUtils';
 
-describe('getFilteredSuggestions', () => {
+describe(getFilteredSuggestions, () => {
   it('sorts matching suggestions with a case-insensitive comparator and removes duplicates', () => {
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
@@ -50,6 +50,7 @@ describe('getFilteredSuggestions', () => {
       options: [{ name: 'Alpha Pty Ltd', parent: 'Acme' }],
       parentValue: 'acme',
     });
+
     expect(suggestions).toEqual([]);
   });
 

@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { Form, Formik, type FormikProps } from 'formik';
 import { MemoryRouter } from 'react-router';
-import { afterEach, vi } from 'vitest';
+import { afterEach, vi, describe, beforeEach, it, expect } from 'vitest';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { HttpStatusCode } from '@/types';
 
@@ -13,7 +13,7 @@ const TestRouter = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
 );
 
-describe('ErrorSummary', () => {
+describe(ErrorSummary, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -35,6 +35,7 @@ describe('ErrorSummary', () => {
     );
 
     const link = screen.getByRole('link', { name: 'Contact: (#1): Required' });
+
     expect(link).toHaveAttribute('href', '#contact.0.firstName');
   });
 
@@ -185,6 +186,7 @@ describe('ErrorSummary', () => {
     const summaryEl = document.querySelector(
       '#form-error-summary'
     ) as HTMLElement;
+
     expect(summaryEl).not.toBeNull();
 
     act(() => {

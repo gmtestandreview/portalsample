@@ -10,56 +10,62 @@ const mocks = vi.hoisted(() => ({
   createTrustedTypePolicy: vi.fn(),
 }));
 
-vi.mock('react-dom/client', () => ({
+vi.mock(import('react-dom/client'), () => ({
   createRoot: mocks.createRoot,
 }));
 
-vi.mock('@azure/msal-browser', () => ({
+vi.mock(import('@azure/msal-browser'), () => ({
   createStandardPublicClientApplication:
     mocks.createStandardPublicClientApplication,
 }));
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   MsalProvider: ({ children }: { children: React.ReactNode }) => (
     <section data-testid='msal-provider'>{children}</section>
   ),
 }));
 
-vi.mock('react-router/dom', () => ({
+vi.mock(import('react-router/dom'), () => ({
   RouterProvider: () => <main>Router provider</main>,
 }));
 
-vi.mock('../../../ClientApp/src/authentication/AccountProvider', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <section data-testid='account-provider'>{children}</section>
-  ),
-}));
+vi.mock(
+  import('../../../ClientApp/src/authentication/AccountProvider'),
+  () => ({
+    default: ({ children }: { children: React.ReactNode }) => (
+      <section data-testid='account-provider'>{children}</section>
+    ),
+  })
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
   configuration: { auth: { clientId: 'client-id' } },
 }));
 
-vi.mock('../../../ClientApp/src/App', () => ({
+vi.mock(import('../../../ClientApp/src/App'), () => ({
   default: { routes: [] },
 }));
 
-vi.mock('../../../ClientApp/src/trustedtypes', () => ({
+vi.mock(import('../../../ClientApp/src/trustedtypes'), () => ({
   TrustedTypes: {
     createTrustedTypePolicy: mocks.createTrustedTypePolicy,
   },
 }));
 
-vi.mock('../../../ClientApp/src/components/ErrorBoundary', () => ({
+vi.mock(import('../../../ClientApp/src/components/ErrorBoundary'), () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <section data-testid='error-boundary'>{children}</section>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/instrumentation/AppInsightsService', () => ({
-  ai: {
-    reactPlugin: { plugin: 'app-insights' },
-  },
-}));
+vi.mock(
+  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
+  () => ({
+    ai: {
+      reactPlugin: { plugin: 'app-insights' },
+    },
+  })
+);
 
 describe('application bootstrap', () => {
   it('creates the root, initializes MSAL, installs Trusted Types, and renders providers', async () => {
@@ -75,7 +81,7 @@ describe('application bootstrap', () => {
     expect(mocks.createStandardPublicClientApplication).toHaveBeenCalledWith({
       auth: { clientId: 'client-id' },
     });
-    expect(mocks.createTrustedTypePolicy).toHaveBeenCalled();
+    expect(mocks.createTrustedTypePolicy).toHaveBeenCalledWith();
     expect(mocks.render).toHaveBeenCalledWith(expect.any(Object));
   });
 

@@ -1,3 +1,4 @@
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router';
 import { useRouteAccessibility } from '@/hooks/useRouteAccessibility';
@@ -36,6 +37,7 @@ describe('route accessibility behavior', () => {
     );
 
     await act(() => vi.advanceTimersByTimeAsync(100));
+
     expect(
       screen.getByRole('status', { name: 'Route announcement' })
     ).toHaveTextContent('Navigated to Dashboard page.');
@@ -46,6 +48,7 @@ describe('route accessibility behavior', () => {
       screen.getByRole('button', { name: 'Next route' }).click();
     });
     await act(() => vi.advanceTimersByTimeAsync(100));
+
     expect(
       screen.getByRole('status', { name: 'Route announcement' })
     ).toHaveTextContent('Navigated to page.');
@@ -60,6 +63,7 @@ describe('route accessibility behavior', () => {
     );
 
     unmount();
-    expect(clearTimeoutSpy).toHaveBeenCalled();
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith();
   });
 });

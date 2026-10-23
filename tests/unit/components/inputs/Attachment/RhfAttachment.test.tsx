@@ -127,7 +127,7 @@ const renderAttachment = (
     />
   );
 
-describe('RhfAttachment', () => {
+describe('rhfAttachment', () => {
   it('renders upload controls with help text, disabled state, and file constraints', () => {
     renderAttachment([], {
       className: 'drop-target',
@@ -167,7 +167,8 @@ describe('RhfAttachment', () => {
 
     await user.click(screen.getByTestId('attachments'));
 
-    expect(inputClick).toHaveBeenCalled();
+    expect(inputClick).toHaveBeenCalledWith();
+
     inputClick.mockRestore();
   });
 
@@ -183,7 +184,7 @@ describe('RhfAttachment', () => {
       .getByLabelText('Upload supporting documents')
       .dispatchEvent(clickEvent);
 
-    expect(preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalledWith();
   });
 
   it('ignores a change event that carries no file list', () => {
@@ -330,6 +331,7 @@ describe('RhfAttachment', () => {
         '"attachmentName":"diagram.jpg"'
       )
     );
+
     expect(screen.getByTestId('values')).not.toHaveTextContent(
       '"attachmentName":"manual.pdf"'
     );
@@ -356,9 +358,11 @@ describe('RhfAttachment', () => {
         expect.objectContaining({ name: 'small.pdf' }),
       ])
     );
+
     expect(
       screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.')
     ).toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentName":"small.pdf"'
@@ -393,6 +397,7 @@ describe('RhfAttachment', () => {
         '"attachments":[{"id":"doc-1"'
       )
     );
+
     expect(
       screen.getByRole('progressbar', { name: 'Uploading' })
     ).toBeInTheDocument();
@@ -416,6 +421,7 @@ describe('RhfAttachment', () => {
       />
     );
     const button = screen.getByTestId('supporting-documents');
+
     expect(button).toHaveAttribute(
       'aria-describedby',
       'help-supporting-documents'
@@ -433,6 +439,7 @@ describe('RhfAttachment', () => {
 
   it('shows the missing-category message on every row after a submit attempt', async () => {
     renderAttachment([{ ...uploadedAttachment, attachmentCategory: '' }]);
+
     expect(
       screen.queryByText('Select a category that best describes this document.')
     ).not.toBeInTheDocument();
@@ -474,7 +481,9 @@ describe('RhfAttachment', () => {
       file('manual.pdf', 10)
     );
 
-    expect(await screen.findByText('Virus scan failed')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Virus scan failed')
+    ).resolves.toBeInTheDocument();
     expect(
       screen.getByText('Document could not be stored')
     ).toBeInTheDocument();
@@ -494,7 +503,8 @@ describe('RhfAttachment', () => {
       file('manual.pdf', 10)
     );
 
-    await waitFor(() => expect(onUploadFiles).toHaveBeenCalled());
+    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledWith());
+
     expect(
       within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(
         'listitem'
@@ -567,6 +577,7 @@ describe('RhfAttachment', () => {
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent('"attachments":[]')
     );
@@ -608,7 +619,9 @@ describe('RhfAttachment', () => {
     await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
-    expect(await screen.findByText('Delete failed')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Delete failed')
+    ).resolves.toBeInTheDocument();
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"attachmentName":"manual.pdf"'
     );
@@ -625,6 +638,7 @@ describe('RhfAttachment', () => {
     const attachmentRegion = screen
       .getByText('manual.pdf')
       .closest('.attachment');
+
     expect(attachmentRegion).not.toBeNull();
     expect(
       within(attachmentRegion as HTMLElement).queryByRole('button', {
@@ -720,11 +734,11 @@ describe('RhfAttachment', () => {
       'Certificate'
     );
 
-    expect(
-      await within(
-        screen.getByRole('list', { name: 'upload errors' })
-      ).findByText('Could not save the category for manual.pdf.')
-    ).toBeInTheDocument();
+    await expect(
+      within(screen.getByRole('list', { name: 'upload errors' })).findByText(
+        'Could not save the category for manual.pdf.'
+      )
+    ).resolves.toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
       'Manuals'
     );
@@ -746,6 +760,7 @@ describe('RhfAttachment', () => {
     await waitFor(() =>
       expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument()
     );
+
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
       'Certificate'
     );
@@ -792,6 +807,7 @@ describe('RhfAttachment', () => {
       ]);
 
       await touchCategory(user, 'first.pdf');
+
       expect(
         within(rowOf('first.pdf')).getByText(CATEGORY_ERROR)
       ).toBeInTheDocument();
@@ -814,6 +830,7 @@ describe('RhfAttachment', () => {
       });
 
       await touchCategory(user, 'first.pdf');
+
       expect(screen.getByText(CATEGORY_ERROR)).toBeInTheDocument();
 
       await user.upload(
@@ -824,6 +841,7 @@ describe('RhfAttachment', () => {
       await waitFor(() =>
         expect(screen.getByText('second.pdf')).toBeInTheDocument()
       );
+
       expect(screen.queryByText('first.pdf')).not.toBeInTheDocument();
       expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
     });
@@ -904,6 +922,7 @@ describe('RhfAttachment', () => {
     const values = JSON.parse(
       screen.getByTestId('values').textContent ?? '{}'
     ) as { attachments: AttachmentDto[] };
+
     expect(values.attachments).toHaveLength(1);
     expect(values.attachments[0]).toMatchObject({
       id: 'doc-2',

@@ -100,10 +100,10 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
         The following issue(s) must be corrected before you can continue:
       </Alert.Heading>
       <ul>
-        {Object.keys(errors).map((key) =>
+        {Object.entries(errors).map(([key, value]) =>
           renderErrorListItem(
             key,
-            `${keyToSentenceCase(key, 1)}${errors[key]}`,
+            `${keyToSentenceCase(key, 1)}${value}`,
             disableLinkedError
           )
         )}
@@ -156,11 +156,11 @@ const formatServerErrorKeys = (
   validationErrors: Record<string, string[]>,
   prefixToRemove?: string
 ): FlatErrorData =>
-  Object.entries(validationErrors).reduce<FlatErrorData>(
-    (result, [key, messages]) => {
+  Object.fromEntries(
+    Object.entries(validationErrors).flatMap(([key, messages]) => {
       const message = messages[0];
       if (message === undefined) {
-        return result;
+        return [];
       }
 
       let keyBuilder = key;
@@ -173,10 +173,8 @@ const formatServerErrorKeys = (
         .split('.')
         .map((part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}`) // lowercase first letter of each subkey
         .join('.');
-      result[keyBuilder] = message;
-      return result;
-    },
-    {}
+      return [[keyBuilder, message]];
+    })
   );
 
 interface SummaryFocusState {

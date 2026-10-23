@@ -4,16 +4,16 @@ import {
   type ServerResponse,
 } from 'node:http';
 import { spawn, spawnSync } from 'node:child_process';
-import {
-  existsSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+
+import {
+  pathExists,
+  readTextFileSync,
+  writeTextFileSync,
+} from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '../../..');
 const CHILD_TIMEOUT_MS = 30_000;
@@ -106,16 +106,19 @@ function runBacklog() {
 
     return {
       result,
-      output: result.status === 0 ? readFileSync(outputPath, 'utf8') : '',
+      output:
+        result.status === 0
+          ? readTextFileSync(outputPath, outputDirectory)
+          : '',
     };
   } finally {
     rmSync(outputDirectory, { recursive: true, force: true });
   }
 }
 
-describe('Sonar all-issue backlog pressure tests', () => {
+describe('sonar all-issue backlog pressure tests', () => {
   it(
-    'RED: keeps every Sonar issue returned by every fixture page',
+    'rED: keeps every Sonar issue returned by every fixture page',
     () => {
       const { result, output } = runBacklog();
 
@@ -130,7 +133,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
   );
 
   it(
-    'GREEN: prioritises security and reliability ahead of low maintainability work',
+    'gREEN: prioritises security and reliability ahead of low maintainability work',
     () => {
       const { output } = runBacklog();
 
@@ -145,7 +148,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
   );
 
   it(
-    'AMBER: preserves unknown future Sonar shapes as triage work instead of dropping them',
+    'aMBER: preserves unknown future Sonar shapes as triage work instead of dropping them',
     () => {
       const { result, output } = runBacklog();
 
@@ -157,7 +160,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
   );
 
   it(
-    'RED: never writes authentication material into the backlog artifact',
+    'rED: never writes authentication material into the backlog artifact',
     () => {
       const { output } = runBacklog();
 
@@ -170,11 +173,12 @@ describe('Sonar all-issue backlog pressure tests', () => {
   it('rejects fixture files with malformed issue entries', () => {
     const fixtureDirectory = mkdtempSync(path.join(tmpdir(), 'sonar-invalid-'));
     const outputPath = path.join(fixtureDirectory, 'output.md');
-    writeFileSync(
+    writeTextFileSync(
       path.join(fixtureDirectory, 'invalid.json'),
       JSON.stringify({
         issues: [{ key: 'INVALID', message: { text: 'wrong type' } }],
-      })
+      }),
+      fixtureDirectory
     );
 
     try {
@@ -192,7 +196,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain('message must be a string');
-      expect(existsSync(outputPath)).toBe(false);
+      expect(pathExists(outputPath, fixtureDirectory)).toBe(false);
     } finally {
       rmSync(fixtureDirectory, { recursive: true, force: true });
     }
@@ -211,13 +215,15 @@ describe('Sonar all-issue backlog pressure tests', () => {
       type: 'CODE_SMELL',
       message: 'duplicate',
     };
-    writeFileSync(
+    writeTextFileSync(
       path.join(fixtureDirectory, 'page-1.json'),
-      JSON.stringify({ issues: [issue] })
+      JSON.stringify({ issues: [issue] }),
+      fixtureDirectory
     );
-    writeFileSync(
+    writeTextFileSync(
       path.join(fixtureDirectory, 'page-2.json'),
-      JSON.stringify({ issues: [issue] })
+      JSON.stringify({ issues: [issue] }),
+      fixtureDirectory
     );
 
     try {
@@ -235,7 +241,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain('duplicate issue key DUPLICATE');
-      expect(existsSync(outputPath)).toBe(false);
+      expect(pathExists(outputPath, fixtureDirectory)).toBe(false);
     } finally {
       rmSync(fixtureDirectory, { recursive: true, force: true });
     }
@@ -244,7 +250,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
   it('rejects malformed array-valued ranking fields in fixtures', () => {
     const fixtureDirectory = mkdtempSync(path.join(tmpdir(), 'sonar-ranking-'));
     const outputPath = path.join(fixtureDirectory, 'output.md');
-    writeFileSync(
+    writeTextFileSync(
       path.join(fixtureDirectory, 'invalid.json'),
       JSON.stringify({
         issues: [
@@ -253,7 +259,8 @@ describe('Sonar all-issue backlog pressure tests', () => {
             impactSeverities: { 0: 'HIGH' },
           },
         ],
-      })
+      }),
+      fixtureDirectory
     );
 
     try {
@@ -273,7 +280,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
       expect(result.stderr).toContain(
         'impactSeverities must be an array of strings'
       );
-      expect(existsSync(outputPath)).toBe(false);
+      expect(pathExists(outputPath, fixtureDirectory)).toBe(false);
     } finally {
       rmSync(fixtureDirectory, { recursive: true, force: true });
     }
@@ -328,7 +335,9 @@ describe('Sonar all-issue backlog pressure tests', () => {
 
             expect(result.status).toBe(0);
             expect(requestCount).toBe(2);
-            expect(readFileSync(outputPath, 'utf8')).toContain('LIVE-RETRY');
+            expect(readTextFileSync(outputPath, outputDirectory)).toContain(
+              'LIVE-RETRY'
+            );
           } finally {
             rmSync(outputDirectory, { recursive: true, force: true });
           }
@@ -426,7 +435,7 @@ describe('Sonar all-issue backlog pressure tests', () => {
 
             expect(result.status).not.toBe(0);
             expect(result.stderr).toContain('timed out after 10ms');
-            expect(existsSync(outputPath)).toBe(false);
+            expect(pathExists(outputPath, outputDirectory)).toBe(false);
           } finally {
             rmSync(outputDirectory, { recursive: true, force: true });
           }

@@ -8,7 +8,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock('react-aria-components/Breadcrumbs', () => ({
+vi.mock(import('react-aria-components/Breadcrumbs'), () => ({
   Breadcrumbs: ({
     children,
     className,
@@ -25,7 +25,7 @@ vi.mock('react-aria-components/Breadcrumbs', () => ({
   }) => <li className={className}>{children}</li>,
 }));
 
-vi.mock('react-aria-components/Link', () => ({
+vi.mock(import('react-aria-components/Link'), () => ({
   Link: ({
     children,
     href,
@@ -45,11 +45,11 @@ vi.mock('react-aria-components/Link', () => ({
           : { children }
       )
     ) : (
-      <a>{children}</a>
+      <a href={href ?? '#'}>{children}</a>
     ),
 }));
 
-describe('CustomBreadcrumb React Aria render fallback', () => {
+describe('customBreadcrumb React Aria render fallback', () => {
   afterEach(() => {
     ariaLinkMockState.includeHref = false;
   });

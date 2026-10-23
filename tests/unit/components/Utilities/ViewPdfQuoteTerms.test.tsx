@@ -14,20 +14,20 @@ const helperMocks = vi.hoisted(() => ({
 const trackGAEventMock = vi.hoisted(() => vi.fn());
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
-vi.mock('@azure/msal-react', () => ({
+vi.mock(import('@azure/msal-react'), () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'test-account' }],
     instance: { acquireTokenSilent: acquireTokenSilentMock },
   }),
 }));
 
-vi.mock('@/routes/common/helperFunctions', () => helperMocks);
+vi.mock(import('@/routes/common/helperFunctions'), () => helperMocks);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
+vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
   trackGAEvent: trackGAEventMock,
 }));
 
-vi.mock('@/instrumentation/AppLogger', () => ({
+vi.mock(import('@/instrumentation/AppLogger'), () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
@@ -49,7 +49,7 @@ const defaultProps = {
 const getTermsAnchor = (container: HTMLElement) =>
   container.querySelector('a.nmi-in-text-link') as HTMLElement;
 
-describe('ViewPdfQuoteTerms', () => {
+describe(ViewPdfQuoteTerms, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     acquireTokenSilentMock.mockResolvedValue({
@@ -81,7 +81,7 @@ describe('ViewPdfQuoteTerms', () => {
     await user.click(getTermsAnchor(container));
 
     await waitFor(() => {
-      expect(acquireTokenSilentMock).toHaveBeenCalled();
+      expect(acquireTokenSilentMock).toHaveBeenCalledWith();
       expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
         'test-access-token',
         mockQuotationData,

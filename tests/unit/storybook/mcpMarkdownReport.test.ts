@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseMcpMarkdownReport } from '../../e2e/support/storybookMcpReport';
 
-describe('parseMcpMarkdownReport', () => {
+describe(parseMcpMarkdownReport, () => {
   it('extracts passing stories and empty failure sections', () => {
     const report = parseMcpMarkdownReport(`
 ## Passing Stories

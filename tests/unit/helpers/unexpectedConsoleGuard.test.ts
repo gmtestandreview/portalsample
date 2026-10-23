@@ -97,7 +97,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('installUnexpectedConsoleGuard', () => {
+describe(installUnexpectedConsoleGuard, () => {
   it('registers exactly one beforeEach and one afterEach so failures attach to the emitting test', () => {
     const hooks = captureHooks();
 
@@ -229,7 +229,7 @@ describe('console argument formatting', () => {
   });
 });
 
-describe('expectConsoleMessage', () => {
+describe(expectConsoleMessage, () => {
   it('consumes a matching message so teardown passes', async () => {
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /not wrapped in act/, 1, () => {

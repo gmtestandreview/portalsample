@@ -6,26 +6,32 @@ const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
+vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
   useAccountState: mocks.useAccountState,
 }));
 
-vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
+vi.mock(import('../../../ClientApp/src/components/forms/FormBanner'), () => ({
   default: ({ title }: { title: string }) => (
     <div data-testid='form-banner'>{title}</div>
   ),
 }));
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
+vi.mock(import('../../../ClientApp/src/components/HeaderIntroText'), () => ({
   default: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
 }));
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  () => ({
+    default: () => {},
+  })
+);
+vi.mock(
+  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  () => ({
+    default: () => {},
+  })
+);
 
 describe('account created route', () => {
   beforeEach(() => {

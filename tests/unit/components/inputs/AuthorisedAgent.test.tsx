@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import AuthorisedAgent from '@/components/Inputs/AuthorisedAgent';
 
-vi.mock('@/components/Inputs/TextInput', () => ({
+vi.mock(import('@/components/Inputs/TextInput'), () => ({
   default: ({
     name,
     label,
@@ -22,7 +22,7 @@ vi.mock('@/components/Inputs/TextInput', () => ({
   ),
 }));
 
-vi.mock('@/components/Inputs/NumberInput', () => ({
+vi.mock(import('@/components/Inputs/NumberInput'), () => ({
   default: ({
     name,
     label,
@@ -51,7 +51,7 @@ vi.mock('@/components/Inputs/NumberInput', () => ({
   ),
 }));
 
-vi.mock('@/components/Inputs/AddressLookup', () => ({
+vi.mock(import('@/components/Inputs/AddressLookup'), () => ({
   default: ({
     name,
     label,
@@ -77,7 +77,7 @@ vi.mock('@/components/Inputs/AddressLookup', () => ({
   ),
 }));
 
-describe('AuthorisedAgent', () => {
+describe(AuthorisedAgent, () => {
   it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
     render(<AuthorisedAgent />);
 

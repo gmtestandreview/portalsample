@@ -13,31 +13,29 @@ const REPORT_SECTIONS = [
   'Unhandled Errors',
 ] as const;
 
+const markdownLines = (markdown: string): string[] => markdown.split(/\r?\n/);
+
+const sectionIndex = (markdown: string, heading: string): number =>
+  markdownLines(markdown).findIndex(
+    (line) => line.trimEnd() === `## ${heading}`
+  );
+
 const hasSection = (markdown: string, heading: string): boolean =>
-  new RegExp(
-    `^## ${heading.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\s*$`,
-    'm'
-  ).test(markdown);
+  sectionIndex(markdown, heading) !== -1;
 
 const sectionLines = (markdown: string, heading: string): string[] => {
-  const headingPattern = new RegExp(
-    `^## ${heading.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\s*$`,
-    'm'
-  );
-  const headingMatch = headingPattern.exec(markdown);
-  if (headingMatch === null) {
+  const lines = markdownLines(markdown);
+  const headingLine = sectionIndex(markdown, heading);
+  if (headingLine === -1) {
     return [];
   }
 
-  const sectionStart = headingMatch.index + headingMatch[0].length;
-  const nextHeading = /^## .+$/m.exec(markdown.slice(sectionStart));
-  const section = markdown.slice(
-    sectionStart,
-    nextHeading === null ? markdown.length : sectionStart + nextHeading.index
+  const nextHeading = lines.findIndex(
+    (line, index) => index > headingLine && line.startsWith('## ')
   );
 
-  return section
-    .split(/\r?\n/)
+  return lines
+    .slice(headingLine + 1, nextHeading === -1 ? undefined : nextHeading)
     .map((line) => line.trim())
     .filter((line) => line.startsWith('- '))
     .map((line) => line.slice(2).trim())

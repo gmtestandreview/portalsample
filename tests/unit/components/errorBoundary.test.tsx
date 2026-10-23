@@ -13,7 +13,7 @@ const renderErrorDisplay = (status: HttpStatusCode | number) =>
     </MemoryRouter>
   );
 
-describe('ErrorDisplay', () => {
+describe(ErrorDisplay, () => {
   afterEach(() => {
     document.body.className = '';
     document.title = '';
@@ -85,7 +85,7 @@ describe('ErrorDisplay', () => {
   });
 });
 
-describe('ErrorBoundary', () => {
+describe(ErrorBoundary, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -290,6 +290,7 @@ describe('ErrorBoundary', () => {
     const [trackedException] = trackException.mock.calls[0] as [
       { error: Error; exception: Error; severityLevel: SeverityLevel },
     ];
+
     expect(trackedException.error).toBeInstanceOf(Error);
     expect(trackedException.exception).toBe(trackedException.error);
     expect(trackedException.error.message).toBe('plain string failure');

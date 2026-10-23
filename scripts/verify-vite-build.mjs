@@ -14,9 +14,26 @@ const assert = (condition, message) => {
   if (!condition) fail(message);
 };
 
+const isInside = (parent, candidate) => {
+  const relative = path.relative(parent, candidate);
+  return (
+    relative === '' ||
+    (!relative.startsWith('..') && !path.isAbsolute(relative))
+  );
+};
+
+const distPath = (candidate) => {
+  const resolved = path.resolve(candidate);
+  assert(isInside(dist, resolved), `path escapes dist: ${candidate}`);
+  return resolved;
+};
+
 async function exists(filePath) {
+  const safePath = distPath(filePath);
   try {
-    await stat(filePath);
+    // safePath is rooted under the build output directory by distPath().
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
+    await stat(safePath);
     return true;
   } catch {
     return false;
@@ -24,12 +41,15 @@ async function exists(filePath) {
 }
 
 async function filesIn(directory) {
-  if (!(await exists(directory))) return [];
+  const safeDirectory = distPath(directory);
+  if (!(await exists(safeDirectory))) return [];
 
-  const entries = await readdir(directory, { withFileTypes: true });
+  // safeDirectory is produced from distPath() and is therefore confined to dist.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  const entries = await readdir(safeDirectory, { withFileTypes: true });
   const nested = await Promise.all(
     entries.map(async (entry) => {
-      const entryPath = path.join(directory, entry.name);
+      const entryPath = distPath(path.join(safeDirectory, entry.name));
       return entry.isDirectory() ? filesIn(entryPath) : [entryPath];
     })
   );
@@ -49,22 +69,32 @@ function htmlJavaScriptReferences(html) {
     .filter((source) => source.endsWith('.js'));
 }
 
-const htmlAttributeEscapes = {
-  '&': '&amp;',
-  '"': '&quot;',
-  "'": '&#39;',
-  '<': '&lt;',
-  '>': '&gt;',
-};
+const htmlAttributeEscapes = new Map([
+  ['&', '&amp;'],
+  ['"', '&quot;'],
+  ["'", '&#39;'],
+  ['<', '&lt;'],
+  ['>', '&gt;'],
+]);
 
 const escapeHtmlAttributeValue = (value) =>
-  value.replace(/[&"'<>]/gu, (character) => htmlAttributeEscapes[character]);
+  value.replace(
+    /[&"'<>]/gu,
+    (character) => htmlAttributeEscapes.get(character) ?? character
+  );
+
+async function readDistFile(filePath) {
+  const safePath = distPath(filePath);
+  // safePath is rooted under dist after validation above.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  return readFile(safePath, 'utf8');
+}
 
 async function verifyHtmlEntry(fileName, expectedEntryName) {
-  const htmlPath = path.join(dist, fileName);
+  const htmlPath = distPath(path.join(dist, fileName));
   assert(await exists(htmlPath), `${fileName} was not emitted`);
 
-  const html = await readFile(htmlPath, 'utf8');
+  const html = await readDistFile(htmlPath);
   assert(
     !html.includes('<%='),
     `${fileName} still contains an HTML template placeholder`
@@ -78,7 +108,7 @@ async function verifyHtmlEntry(fileName, expectedEntryName) {
   );
 
   for (const source of scripts) {
-    const scriptPath = path.join(dist, source.replace(/^\/+/, ''));
+    const scriptPath = distPath(path.join(dist, source.replace(/^\/+/, '')));
     assert(
       await exists(scriptPath),
       `${fileName} references missing script ${source}`
@@ -87,7 +117,7 @@ async function verifyHtmlEntry(fileName, expectedEntryName) {
 }
 
 async function readJavaScript(filePath) {
-  return readFile(filePath, 'utf8');
+  return readDistFile(filePath);
 }
 
 const requiredRootAssets = ['favicon.ico', 'NMI-tile.png'];
@@ -101,7 +131,7 @@ for (const asset of requiredRootAssets) {
 await verifyHtmlEntry('index.html', 'main');
 await verifyHtmlEntry('redirect.html', 'redirect');
 
-const indexHtml = await readFile(path.join(dist, 'index.html'), 'utf8');
+const indexHtml = await readDistFile(path.join(dist, 'index.html'));
 const expectedEnvironment =
   process.env.VITE_ENVIRONMENT ??
   loadEnv('production', root, '').VITE_ENVIRONMENT;
@@ -190,7 +220,7 @@ assert(
   ),
   'code splitting did not emit a named application vendor chunk'
 );
-const redirectHtml = await readFile(path.join(dist, 'redirect.html'), 'utf8');
+const redirectHtml = await readDistFile(path.join(dist, 'redirect.html'));
 const redirectEntryScripts = htmlScriptSources(redirectHtml);
 const redirectScripts = htmlJavaScriptReferences(redirectHtml);
 const redirectPreloads = redirectScripts.filter(
@@ -205,12 +235,12 @@ assert(
 );
 for (const source of redirectScripts) {
   assert(
-    await exists(path.join(dist, source.replace(/^\/+/, ''))),
+    await exists(distPath(path.join(dist, source.replace(/^\/+/, '')))),
     `redirect.html references missing JavaScript ${source}`
   );
 }
 const redirectEntrySource = await readJavaScript(
-  path.join(dist, redirectEntryScripts[0].replace(/^\/+/, ''))
+  distPath(path.join(dist, redirectEntryScripts[0].replace(/^\/+/, '')))
 );
 const authPreload = redirectPreloads.find((source) =>
   /\/auth\.[^/]+\.js$/u.test(source)

@@ -35,9 +35,11 @@ const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
   if (Array.isArray(fieldError))
     return (fieldError as unknown[]).filter(isString);
   if (typeof fieldError !== 'object') return [];
-  return [(fieldError as Record<string, unknown>)[errorName] || ''].filter(
-    isString
-  );
+  const fieldErrorRecord = fieldError as Record<string, unknown>;
+  const nestedError = Object.hasOwn(fieldErrorRecord, errorName)
+    ? Reflect.get(fieldErrorRecord, errorName)
+    : undefined;
+  return [nestedError || ''].filter(isString);
 };
 
 const SupportingDocuments = (
@@ -87,10 +89,13 @@ const SupportingDocuments = (
   // e.g. 'supportingDocuments.form.documents' => 'supportingDocuments'
   const rootErrorName = name.replace(/\..*$/s, '');
   // Get Formik field errors for this field
-  const formikFieldErrors = getFormikFieldErrors(
-    formikErrors?.[rootErrorName],
-    errorName
-  );
+  const rootError =
+    formikErrors !== undefined &&
+    formikErrors !== null &&
+    Object.hasOwn(formikErrors, rootErrorName)
+      ? Reflect.get(formikErrors, rootErrorName)
+      : undefined;
+  const formikFieldErrors = getFormikFieldErrors(rootError, errorName);
   const fileErrors = getFailedFileErrors(progress);
   // Combine errors, deduplicated
   const errors = Array.from(

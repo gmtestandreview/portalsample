@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
@@ -12,26 +13,32 @@ const actions = [
 const renderActions = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);
 
-describe('Actions accessibility', () => {
+describe('actions accessibility', () => {
   it('opens the text action menu from a named button and exposes actions as menuitems', async () => {
     const user = userEvent.setup();
     renderActions(<Actions id='request-actions' dropDownActions={actions} />);
 
     const trigger = screen.getByRole('button', { name: 'Actions' });
+
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
     await user.click(trigger);
 
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
     const viewDetails = screen.getByRole('menuitem', { name: 'View details' });
+
     expect(viewDetails).toHaveAttribute('href', '/quotation/Q-2024-000456');
+
     const recalibrationAction = screen.getByRole('menuitem', {
       name: 'Request recalibration',
     });
+
     expect(recalibrationAction).toBeVisible();
     expect(recalibrationAction).not.toHaveAttribute('href');
 
     await user.keyboard('{Escape}');
+
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
   });
 

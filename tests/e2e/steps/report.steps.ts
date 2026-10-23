@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import { buildMeasurementReport } from '../support/mock-builders';
@@ -71,6 +72,7 @@ When(
   'the user opens report {string}',
   async ({ page }, referenceId: string) => {
     await page.goto(`/report/${referenceId}`);
+
     await expect(
       page.getByRole('heading', {
         name: 'Report',

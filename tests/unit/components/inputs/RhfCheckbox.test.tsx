@@ -39,7 +39,7 @@ const failingResolver: Resolver<Values> = async () => ({
   },
 });
 
-describe('RhfCheckbox', () => {
+describe(RhfCheckbox, () => {
   it('renders a labelled checkbox reflecting the form value', () => {
     render(
       <Harness defaultValue>
@@ -48,6 +48,7 @@ describe('RhfCheckbox', () => {
     );
 
     const box = screen.getByRole('checkbox', { name: 'I accept' });
+
     expect(box).toBeChecked();
     expect(box).toHaveAttribute('id', 'accepted');
   });
@@ -58,7 +59,9 @@ describe('RhfCheckbox', () => {
         <RhfCheckbox name='accepted' label='I accept' />
       </Harness>
     );
+
     expect(screen.getByRole('checkbox')).not.toBeChecked();
+
     unmount();
 
     render(
@@ -66,6 +69,7 @@ describe('RhfCheckbox', () => {
         <RhfCheckbox name='accepted' label='I accept' />
       </Harness>
     );
+
     expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 
@@ -85,6 +89,7 @@ describe('RhfCheckbox', () => {
     );
 
     const box = screen.getByRole('checkbox');
+
     expect(box).toHaveAttribute('id', 'accept-box');
     expect(box).toBeDisabled();
     expect(screen.getByText('Read the terms first')).toBeInTheDocument();
@@ -101,10 +106,12 @@ describe('RhfCheckbox', () => {
     );
 
     await userEvent.click(screen.getByRole('checkbox'));
+
     expect(screen.getByTestId('value')).toHaveTextContent('true');
     expect(onChange).toHaveBeenLastCalledWith(true);
 
     await userEvent.click(screen.getByRole('checkbox'));
+
     expect(screen.getByTestId('value')).toHaveTextContent('false');
     expect(onChange).toHaveBeenLastCalledWith(false);
   });
@@ -157,6 +164,7 @@ describe('RhfCheckbox', () => {
       </Harness>
     );
     const box = screen.getByRole('checkbox');
+
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
 
     await form.submit();
@@ -214,6 +222,7 @@ describe('RhfCheckbox', () => {
     await form.submit();
 
     const box = screen.getByRole('checkbox');
+
     expect(box).toHaveAttribute('aria-invalid', 'true');
     expect(box).toHaveClass('is-invalid');
     expect(box).toHaveAttribute(
@@ -233,6 +242,7 @@ describe('RhfCheckbox', () => {
     await form.trigger();
 
     const box = screen.getByRole('checkbox');
+
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
     expect(box).not.toHaveAttribute('aria-invalid');
     expect(box).not.toHaveClass('is-invalid');
@@ -257,8 +267,10 @@ describe('RhfCheckbox', () => {
         <RhfCheckbox name='accepted' label='I accept' isSummary />
       </Harness>
     );
+
     expect(screen.getByText('Yes')).toBeInTheDocument();
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+
     unmount();
 
     render(
@@ -266,6 +278,7 @@ describe('RhfCheckbox', () => {
         <RhfCheckbox name='accepted' label='I accept' isSummary />
       </Harness>
     );
+
     expect(screen.getByText('No')).toBeInTheDocument();
   });
 });

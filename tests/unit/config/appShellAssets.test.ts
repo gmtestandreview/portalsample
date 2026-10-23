@@ -1,5 +1,7 @@
-import { stat, readFile } from 'node:fs/promises';
+import { expect, describe, it } from 'vitest';
 import path from 'node:path';
+
+import { readTextFile, statPath } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = path.resolve(__dirname, '../../..');
 const publicDirectory = path.join(repositoryRoot, 'ClientApp/public');
@@ -22,7 +24,7 @@ const getPublicAsset = async (document: Document, selector: string) => {
   expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/);
 
   const assetPath = path.join(publicDirectory, publicUrl!.slice(1));
-  const asset = await stat(assetPath);
+  const asset = statPath(assetPath, publicDirectory);
 
   expect(asset.isFile()).toBe(true);
 
@@ -31,9 +33,9 @@ const getPublicAsset = async (document: Document, selector: string) => {
 
 describe('application shell identity assets', () => {
   it('publishes favicon and tile metadata backed by public files', async () => {
-    const html = await readFile(
+    const html = await readTextFile(
       path.join(repositoryRoot, 'index.html'),
-      'utf8'
+      repositoryRoot
     );
     const document = new DOMParser().parseFromString(html, 'text/html');
 

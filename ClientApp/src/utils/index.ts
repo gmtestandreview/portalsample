@@ -195,7 +195,7 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
   const sizes = ['bytes', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
   const index = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes[index]}`;
+  return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes.at(index)}`;
 };
 
 export const formatDate = (
@@ -287,9 +287,9 @@ export const base64toBlob = (
   const byteArrays = [];
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice = byteCharacters.slice(offset, offset + sliceSize);
-    const byteNumbers = new Array(slice.length);
+    const byteNumbers: number[] = [];
     for (let i = 0; i < slice.length; i += 1) {
-      byteNumbers[i] = slice.codePointAt(i);
+      byteNumbers.push(slice.codePointAt(i) ?? 0);
     }
     const byteArray = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);

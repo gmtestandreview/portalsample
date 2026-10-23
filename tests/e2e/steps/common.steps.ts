@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
@@ -26,8 +27,8 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
     throw new Error(`Unsupported RFQ wizard step: ${step}`);
   }
 
-  await expect(page).toHaveURL(
-    new RegExp(`/request-for-quote/[^/]+/${location}$`)
+  await expect(page).toHaveURL((url) =>
+    url.pathname.endsWith(`/request-for-quote/${location}`)
   );
   await expect(page.getByTestId('form')).toBeVisible();
   await expect(page.locator('.stepped-navigation .current-step')).toContainText(
@@ -37,6 +38,7 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
   if (title) {
     const heading =
       step === 3 && title === 'Summary' ? 'Summary and submit' : title;
+
     await expect(
       page.getByRole('heading', {
         name: heading,
@@ -217,9 +219,11 @@ Then(
 Then(
   'a confirmation dialog should appear with {string}',
   async ({ page }, title: string) => {
-    await expect(page.getByRole('dialog')).toContainText(
-      new RegExp(title, 'i')
-    );
+    await expect
+      .poll(async () =>
+        (await page.getByRole('dialog').innerText()).toLowerCase()
+      )
+      .toContain(title.toLowerCase());
   }
 );
 

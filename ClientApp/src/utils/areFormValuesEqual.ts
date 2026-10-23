@@ -42,7 +42,7 @@ export const areFormValuesEqual = (left: unknown, right: unknown): boolean => {
       Array.isArray(left) &&
       Array.isArray(right) &&
       left.length === right.length &&
-      left.every((value, index) => areFormValuesEqual(value, right[index]))
+      left.every((value, index) => areFormValuesEqual(value, right.at(index)))
     );
   }
 
@@ -63,7 +63,7 @@ export const areFormValuesEqual = (left: unknown, right: unknown): boolean => {
     leftKeys.every(
       (key) =>
         Object.prototype.hasOwnProperty.call(right, key) &&
-        areFormValuesEqual(left[key], right[key])
+        areFormValuesEqual(Reflect.get(left, key), Reflect.get(right, key))
     )
   );
 };

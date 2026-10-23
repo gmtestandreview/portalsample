@@ -1,9 +1,10 @@
-import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@storybook/addon-vitest/vitest-plugin', () => ({
+import { readTextFileSync } from '../../helpers/safeTestFilesystem';
+
+vi.mock(import('@storybook/addon-vitest/vitest-plugin'), () => ({
   storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
 }));
 
@@ -20,7 +21,7 @@ const requireFrom = createRequire(import.meta.url);
  */
 const readVitestClassSource = (): string => {
   const shimPath = requireFrom.resolve('vitest/node');
-  const shim = readFileSync(shimPath, 'utf8');
+  const shim = readTextFileSync(shimPath, path.dirname(shimPath));
 
   const bindingLine = shim
     .split('\n')
@@ -42,9 +43,9 @@ const readVitestClassSource = (): string => {
     );
   }
 
-  return readFileSync(
+  return readTextFileSync(
     path.join(path.dirname(shimPath), chunkSpecifier),
-    'utf8'
+    path.dirname(shimPath)
   );
 };
 
@@ -54,18 +55,18 @@ const readVitestClassSource = (): string => {
  * Resolve the package root - which every package exports - and join from there.
  */
 const readAddonSource = (): string =>
-  readFileSync(
+  readTextFileSync(
     path.join(
       path.dirname(requireFrom.resolve('@storybook/addon-vitest/package.json')),
       'dist/node/vitest.js'
     ),
-    'utf8'
+    path.dirname(requireFrom.resolve('@storybook/addon-vitest/package.json'))
   );
 
 const vitestNodeSource = readVitestClassSource();
 const addonSource = readAddonSource();
 
-describe('Storybook/Vitest runtime bridge contract', () => {
+describe('storybook/Vitest runtime bridge contract', () => {
   // The bridge exists solely because @storybook/addon-vitest calls a Vitest API
   // that Vitest deprecated. Each half of that statement is asserted here, so the
   // bridge cannot quietly outlive its justification.
@@ -104,7 +105,8 @@ describe('Storybook/Vitest runtime bridge contract', () => {
     storybookVitestRuntimePlugin.configureVitest({ vitest });
 
     void vitest.init();
-    expect(standalone).toHaveBeenCalledOnce();
+
+    expect(standalone).toHaveBeenCalledExactlyOnceWith();
     expect(legacyInit).not.toHaveBeenCalled();
     expect(vitest.config.coverage.exclude).toContain('ClientApp/src/**/*.json');
   });
