@@ -12,6 +12,7 @@ import {
 } from 'node:fs/promises';
 import { readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import { promisify } from 'node:util';
 import { pathToFileURL } from 'node:url';
 
@@ -20,6 +21,7 @@ import {
   computeIndexDigest,
   deriveExecutableStorySet,
   normalizeMcpReceipt,
+  parseJsonDocument,
   validateFreezeRecord,
   validateProducerIdentity,
 } from './storybook-coverage.mjs';
@@ -46,11 +48,11 @@ const STORYBOOK_INPUT_ROOTS = [
 ];
 
 const STORYBOOK_ROOT_INPUT_PATTERNS = [
-  /^.*\.config\..+$/,
-  /^vitest.*\..+$/,
-  /^tsconfig.*\.json$/,
-  /^\.prettierrc.*$/,
-  /^\.env(?:\..*)?$/,
+  /^.*\.config\..+$/u,
+  /^vitest.*\..+$/u,
+  /^tsconfig.*\.json$/u,
+  /^\.prettierrc.*$/u,
+  /^\.env(?:\..*)?$/u,
 ];
 
 const collectInputFiles = (checkout) => {
@@ -157,12 +159,23 @@ const GATES = [
   ],
   ['gate-5-storybook-build', ['npm', 'run', 'build-storybook']],
   [
-    'gate-6-storybook-bdd',
+    'gate-6-references',
+    [
+      'node',
+      'scripts/storybook-coverage.mjs',
+      '--mode',
+      'references',
+      '--index',
+      'storybook-static/index.json',
+    ],
+  ],
+  [
+    'gate-7-storybook-bdd',
     ['npm', 'run', 'test:e2e:storybook', '--', '--workers=1'],
   ],
-  ['gate-7-docs', ['npm', 'run', 'storybook:verify:docs']],
+  ['gate-8-docs', ['npm', 'run', 'storybook:verify:docs']],
   [
-    'gate-8-closure',
+    'gate-9-closure',
     [
       'node',
       'scripts/storybook-coverage.mjs',
@@ -191,6 +204,31 @@ const failure = (code, message, phases) => ({
 const assertPositiveTimeout = (value) =>
   Number.isFinite(value) && Number.isInteger(value) && value > 0;
 
+const isLoopbackHostname = (hostname) =>
+  ['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname);
+
+const assertPermittedUrl = (value, serverMode) => {
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return 'url must be an absolute URL';
+  }
+  if (parsed.username || parsed.password) {
+    return 'url must not contain credentials';
+  }
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    return 'url scheme must be http or https';
+  }
+  if (parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) {
+    return 'http targets must use a loopback hostname';
+  }
+  if (serverMode === 'managed' && !isLoopbackHostname(parsed.hostname)) {
+    return 'managed Storybook targets must use a loopback hostname';
+  }
+  return undefined;
+};
+
 const throwIfAborted = (signal) => {
   if (!signal?.aborted) return;
   const reason = signal.reason;
@@ -215,6 +253,8 @@ const assertOptions = (options) => {
   if (!['managed', 'external'].includes(options.serverMode)) {
     return 'serverMode must be managed or external';
   }
+  const urlError = assertPermittedUrl(options.url, options.serverMode);
+  if (urlError) return urlError;
   if (typeof options.receipts !== 'string' || options.receipts === '') {
     return 'receipts is required';
   }
@@ -294,6 +334,11 @@ export async function runClosure(options, adapters) {
       serverMode: options.serverMode,
       ci: true,
     });
+    const targetUrlError = assertPermittedUrl(
+      target?.mcpURL ?? options.url,
+      options.serverMode
+    );
+    if (targetUrlError) throw new Error(targetUrlError);
     await adapters.assertOwnedPaths({
       checkout: options.checkout,
       receipts: options.receipts,
@@ -338,7 +383,7 @@ export async function runClosure(options, adapters) {
       signal,
     };
 
-    for (const [name] of GATES.slice(0, 5)) {
+    for (const [name] of GATES.slice(0, 6)) {
       throwIfAborted(signal);
       const gate = await adapters.runGate(name, context);
       phases.push(name);
@@ -398,7 +443,7 @@ export async function runClosure(options, adapters) {
     }
     context.childEpoch = receipts[0]?.childEpoch;
 
-    for (const [name] of GATES.slice(5)) {
+    for (const [name] of GATES.slice(6)) {
       throwIfAborted(signal);
       const gate = await adapters.runGate(name, context);
       phases.push(name);
@@ -440,14 +485,25 @@ export async function runClosure(options, adapters) {
       cleanupError ??= error_;
     }
     phases.push('stop-server');
-    if (cleanupError && outcome?.ok) {
-      outcome = failure(
-        FAILURE_CODES.EXECUTION_INCOMPLETE,
+    if (cleanupError) {
+      const cleanupMessage =
         cleanupError instanceof Error
           ? cleanupError.message
-          : String(cleanupError),
-        phases
-      );
+          : String(cleanupError);
+      if (outcome?.ok) {
+        outcome = failure(
+          FAILURE_CODES.EXECUTION_INCOMPLETE,
+          cleanupMessage,
+          phases
+        );
+      } else {
+        outcome = {
+          ...outcome,
+          ok: false,
+          code: FAILURE_CODES.EXECUTION_INCOMPLETE,
+          message: `${outcome.message}; cleanup failed: ${cleanupMessage}`,
+        };
+      }
     }
   }
 
@@ -660,8 +716,15 @@ const createProductionAdapters = async () => {
       if (operation === 'rename')
         await rename(probePath, `${probePath}-renamed`);
       return { operation, denied: false, target };
-    } catch {
-      return { operation, denied: true, target };
+    } catch (error_) {
+      const errorCode = error_?.code;
+      const denied = ['EACCES', 'EPERM', 'EROFS'].includes(errorCode);
+      return {
+        operation,
+        denied,
+        target,
+        ...(errorCode ? { errorCode } : {}),
+      };
     } finally {
       await rm(`${probePath}-new`, { force: true }).catch(() => undefined);
       await rm(`${probePath}-renamed`, { force: true }).catch(() => undefined);
@@ -697,6 +760,7 @@ const createProductionAdapters = async () => {
     ownedServerStderrTruncated = false;
     ownedServer = spawn(command, args, {
       cwd: checkout,
+      detached: process.platform !== 'win32',
       env: {
         ...process.env,
         STORYBOOK_CLOSURE_FREEZE_ID: freezeId,
@@ -759,30 +823,46 @@ const createProductionAdapters = async () => {
   const parseMcpEnvelope = async (response, expectedId) => {
     const body = await response.text();
     const contentType = response.headers.get('content-type') ?? '';
-    const envelopes = contentType.includes('application/json')
-      ? [JSON.parse(body)]
-      : body
-          .split(/\r?\n/u)
-          .filter((line) => line.startsWith('data: '))
-          .map((line) => JSON.parse(line.slice('data: '.length)));
+    let envelopes;
+    try {
+      envelopes = contentType.includes('application/json')
+        ? [parseJsonDocument(body)]
+        : body
+            .split(/\r?\n/u)
+            .filter((line) => line.startsWith('data: '))
+            .map((line) => parseJsonDocument(line.slice('data: '.length)));
+    } catch (error_) {
+      throw new Error(
+        `MCP response was not valid JSON: ${
+          error_ instanceof Error ? error_.message : String(error_)
+        }`,
+        { cause: error_ }
+      );
+    }
     const matching = envelopes.filter(
-      (envelope) => expectedId === undefined || envelope.id === expectedId
+      (envelope) =>
+        isRecord(envelope) &&
+        envelope.jsonrpc === '2.0' &&
+        (expectedId === undefined || envelope.id === expectedId)
     );
-    const error = matching.find((envelope) => envelope.error !== undefined);
-    if (error) {
+    if (matching.length !== 1) {
       throw new Error(
-        `MCP response contained an error: ${JSON.stringify(error.error)}`
+        `MCP response did not contain exactly one JSON-RPC response ID ${String(expectedId)}`
       );
     }
-    const envelope =
-      matching.find(
-        (candidate) => candidate.result?.structuredContent !== undefined
-      ) ?? matching.at(-1);
-    if (!envelope) {
+    const envelope = matching[0];
+    const hasResult = Object.hasOwn(envelope, 'result');
+    const hasError = Object.hasOwn(envelope, 'error');
+    if (hasResult === hasError) {
+      throw new Error('MCP response must contain exactly one result or error');
+    }
+    if (hasError) {
       throw new Error(
-        `MCP response did not contain JSON-RPC response ID ${String(expectedId)}`
+        `MCP response contained an error: ${JSON.stringify(envelope.error)}`
       );
     }
+    if (!isRecord(envelope.result))
+      throw new Error('MCP response result must be an object');
     return envelope;
   };
 
@@ -996,20 +1076,37 @@ const createProductionAdapters = async () => {
         } catch (error_) {
           firstError ??= error_;
         }
-        await Promise.all(
-          frozenTarget.probePaths.map((probePath) =>
-            rm(probePath, { force: true }).catch(() => undefined)
-          )
-        );
+        for (const probePath of frozenTarget.probePaths) {
+          try {
+            await rm(probePath, { force: true });
+          } catch (error_) {
+            firstError ??= error_;
+          }
+        }
+      }
+      if (!firstError) {
+        for (const frozenTarget of [...frozenTargets].reverse()) {
+          try {
+            await assertFreezeIdentityNotDenied(
+              frozenTarget.target,
+              activeFreeze.ownerIdentity ?? freezeIdentity
+            );
+          } catch (error_) {
+            firstError ??= error_;
+          }
+        }
       }
       if (firstError) {
-        for (const frozenTarget of [...frozenTargets].reverse()) {
-          await assertFreezeIdentityNotDenied(
-            frozenTarget.target,
-            activeFreeze.ownerIdentity ?? freezeIdentity
-          );
-        }
-        firstError = undefined;
+        activeFreeze.restored = false;
+        await writeReceiptJson('freeze.json', activeFreeze).catch(
+          (writeError) => {
+            firstError = new AggregateError(
+              [firstError, writeError],
+              'ACL restoration failed and recovery evidence could not be written'
+            );
+          }
+        );
+        throw firstError;
       }
       await rm(activeFreeze.aclBackupDirectory, {
         recursive: true,
@@ -1088,14 +1185,26 @@ const createProductionAdapters = async () => {
       if (!ownedServer) return undefined;
       const server = ownedServer;
       const metadata = ownedServerMetadata;
-      if (!server.killed) server.kill('SIGTERM');
+      const stopProcessTree = async (force) => {
+        if (process.platform === 'win32') {
+          await execFileAsync('taskkill.exe', [
+            '/PID',
+            String(server.pid),
+            '/T',
+            ...(force ? ['/F'] : []),
+          ]);
+        } else if (server.pid && !server.killed) {
+          process.kill(-server.pid, force ? 'SIGKILL' : 'SIGTERM');
+        }
+      };
+      if (!server.killed) await stopProcessTree(false);
       let exitStatus = await waitForOwnedServerExit(
         MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS
       );
       let forced = false;
       if (!exitStatus) {
         forced = true;
-        server.kill('SIGKILL');
+        await stopProcessTree(true);
         exitStatus = await waitForOwnedServerExit(5_000);
       }
       const evidence = {
@@ -1125,7 +1234,7 @@ const createProductionAdapters = async () => {
       const definition = GATES.find(([gateName]) => gateName === name);
       if (!definition) throw new Error(`unknown closure gate: ${name}`);
       const env =
-        name === 'gate-6-storybook-bdd'
+        name === 'gate-7-storybook-bdd'
           ? {
               ...process.env,
               STORYBOOK_TEST_URL: context.target.baseURL,
@@ -1145,7 +1254,7 @@ const createProductionAdapters = async () => {
         env,
         context.signal
       );
-      if (name === 'gate-5-storybook-build' || name === 'gate-7-docs') {
+      if (name === 'gate-5-storybook-build' || name === 'gate-8-docs') {
         const index = JSON.parse(
           await readFile(
             path.join(context.checkout, 'storybook-static', 'index.json'),
@@ -1174,6 +1283,16 @@ const createProductionAdapters = async () => {
     },
     assertStableIdentity: async (context) => {
       if (context.freeze.inputDigest !== context.inputDigest) {
+        throw Object.assign(new Error('frozen source input changed'), {
+          code: FAILURE_CODES.INPUT_STALE,
+        });
+      }
+      const currentInputDigest = computeInputDigest({
+        files: collectInputFiles(
+          ownedCheckout ?? path.resolve(context.checkout ?? process.cwd())
+        ),
+      });
+      if (currentInputDigest !== context.inputDigest) {
         throw Object.assign(new Error('frozen source input changed'), {
           code: FAILURE_CODES.INPUT_STALE,
         });

@@ -33,4 +33,17 @@ describe('Storybook coverage script lint contract', () => {
     if (!result) throw new Error('ESLint returned no result');
     expect(result.messages.map(({ ruleId }) => ruleId)).toContain('no-undef');
   });
+
+  it('lints every maintained Storybook evidence script with Node globals', async () => {
+    const linter = createLinter();
+    const results = await linter.lintFiles([
+      'scripts/storybook-coverage.mjs',
+      'scripts/storybook-coverage-worklist.mjs',
+      'scripts/verify-storybook-docs.mjs',
+      'scripts/storybook-closure.mjs',
+    ]);
+
+    expect(results).toHaveLength(4);
+    expect(results.every((result) => result.errorCount === 0)).toBe(true);
+  });
 });

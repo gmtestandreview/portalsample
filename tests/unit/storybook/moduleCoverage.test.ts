@@ -46,6 +46,7 @@ type CoverageModule = {
     errors: ValidationResult['errors'];
   };
   validateManifest(manifest: unknown): ValidationResult;
+  parseJsonDocument(text: string): unknown;
   validateSourceClaims(
     manifest: unknown,
     discovery: Discovery
@@ -216,6 +217,61 @@ describe('recursive canonical source/export discovery', () => {
       code: 'SOURCE_UNRESOLVED',
       reason: 'ambiguous module resolution',
     });
+  });
+
+  it('records only the public default export for a named default declaration', () => {
+    const result = discoverSourceExports({
+      files: [
+        {
+          path: 'ClientApp/src/components/DefaultField.tsx',
+          content: 'export default function DefaultField() { return null; }\n',
+        },
+      ],
+    });
+
+    expect(result.exports).toEqual([
+      {
+        source: 'ClientApp/src/components/DefaultField.tsx',
+        export: 'default',
+        kind: 'renderable',
+      },
+    ]);
+  });
+
+  it('preserves aliases and resolves extensionless .mts and .cts re-exports', () => {
+    const result = discoverSourceExports({
+      files: [
+        {
+          path: 'ClientApp/src/components/Typed.mts',
+          content: 'export const Typed = () => null;\n',
+        },
+        {
+          path: 'ClientApp/src/components/Legacy.cts',
+          content: 'export const Legacy = () => null;\n',
+        },
+        {
+          path: 'ClientApp/src/components/index.ts',
+          content:
+            "export { Typed as Renamed } from './Typed';\nexport { Legacy } from './Legacy';\n",
+        },
+      ],
+    });
+
+    expect(result.unresolved).toEqual([]);
+    expect(result.exports).toEqual(
+      expect.arrayContaining([
+        {
+          source: 'ClientApp/src/components/Typed.mts',
+          export: 'Renamed',
+          kind: 'renderable',
+        },
+        {
+          source: 'ClientApp/src/components/Legacy.cts',
+          export: 'Legacy',
+          kind: 'renderable',
+        },
+      ])
+    );
   });
 
   it('does not treat an import-only module as a canonical export', () => {
@@ -465,6 +521,12 @@ describe('renderable evidence and claim validation', () => {
 });
 
 describe('guarded Storybook coverage CLI', () => {
+  it('rejects duplicate JSON keys before parsing the document', () => {
+    expect(() =>
+      coverageModule.parseJsonDocument('{"records": [], "records": []}')
+    ).toThrow(/duplicate manifest JSON key: records/u);
+  });
+
   it('does not execute on module import and rejects invalid invocation stably', async () => {
     expect(process.exitCode).toBeUndefined();
     expect(main(['--mode', 'unknown'])).toMatchObject({

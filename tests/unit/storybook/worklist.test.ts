@@ -52,6 +52,10 @@ describe('storybook coverage worklist', () => {
           path: 'ClientApp/src/utils/index.ts',
           reason: 'outside inventory roots',
         },
+        {
+          path: 'ClientApp/src/utils/Button.tsx',
+          reason: 'outside inventory roots',
+        },
       ],
     };
 
@@ -91,13 +95,17 @@ describe('storybook coverage worklist', () => {
         forwarding: 0,
         nonvisual: 1,
         unresolved: 0,
-        excludedByPolicy: 1,
+        excludedByPolicy: 2,
       },
       discoveredExports: 2,
       diagnosticCount: 3,
       discoveredExportsWithDiagnostics: 2,
       unresolvedEntries: 0,
       excludedPaths: [
+        {
+          path: 'ClientApp/src/utils/Button.tsx',
+          reason: 'outside inventory roots',
+        },
         {
           path: 'ClientApp/src/utils/index.ts',
           reason: 'outside inventory roots',

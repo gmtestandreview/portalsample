@@ -194,4 +194,43 @@ describe('closure evidence validation', () => {
       'EXECUTION_INCOMPLETE'
     );
   });
+
+  it('rejects an executable final-index story without a passing receipt', () => {
+    const extraStoryIndex = {
+      ...fullIndex,
+      entries: {
+        ...fullIndex.entries,
+        'components-field--extra': {
+          id: 'components-field--extra',
+          type: 'story',
+        },
+      },
+    };
+    const result = moduleUnderTest.validateClosure({
+      manifest,
+      fullIndex: extraStoryIndex,
+      docsIndex: extraStoryIndex,
+      receipts: [receipt],
+      freeze: {
+        freezeId: 'freeze-1',
+        inputDigest: 'sha256:inputs',
+        fullIndexDigest: moduleUnderTest.computeIndexDigest(extraStoryIndex),
+        docsIndexDigest: moduleUnderTest.computeIndexDigest(extraStoryIndex),
+      },
+      producer: {
+        producerId: 'producer-1',
+        producerIdentityDigest: 'sha256:producer',
+      },
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.errors).toContainEqual(
+      expect.objectContaining({
+        code: 'EXECUTION_INCOMPLETE',
+        message: expect.stringContaining(
+          'executable story has no passing receipt'
+        ),
+      })
+    );
+  });
 });

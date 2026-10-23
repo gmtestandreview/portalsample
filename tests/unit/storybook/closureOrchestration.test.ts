@@ -142,11 +142,12 @@ describe('runClosure', () => {
         'gate-3-unit',
         'gate-4-source',
         'gate-5-storybook-build',
+        'gate-6-references',
         'awaiting-mcp',
         'mcp-receipts',
-        'gate-6-storybook-bdd',
-        'gate-7-docs',
-        'gate-8-closure',
+        'gate-7-storybook-bdd',
+        'gate-8-docs',
+        'gate-9-closure',
         'release-freeze',
         'stop-server',
       ],
@@ -172,11 +173,12 @@ describe('runClosure', () => {
       'gate-3-unit',
       'gate-4-source',
       'gate-5-storybook-build',
+      'gate-6-references',
       'awaiting-mcp',
       'mcp-receipts',
-      'gate-6-storybook-bdd',
-      'gate-7-docs',
-      'gate-8-closure',
+      'gate-7-storybook-bdd',
+      'gate-8-docs',
+      'gate-9-closure',
       'release-freeze',
       'stop-server',
     ]);
@@ -207,6 +209,7 @@ describe('runClosure', () => {
       'gate-3-unit',
       'gate-4-source',
       'gate-5-storybook-build',
+      'gate-6-references',
       'awaiting-mcp',
       'release-freeze',
       'stop-server',
@@ -244,6 +247,29 @@ describe('runClosure', () => {
       'gate-3-unit',
       expect.any(Object)
     );
+  });
+
+  it('surfaces cleanup failures even after an earlier gate failure', async () => {
+    const { adapters } = makeAdapters({
+      runGate: vi.fn(async (gate: string) => ({
+        name: gate,
+        ok: gate !== 'gate-3-unit',
+        inputDigest: 'sha256:inputs',
+        producerIdentityDigest: 'sha256:producer',
+        freezeId: 'freeze-1',
+      })),
+      releaseFreeze: vi.fn(async () => {
+        throw new Error('ACL restoration failed');
+      }),
+    });
+
+    const result = await moduleUnderTest.runClosure(options, adapters);
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'EXECUTION_INCOMPLETE',
+    });
+    expect(result.message).toContain('ACL restoration failed');
   });
 
   it('releases the freeze and owned server when cancellation is signalled', async () => {

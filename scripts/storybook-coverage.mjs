@@ -1,4 +1,7 @@
 import path from 'node:path';
+import process from 'node:process';
+import { Buffer } from 'node:buffer';
+import { TextDecoder } from 'node:util';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -8,6 +11,7 @@ export const FAILURE_CODES = Object.freeze({
   CLAIM_DUPLICATE: 'CLAIM_DUPLICATE',
   EVIDENCE_MISSING: 'EVIDENCE_MISSING',
   EXECUTION_INCOMPLETE: 'EXECUTION_INCOMPLETE',
+  INPUT_STALE: 'INPUT_STALE',
   INVALID_INVOCATION: 'INVALID_INVOCATION',
   MANIFEST_SCHEMA_INVALID: 'MANIFEST_SCHEMA_INVALID',
   REFERENCE_MISSING: 'REFERENCE_MISSING',
@@ -197,6 +201,14 @@ const assertUniqueJsonKeys = (text) => {
     throw new Error('manifest JSON has trailing content');
 };
 
+export const parseJsonDocument = (text) => {
+  if (typeof text !== 'string') {
+    throw new TypeError('JSON document must be a string');
+  }
+  assertUniqueJsonKeys(text);
+  return JSON.parse(text);
+};
+
 const canonicaliseJson = (value, segments = []) => {
   if (Array.isArray(value)) {
     return value.map((entry, index) =>
@@ -265,7 +277,7 @@ export function computeInputDigest({
           : new TextDecoder().decode(file.content);
       assertUniqueJsonKeys(manifestText);
       content = Buffer.from(
-        JSON.stringify(canonicaliseJson(JSON.parse(manifestText))),
+        JSON.stringify(canonicaliseJson(parseJsonDocument(manifestText))),
         'utf8'
       );
     }
@@ -468,24 +480,19 @@ const statusEntries = (value, label, requestedIds, errors) => {
 };
 
 const markdownSectionEntries = (markdown, heading) => {
-  const escapedHeading = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const headingMatch = new RegExp(`^## ${escapedHeading}\\s*$`, 'm').exec(
-    markdown
-  );
-  if (headingMatch === null) return [];
+  const lines = markdown.split(/\r?\n/u);
+  const headingLine = `## ${heading}`;
+  const headingIndex = lines.findIndex((line) => line.trim() === headingLine);
+  if (headingIndex < 0) return [];
 
-  const sectionStart = headingMatch.index + headingMatch[0].length;
-  const nextHeading = /^## .+$/m.exec(markdown.slice(sectionStart));
-  const section = markdown.slice(
-    sectionStart,
-    nextHeading === null ? markdown.length : sectionStart + nextHeading.index
-  );
-  return section
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith('- ') || line.startsWith('### '))
-    .map((line) => line.slice(line.startsWith('- ') ? 2 : 4).trim())
-    .filter(Boolean);
+  const entries = [];
+  for (const line of lines.slice(headingIndex + 1)) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('## ')) break;
+    if (trimmed.startsWith('- ')) entries.push(trimmed.slice(2).trim());
+    if (trimmed.startsWith('### ')) entries.push(trimmed.slice(4).trim());
+  }
+  return entries.filter(Boolean);
 };
 
 const normalizeMarkdownMcpReport = (response, requestedIds, errors) => {
@@ -1175,26 +1182,25 @@ const isDeclarationStatement = (statement) =>
 
 const collectDeclaration = (statement, filePath, locals, direct) => {
   const name = declarationName(statement);
+  const isDefault = statement.modifiers?.some(
+    (modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword
+  );
   if (name) {
     const entry = {
       export: name,
       kind: sourceFileKind(statement),
     };
     locals.set(name, entry);
-    if (exported(statement)) {
-      direct.push({ source: filePath, ...entry });
+    if (exported(statement) && !isDefault) {
+      direct.push({ source: filePath, ...entry, provenance: 'direct' });
     }
   }
-  if (
-    exported(statement) &&
-    statement.modifiers?.some(
-      (modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword
-    )
-  ) {
+  if (exported(statement) && isDefault) {
     direct.push({
       source: filePath,
       export: 'default',
       kind: sourceFileKind(statement),
+      provenance: 'direct',
     });
   }
 };
@@ -1208,7 +1214,7 @@ const collectVariableStatement = (statement, filePath, locals, direct) => {
     };
     locals.set(declaration.name.text, entry);
     if (exported(statement)) {
-      direct.push({ source: filePath, ...entry });
+      direct.push({ source: filePath, ...entry, provenance: 'direct' });
     }
   }
 };
@@ -1256,6 +1262,7 @@ const collectExportAssignment = (
     source: filePath,
     export: 'default',
     kind: 'renderable',
+    provenance: 'direct',
   });
 };
 
@@ -1318,14 +1325,21 @@ const resolveModule = (fromPath, specifier, filesByPath) => {
   }
   const fromDirectory = path.posix.dirname(fromPath);
   const requested = path.posix.normalize(
-    path.posix.join(fromDirectory, specifier.replace(/\.jsx?$/u, ''))
+    path.posix.join(
+      fromDirectory,
+      specifier.replace(/\.(?:[cm]?[jt]sx?)$/u, '')
+    )
   );
   const candidates = [
     requested,
     `${requested}.ts`,
     `${requested}.tsx`,
+    `${requested}.mts`,
+    `${requested}.cts`,
     `${requested}/index.ts`,
     `${requested}/index.tsx`,
+    `${requested}/index.mts`,
+    `${requested}/index.cts`,
   ].filter((candidate) => filesByPath.has(candidate));
   const uniqueCandidates = [...new Set(candidates)];
   if (uniqueCandidates.length !== 1) {
@@ -1352,7 +1366,7 @@ const uniqueEntries = (entries) => {
   return unique;
 };
 
-const resolveLocalReExport = ({
+function resolveLocalReExport({
   filePath,
   reExport,
   module,
@@ -1361,7 +1375,7 @@ const resolveLocalReExport = ({
   parsed,
   filesByPath,
   addUnresolved,
-}) => {
+}) {
   const local = module.locals.get(reExport.local);
   if (local) {
     return [
@@ -1369,6 +1383,7 @@ const resolveLocalReExport = ({
         source: filePath,
         ...local,
         export: reExport.exported,
+        provenance: 'forwarding',
       },
     ];
   }
@@ -1383,7 +1398,7 @@ const resolveLocalReExport = ({
       parsed,
       filesByPath,
       addUnresolved,
-    });
+    }).map((entry) => ({ ...entry, provenance: 'consumer' }));
   }
 
   addUnresolved({
@@ -1392,9 +1407,9 @@ const resolveLocalReExport = ({
     reason: 'export declaration has no local source',
   });
   return [];
-};
+}
 
-const resolveModuleReExport = ({
+function resolveModuleReExport({
   filePath,
   reExport,
   nextStack,
@@ -1402,7 +1417,7 @@ const resolveModuleReExport = ({
   parsed,
   filesByPath,
   addUnresolved,
-}) => {
+}) {
   if (!reExport.module.startsWith('.')) return [];
 
   const resolved = resolveModule(filePath, reExport.module, filesByPath);
@@ -1438,8 +1453,8 @@ const resolveModuleReExport = ({
     });
     return [];
   }
-  return [{ ...target, export: target.export }];
-};
+  return [{ ...target, export: reExport.exported, provenance: 'forwarding' }];
+}
 
 function visitSourceFile({
   filePath,
@@ -1529,7 +1544,7 @@ export function discoverSourceExports({ files }) {
     }
   };
 
-  const exports = sourceFiles.flatMap((file) =>
+  const discoveredEntries = sourceFiles.flatMap((file) =>
     visitSourceFile({
       filePath: file.path,
       cache,
@@ -1538,7 +1553,16 @@ export function discoverSourceExports({ files }) {
       addUnresolved,
     })
   );
-  return { exports: uniqueEntries(exports), unresolved };
+  const exports = uniqueEntries(discoveredEntries);
+  return {
+    exports: exports.map(({ provenance: _provenance, ...entry }) => entry),
+    provenance: exports.map(({ source, export: exportName, provenance }) => ({
+      source,
+      export: exportName,
+      kind: provenance ?? 'direct',
+    })),
+    unresolved,
+  };
 }
 
 export function validateSourceClaims(manifest, discovery) {
@@ -1744,13 +1768,35 @@ const playBody = (playProperty) => {
   return ts.isMethodDeclaration(playProperty) ? playProperty.body : undefined;
 };
 
-const hasStringLiteral = (node, expected) => {
+const isAssertionCall = (expression) => {
+  if (ts.isIdentifier(expression)) {
+    return ['assert', 'assertThat', 'expect', 'storybookExpect'].includes(
+      expression.text
+    );
+  }
+  return (
+    ts.isPropertyAccessExpression(expression) &&
+    ['assert', 'assertThat', 'expect'].includes(expression.name.text)
+  );
+};
+
+const hasAssertionMarker = (node, expected) => {
   let found = false;
   const visit = (candidate) => {
     if (found) return;
-    if (ts.isStringLiteral(candidate) && candidate.text === expected) {
-      found = true;
-      return;
+    if (
+      ts.isCallExpression(candidate) &&
+      isAssertionCall(candidate.expression)
+    ) {
+      if (
+        candidate.arguments.some(
+          (argument) =>
+            ts.isStringLiteral(argument) && argument.text === expected
+        )
+      ) {
+        found = true;
+        return;
+      }
     }
     ts.forEachChild(candidate, visit);
   };
@@ -1897,7 +1943,7 @@ export function validateStoryEvidence({ manifest, files, index }) {
         );
         continue;
       }
-      if (!hasStringLiteral(playBody(playProperty), state.assertionMarker)) {
+      if (!hasAssertionMarker(playBody(playProperty), state.assertionMarker)) {
         errors.push(
           storyEvidenceError(
             `assertionMarker is not an exact string literal in ${state.storyExport}.play`,
@@ -2127,6 +2173,28 @@ export function validateClosure({
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
           `required story has no passing receipt: ${storyId}`
+        )
+      );
+    }
+  }
+
+  const executableSet = new Set(executable.storyIds);
+  for (const storyId of executableSet) {
+    if (!executed.has(storyId)) {
+      errors.push(
+        error(
+          FAILURE_CODES.EXECUTION_INCOMPLETE,
+          `executable story has no passing receipt: ${storyId}`
+        )
+      );
+    }
+  }
+  for (const storyId of executed) {
+    if (!executableSet.has(storyId)) {
+      errors.push(
+        error(
+          FAILURE_CODES.EXECUTION_INCOMPLETE,
+          `receipt covers a story outside the executable set: ${storyId}`
         )
       );
     }
@@ -2431,7 +2499,7 @@ const runReferencesMode = (args, manifest) => {
   try {
     const referenceResult = validateReferences(
       manifest,
-      JSON.parse(indexContent)
+      parseJsonDocument(indexContent)
     );
     if (!referenceResult.ok) return failureResult(referenceResult.errors);
     if (args.writeInventory) {
@@ -2451,6 +2519,9 @@ const runReferencesMode = (args, manifest) => {
   }
 };
 
+const readJsonFile = (filePath) =>
+  parseJsonDocument(readFileSync(path.resolve(filePath), 'utf8'));
+
 const runClosureMode = (args, manifest) => {
   if (!args.index || !args.docsIndex || !args.receipts) {
     return failureResult([
@@ -2461,23 +2532,19 @@ const runClosureMode = (args, manifest) => {
     ]);
   }
   try {
-    const readJson = (filePath) => {
-      const content = readFileSync(path.resolve(filePath), 'utf8');
-      return JSON.parse(content);
-    };
     const receiptDirectory = path.resolve(args.receipts);
     const receiptFiles = readdirSync(receiptDirectory)
       .filter((fileName) => /^receipt-.*\.json$/u.test(fileName))
       .toSorted();
     const closureResult = validateClosure({
       manifest,
-      fullIndex: readJson(args.index),
-      docsIndex: readJson(args.docsIndex),
+      fullIndex: readJsonFile(args.index),
+      docsIndex: readJsonFile(args.docsIndex),
       receipts: receiptFiles.map((fileName) =>
-        readJson(path.join(receiptDirectory, fileName))
+        readJsonFile(path.join(receiptDirectory, fileName))
       ),
-      freeze: readJson(path.join(receiptDirectory, 'freeze.json')),
-      producer: readJson(path.join(receiptDirectory, 'producer.json')),
+      freeze: readJsonFile(path.join(receiptDirectory, 'freeze.json')),
+      producer: readJsonFile(path.join(receiptDirectory, 'producer.json')),
     });
     return closureResult.ok
       ? failureResult([], 0)
@@ -2511,7 +2578,7 @@ export function main(argv = process.argv.slice(2)) {
     if (manifestContent === undefined) {
       throw new Error(`manifest could not be read: ${manifestPath}`);
     }
-    const manifest = JSON.parse(manifestContent);
+    const manifest = parseJsonDocument(manifestContent);
     const evidenceFiles = readSourceFiles(sourceRoot, {
       includeStories: true,
     });

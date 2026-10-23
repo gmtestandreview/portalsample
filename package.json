@@ -20,7 +20,7 @@
     "verify:vite-build": "npm run build && node scripts/verify-vite-build.mjs",
     "verify:vite-runtime": "node scripts/verify-vite-runtime.mjs",
     "type-check": "tsc --noEmit",
-    "lint": "eslint \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx}\" \"tests/**/*.{ts,tsx}\" \"*.config.{ts,mts,js}\" \"vite.config.mts\" \"scripts/verify-vite-build.mjs\" \"scripts/verify-vite-runtime.mjs\" \"vitest*.{ts,js}\"",
+    "lint": "eslint \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx}\" \"tests/**/*.{ts,tsx}\" \"*.config.{ts,mts,js}\" \"vite.config.mts\" \"scripts/verify-vite-build.mjs\" \"scripts/verify-vite-runtime.mjs\" \"scripts/storybook-coverage.mjs\" \"scripts/storybook-coverage-worklist.mjs\" \"scripts/verify-storybook-docs.mjs\" \"scripts/storybook-closure.mjs\" \"vitest*.{ts,js}\"",
     "lint:mdx": "remark \".storybook/**/*.mdx\" \"ClientApp/src/**/*.mdx\" --frail",
     "lint:rules": "node scripts/verify-rule-citations.mjs",
     "lint:rules:fix": "node scripts/verify-rule-citations.mjs --fix",

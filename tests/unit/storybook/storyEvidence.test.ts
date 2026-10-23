@@ -232,5 +232,25 @@ describe('reviewed Storybook source and story evidence', () => {
         expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
       ]),
     });
+
+    const nonAssertionMarker = storyContent.replace(
+      "    expect('expect-visible-label').toBe('expect-visible-label');",
+      "    console.log('expect-visible-label');"
+    );
+    expect(
+      moduleUnderTest.validateStoryEvidence({
+        manifest,
+        files: [
+          { path: sourcePath, content: sourceContent },
+          { path: storyPath, content: nonAssertionMarker },
+        ],
+        index,
+      })
+    ).toMatchObject({
+      ok: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
+      ]),
+    });
   });
 });

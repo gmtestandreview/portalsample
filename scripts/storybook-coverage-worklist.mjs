@@ -51,16 +51,22 @@ const batchForSource = (source) => {
 
 const canonicalKey = (entry) => `${entry.source}#${entry.export}`;
 
-const createReviewedEntry = (entry) => ({
-  source: entry.source,
-  export: entry.export,
-  discoveryKind: entry.kind,
-  unresolvedReason: null,
-  proposedClassification: entry.kind === 'renderable' ? 'direct' : 'nonvisual',
-  owner: 'unassigned',
-  batch: batchForSource(entry.source),
-  status: 'needs-review',
-});
+const createReviewedEntry = (entry, provenanceByKey) => {
+  const provenance =
+    provenanceByKey.get(canonicalKey(entry)) ??
+    (entry.kind === 'renderable' ? 'direct' : 'nonvisual');
+  return {
+    source: entry.source,
+    export: entry.export,
+    discoveryKind: entry.kind,
+    unresolvedReason: null,
+    proposedClassification:
+      entry.kind === 'renderable' ? provenance : 'nonvisual',
+    owner: 'unassigned',
+    batch: batchForSource(entry.source),
+    status: 'needs-review',
+  };
+};
 
 const createUnresolvedEntry = (entry) => ({
   source: entry.source,
@@ -82,8 +88,16 @@ export function buildWorklist({ files, candidateFiles = [] }) {
     (candidate) => !acceptedPaths.has(candidate.path)
   );
 
+  const provenanceByKey = new Map(
+    (discovery.provenance ?? []).map((entry) => [
+      canonicalKey(entry),
+      entry.kind,
+    ])
+  );
   const worklist = [
-    ...discovery.exports.map(createReviewedEntry),
+    ...discovery.exports.map((entry) =>
+      createReviewedEntry(entry, provenanceByKey)
+    ),
     ...discovery.unresolved.map(createUnresolvedEntry),
   ].toSorted((left, right) => {
     const keyOrder = compareText(canonicalKey(left), canonicalKey(right));
@@ -94,8 +108,12 @@ export function buildWorklist({ files, candidateFiles = [] }) {
     direct: worklist.filter(
       (entry) => entry.proposedClassification === 'direct'
     ).length,
-    consumer: 0,
-    forwarding: 0,
+    consumer: worklist.filter(
+      (entry) => entry.proposedClassification === 'consumer'
+    ).length,
+    forwarding: worklist.filter(
+      (entry) => entry.proposedClassification === 'forwarding'
+    ).length,
     nonvisual: worklist.filter(
       (entry) => entry.proposedClassification === 'nonvisual'
     ).length,
@@ -115,7 +133,9 @@ export function buildWorklist({ files, candidateFiles = [] }) {
       ).length,
       unresolvedEntries: discovery.unresolved.length,
       diagnosticCount: diagnostics.length,
-      excludedPaths: excludedByPolicy.map((candidate) => ({ ...candidate })),
+      excludedPaths: excludedByPolicy
+        .toSorted((left, right) => compareText(left.path, right.path))
+        .map((candidate) => ({ ...candidate })),
     },
   };
 }

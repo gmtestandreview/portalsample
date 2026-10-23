@@ -10,6 +10,7 @@ export default [
     name: 'nmi/storybook-coverage-mjs',
     files: [
       'scripts/storybook-coverage.mjs',
+      'scripts/storybook-coverage-worklist.mjs',
       'scripts/verify-storybook-docs.mjs',
       'scripts/storybook-closure.mjs',
     ],
@@ -20,6 +21,10 @@ export default [
     },
     rules: {
       'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
     },
   },
 ];
