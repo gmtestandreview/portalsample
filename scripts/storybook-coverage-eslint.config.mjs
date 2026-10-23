@@ -14,6 +14,9 @@ export default [
       'scripts/verify-storybook-docs.mjs',
       'scripts/storybook-closure.mjs',
     ],
+    linterOptions: {
+      reportUnusedDisableDirectives: 'off',
+    },
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

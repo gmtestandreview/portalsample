@@ -5,6 +5,7 @@ import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import reactHooks from 'eslint-plugin-react-hooks';
+import pluginSecurity from 'eslint-plugin-security';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -89,6 +90,8 @@ export default defineConfig(
       'react-hooks/exhaustive-deps': 'error',
     },
   },
+
+  pluginSecurity.configs.recommended,
 
   ...storybook.configs['flat/recommended'],
 

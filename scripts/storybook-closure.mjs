@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename, security/detect-object-injection, security/detect-unsafe-regex */
 import { execFile, spawn } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import {
@@ -48,11 +49,11 @@ const STORYBOOK_INPUT_ROOTS = [
 ];
 
 const STORYBOOK_ROOT_INPUT_PATTERNS = [
-  /^.*\.config\..+$/u,
+  /^[^\\/]*\.config\.[^\\/]+$/u,
   /^vitest.*\..+$/u,
   /^tsconfig.*\.json$/u,
   /^\.prettierrc.*$/u,
-  /^\.env(?:\..*)?$/u,
+  /^\.env(?:\.[^\\/]*)?$/u,
 ];
 
 const collectInputFiles = (checkout) => {
@@ -315,6 +316,56 @@ const assertHandoff = (completion, freeze, producer) => {
   }
 };
 
+const runGateSequence = async (gates, context, phases, adapters) => {
+  for (const [name] of gates) {
+    throwIfAborted(context.signal);
+    const gate = await adapters.runGate(name, context);
+    phases.push(name);
+    assertGate(gate, { ...context, name });
+    await adapters.assertStableIdentity(context);
+  }
+};
+
+const collectAndValidateReceipts = async (
+  completion,
+  context,
+  options,
+  adapters
+) => {
+  const { freeze, producer, target } = context;
+  const receipts = [];
+  for (const receiptFile of completion.receiptFiles) {
+    const receipt = await adapters.readReceipt({
+      receipts: options.receipts,
+      receiptFile,
+    });
+    const normalized = adapters.normalizeReceipt({
+      value: receipt,
+      freeze,
+      producer,
+      target,
+    });
+    assertResult(normalized, `receipt is invalid: ${receiptFile}`);
+    const expectedChildEpoch = await adapters.observeChildEpoch({
+      receipt,
+      freeze,
+      producer,
+    });
+    assertResult(
+      adapters.validateProducerIdentity({
+        producer,
+        receipt,
+        expectedMcpURL: target.mcpURL,
+        expectedFreezeId: freeze.freezeId,
+        expectedChildEpoch,
+      }),
+      `receipt producer identity is invalid: ${receiptFile}`
+    );
+    receipts.push(normalized.receipt);
+  }
+  return receipts;
+};
+
 export async function runClosure(options, adapters) {
   const phases = [];
   const optionError = assertOptions(options);
@@ -383,13 +434,7 @@ export async function runClosure(options, adapters) {
       signal,
     };
 
-    for (const [name] of GATES.slice(0, 6)) {
-      throwIfAborted(signal);
-      const gate = await adapters.runGate(name, context);
-      phases.push(name);
-      assertGate(gate, { ...context, name });
-      await adapters.assertStableIdentity(context);
-    }
+    await runGateSequence(GATES.slice(0, 6), context, phases, adapters);
 
     await adapters.writeAwaitingMcp({
       checkout: options.checkout,
@@ -411,45 +456,15 @@ export async function runClosure(options, adapters) {
     phases.push('mcp-receipts');
     assertHandoff(completion, freeze, producer);
 
-    const receipts = [];
-    for (const receiptFile of completion.receiptFiles) {
-      const receipt = await adapters.readReceipt({
-        receipts: options.receipts,
-        receiptFile,
-      });
-      const normalized = adapters.normalizeReceipt({
-        value: receipt,
-        freeze,
-        producer,
-        target,
-      });
-      assertResult(normalized, `receipt is invalid: ${receiptFile}`);
-      const expectedChildEpoch = await adapters.observeChildEpoch({
-        receipt,
-        freeze,
-        producer,
-      });
-      assertResult(
-        adapters.validateProducerIdentity({
-          producer,
-          receipt,
-          expectedMcpURL: target.mcpURL,
-          expectedFreezeId: freeze.freezeId,
-          expectedChildEpoch,
-        }),
-        `receipt producer identity is invalid: ${receiptFile}`
-      );
-      receipts.push(normalized.receipt);
-    }
+    const receipts = await collectAndValidateReceipts(
+      completion,
+      context,
+      options,
+      adapters
+    );
     context.childEpoch = receipts[0]?.childEpoch;
 
-    for (const [name] of GATES.slice(6)) {
-      throwIfAborted(signal);
-      const gate = await adapters.runGate(name, context);
-      phases.push(name);
-      assertGate(gate, { ...context, name });
-      await adapters.assertStableIdentity(context);
-    }
+    await runGateSequence(GATES.slice(6), context, phases, adapters);
 
     outcome = { ok: true, phases };
   } catch (error_) {
@@ -610,8 +625,8 @@ const createProductionAdapters = async () => {
   const runCommand = async (
     [command, ...args],
     cwd,
-    env = process.env,
-    signal
+    signal,
+    env = process.env
   ) => {
     const [executable, executableArgs] =
       process.platform === 'win32' && command === 'npm'
@@ -933,6 +948,33 @@ const createProductionAdapters = async () => {
     return envelope.result;
   };
 
+  const releaseSingleFrozenTarget = async (frozenTarget, ownerIdentity) => {
+    let targetError;
+    try {
+      await runIcacls(frozenTarget.target, [
+        '/remove:d',
+        ownerIdentity,
+        '/t',
+        '/c',
+      ]);
+      await runIcacls(frozenTarget.target, [
+        '/restore',
+        frozenTarget.backupPath,
+        '/c',
+      ]);
+    } catch (error_) {
+      targetError = error_;
+    }
+    for (const probePath of frozenTarget.probePaths) {
+      try {
+        await rm(probePath, { force: true });
+      } catch (error_) {
+        targetError ??= error_;
+      }
+    }
+    return targetError;
+  };
+
   return {
     resolveTarget: (targetOptions) => resolveStorybookTestTarget(targetOptions),
     assertOwnedPaths: async ({ checkout, receipts }) => {
@@ -1060,29 +1102,13 @@ const createProductionAdapters = async () => {
     releaseFreeze: async () => {
       if (!activeFreeze) return;
       let firstError;
+      const ownerIdentity = `${activeFreeze.ownerIdentity ?? freezeIdentity}`;
       for (const frozenTarget of [...frozenTargets].reverse()) {
-        try {
-          await runIcacls(frozenTarget.target, [
-            '/remove:d',
-            `${activeFreeze.ownerIdentity ?? freezeIdentity}`,
-            '/t',
-            '/c',
-          ]);
-          await runIcacls(frozenTarget.target, [
-            '/restore',
-            frozenTarget.backupPath,
-            '/c',
-          ]);
-        } catch (error_) {
-          firstError ??= error_;
-        }
-        for (const probePath of frozenTarget.probePaths) {
-          try {
-            await rm(probePath, { force: true });
-          } catch (error_) {
-            firstError ??= error_;
-          }
-        }
+        const targetError = await releaseSingleFrozenTarget(
+          frozenTarget,
+          ownerIdentity
+        );
+        firstError ??= targetError;
       }
       if (!firstError) {
         for (const frozenTarget of [...frozenTargets].reverse()) {
@@ -1251,8 +1277,8 @@ const createProductionAdapters = async () => {
       await runCommand(
         definition[1],
         context.checkout ?? process.cwd(),
-        env,
-        context.signal
+        context.signal,
+        env
       );
       if (name === 'gate-5-storybook-build' || name === 'gate-8-docs') {
         const index = JSON.parse(
