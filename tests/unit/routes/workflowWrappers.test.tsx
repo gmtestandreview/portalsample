@@ -23,23 +23,23 @@ const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: mocks.msalAccounts,
     instance: mocks.msalInstance,
   }),
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: mocks.useAccountState,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -80,7 +80,7 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../ClientApp/src/components/forms/WizardForm'), () => ({
+vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
   default: ({
     children,
     locationOnCompletion,
@@ -101,7 +101,7 @@ vi.mock(import('../../../ClientApp/src/components/forms/WizardForm'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () => ({
     default: ({
       children,
@@ -123,7 +123,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/forms/FormBanner'), () => ({
+vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
   default: ({
     title,
     refTitle,
@@ -143,93 +143,93 @@ vi.mock(import('../../../ClientApp/src/components/forms/FormBanner'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/HeaderIntroText'), () => ({
+vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <p data-testid='header-intro'>{children}</p>
   ),
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: () => {},
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () => ({
     default: () => {},
   })
 );
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: mocks.appLoggerError,
     verbose: mocks.appLoggerVerbose,
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   setDashboardNotification: vi.fn(),
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact'),
+  '../../../ClientApp/src/routes/requestForQuote/organisationAndContact',
   () => ({
     default: () => <div>Organisation and contact step</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest'),
+  '../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest',
   () => ({
     default: () => <div>Instrument and request step</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary'),
+  '../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary',
   () => ({
     default: () => <div>Request summary step</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  '../../../ClientApp/src/routes/acceptQuote/reportRecipient',
   () => ({
     default: () => <div>Report recipient step</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
+  '../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
   () => ({
     default: () => <div>Delivery and return step</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  '../../../ClientApp/src/routes/acceptQuote/paymentDetails',
   () => ({
     default: () => <div>Payment details step</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
+  '../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
   () => ({
     default: () => <div>Summary and accept step</div>,
   })
 );
 
-vi.mock(import('../../../ClientApp/src/routes/quotation/quoteDetails'), () => ({
+vi.mock('../../../ClientApp/src/routes/quotation/quoteDetails', () => ({
   default: ({
     quotationData,
     fileError,
@@ -244,21 +244,21 @@ vi.mock(import('../../../ClientApp/src/routes/quotation/quoteDetails'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/quotation/nMIContactDetails'),
+  '../../../ClientApp/src/routes/quotation/nMIContactDetails',
   () => ({
     default: () => <div>NMI contact details</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
   () => ({
     default: () => <div>Quote terms</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuote',
   () => ({
     default: () => <div>Detailed quote PDF</div>,
   })

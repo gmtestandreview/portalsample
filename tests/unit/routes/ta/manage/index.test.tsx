@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import TAApplicationManage from '@/routes/ta/manage';
 
-vi.mock(import('@/routes/ta/manage/appDetails'), () => ({
+vi.mock('@/routes/ta/manage/appDetails', () => ({
   default: () => <div>Application details route</div>,
 }));
 

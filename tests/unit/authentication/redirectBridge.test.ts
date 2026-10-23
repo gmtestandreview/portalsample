@@ -4,7 +4,7 @@ const bridgeMocks = vi.hoisted(() => ({
   broadcastResponseToMainFrame: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-browser/redirect-bridge'), () => bridgeMocks);
+vi.mock('@azure/msal-browser/redirect-bridge', () => bridgeMocks);
 
 describe('mSAL redirect bridge entry', () => {
   beforeEach(() => {

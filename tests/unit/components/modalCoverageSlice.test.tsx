@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
   navigate: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'account-1' }],
     instance: {
@@ -30,7 +30,7 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('react-router'), async () => {
+vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
@@ -38,7 +38,7 @@ vi.mock(import('react-router'), async () => {
   };
 });
 
-vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
   ApplicationType: {
     QuoteRequest: 'QuoteRequest',
   },
@@ -51,27 +51,27 @@ vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => ({
   }),
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['api://mock/.default'] },
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   setDashboardNotification: vi.fn(),
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/types'), () => ({
+vi.mock('../../../ClientApp/src/storage/types', () => ({
   NotificationSeverity: {
     Success: 'success',
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: vi.fn(),
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/analytics/GoogleAnalytics'), () => ({
+vi.mock('../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 

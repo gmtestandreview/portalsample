@@ -13,7 +13,7 @@ import SubmitFormButton from '../../../../ClientApp/src/components/forms/SubmitF
 import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
 }));
 

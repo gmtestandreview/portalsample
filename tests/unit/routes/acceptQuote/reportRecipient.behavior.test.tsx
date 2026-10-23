@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     instance: mocks.instance,
     accounts: mocks.accounts,
@@ -36,14 +36,14 @@ vi.mock(import('@azure/msal-react'), () => ({
   useAccount: () => ({ homeAccountId: 'mock-id' }),
 }));
 
-vi.mock(import('@/authentication/hooks'), () => ({
+vi.mock('@/authentication/hooks', () => ({
   useAccountState: () => ({
     isLoading: false,
     details: { homeAccountId: 'mock-id' },
   }),
 }));
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -54,19 +54,19 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: mocks.error },
 }));
 
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
-vi.mock(import('@/components/Inputs/AddressLookup'), () => ({
+vi.mock('@/components/Inputs/AddressLookup', () => ({
   default: ({ label }: { label: string }) => (
     <div data-testid='address-lookup'>{label}</div>
   ),
 }));
-vi.mock(import('@/components/Inputs/RhfAddressLookup'), () => ({
+vi.mock('@/components/Inputs/RhfAddressLookup', () => ({
   default: ({ label }: { label: string }) => (
     <div data-testid='address-lookup'>{label}</div>
   ),

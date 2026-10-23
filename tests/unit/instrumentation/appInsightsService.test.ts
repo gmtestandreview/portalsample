@@ -17,13 +17,13 @@ describe('appInsightsService', () => {
       this.plugin = 'react';
     });
 
-    vi.doMock(import('@microsoft/applicationinsights-web'), () => ({
+    vi.doMock('@microsoft/applicationinsights-web', () => ({
       ApplicationInsights: applicationInsightsCtor,
     }));
-    vi.doMock(import('@microsoft/applicationinsights-react-js'), () => ({
+    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
       ReactPlugin: reactPluginCtor,
     }));
-    vi.doMock(import('@/env'), () => ({
+    vi.doMock('@/env', () => ({
       env: {
         VITE_APPINSIGHTS_CONN_STRING:
           'InstrumentationConnectionString=test-value',
@@ -58,13 +58,13 @@ describe('appInsightsService', () => {
       this.loadAppInsights = loadAppInsights;
     });
 
-    vi.doMock(import('@microsoft/applicationinsights-web'), () => ({
+    vi.doMock('@microsoft/applicationinsights-web', () => ({
       ApplicationInsights: applicationInsightsCtor,
     }));
-    vi.doMock(import('@microsoft/applicationinsights-react-js'), () => ({
+    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
       ReactPlugin: vi.fn(function ReactPlugin() {}),
     }));
-    vi.doMock(import('@/env'), () => ({
+    vi.doMock('@/env', () => ({
       env: {
         VITE_APPINSIGHTS_CONN_STRING: undefined,
         VITE_ENVIRONMENT: 'development',
@@ -82,13 +82,13 @@ describe('appInsightsService', () => {
   it('warns about disabled telemetry only in runtime development environment', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    vi.doMock(import('@microsoft/applicationinsights-web'), () => ({
+    vi.doMock('@microsoft/applicationinsights-web', () => ({
       ApplicationInsights: vi.fn(),
     }));
-    vi.doMock(import('@microsoft/applicationinsights-react-js'), () => ({
+    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
       ReactPlugin: vi.fn(function ReactPlugin() {}),
     }));
-    vi.doMock(import('@/env'), () => ({
+    vi.doMock('@/env', () => ({
       env: {
         VITE_APPINSIGHTS_CONN_STRING: undefined,
         VITE_ENVIRONMENT: 'development',
@@ -105,16 +105,16 @@ describe('appInsightsService', () => {
   it('stays silent when telemetry is deliberately disabled with the dummy sentinel', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    vi.doMock(import('@microsoft/applicationinsights-web'), () => ({
+    vi.doMock('@microsoft/applicationinsights-web', () => ({
       ApplicationInsights: vi.fn(),
     }));
-    vi.doMock(import('@microsoft/applicationinsights-react-js'), () => ({
+    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
       ReactPlugin: vi.fn(function ReactPlugin() {}),
     }));
     // 'dummy-key' is how Storybook and local dev opt out on purpose. A
     // warning per module instantiation is noise there - 48 lines across the
     // Storybook suite - and it drowns out warnings that mean something.
-    vi.doMock(import('@/env'), () => ({
+    vi.doMock('@/env', () => ({
       env: {
         VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
         VITE_ENVIRONMENT: 'development',
@@ -131,13 +131,13 @@ describe('appInsightsService', () => {
   it('does not warn about disabled telemetry outside the runtime development environment', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    vi.doMock(import('@microsoft/applicationinsights-web'), () => ({
+    vi.doMock('@microsoft/applicationinsights-web', () => ({
       ApplicationInsights: vi.fn(),
     }));
-    vi.doMock(import('@microsoft/applicationinsights-react-js'), () => ({
+    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
       ReactPlugin: vi.fn(function ReactPlugin() {}),
     }));
-    vi.doMock(import('@/env'), () => ({
+    vi.doMock('@/env', () => ({
       env: {
         VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
         VITE_ENVIRONMENT: 'production',

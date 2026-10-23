@@ -8,7 +8,7 @@ import RequestItem from '@/components/RequestList/requestItem';
 import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
 
-vi.mock(import('@/components/Actions'), () => ({
+vi.mock('@/components/Actions', () => ({
   default: ({
     onItemClick,
   }: {

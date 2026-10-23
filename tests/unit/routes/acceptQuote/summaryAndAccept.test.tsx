@@ -20,14 +20,14 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: mocks.accounts,
     instance: mocks.instance,
   }),
 }));
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
 
   return {
@@ -45,7 +45,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: () => ({
     details: {
       givenName: 'Taylor',
@@ -54,7 +54,7 @@ vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
   }),
 }));
 
-vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   AcceptQuoteClient: class {
     setAuthToken = vi.fn();
 
@@ -65,18 +65,18 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   },
 }));
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
-vi.mock(import('../../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../../ClientApp/src/storage/notification', () => ({
   getDashboardNotification: vi.fn(() => undefined),
   clearDashboardNotification: vi.fn(),
   setDashboardNotification: vi.fn(),
   clearDashboardInfoNotification: vi.fn(),
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
+vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
   CustomAccordion: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
@@ -86,47 +86,47 @@ vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Buttons/EditButton'),
+  '../../../../ClientApp/src/components/Buttons/EditButton',
   () => ({
     default: () => <button type='button'>Edit</button>,
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/HeaderIntroText'), () => ({
+vi.mock('../../../../ClientApp/src/components/HeaderIntroText', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: () => {},
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  '../../../../ClientApp/src/routes/acceptQuote/reportRecipient',
   () => ({
     default: () => <div>Report recipient</div>,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
+  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
   () => ({
     default: () => <div>Delivery and return</div>,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  '../../../../ClientApp/src/routes/acceptQuote/paymentDetails',
   () => ({
     default: () => <div>Payment details</div>,
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/InTextLink'), () => ({
+vi.mock('../../../../ClientApp/src/components/InTextLink', () => ({
   default: ({
     children,
     onClick,
@@ -141,34 +141,34 @@ vi.mock(import('../../../../ClientApp/src/components/InTextLink'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/quotationSummary'),
+  '../../../../ClientApp/src/routes/acceptQuote/quotationSummary',
   () => ({
     default: () => <div>Quotation summary</div>,
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () => ({
     default: () => null,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
+  '../../../../ClientApp/src/components/Icons/ExternalLinkIcon',
   () => ({
     default: () => <span aria-hidden='true'>icon</span>,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../../ClientApp/src/routes/common/helperFunctions',
   () => ({
     getFileUrlFromBase64: vi.fn(),
     openPdfPageInNewTab: vi.fn(),

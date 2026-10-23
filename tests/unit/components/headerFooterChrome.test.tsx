@@ -23,34 +23,34 @@ const msalState = vi.hoisted(() => ({
   authenticated: false,
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
     msalState.authenticated ? children : null,
   UnauthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
     msalState.authenticated ? null : children,
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock(import('@/authentication/hooks'), () => ({
+vi.mock('@/authentication/hooks', () => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock(import('@/components/modals/ModalContext'), () => ({
+vi.mock('@/components/modals/ModalContext', () => ({
   useModalDispatch: vi.fn(),
 }));
 
-vi.mock(import('@/routes/common/helperFunctions'), () => ({
+vi.mock('@/routes/common/helperFunctions', () => ({
   getEnvironment: vi.fn(),
 }));
 
-vi.mock(import('@/assets/GovCrest.svg'), () => ({
+vi.mock('@/assets/GovCrest.svg', () => ({
   default: 'gov-crest.svg',
 }));
 
-vi.mock(import('@/components/modals/ContentModal'), () => ({
+vi.mock('@/components/modals/ContentModal', () => ({
   default: ({
     showModal,
     onCancelModal,

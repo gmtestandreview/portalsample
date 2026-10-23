@@ -17,7 +17,7 @@ let mockAccountDispatchAvailable = true;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useIsAuthenticated: () => mockIsAuthenticated,
   useMsal: vi.fn(() => ({
     inProgress: 'none',
@@ -26,7 +26,7 @@ vi.mock(import('@azure/msal-react'), () => ({
   })),
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: () => ({ details: mockAccountStateDetails }),
   useAccountDispatch: () =>
     mockAccountDispatchAvailable
@@ -42,19 +42,19 @@ vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
       : undefined,
 }));
 
-vi.mock(import('../../../ClientApp/src/components/Layout'), () => ({
+vi.mock('../../../ClientApp/src/components/Layout', () => ({
   default: ({ children }: any) => <div data-testid='layout'>{children}</div>,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/TermsAndCondition'),
+  '../../../ClientApp/src/components/modals/TermsAndCondition',
   () => ({
     default: () => <div data-testid='terms-modal'>Terms Modal</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/BranchSelectorModal'),
+  '../../../ClientApp/src/components/modals/BranchSelectorModal',
   () => ({
     default: () => (
       <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
@@ -63,7 +63,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
+  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
   () => ({
     BranchSelectionModalMode: {
       SelectAndEditOrg: 'SelectAndEditOrg',
@@ -73,14 +73,14 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/RFQDeleteModal'),
+  '../../../ClientApp/src/components/modals/RFQDeleteModal',
   () => ({
     default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () => ({
     ModalStateCtx: React.createContext(null),
     ModalDispatchCtx: React.createContext(null),
@@ -90,27 +90,27 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/routeChangeScrollTop'),
+  '../../../ClientApp/src/components/Utilities/routeChangeScrollTop',
   () => ({
     default: () => null,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/backToTopButton'),
+  '../../../ClientApp/src/components/Utilities/backToTopButton',
   () => ({
     default: () => null,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/routeAccessibleNavigation'),
+  '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
   () => ({
     default: () => null,
   })
 );
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   clearDashboardNotification: vi.fn(),
   getBranchModalNotification: vi.fn(() => undefined),
 }));

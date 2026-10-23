@@ -8,7 +8,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock(import('react-aria-components/Breadcrumbs'), () => ({
+vi.mock('react-aria-components/Breadcrumbs', () => ({
   Breadcrumbs: ({
     children,
     className,
@@ -25,7 +25,7 @@ vi.mock(import('react-aria-components/Breadcrumbs'), () => ({
   }) => <li className={className}>{children}</li>,
 }));
 
-vi.mock(import('react-aria-components/Link'), () => ({
+vi.mock('react-aria-components/Link', () => ({
   Link: ({
     children,
     href,

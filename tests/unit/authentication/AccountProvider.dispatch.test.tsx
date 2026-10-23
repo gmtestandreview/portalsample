@@ -30,7 +30,7 @@ const providerMocks = vi.hoisted(() => ({
   signIn: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     inProgress: providerMocks.inProgress,
     accounts: providerMocks.accounts,
@@ -43,11 +43,11 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('@azure/msal-browser'), () => ({
+vi.mock('@azure/msal-browser', () => ({
   InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
 }));
 
-vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
   UsersClient: class {
     setAuthToken = vi.fn();
     setUserProfile = providerMocks.setUserProfileApi;
@@ -55,23 +55,23 @@ vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => ({
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: providerMocks.appLoggerError,
     verbose: vi.fn(),
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/targetOrganisation'), () => ({
+vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
   default: providerMocks.setStoredTargetOrganisation,
   getTargetOrganisation: providerMocks.getStoredTargetOrganisation,
 }));
 
-vi.mock(import('../../../ClientApp/src/terms-config.json'), () => ({
+vi.mock('../../../ClientApp/src/terms-config.json', () => ({
   default: { TermsVersion: '1' },
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['read'] },
 }));
 

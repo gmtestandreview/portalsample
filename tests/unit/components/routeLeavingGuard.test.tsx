@@ -9,7 +9,7 @@ const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 const useBlockerMock = vi.fn();
 
-vi.mock(import('react-router'), () => ({
+vi.mock('react-router', () => ({
   useBlocker: (callback: unknown) => useBlockerMock(callback),
 }));
 

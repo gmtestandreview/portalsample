@@ -13,7 +13,7 @@ import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
 import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 
-vi.mock(import('@/components/RouteLeavingGuard'), () => ({
+vi.mock('@/components/RouteLeavingGuard', () => ({
   default: ({
     when,
     title,

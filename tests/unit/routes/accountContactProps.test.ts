@@ -37,7 +37,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal();
     if (typeof actual !== 'object' || actual === null) {
@@ -72,11 +72,11 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   setDashboardNotification: mocks.setDashboardNotification,
   setBranchModalNotification: mocks.setBranchModalNotification,
 }));

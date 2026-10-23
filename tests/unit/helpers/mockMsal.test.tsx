@@ -16,7 +16,7 @@ import {
   testAccount,
 } from './mockMsal';
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('./mockMsal');
 
   return msalReactModuleMock();

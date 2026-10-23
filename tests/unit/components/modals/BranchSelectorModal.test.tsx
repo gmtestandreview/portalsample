@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -56,24 +56,24 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('@/storage/notification'), () => ({
+vi.mock('@/storage/notification', () => ({
   getBranchModalNotification: () => mocks.getBranchModalNotification(),
   clearBranchModalNotification: () => mocks.clearBranchModalNotification(),
 }));
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: {
     error: (...args: any[]) => mocks.appLoggerError(...args),
     verbose: vi.fn(),
   },
 }));
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return { ...actual, useNavigate: () => mocks.navigate };
 });
 
-vi.mock(import('@/components/Alert/NotificationMessage'), () => ({
+vi.mock('@/components/Alert/NotificationMessage', () => ({
   default: ({ id }: { id: string }) => (
     <div data-testid={id}>notification message</div>
   ),

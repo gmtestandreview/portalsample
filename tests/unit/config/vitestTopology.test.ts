@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import type { ViteUserConfig } from 'vitest/config';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock(import('@storybook/addon-vitest/vitest-plugin'), () => ({
+vi.mock('@storybook/addon-vitest/vitest-plugin', () => ({
   storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
 }));
 

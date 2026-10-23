@@ -37,7 +37,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'account-1' }],
     instance: {
@@ -46,22 +46,22 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('../../../ClientApp/src/analytics/GoogleAnalytics'), () => ({
+vi.mock('../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   clearDashboardNotification: vi.fn(),
 }));
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     verbose: vi.fn(),
     error: vi.fn(),
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
   DashboardClient: vi.fn(function (this: {
     setAuthToken: ReturnType<typeof vi.fn>;
     getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
@@ -71,7 +71,7 @@ vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => ({
   }),
 }));
 
-vi.mock(import('../../../ClientApp/src/routes/common/helperFunctions'), () => ({
+vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
   getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
   getFileUrlFromBase64: vi.fn((fileData: string) => `blob:${fileData}`),
   getQuotationFileDetails: vi.fn(),

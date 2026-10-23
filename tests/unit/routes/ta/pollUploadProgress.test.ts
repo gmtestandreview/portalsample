@@ -9,7 +9,7 @@ import {
 } from '../../../../ClientApp/src/routes/ta/pollUploadProgress';
 
 const appLoggerError = vi.hoisted(() => vi.fn());
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: appLoggerError },
 }));
 

@@ -15,22 +15,22 @@ const mocks = vi.hoisted(() => ({
   setDashboardNotification: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'account-id' }],
     instance: { acquireTokenSilent: mocks.acquireTokenSilent },
   }),
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock(import('@/storage/notification'), () => ({
+vi.mock('@/storage/notification', () => ({
   setDashboardNotification: mocks.setDashboardNotification,
 }));
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -47,7 +47,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 // The real modal only opens after a delete target is chosen, so its confirm
 // handler is unreachable without one. This stand-in is always rendered so the
 // "confirmed with no delete target" guard in PaRequestItem can be exercised.
-vi.mock(import('@/components/modals/ConfirmationModal'), () => ({
+vi.mock('@/components/modals/ConfirmationModal', () => ({
   default: ({ onModalYes }: { onModalYes: () => void }) => (
     <button type='button' onClick={onModalYes}>
       Confirm without target

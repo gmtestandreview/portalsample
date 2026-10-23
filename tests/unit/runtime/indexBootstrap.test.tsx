@@ -10,27 +10,27 @@ const mocks = vi.hoisted(() => ({
   createTrustedTypePolicy: vi.fn(),
 }));
 
-vi.mock(import('react-dom/client'), () => ({
+vi.mock('react-dom/client', () => ({
   createRoot: mocks.createRoot,
 }));
 
-vi.mock(import('@azure/msal-browser'), () => ({
+vi.mock('@azure/msal-browser', () => ({
   createStandardPublicClientApplication:
     mocks.createStandardPublicClientApplication,
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   MsalProvider: ({ children }: { children: React.ReactNode }) => (
     <section data-testid='msal-provider'>{children}</section>
   ),
 }));
 
-vi.mock(import('react-router/dom'), () => ({
+vi.mock('react-router/dom', () => ({
   RouterProvider: () => <main>Router provider</main>,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/AccountProvider'),
+  '../../../ClientApp/src/authentication/AccountProvider',
   () => ({
     default: ({ children }: { children: React.ReactNode }) => (
       <section data-testid='account-provider'>{children}</section>
@@ -38,28 +38,28 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   configuration: { auth: { clientId: 'client-id' } },
 }));
 
-vi.mock(import('../../../ClientApp/src/App'), () => ({
+vi.mock('../../../ClientApp/src/App', () => ({
   default: { routes: [] },
 }));
 
-vi.mock(import('../../../ClientApp/src/trustedtypes'), () => ({
+vi.mock('../../../ClientApp/src/trustedtypes', () => ({
   TrustedTypes: {
     createTrustedTypePolicy: mocks.createTrustedTypePolicy,
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/components/ErrorBoundary'), () => ({
+vi.mock('../../../ClientApp/src/components/ErrorBoundary', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <section data-testid='error-boundary'>{children}</section>
   ),
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
+  '../../../ClientApp/src/instrumentation/AppInsightsService',
   () => ({
     ai: {
       reactPlugin: { plugin: 'app-insights' },

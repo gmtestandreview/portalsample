@@ -9,7 +9,7 @@ const guardProps = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/RouteLeavingGuard'),
+  '../../../../ClientApp/src/components/RouteLeavingGuard',
   () => ({
     default: (props: { when?: boolean; onProceed?: () => void }) => {
       guardProps.last = props;

@@ -16,14 +16,14 @@ import ApplicationSummary from '../../../../../ClientApp/src/routes/ta/summary/A
 import OrganisationSummary from '../../../../../ClientApp/src/routes/ta/summary/OrganisationSummary';
 import { resetMsalMock } from '../../../helpers/mockMsal';
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () => ({
     default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
   })

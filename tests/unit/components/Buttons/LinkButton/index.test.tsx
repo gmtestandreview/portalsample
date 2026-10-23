@@ -8,7 +8,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock(import('react-aria-components/Link'), () => ({
+vi.mock('react-aria-components/Link', () => ({
   Link: ({
     children,
     className,

@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: mocks.accounts,
     instance: {
@@ -26,11 +26,11 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['type-approval.scope'] },
 }));
 
-vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   ApplicationType: {
     PatternApproval: 'PatternApproval',
   },
@@ -42,13 +42,13 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   }),
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: ReactNode }) => (
     <div data-testid='block-ui-spinner'>{children}</div>
   ),
 }));
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: mocks.appLoggerError,
   },

@@ -19,7 +19,7 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     instance: { acquireTokenSilent: mocks.acquireTokenSilent },
     accounts: [mocks.account],
@@ -28,7 +28,7 @@ vi.mock(import('@azure/msal-react'), () => ({
   useAccount: () => mocks.account,
 }));
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -39,7 +39,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 

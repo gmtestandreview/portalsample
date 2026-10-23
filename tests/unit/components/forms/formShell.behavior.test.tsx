@@ -15,11 +15,11 @@ import ContactDetailsInput from '@/components/forms/CommonForms/ContactDetails';
 import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
-vi.mock(import('@/components/forms/UnsavedFormPrompt'), () => ({
+vi.mock('@/components/forms/UnsavedFormPrompt', () => ({
   default: () => <div data-testid='unsaved-form-prompt' />,
 }));
 
-vi.mock(import('@/components/BlockUISpinner'), () => ({
+vi.mock('@/components/BlockUISpinner', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <output>{children}</output>
   ),

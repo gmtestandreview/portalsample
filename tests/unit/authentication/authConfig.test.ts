@@ -1,7 +1,7 @@
 import { LogLevel } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock(import('@/env'), () => ({
+vi.mock('@/env', () => ({
   env: {
     VITE_B2C_CLIENTID: 'test-client-id',
     VITE_B2C_AUTHORITY: 'https://example.test/authority',
@@ -105,7 +105,7 @@ describe('auth configuration', () => {
 
   it('falls back to empty strings when optional runtime auth env values are missing', async () => {
     vi.resetModules();
-    vi.doMock(import('@/env'), () => ({
+    vi.doMock('@/env', () => ({
       env: {
         VITE_B2C_CLIENTID: undefined,
         VITE_B2C_AUTHORITY: 'https://example.test/authority',

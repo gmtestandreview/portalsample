@@ -41,7 +41,7 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     inProgress: mocks.msalState.inProgress,
     accounts: mocks.msalState.accounts,
@@ -49,7 +49,7 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('@azure/msal-browser'), async (importOriginal) => {
+vi.mock('@azure/msal-browser', async (importOriginal) => {
   const actual = await importOriginal<typeof MsalBrowserModule>();
 
   return {
@@ -58,19 +58,19 @@ vi.mock(import('@azure/msal-browser'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: mocks.useAccountState,
   useAccountDispatch: () => ({
     setTargetOrganisation: mocks.setTargetOrganisation,
   }),
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -98,7 +98,7 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   getDashboardNotification: mocks.getDashboardNotification,
   getDashboardInfoNotification: mocks.getDashboardInfoNotification,
   clearDashboardNotification: mocks.clearDashboardNotification,
@@ -107,14 +107,14 @@ vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
   setDashboardInfoNotification: mocks.setDashboardInfoNotification,
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/types'), () => ({
+vi.mock('../../../ClientApp/src/storage/types', () => ({
   NotificationSeverity: {
     Error: 'error',
     Information: 'information',
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/sessionStorageCache'), () => ({
+vi.mock('../../../ClientApp/src/storage/sessionStorageCache', () => ({
   default: () => ({
     getItem: mocks.sessionGetItem,
     removeItem: mocks.sessionRemoveItem,
@@ -122,26 +122,26 @@ vi.mock(import('../../../ClientApp/src/storage/sessionStorageCache'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () => ({
     default: () => {},
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: () => {},
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/Breadcrumb'), () => ({
+vi.mock('../../../ClientApp/src/components/Breadcrumb', () => ({
   default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
     <nav data-testid='breadcrumb'>
       {breadcrumbs.map((item) => item.text).join(' > ')}
@@ -149,14 +149,14 @@ vi.mock(import('../../../ClientApp/src/components/Breadcrumb'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/HeaderIntroText'), () => ({
+vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <p data-testid='header-intro'>{children}</p>
   ),
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../ClientApp/src/components/Alert/NotificationMessage',
   () => ({
     default: ({
       message,
@@ -177,7 +177,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ConfirmationModal'),
+  '../../../ClientApp/src/components/modals/ConfirmationModal',
   () => ({
     default: ({
       isOpen,
@@ -205,7 +205,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
   () => ({
     default: ({
       prefixText,
@@ -223,7 +223,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuote',
   () => ({
     default: ({ text }: { text: string }) => (
       <button type='button'>{text}</button>
@@ -232,7 +232,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewMeasurementReport'),
+  '../../../ClientApp/src/components/Utilities/ViewMeasurementReport',
   () => ({
     default: ({ text }: { text: string }) => (
       <button type='button'>{text}</button>
@@ -241,7 +241,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/mailingLabel'),
+  '../../../ClientApp/src/components/Utilities/mailingLabel',
   () => ({
     default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
       <div data-testid='mailing-label'>{quotationIdNum}</div>
@@ -250,7 +250,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/deliveryInstructions'),
+  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
   () => ({
     default: ({ deliveryInstructions }: { deliveryInstructions?: string }) => (
       <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
@@ -259,7 +259,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Pill/QuoteStatusPill'),
+  '../../../ClientApp/src/components/Pill/QuoteStatusPill',
   () => ({
     default: ({ status }: { status: string }) => (
       <span data-testid='quote-status-pill'>{status}</span>
@@ -267,13 +267,13 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/Pill/StatusPill'), () => ({
+vi.mock('../../../ClientApp/src/components/Pill/StatusPill', () => ({
   default: ({ status }: { status: string }) => (
     <span data-testid='status-pill'>{status}</span>
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/Pagination'), () => ({
+vi.mock('../../../ClientApp/src/components/Pagination', () => ({
   default: ({
     currentPage,
     totalPages,
@@ -294,7 +294,7 @@ vi.mock(import('../../../ClientApp/src/components/Pagination'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/InTextLink'), () => ({
+vi.mock('../../../ClientApp/src/components/InTextLink', () => ({
   default: ({
     children,
     onClick,
@@ -309,18 +309,18 @@ vi.mock(import('../../../ClientApp/src/components/InTextLink'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
+  '../../../ClientApp/src/components/Icons/ExternalLinkIcon',
   () => ({
     default: () => <span data-testid='external-link-icon' />,
   })
 );
 
-vi.mock(import('../../../ClientApp/src/routes/common/openWindow'), () => ({
+vi.mock('../../../ClientApp/src/routes/common/openWindow', () => ({
   openInternalRouteInNewTab: mocks.openInternalRouteInNewTab,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const actual = await importOriginal<typeof HelperFunctionsModule>();
 
@@ -331,7 +331,7 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: mocks.appLoggerError,
     verbose: mocks.appLoggerVerbose,

@@ -6,7 +6,7 @@ import CustomDatePicker from '@/components/Inputs/DatePicker/CustomDatePicker';
 
 const mockDate = new Date('2026-05-18T00:00:00.000Z');
 
-vi.mock(import('@/components/Inputs/DatePicker/CustomDateInput'), () => ({
+vi.mock('@/components/Inputs/DatePicker/CustomDateInput', () => ({
   default: ({
     calendarOnKeyDown,
     forwardedControlRef,
@@ -60,7 +60,7 @@ vi.mock(import('@/components/Inputs/DatePicker/CustomDateInput'), () => ({
   ),
 }));
 
-vi.mock(import('react-datepicker'), () => {
+vi.mock('react-datepicker', () => {
   const MockDatePicker = React.forwardRef((props: any, ref: any) => {
     React.useImperativeHandle(ref, () => ({
       state: {

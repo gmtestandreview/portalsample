@@ -9,7 +9,7 @@ const reactGaMock = vi.hoisted(() => ({
   send: vi.fn(),
 }));
 
-vi.mock(import('react-ga4'), () => ({
+vi.mock('react-ga4', () => ({
   default: reactGaMock,
 }));
 

@@ -17,15 +17,15 @@ const wrapperMocks = vi.hoisted(() => ({
   )),
 }));
 
-vi.mock(import('@/components/ErrorBoundary'), () => ({
+vi.mock('@/components/ErrorBoundary', () => ({
   default: wrapperMocks.errorBoundary,
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   default: wrapperMocks.analytics,
 }));
 
-vi.mock(import('@/components/modals/ConfirmationModal'), () => ({
+vi.mock('@/components/modals/ConfirmationModal', () => ({
   default: ({
     closeModal,
     isOpen,

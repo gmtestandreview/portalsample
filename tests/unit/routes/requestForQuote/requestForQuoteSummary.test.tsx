@@ -26,14 +26,14 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -45,7 +45,7 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
 }));
 

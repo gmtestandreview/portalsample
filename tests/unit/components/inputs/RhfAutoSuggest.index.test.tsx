@@ -19,7 +19,7 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer'),
+  '@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer',
   () => ({
     default: (props: MockContainerProps) => {
       containerState.props = props;

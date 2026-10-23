@@ -14,20 +14,20 @@ const helperMocks = vi.hoisted(() => ({
 const trackGAEventMock = vi.hoisted(() => vi.fn());
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'test-account' }],
     instance: { acquireTokenSilent: acquireTokenSilentMock },
   }),
 }));
 
-vi.mock(import('@/routes/common/helperFunctions'), () => helperMocks);
+vi.mock('@/routes/common/helperFunctions', () => helperMocks);
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: trackGAEventMock,
 }));
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 

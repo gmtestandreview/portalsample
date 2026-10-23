@@ -24,11 +24,11 @@ const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => msalContext,
 }));
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -39,12 +39,12 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
 // Stub form-input children — they require Formik context which is outside this component's scope
-vi.mock(import('@/components/Inputs/TextInput'), () => ({
+vi.mock('@/components/Inputs/TextInput', () => ({
   default: ({
     inlineHelp,
     name,
@@ -57,18 +57,18 @@ vi.mock(import('@/components/Inputs/TextInput'), () => ({
     </div>
   ),
 }));
-vi.mock(import('@/components/Inputs/RadioButtonGroup'), () => ({
+vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
   default: ({ name }: { name: string }) => (
     <div data-testid={`radio-group`} data-name={name} />
   ),
 }));
-vi.mock(import('@/components/forms/HidableField'), () => ({
+vi.mock('@/components/forms/HidableField', () => ({
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
-vi.mock(import('@/components/forms/CommonForms/ContactDetails'), () => ({
+vi.mock('@/components/forms/CommonForms/ContactDetails', () => ({
   default: () => <div data-testid='contact-details' />,
 }));
-vi.mock(import('@/components/BlockUISpinner'), () => ({
+vi.mock('@/components/BlockUISpinner', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='spinner'>{children}</div>
   ),

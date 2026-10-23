@@ -16,14 +16,14 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -40,16 +40,16 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
 }));
 
 // The real accordion collapses its body; the summary inside it is what is under test.
-vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
+vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
   CustomAccordion: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -63,14 +63,14 @@ vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appDocuments'),
+  '../../../../ClientApp/src/routes/ta/manage/appDocuments',
   () => ({
     default: () => <div data-testid='application-documents' />,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appMessages'),
+  '../../../../ClientApp/src/routes/ta/manage/appMessages',
   () => ({
     default: () => <div data-testid='application-messages' />,
   })

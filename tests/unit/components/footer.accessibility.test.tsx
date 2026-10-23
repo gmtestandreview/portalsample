@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 import Privacy from '@/components/Footer/privacy';
 import TermsOfUse from '@/components/Footer/termsOfUse';
 
-vi.mock(import('@/assets/GovCrest.svg'), () => ({
+vi.mock('@/assets/GovCrest.svg', () => ({
   default: 'gov-crest.svg',
 }));
 

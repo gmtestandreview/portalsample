@@ -20,7 +20,7 @@ const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useAccount: () => mocks.account,
   useMsal: () => ({
     accounts: mocks.accounts,
@@ -29,7 +29,7 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => ({
+vi.mock('@/api/web-api-client', async (importOriginal) => ({
   ...(await importOriginal<typeof WebApiClientModule>()),
   AddressClient,
 }));

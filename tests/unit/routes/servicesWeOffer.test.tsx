@@ -33,14 +33,14 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getServices'>,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../helpers/mockApiClient');
@@ -55,16 +55,16 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['api://services/.default'] },
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
   default: () => mocks.accountContext(),
   useAccountDispatch: () => ({ setUserProfile: mocks.setUserProfile }),
 }));
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: mocks.appLoggerError, info: mocks.appLoggerInfo },
 }));
 

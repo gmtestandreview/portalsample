@@ -22,11 +22,11 @@ import Welcome from '@/components/Welcome';
 import { useAccountState } from '@/authentication/hooks';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock(import('@/components/get-started/get-started'), () => ({
+vi.mock('@/components/get-started/get-started', () => ({
   default: () => <main>Get started content</main>,
 }));
 
-vi.mock(import('@/authentication/hooks'), () => ({
+vi.mock('@/authentication/hooks', () => ({
   useAccountState: vi.fn(),
 }));
 

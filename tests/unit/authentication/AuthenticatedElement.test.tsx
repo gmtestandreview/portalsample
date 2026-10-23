@@ -17,7 +17,7 @@ const authElementMocks = vi.hoisted(() => ({
   setActiveAccount: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   MsalAuthenticationTemplate: ({
     authenticationRequest,
     children,
@@ -55,13 +55,13 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('@azure/msal-browser'), () => ({
+vi.mock('@azure/msal-browser', () => ({
   InteractionType: {
     Redirect: 'Redirect',
   },
 }));
 
-vi.mock(import('react-router'), () => ({
+vi.mock('react-router', () => ({
   isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
   Navigate: ({ to }: { to: string }) => (
     <span data-testid='navigate'>{to}</span>
@@ -70,7 +70,7 @@ vi.mock(import('react-router'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/preConditions/PreConditions'),
+  '../../../ClientApp/src/routes/preConditions/PreConditions',
   () => ({
     default: ({
       children,
@@ -89,7 +89,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/ErrorBoundary'), () => ({
+vi.mock('../../../ClientApp/src/components/ErrorBoundary', () => ({
   default: ({
     appInsights,
     children,
@@ -106,14 +106,14 @@ vi.mock(import('../../../ClientApp/src/components/ErrorBoundary'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: ReactNode }) => (
     <output>{children}</output>
   ),
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
+  '../../../ClientApp/src/instrumentation/AppInsightsService',
   () => ({
     ai: {
       reactPlugin: { name: 'react-plugin' },
@@ -121,7 +121,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   authRequest: {
     redirectUri: '/redirect',
     scopes: ['read'],

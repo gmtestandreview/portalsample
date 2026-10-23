@@ -25,14 +25,14 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -58,11 +58,11 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 

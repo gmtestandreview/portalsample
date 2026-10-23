@@ -11,7 +11,7 @@ import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import { defined } from '../helpers/defined';
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 

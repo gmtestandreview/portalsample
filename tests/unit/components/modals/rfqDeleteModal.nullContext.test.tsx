@@ -9,25 +9,25 @@ const mocks = vi.hoisted(() => ({
   setShowRFQDeleteModal: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [],
     instance: { acquireTokenSilent: mocks.acquireTokenSilent },
   }),
 }));
 
-vi.mock(import('react-router'), () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => mocks.navigate,
 }));
 
-vi.mock(import('@/components/modals/ModalContext'), () => ({
+vi.mock('@/components/modals/ModalContext', () => ({
   useModalState: () => null,
   useModalDispatch: () => ({
     setShowRFQDeleteModal: mocks.setShowRFQDeleteModal,
   }),
 }));
 
-vi.mock(import('@/api/web-api-client'), () => ({
+vi.mock('@/api/web-api-client', () => ({
   ApplicationType: { QuoteRequest: 'QuoteRequest' },
   ApplicationClient: vi.fn(function ApplicationClientMock() {
     return {
@@ -37,19 +37,19 @@ vi.mock(import('@/api/web-api-client'), () => ({
   }),
 }));
 
-vi.mock(import('@/authentication/authConfig'), () => ({
+vi.mock('@/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: { error: vi.fn() },
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock(import('react-bootstrap'), () => {
+vi.mock('react-bootstrap', () => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );

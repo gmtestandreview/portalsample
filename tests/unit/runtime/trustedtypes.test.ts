@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({
   sanitize: vi.fn((value: string) => `sanitized:${value}`),
 }));
 
-vi.mock(import('dompurify'), () => ({
+vi.mock('dompurify', () => ({
   default: {
     sanitize: mocks.sanitize,
   },

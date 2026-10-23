@@ -15,26 +15,26 @@ const mocks = vi.hoisted(() => ({
   updateContactProps: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'account-1' }],
     instance: { acquireTokenSilent: vi.fn() },
   }),
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: mocks.useAccountState,
   useAccountDispatch: mocks.useAccountDispatch,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () => ({
     useModalDispatch: mocks.useModalDispatch,
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/forms/WizardForm'), () => ({
+vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
   default: ({
     children,
     locationOnCompletion,
@@ -55,7 +55,7 @@ vi.mock(import('../../../ClientApp/src/components/forms/WizardForm'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () => ({
     default: ({
       children,
@@ -71,64 +71,64 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/routes/account/accountDetails'), () => ({
+vi.mock('../../../ClientApp/src/routes/account/accountDetails', () => ({
   default: () => <div>Account details fields</div>,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/organisationDetails'),
+  '../../../ClientApp/src/routes/account/organisationDetails',
   () => ({
     default: () => <div>Organisation details fields</div>,
   })
 );
 
-vi.mock(import('../../../ClientApp/src/routes/contact/contactDetails'), () => ({
+vi.mock('../../../ClientApp/src/routes/contact/contactDetails', () => ({
   default: () => <div>Contact details fields</div>,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/create/createAccountProps'),
+  '../../../ClientApp/src/routes/account/create/createAccountProps',
   () => ({
     default: mocks.createAccountProps,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/update/updateAccountProps'),
+  '../../../ClientApp/src/routes/account/update/updateAccountProps',
   () => ({
     default: mocks.updateAccountProps,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/addBranch/addBranchProps'),
+  '../../../ClientApp/src/routes/account/addBranch/addBranchProps',
   () => ({
     default: mocks.addBranchProps,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/contact/create/createContactProps'),
+  '../../../ClientApp/src/routes/contact/create/createContactProps',
   () => ({
     default: mocks.createContactProps,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/contact/update/updateContactProps'),
+  '../../../ClientApp/src/routes/contact/update/updateContactProps',
   () => ({
     default: mocks.updateContactProps,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: () => {},
   })
 );
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () => ({
     default: () => {},
   })

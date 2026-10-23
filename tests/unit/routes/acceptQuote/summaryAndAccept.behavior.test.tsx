@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     instance: mocks.instance,
     accounts: mocks.accounts,
@@ -38,14 +38,14 @@ vi.mock(import('@azure/msal-react'), () => ({
   useAccount: () => ({ homeAccountId: 'mock-id' }),
 }));
 
-vi.mock(import('@/authentication/hooks'), () => ({
+vi.mock('@/authentication/hooks', () => ({
   useAccountState: () => ({
     isLoading: false,
     details: { givenName: 'Taylor', familyName: 'Nguyen' },
   }),
 }));
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -59,22 +59,22 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: mocks.error },
 }));
 
 // The read-only summaries of the other steps are separate components with
 // their own suites; stand in markers so this suite pins only this step.
-vi.mock(import('@/routes/acceptQuote/reportRecipient'), () => ({
+vi.mock('@/routes/acceptQuote/reportRecipient', () => ({
   default: () => <div>Report recipient summary</div>,
 }));
-vi.mock(import('@/routes/acceptQuote/deliveryAndReturn'), () => ({
+vi.mock('@/routes/acceptQuote/deliveryAndReturn', () => ({
   default: () => <div>Delivery and return summary</div>,
 }));
-vi.mock(import('@/routes/acceptQuote/paymentDetails'), () => ({
+vi.mock('@/routes/acceptQuote/paymentDetails', () => ({
   default: () => <div>Payment details summary</div>,
 }));
-vi.mock(import('@/routes/acceptQuote/quotationSummary'), () => ({
+vi.mock('@/routes/acceptQuote/quotationSummary', () => ({
   default: () => <div>Quotation summary marker</div>,
 }));
 

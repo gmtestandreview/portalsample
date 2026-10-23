@@ -5,7 +5,7 @@ import ViewPdfButton from '@/components/Utilities/ViewPdfButton';
 
 const trackGAEventMock = vi.hoisted(() => vi.fn());
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: trackGAEventMock,
 }));
 

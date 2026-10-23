@@ -44,26 +44,26 @@ const selectNamed = (name: string) =>
 const checkboxGroupNamed = (name: string) =>
   defined(captured.checkboxGroups.get(name), `checkbox group "${name}"`);
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 
 // HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/HidableField'),
+  '../../../../ClientApp/src/components/forms/HidableField',
   () => ({
     default: ({ children }: { children: ReactNode }) => <>{children}</>,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/SelectInput'),
+  '../../../../ClientApp/src/components/Inputs/SelectInput',
   () => ({
     default: ({
       name,
@@ -102,7 +102,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/CheckboxGroup'),
+  '../../../../ClientApp/src/components/Inputs/CheckboxGroup',
   () => ({
     default: ({
       name,
@@ -121,7 +121,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/RadioButton'),
+  '../../../../ClientApp/src/components/Inputs/RadioButton',
   () => ({
     default: ({
       id,
@@ -152,7 +152,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  '../../../../ClientApp/src/components/Inputs/TextInput',
   () => ({
     default: ({ name, label }: { name: string; label: string }) => (
       <div data-testid={`text-${name}`}>{label}</div>
@@ -161,7 +161,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextAreaInput'),
+  '../../../../ClientApp/src/components/Inputs/TextAreaInput',
   () => ({
     default: ({ name, label }: { name: string; label: string }) => (
       <div data-testid={`textarea-${name}`}>{label}</div>
@@ -170,7 +170,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/CertificateNumberLookup'),
+  '../../../../ClientApp/src/components/Inputs/CertificateNumberLookup',
   () => ({
     default: ({ name, label }: { name: string; label: string }) => (
       <div data-testid={`certificate-${name}`}>{label}</div>
@@ -179,7 +179,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
+  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
   () => ({
     default: ({
       selectedInstrumentCategoryId,
@@ -198,7 +198,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/SummaryDisplay'), () => ({
+vi.mock('../../../../ClientApp/src/components/SummaryDisplay', () => ({
   default: ({
     id,
     label,

@@ -11,17 +11,17 @@ const mocks = vi.hoisted(() => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock(import('@/authentication/hooks'), () => ({
+vi.mock('@/authentication/hooks', () => ({
   useAccountDispatch: () => ({
     setUserProfile: mocks.setUserProfile,
   }),
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: mocks.trackGAEvent,
 }));
 
-vi.mock(import('@/components/Inputs/RadioButtonGroup'), () => ({
+vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
   default: ({
     legend,
     name,

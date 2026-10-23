@@ -1,4 +1,3 @@
-import { test, expect } from 'vitest';
 import { createServer, type Server, type ServerResponse } from 'node:http';
 
 import { expect, test } from '@playwright/test';

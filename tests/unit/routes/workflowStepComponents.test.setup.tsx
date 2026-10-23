@@ -63,21 +63,21 @@ const mocks: {
   };
 });
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({ accounts: mocks.msalAccounts, instance: mocks.instance }),
   useAccount: (account: { homeAccountId: string }) => account,
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: mocks.useAccountState,
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['scope'] },
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -112,7 +112,7 @@ vi.mock(
   }
 );
 
-vi.mock(import('formik'), () => {
+vi.mock('formik', () => {
   const getPath = (path: string, values = mocks.formikValues) =>
     path.split('.').reduce<unknown>((value, part) => {
       if (value === null || typeof value !== 'object') return undefined;
@@ -136,7 +136,7 @@ vi.mock(import('formik'), () => {
   };
 });
 
-vi.mock(import('../../../ClientApp/src/components/Inputs/TextInput'), () => ({
+vi.mock('../../../ClientApp/src/components/Inputs/TextInput', () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid='text-input' data-name={name}>
       {label}
@@ -145,7 +145,7 @@ vi.mock(import('../../../ClientApp/src/components/Inputs/TextInput'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/TextAreaInput'),
+  '../../../ClientApp/src/components/Inputs/TextAreaInput',
   () => ({
     default: ({ label, name }: { label: string; name: string }) => (
       <div data-testid='textarea-input' data-name={name}>
@@ -156,7 +156,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
+  '../../../ClientApp/src/components/Inputs/RadioButtonGroup',
   () => ({
     default: ({
       legend,
@@ -177,7 +177,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/Inputs/SelectInput'), () => ({
+vi.mock('../../../ClientApp/src/components/Inputs/SelectInput', () => ({
   default: ({
     label,
     name,
@@ -206,7 +206,7 @@ vi.mock(import('../../../ClientApp/src/components/Inputs/SelectInput'), () => ({
   },
 }));
 
-vi.mock(import('../../../ClientApp/src/components/Inputs/NumberInput'), () => ({
+vi.mock('../../../ClientApp/src/components/Inputs/NumberInput', () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid='number-input' data-name={name}>
       {label}
@@ -214,7 +214,7 @@ vi.mock(import('../../../ClientApp/src/components/Inputs/NumberInput'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/Inputs/DatePicker'), () => ({
+vi.mock('../../../ClientApp/src/components/Inputs/DatePicker', () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid='date-picker' data-name={name}>
       {label}
@@ -223,7 +223,7 @@ vi.mock(import('../../../ClientApp/src/components/Inputs/DatePicker'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/AddressLookup'),
+  '../../../ClientApp/src/components/Inputs/AddressLookup',
   () => ({
     default: ({ label, name }: { label: string; name: string }) => (
       <div data-testid='address-lookup' data-name={name}>
@@ -234,7 +234,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/RhfAddressLookup'),
+  '../../../ClientApp/src/components/Inputs/RhfAddressLookup',
   () => ({
     default: ({ label, name }: { label: string; name: string }) => (
       <div data-testid='address-lookup' data-name={name}>
@@ -244,7 +244,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/Inputs/Checkbox'), () => ({
+vi.mock('../../../ClientApp/src/components/Inputs/Checkbox', () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid='checkbox' data-name={name}>
       {label}
@@ -252,7 +252,7 @@ vi.mock(import('../../../ClientApp/src/components/Inputs/Checkbox'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/forms/HidableField'), () => ({
+vi.mock('../../../ClientApp/src/components/forms/HidableField', () => ({
   default: ({ children, name }: { children: ReactNode; name: string }) => (
     <div data-testid='hidable-field' data-name={name}>
       {children}
@@ -261,7 +261,7 @@ vi.mock(import('../../../ClientApp/src/components/forms/HidableField'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
+  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
   () => ({
     default: ({ name }: { name: string }) => (
       <div data-testid='contact-details'>{name}</div>
@@ -270,7 +270,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () => ({
     useModalDispatch: () => ({
       setShowRFQSelectModal: mocks.setShowRFQSelectModal,
@@ -278,14 +278,14 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/mailingLabel'),
+  '../../../ClientApp/src/components/Utilities/mailingLabel',
   () => ({
     default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
       <div data-testid='mailing-label'>{quotationIdNum}</div>
@@ -294,7 +294,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/deliveryInstructions'),
+  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
   () => ({
     default: ({ deliveryInstructions }: { deliveryInstructions?: string }) => (
       <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
@@ -303,13 +303,13 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: () => {},
   })
 );
 
-vi.mock(import('../../../ClientApp/src/components/Accordion'), () => ({
+vi.mock('../../../ClientApp/src/components/Accordion', () => ({
   CustomAccordion: ({ children, id }: { children: ReactNode; id: string }) => (
     <section data-testid='accordion' data-id={id}>
       {children}
@@ -329,7 +329,7 @@ vi.mock(import('../../../ClientApp/src/components/Accordion'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/Buttons/EditButton'), () => ({
+vi.mock('../../../ClientApp/src/components/Buttons/EditButton', () => ({
   default: ({ link }: { link: string }) => (
     <a data-testid='edit-button' href={link}>
       Edit
@@ -337,13 +337,13 @@ vi.mock(import('../../../ClientApp/src/components/Buttons/EditButton'), () => ({
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/HeaderIntroText'), () => ({
+vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
   default: ({ children }: { children: ReactNode }) => (
     <p data-testid='header-intro'>{children}</p>
   ),
 }));
 
-vi.mock(import('../../../ClientApp/src/components/InTextLink'), () => ({
+vi.mock('../../../ClientApp/src/components/InTextLink', () => ({
   default: ({
     children,
     onClick,
@@ -360,14 +360,14 @@ vi.mock(import('../../../ClientApp/src/components/InTextLink'), () => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
+  '../../../ClientApp/src/components/Icons/ExternalLinkIcon',
   () => ({
     default: () => <span data-testid='external-link-icon' />,
   })
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../ClientApp/src/components/Alert/NotificationMessage',
   () => ({
     default: ({
       message,
@@ -387,19 +387,19 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../ClientApp/src/storage/notification', () => ({
   getDashboardNotification: () => mocks.dashboardNotification,
   clearDashboardNotification: mocks.clearDashboardNotification,
   setDashboardNotification: mocks.setDashboardNotification,
   clearDashboardInfoNotification: mocks.clearDashboardInfoNotification,
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/types'), () => ({
+vi.mock('../../../ClientApp/src/storage/types', () => ({
   NotificationSeverity: { Error: 'error', Info: 'info' },
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const actual = await importOriginal<typeof HelperFunctionsModule>();
 
@@ -407,20 +407,20 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: mocks.appLoggerError,
     verbose: mocks.appLoggerVerbose,
   },
 }));
 
-vi.mock(import('react-number-format'), () => ({
+vi.mock('react-number-format', () => ({
   NumericFormat: ({ value }: { value?: string }) => <span>{value}</span>,
   PatternFormat: ({ value }: { value?: string }) => <span>{value}</span>,
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/quotationSummary'),
+  '../../../ClientApp/src/routes/acceptQuote/quotationSummary',
   () => ({
     default: () => (
       <div data-testid='quotation-summary'>Quotation summary content</div>

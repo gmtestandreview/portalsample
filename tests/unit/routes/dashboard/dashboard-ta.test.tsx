@@ -72,7 +72,7 @@ const {
 
 let mockAccountDetails: AccountDetails | null;
 
-vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   PatternApprovalClient: vi.fn().mockImplementation(function (
     this: Record<string, unknown>
   ) {
@@ -86,39 +86,39 @@ vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
   },
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => mockMsalContext,
 }));
 
-vi.mock(import('@azure/msal-browser'), () => ({
+vi.mock('@azure/msal-browser', () => ({
   InteractionStatus: { None: 'none' },
 }));
 
-vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
   default: () => mockAccountContextState.value,
   useAccountDispatch: () => mockAccountDispatchState.value,
 }));
 
-vi.mock(import('../../../../ClientApp/src/hooks/useUserServices'), () => ({
+vi.mock('../../../../ClientApp/src/hooks/useUserServices', () => ({
   default: () => mockServicesState.value,
 }));
 
-vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['openid'] },
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/Welcome'), () => ({
+vi.mock('../../../../ClientApp/src/components/Welcome', () => ({
   default: () => <div data-testid='welcome' />,
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/BlockUISpinner'), () => ({
+vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
   default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='block-spinner'>{children}</div>
   ),
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () => ({
     default: ({
       id,
@@ -137,19 +137,19 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () => ({
     default: () => {},
   })
 );
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: () => {},
   })
 );
 vi.mock(
-  import('../../../../ClientApp/src/components/tiles/StandardPathway'),
+  '../../../../ClientApp/src/components/tiles/StandardPathway',
   () => ({
     default: ({ title }: { title: string }) => (
       <div data-testid='standard-pathway'>{title}</div>
@@ -158,14 +158,14 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/RequestList/noRequests'),
+  '../../../../ClientApp/src/components/RequestList/noRequests',
   () => ({
     default: () => <div data-testid='no-requests' />,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/RequestList/paRequestItem'),
+  '../../../../ClientApp/src/components/RequestList/paRequestItem',
   () => ({
     default: ({ request, setDeleteSuccess, tab }: any) => (
       <div data-testid='request-item' data-tab={tab}>
@@ -179,7 +179,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter'),
+  '../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter',
   () => ({
     default: ({ initialFilters, setCurrentPage, setInitialFilters }: any) => (
       <div
@@ -209,7 +209,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/Pagination'), () => ({
+vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
   default: ({ currentPage, onPageChange, totalPages }: any) => (
     <button
       data-testid='pagination'
@@ -224,7 +224,7 @@ vi.mock(import('../../../../ClientApp/src/components/Pagination'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/PaginationHeader'),
+  '../../../../ClientApp/src/components/PaginationHeader',
   () => ({
     default: ({ currentPage, pageSize, totalCount }: any) => (
       <div
@@ -237,7 +237,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: {
     error: mockAppLoggerError,
     info: mockAppLoggerInfo,
@@ -245,12 +245,12 @@ vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
   },
 }));
 
-vi.mock(import('../../../../ClientApp/src/routes/common/errorRoutes'), () => ({
+vi.mock('../../../../ClientApp/src/routes/common/errorRoutes', () => ({
   default: (status: number) => `/server-error/${status}`,
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/dashboardNotifications'),
+  '../../../../ClientApp/src/routes/common/dashboardNotifications',
   () => ({
     DashBoardNotifications: {
       getForbiddenNotification: () => ({
@@ -269,7 +269,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/storage/notification'), () => ({
+vi.mock('../../../../ClientApp/src/storage/notification', () => ({
   getDashboardNotification: mockGetDashboardNotification,
   clearDashboardNotification: mockClearDashboardNotification,
   setDashboardNotification: mockSetDashboardNotification,
@@ -279,7 +279,7 @@ vi.mock(import('../../../../ClientApp/src/storage/notification'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/sessionStorageCache'),
+  '../../../../ClientApp/src/storage/sessionStorageCache',
   () => ({
     default: () => ({
       getItem: mockSessionGetItem,
@@ -288,11 +288,11 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/analytics/GoogleAnalytics'), () => ({
+vi.mock('../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
   trackGAEvent: mockTrackGAEvent,
 }));
 
-vi.mock(import('react-number-format'), () => ({
+vi.mock('react-number-format', () => ({
   PatternFormat: ({ value }: { value: string }) => <span>{value}</span>,
 }));
 

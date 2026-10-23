@@ -6,7 +6,6 @@
  * directory.
  */
 
-import { expect } from 'vitest';
 import process from 'node:process';
 import {
   expect,

@@ -12,7 +12,7 @@ const mockInstance = {
   getActiveAccount: vi.fn().mockReturnValue(null),
 };
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: vi.fn(() => ({
     inProgress: 'none',
     accounts: [
@@ -29,14 +29,14 @@ vi.mock(import('@azure/msal-react'), () => ({
   })),
 }));
 
-vi.mock(import('@azure/msal-browser'), () => ({
+vi.mock('@azure/msal-browser', () => ({
   InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
 }));
 
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
 
-vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
+vi.mock('../../../ClientApp/src/api/web-api-client', () => {
   return {
     UsersClient: class {
       setAuthToken = vi.fn();
@@ -46,24 +46,24 @@ vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
   };
 });
 
-vi.mock(import('../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
 }));
 
-vi.mock(import('../../../ClientApp/src/storage/targetOrganisation'), () => ({
+vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
   default: vi.fn(),
   getTargetOrganisation: vi.fn().mockReturnValue(null),
 }));
 
-vi.mock(import('../../../ClientApp/src/terms-config.json'), () => ({
+vi.mock('../../../ClientApp/src/terms-config.json', () => ({
   default: { TermsVersion: '1' },
 }));
 
-vi.mock(import('../../../ClientApp/src/routes/common/helperFunctions'), () => ({
+vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
   mapToUserProfile: vi.fn().mockReturnValue(undefined),
 }));
 
-vi.mock(import('../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: [] },
 }));
 

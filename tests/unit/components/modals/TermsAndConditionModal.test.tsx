@@ -10,7 +10,7 @@ const mockMsal = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn().mockResolvedValue({ accessToken: 'mock-token' }),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     inProgress: mockMsal.inProgress,
     accounts: mockMsal.accounts,
@@ -23,7 +23,7 @@ vi.mock(import('@azure/msal-react'), () => ({
 const mockSetAgree = vi.fn();
 const mockDispatch = { setAgree: mockSetAgree };
 
-vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
   useAccountState: vi.fn(),
   useAccountDispatch: vi.fn(),
 }));
@@ -33,18 +33,18 @@ vi.mock(import('../../../../ClientApp/src/authentication/hooks'), () => ({
 const mockAcceptTermsAndCondition = vi.fn().mockResolvedValue(undefined);
 const mockSetAuthToken = vi.fn();
 
-vi.mock(import('../../../../ClientApp/src/api/web-api-client'), () => ({
+vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   UsersClient: vi.fn(function (this: any) {
     this.setAuthToken = mockSetAuthToken;
     this.acceptTermsAndCondition = mockAcceptTermsAndCondition;
   }),
 }));
 
-vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['api://mock/.default'] },
 }));
 
-vi.mock(import('../../../../ClientApp/src/terms-config.json'), () => ({
+vi.mock('../../../../ClientApp/src/terms-config.json', () => ({
   default: { TermsVersion: '2' },
 }));
 

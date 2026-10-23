@@ -6,7 +6,7 @@ import RhfTextInput from '../../../../ClientApp/src/components/Inputs/RhfTextInp
 import type { Hideable } from '../../../../ClientApp/src/components/forms/types';
 import { renderRhfShell } from '../../helpers/rhfShell';
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
 }));
 

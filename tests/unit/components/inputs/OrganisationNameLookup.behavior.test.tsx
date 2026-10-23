@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
-vi.mock(import('@/components/Inputs/TextInput'), () => ({
+vi.mock('@/components/Inputs/TextInput', () => ({
   default: ({
     name,
     label,

@@ -15,11 +15,11 @@ const accountDispatchMock = vi.hoisted(() => ({
   setUserProfile: vi.fn(),
 }));
 
-vi.mock(import('@/authentication/hooks'), () => ({
+vi.mock('@/authentication/hooks', () => ({
   useAccountDispatch: () => accountDispatchMock,
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
 }));
 

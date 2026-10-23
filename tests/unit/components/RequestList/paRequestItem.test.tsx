@@ -28,7 +28,7 @@ const mocks = vi.hoisted(() => ({
   loggerError: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), () => ({
+vi.mock('@azure/msal-react', () => ({
   useMsal: () => ({
     accounts: [{ homeAccountId: 'account-id' }],
     instance: {
@@ -37,17 +37,17 @@ vi.mock(import('@azure/msal-react'), () => ({
   }),
 }));
 
-vi.mock(import('@/analytics/GoogleAnalytics'), () => ({
+vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: mocks.trackGAEvent,
 }));
 
-vi.mock(import('@/instrumentation/AppLogger'), () => ({
+vi.mock('@/instrumentation/AppLogger', () => ({
   default: {
     error: mocks.loggerError,
   },
 }));
 
-vi.mock(import('@/storage/notification'), async (importOriginal) => {
+vi.mock('@/storage/notification', async (importOriginal) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
@@ -55,7 +55,7 @@ vi.mock(import('@/storage/notification'), async (importOriginal) => {
   };
 });
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {

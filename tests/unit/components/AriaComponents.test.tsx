@@ -86,7 +86,11 @@ import {
 } from '@/components/AriaComponents/Tree/Tree';
 
 if (!Element.prototype.getAnimations) {
-  vi.spyOn(Element.prototype, 'getAnimations').mockImplementation(() => []);
+  Object.defineProperty(Element.prototype, 'getAnimations', {
+    configurable: true,
+    value: vi.fn(() => []),
+    writable: true,
+  });
 }
 
 class TestIntersectionObserver implements IntersectionObserver {

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import AuthorisedAgent from '@/components/Inputs/AuthorisedAgent';
 
-vi.mock(import('@/components/Inputs/TextInput'), () => ({
+vi.mock('@/components/Inputs/TextInput', () => ({
   default: ({
     name,
     label,
@@ -22,7 +22,7 @@ vi.mock(import('@/components/Inputs/TextInput'), () => ({
   ),
 }));
 
-vi.mock(import('@/components/Inputs/NumberInput'), () => ({
+vi.mock('@/components/Inputs/NumberInput', () => ({
   default: ({
     name,
     label,
@@ -51,7 +51,7 @@ vi.mock(import('@/components/Inputs/NumberInput'), () => ({
   ),
 }));
 
-vi.mock(import('@/components/Inputs/AddressLookup'), () => ({
+vi.mock('@/components/Inputs/AddressLookup', () => ({
   default: ({
     name,
     label,

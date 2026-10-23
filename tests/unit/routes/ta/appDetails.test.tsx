@@ -33,14 +33,14 @@ const captured = vi.hoisted(() => ({
   selectTab: undefined as unknown as (key: string | null) => void,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock();
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -54,16 +54,16 @@ vi.mock(
   }
 );
 
-vi.mock(import('../../../../ClientApp/src/authentication/authConfig'), () => ({
+vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
   tokenRequest: { scopes: ['api://ta/.default'] },
 }));
 
-vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => ({
+vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appDetailsProps'),
+  '../../../../ClientApp/src/routes/ta/manage/appDetailsProps',
   () => ({
     default: () => ({
       loadStepValues: mocks.loadStepValues,
@@ -72,7 +72,7 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
+vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
   CustomAccordion: ({ children }: { children: ReactNode }) => (
     <div>{children}</div>
   ),
@@ -93,7 +93,7 @@ vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
   ),
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/Breadcrumb'), () => ({
+vi.mock('../../../../ClientApp/src/components/Breadcrumb', () => ({
   default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
     <nav data-testid='breadcrumb'>
       {breadcrumbs.map((b) => b.text).join(' / ')}
@@ -101,35 +101,35 @@ vi.mock(import('../../../../ClientApp/src/components/Breadcrumb'), () => ({
   ),
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/Pill/StatusPill'), () => ({
+vi.mock('../../../../ClientApp/src/components/Pill/StatusPill', () => ({
   default: ({ status }: { status: string }) => (
     <span data-testid='status-pill'>{status}</span>
   ),
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Buttons/BackToDashboardButton'),
+  '../../../../ClientApp/src/components/Buttons/BackToDashboardButton',
   () => ({
     default: () => <a href='/dashboard'>Back to dashboard</a>,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/summary/OrganisationSummary'),
+  '../../../../ClientApp/src/routes/ta/summary/OrganisationSummary',
   () => ({
     default: () => <div data-testid='organisation-and-contact' />,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/summary/ApplicationSummary'),
+  '../../../../ClientApp/src/routes/ta/summary/ApplicationSummary',
   () => ({
     default: () => <div data-testid='application-and-instrument' />,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
+  '../../../../ClientApp/src/routes/ta/rhfSupportingDocuments',
   () => ({
     default: (props: typeof captured.docsProps) => {
       captured.docsProps = props;
@@ -141,7 +141,7 @@ vi.mock(
 
 // Everything real except a hook onto Tab.Container's onSelect, so the guard that rejects an unknown
 // tab key can be exercised. React-Bootstrap only ever hands it the keys its own Nav.Links carry.
-vi.mock(import('react-bootstrap'), async (importOriginal) => {
+vi.mock('react-bootstrap', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactBootstrap>();
   const RealContainer = actual.Tab.Container;
 
@@ -156,14 +156,14 @@ vi.mock(import('react-bootstrap'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appDocuments'),
+  '../../../../ClientApp/src/routes/ta/manage/appDocuments',
   () => ({
     default: () => <div data-testid='application-documents' />,
   })
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appMessages'),
+  '../../../../ClientApp/src/routes/ta/manage/appMessages',
   () => ({
     default: () => <div data-testid='application-messages' />,
   })

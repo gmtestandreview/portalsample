@@ -6,7 +6,7 @@ import RouteLeavingGuard from '@/components/RouteLeavingGuard';
 const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 
-vi.mock(import('react-router'), () => ({
+vi.mock('react-router', () => ({
   useBlocker: () => ({
     state: 'unblocked',
     reset: resetBlocker,
@@ -14,7 +14,7 @@ vi.mock(import('react-router'), () => ({
   }),
 }));
 
-vi.mock(import('react-bootstrap/Modal'), () => {
+vi.mock('react-bootstrap/Modal', () => {
   const Modal = ({
     children,
     onHide,

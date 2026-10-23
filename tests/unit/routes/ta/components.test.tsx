@@ -14,13 +14,13 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../../ClientApp/src/components/Utilities/useBodyClass',
   () => ({
     default: mocks.useBodyClass,
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
+vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
   CustomAccordion: ({ children, id }: { children: ReactNode; id: string }) => (
     <section data-testid={`accordion-${id}`}>{children}</section>
   ),
@@ -39,7 +39,7 @@ vi.mock(import('../../../../ClientApp/src/components/Accordion'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Buttons/EditButton'),
+  '../../../../ClientApp/src/components/Buttons/EditButton',
   () => ({
     default: ({ link }: { link: string }) => (
       <a data-testid='edit-link' href={link}>
@@ -49,11 +49,11 @@ vi.mock(
   })
 );
 
-vi.mock(import('../../../../ClientApp/src/components/HeaderIntroText'), () => ({
+vi.mock('../../../../ClientApp/src/components/HeaderIntroText', () => ({
   default: ({ children }: { children: ReactNode }) => <p>{children}</p>,
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/InTextLink'), () => ({
+vi.mock('../../../../ClientApp/src/components/InTextLink', () => ({
   default: ({
     children,
     href,
@@ -69,7 +69,7 @@ vi.mock(import('../../../../ClientApp/src/components/InTextLink'), () => ({
   ),
 }));
 
-vi.mock(import('../../../../ClientApp/src/components/Inputs/Checkbox'), () => ({
+vi.mock('../../../../ClientApp/src/components/Inputs/Checkbox', () => ({
   default: ({
     label,
     name,
@@ -92,7 +92,7 @@ vi.mock(import('../../../../ClientApp/src/components/Inputs/Checkbox'), () => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  '../../../../ClientApp/src/routes/ta/supportingDocuments',
   () => ({
     default: ({
       isSummary,
@@ -124,7 +124,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
+  '../../../../ClientApp/src/components/Inputs/RadioButtonGroup',
   () => ({
     default: ({
       legend,
@@ -160,7 +160,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/HidableField'),
+  '../../../../ClientApp/src/components/forms/HidableField',
   () => ({
     default: ({ children, name }: { children: ReactNode; name: string }) => (
       <div data-testid={`hidable-${name}`}>{children}</div>
@@ -169,7 +169,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  '../../../../ClientApp/src/components/Inputs/TextInput',
   () => ({
     default: ({
       label,
@@ -192,7 +192,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/AddressLookup'),
+  '../../../../ClientApp/src/components/Inputs/AddressLookup',
   () => ({
     default: ({
       label,
@@ -221,7 +221,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/AuthorisedAgent'),
+  '../../../../ClientApp/src/components/Inputs/AuthorisedAgent',
   () => ({
     default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
       <div
@@ -234,7 +234,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
+  '../../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
   () => ({
     default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
       <div
