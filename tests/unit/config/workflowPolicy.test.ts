@@ -88,13 +88,13 @@ const withoutComments = (contents: string): string =>
 const CHECKOUT_PIN =
   'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1';
 const SETUP_NODE_PIN =
-  'actions/setup-node@820762786026740c76f36085b0efc47a31fe5020';
+  'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1';
 const UPLOAD_ARTIFACT_PIN =
-  'actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a';
+  'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9';
 const DOWNLOAD_ARTIFACT_PIN =
-  'actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c';
+  'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333';
 const CHROMATIC_ACTION_PIN =
-  'chromaui/action@a18e9f57b71eb05f941848c0b927aab2ee644e3e';
+  'chromaui/action@38afd264ef2241136f12d039093c2724748bec08';
 const CODEQL_ACTION_PIN =
   'github/codeql-action/(?:init|analyze)@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
 

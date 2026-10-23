@@ -149,10 +149,10 @@ describe('Storybook documentation architecture', () => {
     ];
 
     for (const packageName of storybookPackages) {
-      expect(declaredVersion(packageName), packageName).toBe('10.6.1');
+      expect(declaredVersion(packageName), packageName).toBe('10.6.2');
     }
 
-    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.1');
+    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.2');
     expect(declaredVersion('@chromatic-com/storybook')).toBe('5.5.0');
     expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
   });
