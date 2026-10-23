@@ -356,16 +356,21 @@ jobs:
           New-Item -ItemType Directory -Path $dir | Out-Null
           $f = Join-Path $dir 'probe.txt'
           'original' | Set-Content -Path $f
-          icacls $f /deny "${id}:(WD,AD,WA,DE)" /c | Out-Null
-          try {
-            'overwrite' | Set-Content -Path $f -ErrorAction Stop
-            Write-Output 'PROBE_OVERWRITE: SUCCEEDED (deny NOT enforced - matches the CI failure)'
-          } catch {
-            Write-Output 'PROBE_OVERWRITE: DENIED (deny enforced)'
+          icacls $f /deny "${id}:(WD,AD,WA,DE)" /c
+          $denyExitCode = $LASTEXITCODE
+          if ($denyExitCode -ne 0) {
+            Write-Output "ACL_DENY_APPLY_FAILED: icacls exited with code $denyExitCode; skipping enforcement probe"
+          } else {
+            try {
+              'overwrite' | Set-Content -Path $f -ErrorAction Stop
+              Write-Output 'PROBE_OVERWRITE: SUCCEEDED (deny NOT enforced - matches the CI failure)'
+            } catch {
+              Write-Output 'PROBE_OVERWRITE: DENIED (deny enforced)'
+            }
           }
           Write-Output '--- effective ACL on probe file ---'
           icacls $f
-          icacls $f /remove:d "$id" /c | Out-Null
+          icacls $f /remove:d "$id" /c
           Remove-Item $f -Force
           Remove-Item $dir -Force
           exit 0

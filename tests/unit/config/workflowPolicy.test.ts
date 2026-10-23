@@ -409,6 +409,11 @@ describe('the e2e job runs the full Playwright contract', () => {
     expect(block).toContain('playwright install --with-deps chromium');
   });
 
+  it('reports a failed diagnostic deny-ACL application distinctly', () => {
+    expect(block).toContain('ACL_DENY_APPLY_FAILED:');
+    expect(block).toContain('if ($denyExitCode -ne 0)');
+  });
+
   it('uploads the HTML report, traces, and screenshots', () => {
     expect(block).toContain('reports/playwright');
     expect(block).toContain('reports/test-results');
