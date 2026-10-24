@@ -24,7 +24,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useIsAuthenticated: mocks.useIsAuthenticated,
@@ -33,7 +33,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
+  import('../../../ClientApp/src/storage/targetOrganisation'),
   () =>
     ({
       clearTargetOrganisation: mocks.clearTargetOrganisation,
@@ -41,7 +41,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
+  import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: mocks.useAccountContext,

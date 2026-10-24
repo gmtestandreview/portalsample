@@ -73,7 +73,7 @@ const {
 let mockAccountDetails: AccountDetails | null;
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       PatternApprovalClient: vi.fn().mockImplementation(function (
@@ -91,7 +91,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => mockMsalContext,
@@ -99,7 +99,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       InteractionStatus: { None: 'none' },
@@ -107,7 +107,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: () => mockAccountContextState.value,
@@ -116,7 +116,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/hooks/useUserServices',
+  import('../../../../ClientApp/src/hooks/useUserServices'),
   () =>
     ({
       default: () => mockServicesState.value,
@@ -124,7 +124,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['openid'] },
@@ -132,7 +132,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Welcome',
+  import('../../../../ClientApp/src/components/Welcome'),
   () =>
     ({
       default: () => <div data-testid='welcome' />,
@@ -140,7 +140,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -150,7 +150,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Alert/NotificationMessage',
+  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
   () =>
     ({
       default: ({
@@ -170,21 +170,21 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule89>
 );
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule59>
 );
 vi.mock(
-  '../../../../ClientApp/src/components/tiles/StandardPathway',
+  import('../../../../ClientApp/src/components/tiles/StandardPathway'),
   () =>
     ({
       default: ({ title }: { title: string }) => (
@@ -194,7 +194,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/RequestList/noRequests',
+  import('../../../../ClientApp/src/components/RequestList/noRequests'),
   () =>
     ({
       default: () => <div data-testid='no-requests' />,
@@ -202,7 +202,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/RequestList/paRequestItem',
+  import('../../../../ClientApp/src/components/RequestList/paRequestItem'),
   () =>
     ({
       default: ({ request, setDeleteSuccess, tab }: any) => (
@@ -217,7 +217,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter',
+  import('../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter'),
   () =>
     ({
       default: ({ initialFilters, setCurrentPage, setInitialFilters }: any) => (
@@ -249,7 +249,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Pagination',
+  import('../../../../ClientApp/src/components/Pagination'),
   () =>
     ({
       default: ({ currentPage, onPageChange, totalPages }: any) => (
@@ -267,7 +267,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/PaginationHeader',
+  import('../../../../ClientApp/src/components/PaginationHeader'),
   () =>
     ({
       default: ({ currentPage, pageSize, totalCount }: any) => (
@@ -282,7 +282,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -294,7 +294,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/errorRoutes',
+  import('../../../../ClientApp/src/routes/common/errorRoutes'),
   () =>
     ({
       default: (status: number) => `/server-error/${status}`,
@@ -302,7 +302,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/dashboardNotifications',
+  import('../../../../ClientApp/src/routes/common/dashboardNotifications'),
   () =>
     ({
       DashBoardNotifications: {
@@ -323,7 +323,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/notification',
+  import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
       getDashboardNotification: mockGetDashboardNotification,
@@ -336,7 +336,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/sessionStorageCache',
+  import('../../../../ClientApp/src/storage/sessionStorageCache'),
   () =>
     ({
       default: () => ({
@@ -347,7 +347,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: mockTrackGAEvent,
@@ -355,7 +355,7 @@ vi.mock(
 );
 
 vi.mock(
-  'react-number-format',
+  import('react-number-format'),
   () =>
     ({
       PatternFormat: ({ value }: { value: string }) => <span>{value}</span>,

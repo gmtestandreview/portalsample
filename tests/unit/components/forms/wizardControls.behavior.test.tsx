@@ -18,7 +18,7 @@ const wrapperMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/components/ErrorBoundary',
+  import('@/components/ErrorBoundary'),
   () =>
     ({
       default: wrapperMocks.errorBoundary,
@@ -26,7 +26,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       default: wrapperMocks.analytics,
@@ -34,7 +34,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/components/modals/ConfirmationModal',
+  import('@/components/modals/ConfirmationModal'),
   () =>
     ({
       default: ({

@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-dom/client',
+  import('react-dom/client'),
   () =>
     ({
       createRoot: mocks.createRoot,
@@ -19,7 +19,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       createStandardPublicClientApplication:
@@ -28,7 +28,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       MsalProvider: ({ children }: { children: React.ReactNode }) => (
@@ -38,7 +38,7 @@ vi.mock(
 );
 
 vi.mock(
-  'react-router/dom',
+  import('react-router/dom'),
   () =>
     ({
       RouterProvider: () => <main>Router provider</main>,
@@ -46,7 +46,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/AccountProvider',
+  import('../../../ClientApp/src/authentication/AccountProvider'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -56,7 +56,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       configuration: { auth: { clientId: 'client-id' } },
@@ -64,7 +64,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/App',
+  import('../../../ClientApp/src/App'),
   () =>
     ({
       default: { routes: [] },
@@ -72,7 +72,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/trustedtypes',
+  import('../../../ClientApp/src/trustedtypes'),
   () =>
     ({
       TrustedTypes: {
@@ -82,7 +82,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/ErrorBoundary',
+  import('../../../ClientApp/src/components/ErrorBoundary'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -92,7 +92,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppInsightsService',
+  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
   () =>
     ({
       ai: {

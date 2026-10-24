@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';

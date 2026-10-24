@@ -14,7 +14,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: mocks.useBodyClass,
@@ -22,7 +22,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Accordion',
+  import('../../../../ClientApp/src/components/Accordion'),
   () =>
     ({
       CustomAccordion: ({
@@ -48,7 +48,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Buttons/EditButton',
+  import('../../../../ClientApp/src/components/Buttons/EditButton'),
   () =>
     ({
       default: ({ link }: { link: string }) => (
@@ -60,7 +60,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/HeaderIntroText',
+  import('../../../../ClientApp/src/components/HeaderIntroText'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => <p>{children}</p>,
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/InTextLink',
+  import('../../../../ClientApp/src/components/InTextLink'),
   () =>
     ({
       default: ({
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/Checkbox',
+  import('../../../../ClientApp/src/components/Inputs/Checkbox'),
   () =>
     ({
       default: ({
@@ -114,7 +114,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/supportingDocuments',
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
   () =>
     ({
       default: ({
@@ -150,7 +150,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/RadioButtonGroup',
+  import('../../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
   () =>
     ({
       default: ({
@@ -187,7 +187,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/HidableField',
+  import('../../../../ClientApp/src/components/forms/HidableField'),
   () =>
     ({
       default: ({ children, name }: { children: ReactNode; name: string }) => (
@@ -197,7 +197,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/TextInput',
+  import('../../../../ClientApp/src/components/Inputs/TextInput'),
   () =>
     ({
       default: ({
@@ -221,7 +221,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/AddressLookup',
+  import('../../../../ClientApp/src/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({
@@ -251,7 +251,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/AuthorisedAgent',
+  import('../../../../ClientApp/src/components/Inputs/AuthorisedAgent'),
   () =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -265,7 +265,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
+  import('../../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
   () =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (

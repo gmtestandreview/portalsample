@@ -8,7 +8,7 @@ import { useInstrumentAndRequestLookups } from '@/routes/requestForQuote/instrum
 // runs, so measurementCategories stays undefined and the options builder has to
 // use its empty-list fallback.
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({

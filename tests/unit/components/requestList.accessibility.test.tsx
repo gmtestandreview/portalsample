@@ -8,7 +8,7 @@ import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import type { DashboardItemDto } from '@/api/web-api-client';
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),

@@ -13,7 +13,7 @@ const mockInstance = {
 };
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: vi.fn(() => ({
@@ -34,7 +34,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
@@ -44,7 +44,7 @@ vi.mock(
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => {
+vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
   return {
     UsersClient: class {
       setAuthToken = vi.fn();
@@ -55,7 +55,7 @@ vi.mock('../../../ClientApp/src/api/web-api-client', () => {
 });
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -63,7 +63,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
+  import('../../../ClientApp/src/storage/targetOrganisation'),
   () =>
     ({
       default: vi.fn(),
@@ -72,7 +72,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/terms-config.json',
+  import('../../../ClientApp/src/terms-config.json'),
   () =>
     ({
       default: { TermsVersion: '1' },
@@ -80,7 +80,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
       mapToUserProfile: vi.fn().mockReturnValue(undefined),
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: [] },

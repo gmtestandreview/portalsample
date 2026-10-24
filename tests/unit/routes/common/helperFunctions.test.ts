@@ -56,7 +56,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -76,7 +76,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/notification',
+  import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -84,7 +84,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/openWindow',
+  import('../../../../ClientApp/src/routes/common/openWindow'),
   () =>
     ({
       openUrlInSecureNewTab: mocks.openUrlInSecureNewTab,
@@ -93,7 +93,7 @@ vi.mock(
 );
 
 vi.mock(
-  'react-ga4',
+  import('react-ga4'),
   () =>
     ({
       default: {

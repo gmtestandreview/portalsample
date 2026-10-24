@@ -55,7 +55,7 @@ const mocks: {
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useAccount: () => mocks.account,
@@ -67,7 +67,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -859,7 +859,8 @@ describe('complex input behavior slice', () => {
 
     await user.clear(combobox);
 
-    expect(onSelectedOption).toHaveBeenCalledWith();
+    expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
+    expect(onSelectedOption.mock.calls[0]).toEqual([]);
     expect(getOptions).not.toHaveBeenCalled();
 
     await user.type(combobox, 'ab');

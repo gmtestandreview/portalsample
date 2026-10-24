@@ -140,6 +140,15 @@ const ToolbarButton = ({
   </button>
 );
 
+function getCharCount(v: CustomElement[]): number {
+  // Check emptiness at the model level — avoids HTML serialisation purely for the empty check.
+  const hasContent = v.some((el) =>
+    el.children.some((child) => child.text.trim() !== '')
+  );
+  if (!hasContent) return 0;
+  return serializeToHtml(v).length;
+}
+
 const SlateEditor: React.FC<SlateEditorProps> = ({
   value,
   setValue,
@@ -151,15 +160,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
   const [errors, setErrors] = React.useState<string[]>([]);
   const max = maxCharacters ?? 1000;
   const [liveCharCount, setLiveCharCount] = React.useState<number>(0);
-
-  function getCharCount(v: CustomElement[]): number {
-    // Check emptiness at the model level — avoids HTML serialisation purely for the empty check.
-    const hasContent = v.some((el) =>
-      el.children.some((child) => child.text.trim() !== '')
-    );
-    if (!hasContent) return 0;
-    return serializeToHtml(v).length;
-  }
 
   const handleChange = (newValue: Descendant[]) => {
     const nextCount = getCharCount(newValue as CustomElement[]);
@@ -287,11 +287,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                 className='d-flex align-items-center justify-content-center p-2'
               >
                 <span className='d-flex align-items-center justify-content-center w-100 h-100'>
-                  <i
-                    className='icon icon-send'
-                    aria-hidden='true'
-                    role='presentation'
-                  />
+                  <i className='icon icon-send' aria-hidden='true' />
                 </span>
                 <span className='visually-hidden'>Send</span>
               </PrimaryButton>

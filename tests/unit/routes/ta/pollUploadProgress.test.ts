@@ -10,7 +10,7 @@ import {
 
 const appLoggerError = vi.hoisted(() => vi.fn());
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: appLoggerError },

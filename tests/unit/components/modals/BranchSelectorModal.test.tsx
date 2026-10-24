@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -57,7 +57,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/storage/notification',
+  import('@/storage/notification'),
   () =>
     ({
       getBranchModalNotification: () => mocks.getBranchModalNotification(),
@@ -66,7 +66,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -76,7 +76,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -85,7 +85,7 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/components/Alert/NotificationMessage',
+  import('@/components/Alert/NotificationMessage'),
   () =>
     ({
       default: ({ id }: { id: string }) => (

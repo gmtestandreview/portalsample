@@ -14,7 +14,7 @@ import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 
 vi.mock(
-  '@/components/RouteLeavingGuard',
+  import('@/components/RouteLeavingGuard'),
   () =>
     ({
       default: ({

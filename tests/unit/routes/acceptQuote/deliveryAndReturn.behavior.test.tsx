@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -47,7 +47,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
@@ -57,7 +57,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -72,7 +72,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: mocks.error },
@@ -82,7 +82,7 @@ vi.mock(
 // The lookup talks to the address service; stand in a marker element. The edit
 // form renders the RHF twin once migrated; the summary keeps the Formik one.
 vi.mock(
-  '@/components/Inputs/AddressLookup',
+  import('@/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -91,7 +91,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule31>
 );
 vi.mock(
-  '@/components/Inputs/RhfAddressLookup',
+  import('@/components/Inputs/RhfAddressLookup'),
   () =>
     ({
       default: ({ label }: { label: string }) => (

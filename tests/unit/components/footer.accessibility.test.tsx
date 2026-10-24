@@ -8,7 +8,7 @@ import Privacy from '@/components/Footer/privacy';
 import TermsOfUse from '@/components/Footer/termsOfUse';
 
 vi.mock(
-  '@/assets/GovCrest.svg',
+  import('@/assets/GovCrest.svg'),
   () =>
     ({
       default: 'gov-crest.svg',

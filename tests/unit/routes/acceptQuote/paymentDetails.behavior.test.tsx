@@ -29,14 +29,14 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
 const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => msalContext,
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -44,14 +44,14 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
-      vi.spyOn(this, 'setAuthToken').mockImplementation(() => undefined);
+      vi.spyOn(this, 'setAuthToken').mockImplementation();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },

@@ -31,7 +31,7 @@ const providerMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -48,7 +48,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
@@ -56,7 +56,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
+  import('../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       UsersClient: class {
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -79,7 +79,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
+  import('../../../ClientApp/src/storage/targetOrganisation'),
   () =>
     ({
       default: providerMocks.setStoredTargetOrganisation,
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/terms-config.json',
+  import('../../../ClientApp/src/terms-config.json'),
   () =>
     ({
       default: { TermsVersion: '1' },
@@ -96,7 +96,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['read'] },
