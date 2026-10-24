@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { Button, Alert } from 'react-bootstrap';
 import { Component, useState } from 'react';
@@ -15,7 +15,7 @@ const WorkingComponent = () => (
 const ThrowingComponent = ({ shouldThrow }: { shouldThrow: boolean }) => {
   if (shouldThrow) {
     throw new Error(
-      'This component threw a render error to demonstrate the ErrorBoundary.'
+      'This component threw a render error to demonstrate the ErrorBoundary.',
     );
   }
   return (
@@ -55,15 +55,13 @@ class ResetableErrorBoundaryWrapper extends Component<
   }
 }
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/ErrorBoundary',
   parameters: { layout: 'padded' },
-} satisfies Meta;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const NoError: Story = {
+export const NoError = meta.story({
   render: () => (
     <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
       <WorkingComponent />
@@ -71,14 +69,14 @@ export const NoError: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('alert')).toHaveTextContent('All good!');
   },
-};
+});
 
-export const CaughtError: Story = {
+export const CaughtError = meta.story({
   render: () => {
     const BrokenApp = () => {
       throw new Error('Simulated render error from a broken child component.');
@@ -89,9 +87,9 @@ export const CaughtError: Story = {
       </ErrorBoundary>
     );
   },
-};
+});
 
-export const RecoveredAfterReset: Story = {
+export const RecoveredAfterReset = meta.story({
   render: () => {
     const ThrowController = () => {
       const [shouldThrow, setShouldThrow] = useState(false);
@@ -112,9 +110,9 @@ export const RecoveredAfterReset: Story = {
     };
     return <ThrowController />;
   },
-};
+});
 
-export const NestedBoundaries: Story = {
+export const NestedBoundaries = meta.story({
   render: () => {
     const BrokenChild = () => {
       throw new Error('Inner component error');
@@ -131,4 +129,4 @@ export const NestedBoundaries: Story = {
       </ErrorBoundary>
     );
   },
-};
+});

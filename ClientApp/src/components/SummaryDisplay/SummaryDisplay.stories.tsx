@@ -1,19 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import SummaryDisplay from './index';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/SummaryDisplay',
   component: SummaryDisplay,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof SummaryDisplay>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const TextValue: Story = {
+export const TextValue = meta.story({
   args: {
     label: 'Organisation name',
     value: 'Storybook Organisation',
@@ -22,15 +20,15 @@ export const TextValue: Story = {
   // SB-021: label and value both render
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Organisation name')).toBeVisible();
     await expect(canvas.getByText('Storybook Organisation')).toBeVisible();
   },
-};
+});
 
-export const PhoneValue: Story = {
+export const PhoneValue = meta.story({
   args: {
     label: 'Business phone',
     value: '02 6213 6800',
@@ -39,7 +37,7 @@ export const PhoneValue: Story = {
   // SB-021: phone label triggers WCAG screen-reader split — visually-hidden node present
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Business phone')).toBeVisible();
@@ -51,9 +49,9 @@ export const PhoneValue: Story = {
 
     await expect(hidden).not.toBeNull();
   },
-};
+});
 
-export const FormattedNumber: Story = {
+export const FormattedNumber = meta.story({
   args: {
     label: 'ABN',
     value: '00000000000',
@@ -63,15 +61,15 @@ export const FormattedNumber: Story = {
   // SB-021: formatted number renders a visually-hidden spaced version for screen readers
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('ABN')).toBeVisible();
   },
-};
+});
 
 // SB-021: empty value renders dash fallback with visually-hidden "No details added"
-export const EmptyValue: Story = {
+export const EmptyValue = meta.story({
   args: {
     label: 'Serial number',
     value: undefined,
@@ -79,7 +77,7 @@ export const EmptyValue: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     // Visible dash
@@ -87,10 +85,10 @@ export const EmptyValue: Story = {
     // Screen-reader text
     await expect(canvas.getByText('No details added')).toBeInTheDocument();
   },
-};
+});
 
 // SB-021: descriptor prop renders below the value
-export const WithDescriptor: Story = {
+export const WithDescriptor = meta.story({
   args: {
     label: 'Calibration date',
     value: '15 March 2024',
@@ -99,18 +97,18 @@ export const WithDescriptor: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('15 March 2024')).toBeVisible();
     await expect(
-      canvas.getByText('Certificate valid for 12 months from this date.')
+      canvas.getByText('Certificate valid for 12 months from this date.'),
     ).toBeVisible();
   },
-};
+});
 
 // SB-021: custom bodyText renders when as='custom'
-export const CustomBody: Story = {
+export const CustomBody = meta.story({
   args: {
     label: 'Notes',
     value: 'some-value',
@@ -119,9 +117,9 @@ export const CustomBody: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByTestId('custom-body')).toBeVisible();
   },
-};
+});

@@ -1,9 +1,9 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Tabs, Tab, TabList, TabPanel, TabPanels } from './Tabs';
 import { expect, fn } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Tabs',
   component: Tabs,
@@ -14,14 +14,11 @@ const meta = {
     onSelectionChange: fn(),
   },
   tags: ['interaction-test'],
-} satisfies Meta<typeof Tabs>;
+});
 
-export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Example = meta.story({
+  render: (args) => (
     <Tabs {...args}>
       <TabList aria-label='History of Ancient Rome'>
         <Tab id='FoR'>Founding of Rome</Tab>
@@ -55,15 +52,15 @@ export const Example: Story = {
     args,
     canvas,
     userEvent,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const empireTab = canvas.getByRole('tab', { name: 'Empire' });
 
     await userEvent.click(empireTab);
 
     await expect(empireTab).toHaveAttribute('aria-selected', 'true');
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
-      'Alea jacta est.'
+      'Alea jacta est.',
     );
     await expect(args.onSelectionChange).toHaveBeenCalledWith('Emp');
   },
-};
+});

@@ -8,7 +8,7 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/components/Inputs/AutoSuggest/AutoSuggestContainer'),
+  '@/components/Inputs/AutoSuggest/AutoSuggestContainer',
   () =>
     ({
       default: (props: any) => {

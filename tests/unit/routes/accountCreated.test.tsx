@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: mocks.useAccountState,
@@ -15,7 +15,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/FormBanner'),
+  '../../../ClientApp/src/components/forms/FormBanner',
   () =>
     ({
       default: ({ title }: { title: string }) => (
@@ -25,7 +25,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/HeaderIntroText'),
+  '../../../ClientApp/src/components/HeaderIntroText',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -35,14 +35,14 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule59>
 );
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () =>
     ({
       default: () => {},

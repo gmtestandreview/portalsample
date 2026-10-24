@@ -20,7 +20,7 @@ import { defined } from '../../../helpers/defined';
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -30,7 +30,7 @@ vi.mock(
 // WizardStep wraps ErrorBoundary (needs AppInsights) + GoogleAnalytics.
 // Both are irrelevant to these tests; stub them out.
 vi.mock(
-  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (

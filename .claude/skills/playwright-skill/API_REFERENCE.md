@@ -79,7 +79,7 @@ export default defineConfig({
 ### Basic Browser Automation
 
 ```javascript
-const { chromium } = require('playwright');
+import { chromium } from 'playwright';
 
 (async () => {
   // Launch browser
@@ -455,7 +455,7 @@ await expect(page).toHaveScreenshot('homepage.png');
 
 ```javascript
 // Device emulation
-const { devices } = require('playwright');
+import { devices } from 'playwright';
 const iPhone = devices['iPhone 12'];
 
 const context = await browser.newContext({

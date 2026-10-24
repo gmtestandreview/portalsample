@@ -9,7 +9,7 @@ import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
 
 vi.mock(
-  import('@/components/Actions'),
+  '@/components/Actions',
   () =>
     ({
       default: ({

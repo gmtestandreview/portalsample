@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import TextInput from './TextInput';
 import SelectInput from './SelectInput';
@@ -8,7 +8,7 @@ import TextAreaInput from './TextAreaInput';
 import RadioButtonGroup from './RadioButtonGroup';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs',
   component: TextInput,
   decorators: [withPortalProviders],
@@ -28,12 +28,9 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof TextInput>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const CommonFieldSet: Story = {
+export const CommonFieldSet = meta.story({
   args: {
     label: 'Organisation name',
     name: 'organisationName',
@@ -134,13 +131,13 @@ export const CommonFieldSet: Story = {
     await expect(quantity).toHaveValue('5');
 
     const requirements = canvas.getByLabelText(
-      'Testing/calibration requirements'
+      'Testing/calibration requirements',
     );
     await userEvent.clear(requirements);
     await userEvent.type(requirements, 'Calibrate at five operating points.');
 
     await expect(requirements).toHaveValue(
-      'Calibrate at five operating points.'
+      'Calibrate at five operating points.',
     );
   },
-};
+});

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import CustomBreadcrumb from './index';
 
@@ -15,15 +15,13 @@ import CustomBreadcrumb from './index';
  *
  */
 
-const meta = {
+const meta = preview.meta({
   component: CustomBreadcrumb,
   tags: ['ai-generated', 'needs-work'],
-} satisfies Meta<typeof CustomBreadcrumb>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const ThreeLevels: Story = {
+export const ThreeLevels = meta.story({
   args: {
     breadcrumbs: [
       { to: '/', text: 'Home' },
@@ -33,7 +31,7 @@ export const ThreeLevels: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const navigation = await canvas.findByRole('navigation', {
       name: /breadcrumb/i,
     });
@@ -42,15 +40,15 @@ export const ThreeLevels: Story = {
     await expect(navigation).toBeInTheDocument();
     await expect(lastBreadcrumb).toHaveAttribute('aria-current', 'page');
   },
-};
+});
 
-export const TwoLevels: Story = {
+export const TwoLevels = meta.story({
   args: {
     breadcrumbs: [{ to: '/', text: 'Home' }, { text: 'Help guide' }],
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const navigation = await canvas.findByRole('navigation', {
       name: /breadcrumb/i,
     });
@@ -61,4 +59,4 @@ export const TwoLevels: Story = {
     await expect(homeLink).toHaveAttribute('href', '/');
     await expect(lastBreadcrumb).toHaveAttribute('aria-current', 'page');
   },
-};
+});

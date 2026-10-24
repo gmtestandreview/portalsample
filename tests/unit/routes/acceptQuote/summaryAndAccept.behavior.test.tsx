@@ -30,7 +30,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -43,7 +43,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/authentication/hooks'),
+  '@/authentication/hooks',
   () =>
     ({
       useAccountState: () => ({
@@ -53,7 +53,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>
 );
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -68,7 +68,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: mocks.error },
@@ -78,28 +78,28 @@ vi.mock(
 // The read-only summaries of the other steps are separate components with
 // their own suites; stand in markers so this suite pins only this step.
 vi.mock(
-  import('@/routes/acceptQuote/reportRecipient'),
+  '@/routes/acceptQuote/reportRecipient',
   () =>
     ({
       default: () => <div>Report recipient summary</div>,
     }) satisfies __ExactMockModule<__TestMockModule61>
 );
 vi.mock(
-  import('@/routes/acceptQuote/deliveryAndReturn'),
+  '@/routes/acceptQuote/deliveryAndReturn',
   () =>
     ({
       default: () => <div>Delivery and return summary</div>,
     }) satisfies __ExactMockModule<__TestMockModule62>
 );
 vi.mock(
-  import('@/routes/acceptQuote/paymentDetails'),
+  '@/routes/acceptQuote/paymentDetails',
   () =>
     ({
       default: () => <div>Payment details summary</div>,
     }) satisfies __ExactMockModule<__TestMockModule63>
 );
 vi.mock(
-  import('@/routes/acceptQuote/quotationSummary'),
+  '@/routes/acceptQuote/quotationSummary',
   () =>
     ({
       default: () => <div>Quotation summary marker</div>,
@@ -232,7 +232,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(submittedValues(onSubmit)).toEqual({
       associatedDisputes: 'Yes',
@@ -256,7 +256,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(submittedValues(onSubmit)).toEqual({
       associatedDisputes: 'No',
@@ -311,7 +311,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
@@ -369,7 +369,7 @@ describe('summaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
@@ -403,7 +403,7 @@ describe('summaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
@@ -445,7 +445,7 @@ describe('summaryAndAccept behavior', () => {
     mocks.getSummaryAndAccept.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
+    await waitFor(() => expect(mocks.error).toHaveBeenCalled());
 
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInTheDocument();
   });

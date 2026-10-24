@@ -1,27 +1,24 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorSwatch } from './ColorSwatch';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorSwatch',
   component: ColorSwatch,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorSwatch>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   args: {
     color: '#f00a',
   },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole('img', { name: 'vibrant red, 33% transparent' })
+      canvas.getByRole('img', { name: 'vibrant red, 33% transparent' }),
     ).toBeInTheDocument();
   },
-};
+});

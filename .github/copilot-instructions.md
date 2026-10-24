@@ -20,7 +20,7 @@ This workspace is a **source-map capture snapshot** of portal.measurement.gov.au
 | Application source | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx` |
 | Styles | `ClientApp/src/styles/**/*.scss` |
 
-**Never edit:** `ClientApp/src/api/web-api-client.ts`, `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/webpack/**`
+**Never edit:** `ClientApp/src/api/web-api-client.ts`, `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`
 
 ## Critical conventions
 

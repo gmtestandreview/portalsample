@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { useFormikContext } from 'formik';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import { http, HttpResponse } from 'msw/http';
@@ -18,7 +18,7 @@ const addressSearchHandler = http.get('/api/address/*', () =>
         postCode: '2600',
       },
     ],
-  })
+  }),
 );
 
 const AddressValueProbe = () => {
@@ -39,16 +39,14 @@ const AddressValueProbe = () => {
   );
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/AddressLookup',
   component: AddressLookup,
   decorators: [withPortalProviders],
-} satisfies Meta<typeof AddressLookup>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     name: 'streetAddress',
     label: 'Street address',
@@ -87,7 +85,7 @@ export const Default: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const combobox = canvas.getByRole('combobox');
@@ -105,12 +103,12 @@ export const Default: Story = {
 
     await expect(combobox).toHaveValue('1 Main Street, Canberra ACT 2600');
     await expect(canvas.getByLabelText('Selected address')).toHaveTextContent(
-      '1 Main Street, Canberra, ACT, 2600'
+      '1 Main Street, Canberra, ACT, 2600',
     );
   },
-};
+});
 
-export const ManualEntry: Story = {
+export const ManualEntry = meta.story({
   args: {
     name: 'streetAddress',
     label: 'Street address',
@@ -138,7 +136,7 @@ export const ManualEntry: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const line1 = canvas.getByLabelText(/address line 1/i);
 
@@ -148,4 +146,4 @@ export const ManualEntry: Story = {
 
     await expect(suburb).toBeVisible();
   },
-};
+});

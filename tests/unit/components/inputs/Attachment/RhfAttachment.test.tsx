@@ -503,7 +503,9 @@ describe('rhfAttachment', () => {
       file('manual.pdf', 10)
     );
 
-    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(onUploadFiles).toHaveBeenCalledWith([expect.any(File)])
+    );
 
     expect(
       within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(

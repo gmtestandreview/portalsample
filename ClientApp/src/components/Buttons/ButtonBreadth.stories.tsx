@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { useParams } from 'react-router';
 import ButtonGroup from './ButtonGroup';
@@ -19,24 +19,21 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
  *
  */
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Buttons/Breadth',
   component: ButtonGroup,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ButtonGroup>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const EditDestination = () => {
   const { requestId } = useParams();
   return <p>Editing request {requestId} organisation and contact</p>;
 };
 
-export const GroupedActions: Story = {
+export const GroupedActions = meta.story({
   args: {
     left: () => (
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
@@ -58,7 +55,7 @@ export const GroupedActions: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByRole('link', { name: 'Cancel' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
 
     const externalReference = canvas.getByRole('link', {
@@ -67,13 +64,13 @@ export const GroupedActions: Story = {
 
     await expect(externalReference).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     await expect(externalReference).toHaveAttribute('target', '_blank');
   },
-};
+});
 
-export const EditSection: Story = {
+export const EditSection = meta.story({
   args: {
     left: () => <></>,
     right: () => <></>,
@@ -99,7 +96,7 @@ export const EditSection: Story = {
     await userEvent.keyboard('{Enter}');
 
     await expect(
-      await canvas.findByText('Editing request 123 organisation and contact')
+      await canvas.findByText('Editing request 123 organisation and contact'),
     ).toBeVisible();
   },
-};
+});

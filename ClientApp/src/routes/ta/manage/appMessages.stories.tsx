@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, waitFor } from 'storybook/test';
 import { http, HttpResponse } from 'msw/http';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -9,7 +9,7 @@ import ApplicationMessages from './appMessages';
  * It provides a rich-text composer (the `SlateEditor`) plus a paged thread of messages
  * between the applicant and NMI. The story loads an empty thread and exercises the composer.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/Manage/ApplicationMessages',
   component: ApplicationMessages,
   decorators: [withPortalProviders],
@@ -23,8 +23,8 @@ const meta = {
             totalCount: 0,
             items: [],
           },
-        })
-      )
+        }),
+      ),
     );
   },
   parameters: {
@@ -35,21 +35,19 @@ const meta = {
       routePath: '/ta/:id/manage',
     },
   },
-} satisfies Meta<typeof ApplicationMessages>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const MessagesTab: Story = {
+export const MessagesTab = meta.story({
   play: async ({
     canvas,
     userEvent,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(
-      await canvas.findByText('No messages to display')
+      await canvas.findByText('No messages to display'),
     ).toBeVisible();
     await expect(
-      canvas.getByRole('combobox', { name: 'Select your view' })
+      canvas.getByRole('combobox', { name: 'Select your view' }),
     ).toBeEnabled();
 
     const getEditor = () =>
@@ -71,7 +69,7 @@ export const MessagesTab: Story = {
 
         expect(anchor !== null && editor.contains(anchor)).toBe(true);
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
     await userEvent.keyboard('Hi');
     // Slate commits typed text through a deferred React render, so the
@@ -80,4 +78,4 @@ export const MessagesTab: Story = {
 
     await expect(await canvas.findByText(/^9\s*\//)).toBeVisible();
   },
-};
+});

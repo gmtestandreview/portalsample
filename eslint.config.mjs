@@ -13,7 +13,7 @@ import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import vitest from '@vitest/eslint-plugin';
 
 const packageJsonPath = fileURLToPath(
-  new URL('./package.json', import.meta.url)
+  new URL('./package.json', import.meta.url),
 );
 
 /**
@@ -31,16 +31,8 @@ export default defineConfig(
       'node_modules/**',
       'dist/**',
       'storybook-static/**',
-      'coverage/**',
       'reports/**',
-      'test-results/**',
-      'playwright-report/**',
       'ClientApp/src/api/web-api-client.ts',
-      'ClientApp/src/external/**',
-      'ClientApp/src/parent/node_modules/**',
-      'ClientApp/src/parent/packages/**',
-      'ClientApp/source-map-http-downloads/**',
-      'ClientApp/webpack/**',
     ],
   },
   {
@@ -166,24 +158,16 @@ export default defineConfig(
     },
   },
   {
-    name: 'nmi/commonjs-and-scripts',
-    files: ['**/*.cjs', '**/*.js', 'webpack.config.js'],
+    name: 'nmi/node-scripts',
+    files: [
+      '.claude/skills/playwright-skill/**/*.{js,mjs}',
+      'scripts/**/*.{js,mjs}',
+      'skills/**/scripts/**/*.{js,mjs}',
+      '*.config.{js,mjs}',
+      'remark.config.mjs',
+    ],
     languageOptions: {
-      sourceType: 'script',
       globals: { ...globals.node },
-    },
-    rules: {
-      '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-    },
-  },
-  {
-    // This standalone script uses native ESM syntax while the rest of the
-    // repository's .js surface remains CommonJS-compatible by default.
-    name: 'nmi/esm-script',
-    files: ['skills/writing-skills/scripts/render-graphs.js'],
-    languageOptions: {
-      sourceType: 'module',
     },
   },
 
@@ -302,5 +286,23 @@ export default defineConfig(
     ],
     ...vitest.configs.all,
   },
-  eslintPluginPrettierRecommended
+  {
+    // Setup files intentionally register global hooks and browser shims at
+    // module scope so they are installed before each test file is imported.
+    name: 'nmi/vitest-setup-files',
+    files: ['vitest.setup.ts', 'vitest.storybook.setup.ts'],
+    rules: {
+      'vitest/require-hook': 'off',
+    },
+  },
+  {
+    // Storybook setup restores its global error listener after the project ends.
+    name: 'nmi/storybook-vitest-setup-hooks',
+    files: ['vitest.storybook.setup.ts'],
+    rules: {
+      'vitest/no-hooks': 'off',
+      'vitest/require-top-level-describe': 'off',
+    },
+  },
+  eslintPluginPrettierRecommended,
 );

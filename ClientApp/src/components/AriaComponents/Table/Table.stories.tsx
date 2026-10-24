@@ -1,22 +1,18 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Column, Row, Table, TableHeader, TableBody, Cell } from './Table';
 import { expect } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Table',
   component: Table,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Table>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   render: (args) => (
     <Table aria-label='Files' {...args}>
       <TableHeader>
@@ -50,4 +46,4 @@ export const Example: Story = {
     await expect(canvas.getByRole('grid', { name: 'Files' })).toBeVisible();
     await expect(canvas.getByText('Games')).toBeVisible();
   },
-};
+});

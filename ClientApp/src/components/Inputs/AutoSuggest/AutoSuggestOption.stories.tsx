@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { ListBox } from 'react-aria-components';
 import { expect } from 'storybook/test';
 import AutoSuggestOption from './AutoSuggestOption';
@@ -8,7 +8,7 @@ import AutoSuggestOption from './AutoSuggestOption';
  * is a thin wrapper over React Aria's `ListBoxItem` and must be rendered inside a
  * `ListBox` collection, so the stories provide that parent context.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/AutoSuggest/AutoSuggestOption',
   component: AutoSuggestOption,
   parameters: {
@@ -27,34 +27,32 @@ const meta = {
     ariaLabel: 'National Measurement Institute',
     value: 'nmi',
   },
-} satisfies Meta<typeof AutoSuggestOption>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });
 
     await expect(option).toBeVisible();
   },
-};
+});
 
-export const Highlighted: Story = {
+export const Highlighted = meta.story({
   args: {
     selected: 'opt-1',
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });
 
     await expect(option).toHaveClass('highlighted');
   },
-};
+});

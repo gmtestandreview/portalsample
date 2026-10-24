@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import ApplicationAndInstrument from './applicationAndInstrument';
@@ -9,7 +9,7 @@ import ApplicationAndInstrument from './applicationAndInstrument';
  * lookups held in the form values), plus instrument and variation details. Seeding the
  * `patternApprovalType` initial value keeps the step out of its data-loading branch.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/ApplicationAndInstrument',
   component: ApplicationAndInstrument,
   decorators: [withPortalProviders],
@@ -30,19 +30,17 @@ const meta = {
     name: 'applicationAndInstrument',
     isSummary: false,
   },
-} satisfies Meta<typeof ApplicationAndInstrument>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const EditStep: Story = {
+export const EditStep = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('heading', { name: 'Instrument details' })
+      await canvas.findByRole('heading', { name: 'Instrument details' }),
     ).toBeInTheDocument();
   },
-};
+});

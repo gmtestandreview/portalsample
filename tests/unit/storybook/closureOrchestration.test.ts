@@ -214,7 +214,12 @@ describe('runClosure', () => {
       'release-freeze',
       'stop-server',
     ]);
-    expect(adapters.produceMcpReceipts).toHaveBeenCalledExactlyOnceWith();
+    expect(adapters.produceMcpReceipts).toHaveBeenCalledExactlyOnceWith({
+      receipts: options.receipts,
+      freeze: expect.objectContaining({ freezeId: 'freeze-1' }),
+      producer: expect.objectContaining({ producerId: 'producer-1' }),
+      timeout: options.mcpTimeoutMs,
+    });
   });
 
   it('fails closed when a pre-freeze gate is reported', async () => {

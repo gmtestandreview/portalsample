@@ -1,3 +1,4 @@
+import addonLinks from '@storybook/addon-links';
 import addonDocs from '@storybook/addon-docs';
 import addonA11y from '@storybook/addon-a11y';
 import addonTest from '@storybook/addon-vitest';
@@ -17,6 +18,7 @@ import {
   PortalStoryRouter,
   type PortalStoryParameters,
 } from '../ClientApp/src/storybook/storybookHarness';
+
 import './preview-setup';
 
 let storybookWorkerPromise: Promise<ReturnType<typeof setupWorker>> | undefined;
@@ -39,13 +41,9 @@ const preview = definePreview({
     addonDocs(),
     addonA11y(),
     addonTest(),
-    ...(globalThis.navigator?.serviceWorker === undefined
-      ? []
-      : [addonMsw(getStorybookWorker)]),
+    addonMsw(getStorybookWorker),
+    addonLinks(),
   ],
-
-  tags: ['autodocs'],
-
   decorators: [
     (Story, { parameters }) => {
       const portal = (parameters?.['portal'] ?? {}) as PortalStoryParameters;
@@ -89,7 +87,23 @@ const preview = definePreview({
       config: {
         rules: [{ id: 'color-contrast', enabled: true }],
       },
-
+      options: {
+        runOnly: [
+          'wcag2a',
+          'wcag2aa',
+          'wcag2aaa',
+          'wcag21a',
+          'wcag21aa',
+          'wcag22aa',
+          'best-practice',
+          'experimental',
+          'ACT',
+          'TTv5',
+          'EN-301-549v4',
+          'RGAAv4',
+        ],
+      },
+      test: 'error',
       // 'todo' - show a11y violations in the test UI only
       // 'error' - fail CI on a11y violations
       // 'off' - skip a11y checks entirely
@@ -99,7 +113,6 @@ const preview = definePreview({
       // four real defects sat unreported: unnamed progress bars, an aria-hidden
       // stepper containing focusable links, an empty h1, and muted text at 4.28:1 on
       // the grey band. Enforcing it is what stops the next one going unnoticed.
-      test: 'error',
     },
     docs: {
       toc: {

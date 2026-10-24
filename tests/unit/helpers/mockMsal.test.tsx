@@ -16,7 +16,7 @@ import {
   testAccount,
 } from './mockMsal';
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('./mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
@@ -121,7 +121,10 @@ describe('shared MSAL harness', () => {
     render(<TokenProbe />);
 
     await waitFor(() =>
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith()
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
+        scopes: ['scope'],
+        account: testAccount,
+      })
     );
 
     expect(screen.getByTestId('token')).toHaveTextContent('');
@@ -139,7 +142,10 @@ describe('shared MSAL harness', () => {
     render(<TokenProbe />);
 
     await waitFor(() =>
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith()
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
+        scopes: ['scope'],
+        account: testAccount,
+      })
     );
 
     token.fail(new Error('token expired'));

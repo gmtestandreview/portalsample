@@ -1,19 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { PageHeader } from './PageHeader';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/React Aria/PageHeader',
   component: PageHeader,
   parameters: {
     layout: 'padded',
   },
-} satisfies Meta<typeof PageHeader>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const TitleOnly: Story = {
+export const TitleOnly = meta.story({
   args: {
     title: 'Measurement services',
   },
@@ -22,12 +19,12 @@ export const TitleOnly: Story = {
 
     await expect(header).toBeInTheDocument();
     await expect(
-      canvas.getByRole('heading', { name: 'Measurement services', level: 1 })
+      canvas.getByRole('heading', { name: 'Measurement services', level: 1 }),
     ).toBeInTheDocument();
   },
-};
+});
 
-export const WithContextAndActions: Story = {
+export const WithContextAndActions = meta.story({
   args: {
     actions: <button type='button'>Start a request</button>,
     description: 'Manage your applications and view the latest updates.',
@@ -36,18 +33,18 @@ export const WithContextAndActions: Story = {
   },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByText('National Measurement Institute')
+      canvas.getByText('National Measurement Institute'),
     ).toBeInTheDocument();
     await expect(
-      canvas.getByText('Manage your applications and view the latest updates.')
+      canvas.getByText('Manage your applications and view the latest updates.'),
     ).toBeInTheDocument();
     await expect(
-      canvas.getByRole('button', { name: 'Start a request' })
+      canvas.getByRole('button', { name: 'Start a request' }),
     ).toBeInTheDocument();
   },
-};
+});
 
-export const LongContent: Story = {
+export const LongContent = meta.story({
   args: {
     description:
       'Use this heading state to check that long descriptive content wraps cleanly while the structural header and primary heading remain discoverable.',
@@ -59,12 +56,12 @@ export const LongContent: Story = {
       canvas.getByRole('heading', {
         name: 'Applications and measurement service requests',
         level: 1,
-      })
+      }),
     ).toBeInTheDocument();
     await expect(
       canvas.getByText(
-        'Use this heading state to check that long descriptive content wraps cleanly while the structural header and primary heading remain discoverable.'
-      )
+        'Use this heading state to check that long descriptive content wraps cleanly while the structural header and primary heading remain discoverable.',
+      ),
     ).toBeInTheDocument();
   },
-};
+});

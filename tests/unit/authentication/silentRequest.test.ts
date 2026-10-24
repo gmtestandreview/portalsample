@@ -2,7 +2,7 @@ import type { AccountInfo } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  import('@/env'),
+  '@/env',
   () =>
     ({
       env: {

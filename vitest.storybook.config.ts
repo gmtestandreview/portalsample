@@ -29,6 +29,12 @@ export default defineConfig({
     storybookTest({ configDir: path.join(dirname, '.storybook') }),
     storybookVitestRuntimePlugin,
   ],
+  // Prebundle the preview addon before Browser Mode starts. Discovering this
+  // dependency during a run makes Vite reload the test module, which can cause
+  // Vitest to evaluate a story outside an active suite.
+  optimizeDeps: {
+    include: ['msw-storybook-addon/preview'],
+  },
   test: {
     name: 'storybook',
     // Single run unless `--watch` is passed (see `test:storybook:watch`).

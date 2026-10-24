@@ -22,7 +22,7 @@ import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput'
 // say what should happen. See the design addendum, parity contract.
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -31,7 +31,7 @@ vi.mock(
 
 // The real WizardStep wraps an error boundary and analytics; render children.
 vi.mock(
-  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -41,7 +41,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -51,7 +51,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/components/SteppedNavigation'),
+  '../../../../../ClientApp/src/components/SteppedNavigation',
   () =>
     ({
       default: () => <div data-testid='stepped-navigation' />,

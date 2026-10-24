@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import HelpHowToSetupAccess from './how-to-setup-access';
 import FAQs from './faqs';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/HelpGuide/Details',
   component: HelpHowToSetupAccess,
   decorators: [withPortalProviders],
@@ -14,14 +14,11 @@ const meta = {
       initialEntries: ['/help-guide/how-to-setup-access'],
     },
   },
-} satisfies Meta<typeof HelpHowToSetupAccess>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const HowToSetupAccess = meta.story();
 
-export const HowToSetupAccess: Story = {};
-
-export const FrequentlyAskedQuestions: Story = {
+export const FrequentlyAskedQuestions = meta.story({
   render: () => <FAQs />,
   parameters: {
     portal: {
@@ -29,4 +26,4 @@ export const FrequentlyAskedQuestions: Story = {
       initialEntries: ['/help-guide/faqs'],
     },
   },
-};
+});

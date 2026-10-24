@@ -33,7 +33,7 @@ describe('playwright-BDD route coverage manifest', () => {
         expect(entry.feature).toBeUndefined();
       } else {
         expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
-        expect(entry.scenario).toBe(true);
+        expect(entry.scenario).toBeDefined();
 
         const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
 

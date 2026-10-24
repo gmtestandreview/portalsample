@@ -1,22 +1,18 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { RangeCalendar } from './RangeCalendar';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/RangeCalendar',
   component: RangeCalendar,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof RangeCalendar>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   args: {
     'aria-label': 'Trip dates',
   },
@@ -30,8 +26,8 @@ export const Example: Story = {
     await expect(rangeCalendar).toBeInTheDocument();
     await expect(cells.length).toBeGreaterThan(0);
   },
-};
-export const Invalid: Story = {
+});
+export const Invalid = meta.story({
   args: {
     'aria-label': 'Trip dates',
     isInvalid: true,
@@ -39,7 +35,7 @@ export const Invalid: Story = {
   },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByText('Choose a range that starts today or later.')
+      canvas.getByText('Choose a range that starts today or later.'),
     ).toBeVisible();
   },
-};
+});

@@ -7,8 +7,8 @@ vi.mock(
   import('@storybook/addon-vitest/vitest-plugin'),
   () =>
     ({
-      storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
-    }) satisfies __ExactMockModule<__TestMockModule56>
+      storybookTest: vi.fn(async () => []),
+    }) satisfies __ExactMockModule<__TestMockModule56>,
 );
 
 import rootConfig from '../../../vitest.config';
@@ -80,7 +80,7 @@ describe('root Vitest config is composition only', () => {
 describe('vitest config loading stays explicit and shim-free', () => {
   it('pins every package script that invokes Vitest to the runner config loader', () => {
     const vitestScripts = Object.entries(packageScripts()).filter(
-      ([, command]) => command.includes('./node_modules/vitest/vitest.mjs')
+      ([, command]) => command.includes('./node_modules/vitest/vitest.mjs'),
     );
 
     expect(vitestScripts.length).toBeGreaterThan(0);
@@ -88,7 +88,7 @@ describe('vitest config loading stays explicit and shim-free', () => {
     for (const [name, command] of vitestScripts) {
       expect(
         command,
-        `${name} must not rely on Vite's default config loader`
+        `${name} must not rely on Vite's default config loader`,
       ).toContain('--configLoader runner');
     }
   });
@@ -101,7 +101,7 @@ describe('vitest config loading stays explicit and shim-free', () => {
         ?.at(1);
 
       expect(configContents).not.toContain('__dirname');
-    }
+    },
   );
 });
 
@@ -130,9 +130,15 @@ describe('storybook leaf is a directly runnable Browser Mode project', () => {
 
     expect(
       include.some(
-        (entry) => typeof entry === 'string' && entry.startsWith('lodash/')
-      )
+        (entry) => typeof entry === 'string' && entry.startsWith('lodash/'),
+      ),
     ).toBe(false);
+  });
+
+  it('prebundles the Storybook MSW preview addon before Browser Mode starts', () => {
+    const include = storybookConfig.optimizeDeps?.include ?? [];
+
+    expect(include).toContain('msw-storybook-addon/preview');
   });
 
   it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {
@@ -150,7 +156,7 @@ describe('storybook leaf is a directly runnable Browser Mode project', () => {
     // file the root - i.e. the `test:storybook` script - and is inert when the
     // project is loaded through the aggregate `vitest.config.ts`.
     expect(storybook.coverage?.reportsDirectory).toBe(
-      './reports/coverage/storybook'
+      './reports/coverage/storybook',
     );
     expect(storybook.coverage?.include).toEqual([
       'ClientApp/src/**/*.{ts,tsx}',
@@ -164,7 +170,7 @@ describe('storybook leaf is a directly runnable Browser Mode project', () => {
     expect(root.coverage).toBeUndefined();
 
     const { scripts } = JSON.parse(
-      readFileSync('package.json', 'utf8')
+      readFileSync('package.json', 'utf8'),
     ) as PackageScripts;
 
     const reviewedCoverageConfigs = new Set([
@@ -180,7 +186,7 @@ describe('storybook leaf is a directly runnable Browser Mode project', () => {
         const config = /--config(?:=|\s+)([^\s]+)/.exec(command)?.[1];
 
         return config === undefined || !reviewedCoverageConfigs.has(config);
-      }
+      },
     );
 
     expect(aggregateRunsWithCoverage).toEqual([]);
@@ -214,7 +220,7 @@ describe('playwright files stay out of both Vitest leaves', () => {
     for (const pattern of unit.include ?? []) {
       expect(
         foreignPath.startsWith(pattern.split('*', 1)[0] ?? pattern),
-        `unit include "${pattern}" must not reach ${foreignPath}`
+        `unit include "${pattern}" must not reach ${foreignPath}`,
       ).toBe(false);
     }
   });

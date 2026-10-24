@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, userEvent, screen, waitFor, within } from 'storybook/test';
 import { Routes, Route, Link } from 'react-router';
 import { Formik, Form } from 'formik';
@@ -45,7 +45,7 @@ const GuardHarness = ({
   </Routes>
 );
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/RouteLeavingGuard',
   component: RouteLeavingGuard,
   argTypes: {
@@ -109,22 +109,20 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof RouteLeavingGuard>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Idle: Story = {
+export const Idle = meta.story({
   name: 'Idle — guard inactive',
   render: () => <GuardHarness when={false} />,
-};
+});
 
-export const InterceptedNavigation: Story = {
+export const InterceptedNavigation = meta.story({
   name: 'Active — confirmation modal on navigation',
   render: () => <GuardHarness when={true} />,
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     // Link is in the canvas (inside Routes); modal renders via Bootstrap portal into document.body
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
@@ -134,15 +132,15 @@ export const InterceptedNavigation: Story = {
     await waitFor(() => expect(dialog).toBeVisible());
 
     await expect(
-      within(dialog).getByRole('button', { name: /^cancel$/i })
+      within(dialog).getByRole('button', { name: /^cancel$/i }),
     ).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /discard changes/i })
+      within(dialog).getByRole('button', { name: /discard changes/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const CustomCopy: Story = {
+export const CustomCopy = meta.story({
   name: 'Custom title, body, and button labels',
   render: () => (
     <GuardHarness
@@ -155,7 +153,7 @@ export const CustomCopy: Story = {
   ),
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {
@@ -164,20 +162,20 @@ export const CustomCopy: Story = {
     await waitFor(() => expect(dialog).toBeVisible());
 
     await expect(
-      within(dialog).getByText(/Any changes made will not be saved/)
+      within(dialog).getByText(/Any changes made will not be saved/),
     ).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /yes, logout/i })
+      within(dialog).getByRole('button', { name: /yes, logout/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const ProceedAfterConfirm: Story = {
+export const ProceedAfterConfirm = meta.story({
   name: 'Confirm navigation — modal clears and user proceeds',
   render: () => <GuardHarness when={true} />,
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {
@@ -190,7 +188,7 @@ export const ProceedAfterConfirm: Story = {
 
     // After navigation the /other route replaces /form content in canvas
     await expect(
-      canvas.findByText('You left the page.')
+      canvas.findByText('You left the page.'),
     ).resolves.toBeVisible();
   },
-};
+});

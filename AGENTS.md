@@ -81,7 +81,7 @@ heading.
 - **CSS**: Bootstrap 5 (custom NMI theme) + SCSS partials
 - **API client**: Auto-generated `web-api-client.ts` (NSwag/OpenAPI)
 - **Analytics**: Azure Application Insights + Google Analytics
-- **Bundler**: Webpack (bundled artifacts only; config not present in snapshot)
+- **Bundler**: Vite 8 (`vite.config.mts`)
 - **CSP**: Trusted Types policy via `trustedtypes.ts` + DOMPurify
 
 ## Repository Shape
@@ -93,7 +93,6 @@ ClientApp/src/api/web-api-client.ts  ← generated NSwag/OpenAPI API client
                                       do not edit
 ClientApp/source-map-http-downloads/ ← third-party source mirrors, do not edit
 ClientApp/src/external/              ← vendor copies, do not edit
-ClientApp/webpack/                   ← webpack runtime bootstrap, do not edit
 ClientApp/media/                     ← captured media assets
 ```
 
@@ -212,7 +211,7 @@ font-size: math.div($h1-font-size, 1.375);
 **Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a
 Bootstrap 5 internal available only via the global `@import` cascade. Full
 `@use`-based migration is deferred until Bootstrap 6. Until then,
-`silenceDeprecations: ['import']` in `webpack.config.js` and
+`silenceDeprecations: ['import']` in `vite.config.mts` and
 `.storybook/main.ts` suppresses deprecation warnings from our own partials;
 `quietDeps: true` suppresses Bootstrap's internal deprecations.
 
@@ -280,7 +279,6 @@ unavailable:
 - `ClientApp/css/main.*.css`
 - `ClientApp/source-map-http-downloads/**`
 - `ClientApp/src/external/**`
-- `ClientApp/webpack/**`
 
 ## Validation Guidance
 

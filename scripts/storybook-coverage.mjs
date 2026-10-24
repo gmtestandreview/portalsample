@@ -240,7 +240,7 @@ export const parseJsonDocument = (text) => {
 const canonicaliseJson = (value, segments = []) => {
   if (Array.isArray(value)) {
     return value.map((entry, index) =>
-      canonicaliseJson(entry, [...segments, index])
+      canonicaliseJson(entry, [...segments, index]),
     );
   }
   if (!isRecord(value)) return value;
@@ -248,7 +248,7 @@ const canonicaliseJson = (value, segments = []) => {
   return Object.fromEntries(
     Object.entries(value)
       .sort(([leftKey], [rightKey]) =>
-        leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0
+        leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0,
       )
       .filter(
         ([key]) =>
@@ -258,12 +258,12 @@ const canonicaliseJson = (value, segments = []) => {
             segments[0] === 'records' &&
             Number.isInteger(segments[1]) &&
             segments[2] === 'review'
-          )
+          ),
       )
       .map(([key, entryValue]) => [
         key,
         canonicaliseJson(entryValue, [...segments, key]),
-      ])
+      ]),
   );
 };
 
@@ -311,7 +311,7 @@ export function computeInputDigest({
       assertUniqueJsonKeys(manifestText);
       content = Buffer.from(
         JSON.stringify(canonicaliseJson(parseJsonDocument(manifestText))),
-        'utf8'
+        'utf8',
       );
     }
     return { filePath, content };
@@ -337,8 +337,8 @@ export function computeInputDigest({
   normalizedFiles.sort((left, right) =>
     Buffer.compare(
       Buffer.from(left.filePath, 'utf8'),
-      Buffer.from(right.filePath, 'utf8')
-    )
+      Buffer.from(right.filePath, 'utf8'),
+    ),
   );
   const hash = createHash('sha256');
   hash.update(Buffer.from('storybook-coverage-input-v1\0', 'utf8'));
@@ -377,20 +377,20 @@ export function validateFreezeRecord({
   }
   if (!nonEmptyString(freeze.freezeId)) {
     errors.push(
-      error(FAILURE_CODES.EXECUTION_INCOMPLETE, 'freezeId is required')
+      error(FAILURE_CODES.EXECUTION_INCOMPLETE, 'freezeId is required'),
     );
   }
   if (freeze.inputDigest !== expectedInputDigest) {
     errors.push(
-      error(FAILURE_CODES.EXECUTION_INCOMPLETE, 'freeze inputDigest is stale')
+      error(FAILURE_CODES.EXECUTION_INCOMPLETE, 'freeze inputDigest is stale'),
     );
   }
   if (!Array.isArray(selectedPaths) || selectedPaths.length === 0) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'selected input paths are required'
-      )
+        'selected input paths are required',
+      ),
     );
   }
   const protectedPaths = Array.isArray(freeze.protectedPaths)
@@ -403,17 +403,17 @@ export function validateFreezeRecord({
     selectedPathSet.size !== (selectedPaths ?? []).length ||
     protectedPathSet.size !== selectedPathSet.size ||
     [...selectedPathSet].some(
-      (selectedPath) => !protectedPathSet.has(selectedPath)
+      (selectedPath) => !protectedPathSet.has(selectedPath),
     ) ||
     [...protectedPathSet].some(
-      (protectedPath) => !selectedPathSet.has(protectedPath)
+      (protectedPath) => !selectedPathSet.has(protectedPath),
     )
   ) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'freeze does not protect every selected path'
-      )
+        'freeze does not protect every selected path',
+      ),
     );
   }
 
@@ -430,20 +430,20 @@ export function validateFreezeRecord({
   for (const operation of requiredOperations) {
     if (
       !denialProbes.some(
-        (probe) => probe?.operation === operation && probe.denied === true
+        (probe) => probe?.operation === operation && probe.denied === true,
       )
     ) {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `freeze denial probe did not reject ${operation}`
-        )
+          `freeze denial probe did not reject ${operation}`,
+        ),
       );
     }
   }
   if (freeze.restored !== false) {
     errors.push(
-      error(FAILURE_CODES.EXECUTION_INCOMPLETE, 'freeze ACLs are not active')
+      error(FAILURE_CODES.EXECUTION_INCOMPLETE, 'freeze ACLs are not active'),
     );
   }
   return result(errors);
@@ -452,7 +452,7 @@ export function validateFreezeRecord({
 const statusEntries = (value, label, requestedIds, errors) => {
   if (!Array.isArray(value)) {
     errors.push(
-      error(FAILURE_CODES.EXECUTION_INCOMPLETE, `${label} must be an array`)
+      error(FAILURE_CODES.EXECUTION_INCOMPLETE, `${label} must be an array`),
     );
     return [];
   }
@@ -463,8 +463,8 @@ const statusEntries = (value, label, requestedIds, errors) => {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `${label} contains a result without a storyId`
-        )
+          `${label} contains a result without a storyId`,
+        ),
       );
       continue;
     }
@@ -473,8 +473,8 @@ const statusEntries = (value, label, requestedIds, errors) => {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `${label} contains a duplicate storyId: ${entry.storyId}`
-        )
+          `${label} contains a duplicate storyId: ${entry.storyId}`,
+        ),
       );
     }
     seen.add(entry.storyId);
@@ -483,8 +483,8 @@ const statusEntries = (value, label, requestedIds, errors) => {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `${label} contains an unknown storyId: ${entry.storyId}`
-        )
+          `${label} contains an unknown storyId: ${entry.storyId}`,
+        ),
       );
     }
 
@@ -492,8 +492,8 @@ const statusEntries = (value, label, requestedIds, errors) => {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `${label} did not pass for ${entry.storyId}`
-        )
+          `${label} did not pass for ${entry.storyId}`,
+        ),
       );
     }
   }
@@ -503,8 +503,8 @@ const statusEntries = (value, label, requestedIds, errors) => {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `${label} is missing the requested storyId: ${storyId}`
-        )
+          `${label} is missing the requested storyId: ${storyId}`,
+        ),
       );
     }
   }
@@ -532,7 +532,7 @@ const normalizeMarkdownMcpReport = (response, requestedIds, errors) => {
   const markdown = Array.isArray(response?.content)
     ? response.content
         .filter(
-          (block) => block?.type === 'text' && typeof block.text === 'string'
+          (block) => block?.type === 'text' && typeof block.text === 'string',
         )
         .map((block) => block.text)
         .join('\n')
@@ -544,38 +544,38 @@ const normalizeMarkdownMcpReport = (response, requestedIds, errors) => {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP markdown response is missing Passing Stories'
-      )
+        'MCP markdown response is missing Passing Stories',
+      ),
     );
   }
   const failingStoryIds = markdownSectionEntries(markdown, 'Failing Stories');
   const accessibilityViolationStoryIds = markdownSectionEntries(
     markdown,
-    'Accessibility Violations'
+    'Accessibility Violations',
   );
   const unhandledErrors = markdownSectionEntries(markdown, 'Unhandled Errors');
   if (failingStoryIds.length > 0) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP markdown response contains failing stories'
-      )
+        'MCP markdown response contains failing stories',
+      ),
     );
   }
   if (accessibilityViolationStoryIds.length > 0) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP markdown response contains accessibility violations'
-      )
+        'MCP markdown response contains accessibility violations',
+      ),
     );
   }
   if (unhandledErrors.length > 0) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP markdown response contains unhandled errors'
-      )
+        'MCP markdown response contains unhandled errors',
+      ),
     );
   }
 
@@ -587,13 +587,13 @@ const normalizeMarkdownMcpReport = (response, requestedIds, errors) => {
     statuses,
     'componentTestStatuses',
     requestedIds,
-    errors
+    errors,
   );
   const a11yStatuses = statusEntries(
     statuses,
     'a11yStatuses',
     requestedIds,
-    errors
+    errors,
   );
   return {
     status: 'completed',
@@ -619,7 +619,7 @@ const normalizeMarkdownMcpReport = (response, requestedIds, errors) => {
         'Accessibility Violations',
         'Unhandled Errors',
       ].filter(
-        (heading) => markdownSectionEntries(markdown, heading).length === 0
+        (heading) => markdownSectionEntries(markdown, heading).length === 0,
       ),
     },
   };
@@ -653,7 +653,10 @@ export function normalizeMcpReceipt({
   ]) {
     if (!nonEmptyString(value)) {
       errors.push(
-        error(FAILURE_CODES.EXECUTION_INCOMPLETE, `receipt is missing ${field}`)
+        error(
+          FAILURE_CODES.EXECUTION_INCOMPLETE,
+          `receipt is missing ${field}`,
+        ),
       );
     }
   }
@@ -661,8 +664,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'receipt is missing child provenance'
-      )
+        'receipt is missing child provenance',
+      ),
     );
   }
   if (
@@ -672,8 +675,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'receipt inputDigest does not match the selected freeze'
-      )
+        'receipt inputDigest does not match the selected freeze',
+      ),
     );
   }
   if (
@@ -683,16 +686,16 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'receipt producerIdentityDigest does not match the selected producer'
-      )
+        'receipt producerIdentityDigest does not match the selected producer',
+      ),
     );
   }
   if (!Array.isArray(requestedStoryIds) || requestedStoryIds.length === 0) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'at least one requested story ID is required'
-      )
+        'at least one requested story ID is required',
+      ),
     );
   }
 
@@ -701,8 +704,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'requested story IDs must be unique'
-      )
+        'requested story IDs must be unique',
+      ),
     );
   }
 
@@ -710,8 +713,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP response contains a protocol error'
-      )
+        'MCP response contains a protocol error',
+      ),
     );
   }
 
@@ -722,8 +725,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        `MCP execution status was ${structuredContent?.status ?? 'missing'}`
-      )
+        `MCP execution status was ${structuredContent?.status ?? 'missing'}`,
+      ),
     );
   }
 
@@ -734,8 +737,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP response is missing the structured execution result'
-      )
+        'MCP response is missing the structured execution result',
+      ),
     );
   }
 
@@ -743,13 +746,13 @@ export function normalizeMcpReceipt({
     execution?.componentTestStatuses,
     'componentTestStatuses',
     requestedIds,
-    errors
+    errors,
   );
   const a11yStatuses = statusEntries(
     execution?.a11yStatuses,
     'a11yStatuses',
     requestedIds,
-    errors
+    errors,
   );
 
   const counts = execution?.counts;
@@ -763,8 +766,8 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP result counts do not match the requested story IDs'
-      )
+        'MCP result counts do not match the requested story IDs',
+      ),
     );
   }
 
@@ -772,15 +775,15 @@ export function normalizeMcpReceipt({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP result is missing unhandledErrors'
-      )
+        'MCP result is missing unhandledErrors',
+      ),
     );
   } else if (execution.unhandledErrors.length > 0) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP result contains unhandled errors'
-      )
+        'MCP result contains unhandled errors',
+      ),
     );
   }
 
@@ -819,7 +822,7 @@ export function validateProducerIdentity({
     return result([
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'producer and receipt records are required'
+        'producer and receipt records are required',
       ),
     ]);
   }
@@ -840,8 +843,8 @@ export function validateProducerIdentity({
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `producer is missing ${field}`
-        )
+          `producer is missing ${field}`,
+        ),
       );
     }
   }
@@ -849,8 +852,8 @@ export function validateProducerIdentity({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'producer serverPid must be a positive integer'
-      )
+        'producer serverPid must be a positive integer',
+      ),
     );
   }
   if (
@@ -860,16 +863,16 @@ export function validateProducerIdentity({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'producer native MCP URL does not match the selected endpoint'
-      )
+        'producer native MCP URL does not match the selected endpoint',
+      ),
     );
   }
   if (producer.freezeId !== expectedFreezeId) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'producer freezeId does not match the selected freeze'
-      )
+        'producer freezeId does not match the selected freeze',
+      ),
     );
   }
 
@@ -888,8 +891,8 @@ export function validateProducerIdentity({
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `receipt ${field} does not match producer identity`
-        )
+          `receipt ${field} does not match producer identity`,
+        ),
       );
     }
   }
@@ -901,8 +904,8 @@ export function validateProducerIdentity({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'expected and receipt child provenance are required'
-      )
+        'expected and receipt child provenance are required',
+      ),
     );
   } else if (
     expectedChildEpoch.pid !== receipt.childEpoch.pid ||
@@ -911,8 +914,8 @@ export function validateProducerIdentity({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'receipt child provenance does not match the producer epoch'
-      )
+        'receipt child provenance does not match the producer epoch',
+      ),
     );
   }
 
@@ -948,8 +951,8 @@ const validateState = (state, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'state must contain exactly the schema v1 state fields',
-        recordPath
-      )
+        recordPath,
+      ),
     );
     return;
   }
@@ -959,8 +962,8 @@ const validateState = (state, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'state name and rationale must be non-empty strings',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 
@@ -969,8 +972,8 @@ const validateState = (state, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'state applicability must be required or not-supported',
-        recordPath
-      )
+        recordPath,
+      ),
     );
     return;
   }
@@ -981,8 +984,8 @@ const validateState = (state, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'state outcome must be a non-empty string',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 
@@ -1000,8 +1003,8 @@ const validateState = (state, recordPath, errors) => {
         error(
           FAILURE_CODES.EVIDENCE_MISSING,
           'required state needs a meaningful outcome and complete story/assertion references',
-          recordPath
-        )
+          recordPath,
+        ),
       );
     }
   } else if (
@@ -1018,8 +1021,8 @@ const validateState = (state, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'not-supported state needs a specific rationale and no story/assertion references',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 };
@@ -1030,8 +1033,8 @@ const validateRecordDetails = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'record source and export must identify a relative canonical declaration',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
   if (!CLASSIFICATIONS.has(record.classification)) {
@@ -1039,8 +1042,8 @@ const validateRecordDetails = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'record classification is not supported by schema v1',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
   if (!nonEmptyString(record.owner) || !nonEmptyString(record.reason)) {
@@ -1048,8 +1051,8 @@ const validateRecordDetails = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'record owner and reason must be non-empty strings',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
   if (!Array.isArray(record.states)) {
@@ -1057,8 +1060,8 @@ const validateRecordDetails = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'record states must be an array',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 };
@@ -1069,8 +1072,8 @@ const validateRecordReview = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'record review must contain exactly the schema v1 review fields',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   } else if (
     !nonEmptyString(record.review.reviewer) ||
@@ -1081,8 +1084,8 @@ const validateRecordReview = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'review fields must be non-empty strings',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 };
@@ -1093,8 +1096,8 @@ const validateRenderableRecord = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'renderable records need a docsOwnerId',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
   if (!Array.isArray(record.states)) return;
@@ -1103,15 +1106,15 @@ const validateRenderableRecord = (record, recordPath, errors) => {
     validateState(state, recordPath, errors);
   }
   const requiredStates = record.states.filter(
-    (state) => isRecord(state) && state.applicability === 'required'
+    (state) => isRecord(state) && state.applicability === 'required',
   );
   if (requiredStates.every((state) => !isMeaningfulOutcome(state))) {
     errors.push(
       error(
         FAILURE_CODES.EVIDENCE_MISSING,
         'renderable records need a meaningful required baseline state',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 };
@@ -1122,8 +1125,8 @@ const validateNonvisualRecord = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'nonvisual records must have a null docsOwnerId',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
   if (!Array.isArray(record.states) || record.states.length !== 0) {
@@ -1131,8 +1134,8 @@ const validateNonvisualRecord = (record, recordPath, errors) => {
       error(
         FAILURE_CODES.EVIDENCE_MISSING,
         'nonvisual records cannot carry UI states',
-        recordPath
-      )
+        recordPath,
+      ),
     );
   }
 };
@@ -1144,8 +1147,8 @@ const validateRecord = (record, index, errors) => {
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
         'record must contain exactly the schema v1 record fields',
-        recordPath
-      )
+        recordPath,
+      ),
     );
     return;
   }
@@ -1170,19 +1173,19 @@ export function validateManifest(manifest) {
     return result([
       error(
         FAILURE_CODES.MANIFEST_SCHEMA_INVALID,
-        'manifest must be an object with schemaVersion 1 and records'
+        'manifest must be an object with schemaVersion 1 and records',
       ),
     ]);
   }
   manifest.records.forEach((record, index) =>
-    validateRecord(record, index, errors)
+    validateRecord(record, index, errors),
   );
   return result(errors);
 }
 
 const excludedSourcePath = (filePath) =>
   /(^|\/)(\.claude|\.git|stories?|tests?|__tests__|vendor|external|generated|node_modules|reports|storybook-static|dist)(\/|$)/u.test(
-    filePath
+    filePath,
   ) || /\.(stories|test|spec|d)\.(tsx?|jsx?)$/u.test(filePath);
 
 const sourceFileKind = (node) =>
@@ -1194,7 +1197,7 @@ const sourceFileKind = (node) =>
 
 const exported = (node) =>
   node.modifiers?.some(
-    (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword
+    (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
   ) ?? false;
 
 const declarationName = (node) => {
@@ -1219,7 +1222,7 @@ const isDeclarationStatement = (statement) =>
 const collectDeclaration = (statement, filePath, locals, direct) => {
   const name = declarationName(statement);
   const isDefault = statement.modifiers?.some(
-    (modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword
+    (modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword,
   );
   if (name) {
     const entry = {
@@ -1282,7 +1285,7 @@ const collectExportAssignment = (
   filePath,
   locals,
   reExports,
-  direct
+  direct,
 ) => {
   if (
     ts.isIdentifier(statement.expression) &&
@@ -1331,7 +1334,7 @@ const parseSourceFile = (file) => {
     file.content,
     ts.ScriptTarget.Latest,
     true,
-    file.path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS
+    file.path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
   const locals = new Map();
   const imports = new Map();
@@ -1363,8 +1366,8 @@ const resolveModule = (fromPath, specifier, filesByPath) => {
   const requested = path.posix.normalize(
     path.posix.join(
       fromDirectory,
-      specifier.replace(/\.(?:[cm]?[jt]sx?)$/u, '')
-    )
+      specifier.replace(/\.(?:[cm]?[jt]sx?)$/u, ''),
+    ),
   );
   const candidates = [
     requested,
@@ -1479,7 +1482,7 @@ function resolveModuleReExport({
   }
 
   const target = targetEntries.find(
-    (entry) => entry.export === reExport.imported
+    (entry) => entry.export === reExport.imported,
   );
   if (!target) {
     addUnresolved({
@@ -1556,12 +1559,12 @@ export function discoverSourceExports({ files }) {
         typeof file.content === 'string' &&
         /\.(tsx?|mts|cts)$/u.test(file.path) &&
         isInventorySourcePath(file.path) &&
-        !excludedSourcePath(file.path)
+        !excludedSourcePath(file.path),
     )
     .sort((left, right) => left.path.localeCompare(right.path));
   const filesByPath = new Map(sourceFiles.map((file) => [file.path, file]));
   const parsed = new Map(
-    sourceFiles.map((file) => [file.path, parseSourceFile(file)])
+    sourceFiles.map((file) => [file.path, parseSourceFile(file)]),
   );
   const unresolved = [];
   const cache = new Map();
@@ -1587,7 +1590,7 @@ export function discoverSourceExports({ files }) {
       parsed,
       filesByPath,
       addUnresolved,
-    })
+    }),
   );
   const exports = uniqueEntries(discoveredEntries);
   return {
@@ -1609,8 +1612,8 @@ export function validateSourceClaims(manifest, discovery) {
     errors.push(
       error(
         FAILURE_CODES.EVIDENCE_MISSING,
-        'source inventory must contain at least one reviewed claim'
-      )
+        'source inventory must contain at least one reviewed claim',
+      ),
     );
   }
   for (const unresolved of discovery.unresolved) {
@@ -1618,12 +1621,12 @@ export function validateSourceClaims(manifest, discovery) {
       error(
         FAILURE_CODES.SOURCE_UNRESOLVED,
         `${unresolved.source}#${unresolved.export}: ${unresolved.reason}`,
-        unresolved.source
-      )
+        unresolved.source,
+      ),
     );
   }
   const discovered = new Set(
-    discovery.exports.map((entry) => `${entry.source}|${entry.export}`)
+    discovery.exports.map((entry) => `${entry.source}|${entry.export}`),
   );
   const claims = new Set();
   for (const [index, record] of manifest.records.entries()) {
@@ -1633,8 +1636,8 @@ export function validateSourceClaims(manifest, discovery) {
         error(
           FAILURE_CODES.CLAIM_DUPLICATE,
           `duplicate canonical claim ${record.source}#${record.export}`,
-          `records[${index}]`
-        )
+          `records[${index}]`,
+        ),
       );
     }
     claims.add(key);
@@ -1643,8 +1646,8 @@ export function validateSourceClaims(manifest, discovery) {
         error(
           FAILURE_CODES.SOURCE_UNRESOLVED,
           `canonical source/export was not discovered: ${record.source}#${record.export}`,
-          record.source
-        )
+          record.source,
+        ),
       );
     }
   }
@@ -1655,8 +1658,8 @@ export function validateSourceClaims(manifest, discovery) {
         error(
           FAILURE_CODES.EVIDENCE_MISSING,
           `discovered export has no reviewed claim: ${discoveredExport.source}#${discoveredExport.export}`,
-          discoveredExport.source
-        )
+          discoveredExport.source,
+        ),
       );
     }
   }
@@ -1672,15 +1675,15 @@ export function validateReferences(manifest, index) {
   const entriesById = new Map(
     entries
       .filter((entry) => isRecord(entry) && nonEmptyString(entry.id))
-      .map((entry) => [entry.id, entry])
+      .map((entry) => [entry.id, entry]),
   );
 
   if (entriesById.size === 0) {
     errors.push(
       error(
         FAILURE_CODES.REFERENCE_MISSING,
-        'generated Storybook index contains no entries'
-      )
+        'generated Storybook index contains no entries',
+      ),
     );
     return result(errors);
   }
@@ -1694,8 +1697,8 @@ export function validateReferences(manifest, index) {
           error(
             FAILURE_CODES.REFERENCE_MISSING,
             `docsOwnerId does not resolve to a generated docs entry: ${record.docsOwnerId}`,
-            recordPath
-          )
+            recordPath,
+          ),
         );
       }
       for (const state of record.states) {
@@ -1706,8 +1709,8 @@ export function validateReferences(manifest, index) {
             error(
               FAILURE_CODES.REFERENCE_MISSING,
               `required storyId does not resolve to a generated story entry: ${state.storyId}`,
-              recordPath
-            )
+              recordPath,
+            ),
           );
         }
       }
@@ -1727,7 +1730,7 @@ const textForInput = (content) =>
 
 const hasExportModifier = (node) =>
   node.modifiers?.some(
-    (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword
+    (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
   ) ?? false;
 
 const identifierText = (node) =>
@@ -1737,7 +1740,7 @@ const findNamedStoryDeclaration = (sourceFile, exportName) => {
   for (const statement of sourceFile.statements) {
     if (ts.isVariableStatement(statement) && hasExportModifier(statement)) {
       const declaration = statement.declarationList.declarations.find(
-        (candidate) => identifierText(candidate.name) === exportName
+        (candidate) => identifierText(candidate.name) === exportName,
       );
       if (declaration) return declaration;
     }
@@ -1807,7 +1810,7 @@ const playBody = (playProperty) => {
 const isAssertionCall = (expression) => {
   if (ts.isIdentifier(expression)) {
     return ['assert', 'assertThat', 'expect', 'storybookExpect'].includes(
-      expression.text
+      expression.text,
     );
   }
   return (
@@ -1827,7 +1830,7 @@ const hasAssertionMarker = (node, expected) => {
       if (
         candidate.arguments.some(
           (argument) =>
-            ts.isStringLiteral(argument) && argument.text === expected
+            ts.isStringLiteral(argument) && argument.text === expected,
         )
       ) {
         found = true;
@@ -1854,7 +1857,7 @@ export function validateStoryEvidence({ manifest, files, index }) {
     return result([
       error(
         FAILURE_CODES.SOURCE_UNRESOLVED,
-        'story evidence requires an input file list'
+        'story evidence requires an input file list',
       ),
     ]);
   }
@@ -1881,23 +1884,23 @@ export function validateStoryEvidence({ manifest, files, index }) {
         error(
           FAILURE_CODES.SOURCE_UNRESOLVED,
           `source file could not be resolved: ${record.source}`,
-          recordPath
-        )
+          recordPath,
+        ),
       );
       continue;
     }
 
     const discovered = discovery.exports.some(
       (entry) =>
-        entry.source === record.source && entry.export === record.export
+        entry.source === record.source && entry.export === record.export,
     );
     if (!discovered) {
       errors.push(
         error(
           FAILURE_CODES.SOURCE_UNRESOLVED,
           `named source export could not be resolved: ${record.source}#${record.export}`,
-          recordPath
-        )
+          recordPath,
+        ),
       );
     }
 
@@ -1907,8 +1910,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
       errors.push(
         storyEvidenceError(
           `reviewed source digest is stale for ${record.source}`,
-          recordPath
-        )
+          recordPath,
+        ),
       );
     }
 
@@ -1920,8 +1923,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
         errors.push(
           storyEvidenceError(
             'storyFile and assertionFile must identify the same story source',
-            statePath
-          )
+            statePath,
+          ),
         );
       }
       if (
@@ -1932,8 +1935,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
         errors.push(
           storyEvidenceError(
             `story source could not be resolved: ${state.storyFile}`,
-            statePath
-          )
+            statePath,
+          ),
         );
         continue;
       }
@@ -1944,18 +1947,18 @@ export function validateStoryEvidence({ manifest, files, index }) {
         textForInput(storyFile.content),
         ts.ScriptTarget.Latest,
         true,
-        state.storyFile.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS
+        state.storyFile.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
       );
       const storyDeclaration = findNamedStoryDeclaration(
         storySource,
-        state.storyExport
+        state.storyExport,
       );
       if (!storyDeclaration) {
         errors.push(
           storyEvidenceError(
             `named story export could not be resolved: ${state.storyExport}`,
-            statePath
-          )
+            statePath,
+          ),
         );
         continue;
       }
@@ -1964,8 +1967,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
         errors.push(
           storyEvidenceError(
             `assertionExport must be ${state.storyExport}.play`,
-            statePath
-          )
+            statePath,
+          ),
         );
         continue;
       }
@@ -1974,8 +1977,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
         errors.push(
           storyEvidenceError(
             `story export has no play property: ${state.storyExport}`,
-            statePath
-          )
+            statePath,
+          ),
         );
         continue;
       }
@@ -1983,8 +1986,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
         errors.push(
           storyEvidenceError(
             `assertionMarker is not an exact string literal in ${state.storyExport}.play`,
-            statePath
-          )
+            statePath,
+          ),
         );
       }
     }
@@ -2052,7 +2055,7 @@ export function validateClosure({
         ...referenceResult.errors.map((entry) => ({
           ...entry,
           message: `${label} index: ${entry.message}`,
-        }))
+        })),
       );
     }
   }
@@ -2061,16 +2064,16 @@ export function validateClosure({
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'closure freeze identity is required'
-      )
+        'closure freeze identity is required',
+      ),
     );
   }
   if (!isRecord(producer) || !nonEmptyString(producer.producerId)) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'closure producer identity is required'
-      )
+        'closure producer identity is required',
+      ),
     );
   }
 
@@ -2082,8 +2085,8 @@ export function validateClosure({
       errors.push(
         error(
           FAILURE_CODES.INPUT_STALE,
-          `${label} Storybook index does not match the frozen digest`
-        )
+          `${label} Storybook index does not match the frozen digest`,
+        ),
       );
     }
   }
@@ -2093,7 +2096,7 @@ export function validateClosure({
     .flatMap((record) =>
       (record.states ?? [])
         .filter((state) => state.applicability === 'required')
-        .map((state) => state.storyId)
+        .map((state) => state.storyId),
     );
   const executable = deriveExecutableStorySet({
     index: fullIndex,
@@ -2101,14 +2104,14 @@ export function validateClosure({
   });
   const requiredSet = new Set(requiredStoryIds);
   const skippedRequired = executable.skipped.filter((storyId) =>
-    requiredSet.has(storyId)
+    requiredSet.has(storyId),
   );
   for (const storyId of skippedRequired) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        `required story is skipped: ${storyId}`
-      )
+        `required story is skipped: ${storyId}`,
+      ),
     );
   }
 
@@ -2119,8 +2122,8 @@ export function validateClosure({
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          'closure receipt is not a passing receipt'
-        )
+          'closure receipt is not a passing receipt',
+        ),
       );
       continue;
     }
@@ -2133,8 +2136,8 @@ export function validateClosure({
       errors.push(
         error(
           FAILURE_CODES.INPUT_STALE,
-          'closure receipt does not match the frozen producer identity'
-        )
+          'closure receipt does not match the frozen producer identity',
+        ),
       );
     }
     const requestedValues = Array.isArray(receipt.requestedStoryIds)
@@ -2145,14 +2148,14 @@ export function validateClosure({
       requested.size !== requestedValues.length ||
       [...requested].some(
         (storyId) =>
-          !nonEmptyString(storyId) || !executable.storyIds.includes(storyId)
+          !nonEmptyString(storyId) || !executable.storyIds.includes(storyId),
       )
     ) {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          'closure receipt requests duplicate, invalid, or non-executable stories'
-        )
+          'closure receipt requests duplicate, invalid, or non-executable stories',
+        ),
       );
     }
     const executedValues = Array.isArray(receipt.executedStoryIds)
@@ -2163,23 +2166,23 @@ export function validateClosure({
       receipt.componentTestStatuses,
       'component test statuses',
       requested,
-      errors
+      errors,
     );
     const a11yStatuses = statusEntries(
       receipt.a11yStatuses,
       'a11y statuses',
       requested,
-      errors
+      errors,
     );
     const componentPassed = new Set(
       componentStatuses
         .filter((entry) => entry?.status === SUCCESS_STATUS)
-        .map((entry) => entry.storyId)
+        .map((entry) => entry.storyId),
     );
     const a11yPassed = new Set(
       a11yStatuses
         .filter((entry) => entry?.status === SUCCESS_STATUS)
-        .map((entry) => entry.storyId)
+        .map((entry) => entry.storyId),
     );
     if (
       requested.size === 0 ||
@@ -2190,14 +2193,14 @@ export function validateClosure({
       requested.size !== componentPassed.size ||
       requested.size !== a11yPassed.size ||
       [...requested].some(
-        (storyId) => !componentPassed.has(storyId) || !a11yPassed.has(storyId)
+        (storyId) => !componentPassed.has(storyId) || !a11yPassed.has(storyId),
       )
     ) {
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          'closure receipt is missing exact component or a11y story results'
-        )
+          'closure receipt is missing exact component or a11y story results',
+        ),
       );
     }
     for (const storyId of requested) executed.add(storyId);
@@ -2208,8 +2211,8 @@ export function validateClosure({
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `required story has no passing receipt: ${storyId}`
-        )
+          `required story has no passing receipt: ${storyId}`,
+        ),
       );
     }
   }
@@ -2220,8 +2223,8 @@ export function validateClosure({
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `executable story has no passing receipt: ${storyId}`
-        )
+          `executable story has no passing receipt: ${storyId}`,
+        ),
       );
     }
   }
@@ -2230,8 +2233,8 @@ export function validateClosure({
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `receipt covers a story outside the executable set: ${storyId}`
-        )
+          `receipt covers a story outside the executable set: ${storyId}`,
+        ),
       );
     }
   }
@@ -2251,7 +2254,7 @@ export function validateClosure({
 
 const inventoryRow = (record) => {
   const requiredStates = record.states.filter(
-    (state) => state.applicability === 'required'
+    (state) => state.applicability === 'required',
   );
   const storyIds = requiredStates
     .map((state) => state.storyId)
@@ -2265,8 +2268,8 @@ const inventoryRegion = (records) => {
     .toSorted((left, right) =>
       Buffer.compare(
         Buffer.from(`${left.source}#${left.export}`),
-        Buffer.from(`${right.source}#${right.export}`)
-      )
+        Buffer.from(`${right.source}#${right.export}`),
+      ),
     )
     .map(inventoryRow);
   return [
@@ -2289,19 +2292,19 @@ export function generateInventory({ manifest }) {
     return result([
       error(
         FAILURE_CODES.EVIDENCE_MISSING,
-        'cannot generate inventory regions from an empty manifest'
+        'cannot generate inventory regions from an empty manifest',
       ),
     ]);
   }
 
   const components = manifest.records.filter((record) =>
-    record.source.startsWith('ClientApp/src/components/')
+    record.source.startsWith('ClientApp/src/components/'),
   );
   const routes = manifest.records.filter((record) =>
-    record.source.startsWith('ClientApp/src/routes/')
+    record.source.startsWith('ClientApp/src/routes/'),
   );
   const renderableCount = manifest.records.filter((record) =>
-    isRenderable(record.classification)
+    isRenderable(record.classification),
   ).length;
   const nonvisualCount = manifest.records.length - renderableCount;
   const matrix = [
@@ -2335,7 +2338,7 @@ const replaceGeneratedRegion = (filePath, generatedRegion) => {
   const matches = content.match(markerPattern) ?? [];
   if (matches.length !== 1) {
     throw new Error(
-      `inventory document must contain exactly one generated region: ${filePath}`
+      `inventory document must contain exactly one generated region: ${filePath}`,
     );
   }
   const usesJsxComments = matches[0].startsWith('{/*');
@@ -2343,11 +2346,11 @@ const replaceGeneratedRegion = (filePath, generatedRegion) => {
     ? generatedRegion
         .replace(
           '<!-- storybook-coverage:generated:start -->',
-          '{/* storybook-coverage:generated:start */}'
+          '{/* storybook-coverage:generated:start */}',
         )
         .replace(
           '<!-- storybook-coverage:generated:end -->',
-          '{/* storybook-coverage:generated:end */}'
+          '{/* storybook-coverage:generated:end */}',
         )
     : generatedRegion;
   ts.sys.writeFile(filePath, content.replace(markerPattern, replacement));
@@ -2357,12 +2360,12 @@ export const writeInventoryRegions = ({ inventory, root = process.cwd() }) => {
   const files = {
     components: path.resolve(
       root,
-      'ClientApp/src/components/ComponentInventory.docs.mdx'
+      'ClientApp/src/components/ComponentInventory.docs.mdx',
     ),
     routes: path.resolve(root, 'ClientApp/src/routes/RouteInventory.docs.mdx'),
     matrix: path.resolve(
       root,
-      'ClientApp/src/storybook/CoverageMatrix.docs.mdx'
+      'ClientApp/src/storybook/CoverageMatrix.docs.mdx',
     ),
   };
   for (const [filePath, generatedRegion] of [
@@ -2400,20 +2403,20 @@ export const readSourceFiles = (root, { includeStories = false } = {}) => {
       ({ relativePathValue }) =>
         isRelativePath(relativePathValue) &&
         isInventorySourcePath(relativePathValue) &&
-        (includeStories || !excludedSourcePath(relativePathValue))
+        (includeStories || !excludedSourcePath(relativePathValue)),
     )
     .map(({ filePath, relativePathValue }) => {
       const realFilePath = ts.sys.realpath?.(filePath) ?? filePath;
       if (!isPathInside(realSourceRoot, realFilePath)) {
         throw new Error(
-          `SOURCE_UNRESOLVED: symlink input ${relativePathValue}`
+          `SOURCE_UNRESOLVED: symlink input ${relativePathValue}`,
         );
       }
 
       const content = ts.sys.readFile(filePath);
       if (content === undefined) {
         throw new Error(
-          `SOURCE_UNRESOLVED: unreadable input ${relativePathValue}`
+          `SOURCE_UNRESOLVED: unreadable input ${relativePathValue}`,
         );
       }
       return { path: relativePathValue, content };
@@ -2454,7 +2457,7 @@ const parseArguments = (argv) => {
         errors: [
           error(
             FAILURE_CODES.INVALID_INVOCATION,
-            `invalid or incomplete option: ${flag ?? '(missing)'}`
+            `invalid or incomplete option: ${flag ?? '(missing)'}`,
           ),
         ],
       };
@@ -2485,7 +2488,7 @@ const parseArguments = (argv) => {
           errors: [
             error(
               FAILURE_CODES.INVALID_INVOCATION,
-              `invalid or incomplete option: ${flag ?? '(missing)'}`
+              `invalid or incomplete option: ${flag ?? '(missing)'}`,
             ),
           ],
         };
@@ -2497,7 +2500,7 @@ const parseArguments = (argv) => {
       errors: [
         error(
           FAILURE_CODES.INVALID_INVOCATION,
-          'mode must be source, references, or closure'
+          'mode must be source, references, or closure',
         ),
       ],
     };
@@ -2508,7 +2511,7 @@ const parseArguments = (argv) => {
       errors: [
         error(
           FAILURE_CODES.INVALID_INVOCATION,
-          '--write-inventory is permitted only with references mode'
+          '--write-inventory is permitted only with references mode',
         ),
       ],
     };
@@ -2523,7 +2526,7 @@ const runReferencesMode = (args, manifest) => {
     return failureResult([
       error(
         FAILURE_CODES.REFERENCE_MISSING,
-        'references mode requires --index'
+        'references mode requires --index',
       ),
     ]);
   }
@@ -2532,14 +2535,14 @@ const runReferencesMode = (args, manifest) => {
     return failureResult([
       error(
         FAILURE_CODES.REFERENCE_MISSING,
-        `generated Storybook index could not be read: ${args.index}`
+        `generated Storybook index could not be read: ${args.index}`,
       ),
     ]);
   }
   try {
     const referenceResult = validateReferences(
       manifest,
-      parseJsonDocument(indexContent)
+      parseJsonDocument(indexContent),
     );
     if (!referenceResult.ok) return failureResult(referenceResult.errors);
     if (args.writeInventory) {
@@ -2553,7 +2556,7 @@ const runReferencesMode = (args, manifest) => {
     return failureResult([
       error(
         FAILURE_CODES.REFERENCE_MISSING,
-        `generated Storybook index is invalid: ${message}`
+        `generated Storybook index is invalid: ${message}`,
       ),
     ]);
   }
@@ -2572,7 +2575,7 @@ const runClosureMode = (args, manifest) => {
     return failureResult([
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'closure mode requires --index, --docs-index, and --receipts'
+        'closure mode requires --index, --docs-index, and --receipts',
       ),
     ]);
   }
@@ -2590,7 +2593,7 @@ const runClosureMode = (args, manifest) => {
       fullIndex: readJsonFile(args.index),
       docsIndex: readJsonFile(args.docsIndex),
       receipts: receiptFiles.map((fileName) =>
-        readJsonFile(path.join(receiptDirectory, fileName))
+        readJsonFile(path.join(receiptDirectory, fileName)),
       ),
       freeze: readJsonFile(path.join(receiptDirectory, 'freeze.json')),
       producer: readJsonFile(path.join(receiptDirectory, 'producer.json')),
@@ -2603,7 +2606,7 @@ const runClosureMode = (args, manifest) => {
     return failureResult([
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        `closure inputs are invalid: ${message}`
+        `closure inputs are invalid: ${message}`,
       ),
     ]);
   }
@@ -2650,7 +2653,7 @@ export function main(argv = process.argv.slice(2)) {
         : message;
     return failureResult(
       [error(knownCode, cleanMessage)],
-      knownCode === FAILURE_CODES.INVALID_INVOCATION ? 2 : 1
+      knownCode === FAILURE_CODES.INVALID_INVOCATION ? 2 : 1,
     );
   }
 }

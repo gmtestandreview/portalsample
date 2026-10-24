@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -27,7 +27,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: mocks.useAccountState,
@@ -36,7 +36,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () =>
     ({
       useModalDispatch: mocks.useModalDispatch,
@@ -44,7 +44,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm'),
+  '../../../ClientApp/src/components/forms/WizardForm',
   () =>
     ({
       default: ({
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({
@@ -86,7 +86,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/accountDetails'),
+  '../../../ClientApp/src/routes/account/accountDetails',
   () =>
     ({
       default: () => <div>Account details fields</div>,
@@ -94,7 +94,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/organisationDetails'),
+  '../../../ClientApp/src/routes/account/organisationDetails',
   () =>
     ({
       default: () => <div>Organisation details fields</div>,
@@ -102,7 +102,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/contact/contactDetails'),
+  '../../../ClientApp/src/routes/contact/contactDetails',
   () =>
     ({
       default: () => <div>Contact details fields</div>,
@@ -110,7 +110,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/create/createAccountProps'),
+  '../../../ClientApp/src/routes/account/create/createAccountProps',
   () =>
     ({
       default: mocks.createAccountProps,
@@ -118,7 +118,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/update/updateAccountProps'),
+  '../../../ClientApp/src/routes/account/update/updateAccountProps',
   () =>
     ({
       default: mocks.updateAccountProps,
@@ -126,7 +126,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/account/addBranch/addBranchProps'),
+  '../../../ClientApp/src/routes/account/addBranch/addBranchProps',
   () =>
     ({
       default: mocks.addBranchProps,
@@ -134,7 +134,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/contact/create/createContactProps'),
+  '../../../ClientApp/src/routes/contact/create/createContactProps',
   () =>
     ({
       default: mocks.createContactProps,
@@ -142,7 +142,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/contact/update/updateContactProps'),
+  '../../../ClientApp/src/routes/contact/update/updateContactProps',
   () =>
     ({
       default: mocks.updateContactProps,
@@ -150,14 +150,14 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule59>
 );
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () =>
     ({
       default: () => {},

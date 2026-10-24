@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const lintConfigPath = path.resolve(
   import.meta.dirname,
-  '../../../scripts/storybook-coverage-eslint.config.mjs'
+  '../../../scripts/storybook-coverage-eslint.config.mjs',
 );
 
 const createLinter = () =>
@@ -17,7 +17,7 @@ describe('storybook coverage script lint contract', () => {
     const linter = createLinter();
     const [result] = await linter.lintText(
       'const value = 1;\nconsole.error(value);\n',
-      { filePath: 'scripts/storybook-closure.mjs' }
+      { filePath: 'scripts/storybook-closure.mjs' },
     );
 
     if (!result) throw new Error('ESLint returned no result');

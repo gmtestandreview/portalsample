@@ -1,22 +1,21 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Select, SelectItem } from './Select';
-import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
+import type { StoryFn } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Select',
   component: Select,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Select>;
-
-export default meta;
+});
 
 type Story = StoryFn<typeof Select>;
 
-export const Example = {
+export const Example = meta.story({
   render: (args: Readonly<Parameters<Story>[0]>) => (
     <Select {...args}>
       <SelectItem>Chocolate</SelectItem>
@@ -33,4 +32,4 @@ export const Example = {
     await expect(canvas.getByText('Ice cream flavor')).toBeVisible();
     await expect(canvas.getByText('Select an item')).toBeVisible();
   },
-} satisfies StoryObj<typeof meta>;
+});

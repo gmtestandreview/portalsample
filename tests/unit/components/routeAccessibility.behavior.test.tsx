@@ -64,6 +64,6 @@ describe('route accessibility behavior', () => {
 
     unmount();
 
-    expect(clearTimeoutSpy).toHaveBeenCalledWith();
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(expect.any(Object));
   });
 });

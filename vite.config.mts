@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import type { DeprecationOrId } from 'sass';
+import { msw } from 'msw/vite';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUNTIME_ENVIRONMENT_FILE = path.resolve(dirname, 'ClientApp/env.js');
@@ -46,7 +47,7 @@ function resolveEnvVars(mode: string, command: string): Record<string, string> {
 
   if (command === 'build' && !loadedEnvValues.get('VITE_ENVIRONMENT')) {
     throw new Error(
-      'VITE_ENVIRONMENT must be provided explicitly for production builds'
+      'VITE_ENVIRONMENT must be provided explicitly for production builds',
     );
   }
 
@@ -56,7 +57,7 @@ function resolveEnvVars(mode: string, command: string): Record<string, string> {
       loadedEnvValues.get(key) ??
         (isDevelopment ? developmentDefaults.get(key) : '') ??
         '',
-    ])
+    ]),
   );
 }
 
@@ -77,19 +78,19 @@ function escapeHtmlAttributeCharacter(character: string): string {
 function escapeHtmlAttributeValue(value: string): string {
   return value.replace(
     HTML_ATTRIBUTE_UNSAFE_CHARACTER_PATTERN,
-    escapeHtmlAttributeCharacter
+    escapeHtmlAttributeCharacter,
   );
 }
 
 function replaceEnvironmentTemplates(
   html: string,
-  envVars: Record<string, string>
+  envVars: Record<string, string>,
 ): string {
   let transformedHtml = html;
 
   for (const [key, value] of Object.entries(envVars)) {
     transformedHtml = transformedHtml.replaceAll(`<%= ${key} %>`, () =>
-      escapeHtmlAttributeValue(value)
+      escapeHtmlAttributeValue(value),
     );
   }
 
@@ -180,7 +181,7 @@ function blockedGeneratedPathsPlugin(): Plugin {
       const isBlocked = BLOCKED_RESOLUTION_PREFIXES.some(
         (prefix) =>
           normalizedSource === prefix ||
-          normalizedSource.startsWith(`${prefix}/`)
+          normalizedSource.startsWith(`${prefix}/`),
       );
 
       if (isBlocked) {
@@ -239,7 +240,7 @@ export default defineConfig(({ command, mode }) => {
     VITE_ENV_KEYS.map((key) => [
       `import.meta.env.${key}`,
       JSON.stringify(envValues.get(key)),
-    ])
+    ]),
   );
 
   return {
@@ -253,6 +254,7 @@ export default defineConfig(({ command, mode }) => {
       envTemplatePlugin(envVars),
       runtimeEnvironmentPlugin(command),
       msalRedirectCspPlugin(),
+      msw(), // Automatically manages and serves the service worker script in development
     ],
 
     resolve: {
@@ -280,7 +282,7 @@ export default defineConfig(({ command, mode }) => {
       resolveDependencies: (
         filename: string,
         dependencies: string[],
-        { hostId }: { hostId: string; hostType: 'html' | 'js' }
+        { hostId }: { hostId: string; hostType: 'html' | 'js' },
       ) => {
         if (
           hostId.endsWith('redirect.html') ||
@@ -288,8 +290,8 @@ export default defineConfig(({ command, mode }) => {
         ) {
           return dependencies.filter((dependency) =>
             /\/(?:auth|rolldown-runtime|modulepreload-polyfill)\./u.test(
-              dependency
-            )
+              dependency,
+            ),
           );
         }
 

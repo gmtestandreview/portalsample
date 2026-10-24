@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { storybookVitestRuntimePlugin } from '../../../vitest.storybook.runtime';
 import {
   makeDirectorySync,
+  pathExists,
   readDirectorySync,
   readTextFileSync,
 } from '../../helpers/safeTestFilesystem';
@@ -17,6 +18,7 @@ const readRepositoryFile = (relativePath: string): string =>
 const previewSetup = readRepositoryFile('.storybook/preview-setup.ts');
 const browserSetup = readRepositoryFile('vitest.storybook.setup.ts');
 const preview = readRepositoryFile('.storybook/preview.ts');
+const storybookMain = readRepositoryFile('.storybook/main.ts');
 const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
 const runtimeFixtureValue = (
@@ -79,6 +81,18 @@ describe('storybook MSW diagnostic policy', () => {
   it('passes query-gated quiet mode to the installed addon-v3 loader', () => {
     expect(preview).toContain('quiet: !isStorybookMswDebugEnabled');
     expect(previewSetup).not.toContain('quiet: false');
+  });
+
+  it('registers the CSF Next MSW addon independently of browser globals', () => {
+    expect(preview).toMatch(/addonMsw\(getStorybookWorker\)/);
+    expect(preview).not.toContain('navigator?.serviceWorker');
+  });
+
+  it('serves the generated MSW worker from Storybook static assets', () => {
+    expect(storybookMain).toContain("staticDirs: ['../ClientApp/public']");
+    expect(
+      pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot),
+    ).toBe(true);
   });
 });
 

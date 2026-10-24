@@ -97,7 +97,7 @@ let mockAccountDetails: AccountDetails | null = null;
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       DashboardClient: vi.fn().mockImplementation(function (this: any) {
@@ -111,7 +111,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => mockMsalContext,
@@ -119,7 +119,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  '@azure/msal-browser',
   () =>
     ({
       InteractionStatus: { None: 'none' },
@@ -127,7 +127,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: () => ({ details: mockAccountDetails }),
@@ -136,7 +136,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['openid'] },
@@ -144,7 +144,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () =>
     ({
       useModalState: () => mockModalState,
@@ -155,7 +155,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/constants'),
+  '../../../ClientApp/src/routes/common/constants',
   () =>
     ({
       defaultFilter: {
@@ -171,7 +171,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   () =>
     ({
       mapToUserProfile: mockMapToUserProfile,
@@ -179,7 +179,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Welcome'),
+  '../../../ClientApp/src/components/Welcome',
   () =>
     ({
       default: () => <div data-testid='welcome' />,
@@ -187,7 +187,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/BlockUISpinner'),
+  '../../../ClientApp/src/components/BlockUISpinner',
   () =>
     ({
       default: ({ children }: any) => (
@@ -197,7 +197,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
     ({
       default: () => <div data-testid='notification-message' />,
@@ -205,7 +205,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () =>
     ({
       default: () => {},
@@ -213,7 +213,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: () => {},
@@ -221,7 +221,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useDebounce'),
+  '../../../ClientApp/src/components/Utilities/useDebounce',
   () =>
     ({
       default: (value: any) => value,
@@ -229,7 +229,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/tiles/StandardPathway'),
+  '../../../ClientApp/src/components/tiles/StandardPathway',
   () =>
     ({
       default: () => <div data-testid='standard-pathway' />,
@@ -237,7 +237,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/SearchFilter'),
+  '../../../ClientApp/src/components/SearchFilter',
   () =>
     ({
       default: () => <div data-testid='search-filter' />,
@@ -245,7 +245,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/RequestList/requestItem'),
+  '../../../ClientApp/src/components/RequestList/requestItem',
   () =>
     ({
       default: () => <li data-testid='request-item' />,
@@ -253,7 +253,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/RequestList/instrumentItem'),
+  '../../../ClientApp/src/components/RequestList/instrumentItem',
   () =>
     ({
       default: () => <li data-testid='instrument-item' />,
@@ -261,7 +261,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/RequestList/noRequests'),
+  '../../../ClientApp/src/components/RequestList/noRequests',
   () =>
     ({
       default: () => <div data-testid='no-requests' />,
@@ -270,7 +270,7 @@ vi.mock(
 
 // CustomPagination mock — exposes data-current, data-total, and an onPageChange-wired Next button
 vi.mock(
-  import('../../../ClientApp/src/components/Pagination'),
+  '../../../ClientApp/src/components/Pagination',
   () =>
     ({
       default: ({ onPageChange, currentPage, totalPages }: any) => (
@@ -287,7 +287,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/PaginationHeader'),
+  '../../../ClientApp/src/components/PaginationHeader',
   () =>
     ({
       default: () => <div data-testid='pagination-header' />,
@@ -295,7 +295,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -310,7 +310,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/errorRoutes'),
+  '../../../ClientApp/src/routes/common/errorRoutes',
   () =>
     ({
       default: (_status: number) => '/server-error',
@@ -318,7 +318,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/dashboardNotifications'),
+  '../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
     ({
       DashBoardNotifications: {
@@ -343,7 +343,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/notification'),
+  '../../../ClientApp/src/storage/notification',
   () =>
     ({
       getDashboardNotification: mockGetDashboardNotification,
@@ -356,7 +356,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/sessionStorageCache'),
+  '../../../ClientApp/src/storage/sessionStorageCache',
   () =>
     ({
       default: () => ({
@@ -369,7 +369,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/analytics/GoogleAnalytics'),
+  '../../../ClientApp/src/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: mockTrackGAEvent,
@@ -377,7 +377,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/enums'),
+  '../../../ClientApp/src/routes/common/enums',
   () =>
     ({
       DashboardItemStatus: {
@@ -390,7 +390,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
+  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
   () =>
     ({
       BranchSelectionModalMode: {
@@ -401,7 +401,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('react-number-format'),
+  'react-number-format',
   () =>
     ({
       PatternFormat: ({ value }: any) => <span>{value}</span>,
@@ -526,7 +526,7 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => {
-      expect(mockGetDrafts).toHaveBeenCalledWith();
+      expect(mockGetDrafts).toHaveBeenCalled();
     });
 
     // SEC-010: every call — not just the first — must use the correct org GUID
@@ -543,7 +543,7 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
@@ -559,7 +559,7 @@ describe('dashboard', () => {
     });
 
     // Verify ordering: setAuthToken must precede getDashboardDraftsByPortalID
-    expect(mockGetDrafts).toHaveBeenCalledWith();
+    expect(mockGetDrafts).toHaveBeenCalled();
 
     const setTokenOrder = mockSetAuthToken.mock.invocationCallOrder[0];
     const getDraftsOrder = mockGetDrafts.mock.invocationCallOrder[0];
@@ -663,7 +663,7 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => {
-      expect(mockGetDrafts).toHaveBeenCalledWith();
+      expect(mockGetDrafts).toHaveBeenCalled();
     });
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
@@ -689,7 +689,7 @@ describe('dashboard', () => {
 
       fireEvent.click(await screen.findByRole('tab', { name: accessibleName }));
 
-      await waitFor(() => expect(apiMock).toHaveBeenCalledWith());
+      await waitFor(() => expect(apiMock).toHaveBeenCalled());
 
       expect(mockTrackGAEvent).toHaveBeenCalledWith(tabValue);
       expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -706,7 +706,7 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     fireEvent.click(await screen.findByRole('tab', { name: 'Requests' }));
-    await waitFor(() => expect(mockGetQuotes).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetQuotes).toHaveBeenCalled());
 
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
@@ -805,7 +805,7 @@ describe('dashboard', () => {
 
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
     expect(screen.queryByTestId('error-page')).not.toBeInTheDocument();
@@ -826,11 +826,14 @@ describe('dashboard', () => {
     expect(mockSetShowBranchSelector).toHaveBeenCalledWith(true);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Instrument/artefacts' }));
-    await waitFor(() => expect(mockGetArtefacts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetArtefacts).toHaveBeenCalled());
     fireEvent.click(defined(screen.getAllByTestId('pagination')[2]));
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('Instrument/pagechange');
-    expect(scrollIntoView).toHaveBeenCalledWith();
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
 
     fireEvent.click(screen.getByTestId('new-request-button'));
 
@@ -901,7 +904,7 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
     expect(screen.getAllByTestId('notification-message')).toHaveLength(2);
     expect(screen.getByText(/Trading name/)).toBeInTheDocument();
@@ -975,7 +978,7 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
     expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
@@ -1091,7 +1094,7 @@ describe('dashboard', () => {
   it('does not replace initial filters when the saved profile changes', async () => {
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
     mockMapToUserProfile.mockClear();
 
     mockAccountDetails = {
@@ -1111,7 +1114,7 @@ describe('dashboard', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => expect(mockMapToUserProfile).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockMapToUserProfile).toHaveBeenCalled());
   });
 
   it('seeds initial filters when the saved profile arrives after mount', async () => {
@@ -1150,7 +1153,7 @@ describe('dashboard', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
@@ -1197,7 +1200,7 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalled());
 
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
@@ -1219,7 +1222,7 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBeUndefined();
     expect(mockGetDrafts.mock.calls.at(-1)?.[5]).toBe(1);
@@ -1230,7 +1233,7 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
     await waitFor(() =>
       expect(screen.getByTestId('welcome').parentElement).not.toHaveAttribute(
         'aria-live'

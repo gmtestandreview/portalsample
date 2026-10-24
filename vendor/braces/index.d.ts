@@ -15,4 +15,4 @@ declare namespace braces {
   }
 }
 
-export = braces;
+export default braces;

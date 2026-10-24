@@ -7,7 +7,7 @@ const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 
 vi.mock(
-  import('react-router'),
+  'react-router',
   () =>
     ({
       useBlocker: () => ({
@@ -18,7 +18,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule11>
 );
 
-vi.mock(import('react-bootstrap/Modal'), () => {
+vi.mock('react-bootstrap/Modal', () => {
   const Modal = ({
     children,
     onHide,

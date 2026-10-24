@@ -16,7 +16,7 @@ const accountDispatchMock = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/authentication/hooks'),
+  '@/authentication/hooks',
   () =>
     ({
       useAccountDispatch: () => accountDispatchMock,
@@ -24,7 +24,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: vi.fn(),

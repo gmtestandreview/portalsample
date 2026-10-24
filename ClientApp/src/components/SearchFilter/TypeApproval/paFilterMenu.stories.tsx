@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import type { PatternApprovalDashboardDto } from '../../../api/web-api-client';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -20,7 +20,7 @@ const initialFilters: PatternApprovalDashboardDto = {
   filterSearchText: '',
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/SearchFilter/TypeApproval/PaFilterMenu',
   component: PaFilterMenu,
   decorators: [withPortalProviders],
@@ -35,33 +35,31 @@ const meta = {
     setInitialFilters: fn(),
     setCurrentPage: fn(),
   },
-} satisfies Meta<typeof PaFilterMenu>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Closed: Story = {
+export const Closed = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('button', { name: /filters/i })
+      canvas.getByRole('button', { name: /filters/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const Opened: Story = {
+export const Opened = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await user.click(canvas.getByRole('button', { name: /filters/i }));
 
     await expect(
-      await canvas.findByText('In progress - with NMI')
+      await canvas.findByText('In progress - with NMI'),
     ).toBeVisible();
   },
-};
+});

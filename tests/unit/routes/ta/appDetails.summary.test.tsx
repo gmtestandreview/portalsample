@@ -16,14 +16,14 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -41,7 +41,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  '../../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -49,7 +49,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
@@ -58,7 +58,7 @@ vi.mock(
 
 // The real accordion collapses its body; the summary inside it is what is under test.
 vi.mock(
-  import('../../../../ClientApp/src/components/Accordion'),
+  '../../../../ClientApp/src/components/Accordion',
   () =>
     ({
       CustomAccordion: ({ children }: { children: ReactNode }) => (
@@ -75,7 +75,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appDocuments'),
+  '../../../../ClientApp/src/routes/ta/manage/appDocuments',
   () =>
     ({
       default: () => <div data-testid='application-documents' />,
@@ -83,7 +83,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/manage/appMessages'),
+  '../../../../ClientApp/src/routes/ta/manage/appMessages',
   () =>
     ({
       default: () => <div data-testid='application-messages' />,

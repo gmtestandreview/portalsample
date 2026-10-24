@@ -10,7 +10,7 @@ import {
 
 const appLoggerError = vi.hoisted(() => vi.fn());
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: appLoggerError },
@@ -161,6 +161,10 @@ describe(pollUploadProgress, () => {
       onFinished: vi.fn(),
     });
 
-    expect(getProgress).toHaveBeenCalledExactlyOnceWith();
+    expect(getProgress).toHaveBeenCalledExactlyOnceWith(
+      'u1',
+      -1,
+      expect.any(AbortSignal)
+    );
   });
 });

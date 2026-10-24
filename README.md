@@ -15,7 +15,7 @@ This workspace is a source-map capture snapshot of the live deployment, extended
 | Forms | Formik + Yup with custom string extensions |
 | CSS | Bootstrap 5 (custom NMI theme) + SCSS |
 | API client | Auto-generated NSwag/OpenAPI (`web-api-client.ts`) |
-| Bundler | Webpack 5 |
+| Bundler | Vite 8 |
 | Unit tests | Vitest + React Testing Library |
 | E2E tests | Playwright BDD (`playwright-bdd`) |
 | Component catalogue | Storybook 10 |
@@ -38,7 +38,7 @@ Runtime configuration is injected via `window.*` variables at deploy time. For l
 ### Development
 
 ```bash
-npm start                   # Webpack dev server (port configured in webpack.config.js)
+npm start                   # Vite dev server
 npm run storybook           # Storybook dev server on port 6006
 ```
 
@@ -66,7 +66,7 @@ npm run test:ci             # Full CI gate: type-check + coverage + regression
 ### Build
 
 ```bash
-npm run build               # Production Webpack build
+npm run build               # Production Vite build
 npm run build-storybook     # Static Storybook build
 ```
 
@@ -127,6 +127,6 @@ quality/                # Regression quality suite
 
 **Edit freely:** `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, `ClientApp/src/styles/**/*.scss`
 
-**Never edit (generated / vendor):** `ClientApp/src/api/web-api-client.ts`, `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/webpack/**`
+**Never edit (generated / vendor):** `ClientApp/src/api/web-api-client.ts`, `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`
 
 See [CLAUDE.md](CLAUDE.md) for critical patterns (env vars, auth guard, Yup import guard, SCSS rules).

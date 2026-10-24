@@ -109,17 +109,11 @@ flowchart TD
 - Current guards use `path.includes(...)` checks in `ClientApp/src/routes/preConditions/PreConditions.tsx`.
 - Modal visibility (`TermsAndCondition`, `BranchSelector`, `RFQDelete`) sets inert mode on the wrapped content for accessibility/interaction safety.
 
-## 5) Dual build system rationale and divergence summary
+## 5) Unified Vite build system and verification summary
 
-Current state is intentionally split:
-
-- Production bundle: webpack 5
-- Storybook and test tooling: Vite 8-based tooling path
-
-Why this exists now:
-
-- Production packaging remains aligned with the legacy portal host and current deployment process.
-- Storybook and test workflows use Vite-based tooling for faster dev/test feedback.
+Vite 8 is the canonical production, development, Storybook, and test-tooling
+pipeline. The same Vite module-resolution, Sass, asset, and code-splitting
+behavior is used across the application and its component/test environments.
 
 What must be regression-tested because of this split:
 
@@ -128,4 +122,5 @@ What must be regression-tested because of this split:
 - Asset base-path resolution differences
 - Code-splitting/chunk loading behavior
 
-See `docs/architecture/storybook-vs-webpack-runtime.md` for build-pipeline details.
+See `docs/architecture/storybook-vs-webpack-runtime.md` for the shared build and
+runtime verification checklist.

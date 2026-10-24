@@ -13,14 +13,14 @@ const mocks = vi.hoisted(() => ({
   downloadFileFromUrl: vi.fn(),
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 

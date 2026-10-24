@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import { expect, type Page } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from '../../support/fixtures';
@@ -66,9 +65,7 @@ Then(
       throw new Error(`Unsupported type-approval step: ${title}`);
     }
 
-    await expect(page).toHaveURL((url) =>
-      url.pathname.endsWith(`/ta/${location}`)
-    );
+    await expect(page).toHaveURL(new RegExp(`/ta/[^/]+/${location}$`));
     await expect(page.getByTestId('form')).toBeVisible();
     await expect
       .poll(async () =>

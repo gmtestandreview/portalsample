@@ -43,14 +43,14 @@ const attachmentControl = vi.hoisted(() => ({
   },
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  '../../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -76,7 +76,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/hooks'),
+  '../../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       default: () => mocks.accountContext(),
@@ -87,7 +87,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/notification'),
+  '../../../../ClientApp/src/storage/notification',
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -95,7 +95,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
+  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
   () =>
     ({
       default: ({
@@ -115,7 +115,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/Attachment/index-new'),
+  '../../../../ClientApp/src/components/Inputs/Attachment/index-new',
   () =>
     ({
       default: (props: typeof attachmentControl.props) => {
@@ -435,7 +435,14 @@ describe('supporting documents', () => {
         uploaded = await attachmentControl.props.onUploadFiles(files);
       });
 
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith();
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          account: expect.objectContaining({
+            homeAccountId: 'test-home-account-id',
+          }),
+          scopes: ['api://ta/.default'],
+        })
+      );
       expect(onUploadAttachment).toHaveBeenCalledTimes(1);
       expect(onUploadAttachment).toHaveBeenCalledWith(DEFAULT_ACCESS_TOKEN, [
         { data: files[0], fileName: 'first.pdf' },
@@ -514,7 +521,12 @@ describe('supporting documents', () => {
       });
 
       await waitFor(() =>
-        expect(mocks.setDashboardNotification).toHaveBeenCalledWith()
+        expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: expect.stringContaining('Client Org'),
+            severity: 'Error',
+          })
+        )
       );
 
       expect(

@@ -11,7 +11,7 @@ import {
 import { NotificationSeverity } from '@/storage/types';
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useIsAuthenticated: vi.fn(),

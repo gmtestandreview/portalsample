@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn, waitFor } from 'storybook/test';
 import type { ComponentType } from 'react';
 import { useEffect } from 'react';
@@ -16,13 +16,13 @@ import { NotificationSeverity } from '../../storage/types';
 import NotificationMessage from '../../components/Alert/NotificationMessage';
 
 const draftItems = dashboardItems.filter(
-  (item) => item.status === DashboardItemStatus.QuoteDrafted
+  (item) => item.status === DashboardItemStatus.QuoteDrafted,
 );
 const requestItems = dashboardItems.filter(
-  (item) => item.status !== DashboardItemStatus.ReportIssued
+  (item) => item.status !== DashboardItemStatus.ReportIssued,
 );
 const instrumentItems = dashboardItems.filter(
-  (item) => item.status === DashboardItemStatus.ReportIssued
+  (item) => item.status === DashboardItemStatus.ReportIssued,
 );
 
 const buildDashboardResponse = (items = dashboardItems) =>
@@ -57,21 +57,21 @@ const NotificationDecorator = (Story: ComponentType) => {
   );
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Dashboard',
   component: Dashboard,
   decorators: [withPortalProviders],
   beforeEach({ msw }) {
     msw.use(
       http.get('/api/dashboard/get-filtered-dashboard-drafts', () =>
-        buildDashboardResponse(draftItems)
+        buildDashboardResponse(draftItems),
       ),
       http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
-        buildDashboardResponse(requestItems)
+        buildDashboardResponse(requestItems),
       ),
       http.get('/api/dashboard/get-filtered-dashboard-artefacts', () =>
-        buildDashboardResponse(instrumentItems)
-      )
+        buildDashboardResponse(instrumentItems),
+      ),
     );
   },
   parameters: {
@@ -93,15 +93,13 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof Dashboard>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Populated: Story = {
+export const Populated = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const tabList = await canvas.findByRole('tablist', {
       name: 'Select your dashboard view',
@@ -109,44 +107,44 @@ export const Populated: Story = {
 
     await expect(tabList).toBeVisible();
     await expect(
-      await canvas.findByRole('heading', { name: 'Fluke 87V' })
+      await canvas.findByRole('heading', { name: 'Fluke 87V' }),
     ).toBeVisible();
   },
-};
+});
 
-export const EmptyState: Story = {
+export const EmptyState = meta.story({
   beforeEach({ msw }) {
     msw.use(
       http.get(
         '/api/dashboard/get-filtered-dashboard-drafts',
-        emptyDraftsResponse
+        emptyDraftsResponse,
       ),
       http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
-        buildDashboardResponse([])
+        buildDashboardResponse([]),
       ),
       http.get('/api/dashboard/get-filtered-dashboard-artefacts', () =>
-        buildDashboardResponse([])
-      )
+        buildDashboardResponse([]),
+      ),
     );
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // The empty message also exists before loading starts, so first wait for the request.
     await waitFor(() => expect(emptyDraftsResponse).toHaveBeenCalled());
     await waitFor(() =>
-      expect(canvas.queryByText('Loading data...')).not.toBeInTheDocument()
+      expect(canvas.queryByText('Loading data...')).not.toBeInTheDocument(),
     );
     const noRequestsTexts = await canvas.findAllByText(
-      /you currently have no requests/i
+      /you currently have no requests/i,
     );
 
     await expect(noRequestsTexts[0]).toBeVisible();
   },
-};
+});
 
-export const RequestsTabWithNotification: Story = {
+export const RequestsTabWithNotification = meta.story({
   decorators: [NotificationDecorator],
   parameters: {
     portal: {
@@ -169,15 +167,15 @@ export const RequestsTabWithNotification: Story = {
   // SB-016: notification renders and dismiss button is present
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const notifications = await canvas.findAllByText(
-      /quote request saved as draft/i
+      /quote request saved as draft/i,
     );
     await waitFor(() =>
       expect(
-        canvas.getByRole('heading', { name: /Keysight U1242C/ })
-      ).toBeVisible()
+        canvas.getByRole('heading', { name: /Keysight U1242C/ }),
+      ).toBeVisible(),
     );
 
     await expect(notifications[0]).toBeVisible();
@@ -189,18 +187,18 @@ export const RequestsTabWithNotification: Story = {
 
     await expect(dismissButtons[0]).toBeInTheDocument();
   },
-};
+});
 
 // SB-016: clicking a tab changes the visible tab panel
-export const TabNavigation: Story = {
+export const TabNavigation = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
 
     await expect(
-      await canvas.findByRole('heading', { name: 'Fluke 87V' })
+      await canvas.findByRole('heading', { name: 'Fluke 87V' }),
     ).toBeVisible();
 
     const tabList = await canvas.findByRole('tablist', {
@@ -232,8 +230,8 @@ export const TabNavigation: Story = {
     });
     await waitFor(() =>
       expect(
-        canvas.getByRole('heading', { name: /Keysight U1242C/ })
-      ).toBeVisible()
+        canvas.getByRole('heading', { name: /Keysight U1242C/ }),
+      ).toBeVisible(),
     );
   },
-};
+});

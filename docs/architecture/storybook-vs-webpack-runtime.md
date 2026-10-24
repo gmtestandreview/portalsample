@@ -1,85 +1,62 @@
-# Storybook vs Production Runtime Gap
+# Storybook and Production Runtime Alignment
 
 ## Summary
 
-The NMI Portal Storybook uses the **Vite** dev server (via `@storybook/react-vite`
-adapter). The production portal uses **webpack 5** as its bundler
-(configured in `ClientApp/webpack/`).
+The NMI Portal uses Vite 8 for the production application, local development,
+Storybook, and Vitest Browser Mode. The production application is configured by
+`vite.config.mts`; Storybook uses the `@storybook/react-vite` adapter.
 
-This is not a contradiction — two different build pipelines can coexist — but
-it creates a divergence that must be understood before migrating stories or
-introducing build-time plugins.
+Using one bundler family removes the former production-versus-Storybook build
+gap and keeps module resolution, Sass processing, asset handling, and lazy
+loading behavior aligned.
 
-## Why the dual setup exists today
+## Canonical pipelines
 
-The current split is intentional:
-
-- **webpack 5** remains the production bundler path used by the deployed portal.
-- **Vite** is used in Storybook to reduce feedback time for component development.
-
-This lets teams improve component quality and developer speed without changing
-production packaging in the source-map snapshot.
-
-## What this means for migration
-
-| Concern | Storybook (Vite) | Production (webpack 5) |
+| Surface | Entry point | Purpose |
 | --- | --- | --- |
-| CSS/SCSS processing | Vite native (fast) | `css-loader` + `sass-loader` |
-| Module aliases | Vite `resolve.alias` | webpack `resolve.alias` |
-| Static assets | Vite asset handling | `file-loader` / `asset/resource` |
-| `process.env` | Vite injects `import.meta.env` | webpack `DefinePlugin` |
-| Tree shaking | Rollup (Vite) | webpack TerserPlugin |
-| HMR | Vite HMR | webpack HMR |
+| Application development | `npm run dev` / `npm start` | Vite dev server |
+| Application production | `npm run build` | Vite production bundle |
+| Storybook | `npm run storybook` | Component development and documentation |
+| Storybook tests | `npm run test:storybook` | Browser-mode story interaction tests |
+| Application E2E | `npm run test:e2e:app` | Real application workflows against the Vite server |
 
-## Divergence checklist (must pass before merge)
+## Shared build contract
 
-For any UI/platform change that passes in Storybook, also confirm production parity for:
+| Concern | Production application | Storybook and tests |
+| --- | --- | --- |
+| CSS/SCSS | Vite `css.preprocessorOptions` | Storybook Vite configuration |
+| Module aliases | `vite.config.mts` | `.storybook/main.ts` |
+| Static assets | Vite asset handling | Vite asset handling |
+| Runtime environment | `env.ts` reads injected `window.*` values | Test and Storybook harness stubs the same contract |
+| Code splitting | Vite-generated lazy chunks | Storybook exercises the component-level module graph |
 
-1. CSS/SCSS import and ordering behavior
-2. Alias and module resolution behavior
-3. Asset URL/base-path behavior (especially fonts and media)
-4. Route-level lazy loading and chunk fetch behavior
-5. Runtime env variable behavior (`window.*` via `env.ts`, never `import.meta.env` in app runtime code)
+## Verification checklist
 
-## Why stories can pass but production can fail
+For changes that affect bundling, assets, or runtime configuration, run:
 
-A story rendered in Storybook's Vite environment may:
+1. `npm run type-check`
+2. `npm run build`
+3. `npm run verify:vite-build`
+4. `npm run verify:vite-runtime`
+5. Relevant Storybook tests and application E2E scenarios
 
-- Import a CSS module or SCSS partial that Vite resolves differently from webpack
-- Rely on `import.meta.env.*` which is undefined in webpack builds
-- Use a dynamic `import()` with a path that webpack tree-shakes differently
+A passing Storybook story is useful component evidence, but it does not replace
+the production build and runtime verifiers.
 
-The 56 font-path failures resolved 2026-05-31 in `.storybook/preview.ts` are an
-example: Vite resolved relative font paths from a different base than webpack.
+## Runtime behavior not covered by Storybook
 
-## Known production-only behaviour not covered by Storybook
-
-1. **MSAL redirect flow** — the Azure B2C redirect sets cookies and storage keys
-   that require a real browser navigation cycle. Storybook stories mock MSAL state
-   via `storybookHarness.tsx`; the real redirect flow is only exercised in E2E tests.
-
-2. **API error boundaries** — production `AuthenticatedElement` wraps children in
-   an `ErrorBoundary`; stories use `withPortalProviders` which includes the same
-   boundary but does not simulate real 401/403 responses from MSW.
-
-3. **webpack code splitting** — route-level lazy loading is configured in
-   `App.tsx` via `React.lazy`. Storybook/Vite does not exercise the webpack chunk
-   boundary, so chunk-load failures are invisible in stories.
-
-## Rebuild recommendation
-
-In the rebuilt portal, align Storybook and production on the same bundler
-(either both Vite or both webpack) to close this gap. Vite is the recommended
-direction given the React ecosystem trend.
-
-If the rebuild uses Vite for production, the Storybook adapter should remain
-`@storybook/react-vite` (as already used here).
+1. **MSAL redirects** — Azure B2C navigation and browser storage require a real
+   application navigation cycle and are covered by application E2E tests.
+2. **API error boundaries** — Storybook uses MSW and provider harnesses; it does
+   not reproduce every real 401/403 response or server failure.
+3. **Lazy chunk failures** — route-level `React.lazy` loading is exercised by
+   the production build and application E2E flow, not by isolated stories.
 
 ## Files involved
 
 | File | Role |
 | --- | --- |
-| `.storybook/main.ts` | Configures Storybook adapter (vite adapter confirmed) |
-| `.storybook/preview.ts` | Global decorators — font paths resolved here |
-| `ClientApp/webpack/` | Production webpack config — do not edit |
-| `ClientApp/src/storybook/storybookHarness.tsx` | MSAL/auth mock context for stories |
+| `vite.config.mts` | Application development, production, Sass, alias, and runtime plugins |
+| `.storybook/main.ts` | Storybook Vite adapter and shared build settings |
+| `.storybook/preview.ts` | Global decorators and asset setup |
+| `ClientApp/src/storybook/storybookHarness.tsx` | MSAL and application-provider test context |

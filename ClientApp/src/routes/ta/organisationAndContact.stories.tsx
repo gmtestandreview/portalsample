@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import OrganisationAndContact from './organisationAndContact';
@@ -9,7 +9,7 @@ import OrganisationAndContact from './organisationAndContact';
  * main contact. Every field is Formik-bound under the step `name` prefix, so the story
  * provides a matching initial-values context.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/OrganisationAndContact',
   component: OrganisationAndContact,
   decorators: [withPortalProviders],
@@ -33,19 +33,17 @@ const meta = {
     name: 'organisationAndContact',
     isSummary: false,
   },
-} satisfies Meta<typeof OrganisationAndContact>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const EditStep: Story = {
+export const EditStep = meta.story({
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const organisationType = await canvas.findByText('Organisation type');
     const organisationName = await canvas.findByLabelText(/organisation name/i);
 
     await expect(organisationType).toBeInTheDocument();
     await expect(organisationName).toBeInTheDocument();
   },
-};
+});

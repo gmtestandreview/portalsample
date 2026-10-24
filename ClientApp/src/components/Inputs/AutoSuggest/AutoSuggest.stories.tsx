@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import AutoSuggest from './index';
 import AutoSuggestContainer from './AutoSuggestContainer';
@@ -25,17 +25,15 @@ const mockOptions: AutoSuggestOption<string>[] = [
 const getMockOptions = () => Promise.resolve(mockOptions);
 const getEmptyOptions = () => Promise.resolve<AutoSuggestOption<string>[]>([]);
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/AutoSuggest',
   component: AutoSuggest,
   subcomponents: { AutoSuggestContainer },
   decorators: [withPortalProviders],
-} satisfies Meta<typeof AutoSuggest>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const WithSuggestions: Story = {
+export const WithSuggestions = meta.story({
   args: {
     name: 'suburb',
     label: 'Suburb',
@@ -61,7 +59,7 @@ export const WithSuggestions: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
@@ -78,7 +76,7 @@ export const WithSuggestions: Story = {
     await expect(
       await screen.findByRole('option', {
         name: 'Sydney Olympic Park NSW (2 of 3)',
-      })
+      }),
     ).toBeVisible();
 
     // Escape closes the suggestion list. Asserting it also leaves the combobox settled
@@ -88,9 +86,9 @@ export const WithSuggestions: Story = {
 
     await expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   },
-};
+});
 
-export const EmptyState: Story = {
+export const EmptyState = meta.story({
   args: {
     name: 'suburb',
     label: 'Suburb',
@@ -116,7 +114,7 @@ export const EmptyState: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
@@ -125,9 +123,9 @@ export const EmptyState: Story = {
 
     await expect(noResult).toBeVisible();
   },
-};
+});
 
-export const Loading: Story = {
+export const Loading = meta.story({
   name: 'Loading (AutoSuggestContainer)',
   args: {
     name: 'suburb',
@@ -163,10 +161,10 @@ export const Loading: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const loadingText = canvas.getByText(/loading options/i);
 
     await expect(loadingText).toBeVisible();
   },
-};
+});

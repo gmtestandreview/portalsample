@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import InstrumentInfoPanel from './instrumentInfoPanel';
@@ -10,7 +10,7 @@ import InstrumentInfoPanel from './instrumentInfoPanel';
  * selection it collapses to a screen-reader-only empty notice. Real reference links are
  * fetched only for valid instrument GUIDs, so these stories exercise the static panel.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/InstrumentInfoPanel',
   component: InstrumentInfoPanel,
   decorators: [withPortalProviders],
@@ -24,43 +24,41 @@ const meta = {
     name: 'instrument',
     isNewCustomer: true,
   },
-} satisfies Meta<typeof InstrumentInfoPanel>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const WithReferences: Story = {
+export const WithReferences = meta.story({
   args: {
     selectedInstrumentCategoryId: 'category-area-measurement',
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByText('References for this instrument type')
+      canvas.getByText('References for this instrument type'),
     ).toBeVisible();
     await expect(
-      canvas.getByText('Technical specification documents')
+      canvas.getByText('Technical specification documents'),
     ).toBeVisible();
     // New customers also see the credit-check form link.
     await expect(
       canvas.getByRole('link', {
         name: /download credit check application form/i,
-      })
+      }),
     ).toBeVisible();
   },
-};
+});
 
-export const NoSelection: Story = {
+export const NoSelection = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByText(/no references for this instrument type/i)
+      canvas.getByText(/no references for this instrument type/i),
     ).toBeInTheDocument();
   },
-};
+});

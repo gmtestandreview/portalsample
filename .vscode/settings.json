@@ -74,5 +74,7 @@
       "source.organizeImports.ruff": "explicit"
     }
   },
-  "codeQL.createQuery.qlPackLocation": "c:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\.worktrees\\feat-storybook-coverage-remediation"
+  "codeQL.createQuery.qlPackLocation": "c:\\Users\\gregm\\offline-site-robots-off\\portal.measurement.gov.au\\source-map-capture\\portal.measurement.gov.au\\.worktrees\\feat-storybook-coverage-remediation",
+  "vitest.workspaceConfig": "",
+  "vitest.vitestPackagePath": ""
 }

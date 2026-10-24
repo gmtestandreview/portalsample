@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import AccountDetails from './accountDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Account/CreateAccountStep',
   component: AccountDetails,
   decorators: [withPortalProviders],
@@ -38,18 +38,16 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof AccountDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const OrganisationDetails: Story = {
+export const OrganisationDetails = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const tradingName = canvas.getByLabelText(
-      'Business or Trading name (optional)'
+      'Business or Trading name (optional)',
     );
     await userEvent.clear(tradingName);
     await userEvent.type(tradingName, 'Prec');
@@ -59,7 +57,7 @@ export const OrganisationDetails: Story = {
     // is what left OrganisationNameLookup updating outside act - twice, once per instance
     // on this route.
     await expect(
-      await canvas.findByRole('option', { name: /Precision Testing/ })
+      await canvas.findByRole('option', { name: /Precision Testing/ }),
     ).toBeVisible();
 
     // A listbox may only own `option` and `group` children. The "Did you mean?" heading
@@ -72,12 +70,12 @@ export const OrganisationDetails: Story = {
     });
 
     await expect(within(suggestions).queryAllByRole('listitem')).toHaveLength(
-      0
+      0,
     );
   },
-};
+});
 
-export const OrganisationDetailsValidation: Story = {
+export const OrganisationDetailsValidation = meta.story({
   parameters: {
     portal: {
       formik: {
@@ -107,4 +105,4 @@ export const OrganisationDetailsValidation: Story = {
       },
     },
   },
-};
+});

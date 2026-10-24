@@ -23,7 +23,7 @@ import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
  */
 const captured = vi.hoisted(() => ({ editors: [] as Editor[] }));
 
-vi.mock(import('slate'), async (importOriginal) => {
+vi.mock('slate', async (importOriginal) => {
   const actual = await importOriginal<typeof SlateModule>();
 
   return {

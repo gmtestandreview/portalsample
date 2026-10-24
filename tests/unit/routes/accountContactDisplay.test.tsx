@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/TextInput'),
+  '../../../ClientApp/src/components/Inputs/TextInput',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -12,7 +12,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/NumberInput'),
+  '../../../ClientApp/src/components/Inputs/NumberInput',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -22,7 +22,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/Checkbox'),
+  '../../../ClientApp/src/components/Inputs/Checkbox',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -32,7 +32,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/AddressLookup'),
+  '../../../ClientApp/src/components/Inputs/AddressLookup',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -42,7 +42,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Inputs/OrganisationNameLookup'),
+  '../../../ClientApp/src/components/Inputs/OrganisationNameLookup',
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -52,7 +52,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/HidableField'),
+  '../../../ClientApp/src/components/forms/HidableField',
   () =>
     ({
       default: ({
@@ -66,7 +66,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
+  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
   () =>
     ({
       default: ({ name, roleLabel }: { name: string; roleLabel: string }) => (

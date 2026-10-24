@@ -1,30 +1,27 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Checkbox } from './Checkbox';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Checkbox>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole('checkbox', { name: 'Unsubscribe' })
+      canvas.getByRole('checkbox', { name: 'Unsubscribe' }),
     ).toBeInTheDocument();
   },
-};
+});
 
-export const Indeterminate: Story = {
+export const Indeterminate = meta.story({
   render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
   args: {
     isIndeterminate: true,
@@ -32,19 +29,19 @@ export const Indeterminate: Story = {
   play: async ({ canvas }) => {
     // The indeterminate state draws a dash rather than a tick, so it renders a different mark.
     await expect(
-      canvas.getByRole('checkbox', { name: 'Unsubscribe' })
+      canvas.getByRole('checkbox', { name: 'Unsubscribe' }),
     ).toBePartiallyChecked();
   },
-};
+});
 
-export const WithDescription: Story = {
+export const WithDescription = meta.story({
   render: (args) => <Checkbox {...args}>Unsubscribe</Checkbox>,
   args: {
     description: 'You can resubscribe at any time.',
   },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByText('You can resubscribe at any time.')
+      canvas.getByText('You can resubscribe at any time.'),
     ).toBeVisible();
   },
-};
+});

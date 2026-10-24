@@ -1,22 +1,18 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Tree, TreeItem } from './Tree';
 import { expect } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Tree',
   component: Tree,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Tree>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   render: (args) => (
     <Tree aria-label='Files' {...args}>
       <TreeItem title='Documents'>
@@ -38,4 +34,4 @@ export const Example: Story = {
     await expect(canvas.getByRole('treegrid', { name: 'Files' })).toBeVisible();
     await expect(canvas.getByRole('row', { name: 'Documents' })).toBeVisible();
   },
-};
+});

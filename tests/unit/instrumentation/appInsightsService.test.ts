@@ -18,21 +18,21 @@ describe('appInsightsService', () => {
     });
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      '@microsoft/applicationinsights-web',
       () =>
         ({
           ApplicationInsights: applicationInsightsCtor,
         }) satisfies __ExactMockModule<__TestMockModule57>
     );
     vi.doMock(
-      import('@microsoft/applicationinsights-react-js'),
+      '@microsoft/applicationinsights-react-js',
       () =>
         ({
           ReactPlugin: reactPluginCtor,
         }) satisfies __ExactMockModule<__TestMockModule58>
     );
     vi.doMock(
-      import('@/env'),
+      '@/env',
       () =>
         ({
           env: {
@@ -71,21 +71,21 @@ describe('appInsightsService', () => {
     });
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      '@microsoft/applicationinsights-web',
       () =>
         ({
           ApplicationInsights: applicationInsightsCtor,
         }) satisfies __ExactMockModule<__TestMockModule57>
     );
     vi.doMock(
-      import('@microsoft/applicationinsights-react-js'),
+      '@microsoft/applicationinsights-react-js',
       () =>
         ({
           ReactPlugin: vi.fn(function ReactPlugin() {}),
         }) satisfies __ExactMockModule<__TestMockModule58>
     );
     vi.doMock(
-      import('@/env'),
+      '@/env',
       () =>
         ({
           env: {
@@ -107,21 +107,21 @@ describe('appInsightsService', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      '@microsoft/applicationinsights-web',
       () =>
         ({
           ApplicationInsights: vi.fn(),
         }) satisfies __ExactMockModule<__TestMockModule57>
     );
     vi.doMock(
-      import('@microsoft/applicationinsights-react-js'),
+      '@microsoft/applicationinsights-react-js',
       () =>
         ({
           ReactPlugin: vi.fn(function ReactPlugin() {}),
         }) satisfies __ExactMockModule<__TestMockModule58>
     );
     vi.doMock(
-      import('@/env'),
+      '@/env',
       () =>
         ({
           env: {
@@ -142,14 +142,14 @@ describe('appInsightsService', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      '@microsoft/applicationinsights-web',
       () =>
         ({
           ApplicationInsights: vi.fn(),
         }) satisfies __ExactMockModule<__TestMockModule57>
     );
     vi.doMock(
-      import('@microsoft/applicationinsights-react-js'),
+      '@microsoft/applicationinsights-react-js',
       () =>
         ({
           ReactPlugin: vi.fn(function ReactPlugin() {}),
@@ -159,7 +159,7 @@ describe('appInsightsService', () => {
     // warning per module instantiation is noise there - 48 lines across the
     // Storybook suite - and it drowns out warnings that mean something.
     vi.doMock(
-      import('@/env'),
+      '@/env',
       () =>
         ({
           env: {
@@ -180,21 +180,21 @@ describe('appInsightsService', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      '@microsoft/applicationinsights-web',
       () =>
         ({
           ApplicationInsights: vi.fn(),
         }) satisfies __ExactMockModule<__TestMockModule57>
     );
     vi.doMock(
-      import('@microsoft/applicationinsights-react-js'),
+      '@microsoft/applicationinsights-react-js',
       () =>
         ({
           ReactPlugin: vi.fn(function ReactPlugin() {}),
         }) satisfies __ExactMockModule<__TestMockModule58>
     );
     vi.doMock(
-      import('@/env'),
+      '@/env',
       () =>
         ({
           env: {

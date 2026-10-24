@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/hooks'),
+  '../../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       default: () => mocks.account,
@@ -26,7 +26,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () =>
     ({
       default: mocks.useHtmlTitle,
@@ -34,7 +34,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: mocks.useBodyClass,
@@ -42,7 +42,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/FormBanner'),
+  '../../../../ClientApp/src/components/forms/FormBanner',
   () =>
     ({
       default: ({

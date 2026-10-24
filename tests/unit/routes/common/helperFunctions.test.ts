@@ -56,7 +56,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -76,7 +76,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/notification'),
+  '../../../../ClientApp/src/storage/notification',
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -84,7 +84,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/openWindow'),
+  '../../../../ClientApp/src/routes/common/openWindow',
   () =>
     ({
       openUrlInSecureNewTab: mocks.openUrlInSecureNewTab,
@@ -93,7 +93,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('react-ga4'),
+  'react-ga4',
   () =>
     ({
       default: {
@@ -227,7 +227,12 @@ describe('route common helper functions', () => {
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalledWith();
+    const expectedId =
+      methodName === 'getQuoteOfferPDFByQuoteID' ? 'quote-1' : 'request-1';
+    expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalledWith(
+      expectedId,
+      false
+    );
   });
 
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {

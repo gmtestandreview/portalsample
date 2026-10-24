@@ -1,18 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
 import ContentModal from './index';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Modals/ContentModal',
   component: ContentModal,
   decorators: [withPortalProviders],
-} satisfies Meta<typeof ContentModal>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 const DismissibleContentModalDemo = ({
   onCancelModal,
@@ -35,26 +33,26 @@ const DismissibleContentModalDemo = ({
   );
 };
 
-export const OpenWithContent: Story = {
+export const OpenWithContent = meta.story({
   args: {
     showModal: true,
     onCancelModal: fn(),
     modalTitle: 'Example Modal Title',
     modalBody: <p>Modal body content for Storybook preview.</p>,
   },
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+  render: (args) => (
     <DismissibleContentModalDemo {...args} />
   ),
   play: async ({
     args,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const dialog = await screen.findByRole('dialog', {
       name: /example modal title/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
 
     await expect(
-      within(dialog).getByText('Modal body content for Storybook preview.')
+      within(dialog).getByText('Modal body content for Storybook preview.'),
     ).toBeVisible();
 
     await userEvent.click(screen.getByTestId('close-button'));
@@ -63,17 +61,17 @@ export const OpenWithContent: Story = {
 
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: /example modal title/i })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('dialog', { name: /example modal title/i }),
+      ).not.toBeInTheDocument(),
     );
   },
-};
+});
 
-export const Closed: Story = {
+export const Closed = meta.story({
   args: {
     showModal: false,
     onCancelModal: () => {},
     modalTitle: 'Closed Modal',
     modalBody: <p>This modal is closed.</p>,
   },
-};
+});

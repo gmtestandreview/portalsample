@@ -72,7 +72,7 @@ Playwright-BDD project commands:
 | `npm run test:e2e:storybook` | Storybook scenarios using the `storybook-bdd` project |
 | `npm run test:e2e` | Both BDD projects, run sequentially |
 
-`app-bdd` starts only Webpack on port 3000. `storybook-bdd` starts only
+`app-bdd` starts only Vite on port 3000. `storybook-bdd` starts only
 Storybook on port 6006. A passing suite is scenario coverage, not JavaScript
 statement or branch coverage.
 
@@ -106,7 +106,7 @@ branch coverage.
 | --- | --- |
 | `static-quality-node24` | `type-check`, `lint`, `lint:mdx` |
 | `vitest` × 3 | `unit`, `storybook`, `quality` partitions — each its own required status |
-| `build-node24` | production webpack build + `storybook:verify:docs` |
+| `build-node24` | production Vite build + `storybook:verify:docs` |
 | `date-timezone` × 3 | the focused date suite under UTC, Australia/Sydney, America/Los_Angeles |
 | `e2e-node24` | both BDD suites (`npm run test:e2e`) |
 | `lower-bound-node24` | install on the exact Node 24.0.0 floor with `--strict-peer-deps`, plus dependency-security policy tests |
@@ -287,7 +287,7 @@ Current reporting:
 - `html`
 - `json-summary`
 
-Coverage includes handwritten `ClientApp/src/**/*.{ts,tsx}` plus `webpack.config.js`. Thresholds are set to 100% for statements, branches, functions, and lines.
+Coverage includes handwritten `ClientApp/src/**/*.{ts,tsx}` plus `vite.config.mts`. Thresholds are set to 100% for statements, branches, functions, and lines.
 
 The 2026-06-28 coverage run is currently red even though all 1,169 tests pass:
 

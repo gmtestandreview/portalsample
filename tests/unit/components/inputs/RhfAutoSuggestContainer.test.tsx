@@ -19,7 +19,7 @@ const comboState = vi.hoisted(() => ({
   onOpenChange: undefined as ((isOpen: boolean) => void) | undefined,
 }));
 
-vi.mock(import('react-aria-components/ComboBox'), async () => {
+vi.mock('react-aria-components/ComboBox', async () => {
   const React = await import('react');
   const ComboBoxStateContext = React.createContext(comboState);
 
@@ -62,7 +62,7 @@ vi.mock(import('react-aria-components/ComboBox'), async () => {
   } satisfies __ExactMockModule<__TestMockModule37>;
 });
 
-vi.mock(import('react-aria-components/Group'), async () => {
+vi.mock('react-aria-components/Group', async () => {
   const React = await import('react');
   const Group = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'group' }, children);
@@ -70,7 +70,7 @@ vi.mock(import('react-aria-components/Group'), async () => {
 });
 
 vi.mock(
-  import('@/components/Inputs/AutoSuggest/AutoSuggestOptions'),
+  '@/components/Inputs/AutoSuggest/AutoSuggestOptions',
   () =>
     ({
       default: ({ options }: { options: AutoSuggestOption<string>[] }) => (

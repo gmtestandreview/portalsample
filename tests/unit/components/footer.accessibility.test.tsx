@@ -8,7 +8,7 @@ import Privacy from '@/components/Footer/privacy';
 import TermsOfUse from '@/components/Footer/termsOfUse';
 
 vi.mock(
-  import('@/assets/GovCrest.svg'),
+  '@/assets/GovCrest.svg',
   () =>
     ({
       default: 'gov-crest.svg',
@@ -55,7 +55,7 @@ describe('footer accessibility', () => {
       for (const section of labelledSections) {
         const labelId = section.getAttribute('aria-labelledby');
 
-        expect(labelId).toBe(true);
+        expect(labelId).toBeTruthy();
         expect(container.querySelectorAll(`#${labelId}`)).toHaveLength(1);
       }
     }

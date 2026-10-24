@@ -1,3 +1,4 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { DisclosureGroup } from './DisclosureGroup';
 import {
@@ -5,22 +6,21 @@ import {
   DisclosureHeader,
   DisclosurePanel,
 } from '../Disclosure/Disclosure';
-import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
+import type { StoryFn } from '@storybook/react-vite';
 import { expect, userEvent } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/DisclosureGroup',
   component: DisclosureGroup,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof DisclosureGroup>;
+});
 
-export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
-export const Example = {
+export const Example = meta.story({
   render: (args: Readonly<Parameters<Story>[0]>) => (
     <DisclosureGroup {...args}>
       <Disclosure id='personal'>
@@ -51,7 +51,7 @@ export const Example = {
     await expect(personalTrigger).toHaveAttribute('aria-expanded', 'true');
     await expect(billingTrigger).toHaveAttribute('aria-expanded', 'false');
     await expect(
-      canvas.getByText('Personal information form here.')
+      canvas.getByText('Personal information form here.'),
     ).toBeInTheDocument();
 
     await userEvent.click(billingTrigger);
@@ -59,7 +59,7 @@ export const Example = {
     await expect(personalTrigger).toHaveAttribute('aria-expanded', 'false');
     await expect(billingTrigger).toHaveAttribute('aria-expanded', 'true');
     await expect(
-      canvas.getByText('Billing address form here.')
+      canvas.getByText('Billing address form here.'),
     ).toBeInTheDocument();
   },
-} satisfies StoryObj<typeof meta>;
+});

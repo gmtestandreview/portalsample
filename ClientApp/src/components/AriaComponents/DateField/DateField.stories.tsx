@@ -1,21 +1,21 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { DateField } from './DateField';
-import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
+import type { StoryFn } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/DateField',
   component: DateField,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof DateField>;
+});
 
-export default meta;
 type Story = StoryFn<typeof DateField>;
 
-export const Example = {
+export const Example = meta.story({
   render: (args: Readonly<Parameters<Story>[0]>) => <DateField {...args} />,
   args: {
     label: 'Event date',
@@ -23,35 +23,31 @@ export const Example = {
   play: async ({ canvas }) => {
     await expect(canvas.getByText('Event date')).toBeVisible();
   },
-} satisfies StoryObj<typeof meta>;
+});
 
-export const WithDescription: Story = (
-  args: Readonly<Parameters<Story>[0]>
-) => <DateField {...args} />;
+export const WithDescription = meta.story({
+  args: {
+    label: 'Event date',
+    description: 'Use the date shown on your certificate.',
+  },
 
-WithDescription.args = {
-  label: 'Event date',
-  description: 'Use the date shown on your certificate.',
-};
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('Use the date shown on your certificate.'),
+    ).toBeVisible();
+  },
+});
 
-WithDescription.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('Use the date shown on your certificate.')
-  ).toBeVisible();
-};
+export const Invalid = meta.story({
+  args: {
+    label: 'Event date',
+    isInvalid: true,
+    errorMessage: 'Enter a date that has already passed.',
+  },
 
-export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <DateField {...args} />
-);
-
-Invalid.args = {
-  label: 'Event date',
-  isInvalid: true,
-  errorMessage: 'Enter a date that has already passed.',
-};
-
-Invalid.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('Enter a date that has already passed.')
-  ).toBeVisible();
-};
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('Enter a date that has already passed.'),
+    ).toBeVisible();
+  },
+});

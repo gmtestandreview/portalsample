@@ -23,7 +23,7 @@ const isInventorySourcePath = (filePath) =>
 
 const isExcludedSourcePath = (filePath) =>
   /(^|\/)(\.claude|\.git|stories?|tests?|__tests__|vendor|external|generated|node_modules|reports|storybook-static|dist)(\/|$)/u.test(
-    filePath
+    filePath,
   ) || /\.(stories|test|spec|d)\.(tsx?|jsx?)$/u.test(filePath);
 
 const relativeSourcePath = (root, filePath) =>
@@ -85,18 +85,18 @@ export function buildWorklist({ files, candidateFiles = [] }) {
   const diagnostics = validateSourceClaims(emptyManifest, discovery).errors;
   const acceptedPaths = new Set(files.map((file) => file.path));
   const excludedByPolicy = candidateFiles.filter(
-    (candidate) => !acceptedPaths.has(candidate.path)
+    (candidate) => !acceptedPaths.has(candidate.path),
   );
 
   const provenanceByKey = new Map(
     (discovery.provenance ?? []).map((entry) => [
       canonicalKey(entry),
       entry.kind,
-    ])
+    ]),
   );
   const worklist = [
     ...discovery.exports.map((entry) =>
-      createReviewedEntry(entry, provenanceByKey)
+      createReviewedEntry(entry, provenanceByKey),
     ),
     ...discovery.unresolved.map(createUnresolvedEntry),
   ].toSorted((left, right) => {
@@ -106,16 +106,16 @@ export function buildWorklist({ files, candidateFiles = [] }) {
 
   const categoryCounts = {
     direct: worklist.filter(
-      (entry) => entry.proposedClassification === 'direct'
+      (entry) => entry.proposedClassification === 'direct',
     ).length,
     consumer: worklist.filter(
-      (entry) => entry.proposedClassification === 'consumer'
+      (entry) => entry.proposedClassification === 'consumer',
     ).length,
     forwarding: worklist.filter(
-      (entry) => entry.proposedClassification === 'forwarding'
+      (entry) => entry.proposedClassification === 'forwarding',
     ).length,
     nonvisual: worklist.filter(
-      (entry) => entry.proposedClassification === 'nonvisual'
+      (entry) => entry.proposedClassification === 'nonvisual',
     ).length,
     unresolved: discovery.unresolved.length,
     excludedByPolicy: excludedByPolicy.length,
@@ -129,7 +129,7 @@ export function buildWorklist({ files, candidateFiles = [] }) {
       discoveredExportsWithDiagnostics: diagnostics.filter(
         (entry) =>
           entry.code === FAILURE_CODES.EVIDENCE_MISSING &&
-          entry.message.startsWith('discovered export has no reviewed claim:')
+          entry.message.startsWith('discovered export has no reviewed claim:'),
       ).length,
       unresolvedEntries: discovery.unresolved.length,
       diagnosticCount: diagnostics.length,

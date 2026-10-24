@@ -1,15 +1,21 @@
 #!/usr/bin/env node
 
-const fs = require('node:fs');
-const path = require('node:path');
-const { spawn } = require('node:child_process');
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const skillDir = __dirname;
 const nodeModules = path.join(skillDir, 'node_modules');
 
-function ensurePlaywright() {
+function resolvePlaywright() {
   try {
-    require.resolve('playwright', { paths: [skillDir] });
+    return import.meta.resolve(
+      'playwright',
+      pathToFileURL(path.join(skillDir, 'run.js')).href
+    );
   } catch {
     console.error(
       'Playwright is not installed. Run `npm run setup` in the skill directory.'
@@ -65,7 +71,7 @@ function run(args) {
   }
 }
 
-ensurePlaywright();
+const playwrightUrl = resolvePlaywright();
 
 const args = process.argv.slice(2);
 if (args[0] === '-e' || args[0] === '--eval') {
@@ -76,13 +82,16 @@ if (args[0] === '-e' || args[0] === '--eval') {
     );
     process.exit(1);
   }
-  const helpersPath = JSON.stringify(path.join(skillDir, 'lib/helpers'));
-  const prefix = `const { chromium, firefox, webkit, devices } = require('playwright');\nconst helpers = require(${helpersPath});\n`;
+  const helpersUrl = JSON.stringify(
+    pathToFileURL(path.join(skillDir, 'lib/helpers.js')).href
+  );
+  const prefix = `import * as playwright from ${JSON.stringify(playwrightUrl)};\nimport * as helpers from ${helpersUrl};\nconst { chromium, firefox, webkit, devices } = playwright;\n`;
   // ponytail: exit once the snippet settles so a snippet that leaves the browser open
   // cannot hang; the empty writes flush queued output first (pipe writes are async).
   const exit =
     "async () => { for (const s of [process.stdout, process.stderr]) await new Promise(r => s.write('', r)); process.exit(process.exitCode ?? 0); }";
   run([
+    '--input-type=module',
     '-e',
     `${prefix}\n(async () => {\n  try {\n    ${source}\n  } catch (error) {\n    console.error(error.stack || error.message);\n    process.exitCode = 1;\n  }\n})().finally(${exit});`,
   ]);

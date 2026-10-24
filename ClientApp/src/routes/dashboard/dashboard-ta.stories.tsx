@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import DashboardTa from './dashboard-ta';
@@ -9,7 +9,7 @@ import DashboardTa from './dashboard-ta';
  * controls. The request lists load from APIs not served in Storybook, so the story
  * documents the framed dashboard shell.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Dashboard/DashboardTypeApproval',
   component: DashboardTa,
   decorators: [withPortalProviders],
@@ -20,22 +20,20 @@ const meta = {
       initialEntries: ['/dashboard-ta'],
     },
   },
-} satisfies Meta<typeof DashboardTa>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Shell: Story = {
+export const Shell = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('heading', { name: 'Quick links' })
+      canvas.getByRole('heading', { name: 'Quick links' }),
     ).toBeVisible();
     await expect(
-      canvas.getByText(/your feedback about using the portal/i)
+      canvas.getByText(/your feedback about using the portal/i),
     ).toBeInTheDocument();
   },
-};
+});

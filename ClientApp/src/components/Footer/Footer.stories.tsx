@@ -1,25 +1,23 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 import Footer from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Footer',
   component: Footer,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof Footer>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 // SB-023: Footer Default — landmark and link a11y assertions
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // Footer renders a contentinfo (footer) landmark
     const footer =
@@ -36,9 +34,9 @@ export const Default: Story = {
       await expect(label).toBeTruthy();
     }
   },
-};
+});
 
-export const TermsModalOpen: Story = {
+export const TermsModalOpen = meta.story({
   play: async () => {
     const user = userEvent.setup();
     const triggerBtn = screen.getByTestId('open-termsofuse-button');
@@ -50,13 +48,13 @@ export const TermsModalOpen: Story = {
     await user.click(screen.getByTestId('close-button'));
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: /portal terms of use/i })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', { name: /portal terms of use/i }),
+      ).not.toBeInTheDocument(),
     );
   },
-};
+});
 
-export const PrivacyModalOpen: Story = {
+export const PrivacyModalOpen = meta.story({
   play: async () => {
     const user = userEvent.setup();
     await user.click(screen.getByTestId('open-privacy-button'));
@@ -67,13 +65,15 @@ export const PrivacyModalOpen: Story = {
     await user.click(screen.getByTestId('close-button'));
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: /privacy collection statement/i })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', {
+          name: /privacy collection statement/i,
+        }),
+      ).not.toBeInTheDocument(),
     );
   },
-};
+});
 
-export const AccessibilityModalOpen: Story = {
+export const AccessibilityModalOpen = meta.story({
   play: async () => {
     const user = userEvent.setup();
     await user.click(screen.getByTestId('open-accessibility-button'));
@@ -84,8 +84,8 @@ export const AccessibilityModalOpen: Story = {
     await user.click(screen.getByTestId('close-button'));
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: /accessibility/i })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', { name: /accessibility/i }),
+      ).not.toBeInTheDocument(),
     );
   },
-};
+});

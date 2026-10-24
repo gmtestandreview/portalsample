@@ -37,7 +37,7 @@ for (const file of requiredFiles) {
 }
 
 const index = JSON.parse(
-  await readOwnedFile(staticDir, resolve(staticDir, 'index.json'))
+  await readOwnedFile(staticDir, resolve(staticDir, 'index.json')),
 );
 
 const entries = Object.values(index.entries ?? {});
@@ -58,12 +58,12 @@ if (storyEntries.length === 0) {
 }
 
 const hasDocumentationSection = docsEntries.some((entry) =>
-  String(entry.title ?? '').startsWith('Documentation/')
+  String(entry.title ?? '').startsWith('Documentation/'),
 );
 
 if (!hasDocumentationSection) {
   throw new Error(
-    'Expected at least one standalone Documentation/* MDX entry.'
+    'Expected at least one standalone Documentation/* MDX entry.',
   );
 }
 
@@ -120,15 +120,15 @@ for (const sourceFile of (
 
 if (internalDocsLinkFailures.length > 0) {
   throw new Error(
-    `Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join('\n  ')}`
+    `Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join('\n  ')}`,
   );
 }
 
 const manifest = JSON.parse(
   await readOwnedFile(
     staticDir,
-    resolve(staticDir, 'manifests/components.json')
-  )
+    resolve(staticDir, 'manifests/components.json'),
+  ),
 );
 
 const components = Object.values(manifest.components ?? {});
@@ -139,12 +139,12 @@ if (components.length === 0) {
 
 const reusableComponentStoryPrefix = './ClientApp/src/components/';
 const reusableComponents = components.filter((component) =>
-  String(component.path ?? '').startsWith(reusableComponentStoryPrefix)
+  String(component.path ?? '').startsWith(reusableComponentStoryPrefix),
 );
 
 if (reusableComponents.length === 0) {
   throw new Error(
-    'Storybook component manifest contains no reusable components.'
+    'Storybook component manifest contains no reusable components.',
   );
 }
 
@@ -195,7 +195,7 @@ const acceptedDocgenExceptions = new Map([
 const reusableDocgenFailureIds = new Set(
   reusableComponents
     .filter((component) => component.error)
-    .map((component) => component.id)
+    .map((component) => component.id),
 );
 const staleAcceptedDocgenExceptions = [
   ...acceptedDocgenExceptions.keys(),
@@ -203,7 +203,7 @@ const staleAcceptedDocgenExceptions = [
 
 if (staleAcceptedDocgenExceptions.length > 0) {
   throw new Error(
-    `Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join('\n  ')}`
+    `Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join('\n  ')}`,
   );
 }
 
@@ -212,12 +212,12 @@ const docgenFailures = reusableComponents
   .filter((component) => !acceptedDocgenExceptions.has(component.id))
   .map(
     (component) =>
-      `${component.name} (${component.id}): ${component.error.name}`
+      `${component.name} (${component.id}): ${component.error.name}`,
   );
 
 if (docgenFailures.length > 0) {
   throw new Error(
-    `Components without generated prop metadata:\n  ${docgenFailures.join('\n  ')}`
+    `Components without generated prop metadata:\n  ${docgenFailures.join('\n  ')}`,
   );
 }
 
@@ -235,6 +235,6 @@ console.warn(
       acceptedDocgenExceptions: Object.fromEntries(acceptedDocgenExceptions),
     },
     null,
-    2
-  )
+    2,
+  ),
 );

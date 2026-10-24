@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import ViewRequestForQuoteSummary from './viewRequestForQuoteSummary';
@@ -10,7 +10,7 @@ import ViewRequestForQuoteSummary from './viewRequestForQuoteSummary';
  * overlay. In Storybook the step-status API is not served, so the story documents that
  * loading state.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/RequestForQuote/ViewRequestForQuoteSummary',
   component: ViewRequestForQuoteSummary,
   decorators: [withPortalProviders],
@@ -24,17 +24,15 @@ const meta = {
   args: {
     isSubmitted: true,
   },
-} satisfies Meta<typeof ViewRequestForQuoteSummary>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Loading: Story = {
+export const Loading = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Loading...')).toBeVisible();
   },
-};
+});

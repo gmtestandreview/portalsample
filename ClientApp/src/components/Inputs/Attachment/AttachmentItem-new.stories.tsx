@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import AttachmentItemNew from './AttachmentItem-new';
@@ -9,7 +9,7 @@ import AttachmentItemNew from './AttachmentItem-new';
  * delete control gated behind a confirmation modal. It reads its data from the Formik
  * array field `${name}[${index}]`, so the stories provide a matching Formik context.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/Attachment/AttachmentItemNew',
   component: AttachmentItemNew,
   decorators: [withPortalProviders],
@@ -40,35 +40,33 @@ const meta = {
     onRemoveItem: fn(),
     onCategoryUpdate: fn(),
   },
-} satisfies Meta<typeof AttachmentItemNew>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Editable: Story = {
+export const Editable = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     await expect(canvas.getByLabelText('Category')).toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: /delete/i })).toBeVisible();
   },
-};
+});
 
-export const ReadOnlySummary: Story = {
+export const ReadOnlySummary = meta.story({
   args: {
     canRemove: false,
     isSummary: true,
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     // No delete affordance in the read-only summary presentation.
     await expect(canvas.queryByRole('button', { name: /delete/i })).toBeNull();
   },
-};
+});

@@ -38,7 +38,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -51,7 +51,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/analytics/GoogleAnalytics'),
+  '../../../ClientApp/src/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: vi.fn(),
@@ -59,7 +59,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/notification'),
+  '../../../ClientApp/src/storage/notification',
   () =>
     ({
       clearDashboardNotification: vi.fn(),
@@ -67,7 +67,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -78,21 +78,21 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       DashboardClient: vi.fn(function (this: {
         setAuthToken: ReturnType<typeof vi.fn>;
         getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
       }) {
-        vi.spyOn(this, 'setAuthToken').mockImplementation();
+        this.setAuthToken = vi.fn();
         this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
       }),
     }) satisfies __ExactMockModule<__TestMockModule4>
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   () =>
     ({
       getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),

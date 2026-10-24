@@ -45,7 +45,7 @@ export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
 
   return (
     <Modal isDismissable isOpen={isOpen} onOpenChange={onOpenChange}>
-      <Dialog className='command-palette-dialog'>
+      <Dialog aria-label='Command palette' className='command-palette-dialog'>
         <AriaAutocomplete disableVirtualFocus filter={contains} {...props}>
           <SearchField
             ref={focusSearchInput}

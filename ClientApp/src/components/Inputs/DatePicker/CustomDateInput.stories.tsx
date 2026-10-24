@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import CustomDateInput from './CustomDateInput';
@@ -8,7 +8,7 @@ import CustomDateInput from './CustomDateInput';
  * `CustomDatePicker` plugs into react-datepicker as its custom input. It reads its
  * Formik field state via `useField`, so the stories run inside a Formik context.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/DatePicker/CustomDateInput',
   component: CustomDateInput,
   decorators: [withPortalProviders],
@@ -30,35 +30,33 @@ const meta = {
     handleOpenCalendar: fn(),
     wrapperUUID: 'story-date-input',
   },
-} satisfies Meta<typeof CustomDateInput>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Date of test')).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
     await expect(
-      canvas.getByRole('button', { name: /choose your test date/i })
+      canvas.getByRole('button', { name: /choose your test date/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const WithError: Story = {
+export const WithError = meta.story({
   args: {
     hasError: true,
     errorMessage: 'Enter a valid date in dd/mm/yyyy format.',
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText(/enter a valid date/i)).toBeVisible();
   },
-};
+});

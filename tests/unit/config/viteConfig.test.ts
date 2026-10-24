@@ -160,7 +160,7 @@ describe('vite config', () => {
     expect(config.resolve.alias['@']).toMatch(/ClientApp[\\/]src$/);
   });
 
-  it('blocks the generated and vendor paths denied by Webpack aliases', () => {
+  it('blocks legacy generated and vendor paths from application imports', () => {
     const blockedPathsPlugin = config.plugins.find(
       (plugin) => plugin.name === 'blocked-generated-paths'
     );

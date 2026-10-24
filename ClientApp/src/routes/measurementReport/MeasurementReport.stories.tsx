@@ -1,22 +1,20 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import ReportDetails from './reportDetails';
 import NMIContactDetails from './nMIContactDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import { requestForQuoteDetailsFixture } from '../../storybook/storybookFixtures';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/MeasurementReport',
   component: ReportDetails,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'padded',
   },
-} satisfies Meta<typeof ReportDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const ReportView: Story = {
+export const ReportView = meta.story({
   args: {
     reportData: requestForQuoteDetailsFixture,
     fileError: false,
@@ -30,17 +28,17 @@ export const ReportView: Story = {
       <NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
     </>
   ),
-};
+});
 
-export const FileError: Story = {
+export const FileError = meta.story({
   args: {
     reportData: requestForQuoteDetailsFixture,
     fileError: true,
   },
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+  render: (args) => (
     <>
       <ReportDetails {...args} />
       <NMIContactDetails quotationData={args.reportData} />
     </>
   ),
-};
+});

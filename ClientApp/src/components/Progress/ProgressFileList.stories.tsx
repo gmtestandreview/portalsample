@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import type { FileProgress } from '../../api/web-api-client';
 import { FileStatus } from '../../routes/ta/types';
@@ -30,7 +30,7 @@ const files: FileProgress[] = [
   },
 ];
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Progress/ProgressFileList',
   component: ProgressFileList,
   parameters: {
@@ -40,15 +40,13 @@ const meta = {
     files,
     onCancelFile: fn(),
   },
-} satisfies Meta<typeof ProgressFileList>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Uploading: Story = {
+export const Uploading = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
@@ -57,7 +55,7 @@ export const Uploading: Story = {
     await expect(
       canvas.getByRole('button', {
         name: /cancel uploading calibration-certificate\.pdf/i,
-      })
+      }),
     ).toBeVisible();
 
     // Each row's progressbar has to name the file it belongs to and carry its value.
@@ -68,13 +66,13 @@ export const Uploading: Story = {
 
     await expect(bar).toHaveAttribute('aria-valuenow', '50');
   },
-};
+});
 
-export const CancelInvokesCallback: Story = {
+export const CancelInvokesCallback = meta.story({
   play: async ({
     canvasElement,
     args,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const cancel = canvas.getByRole('button', {
@@ -83,24 +81,24 @@ export const CancelInvokesCallback: Story = {
     await user.click(cancel);
 
     await expect(args.onCancelFile).toHaveBeenCalledWith(
-      'calibration-certificate.pdf'
+      'calibration-certificate.pdf',
     );
     // Row switches to the "Cancelling..." state once clicked.
     await expect(canvas.getByText(/cancelling/i)).toBeVisible();
   },
-};
+});
 
-export const Empty: Story = {
+export const Empty = meta.story({
   args: {
     files: [],
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.queryByRole('button', { name: /cancel uploading/i })
+      canvas.queryByRole('button', { name: /cancel uploading/i }),
     ).toBeNull();
   },
-};
+});

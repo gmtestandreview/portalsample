@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import {
   defaultUserProfile,
@@ -12,7 +12,7 @@ import FilterMenu from './filterMenu';
  * with status/year radio groups and Reset/Cancel/Show-results actions. It reads the
  * account dispatch context to persist the chosen filters to the user profile.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/SearchFilter/FilterMenu',
   component: FilterMenu,
   decorators: [withPortalProviders],
@@ -27,27 +27,25 @@ const meta = {
     setInitialFilters: fn(),
     setCurrentPage: fn(),
   },
-} satisfies Meta<typeof FilterMenu>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Closed: Story = {
+export const Closed = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('button', { name: /filters/i })
+      canvas.getByRole('button', { name: /filters/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const Opened: Story = {
+export const Opened = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await user.click(canvas.getByRole('button', { name: /filters/i }));
@@ -56,9 +54,9 @@ export const Opened: Story = {
     await expect(await canvas.findByText('Show results')).toBeVisible();
     await expect(canvas.getByText('Quote offer is available')).toBeVisible();
   },
-};
+});
 
-export const WithAppliedFilters: Story = {
+export const WithAppliedFilters = meta.story({
   args: {
     initialFilters: {
       ...defaultUserProfile,
@@ -68,10 +66,10 @@ export const WithAppliedFilters: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     // Applied-filter count badge surfaces a non-zero value.
     await expect(canvas.getByText('1')).toBeVisible();
   },
-};
+});

@@ -1,23 +1,20 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, waitFor, within } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Button } from '../Button/Button';
 import { DialogTrigger } from '../Dialog/Dialog';
 import { Sheet, Heading } from './Sheet';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Components/AriaComponents/Sheet',
   component: Sheet,
   parameters: {
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof Sheet>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const ContextDrivenOpenAndDismiss: Story = {
+export const ContextDrivenOpenAndDismiss = meta.story({
   render: () => (
     <DialogTrigger>
       <Button>Open settings</Button>
@@ -42,15 +39,15 @@ export const ContextDrivenOpenAndDismiss: Story = {
 
     await expect(dialog).toBeInTheDocument();
     await expect(
-      documentBody.getByText('Choose which notifications you receive.')
+      documentBody.getByText('Choose which notifications you receive.'),
     ).toBeInTheDocument();
 
     await expect(
-      documentBody.getByRole('button', { name: 'Close' })
+      documentBody.getByRole('button', { name: 'Close' }),
     ).toBeInTheDocument();
 
     await userEvent.click(documentBody.getByRole('button', { name: 'Close' }));
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
   },
-};
+});

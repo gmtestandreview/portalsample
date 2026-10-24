@@ -98,9 +98,9 @@ Lodash is not a direct application dependency or first-party import. It remains
 installed transitively through Formik, `slate-dom`, and `slate-react`; its type
 package is also retained transitively by `slate-react`.
 
-**Build:** dual pipeline — Webpack 5 for production bundles, Vite 8 for Storybook and Vitest Browser
-Mode. This is a deliberate transitional choice; a change green in Storybook is **not** thereby green
-in the production bundle.
+**Build:** Vite 8 is the canonical development and production pipeline, with Vite-backed Storybook
+and Vitest Browser Mode. Production build verification remains required for changes that affect
+bundling, assets, or runtime configuration.
 
 ---
 
@@ -263,7 +263,7 @@ each has bitten this codebase before.
 
 - **Never edit generated or vendored files:** `ClientApp/src/api/web-api-client.ts`,
   `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/src/external/**`,
-  `ClientApp/src/parent/**`, `ClientApp/webpack/**`, `ClientApp/source-map-http-downloads/**`.
+  `ClientApp/src/parent/**`, `ClientApp/source-map-http-downloads/**`.
   Mirrored in `sonar.exclusions` and the Vitest coverage `exclude` list so all three tools agree.
 - **Never use `process.env` in application code.** Runtime config is injected into `window.*` by a
   server-side template before the bundle loads. Read it only via the `env` object in

@@ -1,17 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, fn } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { SegmentedControl, SegmentedControlItem } from './SegmentedControl';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Components/AriaComponents/SegmentedControl',
   component: SegmentedControl,
   subcomponents: { SegmentedControlItem },
-} satisfies Meta<typeof SegmentedControl>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
+});
 
 const segments = (disabledId?: string): React.ReactNode => (
   <>
@@ -23,7 +20,7 @@ const segments = (disabledId?: string): React.ReactNode => (
   </>
 );
 
-export const SelectionChanges: Story = {
+export const SelectionChanges = meta.story({
   args: {
     defaultSelectedKeys: ['overview'],
     onSelectionChange: fn(),
@@ -34,19 +31,19 @@ export const SelectionChanges: Story = {
     const reports = canvas.getByRole('radio', { name: 'Reports' });
 
     await expect(
-      canvas.getByRole('radio', { name: 'Overview' })
+      canvas.getByRole('radio', { name: 'Overview' }),
     ).toHaveAttribute('aria-checked', 'true');
 
     await userEvent.click(reports);
 
     await expect(reports).toHaveAttribute('aria-checked', 'true');
     await expect(args.onSelectionChange).toHaveBeenCalledWith(
-      new Set(['reports'])
+      new Set(['reports']),
     );
   },
-};
+});
 
-export const KeyboardSelection: Story = {
+export const KeyboardSelection = meta.story({
   args: {
     onSelectionChange: fn(),
     selectionMode: 'single',
@@ -62,9 +59,9 @@ export const KeyboardSelection: Story = {
 
     await expect(overview).toHaveAttribute('aria-checked', 'true');
   },
-};
+});
 
-export const DisabledItem: Story = {
+export const DisabledItem = meta.story({
   args: {
     defaultSelectedKeys: ['overview'],
     selectionMode: 'single',
@@ -81,4 +78,4 @@ export const DisabledItem: Story = {
 
     await expect(reports).toHaveAttribute('aria-checked', 'false');
   },
-};
+});

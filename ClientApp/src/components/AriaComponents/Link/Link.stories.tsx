@@ -1,18 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, fn } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Link } from './Link';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Components/AriaComponents/Link',
   component: Link,
-} satisfies Meta<typeof Link>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const NavigatesWithHref: Story = {
+export const NavigatesWithHref = meta.story({
   args: {
     children: 'View details',
     href: '#details',
@@ -22,9 +19,9 @@ export const NavigatesWithHref: Story = {
 
     await expect(link).toHaveAttribute('href', '#details');
   },
-};
+});
 
-export const LinkRoleWithoutHref: Story = {
+export const LinkRoleWithoutHref = meta.story({
   args: {
     children: 'Open help',
     onPress: fn(),
@@ -39,9 +36,9 @@ export const LinkRoleWithoutHref: Story = {
 
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     children: 'Unavailable resource',
     href: '#unavailable',
@@ -57,4 +54,4 @@ export const Disabled: Story = {
 
     await expect(args.onPress).not.toHaveBeenCalled();
   },
-};
+});

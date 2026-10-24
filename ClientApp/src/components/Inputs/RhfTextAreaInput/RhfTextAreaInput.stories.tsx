@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfTextAreaInput from '.';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -8,7 +8,7 @@ import { withPortalProviders } from '../../../storybook/storybookHarness';
  * `FormProvider`; the portal harness supplies one through the `portal.rhf`
  * story parameter.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/RhfTextAreaInput',
   component: RhfTextAreaInput,
   decorators: [withPortalProviders],
@@ -22,15 +22,13 @@ const meta = {
     label: 'Packaging notes (optional)',
     name: 'packagingNotes',
   },
-} satisfies Meta<typeof RhfTextAreaInput>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Packaging notes (optional)');
@@ -42,29 +40,29 @@ export const Default: Story = {
 
     await expect(input).toHaveValue('Keep dry');
   },
-};
+});
 
-export const WithCharacterCounter: Story = {
+export const WithCharacterCounter = meta.story({
   args: { maxCharacters: 300, rows: 4 },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByText('7 of 300 characters used')
+      canvas.getByText('7 of 300 characters used'),
     ).toBeInTheDocument();
   },
-};
+});
 
-export const Summary: Story = {
+export const Summary = meta.story({
   args: { isSummary: true },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Fragile')).toBeInTheDocument();
     await expect(canvas.queryByRole('textbox')).not.toBeInTheDocument();
   },
-};
+});

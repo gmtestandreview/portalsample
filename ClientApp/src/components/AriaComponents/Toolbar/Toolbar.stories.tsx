@@ -1,3 +1,4 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Toolbar } from './Toolbar';
 import { Separator } from '../Seperator/Separator';
@@ -6,22 +7,17 @@ import { Button } from '../Button/Button';
 import { ToggleButton } from '../ToggleButton/ToggleButton';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { expect } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Toolbar',
   component: Toolbar,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Toolbar>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   render: (args) => (
     <Toolbar aria-label='Text formatting' {...args}>
       <Group aria-label='Style'>
@@ -47,8 +43,8 @@ export const Example: Story = {
   ),
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole('toolbar', { name: 'Text formatting' })
+      canvas.getByRole('toolbar', { name: 'Text formatting' }),
     ).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Copy' })).toBeVisible();
   },
-};
+});

@@ -1,22 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { Container } from 'react-bootstrap';
 import { expect, screen, waitFor } from 'storybook/test';
 import Layout from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Layout',
   component: Layout,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof Layout>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const PortalShell: Story = {
+export const PortalShell = meta.story({
   args: {
     children: null,
   },
@@ -34,7 +31,7 @@ export const PortalShell: Story = {
   ),
   play: async () => {
     await waitFor(() =>
-      expect(screen.getByRole('status')).toHaveTextContent('Navigated to')
+      expect(screen.getByRole('status')).toHaveTextContent('Navigated to'),
     );
   },
-};
+});

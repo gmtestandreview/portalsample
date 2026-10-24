@@ -1,21 +1,18 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorArea } from './ColorArea';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorArea',
   component: ColorArea,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorArea>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   render: (args) => <ColorArea {...args} style={{ width: 200 }} />,
   args: {
     defaultValue: 'hsl(30, 100%, 50%)',
@@ -27,4 +24,4 @@ export const Example: Story = {
     await expect(colorArea).toBeInTheDocument();
     await expect(colorArea).toHaveAttribute('role', marker);
   },
-};
+});

@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom/vitest';
 import { afterAll, vi } from 'vitest';
 
+type UnknownFunction = (...args: unknown[]) => void;
+
+const createVoidMock = () => vi.fn<UnknownFunction>();
+
 // ---------------------------------------------------------------------------
 // Runtime environment variables (same as vitest.setup.ts and preview.ts)
 // ---------------------------------------------------------------------------
@@ -22,26 +26,29 @@ Object.assign(import.meta.env, {
 if (!globalThis.matchMedia) {
   Object.defineProperty(globalThis, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation((query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
+    value: vi.fn<(query: string) => MediaQueryList>().mockImplementation(
+      (query) =>
+        ({
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: createVoidMock(),
+          removeListener: createVoidMock(),
+          addEventListener: createVoidMock(),
+          removeEventListener: createVoidMock(),
+          dispatchEvent: createVoidMock(),
+        }) as unknown as MediaQueryList,
+    ),
   });
 }
 
 Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
   configurable: true,
   writable: true,
-  value: vi.fn(),
+  value: createVoidMock(),
 });
 
-vi.spyOn(globalThis, 'scrollTo').mockImplementation();
+vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => undefined);
 
 const originalGetComputedStyle = globalThis.getComputedStyle.bind(globalThis);
 globalThis.getComputedStyle = (element: Element) =>
@@ -50,33 +57,42 @@ globalThis.getComputedStyle = (element: Element) =>
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
   configurable: true,
   writable: true,
-  value: vi.fn(() => ({
-    arc: vi.fn(),
-    beginPath: vi.fn(),
-    canvas: document.createElement('canvas'),
-    clearRect: vi.fn(),
-    clip: vi.fn(),
-    closePath: vi.fn(),
-    createImageData: vi.fn(() => []),
-    drawImage: vi.fn(),
-    fill: vi.fn(),
-    fillRect: vi.fn(),
-    fillText: vi.fn(),
-    getImageData: vi.fn(() => ({ data: [] })),
-    lineTo: vi.fn(),
-    measureText: vi.fn(() => ({ width: 0 })),
-    moveTo: vi.fn(),
-    putImageData: vi.fn(),
-    rect: vi.fn(),
-    restore: vi.fn(),
-    rotate: vi.fn(),
-    save: vi.fn(),
-    scale: vi.fn(),
-    setTransform: vi.fn(),
-    stroke: vi.fn(),
-    transform: vi.fn(),
-    translate: vi.fn(),
-  })),
+  value: vi.fn<() => CanvasRenderingContext2D>(
+    () =>
+      ({
+        arc: createVoidMock(),
+        beginPath: createVoidMock(),
+        canvas: document.createElement('canvas'),
+        clearRect: createVoidMock(),
+        clip: createVoidMock(),
+        closePath: createVoidMock(),
+        createImageData: vi.fn<() => ImageData>(
+          () => [] as unknown as ImageData,
+        ),
+        drawImage: createVoidMock(),
+        fill: createVoidMock(),
+        fillRect: createVoidMock(),
+        fillText: createVoidMock(),
+        getImageData: vi.fn<() => ImageData>(
+          () => ({ data: [] }) as unknown as ImageData,
+        ),
+        lineTo: createVoidMock(),
+        measureText: vi.fn<() => TextMetrics>(
+          () => ({ width: 0 }) as TextMetrics,
+        ),
+        moveTo: createVoidMock(),
+        putImageData: createVoidMock(),
+        rect: createVoidMock(),
+        restore: createVoidMock(),
+        rotate: createVoidMock(),
+        save: createVoidMock(),
+        scale: createVoidMock(),
+        setTransform: createVoidMock(),
+        stroke: createVoidMock(),
+        transform: createVoidMock(),
+        translate: createVoidMock(),
+      }) as unknown as CanvasRenderingContext2D,
+  ),
 });
 
 const expectedErrorBoundaryStoryMessages = [
@@ -97,7 +113,7 @@ const isExpectedErrorBoundaryStoryError = (message: string) => {
   // The browser test runner re-reports a render error as "Uncaught Error: <message>".
   const unwrapped = message.replace(/^Uncaught (?:Error: )?/, '');
   return expectedErrorBoundaryStoryMessages.some((expected) =>
-    unwrapped.startsWith(expected)
+    unwrapped.startsWith(expected),
   );
 };
 
@@ -131,6 +147,6 @@ afterAll(() => {
   consoleErrorSpy.mockRestore();
   globalThis.removeEventListener(
     'error',
-    handleExpectedErrorBoundaryStoryError
+    handleExpectedErrorBoundaryStoryError,
   );
 });

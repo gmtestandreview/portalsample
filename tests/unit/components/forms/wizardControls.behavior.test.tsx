@@ -18,7 +18,7 @@ const wrapperMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/components/ErrorBoundary'),
+  '@/components/ErrorBoundary',
   () =>
     ({
       default: wrapperMocks.errorBoundary,
@@ -26,7 +26,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       default: wrapperMocks.analytics,
@@ -34,7 +34,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/modals/ConfirmationModal'),
+  '@/components/modals/ConfirmationModal',
   () =>
     ({
       default: ({
@@ -170,7 +170,9 @@ describe('wizard control behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() => expect(validate).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(validate).toHaveBeenCalledWith({ name: '' }, undefined)
+    );
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
@@ -271,7 +273,7 @@ describe('wizard control behavior', () => {
     );
 
     expect(screen.getByText('Wrapped step content')).toBeInTheDocument();
-    expect(wrapperMocks.errorBoundary).toHaveBeenCalledWith();
+    expect(wrapperMocks.errorBoundary).toHaveBeenCalled();
     expect(wrapperMocks.analytics).toHaveBeenCalledWith(
       expect.objectContaining({
         anonymiseIp: false,

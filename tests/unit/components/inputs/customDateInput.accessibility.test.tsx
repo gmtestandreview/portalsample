@@ -111,8 +111,8 @@ describe('customDateInput accessibility', () => {
     fireEvent.change(input, { target: { value: '18/05/2026' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onChange).toHaveBeenCalledWith();
-    expect(onKeyDown).toHaveBeenCalledWith();
+    expect(onChange).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalled();
   });
 
   it('disables the calendar button for disabled and read-only inputs', () => {

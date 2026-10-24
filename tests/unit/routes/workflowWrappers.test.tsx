@@ -24,7 +24,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -35,7 +35,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -43,57 +43,54 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: mocks.useAccountState,
     }) satisfies __ExactMockModule<__TestMockModule26>
 );
 
-vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof WebApiClientModule>();
 
-    return {
-      ...actual,
-      ApplicationType: {
-        QuoteAccept: 'QuoteAccept',
-        QuoteRequest: 'QuoteRequest',
-      },
-      RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getStepStatuses: mocks.requestForQuoteGetStepStatuses,
-        };
-      }),
-      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getStepStatuses: mocks.acceptQuoteGetStepStatuses,
-          getPaymentDetails: mocks.getPaymentDetails,
-        };
-      }),
-      ApplicationClient: vi.fn(function ApplicationClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          createApplication: mocks.createApplication,
-          copyApplication: mocks.copyApplication,
-        };
-      }),
-      QuoteClient: vi.fn(function QuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getQuoteRequestDetails: mocks.getQuoteRequestDetails,
-          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-        };
-      }),
-    } satisfies __ExactMockModule<__TestMockModule4>;
-  }
-);
+  return {
+    ...actual,
+    ApplicationType: {
+      QuoteAccept: 'QuoteAccept',
+      QuoteRequest: 'QuoteRequest',
+    },
+    RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getStepStatuses: mocks.requestForQuoteGetStepStatuses,
+      };
+    }),
+    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getStepStatuses: mocks.acceptQuoteGetStepStatuses,
+        getPaymentDetails: mocks.getPaymentDetails,
+      };
+    }),
+    ApplicationClient: vi.fn(function ApplicationClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        createApplication: mocks.createApplication,
+        copyApplication: mocks.copyApplication,
+      };
+    }),
+    QuoteClient: vi.fn(function QuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getQuoteRequestDetails: mocks.getQuoteRequestDetails,
+        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+      };
+    }),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+});
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm'),
+  '../../../ClientApp/src/components/forms/WizardForm',
   () =>
     ({
       default: ({
@@ -117,7 +114,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({
@@ -141,7 +138,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/forms/FormBanner'),
+  '../../../ClientApp/src/components/forms/FormBanner',
   () =>
     ({
       default: ({
@@ -165,7 +162,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/BlockUISpinner'),
+  '../../../ClientApp/src/components/BlockUISpinner',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -175,7 +172,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/HeaderIntroText'),
+  '../../../ClientApp/src/components/HeaderIntroText',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -185,7 +182,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: () => {},
@@ -193,7 +190,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () =>
     ({
       default: () => {},
@@ -201,7 +198,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -212,7 +209,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/notification'),
+  '../../../ClientApp/src/storage/notification',
   () =>
     ({
       setDashboardNotification: vi.fn(),
@@ -220,7 +217,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact'),
+  '../../../ClientApp/src/routes/requestForQuote/organisationAndContact',
   () =>
     ({
       default: () => <div>Organisation and contact step</div>,
@@ -228,7 +225,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest'),
+  '../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest',
   () =>
     ({
       default: () => <div>Instrument and request step</div>,
@@ -236,7 +233,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary'),
+  '../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary',
   () =>
     ({
       default: () => <div>Request summary step</div>,
@@ -244,7 +241,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  '../../../ClientApp/src/routes/acceptQuote/reportRecipient',
   () =>
     ({
       default: () => <div>Report recipient step</div>,
@@ -252,7 +249,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
+  '../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
   () =>
     ({
       default: () => <div>Delivery and return step</div>,
@@ -260,7 +257,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  '../../../ClientApp/src/routes/acceptQuote/paymentDetails',
   () =>
     ({
       default: () => <div>Payment details step</div>,
@@ -268,7 +265,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
+  '../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
   () =>
     ({
       default: () => <div>Summary and accept step</div>,
@@ -276,7 +273,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/quotation/quoteDetails'),
+  '../../../ClientApp/src/routes/quotation/quoteDetails',
   () =>
     ({
       default: ({
@@ -294,7 +291,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/quotation/nMIContactDetails'),
+  '../../../ClientApp/src/routes/quotation/nMIContactDetails',
   () =>
     ({
       default: () => <div>NMI contact details</div>,
@@ -302,7 +299,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
   () =>
     ({
       default: () => <div>Quote terms</div>,
@@ -310,7 +307,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuote',
   () =>
     ({
       default: () => <div>Detailed quote PDF</div>,
@@ -539,9 +536,7 @@ describe('workflow route wrappers', () => {
       '/request-for-quote/:id/*'
     );
 
-    await waitFor(() =>
-      expect(mocks.acquireTokenSilent).toHaveBeenCalledWith()
-    );
+    await waitFor(() => expect(mocks.acquireTokenSilent).toHaveBeenCalled());
     unmount();
 
     rejectToken(new Error('interaction_required'));

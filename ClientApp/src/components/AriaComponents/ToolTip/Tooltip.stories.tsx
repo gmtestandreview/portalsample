@@ -1,24 +1,20 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Tooltip, TooltipTrigger } from './Tooltip';
 import { Button } from '../Button/Button';
 import { Save } from '../NmiIcon';
 import { expect, userEvent, waitFor } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Tooltip',
   component: Tooltip,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof Tooltip>;
+});
 
-export default meta;
-
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   args: { children: 'Save' },
   render: (args) => (
     <TooltipTrigger>
@@ -36,4 +32,4 @@ export const Example: Story = {
     // load; waitFor retries the read until the hovered state has landed.
     await waitFor(() => expect(button).toHaveAttribute('data-hovered', 'true'));
   },
-};
+});

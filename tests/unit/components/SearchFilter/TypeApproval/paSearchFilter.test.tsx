@@ -5,7 +5,7 @@ import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import PaSearchFilter from '@/components/SearchFilter/TypeApproval/paSearchFilter';
 
 vi.mock(
-  import('@/components/SearchFilter/TypeApproval/paFilterMenu'),
+  '@/components/SearchFilter/TypeApproval/paFilterMenu',
   () =>
     ({
       default: ({

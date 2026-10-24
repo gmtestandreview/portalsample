@@ -1,21 +1,18 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorSwatchPicker, ColorSwatchPickerItem } from './ColorSwatchPicker';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorSwatchPicker',
   component: ColorSwatchPicker,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorSwatchPicker>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   render: (args) => (
     <ColorSwatchPicker {...args}>
       <ColorSwatchPickerItem color='#A00' />
@@ -33,4 +30,4 @@ export const Example: Story = {
     await expect(picker).toBeInTheDocument();
     await expect(swatches.length).toBeGreaterThan(0);
   },
-};
+});

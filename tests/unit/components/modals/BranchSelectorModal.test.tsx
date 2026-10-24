@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -57,7 +57,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/storage/notification'),
+  '@/storage/notification',
   () =>
     ({
       getBranchModalNotification: () => mocks.getBranchModalNotification(),
@@ -66,7 +66,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -76,7 +76,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -85,7 +85,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/components/Alert/NotificationMessage'),
+  '@/components/Alert/NotificationMessage',
   () =>
     ({
       default: ({ id }: { id: string }) => (
@@ -555,7 +555,9 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({
+        defaultOrganisationId: 1,
+      });
     });
 
     // Helper returned early — no dispatch calls made
@@ -570,10 +572,13 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({});
     });
 
-    expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith();
+    expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith(
+      undefined,
+      undefined
+    );
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
   });
 

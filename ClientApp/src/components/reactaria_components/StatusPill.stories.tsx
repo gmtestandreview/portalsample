@@ -1,16 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { StatusPill } from './StatusPill';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/React Aria/StatusPill',
   component: StatusPill,
-} satisfies Meta<typeof StatusPill>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Neutral: Story = {
+export const Neutral = meta.story({
   args: {
     children: 'In progress',
   },
@@ -22,9 +19,9 @@ export const Neutral: Story = {
     await expect(pill).not.toHaveAttribute('role');
     await expect(pill).not.toHaveAttribute('aria-live');
   },
-};
+});
 
-export const ToneVariants: Story = {
+export const ToneVariants = meta.story({
   args: {
     children: 'Tone variants',
   },
@@ -38,20 +35,20 @@ export const ToneVariants: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByText('Approved')).toHaveAttribute(
       'data-tone',
-      'success'
+      'success',
     );
     await expect(canvas.getByText('Needs review')).toHaveAttribute(
       'data-tone',
-      'warning'
+      'warning',
     );
     await expect(canvas.getByText('In progress')).toHaveAttribute(
       'data-tone',
-      'neutral'
+      'neutral',
     );
   },
-};
+});
 
-export const LongLabel: Story = {
+export const LongLabel = meta.story({
   args: {
     children:
       'Awaiting confirmation from the responsible measurement services team',
@@ -60,8 +57,8 @@ export const LongLabel: Story = {
   play: async ({ canvas }) => {
     await expect(
       canvas.getByText(
-        'Awaiting confirmation from the responsible measurement services team'
-      )
+        'Awaiting confirmation from the responsible measurement services team',
+      ),
     ).toHaveAttribute('data-tone', 'warning');
   },
-};
+});

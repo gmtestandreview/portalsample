@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { linkTo } from '@storybook/addon-links';
 import { expect } from 'storybook/test';
 import PrimaryButton from './index';
 
-const meta = {
+const meta = preview.meta({
   component: PrimaryButton,
   tags: ['ai-generated', 'needs-work', '!autodocs'],
   argTypes: {
@@ -15,50 +15,48 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof PrimaryButton>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     children: 'Submit',
   },
-};
+});
 
-export const DarkMode: Story = {
+export const DarkMode = meta.story({
   args: {
     children: 'Continue',
     mode: 'dark',
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     children: 'Submit',
     disabled: true,
   },
-};
+});
 
-export const StoryLinkDemo: Story = {
+export const StoryLinkDemo = meta.story({
   args: {
     children: 'Go to Disabled story',
   },
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+  render: (args) => (
     <PrimaryButton
       {...args}
       onClick={linkTo('Components/Buttons/PrimaryButton', 'Disabled')}
     />
   ),
-};
+});
 
-export const CssCheck: Story = {
+export const CssCheck = meta.story({
   args: {
     children: 'Submit',
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const button = canvas.getByRole('button', { name: /submit/i });
 
     // In jsdom, external CSS files don't affect computed styles.
@@ -67,4 +65,4 @@ export const CssCheck: Story = {
     await expect(button).toHaveTextContent('Submit');
     await expect(button).toBeInTheDocument();
   },
-};
+});

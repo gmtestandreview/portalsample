@@ -1,21 +1,18 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorPicker } from './ColorPicker';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorPicker',
   component: ColorPicker,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorPicker>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Example: Story = {
+export const Example = meta.story({
   args: {
     label: 'Fill color',
     defaultValue: '#f00',
@@ -29,4 +26,4 @@ export const Example: Story = {
 
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   },
-};
+});

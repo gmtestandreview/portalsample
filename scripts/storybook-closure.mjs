@@ -68,7 +68,7 @@ const collectInputFiles = (checkout) => {
       path.isAbsolute(relativeToCheckout)
     ) {
       throw new Error(
-        `input symlink escapes the owned checkout: ${absolutePath}`
+        `input symlink escapes the owned checkout: ${absolutePath}`,
       );
     }
     const stat = statSync(resolvedPath);
@@ -91,8 +91,8 @@ const collectInputFiles = (checkout) => {
   }
   const rootInputFiles = new Set(
     readdirSync(checkout).filter((inputFile) =>
-      STORYBOOK_ROOT_INPUT_PATTERNS.some((pattern) => pattern.test(inputFile))
-    )
+      STORYBOOK_ROOT_INPUT_PATTERNS.some((pattern) => pattern.test(inputFile)),
+    ),
   );
   for (const inputFile of [
     'package.json',
@@ -235,9 +235,9 @@ const throwIfAborted = (signal) => {
   const reason = signal.reason;
   throw Object.assign(
     new Error(
-      reason instanceof Error ? reason.message : 'closure was interrupted'
+      reason instanceof Error ? reason.message : 'closure was interrupted',
     ),
-    { code: FAILURE_CODES.EXECUTION_INCOMPLETE }
+    { code: FAILURE_CODES.EXECUTION_INCOMPLETE },
   );
 };
 
@@ -293,7 +293,7 @@ const assertGate = (gate, context) => {
       new Error(`gate input identity changed: ${context.name}`),
       {
         code: FAILURE_CODES.INPUT_STALE,
-      }
+      },
     );
   }
 };
@@ -307,7 +307,9 @@ const assertHandoff = (completion, freeze, producer) => {
     completion.receiptFiles.length === 0 ||
     completion.receiptFiles.some(
       (file) =>
-        typeof file !== 'string' || file.includes('..') || path.isAbsolute(file)
+        typeof file !== 'string' ||
+        file.includes('..') ||
+        path.isAbsolute(file),
     )
   ) {
     throw Object.assign(new Error('MCP handoff is missing or stale'), {
@@ -330,7 +332,7 @@ const collectAndValidateReceipts = async (
   completion,
   context,
   options,
-  adapters
+  adapters,
 ) => {
   const { freeze, producer, target } = context;
   const receipts = [];
@@ -359,7 +361,7 @@ const collectAndValidateReceipts = async (
         expectedFreezeId: freeze.freezeId,
         expectedChildEpoch,
       }),
-      `receipt producer identity is invalid: ${receiptFile}`
+      `receipt producer identity is invalid: ${receiptFile}`,
     );
     receipts.push(normalized.receipt);
   }
@@ -387,7 +389,7 @@ export async function runClosure(options, adapters) {
     });
     const targetUrlError = assertPermittedUrl(
       target?.mcpURL ?? options.url,
-      options.serverMode
+      options.serverMode,
     );
     if (targetUrlError) throw new Error(targetUrlError);
     await adapters.assertOwnedPaths({
@@ -409,7 +411,7 @@ export async function runClosure(options, adapters) {
         expectedInputDigest: freeze.inputDigest,
         selectedPaths: freeze.protectedPaths,
       }),
-      'freeze record is invalid'
+      'freeze record is invalid',
     );
 
     producer = await adapters.establishProducer({
@@ -460,7 +462,7 @@ export async function runClosure(options, adapters) {
       completion,
       context,
       options,
-      adapters
+      adapters,
     );
     context.childEpoch = receipts[0]?.childEpoch;
 
@@ -475,7 +477,7 @@ export async function runClosure(options, adapters) {
     outcome = failure(
       errorCode,
       error_ instanceof Error ? error_.message : String(error_),
-      phases
+      phases,
     );
   } finally {
     let cleanupError;
@@ -509,7 +511,7 @@ export async function runClosure(options, adapters) {
         outcome = failure(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
           cleanupMessage,
-          phases
+          phases,
         );
       } else {
         outcome = {
@@ -526,7 +528,7 @@ export async function runClosure(options, adapters) {
     return failure(
       FAILURE_CODES.EXECUTION_INCOMPLETE,
       'closure ended without a result',
-      phases
+      phases,
     );
   }
   return { ...outcome, phases };
@@ -577,7 +579,7 @@ const createProductionAdapters = async () => {
     await import('../.storybook/storybook-test-target.mjs').then(
       ({ resolveStorybookTestTargetImplementation }) => ({
         resolveStorybookTestTarget: resolveStorybookTestTargetImplementation,
-      })
+      }),
     );
   let ownedServer;
   let ownedServerMetadata;
@@ -597,7 +599,7 @@ const createProductionAdapters = async () => {
     await writeFile(
       path.join(ownedReceipts, fileName),
       JSON.stringify(value, null, 2),
-      'utf8'
+      'utf8',
     );
   };
 
@@ -626,7 +628,7 @@ const createProductionAdapters = async () => {
     [command, ...args],
     cwd,
     signal,
-    env = process.env
+    env = process.env,
   ) => {
     const [executable, executableArgs] =
       process.platform === 'win32' && command === 'npm'
@@ -638,7 +640,7 @@ const createProductionAdapters = async () => {
                 'node_modules',
                 'npm',
                 'bin',
-                'npm-cli.js'
+                'npm-cli.js',
               ),
               ...args,
             ],
@@ -678,7 +680,7 @@ const createProductionAdapters = async () => {
     const { stdout, stderr } = await execFileAsync(
       'icacls.exe',
       [target, '/t', '/c'],
-      { maxBuffer: 2 * 1024 * 1024 }
+      { maxBuffer: 2 * 1024 * 1024 },
     );
     const output = `${stdout}\n${stderr}`;
     if (
@@ -688,7 +690,7 @@ const createProductionAdapters = async () => {
     ) {
       throw Object.assign(
         new Error(`ACL freeze deny entry remains for ${identity}`),
-        { code: FAILURE_CODES.EXECUTION_INCOMPLETE }
+        { code: FAILURE_CODES.EXECUTION_INCOMPLETE },
       );
     }
   };
@@ -851,18 +853,18 @@ const createProductionAdapters = async () => {
         `MCP response was not valid JSON: ${
           error_ instanceof Error ? error_.message : String(error_)
         }`,
-        { cause: error_ }
+        { cause: error_ },
       );
     }
     const matching = envelopes.filter(
       (envelope) =>
         isRecord(envelope) &&
         envelope.jsonrpc === '2.0' &&
-        (expectedId === undefined || envelope.id === expectedId)
+        (expectedId === undefined || envelope.id === expectedId),
     );
     if (matching.length !== 1) {
       throw new Error(
-        `MCP response did not contain exactly one JSON-RPC response ID ${String(expectedId)}`
+        `MCP response did not contain exactly one JSON-RPC response ID ${String(expectedId)}`,
       );
     }
     const envelope = matching[0];
@@ -873,7 +875,7 @@ const createProductionAdapters = async () => {
     }
     if (hasError) {
       throw new Error(
-        `MCP response contained an error: ${JSON.stringify(envelope.error)}`
+        `MCP response contained an error: ${JSON.stringify(envelope.error)}`,
       );
     }
     if (!isRecord(envelope.result))
@@ -897,7 +899,7 @@ const createProductionAdapters = async () => {
       });
       if (response.status !== expectedStatus) {
         throw new Error(
-          `MCP ${body.method} returned HTTP ${response.status}, expected ${expectedStatus}`
+          `MCP ${body.method} returned HTTP ${response.status}, expected ${expectedStatus}`,
         );
       }
       return response;
@@ -925,7 +927,7 @@ const createProductionAdapters = async () => {
     await request(
       { jsonrpc: '2.0', method: 'notifications/initialized' },
       sessionHeaders,
-      202
+      202,
     );
     const testRun = await request(
       {
@@ -940,7 +942,7 @@ const createProductionAdapters = async () => {
           },
         },
       },
-      sessionHeaders
+      sessionHeaders,
     );
     const envelope = await parseMcpEnvelope(testRun, requestId + 1);
     if (!envelope.result)
@@ -981,7 +983,7 @@ const createProductionAdapters = async () => {
       const checkoutPath = path.resolve(checkout);
       if (process.env.STORYBOOK_CLOSURE_OWNED_CHECKOUT !== checkoutPath) {
         throw new Error(
-          'STORYBOOK_CLOSURE_OWNED_CHECKOUT must identify the owned integration checkout'
+          'STORYBOOK_CLOSURE_OWNED_CHECKOUT must identify the owned integration checkout',
         );
       }
       const receiptsPath = resolveInside(checkoutPath, receipts);
@@ -1007,13 +1009,13 @@ const createProductionAdapters = async () => {
       });
       const backupDirectory = path.join(
         ownedReceipts ?? path.resolve(checkout, receipts),
-        `.acl-backup-${randomUUID()}`
+        `.acl-backup-${randomUUID()}`,
       );
       await mkdir(backupDirectory, { recursive: true });
       const identity = currentIdentity();
       freezeIdentity = identity;
       const selectedPaths = STORYBOOK_INPUT_ROOTS.map((inputRoot) =>
-        resolveInside(ownedCheckout ?? path.resolve(checkout), inputRoot)
+        resolveInside(ownedCheckout ?? path.resolve(checkout), inputRoot),
       );
       frozenTargets = [];
       const denialProbes = [];
@@ -1029,11 +1031,11 @@ const createProductionAdapters = async () => {
           const probePaths = operations.map((operation) =>
             path.join(
               target,
-              `.storybook-closure-probe-${operation}-${randomUUID()}`
-            )
+              `.storybook-closure-probe-${operation}-${randomUUID()}`,
+            ),
           );
           await Promise.all(
-            probePaths.map((probePath) => writeFile(probePath, 'probe'))
+            probePaths.map((probePath) => writeFile(probePath, 'probe')),
           );
           const backupPath = path.join(backupDirectory, `${index}.acl`);
           frozenTargets.push({ target, backupPath, probePaths });
@@ -1056,8 +1058,8 @@ const createProductionAdapters = async () => {
               await runDenialProbe(
                 operation,
                 target,
-                probePaths[operationIndex]
-              )
+                probePaths[operationIndex],
+              ),
             );
           }
         }
@@ -1089,12 +1091,12 @@ const createProductionAdapters = async () => {
           ]).catch(() => undefined);
           await Promise.all(
             frozenTarget.probePaths.map((probePath) =>
-              rm(probePath, { force: true }).catch(() => undefined)
-            )
+              rm(probePath, { force: true }).catch(() => undefined),
+            ),
           );
         }
         await rm(backupDirectory, { recursive: true, force: true }).catch(
-          () => undefined
+          () => undefined,
         );
         throw error_;
       }
@@ -1106,7 +1108,7 @@ const createProductionAdapters = async () => {
       for (const frozenTarget of [...frozenTargets].reverse()) {
         const targetError = await releaseSingleFrozenTarget(
           frozenTarget,
-          ownerIdentity
+          ownerIdentity,
         );
         firstError ??= targetError;
       }
@@ -1115,7 +1117,7 @@ const createProductionAdapters = async () => {
           try {
             await assertFreezeIdentityNotDenied(
               frozenTarget.target,
-              activeFreeze.ownerIdentity ?? freezeIdentity
+              activeFreeze.ownerIdentity ?? freezeIdentity,
             );
           } catch (error_) {
             firstError ??= error_;
@@ -1128,9 +1130,9 @@ const createProductionAdapters = async () => {
           (writeError) => {
             firstError = new AggregateError(
               [firstError, writeError],
-              'ACL restoration failed and recovery evidence could not be written'
+              'ACL restoration failed and recovery evidence could not be written',
             );
-          }
+          },
         );
         throw firstError;
       }
@@ -1160,14 +1162,14 @@ const createProductionAdapters = async () => {
         const producerPath = process.env.STORYBOOK_CLOSURE_PRODUCER_JSON;
         if (!producerPath) {
           throw new Error(
-            'external producer identity must be supplied by an owned adapter'
+            'external producer identity must be supplied by an owned adapter',
           );
         }
         const producer = JSON.parse(
           await readFile(
             await resolveOwnedPath(ownedReceipts, producerPath),
-            'utf8'
-          )
+            'utf8',
+          ),
         );
         if (
           producer.mcpURL !== target.mcpURL ||
@@ -1175,7 +1177,7 @@ const createProductionAdapters = async () => {
           producer.inputDigest !== freeze.inputDigest
         ) {
           throw new Error(
-            'external producer identity does not match the frozen target'
+            'external producer identity does not match the frozen target',
           );
         }
         await writeReceiptJson('producer.json', producer);
@@ -1225,7 +1227,7 @@ const createProductionAdapters = async () => {
       };
       if (!server.killed) await stopProcessTree(false);
       let exitStatus = await waitForOwnedServerExit(
-        MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS
+        MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS,
       );
       let forced = false;
       if (!exitStatus) {
@@ -1278,14 +1280,14 @@ const createProductionAdapters = async () => {
         definition[1],
         context.checkout ?? process.cwd(),
         context.signal,
-        env
+        env,
       );
       if (name === 'gate-5-storybook-build' || name === 'gate-8-docs') {
         const index = JSON.parse(
           await readFile(
             path.join(context.checkout, 'storybook-static', 'index.json'),
-            'utf8'
-          )
+            'utf8',
+          ),
         );
         const snapshotName =
           name === 'gate-5-storybook-build'
@@ -1315,7 +1317,7 @@ const createProductionAdapters = async () => {
       }
       const currentInputDigest = computeInputDigest({
         files: collectInputFiles(
-          ownedCheckout ?? path.resolve(context.checkout ?? process.cwd())
+          ownedCheckout ?? path.resolve(context.checkout ?? process.cwd()),
         ),
       });
       if (currentInputDigest !== context.inputDigest) {
@@ -1351,8 +1353,8 @@ const createProductionAdapters = async () => {
             timeout,
           },
           null,
-          2
-        )
+          2,
+        ),
       );
     },
     produceMcpReceipts: async ({
@@ -1364,12 +1366,15 @@ const createProductionAdapters = async () => {
     }) => {
       if (ownedServerExitStatus) {
         throw new Error(
-          'managed Storybook exited before MCP receipt production'
+          'managed Storybook exited before MCP receipt production',
         );
       }
       const receiptRoot = ownedReceipts ?? path.resolve(receipts);
       const index = JSON.parse(
-        await readFile(path.join(receiptRoot, 'frozen-full-index.json'), 'utf8')
+        await readFile(
+          path.join(receiptRoot, 'frozen-full-index.json'),
+          'utf8',
+        ),
       );
       const storyIds = deriveExecutableStorySet({ index }).storyIds;
       if (storyIds.length === 0) {
@@ -1387,7 +1392,7 @@ const createProductionAdapters = async () => {
       ) {
         const requestedStoryIds = storyIds.slice(
           offset,
-          offset + MCP_STORY_BATCH_SIZE
+          offset + MCP_STORY_BATCH_SIZE,
         );
         const requestId = offset / MCP_STORY_BATCH_SIZE + 1;
         const response = await executeMcpTestRun({
@@ -1412,7 +1417,7 @@ const createProductionAdapters = async () => {
         });
         assertResult(
           normalized,
-          `MCP receipt is invalid for request ${requestId}`
+          `MCP receipt is invalid for request ${requestId}`,
         );
         const receiptFile = `receipt-mcp-${requestId}.json`;
         await writeReceiptJson(receiptFile, {
@@ -1434,7 +1439,10 @@ const createProductionAdapters = async () => {
     readReceipt: async ({ receipts, receiptFile }) => {
       const receiptRoot = ownedReceipts ?? receipts;
       const receipt = JSON.parse(
-        await readFile(await resolveOwnedPath(receiptRoot, receiptFile), 'utf8')
+        await readFile(
+          await resolveOwnedPath(receiptRoot, receiptFile),
+          'utf8',
+        ),
       );
       const responseFile = `mcp-response-${String(receipt.requestId)}.json`;
       try {
@@ -1443,8 +1451,8 @@ const createProductionAdapters = async () => {
           response: JSON.parse(
             await readFile(
               await resolveOwnedPath(receiptRoot, responseFile),
-              'utf8'
-            )
+              'utf8',
+            ),
           ),
         };
       } catch (error_) {
@@ -1470,7 +1478,7 @@ const createProductionAdapters = async () => {
     observeChildEpoch: async ({ receipt }) => {
       if (!receipt.observedChildEpoch) {
         throw new Error(
-          'receipt is missing independently observed child provenance'
+          'receipt is missing independently observed child provenance',
         );
       }
       return receipt.observedChildEpoch;

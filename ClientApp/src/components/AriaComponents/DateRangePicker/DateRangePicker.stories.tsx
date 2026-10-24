@@ -1,59 +1,51 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { DateRangePicker } from './DateRangePicker';
-import type { Meta, StoryFn, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/DateRangePicker',
   component: DateRangePicker,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof DateRangePicker>;
+});
 
-export default meta;
-type Story = StoryFn<typeof DateRangePicker>;
-type ObjectStory = StoryObj<typeof meta>;
-
-export const Example: ObjectStory = {
+export const Example = meta.story({
   args: {
     label: 'Event date',
   },
   play: async ({ canvas }) => {
     await expect(
-      canvas.getByRole('group', { name: 'Event date' })
+      canvas.getByRole('group', { name: 'Event date' }),
     ).toBeVisible();
   },
-};
+});
 
-export const WithDescription: Story = (
-  args: Readonly<Parameters<Story>[0]>
-) => <DateRangePicker {...args} />;
+export const WithDescription = meta.story({
+  args: {
+    label: 'Event date',
+    description: 'Both ends of the range are included.',
+  },
 
-WithDescription.args = {
-  label: 'Event date',
-  description: 'Both ends of the range are included.',
-};
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('Both ends of the range are included.'),
+    ).toBeVisible();
+  },
+});
 
-WithDescription.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('Both ends of the range are included.')
-  ).toBeVisible();
-};
+export const Invalid = meta.story({
+  args: {
+    label: 'Event date',
+    isInvalid: true,
+    errorMessage: 'The end date must follow the start date.',
+  },
 
-export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <DateRangePicker {...args} />
-);
-
-Invalid.args = {
-  label: 'Event date',
-  isInvalid: true,
-  errorMessage: 'The end date must follow the start date.',
-};
-
-Invalid.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('The end date must follow the start date.')
-  ).toBeVisible();
-};
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('The end date must follow the start date.'),
+    ).toBeVisible();
+  },
+});

@@ -1,34 +1,36 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ListBox, ListBoxItem, ListBoxSection } from './ListBox';
 import { Header } from 'react-aria-components/Header';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { StoryFn } from '@storybook/react-vite';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ListBox',
   component: ListBox,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ListBox>;
+});
 
-export default meta;
 type Story = StoryFn<typeof ListBox>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ListBox aria-label='Ice cream flavor' {...args}>
-    <ListBoxItem>Chocolate</ListBoxItem>
-    <ListBoxItem>Mint</ListBoxItem>
-    <ListBoxItem>Strawberry</ListBoxItem>
-    <ListBoxItem>Vanilla</ListBoxItem>
-  </ListBox>
-);
+export const Example = meta.story({
+  render: (args: Readonly<Parameters<Story>[0]>) => (
+    <ListBox aria-label='Ice cream flavor' {...args}>
+      <ListBoxItem>Chocolate</ListBoxItem>
+      <ListBoxItem>Mint</ListBoxItem>
+      <ListBoxItem>Strawberry</ListBoxItem>
+      <ListBoxItem>Vanilla</ListBoxItem>
+    </ListBox>
+  ),
 
-Example.args = {
-  selectionMode: 'single',
-};
+  args: {
+    selectionMode: 'single',
+  },
+});
 
-export const Sections: Story = () => (
+export const Sections = meta.story(() => (
   <ListBox aria-label='Sandwich contents' selectionMode='multiple'>
     <ListBoxSection>
       <Header>Veggies</Header>
@@ -49,4 +51,4 @@ export const Sections: Story = () => (
       <ListBoxItem id='ranch'>Ranch</ListBoxItem>
     </ListBoxSection>
   </ListBox>
-);
+));

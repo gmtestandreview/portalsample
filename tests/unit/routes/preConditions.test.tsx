@@ -18,7 +18,7 @@ let mockAccountDispatchAvailable = true;
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useIsAuthenticated: () => mockIsAuthenticated,
@@ -31,7 +31,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: () => ({ details: mockAccountStateDetails }),
@@ -51,7 +51,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Layout'),
+  '../../../ClientApp/src/components/Layout',
   () =>
     ({
       default: ({ children }: any) => (
@@ -61,7 +61,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/TermsAndCondition'),
+  '../../../ClientApp/src/components/modals/TermsAndCondition',
   () =>
     ({
       default: () => <div data-testid='terms-modal'>Terms Modal</div>,
@@ -69,7 +69,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/BranchSelectorModal'),
+  '../../../ClientApp/src/components/modals/BranchSelectorModal',
   () =>
     ({
       default: () => (
@@ -79,7 +79,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
+  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
   () =>
     ({
       BranchSelectionModalMode: {
@@ -90,7 +90,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/RFQDeleteModal'),
+  '../../../ClientApp/src/components/modals/RFQDeleteModal',
   () =>
     ({
       default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
@@ -98,7 +98,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () =>
     ({
       ModalStateCtx: React.createContext(null),
@@ -109,7 +109,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/routeChangeScrollTop'),
+  '../../../ClientApp/src/components/Utilities/routeChangeScrollTop',
   () =>
     ({
       default: () => null,
@@ -117,7 +117,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/backToTopButton'),
+  '../../../ClientApp/src/components/Utilities/backToTopButton',
   () =>
     ({
       default: () => null,
@@ -125,7 +125,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/routeAccessibleNavigation'),
+  '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
   () =>
     ({
       default: () => null,
@@ -133,7 +133,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/notification'),
+  '../../../ClientApp/src/storage/notification',
   () =>
     ({
       clearDashboardNotification: vi.fn(),

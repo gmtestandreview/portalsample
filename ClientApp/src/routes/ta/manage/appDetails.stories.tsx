@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { Route, Routes } from 'react-router';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -41,7 +41,7 @@ const stubFetch: typeof globalThis.fetch = async (input) => {
   });
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/Manage/ApplicationDetails',
   component: ApplicationDetails,
   decorators: [
@@ -61,21 +61,19 @@ const meta = {
       fetch: stubFetch,
     },
   },
-} satisfies Meta<typeof ApplicationDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const DetailsTab: Story = {
+export const DetailsTab = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     // Once the application loads, the status section and reference render.
     await expect(
-      await canvas.findByRole('heading', { name: 'Application status' })
+      await canvas.findByRole('heading', { name: 'Application status' }),
     ).toBeInTheDocument();
     await expect(await canvas.findByText('PA-2024-0001')).toBeVisible();
   },
-};
+});

@@ -1,25 +1,23 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import Header from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Header',
   component: Header,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'fullscreen',
   },
-} satisfies Meta<typeof Header>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 // SB-023: authenticated header — banner landmark, navigation, and sign-out link accessible
-export const Authenticated: Story = {
+export const Authenticated = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // Header renders a banner landmark (role=banner or <header>)
     const banner =
@@ -42,12 +40,12 @@ export const Authenticated: Story = {
 
     await expect(nav).toBeTruthy();
   },
-};
+});
 
-export const Public: Story = {
+export const Public = meta.story({
   parameters: {
     portal: {
       authenticated: false,
     },
   },
-};
+});

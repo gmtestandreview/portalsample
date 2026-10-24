@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, fn, userEvent } from 'storybook/test';
 import type { AttachmentDto } from '../../../api/web-api-client';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -16,7 +16,7 @@ const savedDocument: AttachmentDto = {
   attachmentCategory: 'Certificate',
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/Attachment/RhfAttachment',
   component: RhfAttachment,
   decorators: [withPortalProviders],
@@ -41,29 +41,27 @@ const meta = {
     onUploadFiles: fn(async () => [savedDocument]),
     onDeleteFile: fn(async () => {}),
   },
-} satisfies Meta<typeof RhfAttachment>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const EmptyUploader: Story = {
+export const EmptyUploader = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
     await expect(
-      canvas.getByRole('button', { name: 'Browse files' })
+      canvas.getByRole('button', { name: 'Browse files' }),
     ).toBeEnabled();
   },
-};
+});
 
-export const UploadsAFile: Story = {
+export const UploadsAFile = meta.story({
   play: async ({
     canvasElement,
     args,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const file = new File(['pdf'], 'saved.pdf', { type: 'application/pdf' });
 
@@ -72,12 +70,12 @@ export const UploadsAFile: Story = {
     await expect(await canvas.findByText('saved.pdf')).toBeVisible();
     await expect(args.onUploadFiles).toHaveBeenCalledTimes(1);
     await expect(
-      canvas.getByRole('combobox', { name: 'Category' })
+      canvas.getByRole('combobox', { name: 'Category' }),
     ).toHaveValue('Certificate');
   },
-};
+});
 
-export const WithSavedDocument: Story = {
+export const WithSavedDocument = meta.story({
   parameters: {
     portal: {
       rhf: { defaultValues: { documents: [savedDocument] } },
@@ -85,17 +83,17 @@ export const WithSavedDocument: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('saved.pdf')).toBeVisible();
     await expect(
-      canvas.getByRole('heading', { name: '1 files uploaded' })
+      canvas.getByRole('heading', { name: '1 files uploaded' }),
     ).toBeVisible();
   },
-};
+});
 
-export const Summary: Story = {
+export const Summary = meta.story({
   args: { isSummary: true },
   parameters: {
     portal: {
@@ -104,12 +102,12 @@ export const Summary: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('saved.pdf')).toBeVisible();
     await expect(
-      canvas.queryByRole('button', { name: 'Browse files' })
+      canvas.queryByRole('button', { name: 'Browse files' }),
     ).not.toBeInTheDocument();
   },
-};
+});

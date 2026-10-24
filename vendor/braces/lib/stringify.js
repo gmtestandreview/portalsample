@@ -1,9 +1,9 @@
-'use strict';
+import utils from './utils.js';
+import constants from './constants.js';
 
-const utils = require('./utils');
-const { MAX_DEPTH } = require('./constants');
+const { MAX_DEPTH } = constants;
 
-module.exports = (ast, options = {}) => {
+const stringify = (ast, options = {}) => {
   const maxDepth = Number.isFinite(options.maxDepth) ? Math.min(MAX_DEPTH, options.maxDepth) : MAX_DEPTH;
 
   const stringify = (node, parent = {}, depth = 0) => {
@@ -35,3 +35,5 @@ module.exports = (ast, options = {}) => {
 
   return stringify(ast, {}, ast.type === 'root' ? 0 : 1);
 };
+
+export default stringify;

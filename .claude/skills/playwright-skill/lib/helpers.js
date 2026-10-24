@@ -1,8 +1,8 @@
-const http = require('node:http');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { chromium, firefox, webkit } = require('playwright');
+import http from 'node:http';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { chromium, firefox, webkit } from 'playwright';
 
 function getExtraHeadersFromEnv() {
   const name = process.env.PW_HEADER_NAME;
@@ -154,7 +154,7 @@ async function detectDevServers(customPorts = []) {
     .map((port) => `http://localhost:${port}`);
 }
 
-module.exports = {
+export {
   createContext,
   detectDevServers,
   getExtraHeadersFromEnv,

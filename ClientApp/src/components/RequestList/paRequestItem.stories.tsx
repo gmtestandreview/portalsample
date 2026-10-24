@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { PatternApprovalDashboardDetailsDto } from '../../api/web-api-client';
 import { PaDashboardItemStatus } from '../../routes/common/enums';
@@ -35,7 +35,7 @@ const submittedRequest: PatternApprovalDashboardDetailsDto = {
   unreadMessageCount: 3,
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/RequestList/PaRequestItem',
   component: PaRequestItem,
   decorators: [withPortalProviders],
@@ -51,40 +51,38 @@ const meta = {
     tab: DashboardTab.Drafts,
     setDeleteSuccess: fn(),
   },
-} satisfies Meta<typeof PaRequestItem>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const DraftApplication: Story = {
+export const DraftApplication = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
       canvas.getByRole('heading', {
         name: /non-automatic weighing instrument/i,
-      })
+      }),
     ).toBeVisible();
     // Draft status appears in the pill (and status detail) after mount.
     await expect((await canvas.findAllByText('Draft'))[0]).toBeVisible();
   },
-};
+});
 
-export const SubmittedApplication: Story = {
+export const SubmittedApplication = meta.story({
   args: {
     request: submittedRequest,
     tab: DashboardTab.Requests,
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByRole('heading', { name: /fuel dispenser flow meter/i })
+      canvas.getByRole('heading', { name: /fuel dispenser flow meter/i }),
     ).toBeVisible();
     await expect((await canvas.findAllByText('Submitted'))[0]).toBeVisible();
   },
-};
+});

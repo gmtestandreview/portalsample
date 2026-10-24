@@ -1,18 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, fn } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Button } from './Button';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Components/AriaComponents/AriaButton',
   component: Button,
-} satisfies Meta<typeof Button>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Primary: Story = {
+export const Primary = meta.story({
   args: {
     children: 'Save changes',
     onPress: fn(),
@@ -23,9 +20,9 @@ export const Primary: Story = {
 
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
-};
+});
 
-export const KeyboardActivation: Story = {
+export const KeyboardActivation = meta.story({
   args: {
     children: 'Continue',
     onPress: fn(),
@@ -40,9 +37,9 @@ export const KeyboardActivation: Story = {
 
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     children: 'Unavailable',
     isDisabled: true,
@@ -57,9 +54,9 @@ export const Disabled: Story = {
 
     await expect(args.onPress).not.toHaveBeenCalled();
   },
-};
+});
 
-export const Pending: Story = {
+export const Pending = meta.story({
   args: {
     children: 'Save changes',
     isPending: true,
@@ -77,4 +74,4 @@ export const Pending: Story = {
     await expect(button).toHaveFocus();
     await expect(button).not.toHaveTextContent('Save changes');
   },
-};
+});
