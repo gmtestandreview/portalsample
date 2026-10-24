@@ -15,35 +15,35 @@ const trackGAEventMock = vi.hoisted(() => vi.fn());
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
         accounts: [{ homeAccountId: 'test-account' }],
         instance: { acquireTokenSilent: acquireTokenSilentMock },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/routes/common/helperFunctions',
-  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>
+  import('@/routes/common/helperFunctions'),
+  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: trackGAEventMock,
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const mockQuotationData = {
@@ -90,7 +90,7 @@ describe(ViewPdfQuoteTerms, () => {
     const user = userEvent.setup();
     const setIsLoading = vi.fn();
     const { container } = render(
-      <ViewPdfQuoteTerms {...defaultProps} setIsLoading={setIsLoading} />
+      <ViewPdfQuoteTerms {...defaultProps} setIsLoading={setIsLoading} />,
     );
 
     await user.click(getTermsAnchor(container));
@@ -103,14 +103,14 @@ describe(ViewPdfQuoteTerms, () => {
       expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
         'test-access-token',
         mockQuotationData,
-        true
+        true,
       );
       expect(helperMocks.getFileUrlFromBase64).toHaveBeenCalledWith(
-        'base64data'
+        'base64data',
       );
       expect(helperMocks.openPdfPageInNewTab).toHaveBeenCalledWith(
         'blob:test-url',
-        2
+        2,
       );
       expect(trackGAEventMock).toHaveBeenCalledWith('Terms', 'download');
       expect(setIsLoading).toHaveBeenCalledWith(true);
@@ -128,7 +128,7 @@ describe(ViewPdfQuoteTerms, () => {
         {...defaultProps}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await user.click(getTermsAnchor(container));

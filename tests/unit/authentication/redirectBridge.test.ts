@@ -5,8 +5,8 @@ const bridgeMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-browser/redirect-bridge',
-  () => bridgeMocks satisfies __ExactMockModule<__TestMockModule16>
+  import('@azure/msal-browser/redirect-bridge'),
+  () => bridgeMocks satisfies __ExactMockModule<__TestMockModule16>,
 );
 
 describe('mSAL redirect bridge entry', () => {
@@ -25,7 +25,7 @@ describe('mSAL redirect bridge entry', () => {
 
   it('reports a sanitized constant when broadcasting fails', async () => {
     bridgeMocks.broadcastResponseToMainFrame.mockRejectedValue(
-      new Error('token=must-not-be-logged')
+      new Error('token=must-not-be-logged'),
     );
     const consoleError = vi
       .spyOn(console, 'error')
@@ -33,7 +33,7 @@ describe('mSAL redirect bridge entry', () => {
 
     await import('../../../ClientApp/src/authentication/redirectBridge');
     await vi.waitFor(() =>
-      expect(consoleError).toHaveBeenCalledWith('MSAL redirect bridge failed')
+      expect(consoleError).toHaveBeenCalledWith('MSAL redirect bridge failed'),
     );
 
     expect(consoleError.mock.calls.flat().join(' ')).not.toContain('token=');

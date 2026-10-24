@@ -23,7 +23,7 @@ type DtoOverrides = Omit<
 };
 
 const content = (
-  overrides: Partial<InstrumentTypeContent> = {}
+  overrides: Partial<InstrumentTypeContent> = {},
 ): InstrumentTypeContent =>
   ({
     instrumentTypeId: 'type-1',
@@ -33,7 +33,7 @@ const content = (
   }) as InstrumentTypeContent;
 
 const dto = (
-  overrides: DtoOverrides = {}
+  overrides: DtoOverrides = {},
 ): Partial<ApplicationAndInstrumentStepDto> => {
   const { newSubOptions, instrumentTypeContent, ...otherOverrides } = overrides;
   const result: Partial<ApplicationAndInstrumentStepDto> = {
@@ -60,7 +60,7 @@ const dto = (
 };
 
 const step = (
-  patternApprovalType?: PatternApprovalRequiredValues
+  patternApprovalType?: PatternApprovalRequiredValues,
 ): ApplicationAndInstrumentStep =>
   ({ patternApprovalType }) as ApplicationAndInstrumentStep;
 
@@ -73,7 +73,7 @@ describe('displayRules.isOIMLHiddenP', () => {
 
   it('treats an absent sub-option list as ticked and falls through to content', () => {
     const result = DisplayRules.isOIMLHiddenP(
-      dto({ newSubOptions: undefined, instrumentTypeContent: undefined })
+      dto({ newSubOptions: undefined, instrumentTypeContent: undefined }),
     );
 
     // No content can be resolved, so eligibility cannot be determined.
@@ -86,7 +86,7 @@ describe('displayRules.isOIMLHiddenP', () => {
         instrumentTypeContent: [
           content({ instrumentTypeId: 'a-different-type' }),
         ],
-      })
+      }),
     );
 
     expect(result).toBe(true);
@@ -98,7 +98,7 @@ describe('displayRules.isOIMLHiddenP', () => {
         instrumentTypeContent: [
           content({ instrumentCategoryId: 'a-different-category' }),
         ],
-      })
+      }),
     );
 
     expect(result).toBe(true);
@@ -106,7 +106,7 @@ describe('displayRules.isOIMLHiddenP', () => {
 
   it('reports hidden for matching content that is eligible for OIML', () => {
     const result = DisplayRules.isOIMLHiddenP(
-      dto({ instrumentTypeContent: [content({ eligibleForOiml: true })] })
+      dto({ instrumentTypeContent: [content({ eligibleForOiml: true })] }),
     );
 
     expect(result).toBe(true);
@@ -116,7 +116,7 @@ describe('displayRules.isOIMLHiddenP', () => {
     const result = DisplayRules.isOIMLHiddenP(
       dto({
         instrumentTypeContent: [content({ eligibleForOiml: false })],
-      })
+      }),
     );
 
     expect(result).toBe(false);
@@ -144,7 +144,7 @@ describe('displayRules.isOIMLHidden', () => {
 
   it('hides the option when no sub-options have been chosen', () => {
     const result = DisplayRules.isOIMLHidden(
-      {} as ApplicationAndInstrumentStep
+      {} as ApplicationAndInstrumentStep,
     );
 
     expect(result).toBe(true);
@@ -199,7 +199,7 @@ describe.each([
 describe('displayRules.isApplNewInstrumentHiddenP', () => {
   it('hides the instrument section for a non new-certificate application', () => {
     const result = DisplayRules.isApplNewInstrumentHiddenP(
-      step(PatternApprovalRequiredValues.Variation)
+      step(PatternApprovalRequiredValues.Variation),
     );
 
     expect(result).toBe(true);

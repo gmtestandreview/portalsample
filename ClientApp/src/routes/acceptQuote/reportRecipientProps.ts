@@ -31,7 +31,7 @@ const loadReportRecipient =
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const reportRecipient = await client.getReportRecipient(id, abortSignal);
@@ -50,18 +50,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: ReportRecipientStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.saveReportRecipient(
@@ -71,7 +71,7 @@ const saveStep =
             formStep: values,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (e) {
         AppLogger.error('Failed to save payment report recipient', e as Error, {
@@ -125,7 +125,7 @@ const reportRecipientProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<ReportRecipientStep> => ({
   initialValues: {
     businessStreetAddress: {},

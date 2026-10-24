@@ -14,15 +14,15 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: mocks.useBodyClass,
-    }) satisfies __ExactMockModule<__TestMockModule59>
+    }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Accordion',
+  import('../../../../ClientApp/src/components/Accordion'),
   () =>
     ({
       CustomAccordion: ({
@@ -44,11 +44,11 @@ vi.mock(
           {children}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule74>
+    }) satisfies __ExactMockModule<__TestMockModule74>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Buttons/EditButton',
+  import('../../../../ClientApp/src/components/Buttons/EditButton'),
   () =>
     ({
       default: ({ link }: { link: string }) => (
@@ -56,19 +56,19 @@ vi.mock(
           Edit
         </a>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule75>
+    }) satisfies __ExactMockModule<__TestMockModule75>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/HeaderIntroText',
+  import('../../../../ClientApp/src/components/HeaderIntroText'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => <p>{children}</p>,
-    }) satisfies __ExactMockModule<__TestMockModule76>
+    }) satisfies __ExactMockModule<__TestMockModule76>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/InTextLink',
+  import('../../../../ClientApp/src/components/InTextLink'),
   () =>
     ({
       default: ({
@@ -84,11 +84,11 @@ vi.mock(
           {children}
         </a>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule77>
+    }) satisfies __ExactMockModule<__TestMockModule77>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/Checkbox',
+  import('../../../../ClientApp/src/components/Inputs/Checkbox'),
   () =>
     ({
       default: ({
@@ -110,11 +110,11 @@ vi.mock(
           {label}
         </label>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule79>
+    }) satisfies __ExactMockModule<__TestMockModule79>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/supportingDocuments',
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
   () =>
     ({
       default: ({
@@ -127,12 +127,12 @@ vi.mock(
         name: string;
         onUploadAttachment: (
           token: string,
-          files: File[]
+          files: File[],
         ) => Promise<unknown[]>;
         attachment: { onUploadFiles: (files: File[]) => Promise<unknown[]> };
       }) => {
         void onUploadAttachment('token', []).then(
-          mocks.supportingDocumentsUploadAttachment
+          mocks.supportingDocumentsUploadAttachment,
         );
         void attachment
           .onUploadFiles([])
@@ -146,11 +146,11 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule141>
+    }) satisfies __ExactMockModule<__TestMockModule141>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/RadioButtonGroup',
+  import('../../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
   () =>
     ({
       default: ({
@@ -183,21 +183,21 @@ vi.mock(
           ))}
         </section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule52>
+    }) satisfies __ExactMockModule<__TestMockModule52>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/HidableField',
+  import('../../../../ClientApp/src/components/forms/HidableField'),
   () =>
     ({
       default: ({ children, name }: { children: ReactNode; name: string }) => (
         <div data-testid={`hidable-${name}`}>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule70>
+    }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/TextInput',
+  import('../../../../ClientApp/src/components/Inputs/TextInput'),
   () =>
     ({
       default: ({
@@ -217,11 +217,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/AddressLookup',
+  import('../../../../ClientApp/src/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({
@@ -247,11 +247,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>
+    }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/AuthorisedAgent',
+  import('../../../../ClientApp/src/components/Inputs/AuthorisedAgent'),
   () =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -261,11 +261,11 @@ vi.mock(
           data-summary={String(isSummary)}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule143>
+    }) satisfies __ExactMockModule<__TestMockModule143>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
+  import('../../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
   () =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -275,7 +275,7 @@ vi.mock(
           data-summary={String(isSummary)}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule71>
+    }) satisfies __ExactMockModule<__TestMockModule71>,
 );
 
 const formValues = {
@@ -303,7 +303,7 @@ const renderWithFormik = (children: ReactNode) =>
       onSubmit={() => {}}
     >
       <Form>{children}</Form>
-    </Formik>
+    </Formik>,
   );
 
 const renderSummary = (isSubmitted = false) =>
@@ -328,7 +328,7 @@ const renderSummary = (isSubmitted = false) =>
           </Routes>
         </Form>
       </Formik>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe(OrganisationAndContact, () => {
@@ -338,42 +338,45 @@ describe(OrganisationAndContact, () => {
 
   it('renders the editable organisation and contact fields with prefixed field names', () => {
     renderWithFormik(
-      <OrganisationAndContact isSummary={false} name='organisationAndContact' />
+      <OrganisationAndContact
+        isSummary={false}
+        name='organisationAndContact'
+      />,
     );
 
     expect(
-      screen.getByTestId('radio-organisationAndContact.isManufacturer')
+      screen.getByTestId('radio-organisationAndContact.isManufacturer'),
     ).toHaveAttribute('data-summary', 'false');
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-name',
-      'organisationAndContact.name'
+      'organisationAndContact.name',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-name',
-      'organisationAndContact.streetAddress'
+      'organisationAndContact.streetAddress',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-max-results',
-      '10'
+      '10',
     );
     expect(screen.getByTestId('authorised-agent')).toHaveAttribute(
       'data-name',
-      'organisationAndContact.authorisedAgent'
+      'organisationAndContact.authorisedAgent',
     );
     expect(
       screen
         .getAllByTestId('contact-details')
-        .map((node) => node.getAttribute('data-name'))
+        .map((node) => node.getAttribute('data-name')),
     ).toEqual([
       'organisationAndContact.contact',
       'organisationAndContact.invoiceContact',
     ]);
     expect(
-      screen.getByRole('heading', { name: 'Contact information' })
+      screen.getByRole('heading', { name: 'Contact information' }),
     ).toBeInTheDocument();
 
     const principalContact = screen.getByTestId(
-      'radio-organisationAndContact.isPrincipalContact'
+      'radio-organisationAndContact.isPrincipalContact',
     );
 
     expect(principalContact).toHaveTextContent('Use my contact details');
@@ -381,7 +384,7 @@ describe(OrganisationAndContact, () => {
     expect(principalContact).toHaveTextContent('ada@example.gov.au');
     expect(principalContact).toHaveTextContent('A different contact person');
     expect(
-      screen.getByTestId('help-organisationAndContact.isPrincipalContact')
+      screen.getByTestId('help-organisationAndContact.isPrincipalContact'),
     ).toHaveTextContent('Dashboard > Settings menu > My contact details');
   });
 
@@ -390,30 +393,30 @@ describe(OrganisationAndContact, () => {
 
     expect(screen.getByTestId('radio-isManufacturer')).toHaveAttribute(
       'data-summary',
-      'true'
+      'true',
     );
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-name',
-      'name'
+      'name',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-name',
-      'streetAddress'
+      'streetAddress',
     );
     expect(screen.getByTestId('authorised-agent')).toHaveAttribute(
       'data-name',
-      'authorisedAgent'
+      'authorisedAgent',
     );
     expect(
       screen
         .getAllByTestId('contact-details')
-        .map((node) => node.getAttribute('data-name'))
+        .map((node) => node.getAttribute('data-name')),
     ).toEqual(['contact', 'invoiceContact']);
     expect(
-      screen.getByRole('heading', { name: 'Contact' })
+      screen.getByRole('heading', { name: 'Contact' }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('heading', { name: 'Contact information' })
+      screen.queryByRole('heading', { name: 'Contact information' }),
     ).not.toBeInTheDocument();
 
     const principalContact = screen.getByTestId('radio-isPrincipalContact');
@@ -443,7 +446,7 @@ describe(SummaryAndSubmit, () => {
             </Routes>
           </Form>
         </Formik>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Application type')).toBeInTheDocument();
@@ -454,19 +457,19 @@ describe(SummaryAndSubmit, () => {
 
     expect(mocks.useBodyClass).toHaveBeenCalledWith('summary');
     expect(
-      screen.getByText(/Before you submit your request/)
+      screen.getByText(/Before you submit your request/),
     ).toBeInTheDocument();
     // Organisation and application read from the wizard's Formik values.
     expect(screen.getByText('Organisation name')).toBeInTheDocument();
     expect(screen.getByText('Application type')).toBeInTheDocument();
     expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
       'data-name',
-      'supportingDocuments.form.documents'
+      'supportingDocuments.form.documents',
     );
     expect(
       screen
         .getAllByTestId('edit-link')
-        .map((link) => link.getAttribute('href'))
+        .map((link) => link.getAttribute('href')),
     ).toEqual([
       '/ta/PA-300/organisation-details',
       '/ta/PA-300/application-details',
@@ -476,7 +479,7 @@ describe(SummaryAndSubmit, () => {
     const checkboxes = screen.getAllByTestId('checkbox');
 
     expect(
-      checkboxes.map((checkbox) => checkbox.getAttribute('data-name'))
+      checkboxes.map((checkbox) => checkbox.getAttribute('data-name')),
     ).toEqual([
       'acceptNMIP106',
       'acceptTermsAndConditions',
@@ -484,13 +487,13 @@ describe(SummaryAndSubmit, () => {
     ]);
     expect(
       within(
-        screen.getByTestId('accordion-applicationTermsAndConditions')
-      ).getByText(/You must read and accept the NMI P 106/)
+        screen.getByTestId('accordion-applicationTermsAndConditions'),
+      ).getByText(/You must read and accept the NMI P 106/),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', {
         name: 'NMI P 106 Procedures for approval and certification of patterns of measuring instruments (PDF)',
-      })
+      }),
     ).toHaveAttribute('target', '_blank');
     expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
     await expect
@@ -505,15 +508,15 @@ describe(SummaryAndSubmit, () => {
     renderSummary(true);
 
     expect(
-      screen.queryByText(/Before you submit your request/)
+      screen.queryByText(/Before you submit your request/),
     ).not.toBeInTheDocument();
     expect(screen.queryByTestId('edit-link')).not.toBeInTheDocument();
     expect(screen.getByTestId('back-button')).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByTestId('back-button')).toHaveTextContent(
-      'Back to dashboard'
+      'Back to dashboard',
     );
   });
 });

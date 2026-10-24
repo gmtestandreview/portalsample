@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
@@ -12,16 +13,13 @@ const meta = preview.meta({
   },
 });
 
-
 export const Example = meta.story({
   render: (args) => (
     <DropZone {...args}>
       <Text slot='label'>Drop supporting documents here</Text>
     </DropZone>
   ),
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('Drop supporting documents here'),
     ).toBeVisible();
@@ -37,9 +35,7 @@ export const Disabled = meta.story({
   args: {
     isDisabled: true,
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     // A closed application still explains why, rather than showing an inert target.
     await expect(
       canvas.getByText('Uploads are closed for this application'),

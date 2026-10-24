@@ -25,7 +25,7 @@ export function Tree<T>(props: Readonly<TreeProps<T>>) {
 export function TreeItemContent(
   props: Readonly<
     Omit<TreeItemContentProps, 'children'> & { children?: React.ReactNode }
-  >
+  >,
 ) {
   return (
     <AriaTreeItemContent>
@@ -82,13 +82,13 @@ export function TreeLoadMoreItem(props: Readonly<TreeLoadMoreItemProps>) {
 }
 
 export function TreeSection(
-  props: Readonly<React.ComponentProps<typeof AriaTreeSection>>
+  props: Readonly<React.ComponentProps<typeof AriaTreeSection>>,
 ) {
   return <AriaTreeSection {...props} />;
 }
 
 export function TreeHeader(
-  props: Readonly<React.ComponentProps<typeof AriaTreeHeader>>
+  props: Readonly<React.ComponentProps<typeof AriaTreeHeader>>,
 ) {
   return <AriaTreeHeader {...props} />;
 }

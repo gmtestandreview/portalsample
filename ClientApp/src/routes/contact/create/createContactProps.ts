@@ -27,7 +27,7 @@ const discardChanges: DiscardProps = {
 
 const getRedirectionLocationOnError = (
   errorCode: number,
-  _errorType: ErrorType
+  _errorType: ErrorType,
 ) => {
   if (errorCode === 412) {
     return '/';
@@ -41,7 +41,7 @@ const createContactProps = (
   instance: IPublicClientApplication,
   statuses: FormStepStatusDto[],
   accountContext: AccountContextState | null,
-  _contactId: number
+  _contactId: number,
 ): WizardStepProps<ContactFormStep> => ({
   initialValues: {},
   stepStatuses: statuses,

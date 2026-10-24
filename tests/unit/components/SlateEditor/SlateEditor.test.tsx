@@ -23,7 +23,7 @@ import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
  */
 const captured = vi.hoisted(() => ({ editors: [] as Editor[] }));
 
-vi.mock('slate', async (importOriginal) => {
+vi.mock(import('slate'), async (importOriginal) => {
   const actual = await importOriginal<typeof SlateModule>();
 
   return {
@@ -92,7 +92,7 @@ describe('slateEditor helpers', () => {
     ]);
 
     expect(html).toBe(
-      '<p><strong>Bold</strong><em>Italic</em><u>Underline</u>Plain</p>'
+      '<p><strong>Bold</strong><em>Italic</em><u>Underline</u>Plain</p>',
     );
   });
 
@@ -137,23 +137,23 @@ describe(SlateEditor, () => {
         setValue={vi.fn()}
         placeholder='Reply to NMI'
         maxCharacters={25}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('textbox', { name: 'Reply to NMI' })
+      screen.getByRole('textbox', { name: 'Reply to NMI' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Bold' })).toHaveAttribute(
       'title',
-      'Bold'
+      'Bold',
     );
     expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute(
       'title',
-      'Italic'
+      'Italic',
     );
     expect(screen.getByRole('button', { name: 'Underline' })).toHaveAttribute(
       'title',
-      'Underline'
+      'Underline',
     );
     expect(document.querySelector('.text-muted')).toHaveTextContent('0 /25');
   });
@@ -166,14 +166,14 @@ describe(SlateEditor, () => {
         value={paragraph('   ')}
         setValue={vi.fn()}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
 
     expect(onSubmit).not.toHaveBeenCalled();
     expect(
-      screen.getByText('Message cannot be empty or spaces only')
+      screen.getByText('Message cannot be empty or spaces only'),
     ).toBeInTheDocument();
   });
 
@@ -186,7 +186,7 @@ describe(SlateEditor, () => {
         setValue={vi.fn()}
         onSubmit={onSubmit}
         maxCharacters={5}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Send' }));
@@ -194,8 +194,8 @@ describe(SlateEditor, () => {
     expect(onSubmit).not.toHaveBeenCalled();
     expect(
       screen.getByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -207,7 +207,7 @@ describe(SlateEditor, () => {
         value={paragraph('ready')}
         setValue={vi.fn()}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     fireEvent.mouseDown(screen.getByRole('button', { name: 'Bold' }));
@@ -234,7 +234,7 @@ describe(SlateEditor, () => {
         ]}
         setValue={vi.fn()}
         onSubmit={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText('Bold bit').closest('strong')).not.toBeNull();
@@ -249,7 +249,7 @@ describe(SlateEditor, () => {
         value={paragraph('   ')}
         setValue={vi.fn()}
         onSubmit={vi.fn()}
-      />
+      />,
     );
 
     const send = screen.getByRole('button', { name: 'Send' });
@@ -258,7 +258,7 @@ describe(SlateEditor, () => {
     fireEvent.click(send);
 
     expect(
-      screen.getAllByText('Message cannot be empty or spaces only')
+      screen.getAllByText('Message cannot be empty or spaces only'),
     ).toHaveLength(1);
   });
 
@@ -269,7 +269,7 @@ describe(SlateEditor, () => {
         setValue={vi.fn()}
         onSubmit={vi.fn()}
         maxCharacters={5}
-      />
+      />,
     );
 
     const send = screen.getByRole('button', { name: 'Send' });
@@ -278,8 +278,8 @@ describe(SlateEditor, () => {
 
     expect(
       screen.getAllByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toHaveLength(1);
   });
 });
@@ -297,7 +297,7 @@ describe('slateEditor document changes', () => {
         value={paragraph('Hello')}
         setValue={setValue}
         maxCharacters={1000}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -320,7 +320,7 @@ describe('slateEditor document changes', () => {
         value={paragraph('abcdef')}
         setValue={vi.fn()}
         maxCharacters={5}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -331,8 +331,8 @@ describe('slateEditor document changes', () => {
 
     expect(
       screen.getByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -342,7 +342,7 @@ describe('slateEditor document changes', () => {
         value={paragraph('abcdef')}
         setValue={vi.fn()}
         maxCharacters={5}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -356,8 +356,8 @@ describe('slateEditor document changes', () => {
 
     expect(
       screen.getAllByText(
-        'Message cannot exceed 5 characters (including formatting)'
-      )
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
     ).toHaveLength(1);
   });
 
@@ -367,7 +367,7 @@ describe('slateEditor document changes', () => {
         value={paragraph('abcdefghijkl')}
         setValue={vi.fn()}
         maxCharacters={20}
-      />
+      />,
     );
 
     const editor = currentEditor();
@@ -378,8 +378,8 @@ describe('slateEditor document changes', () => {
 
     expect(
       screen.getByText(
-        'Message cannot exceed 20 characters (including formatting)'
-      )
+        'Message cannot exceed 20 characters (including formatting)',
+      ),
     ).toBeInTheDocument();
 
     await applyEdit(() => {
@@ -393,8 +393,8 @@ describe('slateEditor document changes', () => {
     // a message that is now perfectly valid.
     expect(
       screen.queryByText(
-        'Message cannot exceed 20 characters (including formatting)'
-      )
+        'Message cannot exceed 20 characters (including formatting)',
+      ),
     ).not.toBeInTheDocument();
   });
 

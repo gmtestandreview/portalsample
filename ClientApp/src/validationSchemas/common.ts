@@ -38,7 +38,7 @@ export const nullableString = (label: string) =>
   yup
     .string()
     .transform((value: unknown) =>
-      typeof value === 'string' ? value.trim() : ''
+      typeof value === 'string' ? value.trim() : '',
     )
     .default('')
     .label(label);
@@ -60,7 +60,7 @@ export const requiredNullableDate = (label: string) =>
     .test(
       'must be a valid date',
       'The date entered must be a valid date in DD/MM/YYYY format.',
-      isDate()
+      isDate(),
     )
     .transform((value: Date) => (isEmptyDate(value) ? undefined : value))
     .required(`${label} is required`)
@@ -73,14 +73,14 @@ export const nullableDate = (label: string) =>
     .test(
       'must be a valid date',
       'The date entered must be a valid date in DD/MM/YYYY format.',
-      isDate()
+      isDate(),
     )
     .transform((value: Date) => (isEmptyDate(value) ? undefined : value))
     .label(label)
     .nullable();
 
 export const oneOfEnum = <T extends NonNullable<unknown>>(
-  enumObject: { [s: string]: T } | ArrayLike<T>
+  enumObject: { [s: string]: T } | ArrayLike<T>,
 ) => yup.mixed<T>().oneOf(Object.values(enumObject));
 
 export const isFutureDate =

@@ -10,11 +10,11 @@ import {
 
 const appLoggerError = vi.hoisted(() => vi.fn());
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: appLoggerError },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const makeClient = () => {
@@ -98,7 +98,7 @@ describe(pollUploadProgress, () => {
     expect(appLoggerError).toHaveBeenCalledWith(
       'Failed to delete progress statistics',
       expect.any(Error),
-      { uploadId: 'u1' }
+      { uploadId: 'u1' },
     );
   });
 
@@ -164,7 +164,7 @@ describe(pollUploadProgress, () => {
     expect(getProgress).toHaveBeenCalledExactlyOnceWith(
       'u1',
       -1,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 });

@@ -53,7 +53,7 @@ const AttachmentItemNew = ({
         displayText: 'Photos or diagrams',
         value: 'Photos or diagrams',
       },
-      { displayText: 'Other', value: 'Other' }
+      { displayText: 'Other', value: 'Other' },
     );
     return options;
   };

@@ -39,7 +39,7 @@ export interface ClientMock<TMethods extends ClientMethodMocks> {
  * never sees.
  */
 export const createClientMock = <TMethods extends ClientMethodMocks>(
-  methods: TMethods
+  methods: TMethods,
 ): ClientMock<TMethods> => {
   const setAuthToken = vi.fn();
   const instance = { setAuthToken, ...methods };
@@ -60,7 +60,7 @@ export const createClientMockFor = <TName extends string>(
   ...methodNames: readonly TName[]
 ): ClientMock<Record<TName, Mock>> => {
   const methods = Object.fromEntries(
-    methodNames.map((name) => [name, vi.fn()])
+    methodNames.map((name) => [name, vi.fn()]),
   ) as Record<TName, Mock>;
 
   return createClientMock(methods);
@@ -84,11 +84,11 @@ export const createClientMockFor = <TName extends string>(
  */
 export const webApiClientModuleMock = (
   original: typeof WebApiClient,
-  clients: Record<string, ClientMock<ClientMethodMocks>>
+  clients: Record<string, ClientMock<ClientMethodMocks>>,
 ) => ({
   ...original,
   ...Object.fromEntries(
-    Object.entries(clients).map(([name, client]) => [name, client.constructor])
+    Object.entries(clients).map(([name, client]) => [name, client.constructor]),
   ),
 });
 

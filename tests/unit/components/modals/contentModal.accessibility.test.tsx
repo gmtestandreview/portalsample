@@ -36,7 +36,7 @@ const renderTwoOpenModals = () =>
         modalTitle={PRIVACY}
         modalBody={<p>Privacy body content.</p>}
       />
-    </>
+    </>,
   );
 
 describe('contentModal accessibility', () => {
@@ -47,7 +47,7 @@ describe('contentModal accessibility', () => {
         onCancelModal={vi.fn()}
         modalTitle='Accessible modal title'
         modalBody={<p>Modal body content.</p>}
-      />
+      />,
     );
 
     const dialog = screen.getByRole('dialog', {

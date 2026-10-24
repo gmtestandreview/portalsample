@@ -13,7 +13,7 @@ describe('storybook rollup onLog filter', () => {
         message:
           'node_modules/@microsoft/applicationinsights-web/dist/es5/... pure annotation',
       },
-      handler
+      handler,
     );
 
     expect(handler).not.toHaveBeenCalled();
@@ -25,7 +25,7 @@ describe('storybook rollup onLog filter', () => {
     onLog(
       'info',
       { code: 'PLUGIN_TIMINGS', message: 'generate bundle 12ms' },
-      handler
+      handler,
     );
 
     expect(handler).not.toHaveBeenCalled();

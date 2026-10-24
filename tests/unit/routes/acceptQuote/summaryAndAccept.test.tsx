@@ -21,17 +21,17 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
         accounts: mocks.accounts,
         instance: mocks.instance,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
 
   return {
@@ -50,7 +50,7 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
@@ -59,11 +59,11 @@ vi.mock(
           familyName: 'Nguyen',
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       AcceptQuoteClient: class {
@@ -74,30 +74,30 @@ vi.mock(
       DashboardClient: class {
         setAuthToken = vi.fn();
       },
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/notification',
+  import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
       getDashboardNotification: vi.fn(() => undefined),
       clearDashboardNotification: vi.fn(),
       setDashboardNotification: vi.fn(),
       clearDashboardInfoNotification: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Accordion',
+  import('../../../../ClientApp/src/components/Accordion'),
   () =>
     ({
       CustomAccordion: ({ children }: { children: React.ReactNode }) => (
@@ -106,61 +106,61 @@ vi.mock(
       CustomAccordionBody: ({ children }: { children: React.ReactNode }) => (
         <div>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule74>
+    }) satisfies __ExactMockModule<__TestMockModule74>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Buttons/EditButton',
+  import('../../../../ClientApp/src/components/Buttons/EditButton'),
   () =>
     ({
       default: () => <button type='button'>Edit</button>,
-    }) satisfies __ExactMockModule<__TestMockModule75>
+    }) satisfies __ExactMockModule<__TestMockModule75>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/HeaderIntroText',
+  import('../../../../ClientApp/src/components/HeaderIntroText'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule76>
+    }) satisfies __ExactMockModule<__TestMockModule76>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule59>
+    }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/reportRecipient',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
   () =>
     ({
       default: () => <div>Report recipient</div>,
-    }) satisfies __ExactMockModule<__TestMockModule61>
+    }) satisfies __ExactMockModule<__TestMockModule61>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
   () =>
     ({
       default: () => <div>Delivery and return</div>,
-    }) satisfies __ExactMockModule<__TestMockModule62>
+    }) satisfies __ExactMockModule<__TestMockModule62>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/paymentDetails',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
   () =>
     ({
       default: () => <div>Payment details</div>,
-    }) satisfies __ExactMockModule<__TestMockModule63>
+    }) satisfies __ExactMockModule<__TestMockModule63>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/InTextLink',
+  import('../../../../ClientApp/src/components/InTextLink'),
   () =>
     ({
       default: ({
@@ -174,50 +174,50 @@ vi.mock(
           {children}
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule77>
+    }) satisfies __ExactMockModule<__TestMockModule77>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/quotationSummary',
+  import('../../../../ClientApp/src/routes/acceptQuote/quotationSummary'),
   () =>
     ({
       default: () => <div>Quotation summary</div>,
-    }) satisfies __ExactMockModule<__TestMockModule73>
+    }) satisfies __ExactMockModule<__TestMockModule73>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>
+    }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Alert/NotificationMessage',
+  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
   () =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule48>
+    }) satisfies __ExactMockModule<__TestMockModule48>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Icons/ExternalLinkIcon',
+  import('../../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
   () =>
     ({
       default: () => <span aria-hidden='true'>icon</span>,
-    }) satisfies __ExactMockModule<__TestMockModule78>
+    }) satisfies __ExactMockModule<__TestMockModule78>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
       getFileUrlFromBase64: vi.fn(),
       openPdfPageInNewTab: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule9>
+    }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 function renderComponent() {
@@ -226,7 +226,7 @@ function renderComponent() {
       <Form>
         <SummaryAndAccept />
       </Form>
-    </Formik>
+    </Formik>,
   );
 }
 
@@ -267,7 +267,7 @@ describe(SummaryAndAccept, () => {
         <Form>
           <SummaryAndAccept />
         </Form>
-      </Formik>
+      </Formik>,
     );
 
     await waitFor(() => {

@@ -20,7 +20,7 @@ describe('storybook migration inventory', () => {
   const authDoc = readSource('authentication', 'Authentication.docs.mdx');
   const validationDoc = readSource(
     'validationSchemas',
-    'ValidationSchemas.docs.mdx'
+    'ValidationSchemas.docs.mdx',
   );
   const assetDoc = readSource('assets', 'AssetsAndMedia.docs.mdx');
 
@@ -28,13 +28,13 @@ describe('storybook migration inventory', () => {
     expect(overviewDoc).toContain('Routes and route wrappers');
     expect(overviewDoc).toContain('Reusable components and component families');
     expect(overviewDoc).toContain(
-      'Authentication providers, guards, and account context contracts'
+      'Authentication providers, guards, and account context contracts',
     );
     expect(overviewDoc).toContain(
-      'Validation schemas and custom Yup extensions'
+      'Validation schemas and custom Yup extensions',
     );
     expect(overviewDoc).toContain(
-      'Assets and media, including SVGs, fonts, and the MSW worker'
+      'Assets and media, including SVGs, fonts, and the MSW worker',
     );
     expect(overviewDoc).toContain('Migration/Coverage Matrix');
   });
@@ -51,7 +51,7 @@ describe('storybook migration inventory', () => {
   it('documents every App route path in the route inventory page', () => {
     const appSource = readSource('App.tsx');
     const rawPaths = [...appSource.matchAll(/path='([^']+)'/g)].map(
-      (match) => match[1]
+      (match) => match[1],
     );
     // Child wildcard routes ('*') are documented as 'parent/*' in the inventory,
     // not as standalone rows. Strip all bare '*' entries then restore the
@@ -69,7 +69,7 @@ describe('storybook migration inventory', () => {
 
       expect(
         inDoc,
-        `"${routePath}" not documented in RouteInventory.docs.mdx`
+        `"${routePath}" not documented in RouteInventory.docs.mdx`,
       ).toBe(true);
     });
   });
@@ -77,7 +77,7 @@ describe('storybook migration inventory', () => {
   it('documents every top-level component family directory', () => {
     const componentDirectories = readDirectorySync(
       path.join(repoRoot, 'ClientApp', 'src', 'components'),
-      repoRoot
+      repoRoot,
     )
       .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
       .map((entry) => entry.name);
@@ -88,7 +88,7 @@ describe('storybook migration inventory', () => {
     componentDirectories.forEach((directory) => {
       expect(
         componentTableRows.some((cells) => cells.includes(`\`${directory}\``)),
-        `"${directory}" not documented in ComponentInventory.docs.mdx`
+        `"${directory}" not documented in ComponentInventory.docs.mdx`,
       ).toBe(true);
     });
   });
@@ -96,11 +96,11 @@ describe('storybook migration inventory', () => {
   it('documents every authentication source file', () => {
     const authFiles = readDirectorySync(
       path.join(repoRoot, 'ClientApp', 'src', 'authentication'),
-      repoRoot
+      repoRoot,
     ).filter(
       (entry) =>
         entry.isFile() &&
-        (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))
+        (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx')),
     );
 
     authFiles.forEach((entry) => {

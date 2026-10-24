@@ -39,12 +39,12 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
       });
       setIsLoading(true);
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
         quotationData as RequestForQuoteDetails,
-        true
+        true,
       );
       if (
         fileResponse?.fileData &&
@@ -54,7 +54,7 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
         const fileUrl = getFileUrlFromBase64(fileResponse.fileData);
         // If the quote is declined then the terms pdf will have 3 pages instead of 2
         const pageNumber = getQuoteOfferPageNumber(
-          quotationData!.quoteRequestStatus
+          quotationData!.quoteRequestStatus,
         );
         openPdfPageInNewTab(fileUrl, pageNumber);
       }

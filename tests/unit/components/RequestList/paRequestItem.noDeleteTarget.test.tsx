@@ -16,33 +16,33 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
         accounts: [{ homeAccountId: 'account-id' }],
         instance: { acquireTokenSilent: mocks.acquireTokenSilent },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/storage/notification',
+  import('@/storage/notification'),
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -60,7 +60,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 // handler is unreachable without one. This stand-in is always rendered so the
 // "confirmed with no delete target" guard in PaRequestItem can be exercised.
 vi.mock(
-  '@/components/modals/ConfirmationModal',
+  import('@/components/modals/ConfirmationModal'),
   () =>
     ({
       default: ({ onModalYes }: { onModalYes: () => void }) => (
@@ -68,7 +68,7 @@ vi.mock(
           Confirm without target
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule23>
+    }) satisfies __ExactMockModule<__TestMockModule23>,
 );
 
 const request: PatternApprovalDashboardDetailsDto = {
@@ -88,11 +88,11 @@ describe('paRequestItem without a delete target', () => {
           tab={DashboardTab.Drafts}
           setDeleteSuccess={mocks.setDeleteSuccess}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(
-      screen.getByRole('button', { name: 'Confirm without target' })
+      screen.getByRole('button', { name: 'Confirm without target' }),
     );
 
     expect(mocks.acquireTokenSilent).not.toHaveBeenCalled();

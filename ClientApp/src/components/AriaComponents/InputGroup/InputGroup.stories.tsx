@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { Input } from 'react-aria-components/Input';
@@ -13,7 +14,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const WithLabel = meta.story({
   render: (args) => (
     <InputGroup {...args}>
@@ -23,9 +23,7 @@ export const WithLabel = meta.story({
   args: {
     label: 'Certificate number',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     // The label is rendered as a span and wired to the group by aria-labelledby, so the group is
     // announced by name rather than as an anonymous container.
     await expect(canvas.getByText('Certificate number')).toBeVisible();
@@ -41,9 +39,7 @@ export const WithoutLabel = meta.story({
       <Input aria-label='Search' placeholder='Search applications' />
     </InputGroup>
   ),
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     // No label prop means no label element at all - the group still renders its children.
     await expect(
       canvas.getByPlaceholderText('Search applications'),
@@ -61,9 +57,7 @@ export const Disabled = meta.story({
     label: 'Certificate number',
     isDisabled: true,
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     // The group pushes its disabled state down through InputContext, so the input inside is
     // disabled without being told separately.
     await expect(canvas.getByPlaceholderText('5/6A/91B')).toBeDisabled();

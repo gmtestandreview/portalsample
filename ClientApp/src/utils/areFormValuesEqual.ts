@@ -63,7 +63,7 @@ export const areFormValuesEqual = (left: unknown, right: unknown): boolean => {
     leftKeys.every(
       (key) =>
         Object.prototype.hasOwnProperty.call(right, key) &&
-        areFormValuesEqual(Reflect.get(left, key), Reflect.get(right, key))
+        areFormValuesEqual(Reflect.get(left, key), Reflect.get(right, key)),
     )
   );
 };

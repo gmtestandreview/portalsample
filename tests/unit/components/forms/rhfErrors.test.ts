@@ -46,13 +46,13 @@ describe(flattenRhfErrors, () => {
         b: { type: 'required', message: '' },
         c: null,
         d: 'text',
-      })
+      }),
     ).toEqual({});
   });
 
   it('treats a nested field named type as a group, not a leaf', () => {
     expect(
-      flattenRhfErrors({ type: { type: 'required', message: 'Pick a type' } })
+      flattenRhfErrors({ type: { type: 'required', message: 'Pick a type' } }),
     ).toEqual({ type: 'Pick a type' });
   });
 });

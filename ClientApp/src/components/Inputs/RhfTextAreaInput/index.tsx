@@ -95,7 +95,7 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
         onBlur={handleBlur}
         onChange={(event) => {
           field.onChange(
-            removeSupplementaryPlaneCharacters(event.target.value)
+            removeSupplementaryPlaneCharacters(event.target.value),
           );
         }}
       />

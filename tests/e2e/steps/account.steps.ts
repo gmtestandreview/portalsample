@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import {
@@ -23,12 +24,12 @@ Given(
     await installMockApi(page, scenarioState);
     await page.goto('/create-account', { waitUntil: 'domcontentloaded' });
     await waitForAppReady(page);
-  }
+  },
 );
 
 Given('the terms of use dialog is displayed', async ({ page }) => {
   await expect(
-    page.getByTestId('prompt-termsandcondition-modal')
+    page.getByTestId('prompt-termsandcondition-modal'),
   ).toBeVisible();
 });
 
@@ -45,7 +46,7 @@ Given('the user has accepted the terms of use', async ({ page }) => {
 Given('the organisation form is displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/create-account/);
   await expect(
-    page.getByRole('heading', { name: 'Organisation', exact: true })
+    page.getByRole('heading', { name: 'Organisation', exact: true }),
   ).toBeVisible();
 });
 
@@ -77,9 +78,9 @@ When('the authentication session expires', async ({ page, scenarioState }) => {
     scenarioState.failures.set(
       failureKey(
         'PUT',
-        `/api/request-for-quote/${scenarioState.activeReferenceId}/instrument-and-request`
+        `/api/request-for-quote/${scenarioState.activeReferenceId}/instrument-and-request`,
       ),
-      { status: 401 }
+      { status: 401 },
     );
     await disableMockAuthenticationReseed(page);
     return;
@@ -95,24 +96,24 @@ When('the user refreshes the page', async ({ page }) => {
 Then('the organisation form remains displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/create-account/);
   await expect(
-    page.getByRole('heading', { name: 'Organisation', exact: true })
+    page.getByRole('heading', { name: 'Organisation', exact: true }),
   ).toBeVisible();
   await expect(page.getByTestId('prompt-termsandcondition-modal')).toHaveCount(
-    0
+    0,
   );
 });
 
 Then('the contact form is displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/create-contact/);
   await expect(
-    page.getByRole('heading', { name: 'My contact details', exact: true })
+    page.getByRole('heading', { name: 'My contact details', exact: true }),
   ).toBeVisible();
 });
 
 Then('the completed account dashboard is displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(
-    page.getByRole('heading', { name: /currently managing/i })
+    page.getByRole('heading', { name: /currently managing/i }),
   ).toBeVisible();
 });
 

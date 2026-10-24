@@ -7,13 +7,13 @@ import { FileStatus } from '@/routes/ta/types';
 
 const renderList = (
   files: FileProgress[],
-  onCancelFile?: (fileName: string) => void
+  onCancelFile?: (fileName: string) => void,
 ) =>
   render(
     <ProgressFileList
       files={files}
       {...(onCancelFile === undefined ? {} : { onCancelFile })}
-    />
+    />,
   );
 
 describe(ProgressFileList, () => {
@@ -40,7 +40,7 @@ describe(ProgressFileList, () => {
     ]);
 
     expect(
-      screen.getByRole('progressbar', { name: 'Uploading bytes.pdf' })
+      screen.getByRole('progressbar', { name: 'Uploading bytes.pdf' }),
     ).toHaveAttribute('aria-valuenow', '57');
     expect(screen.getByText('512 B / 900 B')).toBeInTheDocument();
     expect(screen.getByText('2.00 KB')).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe(ProgressFileList, () => {
           totalBytes: 200,
         },
       ],
-      onCancelFile
+      onCancelFile,
     );
 
     const cancelButton = screen.getByRole('button', {
@@ -72,7 +72,7 @@ describe(ProgressFileList, () => {
     expect(onCancelFile).toHaveBeenCalledWith('manual.pdf');
     expect(screen.getByText('Cancelling...')).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: 'Cancel uploading manual.pdf' })
+      screen.queryByRole('button', { name: 'Cancel uploading manual.pdf' }),
     ).not.toBeInTheDocument();
   });
 

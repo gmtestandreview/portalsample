@@ -30,12 +30,12 @@ const loadDeliveryAndReturn =
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const deliveryAndReturn = await client.getDeliveryAndReturn(
         id,
-        abortSignal
+        abortSignal,
       );
       const wizardStepValues: WizardFormStepValues<DeliveryAndReturnStep> = {
         stepValues: { ...deliveryAndReturn },
@@ -52,17 +52,17 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: DeliveryAndReturnStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.saveDeliveryAndReturn(
@@ -72,7 +72,7 @@ const saveStep =
           formStep: values,
           isCompletingStep: isComplete,
         },
-        abortSignal
+        abortSignal,
       );
     } else {
       throw new Error('No authenticated account available to save form.');
@@ -120,7 +120,7 @@ const deliveryAndReturnProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<DeliveryAndReturnStep> => ({
   initialValues: {
     returnAddress: {},

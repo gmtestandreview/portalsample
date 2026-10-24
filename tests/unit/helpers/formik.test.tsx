@@ -18,7 +18,7 @@ describe('formik harness', () => {
     render(
       <FormikWrapper initialValues={{ name: 'Existing' }}>
         <Field name='name' data-testid='name' />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     expect(screen.getByTestId('name')).toHaveValue('Existing');
@@ -33,13 +33,13 @@ describe('formik harness', () => {
       >
         <Field name='name' data-testid='name' />
         <ErrorMessage name='name' component='span' data-testid='name-error' />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     // Without a schema Formik reports no errors at all, and an "invalid input is rejected"
     // assertion would pass without testing anything.
     await waitFor(() =>
-      expect(screen.getByTestId('name-error')).toBeInTheDocument()
+      expect(screen.getByTestId('name-error')).toBeInTheDocument(),
     );
   });
 
@@ -54,7 +54,7 @@ describe('formik harness', () => {
       >
         <Field name='name' data-testid='name' />
         <button type='submit'>Save</button>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await user.clear(screen.getByTestId('name'));
@@ -77,7 +77,7 @@ describe('formik harness', () => {
       >
         <Field name='name' data-testid='name' />
         <button type='submit'>Save</button>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     const save = screen.getByRole('button', { name: 'Save' });
@@ -105,13 +105,13 @@ describe('formik harness', () => {
         <Field name='name' data-testid='name' />
         <ErrorMessage name='name' component='span' data-testid='name-error' />
         <button type='submit'>Save</button>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     await waitFor(() =>
-      expect(screen.getByTestId('name-error')).toBeInTheDocument()
+      expect(screen.getByTestId('name-error')).toBeInTheDocument(),
     );
 
     expect(submit.submitCount()).toBe(0);

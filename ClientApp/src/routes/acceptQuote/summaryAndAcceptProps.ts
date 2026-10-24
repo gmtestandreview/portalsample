@@ -31,7 +31,7 @@ const loadSummary =
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const summaryStep = await client.getSummaryAndAccept(id, abortSignal);
@@ -49,17 +49,17 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: SummaryAndAcceptStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.saveSummaryAndAccept(
@@ -69,12 +69,12 @@ const saveStep =
           formStep: values,
           isCompletingStep: isComplete,
         },
-        abortSignal
+        abortSignal,
       );
       if (isComplete) {
         SessionStorageCache().setItem(
           values.acceptQuotePreInfo!.quoteRequestIdNum!,
-          'accepted-quote-id'
+          'accepted-quote-id',
         );
       }
     } else {
@@ -116,7 +116,7 @@ const summaryAndAcceptProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<SummaryAndAcceptStep> => ({
   initialValues: {},
   stepStatuses: statuses,

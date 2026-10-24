@@ -12,7 +12,7 @@ export class TrustedTypes {
         createHTML: (toEscape) => DOMPurify.sanitize(toEscape),
         createScript: (): string => {
           throw new Error(
-            'Inline script creation is not allowed by the NMI TrustedTypes policy.'
+            'Inline script creation is not allowed by the NMI TrustedTypes policy.',
           );
         },
       });

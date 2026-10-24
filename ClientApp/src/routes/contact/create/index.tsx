@@ -50,7 +50,7 @@ const CreateContact = () => {
           instance,
           statuses,
           account,
-          contactId
+          contactId,
         )}
       >
         <ContactDetails />

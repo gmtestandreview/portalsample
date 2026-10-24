@@ -18,23 +18,23 @@ const wrapperMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/components/ErrorBoundary',
+  import('@/components/ErrorBoundary'),
   () =>
     ({
       default: wrapperMocks.errorBoundary,
-    }) satisfies __ExactMockModule<__TestMockModule13>
+    }) satisfies __ExactMockModule<__TestMockModule13>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       default: wrapperMocks.analytics,
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/components/modals/ConfirmationModal',
+  import('@/components/modals/ConfirmationModal'),
   () =>
     ({
       default: ({
@@ -63,7 +63,7 @@ vi.mock(
             </button>
           </dialog>
         ) : null,
-    }) satisfies __ExactMockModule<__TestMockModule23>
+    }) satisfies __ExactMockModule<__TestMockModule23>,
 );
 
 const step = (location: string) => (
@@ -97,27 +97,27 @@ describe('wizard control behavior', () => {
             }}
           />
         </Form>
-      </Formik>
+      </Formik>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Finish' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Confirm submission' })
+      screen.getByRole('dialog', { name: 'Confirm submission' }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Confirm no' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Confirm submission' })
+      screen.getByRole('dialog', { name: 'Confirm submission' }),
     ).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: 'Close confirmation' })
+      screen.getByRole('button', { name: 'Close confirmation' }),
     );
 
     expect(
-      screen.queryByRole('dialog', { name: 'Confirm submission' })
+      screen.queryByRole('dialog', { name: 'Confirm submission' }),
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Finish' }));
@@ -141,7 +141,7 @@ describe('wizard control behavior', () => {
             finalStepConfirmation={{ titleText: 'Confirm' }}
           />
         </Form>
-      </Formik>
+      </Formik>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
@@ -166,12 +166,12 @@ describe('wizard control behavior', () => {
             finalStepConfirmation={{ titleText: 'Confirm' }}
           />
         </Form>
-      </Formik>
+      </Formik>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
     await waitFor(() =>
-      expect(validate).toHaveBeenCalledWith({ name: '' }, undefined)
+      expect(validate).toHaveBeenCalledWith({ name: '' }, undefined),
     );
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -188,7 +188,7 @@ describe('wizard control behavior', () => {
             finalStepConfirmation={{}}
           />
         </Form>
-      </Formik>
+      </Formik>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
@@ -201,7 +201,7 @@ describe('wizard control behavior', () => {
     const { rerender } = render(
       <MemoryRouter>
         <PreviousStepButton steps={steps} currentStepIndex={0} url='/wizard' />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
@@ -215,14 +215,14 @@ describe('wizard control behavior', () => {
           url='/wizard'
           className='custom-back'
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('link', { name: 'Previous details' })
+      screen.getByRole('link', { name: 'Previous details' }),
     ).toHaveAttribute('href', '/wizard/first');
     expect(screen.getByRole('link', { name: 'Previous details' })).toHaveClass(
-      'custom-back'
+      'custom-back',
     );
   });
 
@@ -232,7 +232,7 @@ describe('wizard control behavior', () => {
         steps: ['invalid' as unknown as React.ReactElement],
         currentStepIndex: 1,
         url: '/wizard',
-      })
+      }),
     ).toThrow('WizardForm only accepts children of type WizardStep');
   });
 
@@ -250,8 +250,8 @@ describe('wizard control behavior', () => {
             <WizardForm locationOnCompletion='/complete'>
               {'invalid child' as unknown as React.ReactElement}
             </WizardForm>
-          </MemoryRouter>
-        )
+          </MemoryRouter>,
+        ),
       ).toThrow('WizardForm only accepts children of type WizardStep');
     } finally {
       consoleError.mockRestore();
@@ -269,18 +269,18 @@ describe('wizard control behavior', () => {
         loadStepValues={() => ({ stepValues: {} })}
       >
         <span>Wrapped step content</span>
-      </WizardStep>
+      </WizardStep>,
     );
 
     expect(screen.getByText('Wrapped step content')).toBeInTheDocument();
-    expect(wrapperMocks.errorBoundary).toHaveBeenCalled();
+    expect(wrapperMocks.errorBoundary).toHaveBeenCalledWith();
     expect(wrapperMocks.analytics).toHaveBeenCalledWith(
       expect.objectContaining({
         anonymiseIp: false,
         sendPageView: true,
         testMode: false,
       }),
-      {}
+      {},
     );
   });
 });

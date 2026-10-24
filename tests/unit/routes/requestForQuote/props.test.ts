@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal();
     if (typeof actual !== 'object' || actual === null) {
@@ -50,25 +50,25 @@ vi.mock(
         };
       }),
     } satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: mocks.appLoggerError,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -102,7 +102,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const abortSignal = new AbortController().signal;
 
@@ -112,28 +112,28 @@ describe('request for quote wizard prop factories', () => {
     expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
     expect(mocks.getInstrumentAndRequest).toHaveBeenCalledWith(
       'APP-1',
-      abortSignal
+      abortSignal,
     );
     expect(
-      props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.No })
+      props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.No }),
     ).toBe(true);
     expect(
-      props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.Yes })
+      props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.Yes }),
     ).toBe(false);
     expect(props.bannerRefTitle).toBe('Ref ID: APP-1');
     expect(props.bannerSubTitle).toBe(
-      'Trading - Branch - National Measurement Institute'
+      'Trading - Branch - National Measurement Institute',
     );
 
     await props.onSaveAndNext?.(
       {
         hasSerialNumber: YesNo.Yes,
         preferredInstrumentOrArtefactAvailabilityDate: new Date(
-          '2026-06-12T00:00:00Z'
+          '2026-06-12T00:00:00Z',
         ),
       },
       true,
-      abortSignal
+      abortSignal,
     );
 
     expect(mocks.saveInstrumentAndRequest).toHaveBeenCalledWith(
@@ -142,18 +142,18 @@ describe('request for quote wizard prop factories', () => {
         applicationId: 'APP-1',
         formStep: expect.objectContaining({
           preferredInstrumentOrArtefactAvailabilityDate: new Date(
-            '2026-06-12T00:00:00.000Z'
+            '2026-06-12T00:00:00.000Z',
           ),
         }),
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
 
     await props.onSaveAndExit?.(
       { hasSerialNumber: YesNo.No },
       false,
-      abortSignal
+      abortSignal,
     );
 
     expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith(
@@ -163,7 +163,7 @@ describe('request for quote wizard prop factories', () => {
         formStep: { hasSerialNumber: YesNo.No },
         isCompletingStep: false,
       },
-      abortSignal
+      abortSignal,
     );
   });
 
@@ -176,7 +176,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const abortSignal = new AbortController().signal;
 
@@ -187,7 +187,7 @@ describe('request for quote wizard prop factories', () => {
           'not a date' as unknown as Date,
       },
       true,
-      abortSignal
+      abortSignal,
     );
 
     expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith(
@@ -199,7 +199,7 @@ describe('request for quote wizard prop factories', () => {
         }),
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
   });
 
@@ -210,7 +210,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const abortSignal = new AbortController().signal;
 
@@ -219,34 +219,36 @@ describe('request for quote wizard prop factories', () => {
     });
     expect(mocks.getOrganisationAndContact).toHaveBeenCalledWith(
       'APP-2',
-      abortSignal
+      abortSignal,
     );
     expect(props.hidingFields?.businessOrTradingName?.({})).toBe(false);
     expect(props.hidingFields?.branchOrLocationName?.({})).toBe(false);
     expect(
       props.hidingFields?.principalContactHide?.({
         isPrincipalContact: YesNo.Yes,
-      })
+      }),
     ).toBe(true);
     expect(
       props.hidingFields?.principalContactHide?.({
         isPrincipalContact: YesNo.No,
-      })
+      }),
     ).toBe(false);
     expect(
-      props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Other' } })
+      props.hidingFields?.contact?.titleOther?.({
+        contact: { title: 'Other' },
+      }),
     ).toBe(false);
     expect(
-      props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } })
+      props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
     ).toBe(true);
     expect(props.getRedirectionLocationOnError?.(500, ErrorType.Load)).toBe(
-      '/not-found'
+      '/not-found',
     );
 
     await props.onSaveAndExit?.(
       { isPrincipalContact: YesNo.No },
       true,
-      abortSignal
+      abortSignal,
     );
 
     expect(mocks.saveOrganisationAndContact).toHaveBeenCalledWith(
@@ -256,7 +258,7 @@ describe('request for quote wizard prop factories', () => {
         formStep: { isPrincipalContact: YesNo.No },
         isCompletingStep: false,
       },
-      abortSignal
+      abortSignal,
     );
   });
 
@@ -267,7 +269,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const abortSignal = new AbortController().signal;
     const summary = {
@@ -282,19 +284,21 @@ describe('request for quote wizard prop factories', () => {
     expect(mocks.getSummary).toHaveBeenCalledWith('APP-3', abortSignal);
     expect(
       props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
-        summary
-      )
+        summary,
+      ),
     ).toBe(true);
     expect(
       props.hidingFields?.organisationAndContact?.principalContactHide?.(
-        summary
-      )
+        summary,
+      ),
     ).toBe(false);
     expect(
-      props.hidingFields?.organisationAndContact?.contact?.titleOther?.(summary)
+      props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
+        summary,
+      ),
     ).toBe(true);
     expect(props.getRedirectionLocationOnError?.(404, ErrorType.Load)).toBe(
-      '/not-found'
+      '/not-found',
     );
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
@@ -306,29 +310,29 @@ describe('request for quote wizard prop factories', () => {
         formStep: summary,
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
 
     await expect(
-      props.onSaveAndNext?.(summary, true, abortSignal)
+      props.onSaveAndNext?.(summary, true, abortSignal),
     ).resolves.toBeUndefined();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'failoed to submit form',
       expect.any(Error),
-      { Id: 'APP-3' }
+      { Id: 'APP-3' },
     );
 
     mocks.getSummary.mockRejectedValueOnce(new Error('load failed'));
 
     await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load summary',
       expect.any(Error),
-      { Id: 'APP-3' }
+      { Id: 'APP-3' },
     );
   });
 
@@ -339,7 +343,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const abortSignal = new AbortController().signal;
     const summary = {
@@ -354,18 +358,20 @@ describe('request for quote wizard prop factories', () => {
     });
     expect(mocks.getSubmittedSummary).toHaveBeenCalledWith(
       'APP-4',
-      abortSignal
+      abortSignal,
     );
     expect(
       props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
-        summary
-      )
+        summary,
+      ),
     ).toBe(false);
     expect(
-      props.hidingFields?.organisationAndContact?.contact?.titleOther?.(summary)
+      props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
+        summary,
+      ),
     ).toBe(false);
     expect(props.getRedirectionLocationOnError?.(404, ErrorType.Load)).toBe(
-      '/not-found'
+      '/not-found',
     );
 
     await props.onSaveAndNext?.(summary, false, abortSignal);
@@ -377,7 +383,7 @@ describe('request for quote wizard prop factories', () => {
         formStep: summary,
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
   });
 
@@ -388,7 +394,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const organisationProps = organisationAndContactProps(
       'APP-5',
@@ -396,7 +402,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const summaryProps = requestForQuoteSummaryProps(
       'APP-5',
@@ -404,7 +410,7 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
     const viewSummaryProps = viewRequestForQuoteSummaryProps(
       'APP-5',
@@ -412,32 +418,32 @@ describe('request for quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Request quote'
+      'Request quote',
     );
 
     await expect(instrumentProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(instrumentProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'error'
+      'error',
     );
     await expect(organisationProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(organisationProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'error'
+      'error',
     );
     await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(summaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'error'
+      'error',
     );
     await expect(viewSummaryProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(viewSummaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'error'
+      'error',
     );
   });
 });

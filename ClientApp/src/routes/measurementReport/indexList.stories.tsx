@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, waitFor } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
@@ -23,11 +24,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Shell = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // The banner title renders the :id route param. It was empty in every story,

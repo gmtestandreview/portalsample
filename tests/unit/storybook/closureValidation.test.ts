@@ -91,7 +91,7 @@ const receipt = {
 describe('closure evidence validation', () => {
   it('derives only executable story entries and reports skipped entries separately', () => {
     expect(
-      moduleUnderTest.deriveExecutableStorySet({ index: fullIndex })
+      moduleUnderTest.deriveExecutableStorySet({ index: fullIndex }),
     ).toEqual({
       storyIds: ['components-field--default'],
       skipped: ['components-field--skipped'],
@@ -100,7 +100,7 @@ describe('closure evidence validation', () => {
       moduleUnderTest.deriveExecutableStorySet({
         index: fullIndex,
         requiredStoryIds: ['components-field--required'],
-      })
+      }),
     ).toEqual({
       storyIds: ['components-field--default', 'components-field--required'],
       skipped: ['components-field--skipped'],
@@ -124,7 +124,7 @@ describe('closure evidence validation', () => {
           producerId: 'producer-1',
           producerIdentityDigest: 'sha256:producer',
         },
-      })
+      }),
     ).toEqual({
       ok: true,
       errors: [],
@@ -157,7 +157,7 @@ describe('closure evidence validation', () => {
 
     expect(result.ok).toBe(false);
     expect(result.errors.map(({ code }) => code)).toContain(
-      'EXECUTION_INCOMPLETE'
+      'EXECUTION_INCOMPLETE',
     );
   });
 
@@ -191,7 +191,7 @@ describe('closure evidence validation', () => {
 
     expect(result.ok).toBe(false);
     expect(result.errors.map(({ code }) => code)).toContain(
-      'EXECUTION_INCOMPLETE'
+      'EXECUTION_INCOMPLETE',
     );
   });
 
@@ -228,9 +228,9 @@ describe('closure evidence validation', () => {
       expect.objectContaining({
         code: 'EXECUTION_INCOMPLETE',
         message: expect.stringContaining(
-          'executable story has no passing receipt'
+          'executable story has no passing receipt',
         ),
-      })
+      }),
     );
   });
 });

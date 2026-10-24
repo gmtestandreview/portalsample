@@ -6,13 +6,13 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'dompurify',
+  import('dompurify'),
   () =>
     ({
       default: {
         sanitize: mocks.sanitize,
       },
-    }) satisfies __ExactMockModule<__TestMockModule159>
+    }) satisfies __ExactMockModule<__TestMockModule159>,
 );
 
 describe('trustedTypes', () => {
@@ -40,11 +40,11 @@ describe('trustedTypes', () => {
     const [, policy] = defined(createPolicy.mock.calls[0], 'createPolicy call');
 
     expect(policy.createScriptURL('https://example.test/script.js')).toBe(
-      'sanitized:https://example.test/script.js'
+      'sanitized:https://example.test/script.js',
     );
     expect(policy.createHTML('<p>Hello</p>')).toBe('sanitized:<p>Hello</p>');
     expect(() => policy.createScript()).toThrow(
-      'Inline script creation is not allowed'
+      'Inline script creation is not allowed',
     );
   });
 

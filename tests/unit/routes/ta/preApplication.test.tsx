@@ -13,14 +13,14 @@ const mocks = vi.hoisted(() => ({
   downloadFileFromUrl: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions'),
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
@@ -28,7 +28,7 @@ vi.mock(
       ...original,
       downloadFileFromUrl: mocks.downloadFileFromUrl,
     } satisfies __ExactMockModule<__TestMockModule9>;
-  }
+  },
 );
 
 const renderPage = async () => {
@@ -59,13 +59,13 @@ describe('pattern approval pre-application', () => {
     await renderPage();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Pattern/type approval'
+      'Pattern/type approval',
     );
     expect(
-      screen.getByText('test results, certificates or reports')
+      screen.getByText('test results, certificates or reports'),
     ).toBeInTheDocument();
     expect(screen.getByTestId('info-summary')).toHaveTextContent(
-      'New customers'
+      'New customers',
     );
   });
 
@@ -74,13 +74,13 @@ describe('pattern approval pre-application', () => {
 
     expect(screen.getByRole('link', { name: /NMI P 106/ })).toHaveAttribute(
       'href',
-      'https://www.industry.gov.au/sites/default/files/2026-03/nmi-p-106.pdf'
+      'https://www.industry.gov.au/sites/default/files/2026-03/nmi-p-106.pdf',
     );
     expect(
-      screen.getByRole('link', { name: /Pattern approval checklist/ })
+      screen.getByRole('link', { name: /Pattern approval checklist/ }),
     ).toHaveAttribute(
       'href',
-      expect.stringContaining('pattern-approval-requirements')
+      expect.stringContaining('pattern-approval-requirements'),
     );
   });
 
@@ -91,7 +91,7 @@ describe('pattern approval pre-application', () => {
     await user.click(
       screen.getByRole('link', {
         name: /Download credit check application form/,
-      })
+      }),
     );
 
     // Routed through the helper rather than a plain href: the file sits behind a request that
@@ -100,7 +100,7 @@ describe('pattern approval pre-application', () => {
       'https://www.industry.gov.au/sites/default/files/2025-07/NMI-credit-application-form.pdf',
       msalInstance,
       [testAccount],
-      'NMI-credit-application-form.pdf'
+      'NMI-credit-application-form.pdf',
     );
   });
 
@@ -111,7 +111,7 @@ describe('pattern approval pre-application', () => {
     await user.click(
       screen.getByRole('link', {
         name: /Download credit check application form/,
-      })
+      }),
     );
 
     // The anchor carries href='#', so without preventDefault the click would navigate.

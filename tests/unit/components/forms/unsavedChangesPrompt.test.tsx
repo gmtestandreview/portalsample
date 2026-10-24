@@ -9,7 +9,7 @@ const guardProps = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/components/RouteLeavingGuard',
+  import('../../../../ClientApp/src/components/RouteLeavingGuard'),
   () =>
     ({
       default: (props: { when?: boolean; onProceed?: () => void }) => {
@@ -18,7 +18,7 @@ vi.mock(
           <div data-testid='guard' data-when={String(Boolean(props.when))} />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule20>
+    }) satisfies __ExactMockModule<__TestMockModule20>,
 );
 
 const base = { isDirty: false, isValid: true, submitCount: 0 };
@@ -57,7 +57,7 @@ describe(UnsavedChangesPrompt, () => {
   it('passes onProceed to the guard on both wordings', () => {
     const onProceed = vi.fn();
     const { rerender } = render(
-      <UnsavedChangesPrompt {...base} onProceed={onProceed} />
+      <UnsavedChangesPrompt {...base} onProceed={onProceed} />,
     );
 
     expect(guardProps.last?.onProceed).toBe(onProceed);
@@ -67,7 +67,7 @@ describe(UnsavedChangesPrompt, () => {
         {...base}
         path='/create-account/'
         onProceed={onProceed}
-      />
+      />,
     );
 
     expect(guardProps.last?.onProceed).toBe(onProceed);
@@ -91,7 +91,7 @@ describe('unsavedFormPrompt (Formik)', () => {
           <UnsavedFormPrompt />
           <Probe />
         </>
-      </Formik>
+      </Formik>,
     );
 
     expect(screen.getByTestId('errors')).toHaveTextContent('Required');
@@ -101,7 +101,7 @@ describe('unsavedFormPrompt (Formik)', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('errors')).toHaveTextContent('{}')
+      expect(screen.getByTestId('errors')).toHaveTextContent('{}'),
     );
   });
 });

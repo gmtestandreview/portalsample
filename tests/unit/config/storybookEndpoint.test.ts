@@ -25,7 +25,7 @@ describe(resolveStorybookTestTarget, () => {
         url: 'http://127.0.0.1:6007',
         serverMode: 'external',
         ci: true,
-      })
+      }),
     ).toEqual({
       baseURL: 'http://127.0.0.1:6007',
       mcpURL: 'http://127.0.0.1:6007/mcp',
@@ -51,7 +51,7 @@ describe(resolveStorybookTestTarget, () => {
 
   it('rejects an unsupported server mode', () => {
     expect(() =>
-      resolveStorybookTestTarget({ serverMode: 'managed-by-someone-else' })
+      resolveStorybookTestTarget({ serverMode: 'managed-by-someone-else' }),
     ).toThrow('serverMode must be managed or external');
   });
 });

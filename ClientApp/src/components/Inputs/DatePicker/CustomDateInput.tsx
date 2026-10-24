@@ -55,15 +55,15 @@ const CustomDateInput = React.forwardRef<
     event: React.FocusEvent<any>,
     targetLosingFocus: Element | null,
     targetReceivingFocus: Element | null,
-    elementId: string
+    elementId: string,
   ) => {
     const targetLosingFocusInElement = findElementInTreeById(
       targetLosingFocus,
-      elementId
+      elementId,
     );
     const targetReceivingFocusInElement = findElementInTreeById(
       targetReceivingFocus,
-      elementId
+      elementId,
     );
 
     if (
@@ -80,26 +80,26 @@ const CustomDateInput = React.forwardRef<
   };
 
   const handleCustomBlur = <E extends HTMLElement>(
-    event: React.FocusEvent<E, Element>
+    event: React.FocusEvent<E, Element>,
   ) => {
     // OnBlur - target is what loses the focus and related target is what receives focus (if any)
     handleInputAndButtonFocusEvents(
       event,
       event.target,
       event.relatedTarget,
-      wrapperUUID
+      wrapperUUID,
     );
   };
 
   const handleCustomFocus = <E extends HTMLElement>(
-    event: React.FocusEvent<E, Element>
+    event: React.FocusEvent<E, Element>,
   ) => {
     // OnFocus - target is what receives the focus and related target is what loses focus (if any)
     handleInputAndButtonFocusEvents(
       event,
       event.relatedTarget,
       event.target,
-      wrapperUUID
+      wrapperUUID,
     );
   };
 

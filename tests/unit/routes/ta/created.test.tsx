@@ -18,31 +18,31 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: () => mocks.account,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
       default: mocks.useHtmlTitle,
-    }) satisfies __ExactMockModule<__TestMockModule89>
+    }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: mocks.useBodyClass,
-    }) satisfies __ExactMockModule<__TestMockModule59>
+    }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/FormBanner',
+  import('../../../../ClientApp/src/components/forms/FormBanner'),
   () =>
     ({
       default: ({
@@ -60,7 +60,7 @@ vi.mock(
           <span>{subTitle}</span>
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule90>
+    }) satisfies __ExactMockModule<__TestMockModule90>,
 );
 
 const renderCreatedRoute = () =>
@@ -76,12 +76,12 @@ const renderCreatedRoute = () =>
           element={<div>Pattern approval dashboard</div>}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 const expectDashboardTabStorage = () => {
   expect(globalThis.sessionStorage.getItem('set-tabop-after-save')).toBe(
-    JSON.stringify(DashboardTab.Requests)
+    JSON.stringify(DashboardTab.Requests),
   );
 };
 
@@ -95,25 +95,25 @@ describe(RequestForPatternApprovalCreated, () => {
     renderCreatedRoute();
 
     expect(mocks.useHtmlTitle).toHaveBeenCalledWith(
-      'Application for Pattern/type approval created successfully | NMI Services portal'
+      'Application for Pattern/type approval created successfully | NMI Services portal',
     );
     expect(mocks.useBodyClass).toHaveBeenCalledWith('application-created');
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Pattern/type approval - Application'
+      'Pattern/type approval - Application',
     );
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Ref ID: PA-200'
+      'Ref ID: PA-200',
     );
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Trading - Branch - National Measurement Institute'
+      'Trading - Branch - National Measurement Institute',
     );
     expect(
       screen.getByRole('heading', {
         name: 'Your application has been submitted',
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('application-submit-success')).toHaveTextContent(
-      'PA-200'
+      'PA-200',
     );
   });
 

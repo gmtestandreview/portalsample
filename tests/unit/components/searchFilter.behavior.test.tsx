@@ -16,19 +16,19 @@ const accountDispatchMock = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountDispatch: () => accountDispatchMock,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 const defaultFilters: UserProfile = {
@@ -54,7 +54,7 @@ describe('searchFilter behavior', () => {
         onSearchSubmit={onSearchSubmit}
         initialSearchValue='balance'
         placeholder='Search requests'
-      />
+      />,
     );
 
     const input = screen.getByRole('textbox', {
@@ -79,7 +79,7 @@ describe('searchFilter behavior', () => {
 
   it('renders the leading search icon as decorative markup without a presentation role', () => {
     const { container } = render(
-      <SearchBox onSearchSubmit={vi.fn()} placeholder='Search requests' />
+      <SearchBox onSearchSubmit={vi.fn()} placeholder='Search requests' />,
     );
 
     const searchIcon = container.querySelector('#search-icon i');
@@ -98,7 +98,7 @@ describe('searchFilter behavior', () => {
         initialFilters={defaultFilters}
         setInitialFilters={setInitialFilters}
         setCurrentPage={setCurrentPage}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /filters/i }));
@@ -125,7 +125,7 @@ describe('searchFilter behavior', () => {
     });
     expect(screen.getByRole('button', { name: /filters/i })).toHaveAttribute(
       'aria-expanded',
-      'false'
+      'false',
     );
   });
 
@@ -146,7 +146,7 @@ describe('searchFilter behavior', () => {
         initialFilters={changedFilters}
         setInitialFilters={setInitialFilters}
         setCurrentPage={setCurrentPage}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /filters/i }));
@@ -176,7 +176,7 @@ describe('searchFilter behavior', () => {
         initialFilters={defaultFilters}
         setInitialFilters={setInitialFilters}
         setCurrentPage={vi.fn()}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /filters/i }));
@@ -186,7 +186,7 @@ describe('searchFilter behavior', () => {
     expect(setInitialFilters).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: /filters/i })).toHaveAttribute(
       'aria-expanded',
-      'false'
+      'false',
     );
   });
 
@@ -203,7 +203,7 @@ describe('searchFilter behavior', () => {
         }}
         setInitialFilters={vi.fn()}
         setCurrentPage={vi.fn()}
-      />
+      />,
     );
 
     const toggle = screen.getByRole('button', { name: /filters/i });
@@ -227,7 +227,7 @@ describe('searchFilter behavior', () => {
         }}
         setInitialFilters={vi.fn()}
         setCurrentPage={vi.fn()}
-      />
+      />,
     );
 
     const toggle = screen.getByRole('button', { name: /filters/i });
@@ -248,7 +248,7 @@ describe('searchFilter behavior', () => {
         initialFilters={undefined}
         setInitialFilters={setInitialFilters}
         setCurrentPage={vi.fn()}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /filters/i }));
@@ -259,7 +259,7 @@ describe('searchFilter behavior', () => {
         filterYearType: 'allYears',
         filterStatusType: 'allStatuses',
         filtersChanged: false,
-      })
+      }),
     );
   });
 
@@ -273,7 +273,7 @@ describe('searchFilter behavior', () => {
         }}
         setInitialFilters={vi.fn()}
         setCurrentPage={vi.fn()}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /filters/i }));
@@ -293,14 +293,14 @@ describe('searchFilter behavior', () => {
         setInitialFilters={setInitialFilters}
         setCurrentPage={setCurrentPage}
         placeholder='Search dashboard'
-      />
+      />,
     );
 
     await user.type(
       screen.getByRole('textbox', {
         name: 'Type keyword and press Enter key to search.',
       }),
-      'caliper{Enter}'
+      'caliper{Enter}',
     );
 
     expect(setCurrentPage).toHaveBeenCalledWith(1);
@@ -309,7 +309,7 @@ describe('searchFilter behavior', () => {
       defined(setInitialFilters.mock.calls[0], 'setInitialFilters call')[0]({
         ...defaultFilters,
         filterCurrentPage: 4,
-      })
+      }),
     ).toEqual({
       ...defaultFilters,
       filterCurrentPage: 1,

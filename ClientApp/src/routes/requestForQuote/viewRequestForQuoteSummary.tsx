@@ -45,7 +45,7 @@ const ViewRequestForQuoteSummary = ({
         if (accounts.length > 0) {
           const client = new RequestForQuoteClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const result = await client.getStepStatuses(id!);
@@ -76,7 +76,7 @@ const ViewRequestForQuoteSummary = ({
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <RequestForQuoteSummary name='' isSubmitted />

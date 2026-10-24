@@ -64,7 +64,7 @@ const mocks: {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -72,59 +72,62 @@ vi.mock(
         instance: mocks.instance,
       }),
       useAccount: (account: { homeAccountId: string }) => account,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
+  import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: mocks.useAccountState,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock(
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
-  return {
-    ...actual,
-    CRMLookupTypes: {
-      TCPortalMeasurementCategory: 'TCPortalMeasurementCategory',
-      TCArtefactTypePortalCategory: 'TCArtefactTypePortalCategory',
-    },
-    LookupClient: vi.fn(function LookupClientMock() {
-      return { setAuthToken: mocks.setAuthToken, getLookup: mocks.getLookup };
-    }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getReportRecipient: mocks.getReportRecipient,
-        getDeliveryAndReturn: mocks.getDeliveryAndReturn,
-        getPaymentDetails: mocks.getPaymentDetails,
-        getSummaryAndAccept: mocks.getSummaryAndAccept,
-      };
-    }),
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return { setAuthToken: mocks.setAuthToken };
-    }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+    return {
+      ...actual,
+      CRMLookupTypes: {
+        TCPortalMeasurementCategory: 'TCPortalMeasurementCategory',
+        TCArtefactTypePortalCategory: 'TCArtefactTypePortalCategory',
+      },
+      LookupClient: vi.fn(function LookupClientMock() {
+        return { setAuthToken: mocks.setAuthToken, getLookup: mocks.getLookup };
+      }),
+      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getReportRecipient: mocks.getReportRecipient,
+          getDeliveryAndReturn: mocks.getDeliveryAndReturn,
+          getPaymentDetails: mocks.getPaymentDetails,
+          getSummaryAndAccept: mocks.getSummaryAndAccept,
+        };
+      }),
+      AccountsClient: vi.fn(function AccountsClientMock() {
+        return { setAuthToken: mocks.setAuthToken };
+      }),
+      DashboardClient: vi.fn(function DashboardClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
+  },
+);
 
-vi.mock('formik', () => {
+vi.mock(import('formik'), () => {
   const getPath = (path: string, values = mocks.formikValues) =>
     path.split('.').reduce<unknown>((value, part) => {
       if (value === null || typeof value !== 'object') return undefined;
@@ -149,7 +152,7 @@ vi.mock('formik', () => {
 });
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/TextInput',
+  import('../../../ClientApp/src/components/Inputs/TextInput'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -157,11 +160,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/TextAreaInput',
+  import('../../../ClientApp/src/components/Inputs/TextAreaInput'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -169,11 +172,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule134>
+    }) satisfies __ExactMockModule<__TestMockModule134>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/RadioButtonGroup',
+  import('../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
   () =>
     ({
       default: ({
@@ -192,11 +195,11 @@ vi.mock(
           ))}
         </fieldset>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule52>
+    }) satisfies __ExactMockModule<__TestMockModule52>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/SelectInput',
+  import('../../../ClientApp/src/components/Inputs/SelectInput'),
   () =>
     ({
       default: ({
@@ -225,11 +228,11 @@ vi.mock(
           </label>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule131>
+    }) satisfies __ExactMockModule<__TestMockModule131>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/NumberInput',
+  import('../../../ClientApp/src/components/Inputs/NumberInput'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -237,11 +240,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule30>
+    }) satisfies __ExactMockModule<__TestMockModule30>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/DatePicker',
+  import('../../../ClientApp/src/components/Inputs/DatePicker'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -249,11 +252,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule148>
+    }) satisfies __ExactMockModule<__TestMockModule148>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/AddressLookup',
+  import('../../../ClientApp/src/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -261,11 +264,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>
+    }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/RhfAddressLookup',
+  import('../../../ClientApp/src/components/Inputs/RhfAddressLookup'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -273,11 +276,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule69>
+    }) satisfies __ExactMockModule<__TestMockModule69>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/Checkbox',
+  import('../../../ClientApp/src/components/Inputs/Checkbox'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
@@ -285,11 +288,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule79>
+    }) satisfies __ExactMockModule<__TestMockModule79>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/HidableField',
+  import('../../../ClientApp/src/components/forms/HidableField'),
   () =>
     ({
       default: ({ children, name }: { children: ReactNode; name: string }) => (
@@ -297,51 +300,51 @@ vi.mock(
           {children}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule70>
+    }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
+  import('../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
   () =>
     ({
       default: ({ name }: { name: string }) => (
         <div data-testid='contact-details'>{name}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule71>
+    }) satisfies __ExactMockModule<__TestMockModule71>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/ModalContext',
+  import('../../../ClientApp/src/components/modals/ModalContext'),
   () =>
     ({
       useModalDispatch: () => ({
         setShowRFQSelectModal: mocks.setShowRFQSelectModal,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule27>
+    }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => (
         <div data-testid='block-spinner'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>
+    }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/mailingLabel',
+  import('../../../ClientApp/src/components/Utilities/mailingLabel'),
   () =>
     ({
       default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
         <div data-testid='mailing-label'>{quotationIdNum}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule119>
+    }) satisfies __ExactMockModule<__TestMockModule119>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
+  import('../../../ClientApp/src/components/Utilities/deliveryInstructions'),
   () =>
     ({
       default: ({
@@ -351,19 +354,19 @@ vi.mock(
       }) => (
         <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule120>
+    }) satisfies __ExactMockModule<__TestMockModule120>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule59>
+    }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Accordion',
+  import('../../../ClientApp/src/components/Accordion'),
   () =>
     ({
       CustomAccordion: ({
@@ -389,11 +392,11 @@ vi.mock(
           {children}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule74>
+    }) satisfies __ExactMockModule<__TestMockModule74>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Buttons/EditButton',
+  import('../../../ClientApp/src/components/Buttons/EditButton'),
   () =>
     ({
       default: ({ link }: { link: string }) => (
@@ -401,21 +404,21 @@ vi.mock(
           Edit
         </a>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule75>
+    }) satisfies __ExactMockModule<__TestMockModule75>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/HeaderIntroText',
+  import('../../../ClientApp/src/components/HeaderIntroText'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => (
         <p data-testid='header-intro'>{children}</p>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule76>
+    }) satisfies __ExactMockModule<__TestMockModule76>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/InTextLink',
+  import('../../../ClientApp/src/components/InTextLink'),
   () =>
     ({
       default: ({
@@ -431,19 +434,19 @@ vi.mock(
           {children}
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule77>
+    }) satisfies __ExactMockModule<__TestMockModule77>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Icons/ExternalLinkIcon',
+  import('../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
   () =>
     ({
       default: () => <span data-testid='external-link-icon' />,
-    }) satisfies __ExactMockModule<__TestMockModule78>
+    }) satisfies __ExactMockModule<__TestMockModule78>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Alert/NotificationMessage',
+  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
   () =>
     ({
       default: ({
@@ -461,30 +464,30 @@ vi.mock(
           {message}
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule48>
+    }) satisfies __ExactMockModule<__TestMockModule48>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       getDashboardNotification: () => mocks.dashboardNotification,
       clearDashboardNotification: mocks.clearDashboardNotification,
       setDashboardNotification: mocks.setDashboardNotification,
       clearDashboardInfoNotification: mocks.clearDashboardInfoNotification,
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/types',
+  import('../../../ClientApp/src/storage/types'),
   () =>
     ({
       NotificationSeverity: { Error: 'error', Info: 'info' },
-    }) satisfies __ExactMockModule<__TestMockModule47>
+    }) satisfies __ExactMockModule<__TestMockModule47>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../ClientApp/src/routes/common/helperFunctions'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof HelperFunctionsModule>();
 
@@ -492,37 +495,37 @@ vi.mock(
       ...actual,
       openPdfPageInNewTab: mocks.openPdfPageInNewTab,
     } satisfies __ExactMockModule<__TestMockModule9>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: mocks.appLoggerError,
         verbose: mocks.appLoggerVerbose,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  'react-number-format',
+  import('react-number-format'),
   () =>
     ({
       NumericFormat: ({ value }: { value?: string }) => <span>{value}</span>,
       PatternFormat: ({ value }: { value?: string }) => <span>{value}</span>,
-    }) satisfies __ExactMockModule<__TestMockModule102>
+    }) satisfies __ExactMockModule<__TestMockModule102>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/acceptQuote/quotationSummary',
+  import('../../../ClientApp/src/routes/acceptQuote/quotationSummary'),
   () =>
     ({
       default: () => (
         <div data-testid='quotation-summary'>Quotation summary content</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule73>
+    }) satisfies __ExactMockModule<__TestMockModule73>,
 );
 
 export const accountDetails = {
@@ -551,14 +554,14 @@ export const basePreInfo = {
 export const renderRoute = (
   initialPath: string,
   element: ReactNode,
-  routePath = '/workflow/:id'
+  routePath = '/workflow/:id',
 ) =>
   render(
     <MemoryRouter initialEntries={[initialPath]}>
       <Routes>
         <Route path={routePath} element={element} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 export const triggerInputChange = (name: string, value: string | null) => {

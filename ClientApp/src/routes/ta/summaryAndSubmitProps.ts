@@ -35,7 +35,7 @@ const loadSummary =
         const client = new RequestForPatternApprovalClient();
         const lookupClient = new LookupClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         lookupClient.setAuthToken(tokenResult.accessToken);
@@ -44,7 +44,7 @@ const loadSummary =
           lookupClient.getLookup(CRMLookupTypes.PAPortalCategory, abortSignal),
           lookupClient.getLookup(
             CRMLookupTypes.PAPortalInstrumentType,
-            abortSignal
+            abortSignal,
           ),
           client.getSummary(id, abortSignal),
         ]);
@@ -79,7 +79,7 @@ const loadSummary =
         Accounts: accounts,
       });
       throw new Error(
-        `There are no accounts available to load PA summary. Id: ${id}`
+        `There are no accounts available to load PA summary. Id: ${id}`,
       );
     }
   };
@@ -93,13 +93,13 @@ const submitForm =
   async (
     values: RequestForPatternApprovalSummaryDto,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -112,7 +112,7 @@ const submitForm =
             formStep: valuesToSave,
             isCompletingStep: true,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error('Failed to submit PA summary', error as Error, {
@@ -125,10 +125,10 @@ const submitForm =
     } else {
       AppLogger.verbose(
         'There are no accounts available to submit PA summary',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to submit PA summary. Id: ${id}`
+        `There are no accounts available to submit PA summary. Id: ${id}`,
       );
     }
   };
@@ -139,7 +139,7 @@ const summaryAndSubmitProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<RequestForPatternApprovalSummaryDto> => ({
   initialValues: {},
   stepStatuses: statuses,

@@ -15,7 +15,7 @@ describe(AuthorizedApiBase, () => {
   it('captures TargetOrganisationAbn when each client is constructed', async () => {
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
-      JSON.stringify({ targetOrganisationAbn: '11111111111' })
+      JSON.stringify({ targetOrganisationAbn: '11111111111' }),
     );
     const client = new TestClient();
     client.setAuthToken('test-token');
@@ -32,7 +32,7 @@ describe(AuthorizedApiBase, () => {
 
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
-      JSON.stringify({ targetOrganisationAbn: '22222222222' })
+      JSON.stringify({ targetOrganisationAbn: '22222222222' }),
     );
 
     const secondOptions = await client.exposeTransformOptions({
@@ -64,7 +64,7 @@ describe(AuthorizedApiBase, () => {
     globalThis.sessionStorage.setItem('targetOrganisation', 'not-json{{{');
 
     await expect(
-      client.exposeTransformOptions({ headers: { Existing: 'header' } })
+      client.exposeTransformOptions({ headers: { Existing: 'header' } }),
     ).resolves.toEqual({
       headers: {
         Existing: 'header',

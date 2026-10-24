@@ -16,7 +16,7 @@ describe(SteppedNavigation, () => {
         steps={steps}
         id='stepper'
         interactive
-      />
+      />,
     );
 
     const organisationLink = screen.getByRole('link', {
@@ -39,11 +39,11 @@ describe(SteppedNavigation, () => {
         steps={steps}
         id='stepper'
         interactive
-      />
+      />,
     );
 
     expect(
-      screen.queryByRole('link', { name: 'Contact' })
+      screen.queryByRole('link', { name: 'Contact' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Contact')).toBeInTheDocument();
 
@@ -60,11 +60,11 @@ describe(SteppedNavigation, () => {
         steps={steps}
         id='stepper'
         interactive
-      />
+      />,
     );
 
     expect(
-      screen.queryByRole('link', { name: 'Summary', hidden: true })
+      screen.queryByRole('link', { name: 'Summary', hidden: true }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Summary')).toBeInTheDocument();
   });
@@ -76,11 +76,11 @@ describe(SteppedNavigation, () => {
         steps={steps}
         id='stepper'
         interactive={false}
-      />
+      />,
     );
 
     expect(
-      screen.queryByRole('link', { hidden: true })
+      screen.queryByRole('link', { hidden: true }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Organisation')).toBeInTheDocument();
     expect(screen.getByText('Contact')).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe(SteppedNavigation, () => {
         steps={allCompleteSteps}
         id='stepper'
         interactive
-      />
+      />,
     );
 
     const currentStep = container.querySelector('[aria-current="true"]');
@@ -106,10 +106,10 @@ describe(SteppedNavigation, () => {
     expect(currentStep).toHaveClass('current-step', 'completed-step');
     expect(currentStep).toHaveTextContent('Summary');
     expect(
-      screen.getByRole('link', { name: 'Organisation', hidden: true })
+      screen.getByRole('link', { name: 'Organisation', hidden: true }),
     ).toHaveAttribute('href', '/organisation');
     expect(
-      screen.getByRole('link', { name: 'Contact', hidden: true })
+      screen.getByRole('link', { name: 'Contact', hidden: true }),
     ).toHaveAttribute('href', '/contact');
   });
 });

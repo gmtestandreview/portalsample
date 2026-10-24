@@ -10,7 +10,7 @@ import { omitUndefined } from '../../../utils/omitUndefined';
 const DATE_INPUT_FORMAT = 'dd/MM/yyyy';
 
 const CustomDatePicker = (
-  customDatePickerProps: Readonly<CustomDatePickerProps>
+  customDatePickerProps: Readonly<CustomDatePickerProps>,
 ) => {
   const {
     calendarButtonTitle,
@@ -34,7 +34,7 @@ const CustomDatePicker = (
   const [showCalendar, setShowCalendar] = useState(false);
   const [isInvalid, setIsInvalid] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    currentDate || startDate || null
+    currentDate || startDate || null,
   );
 
   // Impure during render: the argument is re-evaluated every render even though
@@ -145,7 +145,7 @@ const CustomDatePicker = (
         },
       },
     }),
-    [isInvalid]
+    [isInvalid],
   );
 
   const CustomInput = (

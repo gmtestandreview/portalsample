@@ -13,7 +13,7 @@ const resolve = async (
     soft?: Pick<Yup.AnyObjectSchema, 'validate'> | undefined;
     hard?: Pick<Yup.AnyObjectSchema, 'validate'> | undefined;
   },
-  options: { mode?: SubmitMode; hidden?: Hideable; values?: object } = {}
+  options: { mode?: SubmitMode; hidden?: Hideable; values?: object } = {},
 ) => {
   const resolver = createWizardYupResolver({
     softSchema: schemas.soft,
@@ -42,10 +42,10 @@ describe(createWizardYupResolver, () => {
     const soft = Yup.object({});
 
     expect(
-      (await resolve({ soft, hard: required }, { mode: 'saveAndExit' })).errors
+      (await resolve({ soft, hard: required }, { mode: 'saveAndExit' })).errors,
     ).toEqual({});
     expect(
-      (await resolve({ soft, hard: required }, { mode: 'next' })).errors
+      (await resolve({ soft, hard: required }, { mode: 'next' })).errors,
     ).toMatchObject({
       name: { message: 'Name is required' },
     });
@@ -57,7 +57,7 @@ describe(createWizardYupResolver, () => {
     });
     const { errors } = await resolve(
       { hard: twoRules },
-      { values: { name: 'a' } }
+      { values: { name: 'a' } },
     );
 
     expect(errors).toMatchObject({ name: { message: 'Too short' } });
@@ -104,7 +104,7 @@ describe(createWizardYupResolver, () => {
   it('drops errors on hidden fields, and passes when only hidden fields fail', async () => {
     const result = await resolve(
       { hard: required },
-      { hidden: { name: true } }
+      { hidden: { name: true } },
     );
 
     expect(result).toEqual({ values: { name: '' }, errors: {} });
@@ -153,16 +153,16 @@ describe('rhfForm api', () => {
     try {
       expect(() => render(<Probe />)).toThrow(expectedError);
       expect(spy).toHaveBeenCalledWith(
-        expect.stringContaining(expectedReactError)
+        expect.stringContaining(expectedReactError),
       );
       expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
-      expect(suppressExpectedError).toHaveBeenCalled();
+      expect(suppressExpectedError).toHaveBeenCalledWith();
       expect(
         suppressExpectedError.mock.calls.every(
           ([event]) =>
             event.error instanceof Error &&
-            event.error.message === expectedError
-        )
+            event.error.message === expectedError,
+        ),
       ).toBe(true);
     } finally {
       globalThis.removeEventListener('error', suppressExpectedError);
@@ -178,7 +178,7 @@ describe('rhfForm api', () => {
             {typeof api.submit} {typeof api.onFormSubmit}
           </span>
         )}
-      </RhfForm>
+      </RhfForm>,
     );
 
     expect(screen.getByTestId('probe').textContent).toBe('function function');

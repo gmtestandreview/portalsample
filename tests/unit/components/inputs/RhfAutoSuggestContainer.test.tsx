@@ -19,7 +19,7 @@ const comboState = vi.hoisted(() => ({
   onOpenChange: undefined as ((isOpen: boolean) => void) | undefined,
 }));
 
-vi.mock('react-aria-components/ComboBox', async () => {
+vi.mock(import('react-aria-components/ComboBox'), async () => {
   const React = await import('react');
   const ComboBoxStateContext = React.createContext(comboState);
 
@@ -40,7 +40,7 @@ vi.mock('react-aria-components/ComboBox', async () => {
     return React.createElement(
       ComboBoxStateContext.Provider,
       { value: comboState },
-      React.createElement('div', { 'data-testid': 'combo-box' }, children)
+      React.createElement('div', { 'data-testid': 'combo-box' }, children),
     );
   };
 
@@ -62,7 +62,7 @@ vi.mock('react-aria-components/ComboBox', async () => {
   } satisfies __ExactMockModule<__TestMockModule37>;
 });
 
-vi.mock('react-aria-components/Group', async () => {
+vi.mock(import('react-aria-components/Group'), async () => {
   const React = await import('react');
   const Group = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'group' }, children);
@@ -70,7 +70,7 @@ vi.mock('react-aria-components/Group', async () => {
 });
 
 vi.mock(
-  '@/components/Inputs/AutoSuggest/AutoSuggestOptions',
+  import('@/components/Inputs/AutoSuggest/AutoSuggestOptions'),
   () =>
     ({
       default: ({ options }: { options: AutoSuggestOption<string>[] }) => (
@@ -80,7 +80,7 @@ vi.mock(
           ))}
         </ul>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule39>
+    }) satisfies __ExactMockModule<__TestMockModule39>,
 );
 
 interface Values {
@@ -95,7 +95,7 @@ const options: AutoSuggestOption<string>[] = [
 const renderContainer = (
   props: Partial<AutoSuggestContainerProps<string>> = {},
   form?: FormHandle<Values>,
-  resolver?: Resolver<Values>
+  resolver?: Resolver<Values>,
 ) => {
   const defaultProps: AutoSuggestContainerProps<string> = {
     name: 'suburb',
@@ -114,7 +114,7 @@ const renderContainer = (
       resolver={resolver}
     >
       <RhfAutoSuggestContainer {...defaultProps} {...props} />
-    </FieldHarness>
+    </FieldHarness>,
   );
 };
 
@@ -147,7 +147,7 @@ describe(RhfAutoSuggestContainer, () => {
 
     expect(screen.getByRole('textbox', { name: 'Suburb' })).toHaveAttribute(
       'placeholder',
-      'Start typing'
+      'Start typing',
     );
     expect(screen.getByText('Use your suburb')).toBeInTheDocument();
     expect(screen.getByText('Searching')).toBeInTheDocument();
@@ -187,7 +187,7 @@ describe(RhfAutoSuggestContainer, () => {
           onCancel={onCancel}
           onSelectedOption={onSelectedOption}
         />
-      </FieldHarness>
+      </FieldHarness>,
     );
 
     expect(comboState.close).toHaveBeenCalledWith();
@@ -209,7 +209,7 @@ describe(RhfAutoSuggestContainer, () => {
 
     expect(screen.getByText('No matches found')).toBeInTheDocument();
     expect(
-      screen.getByText('Results could not be fetched')
+      screen.getByText('Results could not be fetched'),
     ).toBeInTheDocument();
 
     unmount();
@@ -234,12 +234,12 @@ describe(RhfAutoSuggestContainer, () => {
 
     expect(screen.getByText('Enter a suburb')).toHaveAttribute(
       'id',
-      'suburb-validation-msg'
+      'suburb-validation-msg',
     );
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'help-suburb suburb-validation-msg'
+      'help-suburb suburb-validation-msg',
     );
   });
 });

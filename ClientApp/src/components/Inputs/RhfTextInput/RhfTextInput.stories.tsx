@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfTextInput from '.';
@@ -24,11 +25,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Organisation name for report');
@@ -44,9 +42,7 @@ export const Default = meta.story({
 
 export const WithInlineHelp = meta.story({
   args: { inlineHelp: 'The name printed on the measurement report.' },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -60,9 +56,7 @@ export const WithInlineHelp = meta.story({
 
 export const Disabled = meta.story({
   args: { disabled: true },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -73,9 +67,7 @@ export const Disabled = meta.story({
 
 export const Summary = meta.story({
   args: { isSummary: true },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Acme Pty Ltd')).toBeInTheDocument();

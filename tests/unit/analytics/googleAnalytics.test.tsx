@@ -10,11 +10,11 @@ const reactGaMock = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-ga4',
+  import('react-ga4'),
   () =>
     ({
       default: reactGaMock,
-    }) satisfies __ExactMockModule<__TestMockModule1>
+    }) satisfies __ExactMockModule<__TestMockModule1>,
 );
 
 describe('googleAnalytics', () => {
@@ -31,7 +31,7 @@ describe('googleAnalytics', () => {
     render(
       <GoogleAnalytics anonymiseIp testMode>
         <span>Analytics child</span>
-      </GoogleAnalytics>
+      </GoogleAnalytics>,
     );
 
     expect(screen.getByText('Analytics child')).toBeInTheDocument();

@@ -27,7 +27,7 @@ const ConfirmationModal = (props: Readonly<ConfirmationModalProps>) => {
   } = props;
 
   const onModalYesClick = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     closeModal();
     onModalYes(e);

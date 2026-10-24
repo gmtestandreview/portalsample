@@ -23,13 +23,13 @@ const CreateAcceptQuote = () => {
         const client = new ApplicationClient();
         const quoteClient = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         quoteClient.setAuthToken(tokenResult.accessToken);
         const quoteData = await quoteClient.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteRequest,
-          id
+          id,
         );
 
         const application = await client.createApplication({

@@ -10,15 +10,15 @@ const proceedBlocker = vi.fn();
 const useBlockerMock = vi.fn();
 
 vi.mock(
-  'react-router',
+  import('react-router'),
   () =>
     ({
       useBlocker: (callback: unknown) => useBlockerMock(callback),
-    }) satisfies __ExactMockModule<__TestMockModule11>
+    }) satisfies __ExactMockModule<__TestMockModule11>,
 );
 
 const renderGuard = (
-  props: React.ComponentProps<typeof RouteLeavingGuard> = {}
+  props: React.ComponentProps<typeof RouteLeavingGuard> = {},
 ) => render(<RouteLeavingGuard {...props} />);
 
 describe(RouteLeavingGuard, () => {
@@ -52,7 +52,7 @@ describe(RouteLeavingGuard, () => {
 
     const blockerPredicate = defined(
       useBlockerMock.mock.calls[0],
-      'enabled blocker call'
+      'enabled blocker call',
     )[0] as (args: {
       currentLocation: { pathname: string };
       nextLocation: { pathname: string };
@@ -62,27 +62,27 @@ describe(RouteLeavingGuard, () => {
       blockerPredicate({
         currentLocation: { pathname: '/quote' },
         nextLocation: { pathname: '/quote' },
-      })
+      }),
     ).toBe(false);
     expect(
       blockerPredicate({
         currentLocation: { pathname: '/quote' },
         nextLocation: { pathname: '/dashboard' },
-      })
+      }),
     ).toBe(true);
 
     useBlockerMock.mockClear();
     renderGuard({ when: false });
     const disabledPredicate = defined(
       useBlockerMock.mock.calls[0],
-      'disabled blocker call'
+      'disabled blocker call',
     )[0] as typeof blockerPredicate;
 
     expect(
       disabledPredicate({
         currentLocation: { pathname: '/quote' },
         nextLocation: { pathname: '/dashboard' },
-      })
+      }),
     ).toBe(false);
   });
 
@@ -104,7 +104,7 @@ describe(RouteLeavingGuard, () => {
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Leave form?' })
+      screen.getByRole('heading', { name: 'Leave form?' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Your edits are not saved.')).toBeInTheDocument();
 

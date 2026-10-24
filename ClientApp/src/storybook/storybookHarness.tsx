@@ -197,7 +197,7 @@ interface PortalRouterRuntime {
 }
 
 const PortalRouterRuntimeContext = createContext<PortalRouterRuntime | null>(
-  null
+  null,
 );
 
 const StoryRoute = () => {
@@ -254,12 +254,12 @@ export const PortalStoryRouter = ({
           ],
         },
       ],
-      { initialEntries }
-    )
+      { initialEntries },
+    ),
   );
   const runtime = useMemo(
     () => ({ Story, observeLocation }),
-    [Story, observeLocation]
+    [Story, observeLocation],
   );
 
   return (
@@ -271,7 +271,7 @@ export const PortalStoryRouter = ({
 
 const createMsalContext = (
   authenticated: boolean,
-  overrides?: Partial<IMsalContext>
+  overrides?: Partial<IMsalContext>,
 ): IMsalContext => {
   const defaultAccounts = authenticated ? [mockMsalAccount] : [];
   return {
@@ -289,7 +289,7 @@ const createMsalContext = (
 
 const withOptionalFormik = (
   children: ReactNode,
-  formik?: PortalFormikConfig
+  formik?: PortalFormikConfig,
 ) => {
   if (!formik) {
     return children;
@@ -361,7 +361,7 @@ const PatchedFetch = ({
     () => () => {
       restoreRef.current?.();
     },
-    []
+    [],
   );
 
   return children;
@@ -369,7 +369,7 @@ const PatchedFetch = ({
 
 const withOptionalFetch = (
   children: ReactNode,
-  fetchImpl?: typeof globalThis.fetch
+  fetchImpl?: typeof globalThis.fetch,
 ) => {
   if (!fetchImpl) {
     return children;
@@ -405,7 +405,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
   const msalContext = createMsalContext(authenticated, portal.msalContext);
   const storyContent = withOptionalFetch(
     withOptionalRhf(withOptionalFormik(<Story />, portal.formik), portal.rhf),
-    portal.fetch
+    portal.fetch,
   );
 
   return (

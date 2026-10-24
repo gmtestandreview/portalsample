@@ -24,58 +24,58 @@ const msalState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
         msalState.authenticated ? children : null,
       UnauthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
         msalState.authenticated ? null : children,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountState: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '@/components/modals/ModalContext',
+  import('@/components/modals/ModalContext'),
   () =>
     ({
       useModalDispatch: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule27>
+    }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
 vi.mock(
-  '@/routes/common/helperFunctions',
+  import('@/routes/common/helperFunctions'),
   () =>
     ({
       getEnvironment: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule9>
+    }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 vi.mock(
-  '@/assets/GovCrest.svg',
+  import('@/assets/GovCrest.svg'),
   () =>
     ({
       default: 'gov-crest.svg',
-    }) satisfies __ExactMockModule<__TestMockModule19>
+    }) satisfies __ExactMockModule<__TestMockModule19>,
 );
 
 vi.mock(
-  '@/components/modals/ContentModal',
+  import('@/components/modals/ContentModal'),
   () =>
     ({
       default: ({
@@ -98,7 +98,7 @@ vi.mock(
             </button>
           </dialog>
         ) : null,
-    }) satisfies __ExactMockModule<__TestMockModule28>
+    }) satisfies __ExactMockModule<__TestMockModule28>,
 );
 
 const renderWithRouter = (ui: React.ReactNode) =>
@@ -133,23 +133,23 @@ describe('header chrome', () => {
     renderWithRouter(<Header />);
 
     expect(
-      screen.getByRole('navigation', { name: 'Site header' })
+      screen.getByRole('navigation', { name: 'Site header' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'National Measurement Institute logo' })
+      screen.getByRole('link', { name: 'National Measurement Institute logo' }),
     ).toHaveAttribute('href', '/');
     expect(
-      screen.getByRole('img', { name: 'National Measurement Institute logo' })
+      screen.getByRole('img', { name: 'National Measurement Institute logo' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /quick survey\s*Opens in a new tab/i })
+      screen.getByRole('link', { name: /quick survey\s*Opens in a new tab/i }),
     ).toHaveAttribute(
       'href',
-      'https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu'
+      'https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu',
     );
     expect(screen.getByRole('link', { name: /Exit/i })).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     expect(screen.queryByTestId('user-menu-dropdown')).not.toBeInTheDocument();
   });
@@ -164,34 +164,34 @@ describe('header chrome', () => {
     msalState.authenticated = true;
     vi.mocked(getEnvironment).mockReturnValue('TEST');
     vi.mocked(useAccountState).mockReturnValue(
-      accountState as unknown as ReturnType<typeof useAccountState>
+      accountState as unknown as ReturnType<typeof useAccountState>,
     );
     vi.mocked(useModalDispatch).mockReturnValue(modalDispatch);
 
     renderWithRouter(<Header />);
 
     expect(screen.getByTestId('header-environment')).toHaveTextContent(
-      'Environment:TEST'
+      'Environment:TEST',
     );
     expect(
-      screen.getByRole('button', { name: /Current user settings menu/i })
+      screen.getByRole('button', { name: /Current user settings menu/i }),
     ).toHaveTextContent('Alex Citizen');
     expect(screen.getByText('Precision Labs - Canberra')).toBeInTheDocument();
     expect(screen.getByText('Measurement Pty Ltd')).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: /Current user settings menu/i })
+      screen.getByRole('button', { name: /Current user settings menu/i }),
     );
 
     expect(
-      screen.getByRole('link', { name: 'Manage organisation' })
+      screen.getByRole('link', { name: 'Manage organisation' }),
     ).toHaveAttribute('href', '/update-organisation/org-123');
     expect(
-      screen.getByRole('link', { name: 'My contact details' })
+      screen.getByRole('link', { name: 'My contact details' }),
     ).toHaveAttribute('href', '/update-contact');
     expect(screen.getByRole('link', { name: 'Log out' })).toHaveAttribute(
       'href',
-      '/sign-out'
+      '/sign-out',
     );
 
     await user.click(screen.getByRole('link', { name: 'Manage organisation' }));
@@ -199,24 +199,24 @@ describe('header chrome', () => {
     expect(trackGAEvent).toHaveBeenCalledWith('Manage organisation');
 
     await user.click(
-      screen.getByRole('button', { name: /Current user settings menu/i })
+      screen.getByRole('button', { name: /Current user settings menu/i }),
     );
     await user.click(
-      screen.getByRole('link', { name: 'Add or manage branch/location' })
+      screen.getByRole('link', { name: 'Add or manage branch/location' }),
     );
 
     expect(modalDispatch.setShowBranchSelector).toHaveBeenCalledWith(true);
     expect(trackGAEvent).toHaveBeenCalledWith('Manage branch/location');
 
     await user.click(
-      screen.getByRole('button', { name: /Current user settings menu/i })
+      screen.getByRole('button', { name: /Current user settings menu/i }),
     );
     await user.click(screen.getByRole('link', { name: 'My contact details' }));
 
     expect(trackGAEvent).toHaveBeenCalledWith('Manage contact');
 
     await user.click(
-      screen.getByRole('button', { name: /Current user settings menu/i })
+      screen.getByRole('button', { name: /Current user settings menu/i }),
     );
     await user.click(screen.getByRole('link', { name: 'Log out' }));
 
@@ -256,14 +256,14 @@ describe('footer chrome', () => {
     renderWithRouter(<Footer />);
 
     expect(screen.getByTestId('nmi-footer')).toHaveTextContent(
-      'Commonwealth of Australia'
+      'Commonwealth of Australia',
     );
     expect(
-      screen.getByRole('img', { name: 'Australian Government Coat of Arms' })
+      screen.getByRole('img', { name: 'Australian Government Coat of Arms' }),
     ).toHaveAttribute('src', 'gov-crest.svg');
     expect(screen.getByRole('link', { name: 'Help guide' })).toHaveAttribute(
       'href',
-      '/help-guide'
+      '/help-guide',
     );
   });
 
@@ -274,19 +274,19 @@ describe('footer chrome', () => {
     await user.click(screen.getByRole('button', { name: 'Terms of use' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Portal Terms of Use' })
+      screen.getByRole('dialog', { name: 'Portal Terms of Use' }),
     ).toHaveTextContent('1. General');
 
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
 
     expect(
-      screen.queryByRole('dialog', { name: 'Portal Terms of Use' })
+      screen.queryByRole('dialog', { name: 'Portal Terms of Use' }),
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Privacy' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Privacy collection statement' })
+      screen.getByRole('dialog', { name: 'Privacy collection statement' }),
     ).toHaveTextContent('The Privacy Act and your personal information');
 
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
@@ -294,13 +294,13 @@ describe('footer chrome', () => {
     await user.click(screen.getByRole('button', { name: 'Accessibility' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Accessibility' })
+      screen.getByRole('dialog', { name: 'Accessibility' }),
     ).toHaveTextContent('Portable Document Format');
 
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
 
     expect(
-      screen.queryByRole('dialog', { name: 'Accessibility' })
+      screen.queryByRole('dialog', { name: 'Accessibility' }),
     ).not.toBeInTheDocument();
   });
 
@@ -308,7 +308,7 @@ describe('footer chrome', () => {
     const { rerender } = render(<TermsOfUse />);
 
     expect(
-      screen.getByRole('heading', { name: '1. General' })
+      screen.getByRole('heading', { name: '1. General' }),
     ).toBeInTheDocument();
     expect(screen.getByText('9 July, 2024')).toBeInTheDocument();
 
@@ -317,21 +317,21 @@ describe('footer chrome', () => {
     expect(
       screen.getByRole('heading', {
         name: 'Types of personal information collected',
-      })
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'privacy@industry.gov.au' })
+      screen.getByRole('link', { name: 'privacy@industry.gov.au' }),
     ).toHaveAttribute('href', 'mailto:privacy@industry.gov.au');
 
     rerender(<Accessibility />);
 
     expect(
-      screen.getByRole('heading', { name: 'JavaScript' })
+      screen.getByRole('heading', { name: 'JavaScript' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', {
         name: /Web Content Accessibility Guidelines.*Opens in a new tab/i,
-      })
+      }),
     ).toHaveAttribute('target', '_blank');
   });
 });
@@ -339,19 +339,19 @@ describe('footer chrome', () => {
 describe('small static display components', () => {
   it('applies the stable display classes for intro and body text wrappers', () => {
     const { rerender } = render(
-      <HeaderIntroText className='mb-4'>Intro copy</HeaderIntroText>
+      <HeaderIntroText className='mb-4'>Intro copy</HeaderIntroText>,
     );
 
     expect(screen.getByText('Intro copy')).toHaveClass(
       'header-intro-text',
-      'mb-4'
+      'mb-4',
     );
 
     rerender(<BodyText className='text-muted'>Body copy</BodyText>);
 
     expect(screen.getByText('Body copy')).toHaveClass(
       'body-text',
-      'text-muted'
+      'text-muted',
     );
   });
 
@@ -379,7 +379,7 @@ describe('actions callback behavior', () => {
           { action: 'copy', text: 'Copy request', onClick: itemClick },
           { action: 'archive', text: 'Archive request' },
         ]}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));

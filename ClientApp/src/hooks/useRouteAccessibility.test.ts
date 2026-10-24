@@ -8,7 +8,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
   return React.createElement(
     MemoryRouter,
     { initialEntries: ['/test'] },
-    children
+    children,
   );
 }
 
@@ -38,7 +38,7 @@ describe('useRouteAccessibility', () => {
       vi.advanceTimersByTime(100);
     });
     expect(result.current.announcement).toBe(
-      'Navigated to Test Page | NMI Portal page.'
+      'Navigated to Test Page | NMI Portal page.',
     );
   });
 

@@ -45,9 +45,9 @@ describe('storybook inventory writer', () => {
               '<!-- storybook-coverage:generated:end -->',
               'after',
             ].join('\n'),
-            root
-          )
-        )
+            root,
+          ),
+        ),
       );
 
       moduleUnderTest.writeInventoryRegions({
@@ -65,22 +65,22 @@ describe('storybook inventory writer', () => {
         readTextFile(
           path.join(
             root,
-            'ClientApp/src/components/ComponentInventory.docs.mdx'
+            'ClientApp/src/components/ComponentInventory.docs.mdx',
           ),
-          root
-        )
+          root,
+        ),
       ).resolves.toContain('component generated content');
       await expect(
         readTextFile(
           path.join(root, 'ClientApp/src/routes/RouteInventory.docs.mdx'),
-          root
-        )
+          root,
+        ),
       ).resolves.toContain('route generated content');
       await expect(
         readTextFile(
           path.join(root, 'ClientApp/src/storybook/CoverageMatrix.docs.mdx'),
-          root
-        )
+          root,
+        ),
       ).resolves.toContain('matrix generated content');
     } finally {
       await rm(root, { recursive: true, force: true });

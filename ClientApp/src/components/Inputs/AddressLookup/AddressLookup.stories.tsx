@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { useFormikContext } from 'formik';
 import { expect, screen, userEvent, within } from 'storybook/test';
@@ -45,7 +46,6 @@ const meta = preview.meta({
   decorators: [withPortalProviders],
 });
 
-
 export const Default = meta.story({
   args: {
     name: 'streetAddress',
@@ -83,9 +83,7 @@ export const Default = meta.story({
       <AddressValueProbe />
     </>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const combobox = canvas.getByRole('combobox');
@@ -134,9 +132,7 @@ export const ManualEntry = meta.story({
     // TextInput via {...rest}, which would override their individual field labels.
     <ManualAddressInput name='streetAddress' />
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const line1 = canvas.getByLabelText(/address line 1/i);
 

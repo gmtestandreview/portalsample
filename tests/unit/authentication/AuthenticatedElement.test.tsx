@@ -18,7 +18,7 @@ const authElementMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       MsalAuthenticationTemplate: ({
@@ -56,21 +56,21 @@ vi.mock(
           setActiveAccount: authElementMocks.setActiveAccount,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       InteractionType: {
         Redirect: 'Redirect',
       },
-    }) satisfies __ExactMockModule<__TestMockModule3>
+    }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
 vi.mock(
-  'react-router',
+  import('react-router'),
   () =>
     ({
       isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
@@ -78,11 +78,11 @@ vi.mock(
         <span data-testid='navigate'>{to}</span>
       ),
       useRouteError: () => authElementMocks.routeError,
-    }) satisfies __ExactMockModule<__TestMockModule11>
+    }) satisfies __ExactMockModule<__TestMockModule11>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/preConditions/PreConditions',
+  import('../../../ClientApp/src/routes/preConditions/PreConditions'),
   () =>
     ({
       default: ({
@@ -99,11 +99,11 @@ vi.mock(
           {children}
         </section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule12>
+    }) satisfies __ExactMockModule<__TestMockModule12>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/ErrorBoundary',
+  import('../../../ClientApp/src/components/ErrorBoundary'),
   () =>
     ({
       default: ({
@@ -120,38 +120,38 @@ vi.mock(
           {children}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule13>
+    }) satisfies __ExactMockModule<__TestMockModule13>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => (
         <output>{children}</output>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>
+    }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppInsightsService',
+  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
   () =>
     ({
       ai: {
         reactPlugin: { name: 'react-plugin' },
       },
-    }) satisfies __ExactMockModule<__TestMockModule15>
+    }) satisfies __ExactMockModule<__TestMockModule15>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       authRequest: {
         redirectUri: '/redirect',
         scopes: ['read'],
       },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 describe('authenticatedElement', () => {
@@ -170,17 +170,17 @@ describe('authenticatedElement', () => {
     render(
       <AuthenticatedElement displayHeaderAndFooter={false}>
         <span>Secure content</span>
-      </AuthenticatedElement>
+      </AuthenticatedElement>,
     );
 
     expect(screen.getByTestId('preconditions')).toHaveAttribute(
       'data-header-and-footer',
-      'false'
+      'false',
     );
     expect(screen.getByTestId('msal-template')).toBeInTheDocument();
     expect(screen.getByTestId('error-boundary')).toHaveAttribute(
       'data-has-app-insights',
-      'true'
+      'true',
     );
     expect(screen.getByText('Secure content')).toBeInTheDocument();
     expect(authElementMocks.msalTemplateProps).toMatchObject({
@@ -200,7 +200,7 @@ describe('authenticatedElement', () => {
 
     expect(screen.getByTestId('preconditions')).toHaveAttribute(
       'data-header-and-footer',
-      'true'
+      'true',
     );
   });
 

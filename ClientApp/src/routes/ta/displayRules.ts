@@ -11,7 +11,7 @@ export class DisplayRules {
     const { instrumentCategory, instrumentType, instrumentTypeContent } = x;
     const isTicked =
       x.newSubOptions?.includes(
-        PatternApprovalRequiredValueOptions.OIMLCertificate
+        PatternApprovalRequiredValueOptions.OIMLCertificate,
       ) === true || x.newSubOptions === undefined;
     if (isTicked === false) {
       return true; // if the OIML option is not ticked, it should be hidden (return true for hidden)
@@ -19,7 +19,7 @@ export class DisplayRules {
     const content = instrumentTypeContent?.find(
       (p) =>
         p.instrumentTypeId === instrumentType &&
-        p.instrumentCategoryId === instrumentCategory
+        p.instrumentCategoryId === instrumentCategory,
     );
     // if (content === undefined || content.requirements === undefined || content.requirementsLink === '') {
     if (content === undefined) {
@@ -47,7 +47,7 @@ export class DisplayRules {
   }
 
   static isNewCertificateHiddenP(
-    x: Partial<ApplicationAndInstrumentStep>
+    x: Partial<ApplicationAndInstrumentStep>,
   ): boolean {
     return (
       x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
@@ -56,7 +56,7 @@ export class DisplayRules {
   }
 
   static isApplNewInstrumentHiddenP(
-    x: Partial<ApplicationAndInstrumentStep>
+    x: Partial<ApplicationAndInstrumentStep>,
   ): boolean {
     if (
       x.patternApprovalType !== PatternApprovalRequiredValues.NewCertificate ||
@@ -74,7 +74,7 @@ export class DisplayRules {
     // Add your display rule logic here
     return (
       x.newSubOptions?.includes(
-        PatternApprovalRequiredValueOptions.OIMLCertificate
+        PatternApprovalRequiredValueOptions.OIMLCertificate,
       ) === false || x.newSubOptions === undefined
     );
   }

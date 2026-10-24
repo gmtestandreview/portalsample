@@ -10,7 +10,7 @@ import { writeTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const verifier = path.resolve(
   process.cwd(),
-  'scripts/verify-auth-redirect-bridge.mjs'
+  'scripts/verify-auth-redirect-bridge.mjs',
 );
 const temporaryDirectories: string[] = [];
 
@@ -63,7 +63,7 @@ describe('mSAL redirect bridge policy', () => {
       'external script',
       validBridge.replace(
         './js/redirect.js',
-        'https://example.test/redirect.js'
+        'https://example.test/redirect.js',
       ),
     ],
     [
@@ -74,7 +74,7 @@ describe('mSAL redirect bridge policy', () => {
       'second script',
       validBridge.replace(
         '</body>',
-        '<script src="./js/other.js"></script></body>'
+        '<script src="./js/other.js"></script></body>',
       ),
     ],
   ])('rejects %s', async (_description, html) => {
@@ -87,7 +87,7 @@ describe('mSAL redirect bridge policy', () => {
   it('rejects a URL with a query or fragment before fetching it', async () => {
     const result = await runVerifier(
       '--url',
-      'http://127.0.0.1:3000/redirect.html?code=secret'
+      'http://127.0.0.1:3000/redirect.html?code=secret',
     );
 
     expect(result.status).toBe(1);
@@ -105,7 +105,7 @@ describe('mSAL redirect bridge policy', () => {
     });
 
     await new Promise<void>((resolve) =>
-      server.listen(0, '127.0.0.1', resolve)
+      server.listen(0, '127.0.0.1', resolve),
     );
     const address = server.address();
     if (!address || typeof address === 'string') {
@@ -115,14 +115,14 @@ describe('mSAL redirect bridge policy', () => {
     try {
       const result = await runVerifier(
         '--url',
-        `http://127.0.0.1:${address.port}/redirect.html`
+        `http://127.0.0.1:${address.port}/redirect.html`,
       );
 
       expect(result.status).toBe(1);
       expect(result.output).toContain('bridge response must disable caching');
     } finally {
       await new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve()))
+        server.close((error) => (error ? reject(error) : resolve())),
       );
     }
   });

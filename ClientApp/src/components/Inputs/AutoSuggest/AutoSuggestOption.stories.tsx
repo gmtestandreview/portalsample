@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { ListBox } from 'react-aria-components';
 import { expect } from 'storybook/test';
@@ -29,11 +30,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });
@@ -46,9 +44,7 @@ export const Highlighted = meta.story({
   args: {
     selected: 'opt-1',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });

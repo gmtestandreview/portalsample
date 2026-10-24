@@ -49,13 +49,13 @@ describe('actions accessibility', () => {
         as='icon'
         buttonAriaTitle='for request RFQ-2024-001234'
         dropDownActions={actions}
-      />
+      />,
     );
 
     expect(
       screen.getByRole('button', {
         name: 'Actions for request RFQ-2024-001234',
-      })
+      }),
     ).toBeVisible();
   });
 });

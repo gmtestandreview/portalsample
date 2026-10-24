@@ -44,7 +44,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness defaultValue='Acme'>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Organisation' });
@@ -58,7 +58,7 @@ describe(RhfTextInput, () => {
     const { unmount } = render(
       <Harness defaultValue={null}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox')).toHaveValue('');
@@ -68,7 +68,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness defaultValue={undefined}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox')).toHaveValue('');
@@ -88,7 +88,7 @@ describe(RhfTextInput, () => {
           disabled
           readonly
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Organisation' });
@@ -111,7 +111,7 @@ describe(RhfTextInput, () => {
           label='Organisation'
           onChange={onChange}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.type(screen.getByRole('textbox'), 'Hi');
@@ -124,7 +124,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.type(screen.getByRole('textbox'), 'A');
@@ -141,7 +141,7 @@ describe(RhfTextInput, () => {
           label='Organisation'
           onBlur={onBlur}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.type(screen.getByRole('textbox'), '  Acme  ');
@@ -156,7 +156,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness defaultValue={null}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByRole('textbox'));
@@ -173,16 +173,16 @@ describe(RhfTextInput, () => {
           label='Organisation'
           inlineHelp='Legal name'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Legal name')).toHaveAttribute(
       'id',
-      'help-organisationName'
+      'help-organisationName',
     );
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
-      'help-organisationName'
+      'help-organisationName',
     );
   });
 
@@ -195,7 +195,7 @@ describe(RhfTextInput, () => {
           inlineHelp='Legal name'
           inlineHelpTitle='What is this?'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('What is this?')).toBeInTheDocument();
@@ -207,7 +207,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox', { name: 'Organisation' });
 
@@ -217,12 +217,12 @@ describe(RhfTextInput, () => {
 
     expect(screen.getByText('Enter a name')).toHaveAttribute(
       'id',
-      'organisationName-validation-msg'
+      'organisationName-validation-msg',
     );
     expect(input).toHaveClass('is-invalid');
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'organisationName-validation-msg'
+      'organisationName-validation-msg',
     );
   });
 
@@ -231,7 +231,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByRole('textbox'));
@@ -250,7 +250,7 @@ describe(RhfTextInput, () => {
           label='Organisation'
           inlineHelp='Legal name'
         />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
@@ -259,7 +259,7 @@ describe(RhfTextInput, () => {
 
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'help-organisationName organisationName-validation-msg'
+      'help-organisationName organisationName-validation-msg',
     );
     expect(input).toHaveAttribute('aria-invalid', 'true');
   });
@@ -274,18 +274,18 @@ describe(RhfTextInput, () => {
           inlineHelp='Legal name'
           inlineHelpTitle='What is this?'
         />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
 
     expect(container.querySelector('details')).toHaveAttribute(
       'id',
-      'help-organisationName'
+      'help-organisationName',
     );
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
-      'help-organisationName organisationName-validation-msg'
+      'help-organisationName organisationName-validation-msg',
     );
   });
 
@@ -294,7 +294,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     await form.trigger();
@@ -309,7 +309,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
@@ -327,7 +327,7 @@ describe(RhfTextInput, () => {
           inlineHelp='Legal name'
           supressFieldLevelMessages
         />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
@@ -344,7 +344,7 @@ describe(RhfTextInput, () => {
     render(
       <Harness defaultValue='Acme'>
         <RhfTextInput name='organisationName' label='Organisation' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Organisation')).toBeInTheDocument();

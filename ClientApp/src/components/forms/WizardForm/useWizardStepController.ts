@@ -62,7 +62,7 @@ export interface WizardStepController {
 
 export const useWizardStepController = (
   props: Readonly<StepProps>,
-  initialValues: StepValues
+  initialValues: StepValues,
 ): WizardStepController => {
   const {
     stepStatuses,
@@ -111,21 +111,21 @@ export const useWizardStepController = (
         AppLogger.trace(
           'Could not load data for form step.',
           SeverityLevel.Error,
-          { problemDetails: loadServerError, err }
+          { problemDetails: loadServerError, err },
         );
         setErrorState(
           resolveErrorState(
             error,
             getRedirectionLocationOnError,
-            ErrorType.Load
-          )
+            ErrorType.Load,
+          ),
         );
         AppLogger.error('Failed to Load step values', err);
       } finally {
         setIsLoading(false);
       }
     },
-    [loadStepValues] // eslint-disable-line react-hooks/exhaustive-deps
+    [loadStepValues], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export const useWizardStepController = (
       if (accountDispatch) {
         accountDispatch.setTargetOrganisation(
           accountState?.details?.abn ?? '',
-          accountState?.details?.organisation ?? ''
+          accountState?.details?.organisation ?? '',
         );
       }
     }
@@ -187,7 +187,7 @@ export const useWizardStepController = (
         const result = await onSaveAndNext(
           values,
           isDirty,
-          controllerRef.current?.signal
+          controllerRef.current?.signal,
         );
         // Immutable update: replace the DTO at currentStepIndex with a new
         // object, rather than mutating the existing one in place.
@@ -219,8 +219,8 @@ export const useWizardStepController = (
           resolveErrorState(
             error,
             getRedirectionLocationOnError,
-            ErrorType.Update
-          )
+            ErrorType.Update,
+          ),
         );
       }
     }
@@ -251,8 +251,8 @@ export const useWizardStepController = (
           resolveErrorState(
             error,
             getRedirectionLocationOnError,
-            ErrorType.Update
-          )
+            ErrorType.Update,
+          ),
         );
       }
     } else {
@@ -330,7 +330,7 @@ const resolveView = ({
 
   if (!isLoading && currentStepIndex > 0) {
     const firstIncompleteStepIndex = stepStatuses.findIndex(
-      (x) => x.status !== FormStepStatus.Completed
+      (x) => x.status !== FormStepStatus.Completed,
     );
     if (
       firstIncompleteStepIndex !== -1 &&

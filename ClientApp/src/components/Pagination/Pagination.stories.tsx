@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { within, expect, userEvent } from 'storybook/test';
@@ -32,7 +33,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const MidRange = meta.story({
   args: {
     currentPage: 6,
@@ -58,9 +58,7 @@ export const FirstPage = meta.story({
     onPageChange: () => {},
   },
   render: () => <PaginationStory totalPages={12} startPage={1} />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 1 of 12/i);
 
@@ -80,9 +78,7 @@ export const LastPage = meta.story({
     onPageChange: () => {},
   },
   render: () => <PaginationStory totalPages={12} startPage={12} />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 12 of 12/i);
 
@@ -102,9 +98,7 @@ export const CustomStyleVariant = meta.story({
     onPageChange: () => {},
   },
   render: () => <PaginationStory totalPages={8} startPage={3} />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText('Page 3 of 8');
 

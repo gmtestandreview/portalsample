@@ -16,7 +16,7 @@ import {
   testAccount,
 } from './mockMsal';
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('./mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
@@ -77,13 +77,13 @@ describe('shared MSAL harness', () => {
 
     await waitFor(() =>
       expect(screen.getByTestId('token')).toHaveTextContent(
-        DEFAULT_ACCESS_TOKEN
-      )
+        DEFAULT_ACCESS_TOKEN,
+      ),
     );
 
     expect(screen.getByTestId('accounts')).toHaveTextContent('1');
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
-      interactionStatus.None
+      interactionStatus.None,
     );
     expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
       scopes: ['scope'],
@@ -97,7 +97,7 @@ describe('shared MSAL harness', () => {
     render(<TokenProbe />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('token')).toHaveTextContent('another-token')
+      expect(screen.getByTestId('token')).toHaveTextContent('another-token'),
     );
   });
 
@@ -108,8 +108,8 @@ describe('shared MSAL harness', () => {
 
     await waitFor(() =>
       expect(screen.getByTestId('error')).toHaveTextContent(
-        'interaction_required'
-      )
+        'interaction_required',
+      ),
     );
 
     expect(screen.getByTestId('token')).toHaveTextContent('');
@@ -124,7 +124,7 @@ describe('shared MSAL harness', () => {
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
         scopes: ['scope'],
         account: testAccount,
-      })
+      }),
     );
 
     expect(screen.getByTestId('token')).toHaveTextContent('');
@@ -132,7 +132,7 @@ describe('shared MSAL harness', () => {
     token.settle('late-token');
 
     await waitFor(() =>
-      expect(screen.getByTestId('token')).toHaveTextContent('late-token')
+      expect(screen.getByTestId('token')).toHaveTextContent('late-token'),
     );
   });
 
@@ -145,13 +145,13 @@ describe('shared MSAL harness', () => {
       expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
         scopes: ['scope'],
         account: testAccount,
-      })
+      }),
     );
 
     token.fail(new Error('token expired'));
 
     await waitFor(() =>
-      expect(screen.getByTestId('error')).toHaveTextContent('token expired')
+      expect(screen.getByTestId('error')).toHaveTextContent('token expired'),
     );
   });
 
@@ -175,12 +175,12 @@ describe('shared MSAL harness', () => {
     // state is the fix; silencing the warning would just hide the unowned update.
     await waitFor(() =>
       expect(screen.getByTestId('token')).toHaveTextContent(
-        DEFAULT_ACCESS_TOKEN
-      )
+        DEFAULT_ACCESS_TOKEN,
+      ),
     );
 
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
-      interactionStatus.Login
+      interactionStatus.Login,
     );
   });
 
@@ -191,13 +191,13 @@ describe('shared MSAL harness', () => {
 
     await waitFor(() =>
       expect(screen.getByTestId('token')).toHaveTextContent(
-        DEFAULT_ACCESS_TOKEN
-      )
+        DEFAULT_ACCESS_TOKEN,
+      ),
     );
 
     expect(screen.getByTestId('accounts')).toHaveTextContent('1');
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
-      interactionStatus.None
+      interactionStatus.None,
     );
   });
 });

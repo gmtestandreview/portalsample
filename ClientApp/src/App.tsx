@@ -18,7 +18,7 @@ type RouteModule<Props extends object = Record<string, never>> = {
 
 const lazyRoute = <Props extends object>(
   load: () => Promise<RouteModule<Props>>,
-  render: (Component: ComponentType<Props>) => ReactElement
+  render: (Component: ComponentType<Props>) => ReactElement,
 ) =>
   async function loadRoute() {
     const { default: Component } = await load();
@@ -49,7 +49,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -60,7 +60,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -71,7 +71,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -82,7 +82,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -93,7 +93,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -104,7 +104,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -115,7 +115,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -126,7 +126,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -137,7 +137,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -148,7 +148,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -159,7 +159,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -170,7 +170,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -181,7 +181,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -192,7 +192,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -203,7 +203,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -214,7 +214,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component name='' />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -225,7 +225,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -236,7 +236,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -247,7 +247,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -258,7 +258,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -269,7 +269,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement displayHeaderAndFooter={false}>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -280,7 +280,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -291,7 +291,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -302,7 +302,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -313,7 +313,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -324,7 +324,7 @@ const App = createBrowserRouter(
             <AuthenticatedElement>
               <Component />
             </AuthenticatedElement>
-          )
+          ),
         )}
       />
       <Route
@@ -333,7 +333,7 @@ const App = createBrowserRouter(
           () => import('./routes/sign-out'),
           (Component) => (
             <Component />
-          )
+          ),
         )}
       />
       <Route
@@ -344,7 +344,7 @@ const App = createBrowserRouter(
             <Layout>
               <Component />
             </Layout>
-          )
+          ),
         )}
       />
       <Route
@@ -355,7 +355,7 @@ const App = createBrowserRouter(
             <Layout>
               <Component />
             </Layout>
-          )
+          ),
         )}
       />
       <Route
@@ -366,7 +366,7 @@ const App = createBrowserRouter(
             <Layout>
               <Component />
             </Layout>
-          )
+          ),
         )}
       />
       <Route
@@ -377,7 +377,7 @@ const App = createBrowserRouter(
             <Layout>
               <Component />
             </Layout>
-          )
+          ),
         )}
       />
       <Route
@@ -452,7 +452,7 @@ const App = createBrowserRouter(
           </PreConditions>
         }
       />
-    </>
+    </>,
   ),
   {
     future: {
@@ -462,7 +462,7 @@ const App = createBrowserRouter(
       v7_partialHydration: true,
       v7_skipActionErrorRevalidation: true,
     },
-  }
+  },
 );
 
 export default App;

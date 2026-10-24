@@ -24,29 +24,29 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useIsAuthenticated: mocks.useIsAuthenticated,
       useMsal: mocks.useMsal,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
+  import('../../../ClientApp/src/storage/targetOrganisation'),
   () =>
     ({
       clearTargetOrganisation: mocks.clearTargetOrganisation,
-    }) satisfies __ExactMockModule<__TestMockModule6>
+    }) satisfies __ExactMockModule<__TestMockModule6>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
+  import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: mocks.useAccountContext,
       useAccountDispatch: mocks.useAccountDispatch,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 const renderRoute = (ui: React.ReactNode) =>
@@ -86,20 +86,20 @@ describe('static route pages', () => {
     renderRoute(<HelpGuide />);
 
     expect(
-      screen.getByRole('heading', { name: 'Help guide', level: 1 })
+      screen.getByRole('heading', { name: 'Help guide', level: 1 }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /How to set up access/i })
+      screen.getByRole('link', { name: /How to set up access/i }),
     ).toHaveAttribute('href', '/help-guide/how-to-setup-access');
     expect(
-      screen.getByRole('link', { name: /Frequently Asked Questions/i })
+      screen.getByRole('link', { name: /Frequently Asked Questions/i }),
     ).toHaveAttribute('href', '/help-guide/faqs');
     expect(
-      screen.getByRole('link', { name: /Give us your feedback/i })
+      screen.getByRole('link', { name: /Give us your feedback/i }),
     ).toHaveAttribute('target', '_blank');
     expect(screen.getByRole('link', { name: /Back to home/i })).toHaveAttribute(
       'href',
-      '/'
+      '/',
     );
     expect(document.title).toBe('Help guide | NMI Services portal');
     expect(document.body).toHaveClass('help-guide');
@@ -111,7 +111,7 @@ describe('static route pages', () => {
     renderRoute(<HelpGuide />);
 
     expect(
-      screen.getByRole('link', { name: /Back to dashboard/i })
+      screen.getByRole('link', { name: /Back to dashboard/i }),
     ).toHaveAttribute('href', '/dashboard');
   });
 
@@ -122,16 +122,16 @@ describe('static route pages', () => {
       screen.getByRole('heading', {
         name: 'Frequently Asked Questions (FAQs)',
         level: 1,
-      })
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('navigation', { name: 'On this page' })
+      screen.getByRole('navigation', { name: 'On this page' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Portal benefits' })
+      screen.getByRole('link', { name: 'Portal benefits' }),
     ).toHaveAttribute('href', '#faqs-01');
     expect(
-      screen.getByRole('link', { name: /Back to help guide/i })
+      screen.getByRole('link', { name: /Back to help guide/i }),
     ).toHaveAttribute('href', '/help-guide');
 
     unmount();
@@ -142,14 +142,14 @@ describe('static route pages', () => {
       screen.getByRole('heading', {
         name: /How to set up access to the .*NMI Services portal/i,
         level: 1,
-      })
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('navigation', { name: 'On this page' })
+      screen.getByRole('navigation', { name: 'On this page' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /View FAQs/i })).toHaveAttribute(
       'href',
-      '/help-guide/faqs/'
+      '/help-guide/faqs/',
     );
   });
 
@@ -157,12 +157,12 @@ describe('static route pages', () => {
     const { unmount } = renderRoute(<ServicesWeOffer />);
 
     expect(
-      screen.getByRole('heading', { name: 'Services we offer', level: 1 })
+      screen.getByRole('heading', { name: 'Services we offer', level: 1 }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('group', {
         name: /Set your default view and\/or add more NMI services/i,
-      })
+      }),
     ).toBeInTheDocument();
     expect(document.title).toBe('Services we offer | NMI Services portal');
     expect(document.body).toHaveClass('services-we-offer');
@@ -172,18 +172,18 @@ describe('static route pages', () => {
     render(<SignIn />);
 
     expect(
-      screen.getByRole('heading', { name: 'Logging in...' })
+      screen.getByRole('heading', { name: 'Logging in...' }),
     ).toBeInTheDocument();
 
     unmount();
     renderRoute(<SignoutHelper />);
 
     expect(
-      screen.getByRole('heading', { name: /close your browser window/i })
+      screen.getByRole('heading', { name: /close your browser window/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Exit portal' })).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
   });
 
@@ -193,7 +193,7 @@ describe('static route pages', () => {
     expect(screen.getByText('Logging out...')).toBeInTheDocument();
 
     await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith()
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith(),
     );
 
     expect(clearTargetOrganisation).toHaveBeenCalledWith();
@@ -216,7 +216,7 @@ describe('static route pages', () => {
     render(<Signout />);
 
     await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith()
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith(),
     );
 
     expect(mocks.logoutRedirect).not.toHaveBeenCalled();
@@ -226,7 +226,7 @@ describe('static route pages', () => {
   it('does not restart sign-out after the effect has been cleaned up', async () => {
     const { rerender } = render(<Signout />);
     await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1)
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1),
     );
 
     vi.mocked(useMsal).mockReturnValue({
@@ -240,7 +240,7 @@ describe('static route pages', () => {
     rerender(<Signout />);
 
     await waitFor(() =>
-      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1)
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1),
     );
 
     expect(clearTargetOrganisation).toHaveBeenCalledTimes(1);

@@ -42,11 +42,11 @@ const LinkButton = (props: Readonly<LinkButtonProps>) => {
   const hrefValue = as === 'a' ? href : to;
   const resolvedClassName = getButtonClassName(
     variant || 'nmi-primary',
-    className
+    className,
   );
   const linkProps = rest as ComponentProps<typeof AriaLink>;
   const renderRouterLink: ComponentProps<typeof AriaLink>['render'] = (
-    renderProps
+    renderProps,
   ) => {
     if (!('href' in renderProps) || renderProps.href === undefined) {
       return <span {...renderProps} />;

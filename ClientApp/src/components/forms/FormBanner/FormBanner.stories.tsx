@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { useFormikContext } from 'formik';
 import { useLocation } from 'react-router';
@@ -13,7 +14,6 @@ const meta = preview.meta({
     layout: 'fullscreen',
   },
 });
-
 
 const FormikSubmissionProbe = () => {
   const { values } = useFormikContext<Record<string, unknown>>();
@@ -51,9 +51,7 @@ export const SaveAndExit = meta.story({
       <FormikSubmissionProbe />
     </>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // The form actions toolbar should render
     const toolbar = canvas.getByRole('toolbar', { name: /form actions/i });
@@ -77,9 +75,7 @@ export const GoToDashboard = meta.story({
     refTitle: 'SQ-2024-042',
     showGoToDashboardButton: true,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const dashboardLink = canvas.getByTestId(
       'form-go-to-dashboard-portal-button',
@@ -109,9 +105,7 @@ export const WithDiscard = meta.story({
       <DiscardLocationProbe />
     </>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const discardButton = canvas.getByTestId('discard-changes-button');
 

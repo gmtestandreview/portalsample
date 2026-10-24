@@ -16,13 +16,13 @@ const validContact = {
 describe('contact submit validation', () => {
   it('accepts a valid contact object', async () => {
     await expect(
-      contactSubmitValidation.validate({ contact: validContact })
+      contactSubmitValidation.validate({ contact: validContact }),
     ).resolves.toMatchObject({ contact: validContact });
   });
 
   it('requires missing hard contact fields', async () => {
     await expect(
-      contactSubmitValidation.validate({ contact: {} }, { abortEarly: false })
+      contactSubmitValidation.validate({ contact: {} }, { abortEarly: false }),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Title other is required',
@@ -47,8 +47,8 @@ describe('contact submit validation', () => {
             email: 'bad',
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'First name cannot be less than 2 characters',
@@ -69,7 +69,7 @@ describe('contact submit validation', () => {
           lastName: 'c'.repeat(99),
           role: 'd'.repeat(99),
         },
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
@@ -86,8 +86,8 @@ describe('contact submit validation', () => {
             email: `${'e'.repeat(95)}@example.com`,
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Title other cannot be greater than 100 characters',

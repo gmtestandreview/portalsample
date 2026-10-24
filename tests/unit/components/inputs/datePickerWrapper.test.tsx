@@ -7,7 +7,7 @@ import type { CustomDatePickerProps } from '@/components/Inputs/DatePicker/types
 import { parseDateOnlyInput } from '@/utils/dateOnly';
 
 vi.mock(
-  '@/components/Inputs/DatePicker/CustomDatePicker',
+  import('@/components/Inputs/DatePicker/CustomDatePicker'),
   () =>
     ({
       default: ({
@@ -57,7 +57,7 @@ vi.mock(
           </button>
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule35>
+    }) satisfies __ExactMockModule<__TestMockModule35>,
 );
 
 interface HarnessProps {
@@ -110,13 +110,13 @@ describe('datePicker wrapper', () => {
         initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}
       >
         <DatePicker name='dueDate' label='Due date' placeholder='dd/mm/yyyy' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
 
     expect(parseDateOnlyInput((input as HTMLInputElement).value)).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
     expect(input).toHaveAccessibleDescription('Enter a valid date');
     expect(input).toHaveAttribute('placeholder', 'dd/mm/yyyy');
@@ -124,36 +124,36 @@ describe('datePicker wrapper', () => {
     await user.click(screen.getByRole('button', { name: 'Pick date object' }));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"2026-06-12T00:00:00+00:00"'
-      )
+        '"dueDate":"2026-06-12T00:00:00+00:00"',
+      ),
     );
 
     await user.click(screen.getByRole('button', { name: 'Pick valid string' }));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"2026-07-13T00:00:00+00:00"'
-      )
+        '"dueDate":"2026-07-13T00:00:00+00:00"',
+      ),
     );
 
     await user.click(
-      screen.getByRole('button', { name: 'Pick invalid string' })
+      screen.getByRole('button', { name: 'Pick invalid string' }),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"not a date"'
-      )
+        '"dueDate":"not a date"',
+      ),
     );
 
     await user.click(
-      screen.getByRole('button', { name: 'Pick invalid date object' })
+      screen.getByRole('button', { name: 'Pick invalid date object' }),
     );
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null')
+      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
     );
 
     await user.click(screen.getByRole('button', { name: 'Clear date' }));
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null')
+      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
     );
   });
 
@@ -163,7 +163,7 @@ describe('datePicker wrapper', () => {
     render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
@@ -173,7 +173,7 @@ describe('datePicker wrapper', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"dueDate":"2026-08-14T00:00:00+00:00"'
+        '"dueDate":"2026-08-14T00:00:00+00:00"',
       );
       expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true');
     });
@@ -183,12 +183,12 @@ describe('datePicker wrapper', () => {
     render(
       <Harness initialValues={{ dueDate: 'not a date' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByLabelText('Due date')).toHaveValue('');
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"dueDate":"not a date"'
+      '"dueDate":"not a date"',
     );
   });
 
@@ -198,7 +198,7 @@ describe('datePicker wrapper', () => {
     render(
       <Harness initialValues={{ dueDate: '' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
@@ -217,7 +217,7 @@ describe('datePicker wrapper', () => {
     render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByLabelText('Due date');
@@ -225,7 +225,7 @@ describe('datePicker wrapper', () => {
     await user.tab();
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null')
+      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
     );
   });
 
@@ -233,7 +233,7 @@ describe('datePicker wrapper', () => {
     const { rerender } = render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Due date')).toBeInTheDocument();
@@ -244,7 +244,7 @@ describe('datePicker wrapper', () => {
         initialValues={{ dueDate: new Date('2026-06-12T00:00:00.000Z') }}
       >
         <DatePicker name='dueDate' label='Due date' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('12 Jun 2026')).toBeInTheDocument();
@@ -252,7 +252,7 @@ describe('datePicker wrapper', () => {
     rerender(
       <Harness initialValues={{ dueDate: '' }}>
         <DatePicker name='dueDate' label='Due date' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Due date')).toBeInTheDocument();

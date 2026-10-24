@@ -36,54 +36,57 @@ const mocks = vi.hoisted(() => ({
   setBranchModalNotification: vi.fn(),
 }));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal();
-  if (typeof actual !== 'object' || actual === null) {
-    throw new TypeError('Expected module exports object');
-  }
-  return {
-    ...actual,
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return {
-        setAuthToken: mocks.accountSetAuthToken,
-        getNewAccountDetails: mocks.getNewAccountDetails,
-        completeAccountDetails: mocks.completeAccountDetails,
-        getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
-        getBranchDetails: mocks.getBranchDetails,
-        completeBranchAdd: mocks.completeBranchAdd,
-      };
-    }),
-    ContactClient: vi.fn(function ContactClientMock() {
-      return {
-        setAuthToken: mocks.contactSetAuthToken,
-        getUserContact: mocks.getUserContact,
-        saveContactDetails: mocks.saveContactDetails,
-      };
-    }),
-    UsersClient: vi.fn(function UsersClientMock() {
-      return {
-        setAuthToken: mocks.userSetAuthToken,
-        signIn: mocks.signIn,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
-
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
-  () =>
-    ({
-      tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const actual = await importOriginal();
+    if (typeof actual !== 'object' || actual === null) {
+      throw new TypeError('Expected module exports object');
+    }
+    return {
+      ...actual,
+      AccountsClient: vi.fn(function AccountsClientMock() {
+        return {
+          setAuthToken: mocks.accountSetAuthToken,
+          getNewAccountDetails: mocks.getNewAccountDetails,
+          completeAccountDetails: mocks.completeAccountDetails,
+          getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
+          getBranchDetails: mocks.getBranchDetails,
+          completeBranchAdd: mocks.completeBranchAdd,
+        };
+      }),
+      ContactClient: vi.fn(function ContactClientMock() {
+        return {
+          setAuthToken: mocks.contactSetAuthToken,
+          getUserContact: mocks.getUserContact,
+          saveContactDetails: mocks.saveContactDetails,
+        };
+      }),
+      UsersClient: vi.fn(function UsersClientMock() {
+        return {
+          setAuthToken: mocks.userSetAuthToken,
+          signIn: mocks.signIn,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
+  },
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/authentication/authConfig'),
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>,
+);
+
+vi.mock(
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
       setBranchModalNotification: mocks.setBranchModalNotification,
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -126,7 +129,7 @@ describe('account and contact wizard prop factories', () => {
       accounts,
       instance,
       statuses,
-      accountContext
+      accountContext,
     );
     const abortSignal = new AbortController().signal;
     const values = {
@@ -142,37 +145,39 @@ describe('account and contact wizard prop factories', () => {
       stepValues: { name: 'New org' },
     });
     expect(
-      props.hidingFields?.isDefaultOrganisation?.(values as GetAccountValuesDto)
+      props.hidingFields?.isDefaultOrganisation?.(
+        values as GetAccountValuesDto,
+      ),
     ).toBe(true);
     expect(
-      props.hidingFields?.postalAddress?.(values as GetAccountValuesDto)
+      props.hidingFields?.postalAddress?.(values as GetAccountValuesDto),
     ).toBe(true);
     expect(
-      props.hidingFields?.contact?.titleOther?.(values as GetAccountValuesDto)
+      props.hidingFields?.contact?.titleOther?.(values as GetAccountValuesDto),
     ).toBe(true);
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBeUndefined();
 
     await props.onSaveAndNext?.(values, true, abortSignal);
 
     expect(mocks.completeAccountDetails).toHaveBeenCalledWith(
       { formStep: values },
-      abortSignal
+      abortSignal,
     );
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'National Measurement Institute',
       'Trading',
-      'Branch'
+      'Branch',
     );
     expect(accountContext.setCompleted).toHaveBeenCalledWith();
   });
@@ -183,7 +188,7 @@ describe('account and contact wizard prop factories', () => {
       instance,
       statuses,
       accountContext,
-      42
+      42,
     );
     const abortSignal = new AbortController().signal;
     const values: AccountDto = {
@@ -199,30 +204,30 @@ describe('account and contact wizard prop factories', () => {
     });
     expect(mocks.getAccountDetailsByOrgId).toHaveBeenCalledWith(
       42,
-      abortSignal
+      abortSignal,
     );
     expect(
       props.hidingFields?.isDefaultOrganisation?.({
         isDefaultOrganisation: true,
-      })
+      }),
     ).toBe(true);
     expect(
       props.hidingFields?.postalAddress?.({
         postalAddressSameAsStreetAddress: true,
-      })
+      }),
     ).toBe(true);
     expect(props.hidingFields?.contact?.titleOther?.(values)).toBe(false);
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBeUndefined();
 
     await props.onSaveAndNext?.(values, true, abortSignal);
@@ -230,12 +235,12 @@ describe('account and contact wizard prop factories', () => {
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Updated org',
       '',
-      ''
+      '',
     );
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Your organisation details have been successfully updated.',
-      })
+      }),
     );
 
     mocks.completeAccountDetails.mockRejectedValueOnce({
@@ -246,7 +251,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
-      })
+      }),
     );
 
     mocks.completeAccountDetails.mockRejectedValueOnce({
@@ -257,7 +262,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your organisation.',
-      })
+      }),
     );
   });
 
@@ -268,7 +273,7 @@ describe('account and contact wizard prop factories', () => {
       instance,
       statuses,
       accountContext,
-      onShowBranchSelector
+      onShowBranchSelector,
     );
     const abortSignal = new AbortController().signal;
     const values = {
@@ -284,25 +289,27 @@ describe('account and contact wizard prop factories', () => {
       stepValues: { name: 'Branch org' },
     });
     expect(
-      props.hidingFields?.isDefaultOrganisation?.(values as GetAccountValuesDto)
+      props.hidingFields?.isDefaultOrganisation?.(
+        values as GetAccountValuesDto,
+      ),
     ).toBe(false);
     expect(
-      props.hidingFields?.postalAddress?.(values as GetAccountValuesDto)
+      props.hidingFields?.postalAddress?.(values as GetAccountValuesDto),
     ).toBe(false);
     expect(
-      props.hidingFields?.contact?.titleOther?.(values as GetAccountValuesDto)
+      props.hidingFields?.contact?.titleOther?.(values as GetAccountValuesDto),
     ).toBe(false);
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBeUndefined();
 
     const saveResult = props.onSaveAndNext?.(values, true, abortSignal);
@@ -313,22 +320,22 @@ describe('account and contact wizard prop factories', () => {
 
     expect(mocks.completeBranchAdd).toHaveBeenCalledWith(
       { formStep: values },
-      abortSignal
+      abortSignal,
     );
     expect(mocks.userSetAuthToken).toHaveBeenCalledWith('access-token');
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Default org',
       'Trading',
-      'Branch'
+      'Branch',
     );
     expect(accountContext.setDefaultOrganisationId).toHaveBeenCalledWith(
       'new-default',
-      'crm-guid'
+      'crm-guid',
     );
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Your branch/location details have been successfully saved.',
-      })
+      }),
     );
     expect(onShowBranchSelector).toHaveBeenCalledWith();
 
@@ -340,7 +347,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
-      })
+      }),
     );
 
     mocks.completeBranchAdd.mockRejectedValueOnce({
@@ -351,7 +358,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your branch/location details.',
-      })
+      }),
     );
   });
 
@@ -361,14 +368,14 @@ describe('account and contact wizard prop factories', () => {
       instance,
       statuses,
       accountContext,
-      1
+      1,
     );
     const updateProps = updateContactProps(
       accounts,
       instance,
       statuses,
       accountContext,
-      2
+      2,
     );
     const abortSignal = new AbortController().signal;
     const values = { contact: { title: 'Dr' } } as ContactFormStep;
@@ -382,42 +389,42 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.getUserContact).toHaveBeenNthCalledWith(
       1,
       undefined,
-      abortSignal
+      abortSignal,
     );
     expect(mocks.getUserContact).toHaveBeenNthCalledWith(
       2,
       undefined,
-      abortSignal
+      abortSignal,
     );
     expect(createProps.hidingFields?.contact?.titleOther?.(values)).toBe(true);
     expect(
       updateProps.hidingFields?.contact?.titleOther?.({
         contact: { title: 'Other' },
-      })
+      }),
     ).toBe(false);
     expect(
       createProps.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/');
     expect(
       createProps.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBeUndefined();
     expect(
       updateProps.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/');
     expect(
       updateProps.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBeUndefined();
 
     await createProps.onSaveAndNext?.(values, true, abortSignal);
@@ -427,7 +434,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Your contact details have been successfully saved.',
-      })
+      }),
     );
 
     mocks.saveContactDetails.mockRejectedValueOnce({
@@ -439,7 +446,7 @@ describe('account and contact wizard prop factories', () => {
       expect.objectContaining({
         message:
           'This contact already exists. Please review the details and try again.',
-      })
+      }),
     );
 
     mocks.saveContactDetails.mockRejectedValueOnce({
@@ -450,7 +457,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
-      })
+      }),
     );
 
     mocks.saveContactDetails.mockRejectedValueOnce({
@@ -461,7 +468,7 @@ describe('account and contact wizard prop factories', () => {
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
-      })
+      }),
     );
 
     mocks.saveContactDetails.mockRejectedValueOnce({
@@ -473,7 +480,7 @@ describe('account and contact wizard prop factories', () => {
       expect.objectContaining({
         message:
           'This contact already exists. Please review the details and try again.',
-      })
+      }),
     );
   });
 
@@ -482,66 +489,66 @@ describe('account and contact wizard prop factories', () => {
       emptyAccounts,
       instance,
       statuses,
-      accountContext
+      accountContext,
     );
     const updateAccount = updateAccountProps(
       emptyAccounts,
       instance,
       statuses,
       accountContext,
-      1
+      1,
     );
     const branch = addBranchProps(
       emptyAccounts,
       instance,
       statuses,
       accountContext,
-      vi.fn()
+      vi.fn(),
     );
     const createContact = createContactProps(
       emptyAccounts,
       instance,
       statuses,
       accountContext,
-      1
+      1,
     );
     const updateContact = updateContactProps(
       emptyAccounts,
       instance,
       statuses,
       accountContext,
-      1
+      1,
     );
 
     await expect(createAccount.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your organisation and contact details.'
+      'There was an error retrieving your organisation and contact details.',
     );
     await expect(createAccount.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'There was an error saving your organisation and contact details.'
+      'There was an error saving your organisation and contact details.',
     );
     await expect(updateAccount.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your organisation details.'
+      'There was an error retrieving your organisation details.',
     );
     await expect(updateAccount.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'There was an error saving your organisation details.'
+      'There was an error saving your organisation details.',
     );
     await expect(branch.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your organisation and contact details.'
+      'There was an error retrieving your organisation and contact details.',
     );
     await expect(branch.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'There was an error saving your branch/location details.'
+      'There was an error saving your branch/location details.',
     );
     await expect(createContact.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your contact details.'
+      'There was an error retrieving your contact details.',
     );
     await expect(createContact.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'There was an error saving your contact details.'
+      'There was an error saving your contact details.',
     );
     await expect(updateContact.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your contact details.'
+      'There was an error retrieving your contact details.',
     );
     await expect(updateContact.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'There was an error saving your contact details.'
+      'There was an error saving your contact details.',
     );
   });
 
@@ -552,14 +559,14 @@ describe('account and contact wizard prop factories', () => {
       instance,
       statuses,
       accountContext,
-      42
+      42,
     );
     const branchProps = addBranchProps(
       accounts,
       instance,
       statuses,
       accountContext,
-      vi.fn()
+      vi.fn(),
     );
 
     await expect(
@@ -569,8 +576,8 @@ describe('account and contact wizard prop factories', () => {
           businessOrTradingName: undefined,
           branchOrLocationName: undefined,
         },
-        true
-      )
+        true,
+      ),
     ).resolves.toBeUndefined();
 
     await expect(
@@ -579,8 +586,8 @@ describe('account and contact wizard prop factories', () => {
           id: 99,
           name: undefined,
         },
-        true
-      )
+        true,
+      ),
     ).resolves.toBeUndefined();
     expect(accountContext.setOrganisationAndBranch).not.toHaveBeenCalled();
 
@@ -590,8 +597,8 @@ describe('account and contact wizard prop factories', () => {
           name: 'Non-default branch',
           isDefaultOrganisation: false,
         },
-        true
-      )
+        true,
+      ),
     ).resolves.toBeUndefined();
     expect(accountContext.setDefaultOrganisationId).not.toHaveBeenCalled();
 
@@ -603,13 +610,13 @@ describe('account and contact wizard prop factories', () => {
           businessOrTradingName: undefined,
           branchOrLocationName: undefined,
         },
-        true
-      )
+        true,
+      ),
     ).resolves.toBeUndefined();
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Default branch',
       '',
-      ''
+      '',
     );
   });
 
@@ -618,14 +625,14 @@ describe('account and contact wizard prop factories', () => {
       accounts,
       instance,
       statuses,
-      accountContext
+      accountContext,
     );
     const updateProps = updateAccountProps(
       accounts,
       instance,
       statuses,
       accountContext,
-      1
+      1,
     );
 
     await createProps.onSaveAndNext?.(
@@ -634,7 +641,7 @@ describe('account and contact wizard prop factories', () => {
         businessOrTradingName: undefined,
         branchOrLocationName: undefined,
       },
-      true
+      true,
     );
     await updateProps.onSaveAndNext?.(
       {
@@ -643,18 +650,18 @@ describe('account and contact wizard prop factories', () => {
         businessOrTradingName: 'Updated trading name',
         branchOrLocationName: 'Updated branch',
       },
-      true
+      true,
     );
 
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Created organisation',
       '',
-      ''
+      '',
     );
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Updated organisation',
       'Updated trading name',
-      'Updated branch'
+      'Updated branch',
     );
   });
 
@@ -664,39 +671,39 @@ describe('account and contact wizard prop factories', () => {
       instance,
       statuses,
       accountContext,
-      42
+      42,
     );
     const createContact = createContactProps(
       accounts,
       instance,
       statuses,
       accountContext,
-      1
+      1,
     );
     const updateContact = updateContactProps(
       accounts,
       instance,
       statuses,
       accountContext,
-      2
+      2,
     );
 
     mocks.completeAccountDetails.mockRejectedValueOnce(null);
 
     await expect(
-      updateProps.onSaveAndNext?.({ id: 1, name: 'Organisation' }, true)
+      updateProps.onSaveAndNext?.({ id: 1, name: 'Organisation' }, true),
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
 
     await expect(
-      createContact.onSaveAndNext?.({ contact: {} }, true)
+      createContact.onSaveAndNext?.({ contact: {} }, true),
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
 
     await expect(
-      updateContact.onSaveAndNext?.({ contact: {} }, true)
+      updateContact.onSaveAndNext?.({ contact: {} }, true),
     ).resolves.toBeUndefined();
   });
 });

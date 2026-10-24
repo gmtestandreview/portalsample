@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -16,7 +17,6 @@ const meta = preview.meta({
   },
 });
 
-
 /**
  * Server 500 — generic internal server error with no ValidationProblemDetails.errors.
  * The component falls through to the default switch branch and renders "Server error".
@@ -28,9 +28,7 @@ export const ServerError = meta.story({
       status: 500,
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
 
@@ -56,9 +54,7 @@ export const ValidationErrors = meta.story({
     },
     prefixToRemove: 'ContactDetails.',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
 
@@ -82,9 +78,7 @@ export const WAFViolation = meta.story({
     },
     isWafViolation: true,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
 
@@ -105,9 +99,7 @@ export const ConflictError = meta.story({
       status: 409,
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
 

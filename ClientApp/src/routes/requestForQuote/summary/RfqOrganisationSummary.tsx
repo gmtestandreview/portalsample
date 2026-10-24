@@ -47,7 +47,7 @@ const OrganisationHeader = ({
           <span className='d-block text-break'>
             {formatTradingBranchFromStrings(
               organisation?.businessOrTradingName,
-              branchOrLocationName
+              branchOrLocationName,
             )}
           </span>
           <span className='d-block text-break'>{organisation?.name}</span>
@@ -125,20 +125,20 @@ const ContactDetailsSummary = ({
  * `OrganisationAndContact` in summary mode.
  */
 const RfqOrganisationSummary = (
-  props: Readonly<RfqOrganisationSummaryProps>
+  props: Readonly<RfqOrganisationSummaryProps>,
 ) => {
   const { currentContact } = props;
   const org = props.values.organisationAndContact;
   const principal = org?.isPrincipalContact;
   const branchOrLocationName = isSummaryFieldHidden(
     props,
-    `${ROOT}.branchOrLocationName`
+    `${ROOT}.branchOrLocationName`,
   )
     ? undefined
     : org?.branchOrLocationName;
   const hideTitleOther = isSummaryFieldHidden(
     props,
-    `${ROOT}.contact.titleOther`
+    `${ROOT}.contact.titleOther`,
   );
 
   return (

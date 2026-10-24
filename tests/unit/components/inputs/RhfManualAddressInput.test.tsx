@@ -15,12 +15,12 @@ const emptyAddress = {
 
 const renderManualAddress = (
   props: Partial<Parameters<typeof RhfManualAddressInput>[0]> = {},
-  defaultValue: Record<string, string> = emptyAddress
+  defaultValue: Record<string, string> = emptyAddress,
 ) =>
   render(
     <FieldHarness field='address' defaultValue={defaultValue}>
       <RhfManualAddressInput name='address' {...props} />
-    </FieldHarness>
+    </FieldHarness>,
   );
 
 const formValue = () =>
@@ -33,7 +33,7 @@ describe(RhfManualAddressInput, () => {
     ['Address line 1', 'Address line 2', 'Address line 3', 'Suburb'].forEach(
       (label) => {
         expect(screen.getByRole('textbox', { name: label })).toBeEnabled();
-      }
+      },
     );
 
     expect(screen.getByRole('textbox', { name: 'Postcode' })).toBeEnabled();
@@ -65,19 +65,19 @@ describe(RhfManualAddressInput, () => {
 
     await userEvent.type(
       screen.getByRole('textbox', { name: 'Address line 1' }),
-      '1 Bourke St'
+      '1 Bourke St',
     );
     await userEvent.type(
       screen.getByRole('textbox', { name: 'Suburb' }),
-      'Hay'
+      'Hay',
     );
     await userEvent.type(
       screen.getByRole('textbox', { name: 'Postcode' }),
-      '2711'
+      '2711',
     );
     await userEvent.selectOptions(
       screen.getByRole('combobox', { name: 'State' }),
-      'NSW'
+      'NSW',
     );
 
     expect(formValue()).toEqual({
@@ -92,11 +92,11 @@ describe(RhfManualAddressInput, () => {
   it('shows the stored address values', () => {
     renderManualAddress(
       {},
-      { ...emptyAddress, line2: 'Level 2', state: 'VIC' }
+      { ...emptyAddress, line2: 'Level 2', state: 'VIC' },
     );
 
     expect(screen.getByRole('textbox', { name: 'Address line 2' })).toHaveValue(
-      'Level 2'
+      'Level 2',
     );
     expect(screen.getByRole('combobox', { name: 'State' })).toHaveValue('VIC');
   });

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
 vi.mock(
-  '@/components/Inputs/TextInput',
+  import('@/components/Inputs/TextInput'),
   () =>
     ({
       default: ({
@@ -29,11 +29,11 @@ vi.mock(
           />
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
 const renderLookup = (
-  props: Partial<React.ComponentProps<typeof OrganisationNameLookup>> = {}
+  props: Partial<React.ComponentProps<typeof OrganisationNameLookup>> = {},
 ) =>
   render(
     <Formik
@@ -41,7 +41,7 @@ const renderLookup = (
       onSubmit={vi.fn()}
     >
       <OrganisationNameLookup name='orgName' label='Organisation' {...props} />
-    </Formik>
+    </Formik>,
   );
 
 describe(OrganisationNameLookup, () => {
@@ -90,7 +90,7 @@ describe(OrganisationNameLookup, () => {
             optionsFieldName='tradingName'
           />
         </Formik>
-      </Profiler>
+      </Profiler>,
     );
     onRender.mockClear();
 
@@ -108,7 +108,7 @@ describe(OrganisationNameLookup, () => {
     const originalAt = Array.prototype.at;
     const atSpy = vi.spyOn(Array.prototype, 'at').mockImplementation(function (
       this: unknown[],
-      index: number
+      index: number,
     ) {
       if (this.length === 2 && this[0] === 'Alpha Labs' && index === 0) {
         return undefined;
@@ -130,7 +130,7 @@ describe(OrganisationNameLookup, () => {
           label='Organisation'
           optionsFieldName='name'
         />
-      </Formik>
+      </Formik>,
     );
 
     const input = screen.getByRole('combobox');

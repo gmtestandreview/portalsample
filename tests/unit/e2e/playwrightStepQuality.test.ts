@@ -5,27 +5,27 @@ import { describe, expect, it } from 'vitest';
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const steps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'storybook.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const quoteSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'quote.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const accountMaintenanceSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'account-maintenance.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const commonSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'common.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const rfqLifecycleSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'rfq-lifecycle.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const reportSteps = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'steps', 'report.steps.ts'),
-  'utf8'
+  'utf8',
 );
 const workflowErrorsFeature = fs.readFileSync(
   path.join(
@@ -34,13 +34,13 @@ const workflowErrorsFeature = fs.readFileSync(
     'e2e',
     'features',
     'resilience',
-    'workflow-errors.feature'
+    'workflow-errors.feature',
   ),
-  'utf8'
+  'utf8',
 );
 const mockApi = fs.readFileSync(
   path.join(repoRoot, 'tests', 'e2e', 'support', 'mock-api.ts'),
-  'utf8'
+  'utf8',
 );
 
 const routeHandler = (routePattern: string) => {
@@ -52,7 +52,7 @@ const routeHandler = (routePattern: string) => {
       : mockApi.lastIndexOf('await page.route(', markerStart);
   const nextRoute = mockApi.indexOf(
     '\n    await page.route(',
-    markerStart + marker.length
+    markerStart + marker.length,
   );
   const end = nextRoute === -1 ? mockApi.length : nextRoute;
   const handler = start === -1 ? undefined : mockApi.slice(start, end);
@@ -81,7 +81,7 @@ describe('storybook Playwright step quality', () => {
   it('interacts with controls when completing quote wizard steps', () => {
     const completionSteps = extractSection(
       quoteSteps,
-      /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/
+      /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/,
     );
 
     expect(completionSteps).toBeDefined();
@@ -93,11 +93,11 @@ describe('storybook Playwright step quality', () => {
   it('waits for the RFQ route and form before treating a wizard step as ready', () => {
     const readinessHelper = extractSection(
       commonSteps,
-      /const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/
+      /const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/,
     );
     const numericStepAssertion = extractSection(
       commonSteps,
-      /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/
+      /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/,
     );
 
     expect(readinessHelper).toBeDefined();
@@ -114,26 +114,26 @@ describe('storybook Playwright step quality', () => {
   it('opens an existing RFQ draft through its visible dashboard action', () => {
     const actionStep = extractSection(
       rfqLifecycleSteps,
-      /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/
+      /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/,
     );
 
     expect(actionStep).toBeDefined();
     expect(actionStep).toContain("page.goto('/dashboard')");
     expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/);
     expect(actionStep).toMatch(
-      /getByRole\('menuitem', \{\s+name: 'Edit request'/
+      /getByRole\('menuitem', \{\s+name: 'Edit request'/,
     );
   });
 
   it('asserts the accessible measurement report history table', () => {
     expect(reportSteps).toMatch(
-      /getByRole\('table', \{\s+name: \/Measurement reports history\/i/
+      /getByRole\('table', \{\s+name: \/Measurement reports history\/i/,
     );
   });
 
   it('attempts unsaved navigation with the visible discard action', () => {
     expect(workflowErrorsFeature).toContain(
-      'And the user clicks "Discard changes"'
+      'And the user clicks "Discard changes"',
     );
   });
 
@@ -152,7 +152,7 @@ describe('storybook Playwright step quality', () => {
     '**/api/dashboard/get-quote-report-pdf?**',
   ])('delegates configured failures for mutable handler %s', (routePattern) => {
     expect(routeHandler(routePattern)).toContain(
-      'fulfillConfiguredFailure(route, state)'
+      'fulfillConfiguredFailure(route, state)',
     );
   });
 });

@@ -16,39 +16,39 @@ describe(areFormValuesEqual, () => {
     expect(
       areFormValuesEqual(
         { first: 'one', nested: { second: 2, third: true } },
-        { nested: { third: true, second: 2 }, first: 'one' }
-      )
+        { nested: { third: true, second: 2 }, first: 'one' },
+      ),
     ).toBe(true);
     expect(
-      areFormValuesEqual({ nested: { second: 2 } }, { nested: { second: 3 } })
+      areFormValuesEqual({ nested: { second: 2 } }, { nested: { second: 3 } }),
     ).toBe(false);
   });
 
   it('compares arrays in order', () => {
     expect(areFormValuesEqual([1, { name: 'one' }], [1, { name: 'one' }])).toBe(
-      true
+      true,
     );
     expect(areFormValuesEqual([1, 2], [2, 1])).toBe(false);
   });
 
   it('compares Date values by their timestamp', () => {
     expect(
-      areFormValuesEqual(new Date('2026-01-01'), new Date('2026-01-01'))
+      areFormValuesEqual(new Date('2026-01-01'), new Date('2026-01-01')),
     ).toBe(true);
     expect(
-      areFormValuesEqual(new Date('2026-01-01'), new Date('2026-01-02'))
+      areFormValuesEqual(new Date('2026-01-01'), new Date('2026-01-02')),
     ).toBe(false);
     expect(areFormValuesEqual(new Date('invalid'), new Date('invalid'))).toBe(
-      true
+      true,
     );
   });
 
   it('does not equate a Date with a non-Date value', () => {
     expect(areFormValuesEqual(new Date('2026-01-01'), '2026-01-01')).toBe(
-      false
+      false,
     );
     expect(areFormValuesEqual('2026-01-01', new Date('2026-01-01'))).toBe(
-      false
+      false,
     );
   });
 

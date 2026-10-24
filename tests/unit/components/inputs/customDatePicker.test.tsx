@@ -7,7 +7,7 @@ import CustomDatePicker from '@/components/Inputs/DatePicker/CustomDatePicker';
 const mockDate = new Date('2026-05-18T00:00:00.000Z');
 
 vi.mock(
-  '@/components/Inputs/DatePicker/CustomDateInput',
+  import('@/components/Inputs/DatePicker/CustomDateInput'),
   () =>
     ({
       default: ({
@@ -61,10 +61,10 @@ vi.mock(
           {label ? <span>{label}</span> : null}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule33>
+    }) satisfies __ExactMockModule<__TestMockModule33>,
 );
 
-vi.mock('react-datepicker', () => {
+vi.mock(import('react-datepicker'), () => {
   const MockDatePicker = React.forwardRef((props: any, ref: any) => {
     React.useImperativeHandle(ref, () => ({
       state: {
@@ -150,21 +150,21 @@ vi.mock('react-datepicker', () => {
               {String(
                 props.popperModifiers[0].options.offset({
                   placement: 'bottom-start',
-                })[1]
+                })[1],
               )}
             </output>
             <output data-testid='top-offset'>
               {String(
                 props.popperModifiers[0].options.offset({
                   placement: 'top-start',
-                })[1]
+                })[1],
               )}
             </output>
             <output data-testid='side-offset'>
               {String(
                 props.popperModifiers[0].options.offset({
                   placement: 'right-start',
-                })[1]
+                })[1],
               )}
             </output>
             {props.children}
@@ -193,22 +193,22 @@ describe(CustomDatePicker, () => {
         dateOnChange={dateOnChange}
         name='testDate'
         label='Pick a date'
-      />
+      />,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Open calendar' })
+      screen.getByRole('button', { name: 'Open calendar' }),
     );
 
     expect(
-      screen.getByRole('button', { name: 'Pick date' })
+      screen.getByRole('button', { name: 'Pick date' }),
     ).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Pick date' }));
 
     expect(dateOnChange).toHaveBeenCalledWith(mockDate);
     expect(
-      screen.queryByRole('button', { name: 'Pick date' })
+      screen.queryByRole('button', { name: 'Pick date' }),
     ).not.toBeInTheDocument();
   });
 
@@ -218,11 +218,11 @@ describe(CustomDatePicker, () => {
         dateOnBlur={vi.fn()}
         dateOnChange={vi.fn()}
         name='untitledDate'
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('button', { name: 'Open calendar' })
+      screen.getByRole('button', { name: 'Open calendar' }),
     ).toBeInTheDocument();
   });
 
@@ -236,19 +236,19 @@ describe(CustomDatePicker, () => {
         dateOnChange={dateOnChange}
         name='todayDate'
         label='Pick a date'
-      />
+      />,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Open calendar' })
+      screen.getByRole('button', { name: 'Open calendar' }),
     );
     await userEvent.click(
-      screen.getByRole('button', { name: "Select today's date" })
+      screen.getByRole('button', { name: "Select today's date" }),
     );
 
     expect(dateOnChange).toHaveBeenCalledWith(expect.any(Date));
     expect(
-      screen.queryByRole('button', { name: 'Pick date' })
+      screen.queryByRole('button', { name: 'Pick date' }),
     ).not.toBeInTheDocument();
   });
 
@@ -262,7 +262,7 @@ describe(CustomDatePicker, () => {
         dateOnBlur={dateOnBlur}
         dateOnChange={vi.fn()}
         name='keyboardDate'
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
@@ -273,20 +273,20 @@ describe(CustomDatePicker, () => {
     await user.click(screen.getByRole('button', { name: 'Other key' }));
 
     expect(
-      screen.getByRole('button', { name: 'Pick date' })
+      screen.getByRole('button', { name: 'Pick date' }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Escape' }));
 
     expect(
-      screen.queryByRole('button', { name: 'Pick date' })
+      screen.queryByRole('button', { name: 'Pick date' }),
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
     await user.click(screen.getByRole('button', { name: 'Click outside' }));
 
     expect(
-      screen.queryByRole('button', { name: 'Pick date' })
+      screen.queryByRole('button', { name: 'Pick date' }),
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
@@ -294,7 +294,7 @@ describe(CustomDatePicker, () => {
     await user.keyboard('{Escape}');
 
     expect(
-      screen.queryByRole('button', { name: 'Pick date' })
+      screen.queryByRole('button', { name: 'Pick date' }),
     ).not.toBeInTheDocument();
   });
 
@@ -306,25 +306,25 @@ describe(CustomDatePicker, () => {
         dateOnBlur={vi.fn()}
         dateOnChange={vi.fn()}
         name='inputKeyboardDate'
-      />
+      />,
     );
 
     await user.click(
-      screen.getByRole('button', { name: 'Input Enter trigger' })
+      screen.getByRole('button', { name: 'Input Enter trigger' }),
     );
 
     expect(
-      screen.getByRole('button', { name: 'Pick date' })
+      screen.getByRole('button', { name: 'Pick date' }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Close calendar' }));
 
     await user.click(
-      screen.getByRole('button', { name: 'Input Space trigger' })
+      screen.getByRole('button', { name: 'Input Space trigger' }),
     );
 
     expect(
-      screen.getByRole('button', { name: 'Pick date' })
+      screen.getByRole('button', { name: 'Pick date' }),
     ).toBeInTheDocument();
 
     rerender(
@@ -334,15 +334,15 @@ describe(CustomDatePicker, () => {
         dateOnChange={vi.fn()}
         name='inputKeyboardDate'
         readOnly
-      />
+      />,
     );
     await user.click(screen.getByRole('button', { name: 'Close calendar' }));
     await user.click(
-      screen.getByRole('button', { name: 'Input Enter trigger' })
+      screen.getByRole('button', { name: 'Input Enter trigger' }),
     );
 
     expect(
-      screen.queryByRole('button', { name: 'Pick date' })
+      screen.queryByRole('button', { name: 'Pick date' }),
     ).not.toBeInTheDocument();
 
     rerender(
@@ -353,14 +353,14 @@ describe(CustomDatePicker, () => {
         disabled
         name='inputKeyboardDate'
         readOnly
-      />
+      />,
     );
     await user.click(
-      screen.getByRole('button', { name: 'Input Enter trigger' })
+      screen.getByRole('button', { name: 'Input Enter trigger' }),
     );
 
     expect(
-      screen.getByRole('button', { name: 'Pick date' })
+      screen.getByRole('button', { name: 'Pick date' }),
     ).toBeInTheDocument();
   });
 
@@ -377,16 +377,16 @@ describe(CustomDatePicker, () => {
         hasError
         inlineHelp='Date help'
         name='offsetDate'
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
 
     expect(screen.getByTestId('selected-date')).toHaveTextContent(
-      currentDate.toISOString()
+      currentDate.toISOString(),
     );
     expect(screen.getByTestId('open-date')).toHaveTextContent(
-      currentDate.toISOString()
+      currentDate.toISOString(),
     );
     expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-53');
     expect(screen.getByTestId('top-offset')).toHaveTextContent('-48');
@@ -405,11 +405,11 @@ describe(CustomDatePicker, () => {
         dateOnBlur={vi.fn()}
         dateOnChange={vi.fn()}
         name='offsetDate'
-      />
+      />,
     );
 
     expect(screen.getByTestId('selected-date')).toHaveTextContent(
-      nextDate.toISOString()
+      nextDate.toISOString(),
     );
   });
 });

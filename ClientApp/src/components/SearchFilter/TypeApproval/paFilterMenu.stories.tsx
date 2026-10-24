@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import type { PatternApprovalDashboardDto } from '../../../api/web-api-client';
@@ -37,11 +38,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Closed = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -51,9 +49,7 @@ export const Closed = meta.story({
 });
 
 export const Opened = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await user.click(canvas.getByRole('button', { name: /filters/i }));

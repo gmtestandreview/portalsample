@@ -24,10 +24,10 @@ describe('web-api-client GREEN: successful requests', () => {
   it('encodes the search and forwards auth, organisation and cancellation without losing Accept', async () => {
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
-      '{"targetOrganisationAbn":"11111111111"}'
+      '{"targetOrganisationAbn":"11111111111"}',
     );
     const http = transport(
-      Response.json({ matches: [{ displayText: '1 Main St' }] })
+      Response.json({ matches: [{ displayText: '1 Main St' }] }),
     );
     const client = new AddressClient('https://portal.test', http);
     client.setAuthToken('test-token');
@@ -46,7 +46,7 @@ describe('web-api-client GREEN: successful requests', () => {
           Authorization: 'Bearer test-token',
           TargetOrganisationAbn: '11111111111',
         },
-      }
+      },
     );
   });
 
@@ -58,7 +58,7 @@ describe('web-api-client GREEN: successful requests', () => {
       client.createApplication({
         applicationType: ApplicationType.QuoteRequest,
         referenceId: 'RFQ-42',
-      })
+      }),
     ).resolves.toEqual({ id: 42, referenceId: 'RFQ-42' });
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith('/api/application', {
       method: 'POST',
@@ -75,7 +75,7 @@ describe('web-api-client GREEN: successful requests', () => {
     const http = transport(new Response(null, { status: 200 }));
 
     await expect(
-      new ContactClient('', http).saveContactDetails({})
+      new ContactClient('', http).saveContactDetails({}),
     ).resolves.toBeUndefined();
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
       '/api/contact/save-contact',
@@ -84,7 +84,7 @@ describe('web-api-client GREEN: successful requests', () => {
         signal: undefined,
         body: '{}',
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   });
 });
@@ -101,9 +101,9 @@ describe('web-api-client RED: rejected requests', () => {
       const http = transport(Response.json(problem, { status }));
 
       await expect(
-        new ContactClient('', http).saveContactDetails({})
+        new ContactClient('', http).saveContactDetails({}),
       ).rejects.toEqual(problem);
-    }
+    },
   );
 
   it('preserves unexpected error status, body and response headers', async () => {
@@ -111,7 +111,7 @@ describe('web-api-client RED: rejected requests', () => {
       new Response('Service unavailable', {
         status: 503,
         headers: { 'Retry-After': '60' },
-      })
+      }),
     );
     const result = new AddressClient('', http).search('Main');
 
@@ -131,7 +131,7 @@ describe('web-api-client RED: rejected requests', () => {
     http.fetch.mockRejectedValue(error);
 
     await expect(new AddressClient('', http).search('Main')).rejects.toBe(
-      error
+      error,
     );
     expect(http.fetch).toHaveBeenCalledTimes(1);
   });
@@ -140,7 +140,7 @@ describe('web-api-client RED: rejected requests', () => {
     const http = transport(new Response('not-json', { status: 200 }));
 
     await expect(
-      new AddressClient('', http).search('Main')
+      new AddressClient('', http).search('Main'),
     ).rejects.toBeInstanceOf(SyntaxError);
   });
 });
@@ -152,7 +152,7 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
       const http = transport(Response.json({ matches: [] }));
 
       await expect(
-        new AddressClient('', http).search(keyword)
+        new AddressClient('', http).search(keyword),
       ).resolves.toEqual({ matches: [] });
       expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
         '/api/address/search',
@@ -160,9 +160,9 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
           method: 'GET',
           signal: undefined,
           headers: { Accept: 'application/json' },
-        }
+        },
       );
-    }
+    },
   );
 
   it.each([200, 204])(
@@ -171,9 +171,9 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
       const http = transport(new Response(null, { status }));
 
       await expect(
-        new AddressClient('', http).search(undefined)
+        new AddressClient('', http).search(undefined),
       ).resolves.toBeNull();
-    }
+    },
   );
 
   it.each([
@@ -197,10 +197,10 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
             'Content-Disposition': disposition,
             'Content-Type': 'application/pdf',
           },
-        })
+        }),
       );
       const result = await new FileClient('', http).fetchBytesFromUrl(
-        'https://files.test/form.pdf?a=1&b=2'
+        'https://files.test/form.pdf?a=1&b=2',
       );
 
       expect(result).toMatchObject({
@@ -213,8 +213,8 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
         '/api/file/fetch-accessible-form?url=https%3A%2F%2Ffiles.test%2Fform.pdf%3Fa%3D1%26b%3D2',
         expect.objectContaining({
           headers: { Accept: 'application/octet-stream' },
-        })
+        }),
       );
-    }
+    },
   );
 });

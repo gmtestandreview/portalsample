@@ -17,7 +17,7 @@ const accountSubmitValidation = yup.object({
     .maxLength(160),
   isDefaultOrganisation: yup.boolean().optional(),
   businessWebsiteAddress: websiteUrlSchema(
-    'Business website address is not a valid website address'
+    'Business website address is not a valid website address',
   )
     .label('Business website address')
     .maxLength(100)

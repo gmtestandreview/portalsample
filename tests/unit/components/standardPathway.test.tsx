@@ -14,7 +14,7 @@ describe('standardPathway external links', () => {
         bodyText='Feedback survey'
         linkHref='https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu'
         target='_blank'
-      />
+      />,
     );
 
     const link = screen.getByRole('link');
@@ -33,7 +33,7 @@ describe('standardPathway external links', () => {
         linkDescription='Open guide'
         linkHref='https://example.test/guide'
         target='_self'
-      />
+      />,
     );
 
     const link = screen.getByRole('link', {
@@ -55,14 +55,14 @@ describe('standardPathway external links', () => {
         linkHref='https://example.test/digital-id'
         target='_self'
         digitalIdentity
-      />
+      />,
     );
 
     expect(
-      screen.getByText('Continue with your Digital ID.')
+      screen.getByText('Continue with your Digital ID.'),
     ).toBeInTheDocument();
     expect(
-      screen.getByAltText('Australian Government Coat of Arms')
+      screen.getByAltText('Australian Government Coat of Arms'),
     ).toBeInTheDocument();
   });
 
@@ -74,7 +74,7 @@ describe('standardPathway external links', () => {
         linkDescription='Open guide'
         linkHref='https://example.test/guide'
         target='_self'
-      />
+      />,
     );
 
     const footerIcon = container.querySelector('.standard-pathway-footer i');
@@ -93,7 +93,7 @@ describe('standardPathway external links', () => {
           linkDescription='Start now'
           to='/request'
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const link = screen.getByRole('link', {

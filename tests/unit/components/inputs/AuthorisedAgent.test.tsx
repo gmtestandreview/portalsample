@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import AuthorisedAgent from '@/components/Inputs/AuthorisedAgent';
 
 vi.mock(
-  '@/components/Inputs/TextInput',
+  import('@/components/Inputs/TextInput'),
   () =>
     ({
       default: ({
@@ -23,11 +23,11 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
 vi.mock(
-  '@/components/Inputs/NumberInput',
+  import('@/components/Inputs/NumberInput'),
   () =>
     ({
       default: ({
@@ -56,11 +56,11 @@ vi.mock(
           <span>{inlineHelp}</span>
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule30>
+    }) satisfies __ExactMockModule<__TestMockModule30>,
 );
 
 vi.mock(
-  '@/components/Inputs/AddressLookup',
+  import('@/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({
@@ -86,7 +86,7 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>
+    }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 
 describe(AuthorisedAgent, () => {
@@ -95,39 +95,39 @@ describe(AuthorisedAgent, () => {
 
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-name',
-      'manufacturerName'
+      'manufacturerName',
     );
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-name',
-      'abn'
+      'abn',
     );
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-format',
-      '## ### ### ###'
+      '## ### ### ###',
     );
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-leading-zeros',
-      'true'
+      'true',
     );
     expect(
       screen.getByText(
-        'For Australian manufacturers, enter ABN (Australian Business Number)'
-      )
+        'For Australian manufacturers, enter ABN (Australian Business Number)',
+      ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Business street address' })
+      screen.getByRole('heading', { name: 'Business street address' }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-name',
-      'streetAddress'
+      'streetAddress',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-max-results',
-      '10'
+      '10',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-placeholder',
-      'Enter the main business address'
+      'Enter the main business address',
     );
   });
 
@@ -136,27 +136,27 @@ describe(AuthorisedAgent, () => {
 
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-name',
-      'agent.manufacturerName'
+      'agent.manufacturerName',
     );
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-summary',
-      'true'
+      'true',
     );
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-name',
-      'agent.abn'
+      'agent.abn',
     );
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-summary',
-      'true'
+      'true',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-name',
-      'agent.streetAddress'
+      'agent.streetAddress',
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-summary',
-      'true'
+      'true',
     );
   });
 });

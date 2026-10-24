@@ -13,7 +13,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const QuoteSummary = meta.story({
   args: {
     quotationData: requestForQuoteDetailsFixture,

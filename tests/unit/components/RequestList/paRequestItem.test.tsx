@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -38,28 +38,28 @@ vi.mock(
           acquireTokenSilent: mocks.acquireTokenSilent,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: mocks.trackGAEvent,
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: mocks.loggerError,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-vi.mock('@/storage/notification', async (importOriginal) => {
+vi.mock(import('@/storage/notification'), async (importOriginal) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
@@ -67,7 +67,7 @@ vi.mock('@/storage/notification', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule46>;
 });
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -108,7 +108,7 @@ const baseRequest: PatternApprovalDashboardDetailsDto = {
 const renderPaRequestItem = (
   request: PatternApprovalDashboardDetailsDto,
   tab = DashboardTab.Requests,
-  setDeleteSuccess = vi.fn()
+  setDeleteSuccess = vi.fn(),
 ) =>
   render(
     <MemoryRouter initialEntries={['/dashboard']}>
@@ -118,7 +118,7 @@ const renderPaRequestItem = (
         setDeleteSuccess={setDeleteSuccess}
       />
       <LocationDisplay />
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe(PaRequestItem, () => {
@@ -133,43 +133,43 @@ describe(PaRequestItem, () => {
     renderPaRequestItem(baseRequest);
 
     expect(
-      screen.getByRole('heading', { name: 'Pattern approval for flow meter' })
+      screen.getByRole('heading', { name: 'Pattern approval for flow meter' }),
     ).toBeInTheDocument();
     expect(screen.getByText('NMI-PA-2024-001')).toBeInTheDocument();
     expect(screen.getByText('15 Mar 2024')).toBeInTheDocument();
     expect(screen.getByTitle('2 unread messages')).toBeInTheDocument();
     expect(
-      within(screen.getByTitle('2 unread messages')).getByText('2')
+      within(screen.getByTitle('2 unread messages')).getByText('2'),
     ).toHaveRole('status');
 
     await user.click(
-      screen.getByRole('button', { name: 'View application details' })
+      screen.getByRole('button', { name: 'View application details' }),
     );
 
     expect(
-      screen.getByRole('status', { name: 'Current route' })
+      screen.getByRole('status', { name: 'Current route' }),
     ).toHaveTextContent('/ta/PA-2024-0001/manage');
     expect(mocks.trackGAEvent).toHaveBeenCalledWith(
-      'Application item/view details'
+      'Application item/view details',
     );
 
     await user.click(screen.getByRole('button', { name: /messages/i }));
 
     expect(
-      screen.getByRole('status', { name: 'Current route' })
+      screen.getByRole('status', { name: 'Current route' }),
     ).toHaveTextContent('/ta/PA-2024-0001/manage?tab=messages');
     expect(mocks.trackGAEvent).toHaveBeenCalledWith(
-      'Application item/view messages'
+      'Application item/view messages',
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
 
     await expect(
-      screen.findByRole('menuitem', { name: 'View application details' })
+      screen.findByRole('menuitem', { name: 'View application details' }),
     ).resolves.toHaveAttribute('href', '/ta/PA-2024-0001/manage');
 
     await user.click(
-      screen.getByRole('menuitem', { name: 'View application details' })
+      screen.getByRole('menuitem', { name: 'View application details' }),
     );
 
     expect(mocks.trackGAEvent).toHaveBeenCalledWith('Viewapplicationdetails');
@@ -195,12 +195,12 @@ describe(PaRequestItem, () => {
       await expect(
         screen.findByRole('menuitem', {
           name: 'View application details',
-        })
+        }),
       ).resolves.toHaveAttribute('href', `/ta/PA-${status}/manage`);
       expect(
-        screen.getByRole('menuitem', { name: 'View messages' })
+        screen.getByRole('menuitem', { name: 'View messages' }),
       ).toBeInTheDocument();
-    }
+    },
   );
 
   it('resumes draft applications and deletes them after confirmation', async () => {
@@ -219,25 +219,25 @@ describe(PaRequestItem, () => {
         status: PaDashboardItemStatus.PaDraft,
       },
       DashboardTab.Drafts,
-      setDeleteSuccess
+      setDeleteSuccess,
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Draft request for Quote' })
+      screen.getByRole('heading', { name: 'Draft request for Quote' }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /messages/i })
+      screen.queryByRole('button', { name: /messages/i }),
     ).not.toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: 'Resume application' })
+      screen.getByRole('button', { name: 'Resume application' }),
     );
 
     expect(
-      screen.getByRole('status', { name: 'Current route' })
+      screen.getByRole('status', { name: 'Current route' }),
     ).toHaveTextContent('/ta/PA-2024-0001');
     expect(mocks.trackGAEvent).toHaveBeenCalledWith(
-      'Application item/resume application'
+      'Application item/resume application',
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
@@ -253,15 +253,15 @@ describe(PaRequestItem, () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      screen.getByRole('menuitem', { name: 'Delete application' })
+      screen.getByRole('menuitem', { name: 'Delete application' }),
     );
 
     expect(
-      screen.getByRole('dialog', { name: 'Confirm deletion' })
+      screen.getByRole('dialog', { name: 'Confirm deletion' }),
     ).toHaveTextContent('PA-2024-0001');
 
     await user.click(
-      screen.getByRole('button', { name: 'Yes, delete application' })
+      screen.getByRole('button', { name: 'Yes, delete application' }),
     );
 
     await waitFor(() => expect(setDeleteSuccess).toHaveBeenCalledWith(true));
@@ -269,7 +269,7 @@ describe(PaRequestItem, () => {
     expect(mocks.acquireTokenSilent).toHaveBeenCalledWith(
       expect.objectContaining({
         account: { homeAccountId: 'account-id' },
-      })
+      }),
     );
     expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
     expect(mocks.deleteApplication).toHaveBeenCalledWith('PA-2024-0001', {
@@ -294,22 +294,22 @@ describe(PaRequestItem, () => {
         status: PaDashboardItemStatus.PaDraft,
       },
       DashboardTab.Drafts,
-      setDeleteSuccess
+      setDeleteSuccess,
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      await screen.findByRole('menuitem', { name: 'Delete application' })
+      await screen.findByRole('menuitem', { name: 'Delete application' }),
     );
     await user.click(
-      screen.getByRole('button', { name: 'Yes, delete application' })
+      screen.getByRole('button', { name: 'Yes, delete application' }),
     );
 
     await waitFor(() =>
       expect(mocks.loggerError).toHaveBeenCalledWith(
         'Failed to delete application: PA-2024-0001',
-        deleteError
-      )
+        deleteError,
+      ),
     );
 
     expect(setDeleteSuccess).not.toHaveBeenCalled();
@@ -320,8 +320,8 @@ describe(PaRequestItem, () => {
     // runner, which is slow enough for the fade to still be in flight.
     await waitFor(() =>
       expect(
-        screen.queryByRole('dialog', { name: 'Confirm deletion' })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('dialog', { name: 'Confirm deletion' }),
+      ).not.toBeInTheDocument(),
     );
   });
 
@@ -345,15 +345,15 @@ describe(PaRequestItem, () => {
 
       await user.click(screen.getByRole('button', { name: 'Actions' }));
       await user.click(
-        screen.getByRole('menuitem', { name: 'Delete application' })
+        screen.getByRole('menuitem', { name: 'Delete application' }),
       );
 
       expect(
-        screen.queryByRole('dialog', { name: 'Confirm deletion' })
+        screen.queryByRole('dialog', { name: 'Confirm deletion' }),
       ).not.toBeInTheDocument();
       expect(mocks.acquireTokenSilent).not.toHaveBeenCalled();
       expect(mocks.deleteApplication).not.toHaveBeenCalled();
-    }
+    },
   );
 
   it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {
@@ -367,7 +367,7 @@ describe(PaRequestItem, () => {
 
     expect(card).toHaveAttribute(
       'aria-labelledby',
-      'card-summary-PA-2024-0001'
+      'card-summary-PA-2024-0001',
     );
 
     fireEvent.focus(card as HTMLElement);
@@ -376,28 +376,28 @@ describe(PaRequestItem, () => {
     await waitFor(() =>
       expect(card).toHaveAttribute(
         'aria-labelledby',
-        'card-summary-PA-2024-0001'
-      )
+        'card-summary-PA-2024-0001',
+      ),
     );
 
     expect(screen.getByTitle('0 unread messages')).toBeInTheDocument();
     expect(screen.queryByRole('status', { name: '0' })).not.toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: 'Resume application' })
+      screen.getByRole('button', { name: 'Resume application' }),
     );
 
     expect(
-      screen.getByRole('status', { name: 'Current route' })
+      screen.getByRole('status', { name: 'Current route' }),
     ).toHaveTextContent('/ta/PA-2024-0001/manage');
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
 
     expect(
-      screen.queryByRole('menuitem', { name: 'View application details' })
+      screen.queryByRole('menuitem', { name: 'View application details' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('menuitem', { name: 'Delete application' })
+      screen.queryByRole('menuitem', { name: 'Delete application' }),
     ).not.toBeInTheDocument();
   });
 });

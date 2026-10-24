@@ -17,7 +17,7 @@ const markdownLines = (markdown: string): string[] => markdown.split(/\r?\n/);
 
 const sectionIndex = (markdown: string, heading: string): number =>
   markdownLines(markdown).findIndex(
-    (line) => line.trimEnd() === `## ${heading}`
+    (line) => line.trimEnd() === `## ${heading}`,
   );
 
 const hasSection = (markdown: string, heading: string): boolean =>
@@ -31,7 +31,7 @@ const sectionLines = (markdown: string, heading: string): string[] => {
   }
 
   const nextHeading = lines.findIndex(
-    (line, index) => index > headingLine && line.startsWith('## ')
+    (line, index) => index > headingLine && line.startsWith('## '),
   );
 
   return lines
@@ -43,16 +43,16 @@ const sectionLines = (markdown: string, heading: string): string[] => {
 };
 
 export const parseMcpMarkdownReport = (
-  markdown: string
+  markdown: string,
 ): StorybookMcpMarkdownReport => ({
   passingStoryIds: sectionLines(markdown, 'Passing Stories'),
   failingStoryIds: sectionLines(markdown, 'Failing Stories'),
   accessibilityViolationStoryIds: sectionLines(
     markdown,
-    'Accessibility Violations'
+    'Accessibility Violations',
   ),
   unhandledErrors: sectionLines(markdown, 'Unhandled Errors'),
   missingSections: REPORT_SECTIONS.filter(
-    (heading) => !hasSection(markdown, heading)
+    (heading) => !hasSection(markdown, heading),
   ),
 });

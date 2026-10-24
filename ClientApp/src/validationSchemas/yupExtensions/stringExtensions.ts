@@ -7,7 +7,7 @@ const buildErrMsg = (
   label: string | undefined,
   errorMessage: string | undefined,
   labelMessage: (l: string) => string,
-  fallback: string
+  fallback: string,
 ): string => {
   if (typeof errorMessage === 'string' && errorMessage) return errorMessage;
   if (typeof label === 'string' && label) return labelMessage(label);
@@ -19,64 +19,64 @@ declare module 'yup' {
     fixedDigits(
       digits: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     numbersOnly(label?: string, errorMessage?: string): StringSchema;
     minValue(
       minValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     maxValue(
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     decimalNumbersOnly(label?: string, errorMessage?: string): StringSchema;
     postcode(label?: string, errorMessage?: string): StringSchema;
     phone(
       mobileOnly?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     email(label?: string, errorMessage?: string): StringSchema;
     minEntered(
       minLength: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     addressFormat(label?: string, errorMessage?: string): StringSchema;
     allowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     nameAllowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     businessName(label?: string, errorMessage?: string): StringSchema;
     noConsecutiveChars(
       threshold?: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     atLeastOneChar(label?: string, errorMessage?: string): StringSchema;
     noConsecutivePuncuation(
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     numberWithinRange(
       minValue: number,
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     maxLength(
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ): StringSchema;
     isRequired(label?: string, errorMessage?: string): StringSchema;
   }
@@ -156,13 +156,13 @@ export const registerYupStringExtensions = () => {
     function yupFixedDigits(
       digits: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} must be ${digits} digits`,
-        `\${path} must be ${digits} digits`
+        `\${path} must be ${digits} digits`,
       );
 
       return this.test(
@@ -187,9 +187,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -201,7 +201,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} must only include numbers`,
-        `\${path} must only include numbers`
+        `\${path} must only include numbers`,
       );
 
       return this.test(
@@ -226,9 +226,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -238,13 +238,13 @@ export const registerYupStringExtensions = () => {
     function yupMinValue(
       minValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be less than ${minValue} characters`,
-        `\${path} cannot be less than ${minValue} characters`
+        `\${path} cannot be less than ${minValue} characters`,
       );
 
       return this.test(
@@ -274,9 +274,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -286,13 +286,13 @@ export const registerYupStringExtensions = () => {
     function yupMaxValue(
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be greater than ${maxValue} characters`,
-        `\${path} cannot be greater than ${maxValue} characters`
+        `\${path} cannot be greater than ${maxValue} characters`,
       );
 
       return this.test(
@@ -322,9 +322,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -336,7 +336,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} must only include numbers`,
-        `\${path} must only include numbers`
+        `\${path} must only include numbers`,
       );
 
       return this.test(
@@ -361,9 +361,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -375,7 +375,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} is not a valid Australian postcode`,
-        `\${path} is not a valid Australian postcode`
+        `\${path} is not a valid Australian postcode`,
       );
 
       return this.test(
@@ -409,9 +409,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -422,7 +422,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} contains invalid characters`,
-        `\${path} contains invalid characters`
+        `\${path} contains invalid characters`,
       );
 
       return this.test(
@@ -446,9 +446,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -458,7 +458,7 @@ export const registerYupStringExtensions = () => {
     function yupPhone(
       mobileOnly?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errType =
         mobileOnly === undefined || mobileOnly === false
@@ -469,7 +469,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} ${errType}`,
-        `\${path} ${errType}`
+        `\${path} ${errType}`,
       );
 
       return this.test(
@@ -501,9 +501,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   /**
@@ -512,7 +512,7 @@ export const registerYupStringExtensions = () => {
    * input and the match is linear.
    */
   const EMAIL_LOCAL_PART_CHARACTERS = new Set(
-    "-!#$%&'*+/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_abcdefghijklmnopqrstuvwxyz`{|}~"
+    "-!#$%&'*+/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_abcdefghijklmnopqrstuvwxyz`{|}~",
   );
 
   /** A single DNS label, already split on `.`. One character class, so linear. */
@@ -546,8 +546,8 @@ export const registerYupStringExtensions = () => {
         (part) =>
           part.length === 0 ||
           Array.from(part).some(
-            (character) => !EMAIL_LOCAL_PART_CHARACTERS.has(character)
-          )
+            (character) => !EMAIL_LOCAL_PART_CHARACTERS.has(character),
+          ),
       )
     ) {
       return false;
@@ -570,7 +570,7 @@ export const registerYupStringExtensions = () => {
         label.length <= MAX_LABEL_LENGTH &&
         DNS_LABEL.test(label) &&
         !label.startsWith('-') &&
-        !label.endsWith('-')
+        !label.endsWith('-'),
     );
   };
 
@@ -583,7 +583,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} is not a valid email address`,
-        `\${path} is not a valid email address`
+        `\${path} is not a valid email address`,
       );
 
       return this.test(
@@ -606,9 +606,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -621,7 +621,7 @@ export const registerYupStringExtensions = () => {
         errorMessage,
         (l) =>
           `${l} must not contain consecutive apostrophe, hyphen or space characters`,
-        `\${path} must not contain consecutive apostrophe, hyphen or space characters`
+        `\${path} must not contain consecutive apostrophe, hyphen or space characters`,
       );
 
       return this.test(
@@ -645,9 +645,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -658,7 +658,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} must contain at least one letter`,
-        `\${path} must contain at least one letter`
+        `\${path} must contain at least one letter`,
       );
 
       return this.test(
@@ -682,9 +682,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -695,7 +695,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} is required`,
-        `\${path} is required`
+        `\${path} is required`,
       );
 
       return this.test(
@@ -717,9 +717,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -728,7 +728,7 @@ export const registerYupStringExtensions = () => {
     function yupConsChars(
       threshold?: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       let numChars = threshold ?? 3;
       if (numChars < 2) {
@@ -740,7 +740,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} cannot have more than ${numChars} repeating characters`,
-        `\${path} cannot have more than ${numChars} repeating characters`
+        `\${path} cannot have more than ${numChars} repeating characters`,
       );
 
       return this.test(
@@ -768,9 +768,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -779,14 +779,14 @@ export const registerYupStringExtensions = () => {
     function yupAllowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) =>
           `${l} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
-        `\${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`
+        `\${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
       );
 
       return this.test(
@@ -814,9 +814,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -825,14 +825,14 @@ export const registerYupStringExtensions = () => {
     function yupNameAllowedFormat(
       extended?: boolean,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) =>
           `${l} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
-        `\${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`
+        `\${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
       );
 
       return this.test(
@@ -860,9 +860,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -873,7 +873,7 @@ export const registerYupStringExtensions = () => {
         label,
         errorMessage,
         (l) => `${l} contains invalid characters`,
-        `\${path} contains invalid characters`
+        `\${path} contains invalid characters`,
       );
 
       return this.test(
@@ -901,9 +901,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -912,13 +912,13 @@ export const registerYupStringExtensions = () => {
     function yupMinEntered(
       minLength: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be less than ${minLength} characters`,
-        `\${path} cannot be less than ${minLength} characters`
+        `\${path} cannot be less than ${minLength} characters`,
       );
 
       return this.test(
@@ -941,9 +941,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -953,13 +953,13 @@ export const registerYupStringExtensions = () => {
       minValue: number,
       maxValue: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} must be between ${minValue} and ${maxValue}`,
-        `\${path} must be between ${minValue} and ${maxValue}`
+        `\${path} must be between ${minValue} and ${maxValue}`,
       );
 
       return this.test(
@@ -984,9 +984,9 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 
   Yup.addMethod(
@@ -995,13 +995,13 @@ export const registerYupStringExtensions = () => {
     function yupMaxLengthMethod(
       maxLength: number,
       label?: string,
-      errorMessage?: string
+      errorMessage?: string,
     ) {
       const errMsg = buildErrMsg(
         label,
         errorMessage,
         (l) => `${l} cannot be greater than ${maxLength} characters`,
-        `\${path} cannot be greater than ${maxLength} characters`
+        `\${path} cannot be greater than ${maxLength} characters`,
       );
 
       return this.test(
@@ -1024,8 +1024,8 @@ export const registerYupStringExtensions = () => {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
           }
-        }
+        },
       );
-    }
+    },
   );
 };

@@ -145,7 +145,7 @@ describe('normalizeMcpReceipt', () => {
     expect(result.errors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ code: 'EXECUTION_INCOMPLETE' }),
-      ])
+      ]),
     );
   });
 
@@ -237,7 +237,7 @@ describe('normalizeMcpReceipt', () => {
     expect(result.errors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ code: 'EXECUTION_INCOMPLETE' }),
-      ])
+      ]),
     );
   });
 });

@@ -29,7 +29,7 @@ const loadAccountDetails =
     if (accounts.length > 0) {
       const client = new AccountsClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 
@@ -42,14 +42,14 @@ const loadAccountDetails =
     }
 
     throw new Error(
-      'There was an error retrieving your organisation and contact details.'
+      'There was an error retrieving your organisation and contact details.',
     );
   };
 
 const handleOrganisationUpdate = (
   values: AccountDto,
   accountContext: AccountContextState | null,
-  user: UserDto
+  user: UserDto,
 ) => {
   if (
     values.name !== undefined &&
@@ -59,18 +59,18 @@ const handleOrganisationUpdate = (
     accountContext.setOrganisationAndBranch(
       values.name,
       values.businessOrTradingName ?? '',
-      values.branchOrLocationName ?? ''
+      values.branchOrLocationName ?? '',
     );
     accountContext.setDefaultOrganisationId(
       user.defaultOrganisationId,
-      user.organisation?.crmGuid
+      user.organisation?.crmGuid,
     );
   }
 };
 
 const handleBranchSaveError = (
   error: unknown,
-  onShowBranchSelector: () => void
+  onShowBranchSelector: () => void,
 ) => {
   const problemDetails = error as ValidationProblemDetails;
   if (problemDetails?.status === HttpStatusCode.PreconditionFailed) {
@@ -93,14 +93,14 @@ const completeAccountDetails =
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
     accountContext: AccountContextState | null,
-    onShowBranchSelector: () => void
+    onShowBranchSelector: () => void,
   ) =>
   async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.completeBranchAdd(
@@ -114,7 +114,7 @@ const completeAccountDetails =
             // formik isDirty for the autosuggest unless you blur another control after selection before submission
             // isDirty: true,
           },
-          abortSignal
+          abortSignal,
         );
         const userClient = new UsersClient();
         userClient.setAuthToken(tokenResult.accessToken);
@@ -132,7 +132,7 @@ const completeAccountDetails =
       }
     } else {
       throw new Error(
-        'There was an error saving your branch/location details.'
+        'There was an error saving your branch/location details.',
       );
     }
   };
@@ -146,7 +146,7 @@ const discardChanges: DiscardProps = {
 
 const getRedirectionLocationOnError = (
   errorCode: number,
-  _errorType: ErrorType
+  _errorType: ErrorType,
 ) => {
   if (errorCode === 412) {
     return '/';
@@ -160,7 +160,7 @@ const addBranchProps = (
   instance: IPublicClientApplication,
   statuses: FormStepStatusDto[],
   accountContext: AccountContextState | null,
-  onShowBranchSelector: () => void
+  onShowBranchSelector: () => void,
 ): WizardStepProps<GetAccountValuesDto> => ({
   initialValues: {
     id: '',
@@ -192,7 +192,7 @@ const addBranchProps = (
     accounts,
     instance,
     accountContext,
-    onShowBranchSelector
+    onShowBranchSelector,
   ),
   bannerTitle: 'Add branch or location',
   discard: discardChanges,

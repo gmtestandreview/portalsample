@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import { createServer, type Server, type ServerResponse } from 'node:http';
 
 import { expect, test } from '@playwright/test';
@@ -107,7 +108,7 @@ test.describe('API contract helper', () => {
     const response = await request.get(`${baseUrl}/dashboard`);
 
     await expect(
-      expectJsonResponseToMatchSchema(response, dashboardResponseSchema)
+      expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
     ).resolves.toEqual(validDashboardResponse);
   });
 
@@ -117,7 +118,7 @@ test.describe('API contract helper', () => {
     const response = await request.get(`${baseUrl}/dashboard-invalid`);
 
     await expect(
-      expectJsonResponseToMatchSchema(response, dashboardResponseSchema)
+      expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
     ).rejects.toThrow('/items/0');
   });
 });

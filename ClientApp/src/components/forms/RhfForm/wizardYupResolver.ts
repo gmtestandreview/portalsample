@@ -19,7 +19,7 @@ interface WizardYupResolverOptions {
 const toFieldErrors = <TFieldValues extends FieldValues>(
   error: ValidationError,
   values: TFieldValues,
-  hidden: Hideable
+  hidden: Hideable,
 ): FieldErrors<TFieldValues> => {
   let fieldErrors = {};
   const isVisible = (path: string) => !isHidden(path, hidden, values);
@@ -71,7 +71,7 @@ export const createWizardYupResolver =
       const errors = toFieldErrors<TFieldValues>(
         error as ValidationError,
         values,
-        getHidden()
+        getHidden(),
       );
       return Object.keys(errors).length === 0
         ? { values, errors: {} }

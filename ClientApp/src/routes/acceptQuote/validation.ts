@@ -53,7 +53,7 @@ export const deliveryAndReturnSubmitValidation = yup.object<
   returnAddress: yup.mixed().when(['returnMethod', 'returnAddressType'], {
     is: (
       _returnMethod: ReturnMethodValues | undefined,
-      returnAddressType: ReturnAddressTypeValues | undefined
+      returnAddressType: ReturnAddressTypeValues | undefined,
     ) => returnAddressType === ReturnAddressTypeValues.Other,
     then: () => addressSchema('Return address'),
     otherwise: () => yup.mixed(),
@@ -84,7 +84,7 @@ export const deliveryAndReturnSubmitValidation = yup.object<
         .minEntered(2)
         .maxLength(100)
         .required(
-          'Carrier account number or Pre-paid shipment reference is required'
+          'Carrier account number or Pre-paid shipment reference is required',
         ),
   }),
   carrierContactPerson: yup.string().when('returnMethod', {
@@ -105,7 +105,7 @@ export const deliveryAndReturnSubmitValidation = yup.object<
       phoneSchema(
         'Carrier contact phone',
         false,
-        'Please enter a valid phone number'
+        'Please enter a valid phone number',
       ),
   }),
   insuranceNotes: yup.string().when('returnMethod', {

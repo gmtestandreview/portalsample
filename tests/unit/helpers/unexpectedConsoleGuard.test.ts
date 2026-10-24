@@ -44,7 +44,7 @@ type GuardedRun = {
  * an assertion can inspect which phase failed.
  */
 const runGuardedTest = async (
-  body: () => void | Promise<void>
+  body: () => void | Promise<void>,
 ): Promise<GuardedRun> => {
   const hooks = captureHooks();
   let bodyError: unknown;
@@ -171,7 +171,7 @@ describe(installUnexpectedConsoleGuard, () => {
       });
 
       expect(messageOf(teardownError)).toContain(message);
-    }
+    },
   );
 });
 
@@ -206,7 +206,7 @@ describe('console argument formatting', () => {
       });
 
       expect(messageOf(teardownError)).toContain(expected);
-    }
+    },
   );
 
   it('consumes a message whose pattern only matches after interpolation', async () => {
@@ -218,9 +218,9 @@ describe('console argument formatting', () => {
         () => {
           console.error(
             'Warning: An update to %s inside a test was not wrapped in act(...).',
-            'ComboBoxInner'
+            'ComboBoxInner',
           );
-        }
+        },
       );
     });
 
@@ -337,7 +337,7 @@ describe(expectConsoleMessage, () => {
         expectConsoleMessage('warn', /first/, 1, () => {
           console.warn('first signature');
           throw actionFailure;
-        })
+        }),
       ).rejects.toBe(actionFailure);
 
       await expectConsoleMessage('warn', /second/, 1, () => {
@@ -360,7 +360,7 @@ describe(expectConsoleMessage, () => {
         'warn',
         /never settles/,
         1,
-        () => pending
+        () => pending,
       ).catch(() => {});
 
       return Promise.resolve();
@@ -369,13 +369,13 @@ describe(expectConsoleMessage, () => {
     release();
 
     expect(messageOf(teardownError)).toMatch(
-      /open expectation|still open|leaked/i
+      /open expectation|still open|leaked/i,
     );
   });
 
   it('rejects when the guard was never installed for the current test', async () => {
     await expect(
-      expectConsoleMessage('warn', /orphan/, 1, () => {})
+      expectConsoleMessage('warn', /orphan/, 1, () => {}),
     ).rejects.toThrow(/installUnexpectedConsoleGuard/);
   });
 });

@@ -56,7 +56,7 @@ const parseTargetURL = (value: string): { host: string; port: number } => {
     target = new URL(value);
   } catch {
     throw new Error(
-      'the port must be in the valid range or the URL syntax is invalid'
+      'the port must be in the valid range or the URL syntax is invalid',
     );
   }
   if (target.protocol !== 'http:')

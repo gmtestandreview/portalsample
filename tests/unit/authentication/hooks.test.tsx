@@ -67,13 +67,13 @@ describe('authentication hooks', () => {
     render(<AccountProbe />);
 
     expect(
-      screen.getByRole('status', { name: 'Combined account' })
+      screen.getByRole('status', { name: 'Combined account' }),
     ).toHaveTextContent('none');
     expect(
-      screen.getByRole('status', { name: 'State account' })
+      screen.getByRole('status', { name: 'State account' }),
     ).toHaveTextContent('none');
     expect(
-      screen.getByRole('status', { name: 'Dispatch account' })
+      screen.getByRole('status', { name: 'Dispatch account' }),
     ).toHaveTextContent('none');
   });
 
@@ -83,17 +83,17 @@ describe('authentication hooks', () => {
         <AccountDispatchCtx.Provider value={dispatchContext}>
           <AccountProbe />
         </AccountDispatchCtx.Provider>
-      </AccountStateCtx.Provider>
+      </AccountStateCtx.Provider>,
     );
 
     expect(
-      screen.getByRole('status', { name: 'Combined account' })
+      screen.getByRole('status', { name: 'Combined account' }),
     ).toHaveTextContent('National Measurement Institute');
     expect(
-      screen.getByRole('status', { name: 'State account' })
+      screen.getByRole('status', { name: 'State account' }),
     ).toHaveTextContent('National Measurement Institute');
     expect(
-      screen.getByRole('status', { name: 'Dispatch account' })
+      screen.getByRole('status', { name: 'Dispatch account' }),
     ).toHaveTextContent('available');
   });
 
@@ -101,14 +101,14 @@ describe('authentication hooks', () => {
     render(
       <AccountStateCtx.Provider value={stateContext}>
         <AccountProbe />
-      </AccountStateCtx.Provider>
+      </AccountStateCtx.Provider>,
     );
 
     expect(
-      screen.getByRole('status', { name: 'Combined account' })
+      screen.getByRole('status', { name: 'Combined account' }),
     ).toHaveTextContent('National Measurement Institute');
     expect(
-      screen.getByRole('status', { name: 'Dispatch account' })
+      screen.getByRole('status', { name: 'Dispatch account' }),
     ).toHaveTextContent('none');
   });
 
@@ -116,14 +116,14 @@ describe('authentication hooks', () => {
     render(
       <AccountDispatchCtx.Provider value={dispatchContext}>
         <AccountProbe />
-      </AccountDispatchCtx.Provider>
+      </AccountDispatchCtx.Provider>,
     );
 
     expect(
-      screen.getByRole('status', { name: 'Combined account' })
+      screen.getByRole('status', { name: 'Combined account' }),
     ).toHaveTextContent('none');
     expect(
-      screen.getByRole('status', { name: 'Dispatch account' })
+      screen.getByRole('status', { name: 'Dispatch account' }),
     ).toHaveTextContent('available');
   });
 });

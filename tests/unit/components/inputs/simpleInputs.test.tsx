@@ -62,7 +62,7 @@ describe('simple Formik input components', () => {
           inlineHelp='Confirm you have read the terms'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const checkbox = screen.getByRole('checkbox', {
@@ -70,18 +70,18 @@ describe('simple Formik input components', () => {
     });
 
     expect(checkbox).toHaveAccessibleDescription(
-      'Confirm you have read the terms'
+      'Confirm you have read the terms',
     );
     expect(document.querySelector('.icon-tick')).toHaveAttribute(
       'aria-hidden',
-      'true'
+      'true',
     );
     expect(document.querySelector('.icon-tick')).not.toHaveAttribute('role');
 
     await user.click(checkbox);
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"accepted":true')
+      expect(screen.getByTestId('values')).toHaveTextContent('"accepted":true'),
     );
   });
 
@@ -93,7 +93,7 @@ describe('simple Formik input components', () => {
         initialErrors={{ accepted: 'You must accept' }}
       >
         <Checkbox name='accepted' label='Accept declaration' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const checkbox = screen.getByRole('checkbox', {
@@ -102,7 +102,7 @@ describe('simple Formik input components', () => {
 
     expect(checkbox).toHaveAccessibleDescription('You must accept');
     expect(screen.getByText('You must accept')).toHaveClass(
-      'form-validation-message'
+      'form-validation-message',
     );
 
     rerender(
@@ -116,11 +116,11 @@ describe('simple Formik input components', () => {
           label='Accept declaration'
           supressFieldLevelMessages
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(
-      screen.getByRole('checkbox', { name: 'Accept declaration' })
+      screen.getByRole('checkbox', { name: 'Accept declaration' }),
     ).not.toHaveAccessibleDescription();
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
   });
@@ -129,7 +129,7 @@ describe('simple Formik input components', () => {
     const { rerender } = render(
       <FormikHarness initialValues={{ accepted: true }}>
         <Checkbox name='accepted' label='Declaration accepted' isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Declaration accepted')).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe('simple Formik input components', () => {
           label='Declaration accepted'
           subFormField={<p>Extra details</p>}
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Extra details')).toBeInTheDocument();
@@ -164,7 +164,7 @@ describe('simple Formik input components', () => {
           subFormField={<p>Reason details</p>}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const radio = screen.getByRole('radio', { name: /No\s*Do not proceed/i });
@@ -205,7 +205,7 @@ describe('simple Formik input components', () => {
           options={options}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const group = screen.getByRole('group', {
@@ -220,8 +220,8 @@ describe('simple Formik input components', () => {
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"contactMethod":"phone"'
-      )
+        '"contactMethod":"phone"',
+      ),
     );
 
     rerender(
@@ -232,7 +232,7 @@ describe('simple Formik input components', () => {
           options={options}
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Preferred contact method')).toBeInTheDocument();
@@ -254,11 +254,11 @@ describe('simple Formik input components', () => {
           displayHorizontally
           containerClassName='delivery-container'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(
-      screen.getByText('Choose how you want the report delivered')
+      screen.getByText('Choose how you want the report delivered'),
     ).toHaveClass('contextual-help');
     expect(container.querySelector('.delivery-container')).toBeInTheDocument();
 
@@ -270,7 +270,7 @@ describe('simple Formik input components', () => {
           options={options}
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.queryByText('Delivery option')).not.toBeInTheDocument();
@@ -285,7 +285,7 @@ describe('simple Formik input components', () => {
           containerClassName='summary-container'
           className='summary-value'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Pickup')).toHaveClass('summary-value');
@@ -298,7 +298,7 @@ describe('simple Formik input components', () => {
           options={options}
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Delivery option')).toBeInTheDocument();
@@ -324,16 +324,16 @@ describe('simple Formik input components', () => {
           onChange={onChange}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'State' });
 
     expect(select).toHaveAccessibleDescription(
-      'Choose where the instrument is located'
+      'Choose where the instrument is located',
     );
     expect(
-      within(select).getByRole('option', { name: 'Select a state' })
+      within(select).getByRole('option', { name: 'Select a state' }),
     ).toHaveValue('');
     expect(within(select).getByRole('option', { name: 'NSW' })).toBeDisabled();
 
@@ -342,7 +342,7 @@ describe('simple Formik input components', () => {
     expect(onChange).toHaveBeenCalledTimes(1);
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"state":"act"')
+      expect(screen.getByTestId('values')).toHaveTextContent('"state":"act"'),
     );
   });
 
@@ -371,7 +371,7 @@ describe('simple Formik input components', () => {
           containerClassName='service-container'
           className='service-select'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Service' });
@@ -382,10 +382,10 @@ describe('simple Formik input components', () => {
 
     expect(screen.getByText('Pick the service type')).toBeInTheDocument();
     expect(
-      within(select).getByRole('option', { name: 'Please select' })
+      within(select).getByRole('option', { name: 'Please select' }),
     ).toHaveValue('default');
     expect(select.querySelector('option[value="hidden"]')).toHaveAttribute(
-      'hidden'
+      'hidden',
     );
 
     rerender(
@@ -396,7 +396,7 @@ describe('simple Formik input components', () => {
           options={options}
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.queryByText('Service')).not.toBeInTheDocument();
@@ -419,7 +419,7 @@ describe('simple Formik input components', () => {
           options={options}
           displayHorizontally
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'State' });
@@ -430,18 +430,18 @@ describe('simple Formik input components', () => {
     rerender(
       <FormikHarness initialValues={{ state: 'nsw' }}>
         <SelectInput name='state' label='State' options={options} readOnly />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'State' })).toHaveValue('NSW');
     expect(screen.getByRole('textbox', { name: 'State' })).toHaveAttribute(
-      'readonly'
+      'readonly',
     );
 
     rerender(
       <FormikHarness initialValues={{ state: 'act' }}>
         <SelectInput name='state' label='State' options={options} isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('State')).toBeInTheDocument();
@@ -465,14 +465,14 @@ describe('simple Formik input components', () => {
           inlineHelpTitle='State help'
           inlineHelp='Choose a state'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     await user.click(screen.getByText('State help'));
 
     expect(screen.getByText('Choose a state')).toBeInTheDocument();
     expect(
-      screen.getByRole('combobox', { name: 'State' })
+      screen.getByRole('combobox', { name: 'State' }),
     ).toHaveAccessibleDescription('Select a state');
 
     rerender(
@@ -485,17 +485,17 @@ describe('simple Formik input components', () => {
           inlineHelpTitle='Read help'
           inlineHelp='Read only'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'State' })).toHaveValue(
-      'unknown'
+      'unknown',
     );
 
     rerender(
       <FormikHarness initialValues={{ state: 'unknown' }}>
         <SelectInput name='state' label='State' options={options} isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('State')).toBeInTheDocument();
@@ -516,21 +516,21 @@ describe('simple Formik input components', () => {
           displayHorizontally
           addBlank
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'State' });
 
     expect(select).toHaveAttribute(
       'aria-describedby',
-      'service-state-validation-msg'
+      'service-state-validation-msg',
     );
     expect(screen.getByText('Choose a state')).toHaveAttribute(
       'id',
-      'service-state-validation-msg'
+      'service-state-validation-msg',
     );
     expect(
-      screen.getByRole('option', { name: 'Please select' })
+      screen.getByRole('option', { name: 'Please select' }),
     ).toBeInTheDocument();
   });
 
@@ -547,7 +547,7 @@ describe('simple Formik input components', () => {
           placeholder='Add notes'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const textarea = screen.getByRole('textbox', { name: 'Notes' });
@@ -560,7 +560,9 @@ describe('simple Formik input components', () => {
     await user.tab();
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"notes":"abcdef"')
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"notes":"abcdef"',
+      ),
     );
 
     expect(screen.getByTestId('touched')).toHaveTextContent('"notes":true');
@@ -572,8 +574,8 @@ describe('simple Formik input components', () => {
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"notes":"badvalue"'
-      )
+        '"notes":"badvalue"',
+      ),
     );
   });
 
@@ -585,7 +587,7 @@ describe('simple Formik input components', () => {
         initialErrors={{ notes: 'Too long' }}
       >
         <TextAreaInput name='notes' label='Notes' maxCharacters={5} />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const textarea = screen.getByRole('textbox', { name: 'Notes' });
@@ -597,7 +599,7 @@ describe('simple Formik input components', () => {
     rerender(
       <FormikHarness initialValues={{ notes: 'Saved summary' }}>
         <TextAreaInput name='notes' label='Notes' isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Saved summary')).toBeInTheDocument();
@@ -610,7 +612,7 @@ describe('simple Formik input components', () => {
       <FormikHarness initialValues={{ notes: null }}>
         <TextAreaInput name='notes' label='Notes' rows={6} disabled />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const textarea = screen.getByRole('textbox', { name: 'Notes' });
@@ -646,7 +648,7 @@ describe('simple Formik input components', () => {
           onFocus={onFocus}
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'First name' });
@@ -659,22 +661,22 @@ describe('simple Formik input components', () => {
     await user.type(input, '  Jordan  ');
     await user.tab();
 
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledWith();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onKeyDown).toHaveBeenCalled();
-    expect(onChange).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalledWith();
+    expect(onChange).toHaveBeenCalledWith();
     expect(onBlur).toHaveBeenCalledTimes(1);
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"firstName":"Jordan"'
-      )
+        '"firstName":"Jordan"',
+      ),
     );
 
     rerender(
       <FormikHarness initialValues={{ dueDate: '2026-06-11T00:00:00.000Z' }}>
         <TextInput name='dueDate' label='Due date' type='date' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByLabelText('Due date')).toHaveValue('2026-06-11');
@@ -682,7 +684,7 @@ describe('simple Formik input components', () => {
     rerender(
       <FormikHarness initialValues={{ dueDate: '2026-06-11T00:00:00.000Z' }}>
         <TextInput name='dueDate' label='Due date' type='date' isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('11/06/2026')).toBeInTheDocument();
@@ -696,7 +698,7 @@ describe('simple Formik input components', () => {
         initialErrors={{ firstName: 'First name is required' }}
       >
         <TextInput name='firstName' label='First name' disabled readonly />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'First name' });
@@ -705,7 +707,7 @@ describe('simple Formik input components', () => {
     expect(input).toHaveAttribute('readonly');
     expect(input).toHaveAccessibleDescription('First name is required');
     expect(screen.getByText('First name is required')).toHaveClass(
-      'form-validation-message'
+      'form-validation-message',
     );
   });
 
@@ -722,7 +724,7 @@ describe('simple Formik input components', () => {
           aria-controls='due-date-options'
         />
         <ValuesProbe />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Due date' });
@@ -734,13 +736,13 @@ describe('simple Formik input components', () => {
     await user.tab();
 
     await waitFor(() =>
-      expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true')
+      expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true'),
     );
 
     rerender(
       <FormikHarness initialValues={{ dueDate: '' }}>
         <TextInput name='dueDate' label='Due date' type='date' isSummary />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -755,7 +757,7 @@ describe('simple Formik input components', () => {
           value='SUPPLIED-REF'
           inlineHelp='Generated by NMI'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const supplied = screen.getByRole('textbox', { name: 'Reference' });
@@ -767,11 +769,11 @@ describe('simple Formik input components', () => {
     rerender(
       <FormikHarness initialValues={{ reference: 'FORMIK-REF' }}>
         <TextReadOnly name='reference' label='Reference' />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Reference' })).toHaveValue(
-      'FORMIK-REF'
+      'FORMIK-REF',
     );
 
     rerender(
@@ -782,7 +784,7 @@ describe('simple Formik input components', () => {
           isSummary
           format='##-##-##'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Reference')).toBeInTheDocument();

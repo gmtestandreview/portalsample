@@ -36,7 +36,7 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
   const ownedReceiptRoot = path.resolve(cwd, 'reports', 'storybook-coverage');
   if (!isInside(ownedReceiptRoot, resolvedReceiptDirectory)) {
     throw new Error(
-      'STORYBOOK_CLOSURE_RECEIPTS must be inside the owned reports/storybook-coverage directory'
+      'STORYBOOK_CLOSURE_RECEIPTS must be inside the owned reports/storybook-coverage directory',
     );
   }
   const selectedInputRoots = [
@@ -50,7 +50,7 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
     selectedInputRoots.some((root) => isInside(root, resolvedReceiptDirectory))
   ) {
     throw new Error(
-      'STORYBOOK_CLOSURE_RECEIPTS must be outside selected source inputs'
+      'STORYBOOK_CLOSURE_RECEIPTS must be outside selected source inputs',
     );
   }
 
@@ -66,7 +66,7 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
     freezeId,
     project: {
       coverageExclusionPresent: vitest.config.coverage.exclude.includes(
-        jsonCoverageExclusion
+        jsonCoverageExclusion,
       ),
     },
   };
@@ -76,7 +76,7 @@ const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
   writeFileSync(
     path.join(resolvedReceiptDirectory, fileName),
     `${JSON.stringify(diagnostic, null, 2)}\n`,
-    { encoding: 'utf8', flag: 'wx' }
+    { encoding: 'utf8', flag: 'wx' },
   );
 };
 

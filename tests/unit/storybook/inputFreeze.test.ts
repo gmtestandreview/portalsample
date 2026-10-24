@@ -33,7 +33,7 @@ describe('validateFreezeRecord', () => {
         freeze,
         expectedInputDigest: 'sha256:inputs',
         selectedPaths: ['ClientApp/src', '.storybook'],
-      })
+      }),
     ).toEqual({ ok: true, errors: [] });
   });
 
@@ -72,7 +72,7 @@ describe('validateFreezeRecord', () => {
           'ClientApp/src',
           '.storybook',
         ],
-      })
+      }),
     ).toMatchObject({ ok: false, errors: expect.any(Array) });
   });
 });

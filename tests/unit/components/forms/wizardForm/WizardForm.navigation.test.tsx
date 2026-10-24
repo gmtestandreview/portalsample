@@ -17,39 +17,39 @@ import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>
+    }) satisfies __ExactMockModule<__TestMockModule24>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/components/SteppedNavigation',
+  import('../../../../../ClientApp/src/components/SteppedNavigation'),
   () =>
     ({
       default: () => <div data-testid='stepped-navigation' />,
-    }) satisfies __ExactMockModule<__TestMockModule25>
+    }) satisfies __ExactMockModule<__TestMockModule25>,
 );
 
 // ── Shared mock context values ────────────────────────────────────────────────
@@ -98,7 +98,7 @@ function makeTwoStepRouter(
   statuses: FormStepStatusDto[],
   step1Save = vi.fn().mockResolvedValue({}),
   step2Save = vi.fn().mockResolvedValue({}),
-  initialPath = '/wizard/step-1'
+  initialPath = '/wizard/step-1',
 ) {
   return createMemoryRouter(
     [
@@ -144,13 +144,13 @@ function makeTwoStepRouter(
       { path: '/not-found', element: <div>Not Found Page</div> },
       { path: '/server-error', element: <div>Server Error Page</div> },
     ],
-    { initialEntries: [initialPath] }
+    { initialEntries: [initialPath] },
   );
 }
 
 function makeSplitSplatTwoStepRouter(
   statuses: FormStepStatusDto[],
-  step1Save = vi.fn().mockResolvedValue({})
+  step1Save = vi.fn().mockResolvedValue({}),
 ) {
   return createMemoryRouter(
     [
@@ -201,7 +201,7 @@ function makeSplitSplatTwoStepRouter(
       future: {
         v7_relativeSplatPath: true,
       },
-    }
+    },
   );
 }
 
@@ -221,7 +221,7 @@ describe('wizardForm — step navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
@@ -241,7 +241,7 @@ describe('wizardForm — step navigation', () => {
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId('step-1-content')).not.toBeInTheDocument();
@@ -258,7 +258,7 @@ describe('wizardForm — step navigation', () => {
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
     );
 
     expect(step1Save).toHaveBeenCalledTimes(1);
@@ -273,18 +273,18 @@ describe('wizardForm — step navigation', () => {
       statuses,
       undefined,
       undefined,
-      '/wizard/step-2'
+      '/wizard/step-2',
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
     );
 
     await userEvent.click(screen.getByTestId('back-button'));
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
@@ -299,12 +299,12 @@ describe('wizardForm — step navigation', () => {
       statuses,
       undefined,
       undefined,
-      '/wizard/step-2'
+      '/wizard/step-2',
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
@@ -319,7 +319,7 @@ describe('wizardForm — step navigation', () => {
       statuses,
       undefined,
       undefined,
-      '/wizard/step-2'
+      '/wizard/step-2',
     );
     render(<RouterProvider router={router} />);
 
@@ -328,7 +328,7 @@ describe('wizardForm — step navigation', () => {
     await userEvent.click(screen.getByTestId('save-and-next-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('Done Page')).toBeInTheDocument()
+      expect(screen.getByText('Done Page')).toBeInTheDocument(),
     );
   });
 
@@ -342,7 +342,7 @@ describe('wizardForm — step navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument()
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
     );
 
     await userEvent.click(screen.getByTestId('save-and-next-button'));
@@ -350,7 +350,7 @@ describe('wizardForm — step navigation', () => {
     await waitFor(() => {
       expect(screen.getByTestId('step-2-content')).toBeInTheDocument();
       expect(router.state.location.pathname).toBe(
-        '/request-for-quote/abc-123/step-2'
+        '/request-for-quote/abc-123/step-2',
       );
     });
 
@@ -359,7 +359,7 @@ describe('wizardForm — step navigation', () => {
     await waitFor(() => {
       expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
       expect(router.state.location.pathname).toBe(
-        '/request-for-quote/abc-123/step-1'
+        '/request-for-quote/abc-123/step-1',
       );
     });
   });
@@ -393,13 +393,13 @@ describe('wizardForm — step navigation', () => {
         },
         { path: '/done', element: <div>Done Page</div> },
       ],
-      { initialEntries: ['/step-1'] }
+      { initialEntries: ['/step-1'] },
     );
 
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('root-step-content')).toBeInTheDocument()
+      expect(screen.getByTestId('root-step-content')).toBeInTheDocument(),
     );
   });
 });

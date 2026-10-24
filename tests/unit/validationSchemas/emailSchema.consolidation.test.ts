@@ -8,7 +8,7 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
     const schema = emailSchema('Email address');
 
     await expect(schema.validate('user@example.com')).resolves.toBe(
-      'user@example.com'
+      'user@example.com',
     );
   });
 
@@ -16,7 +16,7 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
     const schema = emailSchema('Email address');
 
     await expect(schema.validate('not-an-email')).rejects.toThrow(
-      'Email address is not a valid email address'
+      'Email address is not a valid email address',
     );
   });
 
@@ -24,7 +24,7 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
     const schema = emailSchema('Email address');
 
     await expect(schema.validate('')).rejects.toThrow(
-      'Email address is required'
+      'Email address is required',
     );
   });
 
@@ -39,7 +39,7 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
     const longEmail = `${'a'.repeat(90)}@example.com`; // 102 chars
 
     await expect(schema.validate(longEmail)).rejects.toThrow(
-      'Email address cannot be greater than 100 characters'
+      'Email address cannot be greater than 100 characters',
     );
   });
 });

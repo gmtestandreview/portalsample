@@ -24,7 +24,7 @@ const compareSuggestions = (left: string, right: string) =>
 
 const getOptionValue = (
   item: SuggestionOption,
-  fieldName: string | undefined
+  fieldName: string | undefined,
 ) => {
   if (fieldName === undefined || !Object.hasOwn(item, fieldName)) {
     return undefined;
@@ -66,8 +66,8 @@ export const getFilteredSuggestions = ({
       matches(
         getOptionValue(item, optionsFieldName),
         normalizedInput,
-        matchType
-      )
+        matchType,
+      ),
     )
     .filter((item) => {
       if (parentValue === undefined) {
@@ -77,7 +77,7 @@ export const getFilteredSuggestions = ({
       return matches(
         getOptionValue(item, parentOptionsName),
         parentValue.toLowerCase(),
-        matchType
+        matchType,
       );
     })
     .slice(0, maxResults)

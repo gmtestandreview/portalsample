@@ -36,7 +36,7 @@ const renderWithFormik = (
   fieldState: {
     initialErrors?: Record<string, string>;
     initialTouched?: Record<string, boolean>;
-  } = {}
+  } = {},
 ) =>
   render(
     <Formik
@@ -50,7 +50,7 @@ const renderWithFormik = (
       onSubmit={vi.fn()}
     >
       {children}
-    </Formik>
+    </Formik>,
   );
 
 const suburbOptions = [
@@ -100,7 +100,7 @@ describe('combobox accessibility', () => {
         onCancel={vi.fn()}
         onSelectedOption={vi.fn()}
       />,
-      { suburb: 'Syd' }
+      { suburb: 'Syd' },
     );
 
     const user = userEvent.setup();
@@ -123,15 +123,15 @@ describe('combobox accessibility', () => {
     // ListBox would prepend the Formik field name ("suburb Suburb"), and
     // dropping the `Label` would leave only "Suggestions".
     expect(
-      screen.getByRole('listbox', { name: 'Suggestions Suburb' })
+      screen.getByRole('listbox', { name: 'Suggestions Suburb' }),
     ).toHaveClass('suggestion-options');
     expect(screen.getAllByRole('option')).toHaveLength(2);
     expect(combobox).toHaveAttribute(
       'aria-activedescendant',
-      'suburb-options-option-suburb-option-sydney'
+      'suburb-options-option-suburb-option-sydney',
     );
     expect(
-      screen.getByRole('option', { name: /Sydney NSW \(1 of 2\)/ })
+      screen.getByRole('option', { name: /Sydney NSW \(1 of 2\)/ }),
     ).toHaveClass('highlighted');
   });
 
@@ -148,7 +148,7 @@ describe('combobox accessibility', () => {
           { name: 'ACME Calibration' },
           { name: 'ACME Testing' },
         ],
-      }
+      },
     );
 
     const user = userEvent.setup();
@@ -169,12 +169,12 @@ describe('combobox accessibility', () => {
       expect(combobox).toHaveAttribute('aria-expanded', 'true');
       expect(combobox).toHaveAttribute(
         'aria-activedescendant',
-        'organisationName-option-0'
+        'organisationName-option-0',
       );
     });
 
     expect(
-      screen.getByRole('option', { name: /ACME Calibration/ })
+      screen.getByRole('option', { name: /ACME Calibration/ }),
     ).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -199,7 +199,7 @@ describe('combobox accessibility', () => {
     ({ overrides, visibleMarker }) => {
       renderWithFormik(
         <AutoSuggestContainer<string> {...baseSuburbProps} {...overrides} />,
-        { suburb: 'Syd' }
+        { suburb: 'Syd' },
       );
 
       expect(screen.getByText(visibleMarker)).toBeInTheDocument();
@@ -207,7 +207,7 @@ describe('combobox accessibility', () => {
       const combobox = screen.getByRole('combobox', { name: 'Suburb' });
 
       expect(reactAriaLabelText(combobox)).toBe('Suburb');
-    }
+    },
   );
 
   it('keeps the React Aria label through manual entry, results and cancellation', async () => {
@@ -220,7 +220,7 @@ describe('combobox accessibility', () => {
         getOptions={getOptions}
         onSelectedOption={vi.fn()}
       />,
-      { suburb: '' }
+      { suburb: '' },
     );
 
     const user = userEvent.setup();
@@ -256,7 +256,7 @@ describe('combobox accessibility', () => {
       {
         initialErrors: { suburb: 'Suburb is required' },
         initialTouched: { suburb: true },
-      }
+      },
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });

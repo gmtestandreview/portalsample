@@ -26,17 +26,17 @@ const toOption = (lookup: LookupResponse): SelectInputOption<string> => ({
  */
 const toSortedLookups = (
   measurementCategories: LookupResponse[],
-  artefactTypes: LookupResponse[]
+  artefactTypes: LookupResponse[],
 ): RfqInstrumentLookups => {
   const [sortedCategories] = sortList(
     [...measurementCategories],
     NO_MEASUREMENT_LABEL,
-    'label'
+    'label',
   );
   const [sortedTypes] = sortList(
     artefactTypes.map(toOption),
     NO_INSTRUMENT_LABEL,
-    'displayText'
+    'displayText',
   );
 
   return {
@@ -46,7 +46,7 @@ const toSortedLookups = (
 };
 
 const fetchLookups = async (
-  accessToken: string
+  accessToken: string,
 ): Promise<RfqInstrumentLookups> => {
   const client = new LookupClient();
   client.setAuthToken(accessToken);
@@ -74,14 +74,14 @@ export const useRfqInstrumentLookups = (): RfqInstrumentLookups | undefined => {
     const load = async () => {
       try {
         const token = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         const loaded = await fetchLookups(token.accessToken);
         if (isActive) setLookups(loaded);
       } catch (e) {
         AppLogger.error(
           'Failed to retrieve look ups',
-          e instanceof Error ? e : new Error(String(e))
+          e instanceof Error ? e : new Error(String(e)),
         );
       }
     };

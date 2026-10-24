@@ -8,7 +8,7 @@ const sourceRoot = path.join(repositoryRoot, 'ClientApp/src');
 const environmentSourcePath = path.join(sourceRoot, 'env.ts');
 const designPath = path.join(
   repositoryRoot,
-  'docs/specs/2026-10-20-webpack-to-vite-design.md'
+  'docs/specs/2026-10-20-webpack-to-vite-design.md',
 );
 
 const sourceExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
@@ -47,7 +47,7 @@ const mappingRows = (design: string) =>
     ([, legacyName, viteName]) => ({
       legacyName,
       viteName: viteName?.replaceAll('`', ''),
-    })
+    }),
   );
 
 describe('browser environment contract', () => {
@@ -60,7 +60,7 @@ describe('browser environment contract', () => {
 
     const viteMappings = mapping.filter(
       (mappingRow): mappingRow is { legacyName: string; viteName: string } =>
-        mappingRow.viteName?.startsWith('VITE_') === true
+        mappingRow.viteName?.startsWith('VITE_') === true,
     );
 
     for (const { viteName } of viteMappings) {
@@ -73,7 +73,7 @@ describe('browser environment contract', () => {
   it('preserves the application-facing env export while using the Vite contract', async () => {
     const environmentSource = await readTextFile(
       environmentSourcePath,
-      repositoryRoot
+      repositoryRoot,
     );
 
     expect(environmentSource).toContain('export const env');
@@ -88,10 +88,10 @@ describe('browser source environment policy', () => {
 
     for (const [index, source] of sourceFiles.entries()) {
       expect(source, `browser source file ${index}`).not.toMatch(
-        legacyReferencePattern
+        legacyReferencePattern,
       );
       expect(source, `browser source file ${index}`).not.toMatch(
-        processEnvReferencePattern
+        processEnvReferencePattern,
       );
     }
   });

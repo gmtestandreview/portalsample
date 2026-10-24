@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import type { ReactNode } from 'react';
 import { Formik, Form } from 'formik';
@@ -41,7 +42,6 @@ const meta = preview.meta({
   title: 'Forms/Inputs',
   parameters: { layout: 'padded' },
 });
-
 
 export const AllInputsShowcase = meta.story({
   render: () => (
@@ -241,9 +241,7 @@ export const CheckboxDefault = meta.story({
       />
     </FormikWrapper>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole('checkbox');
 

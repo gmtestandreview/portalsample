@@ -16,7 +16,7 @@ describe('safe test filesystem helpers', () => {
 
       await expect(readTextFile(file, root)).resolves.toBe('fixture');
       await expect(
-        readTextFile(path.join(root, '..', 'outside.txt'), root)
+        readTextFile(path.join(root, '..', 'outside.txt'), root),
       ).rejects.toThrow('outside the allowed root');
     } finally {
       await rm(root, { recursive: true, force: true });

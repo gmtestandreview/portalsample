@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import StatusPill from './StatusPill';
@@ -12,7 +13,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const DashboardStatuses = meta.story({
   args: {
     status: DashboardItemStatus.QuoteAvailable,
@@ -26,9 +26,7 @@ export const DashboardStatuses = meta.story({
       <StatusPill status={DashboardItemStatus.QuoteExpired} />
     </div>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // Wait for useEffect to flush and badges to become visible

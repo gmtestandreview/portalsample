@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfSelectInput from '.';
@@ -30,11 +31,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const select = canvas.getByRole('combobox', { name: 'Category' });
 
@@ -48,9 +46,7 @@ export const Default = meta.story({
 
 export const Disabled = meta.story({
   args: { disabled: true },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -66,9 +62,7 @@ export const Summary = meta.story({
       rhf: { defaultValues: { category: 'Certificate' } },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Certificate')).toBeVisible();

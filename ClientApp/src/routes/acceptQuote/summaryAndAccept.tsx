@@ -93,12 +93,12 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
       setIsLoading(true);
       const client = new DashboardClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const fileResponse = await client.getQuoteOfferPDFByQuoteID(
         acceptQuotePreInfo?.crmQuoteId,
-        true
+        true,
       );
       if (
         fileResponse?.fileData &&
@@ -126,7 +126,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
         AppLogger.verbose('SummaryAndAccept.getAcceptQuotePreInfo', { Id: id });
         const acceptQuoteClient = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
@@ -139,7 +139,7 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
         AppLogger.error(
           'Failed to retrieve getAcceptQuotePreInfo',
           e as Error,
-          { Id: id }
+          { Id: id },
         );
       }
     };

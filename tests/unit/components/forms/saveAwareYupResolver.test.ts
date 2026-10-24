@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 describe(createSaveAwareYupResolver, () => {
   const resolver = createSaveAwareYupResolver(
     deliveryAndReturnSaveValidation,
-    deliveryAndReturnSubmitValidation
+    deliveryAndReturnSubmitValidation,
   );
 
   it('runs the soft schema when saveAndExit is true and the hard schema otherwise, for the same values', async () => {
@@ -24,7 +24,7 @@ describe(createSaveAwareYupResolver, () => {
     const hardResult = await resolver(
       { ...values, saveAndExit: false },
       undefined,
-      {} as never
+      {} as never,
     );
 
     expect(softResult.errors).toEqual({});
@@ -36,12 +36,12 @@ describe(createSaveAwareYupResolver, () => {
     const conditionTrue = await resolver(
       { returnMethod: ReturnMethodValues.ClientWillProvide },
       undefined,
-      {} as never
+      {} as never,
     );
     const conditionFalse = await resolver(
       { returnMethod: ReturnMethodValues.ClientToArrange },
       undefined,
-      {} as never
+      {} as never,
     );
 
     expect(conditionTrue.errors).toHaveProperty('carrierName');
@@ -52,13 +52,13 @@ describe(createSaveAwareYupResolver, () => {
     const result = await resolver(
       { returnMethod: ReturnMethodValues.ClientWillProvide },
       undefined,
-      {} as never
+      {} as never,
     );
 
     expect(result.errors).toHaveProperty('carrierName');
     expect(result.errors).toHaveProperty('carrierAccountNumber');
     expect(
-      (result.errors as Record<string, { type: string }>)['carrierName']
+      (result.errors as Record<string, { type: string }>)['carrierName'],
     ).toMatchObject({ type: 'validation' });
   });
 
@@ -67,12 +67,12 @@ describe(createSaveAwareYupResolver, () => {
     const firstError = new Yup.ValidationError(
       'carrierName is too short',
       values.carrierName,
-      'carrierName'
+      'carrierName',
     );
     const secondError = new Yup.ValidationError(
       'carrierName contains invalid characters',
       values.carrierName,
-      'carrierName'
+      'carrierName',
     );
     const schema: ValidationSchema = {
       validate: () =>
@@ -102,7 +102,7 @@ describe(createSaveAwareYupResolver, () => {
   it('returns empty errors without validating when the active mode has no schema', async () => {
     const softOnlyResolver = createSaveAwareYupResolver(
       undefined,
-      deliveryAndReturnSubmitValidation
+      deliveryAndReturnSubmitValidation,
     );
     const values = {
       returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -119,7 +119,7 @@ describe(createSaveAwareYupResolver, () => {
     const topLevelError = new Yup.ValidationError(
       'carrierName is required',
       values,
-      'carrierName'
+      'carrierName',
     );
     const schema: ValidationSchema = {
       validate: () => Promise.reject(topLevelError),
@@ -165,13 +165,13 @@ describe(createSaveAwareYupResolver, () => {
     };
     const resolverWithPathlessInner = createSaveAwareYupResolver(
       undefined,
-      schema
+      schema,
     );
 
     const result = await resolverWithPathlessInner(
       values,
       undefined,
-      {} as never
+      {} as never,
     );
 
     expect(result.errors).toEqual({});
@@ -190,13 +190,13 @@ describe(createSaveAwareYupResolver, () => {
     };
     const resolverWithPathlessError = createSaveAwareYupResolver(
       undefined,
-      schema
+      schema,
     );
 
     const result = await resolverWithPathlessError(
       values,
       undefined,
-      {} as never
+      {} as never,
     );
 
     expect(result.errors).toEqual({});
@@ -211,7 +211,7 @@ describe(createSaveAwareYupResolver, () => {
     const throwingResolver = createSaveAwareYupResolver(undefined, schema);
 
     await expect(
-      throwingResolver(values, undefined, {} as never)
+      throwingResolver(values, undefined, {} as never),
     ).rejects.toThrow(thrownError);
   });
 });

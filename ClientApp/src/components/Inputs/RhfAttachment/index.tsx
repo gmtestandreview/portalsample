@@ -22,7 +22,7 @@ const isAllowedFile = (file: File, allowedTypes: string[]) =>
 const getUploadValidationErrors = (
   files: File[],
   allowedTypes: string[],
-  maxFiles: number
+  maxFiles: number,
 ): string[] => {
   const typeError =
     `${files.length > 1 ? 'Files' : 'File'} must be` +
@@ -34,7 +34,7 @@ const getUploadValidationErrors = (
 
   if (files.length > maxFiles) {
     errors.push(
-      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`
+      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`,
     );
   }
   return errors;
@@ -77,7 +77,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const unidentifiedAttachmentKeys = useRef(
-    new WeakMap<AttachmentDto, string>()
+    new WeakMap<AttachmentDto, string>(),
   );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -89,7 +89,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   // Repeated failures for one document would otherwise list the same line twice.
   const onCategoryError = (message: string) =>
     setErrors((current) =>
-      current.includes(message) ? current : [...current, message]
+      current.includes(message) ? current : [...current, message],
     );
 
   const clearFileInput = () => {
@@ -108,8 +108,8 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
     addErrors(
       oversizeFiles.map(
         (file) =>
-          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInBytes)} limit.`
-      )
+          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInBytes)} limit.`,
+      ),
     );
 
     if (files.length === 1) {
@@ -134,7 +134,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
       const validationErrors = getUploadValidationErrors(
         files,
         allowedTypeList,
-        maxFiles
+        maxFiles,
       );
 
       if (validationErrors.length > 0) {
@@ -147,8 +147,8 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           addErrors(
             Object.values(
               (problemDetails['errors'] as
-                Record<string, string[]> | undefined) ?? {}
-            ).flat()
+                Record<string, string[]> | undefined) ?? {},
+            ).flat(),
           );
         }
       }
@@ -163,7 +163,9 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
       if (attachment.id) {
         await onDeleteFile(attachment.id);
         field.onChange(
-          attachments.filter((item: AttachmentDto) => item.id !== attachment.id)
+          attachments.filter(
+            (item: AttachmentDto) => item.id !== attachment.id,
+          ),
         );
         clearFileInput();
       }

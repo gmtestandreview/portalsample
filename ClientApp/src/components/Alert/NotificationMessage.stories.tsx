@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, fn } from 'storybook/test';
 import NotificationMessage from './NotificationMessage';
@@ -23,7 +24,6 @@ const meta = preview.meta({
   component: NotificationMessage,
 });
 
-
 export const Success = meta.story({
   args: {
     severity: NotificationSeverity.Success,
@@ -31,9 +31,7 @@ export const Success = meta.story({
     ariaLive: 'polite',
     role: 'status',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const status = canvas.getByRole('status');
 
     await expect(
@@ -50,9 +48,7 @@ export const Information = meta.story({
     ariaLive: 'polite',
     role: 'status',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('Your profile will be updated within 24 hours.'),
     ).toBeVisible();
@@ -66,9 +62,7 @@ export const Warning = meta.story({
     ariaLive: 'polite',
     role: 'alert',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('Please review this warning before continuing.'),
     ).toBeVisible();
@@ -83,9 +77,7 @@ export const ErrorMessage = meta.story({
     ariaLive: 'assertive',
     role: 'alert',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('Something went wrong. Please try again.'),
     ).toBeVisible();
@@ -102,9 +94,7 @@ export const DismissibleError = meta.story({
     canClose: true,
     onClose: fn(),
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const closeButton = canvas.getByRole('button', { name: 'Close alert' });
 
     await expect(closeButton).toBeVisible();

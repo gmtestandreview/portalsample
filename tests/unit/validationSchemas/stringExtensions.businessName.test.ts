@@ -8,19 +8,19 @@ describe('yup stringExtensions — businessName', () => {
 
   it('accepts a valid ASIC-compliant business name', async () => {
     await expect(schema.validate('Test Pty Ltd & Co.')).resolves.toBe(
-      'Test Pty Ltd & Co.'
+      'Test Pty Ltd & Co.',
     );
   });
 
   it("accepts characters from the ASIC allowed set: ! @ # $ % ^ & * ( ) ? ; : = _ - / . , '", async () => {
     await expect(
-      schema.validate("O'Brien-Smith Pty Ltd")
+      schema.validate("O'Brien-Smith Pty Ltd"),
     ).resolves.toBeDefined();
   });
 
   it('rejects a name containing < or > (disallowed ASIC chars)', async () => {
     await expect(schema.validate('<script>bad</script>')).rejects.toThrow(
-      'Business name contains invalid characters'
+      'Business name contains invalid characters',
     );
   });
 

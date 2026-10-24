@@ -125,12 +125,12 @@ describe('application route loading', () => {
 
       expect(element.type).toBe(AuthenticatedElement);
       expect(element.props.displayHeaderAndFooter).toBe(
-        headerlessPaths.has(path) ? false : undefined
+        headerlessPaths.has(path) ? false : undefined,
       );
 
       if (path === '/request-for-quote/:id/view-summary/*') {
         expect(element.props.children?.props.name).toBe('');
       }
-    }
+    },
   );
 });

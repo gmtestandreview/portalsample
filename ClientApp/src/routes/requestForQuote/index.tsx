@@ -79,7 +79,7 @@ const RequestForQuote = () => {
         try {
           const client = new RequestForQuoteClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const result = await client.getStepStatuses(applicationId);
@@ -147,7 +147,7 @@ const RequestForQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <OrganisationAndContact />
@@ -159,7 +159,7 @@ const RequestForQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <InstrumentAndRequest />
@@ -171,7 +171,7 @@ const RequestForQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <RequestForQuoteSummary name='' />

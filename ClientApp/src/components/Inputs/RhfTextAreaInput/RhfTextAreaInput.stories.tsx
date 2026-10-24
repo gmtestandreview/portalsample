@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfTextAreaInput from '.';
@@ -24,11 +25,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Packaging notes (optional)');
@@ -44,9 +42,7 @@ export const Default = meta.story({
 
 export const WithCharacterCounter = meta.story({
   args: { maxCharacters: 300, rows: 4 },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -57,9 +53,7 @@ export const WithCharacterCounter = meta.story({
 
 export const Summary = meta.story({
   args: { isSummary: true },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Fragile')).toBeInTheDocument();

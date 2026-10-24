@@ -8,7 +8,7 @@ export const isObject = (value: unknown): value is object =>
 export function getIn(
   source: unknown,
   path: string | string[],
-  fallback?: unknown
+  fallback?: unknown,
 ): any {
   return formikGetIn(source, path, fallback);
 }
@@ -21,7 +21,7 @@ export function getIn(
 export function setIn<T extends object>(
   source: T,
   path: string,
-  value: unknown
+  value: unknown,
 ): T {
   return formikSetIn(source, path, value);
 }

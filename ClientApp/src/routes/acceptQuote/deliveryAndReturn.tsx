@@ -205,13 +205,13 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
         const acceptQuoteClient = new AcceptQuoteClient();
         const accountsClient = new AccountsClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
         accountsClient.setAuthToken(tokenResult.accessToken);
 
         const deliveryAndReturn = await acceptQuoteClient.getDeliveryAndReturn(
-          id!
+          id!,
         );
         setDeliveryAndReturnStep(deliveryAndReturn);
         setAcceptQuotePreInfo(deliveryAndReturn.acceptQuotePreInfo);

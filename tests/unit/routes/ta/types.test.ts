@@ -26,7 +26,7 @@ describe(PatternApprovalDashboard, () => {
         filterCurrentPage: 0,
         filterActiveTab: DashboardTab.Requests,
         filterSearchText: 'certificate',
-      })
+      }),
     ).toEqual({
       filterStatusType: '',
       filterYearType: '',

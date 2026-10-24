@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Switch } from './Switch';
@@ -21,9 +22,7 @@ export const Example = meta.story({
 });
 
 export const Selected = meta.story({
-  render: (args) => (
-    <Switch {...args}>Wi-Fi</Switch>
-  ),
+  render: (args) => <Switch {...args}>Wi-Fi</Switch>,
 
   args: {
     defaultSelected: true,
@@ -37,9 +36,7 @@ export const Selected = meta.story({
 });
 
 export const WithDescription = meta.story({
-  render: (args) => (
-    <Switch {...args}>Wi-Fi</Switch>
-  ),
+  render: (args) => <Switch {...args}>Wi-Fi</Switch>,
 
   args: {
     description: 'Turn off to save battery.',
@@ -52,9 +49,7 @@ export const WithDescription = meta.story({
 });
 
 export const Toggles = meta.story({
-  render: (args) => (
-    <Switch {...args}>Wi-Fi</Switch>
-  ),
+  render: (args) => <Switch {...args}>Wi-Fi</Switch>,
   args: {
     children: null,
   },

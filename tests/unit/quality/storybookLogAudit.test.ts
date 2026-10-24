@@ -49,7 +49,7 @@ describe('storybook run log audit', () => {
   it('still reports a positive hit found in a truncated log', () => {
     // Presence of evidence IS valid evidence, even when the run died early.
     const audit = auditLog(
-      `${oomRun}\n[MSW] Warning: intercepted a request without a matching handler`
+      `${oomRun}\n[MSW] Warning: intercepted a request without a matching handler`,
     );
 
     expect(audit.completed).toBe(false);
@@ -59,7 +59,7 @@ describe('storybook run log audit', () => {
 
   it('counts every occurrence of each target string', () => {
     const audit = auditLog(
-      `${completedRun}\nunhandled request\nunhandled request`
+      `${completedRun}\nunhandled request\nunhandled request`,
     );
 
     expect(audit.verdict).toBe('dirty');

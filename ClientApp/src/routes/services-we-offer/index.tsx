@@ -33,7 +33,7 @@ const ServicesWeOffer = () => {
     [key: string]: boolean;
   }>({});
   const [defaultService, setDefaultService] = useState<ServiceType | undefined>(
-    undefined
+    undefined,
   );
   const [originalDefaultService, setOriginalDefaultService] = useState<
     ServiceType | undefined
@@ -47,7 +47,7 @@ const ServicesWeOffer = () => {
   const mode = searchParams.get('mode');
   const isManageMode = mode === 'manage';
   const serviceSelected = accountDetails?.userProfile?.services?.find(
-    (s) => s.isDefault
+    (s) => s.isDefault,
   );
   const shouldRedirect = !isManageMode && !!serviceSelected?.service;
   const checkedCount = Object.values(checkedServices).filter(Boolean).length;
@@ -87,7 +87,7 @@ const ServicesWeOffer = () => {
           setIsDataLoading(true);
           const client = new LookupClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const serviceDtos = await client.getServices();
@@ -98,7 +98,7 @@ const ServicesWeOffer = () => {
               .toLocaleLowerCase();
             if (accountDetails?.userProfile?.services) {
               const dbService = accountDetails.userProfile.services.find(
-                (s) => s.service?.toLocaleLowerCase() === serviceLower
+                (s) => s.service?.toLocaleLowerCase() === serviceLower,
               );
               if (dbService) {
                 setCheckedServices((prev) => ({
@@ -214,7 +214,7 @@ const ServicesWeOffer = () => {
     } catch (error) {
       AppLogger.error(
         'Failed to update services offered in user profile.',
-        error as Error
+        error as Error,
       );
     }
   }
@@ -396,7 +396,7 @@ const ServicesWeOffer = () => {
                           onChange={(e) =>
                             setCheckedServicesFn(
                               e.target.checked,
-                              service.serviceType
+                              service.serviceType,
                             )
                           }
                           className='me-2'

@@ -54,7 +54,7 @@ const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   const [sorted, noInstrumentId] = sortList(
     options,
     'No instrument',
-    'displayText'
+    'displayText',
   );
 
   return { options: sorted, noInstrumentId };
@@ -85,7 +85,7 @@ export const useInstrumentAndRequestLookups = () => {
         if (measurementCategories === undefined && accounts.length > 0) {
           const client = new LookupClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const [result, artefactTypeResult] = await Promise.all([
@@ -102,7 +102,8 @@ export const useInstrumentAndRequestLookups = () => {
           ) {
             const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
               artefactTypeResult,
-              context.getFieldMeta('measurementCategory').initialValue as string
+              context.getFieldMeta('measurementCategory')
+                .initialValue as string,
             );
             noInstrumentId.current = lastId;
             setArtefactTypesSelected(options);
@@ -143,7 +144,7 @@ export const useInstrumentAndRequestLookups = () => {
   };
 
   const onMeasurementCategoryChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setIsInstrumentOrArtefactTypeDisabled(false);
     void context.setFieldValue('instrumentOrArtefactType', '');
@@ -151,14 +152,14 @@ export const useInstrumentAndRequestLookups = () => {
     if (event.target.value !== null && artefactTypes !== undefined) {
       const { options, noInstrumentId: lastId } = getArtefactTypeOptions(
         artefactTypes,
-        event.target.value
+        event.target.value,
       );
       noInstrumentId.current = lastId;
       setArtefactTypesSelected(options);
       if (event.target.value === noMeasurementId.current) {
         void context.setFieldValue(
           'instrumentOrArtefactType',
-          noInstrumentId.current
+          noInstrumentId.current,
         );
         setIsInstrumentOrArtefactTypeDisabled(true);
       }
@@ -209,7 +210,7 @@ const ImportantInformation = () => (
 interface InstrumentDetailsSectionProps {
   measurementCategoryOptions: SelectInputOption<string>[];
   onMeasurementCategoryChange: (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   artefactTypesSelected: SelectInputOption<string>[];
   isInstrumentOrArtefactTypeDisabled: boolean;

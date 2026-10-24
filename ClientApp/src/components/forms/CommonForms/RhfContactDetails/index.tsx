@@ -17,7 +17,7 @@ const TITLE_OPTIONS: SelectInputOption<string>[] = Object.keys(Title).map(
   (key) => ({
     displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
     value: key,
-  })
+  }),
 );
 
 type FieldProps = Readonly<Required<Omit<ContactDetailsProps, 'isSummary'>>>;

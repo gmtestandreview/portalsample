@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import type { ComponentType } from 'react';
 import { expect, within } from 'storybook/test';
@@ -14,12 +15,9 @@ const meta = preview.meta({
   },
 });
 
-
 // Default: Taylor Nguyen — given name renders after "Welcome"
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
 
@@ -42,9 +40,7 @@ export const NoGivenName = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
 
@@ -66,9 +62,7 @@ const LoadingDecorator = (Story: ComponentType) => (
 
 export const Loading = meta.story({
   decorators: [LoadingDecorator],
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
 

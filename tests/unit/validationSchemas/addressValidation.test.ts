@@ -17,7 +17,7 @@ const manualAddress = {
 describe(addressSchema, () => {
   it('accepts a manually entered address with required fields', async () => {
     await expect(
-      addressSchema('Street address').validate(manualAddress)
+      addressSchema('Street address').validate(manualAddress),
     ).resolves.toMatchObject(manualAddress);
   });
 
@@ -31,8 +31,8 @@ describe(addressSchema, () => {
           state: undefined,
           suburb: '',
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Address line 1 is required',
@@ -53,8 +53,8 @@ describe(addressSchema, () => {
           postcode: 'ABCD',
           suburb: 'd'.repeat(81),
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Address line 1 cannot be greater than 250 characters',
@@ -71,7 +71,7 @@ describe(addressSchema, () => {
       addressSchema('Postal address').validate({
         isManuallyEntered: false,
         searchText: '',
-      })
+      }),
     ).rejects.toThrow('Postal address is required');
   });
 
@@ -83,7 +83,7 @@ describe(addressSchema, () => {
         postcode: '',
         suburb: '',
         searchText: '1 National Circuit Barton ACT 2600',
-      })
+      }),
     ).resolves.toMatchObject({
       searchText: '1 National Circuit Barton ACT 2600',
     });

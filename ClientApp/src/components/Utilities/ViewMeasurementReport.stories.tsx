@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, fn, userEvent, waitFor } from 'storybook/test';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
@@ -29,12 +30,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-    args,
-  }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
       name: 'View measurement report',

@@ -10,7 +10,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const RadioButtonGroup = <T,>(
-  props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>
+  props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>,
 ) => {
   const {
     displayHorizontally,
@@ -35,7 +35,7 @@ const RadioButtonGroup = <T,>(
   if (isSummary) {
     if (field?.value) {
       const selectedOption = options.find(
-        (option) => option.value === field.value
+        (option) => option.value === field.value,
       );
       return (
         <SummaryDisplay

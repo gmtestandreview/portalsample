@@ -5,7 +5,7 @@ import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import PaSearchFilter from '@/components/SearchFilter/TypeApproval/paSearchFilter';
 
 vi.mock(
-  '@/components/SearchFilter/TypeApproval/paFilterMenu',
+  import('@/components/SearchFilter/TypeApproval/paFilterMenu'),
   () =>
     ({
       default: ({
@@ -27,7 +27,7 @@ vi.mock(
           Filter applications
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule53>
+    }) satisfies __ExactMockModule<__TestMockModule53>,
 );
 
 describe(PaSearchFilter, () => {
@@ -39,26 +39,26 @@ describe(PaSearchFilter, () => {
         initialFilters={initialFilters}
         setInitialFilters={vi.fn()}
         setCurrentPage={vi.fn()}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('button', { name: 'Filter applications' })
+      screen.getByRole('button', { name: 'Filter applications' }),
     ).toBeInTheDocument();
     expect(
       screen
         .getByRole('button', { name: 'Filter applications' })
-        .closest('.container')
+        .closest('.container'),
     ).toHaveClass('container');
     expect(
       screen
         .getByRole('button', { name: 'Filter applications' })
-        .closest('.row')
+        .closest('.row'),
     ).toHaveClass('row');
     expect(
       screen
         .getByRole('button', { name: 'Filter applications' })
-        .closest('.col')
+        .closest('.col'),
     ).toHaveClass('d-flex', 'justify-content-end');
   });
 
@@ -75,7 +75,7 @@ describe(PaSearchFilter, () => {
         initialFilters={initialFilters}
         setInitialFilters={setInitialFilters}
         setCurrentPage={setCurrentPage}
-      />
+      />,
     );
 
     const menu = screen.getByRole('button', { name: 'Filter applications' });

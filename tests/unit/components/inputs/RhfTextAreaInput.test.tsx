@@ -42,7 +42,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness defaultValue='Hello'>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox', { name: 'Notes' });
 
@@ -56,7 +56,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox')).toHaveValue('');
@@ -75,7 +75,7 @@ describe(RhfTextAreaInput, () => {
           placeholder='Type'
           disabled
         />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox');
 
@@ -91,7 +91,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), 'a{Enter}b');
 
@@ -102,7 +102,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'hi \u{1F600} there' },
@@ -115,7 +115,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '  Acme  ');
     await userEvent.tab();
@@ -127,7 +127,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness defaultValue='Acme'>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
@@ -139,7 +139,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
@@ -152,7 +152,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={3} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('0 of 3 characters used')).toBeInTheDocument();
@@ -165,7 +165,7 @@ describe(RhfTextAreaInput, () => {
     await form.submit();
 
     expect(screen.getByText(', 4 of 3 characters used')).toHaveClass(
-      'visually-hidden'
+      'visually-hidden',
     );
   });
 
@@ -173,12 +173,12 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={10} />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), 'ab');
 
     expect(
-      screen.getByText('2 of 10 characters used').parentElement
+      screen.getByText('2 of 10 characters used').parentElement,
     ).toHaveClass('counterLabelWithinMax');
   });
 
@@ -186,7 +186,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={0} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText(/characters used/)).not.toBeInTheDocument();
@@ -196,7 +196,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={5} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('0 of 5 characters used')).toBeInTheDocument();
@@ -206,13 +206,13 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Be brief')).toHaveAttribute('id', 'help-notes');
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
-      'help-notes'
+      'help-notes',
     );
   });
 
@@ -221,7 +221,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox');
 
@@ -232,13 +232,13 @@ describe(RhfTextAreaInput, () => {
 
     expect(screen.getByText('Enter notes')).toHaveAttribute(
       'id',
-      'notes-validation-msg'
+      'notes-validation-msg',
     );
     expect(input).toHaveClass('is-invalid');
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'help-notes notes-validation-msg'
+      'help-notes notes-validation-msg',
     );
     expect(input).toHaveFocus();
   });
@@ -248,7 +248,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
@@ -266,7 +266,7 @@ describe(RhfTextAreaInput, () => {
           label='Notes'
           supressFieldLevelMessages
         />
-      </Harness>
+      </Harness>,
     );
     await form.submit();
 
@@ -278,7 +278,7 @@ describe(RhfTextAreaInput, () => {
     render(
       <Harness defaultValue='Line'>
         <RhfTextAreaInput name='notes' label='Notes' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Line')).toBeInTheDocument();
@@ -289,7 +289,7 @@ describe(RhfTextAreaInput, () => {
     const { container } = render(
       <Harness>
         <RhfTextAreaInput name='notes' label='' />
-      </Harness>
+      </Harness>,
     );
 
     expect(container.querySelector('label')).toBeNull();

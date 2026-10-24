@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import { waitForAppReady } from './common.steps';
@@ -11,9 +12,9 @@ Given(
       page.getByRole('heading', {
         name: 'Organisation',
         exact: true,
-      })
+      }),
     ).toBeVisible();
-  }
+  },
 );
 
 Given('the user opens their contact details for editing', async ({ page }) => {
@@ -23,7 +24,7 @@ Given('the user opens their contact details for editing', async ({ page }) => {
     page.getByRole('heading', {
       name: 'My contact details',
       exact: true,
-    })
+    }),
   ).toBeVisible();
 });
 
@@ -35,7 +36,7 @@ Given('the user opens the add branch form', async ({ page }) => {
       .getByText('Add branch or location', {
         exact: true,
       })
-      .first()
+      .first(),
   ).toBeVisible();
 });
 
@@ -47,14 +48,14 @@ When(
         exact: true,
       })
       .fill(value);
-  }
+  },
 );
 
 When(
   'the user changes the business phone to {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('Business phone', { exact: true }).fill(value);
-  }
+  },
 );
 
 When(
@@ -65,7 +66,7 @@ When(
         exact: true,
       })
       .fill(value);
-  }
+  },
 );
 
 When('the user submits the account maintenance form', async ({ page }) => {
@@ -88,9 +89,9 @@ Then(
     await expect(
       page.getByRole('alert').filter({
         hasText: message,
-      })
+      }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then(
@@ -99,13 +100,13 @@ Then(
     await expect(
       page.getByRole('alert').filter({
         hasText: message,
-      })
+      }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then('the branch selector is displayed', async ({ page }) => {
   await expect(page.locator('[role="dialog"].show')).toContainText(
-    'Manage your branch or location'
+    'Manage your branch or location',
   );
 });

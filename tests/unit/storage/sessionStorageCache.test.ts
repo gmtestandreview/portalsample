@@ -15,7 +15,7 @@ describe(SessionStorageCache, () => {
       globalThis.sessionStorage.setItem('test-key', JSON.stringify({ id: 42 }));
 
       expect(SessionStorageCache().getItem<{ id: number }>('test-key')).toEqual(
-        { id: 42 }
+        { id: 42 },
       );
     });
 
@@ -39,7 +39,7 @@ describe(SessionStorageCache, () => {
       SessionStorageCache().setItem({ name: 'Acme' }, 'org');
 
       expect(globalThis.sessionStorage.getItem('org')).toBe(
-        JSON.stringify({ name: 'Acme' })
+        JSON.stringify({ name: 'Acme' }),
       );
     });
 

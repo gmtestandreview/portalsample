@@ -9,12 +9,12 @@ describe(isWafError, () => {
     expect(
       isWafError({
         headers: { server: 'Microsoft-Azure-Application-Gateway/2.5' },
-      })
+      }),
     ).toBe(true);
     expect(
       isWafError({
         headers: { server: AZURE_WAF_SERVER_PREFIX },
-      })
+      }),
     ).toBe(true);
   });
 

@@ -18,7 +18,7 @@ let mockAccountDispatchAvailable = true;
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useIsAuthenticated: () => mockIsAuthenticated,
@@ -27,11 +27,11 @@ vi.mock(
         accounts: [],
         instance: {},
       })),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
+  import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({ details: mockAccountStateDetails }),
@@ -47,98 +47,98 @@ vi.mock(
               setUserProfile: vi.fn(),
             }
           : undefined,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Layout',
+  import('../../../ClientApp/src/components/Layout'),
   () =>
     ({
       default: ({ children }: any) => (
         <div data-testid='layout'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule110>
+    }) satisfies __ExactMockModule<__TestMockModule110>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/TermsAndCondition',
+  import('../../../ClientApp/src/components/modals/TermsAndCondition'),
   () =>
     ({
       default: () => <div data-testid='terms-modal'>Terms Modal</div>,
-    }) satisfies __ExactMockModule<__TestMockModule111>
+    }) satisfies __ExactMockModule<__TestMockModule111>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/BranchSelectorModal',
+  import('../../../ClientApp/src/components/modals/BranchSelectorModal'),
   () =>
     ({
       default: () => (
         <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule112>
+    }) satisfies __ExactMockModule<__TestMockModule112>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
+  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
   () =>
     ({
       BranchSelectionModalMode: {
         SelectAndEditOrg: 'SelectAndEditOrg',
         RFQSelectOrg: 'RFQSelectOrg',
       },
-    }) satisfies __ExactMockModule<__TestMockModule109>
+    }) satisfies __ExactMockModule<__TestMockModule109>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/RFQDeleteModal',
+  import('../../../ClientApp/src/components/modals/RFQDeleteModal'),
   () =>
     ({
       default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
-    }) satisfies __ExactMockModule<__TestMockModule113>
+    }) satisfies __ExactMockModule<__TestMockModule113>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/ModalContext',
+  import('../../../ClientApp/src/components/modals/ModalContext'),
   () =>
     ({
       ModalStateCtx: React.createContext(null),
       ModalDispatchCtx: React.createContext(null),
       useModalState: vi.fn(),
       useModalDispatch: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule27>
+    }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/routeChangeScrollTop',
+  import('../../../ClientApp/src/components/Utilities/routeChangeScrollTop'),
   () =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule44>
+    }) satisfies __ExactMockModule<__TestMockModule44>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/backToTopButton',
+  import('../../../ClientApp/src/components/Utilities/backToTopButton'),
   () =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule43>
+    }) satisfies __ExactMockModule<__TestMockModule43>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
+  import('../../../ClientApp/src/components/Utilities/routeAccessibleNavigation'),
   () =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule114>
+    }) satisfies __ExactMockModule<__TestMockModule114>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       clearDashboardNotification: vi.fn(),
       getBranchModalNotification: vi.fn(() => undefined),
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────
@@ -254,7 +254,7 @@ function renderAt(initialPath: string, displayHeaderAndFooter = true) {
           }
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -296,7 +296,7 @@ function renderAtPathWithPlainRoot(initialPath: string) {
           element={<div data-testid='root-page'>Root Dashboard</div>}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -336,7 +336,7 @@ describe('preConditions state machine', () => {
 
     // After redirect, current path is /create-account
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
     // Children render on /create-account because redirect is suppressed there
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
@@ -353,7 +353,7 @@ describe('preConditions state machine', () => {
 
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
   });
 
@@ -413,7 +413,7 @@ describe('preConditions state machine', () => {
     renderAt('/some-path');
 
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-contact'
+      '/create-contact',
     );
   });
 
@@ -429,7 +429,7 @@ describe('preConditions state machine', () => {
     renderAt('/some-path');
 
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
   });
 
@@ -446,7 +446,7 @@ describe('preConditions state machine', () => {
 
     // Navigate fires → lands on /create-contact (suppressed there)
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-contact'
+      '/create-contact',
     );
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
@@ -462,7 +462,7 @@ describe('preConditions state machine', () => {
 
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-contact'
+      '/create-contact',
     );
   });
 
@@ -478,7 +478,7 @@ describe('preConditions state machine', () => {
     // redirectToCreateContact has guard: !path.includes('create-account') → suppressed
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
-      '/create-account'
+      '/create-account',
     );
   });
 
@@ -588,7 +588,7 @@ describe('preConditions state machine', () => {
     renderAt('/success-creating-account');
 
     expect(
-      screen.queryByTestId('branch-selector-modal')
+      screen.queryByTestId('branch-selector-modal'),
     ).not.toBeInTheDocument();
   });
 
@@ -615,7 +615,7 @@ describe('preConditions state machine', () => {
     renderAt('/dashboard');
 
     expect(
-      screen.queryByTestId('prompt-branchselector-modal')
+      screen.queryByTestId('prompt-branchselector-modal'),
     ).not.toBeInTheDocument();
   });
 
@@ -631,7 +631,7 @@ describe('preConditions state machine', () => {
     renderAt('/dashboard');
 
     expect(
-      screen.queryByTestId('branch-selector-modal')
+      screen.queryByTestId('branch-selector-modal'),
     ).not.toBeInTheDocument();
   });
 
@@ -712,7 +712,7 @@ describe('preConditions state machine', () => {
         <PreConditions displayHeaderAndFooter>
           <ModalControls />
         </PreConditions>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Show branch' }));

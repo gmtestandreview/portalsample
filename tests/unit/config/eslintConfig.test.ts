@@ -29,7 +29,7 @@ describe('eSLint editor integration', () => {
     () => {
       const storybookDirectory = path.resolve('.storybook');
       const eslintEntryPoint = path.resolve(
-        'node_modules/eslint/bin/eslint.js'
+        'node_modules/eslint/bin/eslint.js',
       );
 
       const result = spawnSync(
@@ -39,18 +39,18 @@ describe('eSLint editor integration', () => {
           cwd: storybookDirectory,
           encoding: 'utf8',
           timeout: CHILD_TIMEOUT_MS,
-        }
+        },
       );
 
       expect(
         result.error,
-        `ESLint could not be spawned: ${result.error?.message}`
+        `ESLint could not be spawned: ${result.error?.message}`,
       ).toBeUndefined();
       expect(
         result.status,
-        `ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`
+        `ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
       ).toBe(0);
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 });

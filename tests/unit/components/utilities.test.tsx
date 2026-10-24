@@ -38,17 +38,17 @@ describe('utility runtime components and hooks', () => {
     render(
       <MemoryRouter>
         <ContactLink />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('link', { name: 'Go to dashboard' })
+      screen.getByRole('link', { name: 'Go to dashboard' }),
     ).toHaveAttribute('href', '/');
     expect(
-      screen.getByRole('link', { name: 'infotm@measurement.gov.au' })
+      screen.getByRole('link', { name: 'infotm@measurement.gov.au' }),
     ).toHaveAttribute(
       'href',
-      'mailto:infotm@measurement.gov.au?Subject=Error on NMI Services portal'
+      'mailto:infotm@measurement.gov.au?Subject=Error on NMI Services portal',
     );
   });
 
@@ -66,10 +66,10 @@ describe('utility runtime components and hooks', () => {
 
     expect(screen.getByRole('link', { name: 'Back to top' })).toHaveAttribute(
       'href',
-      '#summary'
+      '#summary',
     );
     expect(screen.getByRole('link', { name: 'Back to top' })).toHaveClass(
-      'mt-2'
+      'mt-2',
     );
     expect(target.scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
@@ -82,19 +82,20 @@ describe('utility runtime components and hooks', () => {
     render(<BackToTopButton />);
 
     expect(
-      screen.getByRole('navigation', { name: 'Back to top navigation' }).tagName
+      screen.getByRole('navigation', { name: 'Back to top navigation' })
+        .tagName,
     ).toBe('NAV');
   });
 
   it('renders delivery instructions only when text is supplied', () => {
     const { rerender } = render(
-      <DeliveryInstructions deliveryInstructions='Use dock 3 on arrival.' />
+      <DeliveryInstructions deliveryInstructions='Use dock 3 on arrival.' />,
     );
 
     expect(
       screen.getByRole('heading', {
         name: 'NMI site specific receiving instructions',
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText('Use dock 3 on arrival.')).toBeInTheDocument();
 
@@ -103,7 +104,7 @@ describe('utility runtime components and hooks', () => {
     expect(
       screen.queryByRole('heading', {
         name: 'NMI site specific receiving instructions',
-      })
+      }),
     ).not.toBeInTheDocument();
   });
 
@@ -119,7 +120,7 @@ describe('utility runtime components and hooks', () => {
 
   it('adds and removes multiple body classes', () => {
     const { unmount } = render(
-      <BodyClassHarness className={['wizard', 'compact']} />
+      <BodyClassHarness className={['wizard', 'compact']} />,
     );
 
     expect(document.body).toHaveClass('wizard', 'compact');
@@ -132,7 +133,7 @@ describe('utility runtime components and hooks', () => {
 
   it('accepts arrays created in another DOM realm', () => {
     const foreignClasses = vm.runInNewContext(
-      '["wizard", "compact"]'
+      '["wizard", "compact"]',
     ) as string[];
 
     const { unmount } = render(<BodyClassHarness className={foreignClasses} />);

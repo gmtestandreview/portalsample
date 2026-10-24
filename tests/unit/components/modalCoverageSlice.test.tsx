@@ -22,7 +22,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -31,10 +31,10 @@ vi.mock(
           acquireTokenSilent: mocks.acquireTokenSilent,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('react-router', async () => {
+vi.mock(import('react-router'), async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
@@ -43,7 +43,7 @@ vi.mock('react-router', async () => {
 });
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
+  import('../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       ApplicationType: {
@@ -56,51 +56,51 @@ vi.mock(
         this.setAuthToken = mocks.setAuthToken;
         this.deleteApplication = mocks.deleteApplication;
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://mock/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/types',
+  import('../../../ClientApp/src/storage/types'),
   () =>
     ({
       NotificationSeverity: {
         Success: 'success',
       },
-    }) satisfies __ExactMockModule<__TestMockModule47>
+    }) satisfies __ExactMockModule<__TestMockModule47>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: vi.fn(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 const ModalConsumer = () => {
@@ -134,7 +134,7 @@ const defaultModalDispatch: ModalDispatch = {
 
 const renderRFQDeleteModal = (
   state: ModalState = defaultModalState,
-  dispatch: ModalDispatch = defaultModalDispatch
+  dispatch: ModalDispatch = defaultModalDispatch,
 ) =>
   render(
     <MemoryRouter>
@@ -143,7 +143,7 @@ const renderRFQDeleteModal = (
           <RFQDeleteModal />
         </ModalDispatchCtx.Provider>
       </ModalStateCtx.Provider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe('modal coverage slice', () => {
@@ -171,7 +171,7 @@ describe('modal coverage slice', () => {
         <ModalDispatchCtx.Provider value={dispatch}>
           <ModalConsumer />
         </ModalDispatchCtx.Provider>
-      </ModalStateCtx.Provider>
+      </ModalStateCtx.Provider>,
     );
 
     expect(screen.getByText('RFQ-1')).toBeInTheDocument();
@@ -185,7 +185,7 @@ describe('modal coverage slice', () => {
     render(<ModalConsumer />);
 
     expect(
-      screen.getByRole('button', { name: 'Close from context' })
+      screen.getByRole('button', { name: 'Close from context' }),
     ).toBeInTheDocument();
   });
 
@@ -205,7 +205,7 @@ describe('modal coverage slice', () => {
         bodyText={<p>Are you sure?</p>}
         noButtonTitle='No'
         yesButtonTitle='Yes'
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Yes' }));
@@ -246,7 +246,7 @@ describe('modal coverage slice', () => {
     await waitFor(() =>
       expect(mocks.deleteApplication).toHaveBeenCalledWith('RFQ-123', {
         applicationType: 'QuoteRequest',
-      })
+      }),
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
@@ -284,7 +284,7 @@ describe('modal coverage slice', () => {
     };
     renderRFQDeleteModal(
       { showBranchSelector: false, showRFQDeleteModal: true },
-      dispatch
+      dispatch,
     );
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));

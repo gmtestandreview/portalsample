@@ -17,7 +17,7 @@ const parentPath = (path: string): string =>
 export const isHidden = <T, TValues>(
   fieldPath: string,
   hidden: Hideable<Partial<T>, Partial<TValues>>,
-  values: TValues
+  values: TValues,
 ): boolean => {
   const isFieldHidden = getIn(hidden, fieldPath);
   if (isFieldPathHidden(isFieldHidden, values)) {
@@ -41,14 +41,14 @@ export const removeHidden = <T extends FormValues>(
   fieldValue: any,
   values: T,
   hide: Hideable<Partial<T>, Partial<T>>,
-  path?: string
+  path?: string,
 ): any =>
   Object.fromEntries(
     Object.entries(fieldValue ?? {})
       .filter(([key, _]) =>
         path
           ? !isHidden(`${path}.${key}`, hide, values)
-          : !isHidden(key, hide, values)
+          : !isHidden(key, hide, values),
       )
       .map(([key, value]) => {
         if (Array.isArray(value)) {
@@ -66,13 +66,13 @@ export const removeHidden = <T extends FormValues>(
           key,
           isObject(value) ? removeHidden(value, values, hide, key) : value,
         ];
-      })
+      }),
   );
 
 const toFormErrors = <T, TValues>(
   yupError: ValidationError,
   hidden: Hideable<Partial<T>, Partial<TValues>>,
-  values: TValues
+  values: TValues,
 ): FormErrors<TValues> => {
   let errors: FormErrors<TValues> = {};
   if (yupError.inner) {
@@ -100,7 +100,7 @@ const toFormErrors = <T, TValues>(
 export const validateForm =
   <T, TValues>(
     schema: ValidationSchema | undefined,
-    hidden: Hideable<Partial<T>, Partial<TValues>>
+    hidden: Hideable<Partial<T>, Partial<TValues>>,
   ) =>
   async (values: TValues) => {
     let errors: FormErrors<TValues> = {};
@@ -127,5 +127,5 @@ export const validateForm =
  */
 export const normalizeSubmitValues = <T extends FormValues>(
   values: T,
-  hidden: Hideable<Partial<T>, Partial<T>>
+  hidden: Hideable<Partial<T>, Partial<T>>,
 ): T => removeEmptyKeys(removeHidden(values, values, hidden));

@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Tabs, Tab, TabList, TabPanel, TabPanels } from './Tabs';
@@ -15,7 +16,6 @@ const meta = preview.meta({
   },
   tags: ['interaction-test'],
 });
-
 
 export const Example = meta.story({
   render: (args) => (
@@ -48,11 +48,7 @@ export const Example = meta.story({
       </TabPanels>
     </Tabs>
   ),
-  play: async ({
-    args,
-    canvas,
-    userEvent,
-  }) => {
+  play: async ({ args, canvas, userEvent }) => {
     const empireTab = canvas.getByRole('tab', { name: 'Empire' });
 
     await userEvent.click(empireTab);

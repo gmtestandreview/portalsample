@@ -6,12 +6,12 @@ import { pathExists, readTextFileSync } from '../../helpers/safeTestFilesystem';
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const appSource = readTextFileSync(
   path.join(repoRoot, 'ClientApp', 'src', 'App.tsx'),
-  repoRoot
+  repoRoot,
 );
 
 const declaredPaths = Array.from(
   appSource.matchAll(/<Route\s+path='([^']+)'/g),
-  (match) => match[1]
+  (match) => match[1],
 ).filter((routePath): routePath is string => routePath !== undefined);
 
 describe('playwright-BDD route coverage manifest', () => {
@@ -19,7 +19,7 @@ describe('playwright-BDD route coverage manifest', () => {
     const registered = routeCoverage.map(({ path: routePath }) => routePath);
     const sortRoutes = (routes: string[]) =>
       [...routes].sort((left: string, right: string) =>
-        left.localeCompare(right)
+        left.localeCompare(right),
       );
 
     expect(new Set(registered).size).toBe(registered.length);
@@ -39,14 +39,14 @@ describe('playwright-BDD route coverage manifest', () => {
 
         expect(
           pathExists(featurePath, repoRoot),
-          `${entry.feature} should exist`
+          `${entry.feature} should exist`,
         ).toBe(true);
 
         const featureSource = readTextFileSync(featurePath, repoRoot);
 
         expect(
           featureSource,
-          `${entry.scenario} should exist in ${entry.feature}`
+          `${entry.scenario} should exist in ${entry.feature}`,
         ).toContain(`Scenario: ${entry.scenario}`);
       }
     }
@@ -54,7 +54,7 @@ describe('playwright-BDD route coverage manifest', () => {
 
   it('does not retain temporary planned entries', () => {
     expect(
-      routeCoverage.filter((entry) => (entry.status as string) === 'planned')
+      routeCoverage.filter((entry) => (entry.status as string) === 'planned'),
     ).toEqual([]);
   });
 
@@ -62,7 +62,7 @@ describe('playwright-BDD route coverage manifest', () => {
     expect(declaredPaths).toHaveLength(41);
     expect(routeCoverage).toHaveLength(41);
     expect(
-      routeCoverage.filter((entry) => entry.status === 'excluded')
+      routeCoverage.filter((entry) => entry.status === 'excluded'),
     ).toEqual([]);
   });
 });

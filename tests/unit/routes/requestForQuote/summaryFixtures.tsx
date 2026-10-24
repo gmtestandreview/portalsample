@@ -26,7 +26,7 @@ export const summaryHidden =
     {} as never,
     {} as AccountDetails,
     [],
-    'Request for quote'
+    'Request for quote',
   ).hidingFields ?? {};
 
 export const measurementCategoryLookup: LookupResponse[] = [
@@ -57,8 +57,8 @@ export const mockSummaryLookups = (getLookup: Mock) => {
       (lookupType === CRMLookupTypes.TCPortalMeasurementCategory
         ? measurementCategoryLookup
         : artefactTypeLookup
-      ).map((item) => ({ ...item }))
-    )
+      ).map((item) => ({ ...item })),
+    ),
   );
 };
 

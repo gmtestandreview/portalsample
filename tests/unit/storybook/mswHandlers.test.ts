@@ -26,10 +26,10 @@ const requestedLookupTypes = [
       .flatMap((file) =>
         [
           ...readTextFileSync(file, process.cwd()).matchAll(
-            /getLookup\(\s*CRMLookupTypes\.(\w+)/g
+            /getLookup\(\s*CRMLookupTypes\.(\w+)/g,
           ),
-        ].map((match) => match[1])
-      )
+        ].map((match) => match[1]),
+      ),
   ),
 ];
 
@@ -111,7 +111,7 @@ describe('storybook MSW handlers', () => {
 
       if (request.path.includes('get-quote-request-details-byrefid')) {
         expect(payload).toEqual(
-          expect.objectContaining({ crmQuoteRequestId: expect.any(String) })
+          expect.objectContaining({ crmQuoteRequestId: expect.any(String) }),
         );
       } else if (request.path.includes('/api/forms/accounts/')) {
         expect(payload).toEqual(
@@ -120,21 +120,21 @@ describe('storybook MSW handlers', () => {
             stepValues: expect.objectContaining({
               status: 'NotStarted',
             }),
-          })
+          }),
         );
       } else if (request.path.includes('/api/contact/usercontact')) {
         expect(payload).toEqual(
           expect.objectContaining({
             contact: expect.objectContaining({ email: expect.any(String) }),
             formStepStatus: 'NotStarted',
-          })
+          }),
         );
       } else if (request.path === '/api/application') {
         expect(payload).toEqual(
           expect.objectContaining({
             referenceId: expect.any(String),
             applicationType: JSON.parse(request.body ?? '{}').applicationType,
-          })
+          }),
         );
       }
     }
@@ -153,8 +153,8 @@ describe('storybook MSW handlers', () => {
   it('fails closed for an unmapped quote application type', async () => {
     const response = await fetch(
       apiUrl(
-        '/api/quote/get-quote-request-details-byrefid?ApplicationType=NotARealApplicationType'
-      )
+        '/api/quote/get-quote-request-details-byrefid?ApplicationType=NotARealApplicationType',
+      ),
     );
 
     expect(response.status).toBe(501);
@@ -175,7 +175,7 @@ describe('storybook MSW handlers', () => {
 
       expect(response.status).toBe(200);
       await expect(response.json()).resolves.toEqual(lookupResponse);
-    }
+    },
   );
 
   it('fails closed with 501 on an unmapped lookup type instead of falling through', async () => {
@@ -199,6 +199,6 @@ describe('storybook MSW handlers', () => {
       const response = await fetch(url);
 
       expect(response.status).toBe(501);
-    }
+    },
   );
 });

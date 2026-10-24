@@ -10,7 +10,7 @@ import { RhfHiddenRulesProvider, useHiddenRules } from './hiddenRulesContext';
  * hide rules from `RhfHiddenRulesProvider`.
  */
 const RhfHidableField = (
-  props: Readonly<PropsWithChildren<HidableFieldProps>>
+  props: Readonly<PropsWithChildren<HidableFieldProps>>,
 ) => {
   const { name, children } = props;
   const hidden = useHiddenRules();

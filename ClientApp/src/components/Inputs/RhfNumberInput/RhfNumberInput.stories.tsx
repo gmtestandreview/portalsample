@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfNumberInput from '.';
@@ -25,11 +26,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Phone = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Carrier contact phone (optional)');
@@ -47,9 +45,7 @@ export const Summary = meta.story({
       rhf: { defaultValues: { carrierContactPhone: '0291234567' } },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.queryByRole('textbox')).not.toBeInTheDocument();

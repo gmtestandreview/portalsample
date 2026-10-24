@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import Header from './index';
@@ -12,12 +13,9 @@ const meta = preview.meta({
   },
 });
 
-
 // SB-023: authenticated header — banner landmark, navigation, and sign-out link accessible
 export const Authenticated = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Header renders a banner landmark (role=banner or <header>)
     const banner =

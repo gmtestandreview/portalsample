@@ -25,7 +25,7 @@ type ClosureModule = {
       mcpTimeoutMs?: number;
       signal?: AbortSignal;
     },
-    adapters: Record<string, unknown>
+    adapters: Record<string, unknown>,
   ): Promise<ClosureResult>;
 };
 
@@ -107,7 +107,7 @@ const makeAdapters = (overrides: Record<string, unknown> = {}) => {
     })),
     observeChildEpoch: vi.fn(
       async ({ receipt: observedReceipt }: { receipt: typeof receipt }) =>
-        observedReceipt.observedChildEpoch
+        observedReceipt.observedChildEpoch,
     ),
     validateFreezeRecord: vi.fn(() => ({ ok: true, errors: [] })),
     validateProducerIdentity: vi.fn(() => ({ ok: true, errors: [] })),
@@ -250,7 +250,7 @@ describe('runClosure', () => {
     expect(adapters.runGate).toHaveBeenNthCalledWith(
       3,
       'gate-3-unit',
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
@@ -288,7 +288,7 @@ describe('runClosure', () => {
 
     const result = await moduleUnderTest.runClosure(
       { ...options, signal: controller.signal },
-      adapters
+      adapters,
     );
 
     expect(result).toMatchObject({
@@ -311,7 +311,7 @@ describe('runClosure', () => {
 
     const result = await moduleUnderTest.runClosure(
       { ...options, mcpTimeoutMs: 0 },
-      adapters
+      adapters,
     );
 
     expect(result).toMatchObject({

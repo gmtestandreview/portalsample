@@ -10,7 +10,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const CheckboxGroup = <T,>(
-  props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>
+  props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>,
 ) => {
   const {
     displayHorizontally,

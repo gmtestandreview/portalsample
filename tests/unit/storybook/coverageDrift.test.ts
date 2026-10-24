@@ -10,7 +10,7 @@ const sourceRoot = path.join(repoRoot, 'ClientApp', 'src');
 const coverageMatrixPath = path.join(
   sourceRoot,
   'storybook',
-  'CoverageMatrix.docs.mdx'
+  'CoverageMatrix.docs.mdx',
 );
 
 const readDirs = (dir: string) =>
@@ -28,7 +28,7 @@ describe('storybook coverage drift', () => {
 
     expect(
       unregistered,
-      `New route families not registered in CoverageMatrix.docs.mdx — add them to the Route Coverage Matrix or the explicit exclusion table:\n  ${unregistered.join('\n  ')}`
+      `New route families not registered in CoverageMatrix.docs.mdx — add them to the Route Coverage Matrix or the explicit exclusion table:\n  ${unregistered.join('\n  ')}`,
     ).toHaveLength(0);
   });
 
@@ -39,7 +39,7 @@ describe('storybook coverage drift', () => {
 
     expect(
       unregistered,
-      `New component families not registered in CoverageMatrix.docs.mdx — add them to the Component Coverage Matrix with an "Interactive", "Docs only", or "Explicit exclusion" status:\n  ${unregistered.join('\n  ')}`
+      `New component families not registered in CoverageMatrix.docs.mdx — add them to the Component Coverage Matrix with an "Interactive", "Docs only", or "Explicit exclusion" status:\n  ${unregistered.join('\n  ')}`,
     ).toHaveLength(0);
   });
 
@@ -55,7 +55,7 @@ describe('storybook coverage drift', () => {
 
     expect(
       guardRow,
-      'RouteLeavingGuard row not found in CoverageMatrix'
+      'RouteLeavingGuard row not found in CoverageMatrix',
     ).toBeDefined();
     expect(guardRow).not.toContain('Docs only');
   });

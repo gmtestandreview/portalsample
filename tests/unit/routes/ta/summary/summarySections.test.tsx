@@ -18,18 +18,18 @@ const noRules: Hidden = {};
 
 const renderOrganisation = (
   values: RequestForPatternApprovalAppDetails,
-  hidden: Hidden = noRules
+  hidden: Hidden = noRules,
 ) => render(<OrganisationSummary values={values} hidden={hidden} />).container;
 
 const renderApplication = (
   values: RequestForPatternApprovalAppDetails,
-  hidden: Hidden = noRules
+  hidden: Hidden = noRules,
 ) => render(<ApplicationSummary values={values} hidden={hidden} />).container;
 
 describe(ContactSummary, () => {
   it('prints a dash for every field of a missing contact', () => {
     const { container } = render(
-      <ContactSummary name='contact' contact={undefined} />
+      <ContactSummary name='contact' contact={undefined} />,
     );
 
     expect(container.textContent).toContain('First name');
@@ -41,7 +41,7 @@ describe(ContactSummary, () => {
       <ContactSummary
         name='contact'
         contact={{ title: '' as unknown as Title, firstName: 'Ada' }}
-      />
+      />,
     );
 
     expect(screen.getByText('Title (optional)')).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe(ContactSummary, () => {
       <ContactSummary
         name='contact'
         contact={{ title: Title.AssociateProfessor }}
-      />
+      />,
     );
 
     expect(screen.getByText('Associate Professor')).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe(ContactSummary, () => {
       <ContactSummary
         name='contact'
         contact={{ title: Title.Other, titleOther: 'Lord' }}
-      />
+      />,
     );
 
     expect(screen.getByText('Lord')).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe(ContactSummary, () => {
 
   it('shows a dash for an Other title with no text and ignores an unknown title', () => {
     const { rerender } = render(
-      <ContactSummary name='contact' contact={{ title: Title.Other }} />
+      <ContactSummary name='contact' contact={{ title: Title.Other }} />,
     );
 
     expect(screen.getByText('Title, if "Other"')).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe(ContactSummary, () => {
       <ContactSummary
         name='contact'
         contact={{ title: 'Emperor' as unknown as Title }}
-      />
+      />,
     );
 
     expect(screen.queryByText('Emperor')).not.toBeInTheDocument();
@@ -106,7 +106,7 @@ describe(OrganisationSummary, () => {
     });
 
     expect(container.querySelector('span.text-break')).toHaveTextContent(
-      'No details added'
+      'No details added',
     );
   });
 
@@ -132,7 +132,7 @@ describe(OrganisationSummary, () => {
           principalContactHide: true,
           principalInvoiceContactHide: true,
         },
-      }
+      },
     );
 
     expect(screen.queryByText('Organisation name')).not.toBeInTheDocument();

@@ -14,7 +14,7 @@ const RouteLeavingGuard = ({
 }: Readonly<RouteLeavingGuardProps>) => {
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
-      Boolean(when) && currentLocation.pathname !== nextLocation.pathname
+      Boolean(when) && currentLocation.pathname !== nextLocation.pathname,
   );
 
   const closeModal = () => {

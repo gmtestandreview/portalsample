@@ -30,7 +30,7 @@ type Methods<TValues extends BridgedValues> = UseFormReturn<TValues>;
 
 const useResetOnReinit = <TValues extends BridgedValues>(
   reset: Methods<TValues>['reset'],
-  initialValues: TValues
+  initialValues: TValues,
 ) => {
   useEffect(() => {
     reset(initialValues);
@@ -39,7 +39,7 @@ const useResetOnReinit = <TValues extends BridgedValues>(
 
 const useMirrorToFormik = <TValues extends BridgedValues>(
   watch: Methods<TValues>['watch'],
-  isBridgedName: (name: string) => boolean
+  isBridgedName: (name: string) => boolean,
 ) => {
   const { setFieldValue } = useFormikContext<TValues>();
 
@@ -57,7 +57,7 @@ const useMirrorToFormik = <TValues extends BridgedValues>(
 
 const useTouchOnSubmit = <TValues extends BridgedValues>(
   { getValues, setValue, trigger }: Methods<TValues>,
-  touchPaths: readonly Path<TValues>[]
+  touchPaths: readonly Path<TValues>[],
 ) => {
   const { values: outerValues, submitCount } = useFormikContext<TValues>();
   const previousSubmitCount = useRef(submitCount);
@@ -72,7 +72,7 @@ const useTouchOnSubmit = <TValues extends BridgedValues>(
     setValue(
       'saveAndExit' as Path<TValues>,
       outerValues.saveAndExit as PathValue<TValues, Path<TValues>>,
-      { shouldDirty: false, shouldTouch: false, shouldValidate: false }
+      { shouldDirty: false, shouldTouch: false, shouldValidate: false },
     );
     touchPaths.forEach((name) => {
       setValue(name, getValues(name), {
@@ -118,7 +118,7 @@ export const useFormikRhfBridge = <TValues extends BridgedValues>({
   const { initialValues } = useFormikContext<TValues>();
   const resolver = useMemo(
     () => createSaveAwareYupResolver<TValues>(softSchema, hardSchema),
-    [softSchema, hardSchema]
+    [softSchema, hardSchema],
   );
   const methods = useForm<TValues>({
     defaultValues: initialValues as DefaultValues<TValues>,

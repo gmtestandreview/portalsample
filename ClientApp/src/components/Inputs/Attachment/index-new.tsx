@@ -23,7 +23,7 @@ const isAllowedFile = (file: File, allowedTypes: string[]) =>
 const getUploadValidationErrors = (
   files: File[],
   allowedTypes: string[],
-  maxFiles: number
+  maxFiles: number,
 ): string[] => {
   const typeError =
     `${files.length > 1 ? 'Files' : 'File'} must be` +
@@ -35,14 +35,14 @@ const getUploadValidationErrors = (
 
   if (files.length > maxFiles) {
     errors.push(
-      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`
+      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`,
     );
   }
   return errors;
 };
 
 const AttachmentNew = (
-  props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>
+  props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>,
 ) => {
   const {
     id,
@@ -80,7 +80,7 @@ const AttachmentNew = (
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const unidentifiedAttachmentKeys = useRef(
-    new WeakMap<AttachmentDto, string>()
+    new WeakMap<AttachmentDto, string>(),
   );
 
   const inputRef = useRef<any>(null);
@@ -107,8 +107,8 @@ const AttachmentNew = (
     addErrors(
       oversizeFiles.map(
         (file) =>
-          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`
-      )
+          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`,
+      ),
     );
 
     if (files.length === 1) {
@@ -137,7 +137,7 @@ const AttachmentNew = (
       const validationErrors = getUploadValidationErrors(
         files,
         allowedTypeList,
-        maxFiles
+        maxFiles,
       );
 
       if (validationErrors.length > 0) {
@@ -150,8 +150,8 @@ const AttachmentNew = (
           addErrors(
             Object.values(
               (problemDetails['errors'] as
-                Record<string, string[]> | undefined) ?? {}
-            ).flat()
+                Record<string, string[]> | undefined) ?? {},
+            ).flat(),
           );
         }
       }
@@ -166,7 +166,9 @@ const AttachmentNew = (
       if (attachment.id) {
         await onDeleteFile(attachment.id);
         await setValue(
-          attachments.filter((item: AttachmentDto) => item.id !== attachment.id)
+          attachments.filter(
+            (item: AttachmentDto) => item.id !== attachment.id,
+          ),
         );
         if (inputRef.current && inputRef.current.value !== null) {
           inputRef.current.value = null;

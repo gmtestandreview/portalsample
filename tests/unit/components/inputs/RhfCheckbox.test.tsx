@@ -44,7 +44,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness defaultValue>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     const box = screen.getByRole('checkbox', { name: 'I accept' });
@@ -57,7 +57,7 @@ describe(RhfCheckbox, () => {
     const { unmount } = render(
       <Harness defaultValue={null}>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('checkbox')).not.toBeChecked();
@@ -67,7 +67,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness defaultValue={undefined}>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('checkbox')).not.toBeChecked();
@@ -85,7 +85,7 @@ describe(RhfCheckbox, () => {
           descriptor='Read the terms first'
           disabled
         />
-      </Harness>
+      </Harness>,
     );
 
     const box = screen.getByRole('checkbox');
@@ -102,7 +102,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness>
         <RhfCheckbox name='accepted' label='I accept' onChange={onChange} />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByRole('checkbox'));
@@ -120,7 +120,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByLabelText('I accept'));
@@ -132,13 +132,13 @@ describe(RhfCheckbox, () => {
     render(
       <Harness>
         <RhfCheckbox name='accepted' label='I accept' inlineHelp='Required' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Required')).toHaveAttribute('id', 'help-accepted');
     expect(screen.getByRole('checkbox')).toHaveAttribute(
       'aria-describedby',
-      'help-accepted'
+      'help-accepted',
     );
   });
 
@@ -150,7 +150,7 @@ describe(RhfCheckbox, () => {
           label='I accept'
           subFormField={<span>Extra detail</span>}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Extra detail')).toBeInTheDocument();
@@ -161,7 +161,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
     const box = screen.getByRole('checkbox');
 
@@ -171,7 +171,7 @@ describe(RhfCheckbox, () => {
 
     expect(screen.getByText('You must accept')).toHaveAttribute(
       'id',
-      'accepted-validation-msg'
+      'accepted-validation-msg',
     );
     expect(box).toHaveAttribute('aria-describedby', 'accepted-validation-msg');
   });
@@ -181,7 +181,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByRole('checkbox'));
@@ -200,14 +200,14 @@ describe(RhfCheckbox, () => {
           label='I accept'
           supressFieldLevelMessages
         />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
 
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
     expect(screen.getByRole('checkbox')).not.toHaveAttribute(
-      'aria-describedby'
+      'aria-describedby',
     );
   });
 
@@ -216,7 +216,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' inlineHelp='Required' />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
@@ -227,7 +227,7 @@ describe(RhfCheckbox, () => {
     expect(box).toHaveClass('is-invalid');
     expect(box).toHaveAttribute(
       'aria-describedby',
-      'help-accepted accepted-validation-msg'
+      'help-accepted accepted-validation-msg',
     );
   });
 
@@ -236,7 +236,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     await form.trigger();
@@ -253,7 +253,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
-      </Harness>
+      </Harness>,
     );
 
     await form.submit();
@@ -265,7 +265,7 @@ describe(RhfCheckbox, () => {
     const { unmount } = render(
       <Harness defaultValue>
         <RhfCheckbox name='accepted' label='I accept' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Yes')).toBeInTheDocument();
@@ -276,7 +276,7 @@ describe(RhfCheckbox, () => {
     render(
       <Harness>
         <RhfCheckbox name='accepted' label='I accept' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('No')).toBeInTheDocument();

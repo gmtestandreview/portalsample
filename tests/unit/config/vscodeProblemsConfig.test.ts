@@ -8,7 +8,7 @@ const repoRoot = path.resolve(__dirname, '../../..');
 
 function readJson<T>(relativePath: string): T {
   return JSON.parse(
-    readTextFileSync(path.join(repoRoot, relativePath), repoRoot)
+    readTextFileSync(path.join(repoRoot, relativePath), repoRoot),
   ) as T;
 }
 
@@ -33,7 +33,7 @@ describe('vS Code Problems configuration', () => {
 
   it('recommends extensions that contribute repository diagnostics', () => {
     const extensions = readJson<{ recommendations: string[] }>(
-      '.vscode/extensions.json'
+      '.vscode/extensions.json',
     );
 
     expect(extensions.recommendations).toEqual(
@@ -43,14 +43,14 @@ describe('vS Code Problems configuration', () => {
         'charliermarsh.ruff',
         'dbaeumer.vscode-eslint',
         'sonarsource.sonarlint-vscode',
-      ])
+      ]),
     );
   });
 
   it('has a VS Code rule-citation adapter script', () => {
     const script = readTextFileSync(
       path.join(repoRoot, 'scripts/vscode-rule-citation-problems.mjs'),
-      repoRoot
+      repoRoot,
     );
 
     expect(script).toContain('verify-rule-citations.mjs');
@@ -66,7 +66,7 @@ describe('vS Code Problems configuration', () => {
       {
         cwd: repoRoot,
         encoding: 'utf8',
-      }
+      },
     );
 
     // The adapter preserves the citation checker's non-zero status when the
@@ -76,12 +76,12 @@ describe('vS Code Problems configuration', () => {
     const diagnosticLines = result.stdout
       .split(/\r?\n/)
       .filter(
-        (line) => line.includes('): warning ') || line.includes('): error ')
+        (line) => line.includes('): warning ') || line.includes('): error '),
       );
 
     expect(diagnosticLines.length).toBeGreaterThan(0);
     expect(diagnosticLines[0]).toMatch(
-      /^[^(]+\(\d+,\d+\): (warning|error) RULE-\d+: \[[A-Z_]+\] .+$/
+      /^[^(]+\(\d+,\d+\): (warning|error) RULE-\d+: \[[A-Z_]+\] .+$/,
     );
   });
 
@@ -92,7 +92,7 @@ describe('vS Code Problems configuration', () => {
       {
         cwd: repoRoot,
         encoding: 'utf8',
-      }
+      },
     );
 
     // The JSON report remains valid even when the checker reports unresolved
@@ -106,7 +106,7 @@ describe('vS Code Problems configuration', () => {
     expect(report.results).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ where: 'detail', cited: expect.any(Number) }),
-      ])
+      ]),
     );
   });
 
@@ -163,7 +163,7 @@ describe('vS Code Problems configuration', () => {
     }>('.vscode/tasks.json');
 
     const allDiagnostics = tasks.tasks.find(
-      (task) => task.label === 'diagnostics: all'
+      (task) => task.label === 'diagnostics: all',
     );
 
     expect(allDiagnostics?.dependsOn).toEqual([
@@ -177,7 +177,7 @@ describe('vS Code Problems configuration', () => {
 
   it('gREEN: exposes every repository diagnostic source as a runnable VS Code task', () => {
     const tasks = readJson<{ tasks: Array<{ label: string }> }>(
-      '.vscode/tasks.json'
+      '.vscode/tasks.json',
     );
     const labels = tasks.tasks.map((task) => task.label);
 
@@ -188,19 +188,19 @@ describe('vS Code Problems configuration', () => {
         'diagnostics: rule citations',
         'diagnostics: sonar backlog',
         'diagnostics: all',
-      ])
+      ]),
     );
   });
 
   it('aMBER: keeps Sonar editor Problems clean-code focused while requiring a full backlog task', () => {
     const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
     const tasks = readJson<{ tasks: Array<{ label: string }> }>(
-      '.vscode/tasks.json'
+      '.vscode/tasks.json',
     );
 
     expect(settings['sonarlint.focusOnNewCode']).toBe(true);
     expect(
-      tasks.tasks.some((task) => task.label === 'diagnostics: sonar backlog')
+      tasks.tasks.some((task) => task.label === 'diagnostics: sonar backlog'),
     ).toBe(true);
   });
 });

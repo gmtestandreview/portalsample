@@ -40,7 +40,7 @@ const valueFor = <Value>(record: Record<string, Value>, key: string) =>
 async function importEnv(
   overrides: Partial<Record<EnvKey, string>> = {},
   isDevelopment = true,
-  runtimeOverrides: Record<string, string> = {}
+  runtimeOverrides: Record<string, string> = {},
 ) {
   vi.resetModules();
   envKeys.forEach((key) => {
@@ -76,7 +76,7 @@ describe('vite environment contract', () => {
     const module = await importEnv(
       { VITE_B2C_CLIENTID: 'build-client-id' },
       true,
-      { REACT_APP_B2C_CLIENTID: 'runtime-client-id' }
+      { REACT_APP_B2C_CLIENTID: 'runtime-client-id' },
     );
 
     expect(module.env.VITE_B2C_CLIENTID).toBe('runtime-client-id');
@@ -88,7 +88,7 @@ describe('vite environment contract', () => {
     });
 
     expect(exactHost.env.VITE_EXTERNAL_REDIRECT_URL).toBe(
-      'https://measurement.gov.au/return'
+      'https://measurement.gov.au/return',
     );
 
     const subdomain = await importEnv({
@@ -96,7 +96,7 @@ describe('vite environment contract', () => {
     });
 
     expect(subdomain.env.VITE_EXTERNAL_REDIRECT_URL).toBe(
-      'https://portal.measurement.gov.au/return'
+      'https://portal.measurement.gov.au/return',
     );
   });
 
@@ -107,7 +107,7 @@ describe('vite environment contract', () => {
     const missingRequired = Object.fromEntries(
       envKeys
         .filter((key) => key !== 'VITE_ENVIRONMENT')
-        .map((key) => [key, ''])
+        .map((key) => [key, '']),
     ) as Partial<Record<EnvKey, string>>;
 
     const module = await importEnv(missingRequired);
@@ -117,11 +117,11 @@ describe('vite environment contract', () => {
       .filter(
         (key) =>
           key !== 'VITE_APPINSIGHTS_INSTRUMENTATIONKEY' &&
-          key !== 'VITE_GA_TRACKINGID'
+          key !== 'VITE_GA_TRACKINGID',
       )
       .forEach((key) => {
         expect(consoleError).toHaveBeenCalledWith(
-          `[env] Missing required environment variable: ${key}`
+          `[env] Missing required environment variable: ${key}`,
         );
         expect(valueFor(module.env, key)).toBe('');
       });
@@ -138,10 +138,10 @@ describe('vite environment contract', () => {
     });
 
     expect(consoleError).not.toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_APPINSIGHTS_INSTRUMENTATIONKEY'
+      '[env] Missing required environment variable: VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
     );
     expect(consoleError).not.toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_GA_TRACKINGID'
+      '[env] Missing required environment variable: VITE_GA_TRACKINGID',
     );
   });
 
@@ -155,14 +155,14 @@ describe('vite environment contract', () => {
         VITE_APPINSIGHTS_INSTRUMENTATIONKEY: '',
         VITE_GA_TRACKINGID: '',
       },
-      false
+      false,
     );
 
     expect(consoleError).toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_APPINSIGHTS_INSTRUMENTATIONKEY'
+      '[env] Missing required environment variable: VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
     );
     expect(consoleError).toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_GA_TRACKINGID'
+      '[env] Missing required environment variable: VITE_GA_TRACKINGID',
     );
   });
 
@@ -186,17 +186,19 @@ describe('vite environment contract', () => {
     }
 
     expect(consoleError).toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_B2C_CLIENTID'
+      '[env] Missing required environment variable: VITE_B2C_CLIENTID',
     );
   });
 
   it('rejects malformed or disallowed external redirect hosts', async () => {
     await expect(
-      importEnv({ VITE_EXTERNAL_REDIRECT_URL: 'https://evil.example/redirect' })
+      importEnv({
+        VITE_EXTERNAL_REDIRECT_URL: 'https://evil.example/redirect',
+      }),
     ).rejects.toThrow(/not in the allowed domain list/);
 
     await expect(
-      importEnv({ VITE_EXTERNAL_REDIRECT_URL: 'not a url' })
+      importEnv({ VITE_EXTERNAL_REDIRECT_URL: 'not a url' }),
     ).rejects.toThrow(/not in the allowed domain list/);
   });
 });

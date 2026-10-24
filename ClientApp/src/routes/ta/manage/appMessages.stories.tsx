@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, waitFor } from 'storybook/test';
 import { http, HttpResponse } from 'msw/http';
@@ -37,12 +38,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const MessagesTab = meta.story({
-  play: async ({
-    canvas,
-    userEvent,
-  }) => {
+  play: async ({ canvas, userEvent }) => {
     await expect(
       await canvas.findByText('No messages to display'),
     ).toBeVisible();

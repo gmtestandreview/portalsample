@@ -56,7 +56,7 @@ export function GridListItem({
 }
 
 export function GridListLoadMoreItem(
-  props: Readonly<GridListLoadMoreItemProps>
+  props: Readonly<GridListLoadMoreItemProps>,
 ) {
   return (
     <AriaGridListLoadMoreItem {...props}>

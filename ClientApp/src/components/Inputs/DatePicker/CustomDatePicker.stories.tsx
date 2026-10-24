@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -32,11 +33,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Collapsed = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Date of test')).toBeVisible();
@@ -48,9 +46,7 @@ export const Prefilled = meta.story({
   args: {
     currentDate: new Date('2024-04-01T00:00:00'),
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('textbox')).toHaveValue('01/04/2024');

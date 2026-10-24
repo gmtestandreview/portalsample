@@ -56,7 +56,7 @@ const RFQDeleteModal = () => {
     try {
       const client = new ApplicationClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const { rfqId } = modalState ?? {};
@@ -73,7 +73,7 @@ const RFQDeleteModal = () => {
     } catch (e) {
       AppLogger.error(
         `Failed to delete application: ${modalState?.rfqId}`,
-        e as Error
+        e as Error,
       );
     } finally {
       modalDispatch?.setShowRFQDeleteModal(false, '');

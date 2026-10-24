@@ -80,7 +80,7 @@ describe('emailSchema - rejected addresses', () => {
     // pattern only allowed it because its ambiguous domain group could
     // absorb the hyphen. Nothing resolvable is lost.
     expect(emailSchema('Email address').isValidSync('a@trail-.com')).toBe(
-      false
+      false,
     );
   });
 

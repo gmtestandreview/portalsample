@@ -24,7 +24,7 @@ const isPlainObject = (value: object): boolean => {
  * @throws {TypeError} For arrays, class instances and ordinary objects from other realms.
  */
 export const omitUndefined = <T extends object>(
-  value: T
+  value: T,
 ): WithoutUndefined<T> => {
   if (!isPlainObject(value)) {
     throw new TypeError('omitUndefined accepts plain objects only');

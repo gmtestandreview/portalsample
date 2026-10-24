@@ -6,7 +6,7 @@ import type { ValidationSchema } from './types';
 type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
 
 function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
-  error: ValidationError
+  error: ValidationError,
 ): FieldErrors<TFieldValues> {
   let fieldErrors = {};
   const innerErrors = error.inner ?? [];
@@ -41,7 +41,7 @@ export function createSaveAwareYupResolver<
   TFieldValues extends SaveAwareFieldValues,
 >(
   softSchema: ValidationSchema | undefined,
-  hardSchema: ValidationSchema | undefined
+  hardSchema: ValidationSchema | undefined,
 ): Resolver<TFieldValues> {
   return async (values) => {
     const schema = values.saveAndExit === true ? softSchema : hardSchema;

@@ -43,7 +43,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -62,43 +62,43 @@ vi.mock(
         };
       }),
     } satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/notification',
+  import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: mocks.appLoggerError,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/sessionStorageCache',
+  import('../../../../ClientApp/src/storage/sessionStorageCache'),
   () =>
     ({
       default: () => ({
         setItem: mocks.sessionSetItem,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule72>
+    }) satisfies __ExactMockModule<__TestMockModule72>,
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -132,7 +132,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const abortSignal = new AbortController().signal;
 
@@ -143,34 +143,34 @@ describe('accept quote wizard prop factories', () => {
     expect(
       props.hidingFields?.contactHide?.({
         returnContactType: ReturnContactTypeValues.SamePerson,
-      })
+      }),
     ).toBe(true);
     expect(
       props.hidingFields?.contactHide?.({
         returnContactType: ReturnContactTypeValues.DifferentPerson,
-      })
+      }),
     ).toBe(false);
     expect(
       props.hidingFields?.contact?.titleOther?.({
         contact: { title: Title.Other },
-      })
+      }),
     ).toBe(false);
     expect(
       props.hidingFields?.returnAddress?.({
         returnAddressType: ReturnAddressTypeValues.Other,
-      })
+      }),
     ).toBe(false);
     expect(
       props.hidingFields?.carrierHide?.({
         returnMethod: ReturnMethodValues.ClientWillProvide,
-      })
+      }),
     ).toBe(false);
     expect(props.bannerRefTitle).toBe('Quotation ID: Q-1');
 
     await props.onSaveAndNext?.(
       { returnContactType: ReturnContactTypeValues.SamePerson },
       true,
-      abortSignal
+      abortSignal,
     );
 
     expect(mocks.saveDeliveryAndReturn).toHaveBeenCalledWith(
@@ -180,33 +180,33 @@ describe('accept quote wizard prop factories', () => {
         formStep: { returnContactType: 'SamePerson' },
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
 
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/accept-quote/Q-1/view-summary');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.NotFound,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBe('/');
     expect(setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining(
-          'Another person has deleted this request'
+          'Another person has deleted this request',
         ),
-      })
+      }),
     );
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBeUndefined();
   });
 
@@ -217,7 +217,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const abortSignal = new AbortController().signal;
 
@@ -227,35 +227,35 @@ describe('accept quote wizard prop factories', () => {
     expect(
       props.hidingFields?.contactHide?.({
         invoiceSentTo: InvoiceSentToValues.SamePerson,
-      })
+      }),
     ).toBe(true);
     expect(
       props.hidingFields?.contactHide?.({
         invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-      })
+      }),
     ).toBe(false);
     expect(
       props.hidingFields?.contact?.titleOther?.({
         contact: { title: Title.Dr },
-      })
+      }),
     ).toBe(true);
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/accept-quote/Q-2/view-summary');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.NotFound,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBe('/');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBeUndefined();
 
     const paymentValues: PaymentDetailsStep = {
@@ -270,29 +270,29 @@ describe('accept quote wizard prop factories', () => {
         formStep: { invoiceSentTo: InvoiceSentToValues.DifferentPerson },
         isCompletingStep: false,
       },
-      abortSignal
+      abortSignal,
     );
 
     mocks.savePaymentDetails.mockRejectedValueOnce(new Error('save failed'));
 
     await expect(
-      props.onSaveAndNext?.(paymentValues, true, abortSignal)
+      props.onSaveAndNext?.(paymentValues, true, abortSignal),
     ).rejects.toThrow('save failed');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save payment details:',
       expect.any(Error),
-      { ApplicationId: 'Q-2' }
+      { ApplicationId: 'Q-2' },
     );
 
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('load failed'));
 
     await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load payment details',
       expect.any(Error),
-      { Id: 'Q-2' }
+      { Id: 'Q-2' },
     );
   });
 
@@ -304,7 +304,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const abortSignal = new AbortController().signal;
 
@@ -314,36 +314,36 @@ describe('accept quote wizard prop factories', () => {
     expect(
       props.hidingFields?.contact?.titleOther?.({
         contact: { title: Title.Other },
-      })
+      }),
     ).toBe(false);
     expect(
       props.hidingFields?.businessStreetAddress?.({
         reportAddressType: ReportAddressTypeValues.Other,
-      })
+      }),
     ).toBe(false);
     expect(
       props.hidingFields?.businessStreetAddress?.({
         reportAddressType: ReportAddressTypeValues.BusinessAddress,
-      })
+      }),
     ).toBe(true);
     expect(props.discard?.locationOnCancel).toBe('/quotation/RFQ-3');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/accept-quote/Q-3/view-summary');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.NotFound,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBe('/');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBeUndefined();
 
     const recipientValues: ReportRecipientStep = {
@@ -358,18 +358,18 @@ describe('accept quote wizard prop factories', () => {
         formStep: { reportAddressType: 'Other' },
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
 
     mocks.saveReportRecipient.mockRejectedValueOnce(new Error('save failed'));
 
     await expect(
-      props.onSaveAndExit?.(recipientValues, false, abortSignal)
+      props.onSaveAndExit?.(recipientValues, false, abortSignal),
     ).rejects.toThrow('save failed');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save payment report recipient',
       expect.any(Error),
-      { Id: 'Q-3' }
+      { Id: 'Q-3' },
     );
   });
 
@@ -380,7 +380,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const abortSignal = new AbortController().signal;
     const summary = {
@@ -410,32 +410,32 @@ describe('accept quote wizard prop factories', () => {
     expect(props.hidingFields?.associatedDispute?.(summary)).toBe(true);
     expect(props.hidingFields?.reportRecipient?.rfqHide?.(summary)).toBe(false);
     expect(
-      props.hidingFields?.reportRecipient?.organisationNameHide?.(summary)
+      props.hidingFields?.reportRecipient?.organisationNameHide?.(summary),
     ).toBe(true);
     expect(
-      props.hidingFields?.reportRecipient?.contact?.titleOther?.(summary)
+      props.hidingFields?.reportRecipient?.contact?.titleOther?.(summary),
     ).toBe(false);
     expect(
-      props.hidingFields?.reportRecipient?.recipientMailingAddress?.(summary)
+      props.hidingFields?.reportRecipient?.recipientMailingAddress?.(summary),
     ).toBe(true);
     expect(props.hidingFields?.deliveryAndReturn?.rfqHide?.(summary)).toBe(
-      false
+      false,
     );
     expect(props.hidingFields?.deliveryAndReturn?.contactHide?.(summary)).toBe(
-      true
+      true,
     );
     expect(
-      props.hidingFields?.deliveryAndReturn?.contact?.titleOther?.(summary)
+      props.hidingFields?.deliveryAndReturn?.contact?.titleOther?.(summary),
     ).toBe(true);
     expect(props.hidingFields?.paymentDetails?.rfqHide?.(summary)).toBe(true);
     expect(props.hidingFields?.paymentDetails?.contactHide?.(summary)).toBe(
-      false
+      false,
     );
     expect(
-      props.hidingFields?.paymentDetails?.contact?.titleOther?.(summary)
+      props.hidingFields?.paymentDetails?.contact?.titleOther?.(summary),
     ).toBe(false);
     expect(
-      props.hidingFields?.requestForQuote?.contact?.titleOther?.(summary)
+      props.hidingFields?.requestForQuote?.contact?.titleOther?.(summary),
     ).toBe(true);
 
     await props.onSaveAndExit?.(summary, false, abortSignal);
@@ -451,34 +451,34 @@ describe('accept quote wizard prop factories', () => {
         formStep: summary,
         isCompletingStep: true,
       },
-      abortSignal
+      abortSignal,
     );
     expect(mocks.sessionSetItem).toHaveBeenCalledWith(
       'RFQ-NUM-4',
-      'accepted-quote-id'
+      'accepted-quote-id',
     );
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.PreconditionFailed,
-        ErrorType.Load
-      )
+        ErrorType.Load,
+      ),
     ).toBe('/request-for-quote/Q-4/view-summary');
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.NotFound,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBe('/');
     expect(setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already been deleted'),
-      })
+      }),
     );
     expect(
       props.getRedirectionLocationOnError?.(
         HttpStatusCode.InternalServerError,
-        ErrorType.Update
-      )
+        ErrorType.Update,
+      ),
     ).toBeUndefined();
   });
 
@@ -489,7 +489,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const paymentProps = paymentDetailsProps(
       'Q-5',
@@ -497,7 +497,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const recipientProps = reportRecipientProps(
       'Q-5',
@@ -506,7 +506,7 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
     const summaryProps = summaryAndAcceptProps(
       'Q-5',
@@ -514,32 +514,32 @@ describe('accept quote wizard prop factories', () => {
       instance,
       accountDetails,
       statuses,
-      'Accept quote'
+      'Accept quote',
     );
 
     await expect(deliveryProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(deliveryProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'No authenticated account available to save form.'
+      'No authenticated account available to save form.',
     );
     await expect(paymentProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(paymentProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'No authenticated account available to save form.'
+      'No authenticated account available to save form.',
     );
     await expect(recipientProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(recipientProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'No authenticated account available to save form.'
+      'No authenticated account available to save form.',
     );
     await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
-      'There was an error retrieving your details.'
+      'There was an error retrieving your details.',
     );
     await expect(summaryProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'No authenticated account available to save form.'
+      'No authenticated account available to save form.',
     );
   });
 });

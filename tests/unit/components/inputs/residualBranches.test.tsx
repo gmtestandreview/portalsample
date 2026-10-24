@@ -65,11 +65,11 @@ describe('residual input branches', () => {
           inlineHelp='Choose the service state'
           options={[]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(
-      screen.getByRole('combobox', { name: 'State' })
+      screen.getByRole('combobox', { name: 'State' }),
     ).toHaveAccessibleDescription('Choose the service state');
     expect(screen.queryByText(/validation/i)).not.toBeInTheDocument();
   });
@@ -78,12 +78,12 @@ describe('residual input branches', () => {
     const { rerender } = render(
       <Harness initialValues={{ state: '' }} initialTouched={{ state: true }}>
         <SelectInput name='state' label='State' options={[]} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox', { name: 'State' })).not.toHaveAttribute(
       'aria-invalid',
-      'true'
+      'true',
     );
 
     rerender(
@@ -97,7 +97,7 @@ describe('residual input branches', () => {
           displayHorizontally
           options={[]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('Choose a state')).not.toBeInTheDocument();
@@ -116,16 +116,16 @@ describe('residual input branches', () => {
           legend='Delivery'
           options={[{ id: 'post', label: 'Post', value: 'post' }]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox', { name: 'State' })).toHaveAttribute(
       'aria-describedby',
-      'state-validation-msg'
+      'state-validation-msg',
     );
     expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute(
       'aria-describedby',
-      'delivery-validation-msg'
+      'delivery-validation-msg',
     );
   });
 
@@ -142,12 +142,12 @@ describe('residual input branches', () => {
           legend='Delivery'
           options={[{ id: 'post', label: 'Post', value: 'post' }]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute(
       'aria-describedby',
-      'q-delivery-validation-msg'
+      'q-delivery-validation-msg',
     );
   });
 
@@ -159,11 +159,11 @@ describe('residual input branches', () => {
           legend='Delivery'
           options={[{ id: 'post', label: 'Post', value: 'post' }]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('group', { name: 'Delivery' })).not.toHaveAttribute(
-      'aria-describedby'
+      'aria-describedby',
     );
   });
 
@@ -175,12 +175,12 @@ describe('residual input branches', () => {
         initialTouched={{ phone: true }}
       >
         <NumberInput name='phone' label='Phone' format='checkPhoneFormat' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Phone' })).toHaveAttribute(
       'aria-describedby',
-      'phone-validation-msg'
+      'phone-validation-msg',
     );
   });
 
@@ -188,7 +188,7 @@ describe('residual input branches', () => {
     render(
       <Harness initialValues={{ accepted: false }}>
         <Checkbox name='accepted' label='Accepted' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('No')).toBeInTheDocument();
@@ -206,7 +206,7 @@ describe('residual input branches', () => {
             { displayText: 'High priority', value: 1 },
           ]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Zero priority')).toBeInTheDocument();
@@ -222,7 +222,7 @@ describe('residual input branches', () => {
       >
         <TextAreaInput name='notes' label='Notes' />
         <TextInput name='date' label='Date' type='date' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveValue('42');
@@ -233,7 +233,7 @@ describe('residual input branches', () => {
     render(
       <Harness initialValues={{ nickname: null }}>
         <TextInput name='nickname' label='Nickname' />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('textbox', { name: 'Nickname' });
@@ -262,7 +262,7 @@ describe('residual input branches', () => {
           onSelectedOption={vi.fn()}
           onCancel={onCancel}
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Suburb' });
@@ -287,7 +287,7 @@ describe('residual input branches', () => {
           onSelectedOption={vi.fn()}
           onCancel={vi.fn()}
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Suburb' });
@@ -296,7 +296,7 @@ describe('residual input branches', () => {
 
     expect(input).toHaveAttribute(
       'aria-activedescendant',
-      'suburb-options-option-one'
+      'suburb-options-option-one',
     );
   });
 
@@ -314,14 +314,14 @@ describe('residual input branches', () => {
           inlineHelp='Start typing'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(
-      screen.getByRole('combobox', { name: 'Organisation name' })
+      screen.getByRole('combobox', { name: 'Organisation name' }),
     ).toHaveAttribute(
       'aria-describedby',
-      'organisation-control-validation-msg'
+      'organisation-control-validation-msg',
     );
 
     firstRender.unmount();
@@ -338,7 +338,7 @@ describe('residual input branches', () => {
           inlineHelp='Start typing'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Organisation name' });
@@ -348,7 +348,7 @@ describe('residual input branches', () => {
     });
 
     expect(
-      screen.getByRole('listbox', { name: 'Suggested options' })
+      screen.getByRole('listbox', { name: 'Suggested options' }),
     ).toBeInTheDocument();
 
     act(() => {
@@ -356,7 +356,7 @@ describe('residual input branches', () => {
     });
 
     expect(
-      screen.queryByRole('listbox', { name: 'Suggested options' })
+      screen.queryByRole('listbox', { name: 'Suggested options' }),
     ).not.toBeInTheDocument();
   });
 
@@ -373,14 +373,14 @@ describe('residual input branches', () => {
           inlineHelp='Start typing'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
 
     const input = screen.getByRole('combobox', { name: 'Organisation name' });
 
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'organisationName-validation-msg'
+      'organisationName-validation-msg',
     );
 
     act(() => {
@@ -403,7 +403,7 @@ describe('residual input branches', () => {
           name='organisationName'
           optionsFieldName='name'
         />
-      </Harness>
+      </Harness>,
     );
     const populatedInput = screen.getByRole('combobox', {
       name: 'Organisation name',

@@ -5,11 +5,11 @@ const importLoggerWithInsights = async (insights: unknown) => {
   vi.resetModules();
   const getAppInsights = vi.fn(() => insights);
   vi.doMock(
-    '@/instrumentation/AppInsightsService',
+    import('@/instrumentation/AppInsightsService'),
     () =>
       ({
         getAppInsights,
-      }) satisfies __ExactMockModule<__TestMockModule15>
+      }) satisfies __ExactMockModule<__TestMockModule15>,
   );
   const { default: AppLogger } = await import('@/instrumentation/AppLogger');
   return { AppLogger, getAppInsights };

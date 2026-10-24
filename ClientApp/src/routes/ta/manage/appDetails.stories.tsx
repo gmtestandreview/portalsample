@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { Route, Routes } from 'react-router';
 import { within, expect } from 'storybook/test';
@@ -63,11 +64,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const DetailsTab = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // Once the application loads, the status section and reference render.

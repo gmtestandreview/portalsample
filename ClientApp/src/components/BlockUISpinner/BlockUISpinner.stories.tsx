@@ -26,7 +26,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const FullPage = meta.story();
 
 export const Inline = meta.story({

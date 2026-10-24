@@ -30,12 +30,12 @@ const loadOrganisationAndContact =
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const organisationAndContact = await client.getOrganisationAndContact(
           id,
-          abortSignal
+          abortSignal,
         );
         const wizardStepValues: WizardFormStepValues<PatternApprovalOrgAndContact> =
           {
@@ -47,20 +47,20 @@ const loadOrganisationAndContact =
         AppLogger.error(
           'Failed to load PA org and contact details',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(
           `Failed to load PA org and contact details. Id: ${id}`,
-          { cause: error }
+          { cause: error },
         );
       }
     } else {
       AppLogger.verbose(
         'There are no accounts available to load PA organisation and contact details',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to load PA organisation and contact details. Id: ${id}`
+        `There are no accounts available to load PA organisation and contact details. Id: ${id}`,
       );
     }
   };
@@ -70,18 +70,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: PatternApprovalOrgAndContact,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.saveOrganisationAndContact(
@@ -91,26 +91,26 @@ const saveStep =
             formStep: values,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error(
           'Failed to save PA org and contact details',
           error as Error,
-          { Id: id }
+          { Id: id },
         );
         throw new Error(
           `Failed to save PA org and contact details. Id: ${id}`,
-          { cause: error }
+          { cause: error },
         );
       }
     } else {
       AppLogger.verbose(
         'There are no accounts available to save PA organisation and contact details',
-        { Id: id, Accounts: accounts }
+        { Id: id, Accounts: accounts },
       );
       throw new Error(
-        `There are no accounts available to save PA organisation and contact details. Id: ${id}`
+        `There are no accounts available to save PA organisation and contact details. Id: ${id}`,
       );
     }
   };
@@ -125,7 +125,7 @@ const OrganisationAndContactProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<PatternApprovalOrgAndContact> => ({
   initialValues: {},
   stepStatuses: statuses,

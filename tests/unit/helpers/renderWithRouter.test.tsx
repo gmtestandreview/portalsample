@@ -39,7 +39,7 @@ describe('renderWithRouter harness', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1')
+      expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1'),
     );
   });
 
@@ -51,7 +51,7 @@ describe('renderWithRouter harness', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded')
+      expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded'),
     );
   });
 
@@ -78,7 +78,7 @@ describe('renderWithRouter harness', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument()
+      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId(NOT_FOUND_TEST_ID)).not.toBeInTheDocument();
@@ -95,7 +95,7 @@ describe('renderWithRouter harness', () => {
     });
 
     await waitFor(() =>
-      expect(screen.getByTestId('dashboard')).toBeInTheDocument()
+      expect(screen.getByTestId('dashboard')).toBeInTheDocument(),
     );
   });
 });

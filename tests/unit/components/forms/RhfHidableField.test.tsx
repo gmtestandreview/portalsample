@@ -60,7 +60,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('ABN field')).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
@@ -87,7 +87,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('ABN field')).toBeInTheDocument();
@@ -107,7 +107,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('ABN field')).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
@@ -129,7 +129,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
@@ -141,7 +141,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
@@ -153,7 +153,7 @@ describe(RhfHidableField, () => {
         <RhfHidableField name='account.abn'>
           <p>ABN field</p>
         </RhfHidableField>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('ABN field')).toBeInTheDocument();
@@ -165,7 +165,7 @@ describe(RhfHidableField, () => {
         <div data-testid='wrapper'>
           <RhfHidableField name='account.abn' />
         </div>
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByTestId('wrapper')).toBeEmptyDOMElement();

@@ -2,14 +2,14 @@ import type { AccountInfo } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  '@/env',
+  import('@/env'),
   () =>
     ({
       env: {
         VITE_B2C_READ_SCOPE: 'read',
         VITE_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
       },
-    }) satisfies __ExactMockModule<__TestMockModule10>
+    }) satisfies __ExactMockModule<__TestMockModule10>,
 );
 
 const account = {

@@ -20,7 +20,7 @@ const CreateRequestForQuote = () => {
       try {
         const client = new ApplicationClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const application = await client.createApplication({

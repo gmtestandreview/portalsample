@@ -7,46 +7,46 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
+  import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: mocks.useAccountState,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/FormBanner',
+  import('../../../ClientApp/src/components/forms/FormBanner'),
   () =>
     ({
       default: ({ title }: { title: string }) => (
         <div data-testid='form-banner'>{title}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule90>
+    }) satisfies __ExactMockModule<__TestMockModule90>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/HeaderIntroText',
+  import('../../../ClientApp/src/components/HeaderIntroText'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <p>{children}</p>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule76>
+    }) satisfies __ExactMockModule<__TestMockModule76>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule59>
+    }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
   () =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule89>
+    }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
 describe('account created route', () => {
@@ -63,20 +63,20 @@ describe('account created route', () => {
     render(
       <MemoryRouter>
         <AccountCreated />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Create portal account'
+      'Create portal account',
     );
     expect(
       screen.getByRole('heading', {
         name: 'Your portal account is ready, Alex',
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('go-to-dashboard-button')).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
   });
 
@@ -89,11 +89,11 @@ describe('account created route', () => {
     render(
       <MemoryRouter>
         <AccountCreated />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('heading', { name: 'Your portal account is ready,' })
+      screen.getByRole('heading', { name: 'Your portal account is ready,' }),
     ).toBeInTheDocument();
   });
 });

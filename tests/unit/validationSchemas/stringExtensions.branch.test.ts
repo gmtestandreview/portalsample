@@ -65,13 +65,13 @@ describe('yup string extension branch coverage', () => {
 
   it('uses explicit error messages before label and fallback messages', async () => {
     await expect(
-      Yup.string().fixedDigits(2, 'Code', 'Custom fixed').validate('1')
+      Yup.string().fixedDigits(2, 'Code', 'Custom fixed').validate('1'),
     ).rejects.toThrow('Custom fixed');
     await expect(
-      Yup.string().numbersOnly('Code').validate('A')
+      Yup.string().numbersOnly('Code').validate('A'),
     ).rejects.toThrow('Code must only include numbers');
     await expect(
-      Yup.object({ code: Yup.string().numbersOnly() }).validate({ code: 'A' })
+      Yup.object({ code: Yup.string().numbersOnly() }).validate({ code: 'A' }),
     ).rejects.toThrow('code must only include numbers');
   });
 
@@ -172,9 +172,9 @@ describe('yup string extension branch coverage', () => {
     'uses fallback path messages for %s',
     async (_name, schema, value, message) => {
       await expect(
-        Yup.object({ code: schema }).validate({ code: value })
+        Yup.object({ code: schema }).validate({ code: value }),
       ).rejects.toThrow(message);
-    }
+    },
   );
 
   it.each([

@@ -37,7 +37,7 @@ export {
 } from './applicationOptions';
 
 const ApplicationAndInstrument = (
-  props: Readonly<TAApplicationAndInstrumentProps>
+  props: Readonly<TAApplicationAndInstrumentProps>,
 ) => {
   const { isSummary, name } = props;
   const getName = (localName: string) =>
@@ -48,7 +48,7 @@ const ApplicationAndInstrument = (
   const initialKey = context.getFieldMeta('patternApprovalType')
     .initialValue as string | null;
   const [selectedApplication, setSelectedApplication] = useState<string | null>(
-    () => initialKey || 'new'
+    () => initialKey || 'new',
   );
   const [instrumentCategories, setInstrumentCategories] =
     useState<LookupResponse[]>();
@@ -61,16 +61,16 @@ const ApplicationAndInstrument = (
   // Lookup values are loaded in the parent component and passed through Formik context, so we can access them via context.values
   // without needing to make separate API calls here. We just need to transform them into the format needed for the dropdowns.
   const [_instrumentTypeField, _instrumentTypeMeta] = useField(
-    getName('instrumentType')
+    getName('instrumentType'),
   );
   const [_instrumentCatField, _instrumentCatMeta] = useField(
-    getName('instrumentCategory')
+    getName('instrumentCategory'),
   );
   const [_typeLookupField, _typeLookupMeta] = useField(
-    getName('instrumentTypeLookup')
+    getName('instrumentTypeLookup'),
   );
   const [_categoryLookupField, _categoryLookupMeta] = useField(
-    getName('instrumentCategoryLookup')
+    getName('instrumentCategoryLookup'),
   );
 
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
@@ -78,7 +78,7 @@ const ApplicationAndInstrument = (
 
   const getInstrumentTypes = (
     values: LookupResponse[],
-    parentId: string
+    parentId: string,
   ): SelectInputOption<string>[] => {
     const options: SelectInputOption<string>[] = [];
     if (parentId !== undefined && parentId !== '') {
@@ -122,7 +122,7 @@ const ApplicationAndInstrument = (
             const [sorted, lastId] = sortList(
               result,
               'No measurement',
-              'label'
+              'label',
             );
             noInstrumentCategoriestId.current = lastId;
             setInstrumentCategories(sorted);
@@ -135,8 +135,8 @@ const ApplicationAndInstrument = (
               setInstrumentTypesSelected(
                 getInstrumentTypes(
                   artefactTypeResult,
-                  _instrumentCatField.value as string
-                )
+                  _instrumentCatField.value as string,
+                ),
               );
               if (
                 !isSummary &&
@@ -192,14 +192,14 @@ const ApplicationAndInstrument = (
   // console.log('Selected application oth options: ', _othField.value);
 
   const onInstrumentCategoryChange = async (
-    event: ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>,
   ) => {
     setIsInstrumentTypeDisabled(false);
     context.setFieldValue('instrumentType', '');
     context.setFieldTouched('instrumentType', false);
     if (event.target.value !== null && instrumentTypes !== undefined) {
       setInstrumentTypesSelected(
-        getInstrumentTypes(instrumentTypes, event.target.value)
+        getInstrumentTypes(instrumentTypes, event.target.value),
       );
       if (event.target.value === noInstrumentCategoriestId.current) {
         context.setFieldValue('instrumentType', noInstrumentTypeId.current);
@@ -221,7 +221,7 @@ const ApplicationAndInstrument = (
       // Helper to get labels for suboption arrays
       const getSubOptionLabels = (
         value: string[] | string | undefined,
-        options: { label: string; value: string }[]
+        options: { label: string; value: string }[],
       ) => {
         if (!value || (Array.isArray(value) && value.length === 0))
           return 'Not selected';
@@ -258,7 +258,7 @@ const ApplicationAndInstrument = (
                 className='mb-0'
                 value={getSubOptionLabels(
                   _newField.value,
-                  newCertificateSubOptions
+                  newCertificateSubOptions,
                 )}
               />
             )}
@@ -279,7 +279,7 @@ const ApplicationAndInstrument = (
                 className='mb-0'
                 value={getSubOptionLabels(
                   _othField.value,
-                  otherApprovalSubOptions
+                  otherApprovalSubOptions,
                 )}
               />
             )}
@@ -471,7 +471,7 @@ const ApplicationAndInstrument = (
             options={getInstrumentCategories()}
             onChange={(event) => {
               onInstrumentCategoryChange(
-                event as React.ChangeEvent<HTMLInputElement>
+                event as React.ChangeEvent<HTMLInputElement>,
               );
             }}
             isSummary={isSummary}

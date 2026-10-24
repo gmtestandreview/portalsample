@@ -14,11 +14,11 @@ import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/Uns
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 /**
@@ -87,7 +87,7 @@ const Body = ({
 
 const renderShell = async (
   kind: 'formik' | 'rhf',
-  { banner, showButtons }: Setup = {}
+  { banner, showButtons }: Setup = {},
 ) => {
   const onSubmit = vi.fn(async (..._args: unknown[]) => undefined);
   const onSaveAndExit = vi.fn(async (..._args: unknown[]) => undefined);
@@ -164,7 +164,7 @@ describe.each(['formik', 'rhf'] as const)(
         await user.clear(input);
 
         expect(
-          screen.queryByTestId('form-error-summary')
+          screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();
       });
 
@@ -174,10 +174,10 @@ describe.each(['formik', 'rhf'] as const)(
         await user.click(screen.getByTestId('submit-button'));
 
         await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
-          'Name: Name is required'
+          'Name: Name is required',
         );
         expect(
-          screen.getByRole('link', { name: 'Name: Name is required' })
+          screen.getByRole('link', { name: 'Name: Name is required' }),
         ).toHaveAttribute('href', '#name');
         expect(onSubmit).not.toHaveBeenCalled();
       });
@@ -188,7 +188,7 @@ describe.each(['formik', 'rhf'] as const)(
         await user.click(screen.getByTestId('submit-button'));
 
         await waitFor(() =>
-          expect(screen.getByTestId('form-error-summary')).toHaveFocus()
+          expect(screen.getByTestId('form-error-summary')).toHaveFocus(),
         );
 
         expect(screen.getByLabelText('name')).not.toHaveFocus();
@@ -206,7 +206,7 @@ describe.each(['formik', 'rhf'] as const)(
 
         expect(payloadOf(onSubmit)).toEqual({ name: 'Alex' });
         expect(
-          screen.queryByTestId('form-error-summary')
+          screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();
       });
     });
@@ -217,7 +217,7 @@ describe.each(['formik', 'rhf'] as const)(
 
         expect(screen.getByTestId('submit-button')).toHaveTextContent('Submit');
         expect(screen.getByTestId('save-and-exit-button')).toHaveTextContent(
-          'Save and exit'
+          'Save and exit',
         );
 
         await user.type(screen.getByLabelText('name'), 'Alex');
@@ -242,7 +242,7 @@ describe.each(['formik', 'rhf'] as const)(
         expect(payload).not.toHaveProperty('saveAndExit');
         expect(payload).not.toHaveProperty('saveAndExitClick');
         expect(
-          screen.queryByTestId('form-error-summary')
+          screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();
       });
 
@@ -253,7 +253,7 @@ describe.each(['formik', 'rhf'] as const)(
         await user.click(screen.getByTestId('submit-button'));
 
         await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
-          'Name is required'
+          'Name is required',
         );
         expect(onSubmit).not.toHaveBeenCalled();
       });
@@ -279,7 +279,7 @@ describe.each(['formik', 'rhf'] as const)(
         await leave();
 
         await expect(
-          screen.findByTestId('prompt-save-modal')
+          screen.findByTestId('prompt-save-modal'),
         ).resolves.toBeInTheDocument();
         expect(currentPath()).toBe('/form');
 
@@ -289,8 +289,8 @@ describe.each(['formik', 'rhf'] as const)(
         await user.click(screen.getByTestId('prompt-cancel-button'));
         await waitFor(() =>
           expect(
-            screen.queryByTestId('prompt-save-modal')
-          ).not.toBeInTheDocument()
+            screen.queryByTestId('prompt-save-modal'),
+          ).not.toBeInTheDocument(),
         );
 
         expect(currentPath()).toBe('/form');
@@ -321,7 +321,7 @@ describe.each(['formik', 'rhf'] as const)(
         await leave();
 
         await expect(
-          screen.findByTestId('prompt-save-modal')
+          screen.findByTestId('prompt-save-modal'),
         ).resolves.toBeInTheDocument();
         expect(currentPath()).toBe('/form');
       });
@@ -332,7 +332,7 @@ describe.each(['formik', 'rhf'] as const)(
         await renderShell(kind, { showButtons: false });
 
         expect(
-          screen.queryByTestId('save-and-exit-button')
+          screen.queryByTestId('save-and-exit-button'),
         ).not.toBeInTheDocument();
       });
 
@@ -357,7 +357,7 @@ describe.each(['formik', 'rhf'] as const)(
 
         expect(screen.getByText('Custom banner')).toBeInTheDocument();
         expect(
-          screen.queryByTestId('save-and-exit-button')
+          screen.queryByTestId('save-and-exit-button'),
         ).not.toBeInTheDocument();
       });
 
@@ -375,7 +375,7 @@ describe.each(['formik', 'rhf'] as const)(
         await waitFor(() => expect(currentPath()).toBe('/other'));
       });
     });
-  }
+  },
 );
 
 describe('rHF summary sanitisation', () => {

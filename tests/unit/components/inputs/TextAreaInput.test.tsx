@@ -7,7 +7,7 @@ const renderTextAreaInput = () =>
   render(
     <Formik initialValues={{ notes: '' }} onSubmit={() => undefined}>
       <TextAreaInput label='Notes' name='notes' />
-    </Formik>
+    </Formik>,
   );
 
 describe(TextAreaInput, () => {
@@ -30,7 +30,7 @@ describe(TextAreaInput, () => {
     render(
       <Formik initialValues={{ notes: null }} onSubmit={() => undefined}>
         <TextAreaInput label='Notes' name='notes' />
-      </Formik>
+      </Formik>,
     );
 
     const input = screen.getByLabelText('Notes');

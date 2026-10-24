@@ -22,7 +22,7 @@ describe(renderWithProviders, () => {
     expect(screen.getByTestId('pathname')).toHaveTextContent('/start');
     expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute(
       'href',
-      '/next'
+      '/next',
     );
   });
 

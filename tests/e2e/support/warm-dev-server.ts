@@ -23,7 +23,7 @@ export default async function warmDevServer(config: FullConfig) {
 
   const html = await fetchText(`${baseURL}/dashboard`);
   const scriptUrls = [...html.matchAll(SCRIPT_SRC_PATTERN)].map(
-    ([, src]) => new URL(src ?? '', baseURL).href
+    ([, src]) => new URL(src ?? '', baseURL).href,
   );
   await Promise.all(scriptUrls.map(fetchText));
 }

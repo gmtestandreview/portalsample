@@ -26,5 +26,5 @@ export interface RfqCurrentContact {
 /** Resolves a hide rule path such as `organisationAndContact.principalContactHide`. */
 export const isSummaryFieldHidden = (
   { hidden, values }: Readonly<RfqSummarySectionProps>,
-  path: string
+  path: string,
 ) => isHidden(path, hidden, values);

@@ -24,7 +24,7 @@ const loadAccountDetails =
     if (accounts.length > 0) {
       const client = new AccountsClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 
@@ -39,7 +39,7 @@ const loadAccountDetails =
     }
 
     throw new Error(
-      'There was an error retrieving your organisation and contact details.'
+      'There was an error retrieving your organisation and contact details.',
     );
   };
 
@@ -47,13 +47,13 @@ const completeAccountDetails =
   (
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    accountContext: AccountContextState | null
+    accountContext: AccountContextState | null,
   ) =>
   async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       await client.completeAccountDetails(
@@ -67,17 +67,17 @@ const completeAccountDetails =
           // formik isDirty for the autosuggest unless you blur another control after selection before submission
           // isDirty: true,
         },
-        abortSignal
+        abortSignal,
       );
       accountContext?.setOrganisationAndBranch(
         values.name!,
         values.businessOrTradingName ?? '',
-        values.branchOrLocationName ?? ''
+        values.branchOrLocationName ?? '',
       );
       accountContext?.setCompleted();
     } else {
       throw new Error(
-        'There was an error saving your organisation and contact details.'
+        'There was an error saving your organisation and contact details.',
       );
     }
   };
@@ -91,7 +91,7 @@ const discardChanges: DiscardProps = {
 
 const getRedirectionLocationOnError = (
   errorCode: number,
-  _errorType: ErrorType
+  _errorType: ErrorType,
 ) => {
   if (errorCode === 412) {
     return '/';
@@ -104,7 +104,7 @@ const createAccountProps = (
   accounts: AccountInfo[],
   instance: IPublicClientApplication,
   statuses: FormStepStatusDto[],
-  accountContext: AccountContextState | null
+  accountContext: AccountContextState | null,
 ): WizardStepProps<GetAccountValuesDto> => ({
   initialValues: {
     id: '',

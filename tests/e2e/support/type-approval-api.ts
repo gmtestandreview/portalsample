@@ -29,7 +29,7 @@ const multipartValue = (body: string, name: string): string | undefined => {
   if (headerLine === -1) return undefined;
 
   const blankLine = lines.findIndex(
-    (line, index) => index > headerLine && line === ''
+    (line, index) => index > headerLine && line === '',
   );
   return blankLine === -1 ? undefined : lines[blankLine + 1];
 };
@@ -39,7 +39,7 @@ const multipartFileName = (body: string): string | undefined =>
 
 const getApplication = (
   state: ScenarioState,
-  referenceId: string
+  referenceId: string,
 ): TypeApprovalApplicationState | undefined =>
   state.typeApprovalApplications.get(referenceId);
 
@@ -61,7 +61,7 @@ const dashboardItem = (application: TypeApprovalApplicationState) => ({
   assessedAs: application.submitted ? 'Awaiting assessment' : '',
   lastUpdated: '2026-06-01T00:00:00Z',
   unreadMessageCount: application.messages.filter(
-    (message) => !message.messageRead
+    (message) => !message.messageRead,
   ).length,
 });
 
@@ -79,14 +79,14 @@ const dashboardResponse = (state: ScenarioState, submitted: boolean) => {
 };
 
 const supportingDocumentsResponse = (
-  application: TypeApprovalApplicationState
+  application: TypeApprovalApplicationState,
 ) => ({
   ...application.supportingDocuments,
   uploadId: `pa-upload-${Math.max(1, application.supportingDocuments.form?.documents?.length ?? 0)}`,
 });
 
 const applicationDetailsResponse = (
-  application: TypeApprovalApplicationState
+  application: TypeApprovalApplicationState,
 ) => ({
   applicationDetails: {
     referenceId: application.referenceId,
@@ -120,7 +120,7 @@ const notFound = (route: Route, referenceId: string) =>
       status: 404,
       title: `Type-approval application ${referenceId} was not found`,
     },
-    404
+    404,
   );
 
 interface MockContext {
@@ -183,7 +183,7 @@ const handleCreateApplication = async ({ route, state }: MockContext) => {
   state.activeTypeApprovalReferenceId = referenceId;
   state.typeApprovalApplications.set(
     referenceId,
-    createDraftTypeApprovalApplication(referenceId)
+    createDraftTypeApprovalApplication(referenceId),
   );
   await json(route, {
     referenceId,
@@ -290,7 +290,7 @@ const handleUpdateCategory = async ({ route, state }: MockContext) => {
     return;
   }
   const document = application.supportingDocuments.form?.documents?.find(
-    (candidate) => candidate.id === documentReference
+    (candidate) => candidate.id === documentReference,
   );
   if (document) {
     document.attachmentCategory = category;
@@ -329,13 +329,13 @@ const STATIC_ROUTES: readonly MockRoute[] = [
   },
   {
     matches: exactPath(
-      '/api/pattern-approval/get-pattern-approval-dashboard-drafts'
+      '/api/pattern-approval/get-pattern-approval-dashboard-drafts',
     ),
     handle: ({ route, state }) => json(route, dashboardResponse(state, false)),
   },
   {
     matches: exactPath(
-      '/api/pattern-approval/get-pattern-approval-dashboard-applications'
+      '/api/pattern-approval/get-pattern-approval-dashboard-applications',
     ),
     handle: ({ route, state }) => json(route, dashboardResponse(state, true)),
   },
@@ -375,21 +375,21 @@ const STATIC_ROUTES: readonly MockRoute[] = [
   {
     matches: exactPath(
       '/api/request-for-pattern-approval/add-documents',
-      'POST'
+      'POST',
     ),
     handle: handleAddDocuments,
   },
   {
     matches: exactPath(
       '/api/request-for-pattern-approval/delete-document',
-      'PUT'
+      'PUT',
     ),
     handle: handleDeleteDocument,
   },
   {
     matches: exactPath(
       '/api/request-for-pattern-approval/update-category',
-      'PUT'
+      'PUT',
     ),
     handle: handleUpdateCategory,
   },
@@ -409,7 +409,7 @@ const getStepStatuses: ApplicationHandler = ({
     application.stepStatuses.map((status) => ({
       status,
       crmQuoteRequestId: `crm-${referenceId}`,
-    }))
+    })),
   );
 
 const putOrganisationAndContact: ApplicationHandler = async ({
@@ -477,7 +477,7 @@ const getSummary: ApplicationHandler = ({ route, application, referenceId }) =>
 const putSubmit: ApplicationHandler = async ({ route, application }) => {
   application.submitted = true;
   application.stepStatuses = new Array<FormStepStatus>(4).fill(
-    FormStepStatus.Completed
+    FormStepStatus.Completed,
   );
   application.supportingDocuments.formStepStatus = FormStepStatus.Completed;
   if (application.supportingDocuments.form) {
@@ -577,7 +577,7 @@ const handleApplicationResource = async (context: MockContext) => {
         failure.body ?? {
           status: failure.status,
           title: 'Configured E2E failure',
-        }
+        },
       ),
     });
     return;
@@ -598,7 +598,7 @@ const handleApplicationResource = async (context: MockContext) => {
 
 export async function installTypeApprovalMockApi(
   page: Page,
-  state: ScenarioState
+  state: ScenarioState,
 ): Promise<void> {
   await page.route('**/api/**', async (route) => {
     const request = route.request();
@@ -611,7 +611,7 @@ export async function installTypeApprovalMockApi(
       pathname: url.pathname,
     };
     const staticRoute = STATIC_ROUTES.find((candidate) =>
-      candidate.matches(context)
+      candidate.matches(context),
     );
     if (staticRoute) {
       await staticRoute.handle(context);

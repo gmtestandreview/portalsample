@@ -4,11 +4,11 @@ import type { RequestForQuoteDetails } from '../../api/web-api-client';
 const NMIContactDetails = (
   props: Readonly<{
     quotationData: RequestForQuoteDetails | undefined;
-  }>
+  }>,
 ) => {
   const { quotationData } = props;
   const mailtoSubject = encodeURIComponent(
-    `Reviewing Quotation ID: ${quotationData?.quotationIdNum ?? ''}`
+    `Reviewing Quotation ID: ${quotationData?.quotationIdNum ?? ''}`,
   );
 
   return (

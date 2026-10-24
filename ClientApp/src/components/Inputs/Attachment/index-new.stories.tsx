@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { AttachmentDto } from '../../../api/web-api-client';
@@ -49,11 +50,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const EmptyUploader = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
@@ -88,9 +86,7 @@ export const DocumentsWithoutIds = meta.story({
       },
     },
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(canvas.getByText('manual.pdf')).toBeVisible();
     await expect(canvas.getByText('certificate.pdf')).toBeVisible();
   },

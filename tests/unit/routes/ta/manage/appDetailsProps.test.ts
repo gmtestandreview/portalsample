@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../../ClientApp/src/api/web-api-client',
+  import('../../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -32,29 +32,29 @@ vi.mock(
             setAuthToken: mocks.setAuthToken,
             getAppDetails: mocks.getAppDetails,
           };
-        }
+        },
       ),
     } satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: mocks.appLoggerError,
         verbose: mocks.appLoggerVerbose,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -90,119 +90,119 @@ describe(appDetailsProps, () => {
     expect(
       hidingFields.organisationAndContact.branchOrLocationName({
         organisationAndContact: {},
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.branchOrLocationName({
         organisationAndContact: { branchOrLocationName: 'Branch' },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.organisationAndContact.isManufacturerHide({
         organisationAndContact: { isManufacturer: YesNo.Yes },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.isManufacturerHide({
         organisationAndContact: { isManufacturer: YesNo.No },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.organisationAndContact.isManufacturerHide({
         organisationAndContact: { isManufacturer: undefined },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.principalInvoiceContactHide({
         organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.principalInvoiceContactHide({
         organisationAndContact: { isPrincipalInvoiceContact: YesNo.No },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.organisationAndContact.principalInvoiceContactHide({
         organisationAndContact: { isPrincipalInvoiceContact: undefined },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.isCurrentOrganisationHide({
         organisationAndContact: { isManufacturer: YesNo.No },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.isCurrentOrganisationHide({
         organisationAndContact: { isManufacturer: YesNo.Yes },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.organisationAndContact.contact.titleOther({
         organisationAndContact: { contact: { title: 'Other' } },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.organisationAndContact.contact.titleOther({
         organisationAndContact: { contact: { title: 'Dr' } },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.organisationAndContact.invoiceContact.titleOther({
         organisationAndContact: { invoiceContact: { title: 'Other' } },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.organisationAndContact.invoiceContact.titleOther({
         organisationAndContact: { invoiceContact: { title: 'Dr' } },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.applicationAndInstrument.isApplNewHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
         },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.applicationAndInstrument.isApplNewHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.applicationAndInstrument.isApplVariationHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.Variation,
         },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.applicationAndInstrument.isApplVariationHide({
         applicationAndInstrument: { patternApprovalType: undefined },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.applicationAndInstrument.isApplOtherHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         },
-      })
+      }),
     ).toBe(false);
     expect(
       hidingFields.applicationAndInstrument.isApplOtherHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
         },
-      })
+      }),
     ).toBe(true);
     expect(
       hidingFields.applicationAndInstrument.isApplOIMLHide({
         applicationAndInstrument: {
           newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
         },
-      })
+      }),
     ).toBe(false);
   });
 
@@ -211,12 +211,12 @@ describe(appDetailsProps, () => {
     const props = appDetailsProps('PA-2', accounts, instance);
 
     await expect(props.loadStepValues()).rejects.toThrow(
-      'Failed to load app details. Id: PA-2'
+      'Failed to load app details. Id: PA-2',
     );
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load app details',
       expect.any(Error),
-      { Id: 'PA-2' }
+      { Id: 'PA-2' },
     );
   });
 
@@ -224,14 +224,14 @@ describe(appDetailsProps, () => {
     const props = appDetailsProps('PA-3', emptyAccounts, instance);
 
     await expect(props.loadStepValues()).rejects.toThrow(
-      'There are no accounts available to load app details. Id: PA-3'
+      'There are no accounts available to load app details. Id: PA-3',
     );
     expect(mocks.appLoggerVerbose).toHaveBeenCalledWith(
       'There are no accounts available to load app details',
       {
         Id: 'PA-3',
         Accounts: emptyAccounts,
-      }
+      },
     );
     expect(mocks.getAppDetails).not.toHaveBeenCalled();
   });
@@ -244,7 +244,7 @@ describe(appDetailsProps, () => {
     mocks.getAppDetails.mockResolvedValueOnce(appDetails);
 
     await expect(
-      appDetailsProps('PA-4', accounts, instance).loadStepValues()
+      appDetailsProps('PA-4', accounts, instance).loadStepValues(),
     ).resolves.toEqual({
       formValues: {
         applicationDetails: { referenceId: 'PA-4' },

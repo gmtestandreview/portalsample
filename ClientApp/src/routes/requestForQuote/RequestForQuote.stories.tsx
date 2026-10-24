@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, waitFor } from 'storybook/test';
 import OrganisationAndContact from './organisationAndContact';
@@ -54,7 +55,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const OrganisationAndContactStep = meta.story({
   render: () => <OrganisationAndContact />,
 });
@@ -83,9 +83,7 @@ export const InstrumentAndRequestStep = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // The component renders a BlockUISpinner until both lookup setters have run, so
     // awaiting this heading is the settled-state contract: it cannot appear before
@@ -204,9 +202,7 @@ export const InstrumentAndRequestValidation = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Same settled-state contract as Instrument And Request Step: the heading is behind
     // the component's BlockUISpinner branch and appears only once /api/lookup resolves.

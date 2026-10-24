@@ -43,7 +43,7 @@ const createTelemetryService = () => {
       import.meta.env.DEV && import.meta.env.MODE !== 'production';
     if (!connString && isDevelopment) {
       console.warn(
-        '[AppInsights] Telemetry is DISABLED: missing connection string.'
+        '[AppInsights] Telemetry is DISABLED: missing connection string.',
       );
     }
     return { reactPlugin: null, appInsights: null };

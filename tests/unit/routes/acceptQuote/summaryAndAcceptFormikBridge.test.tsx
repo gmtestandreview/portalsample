@@ -49,12 +49,12 @@ function Harness({
           formValues.saveAndExit
             ? summaryAndAcceptSaveValidation
             : summaryAndAcceptSubmitValidation,
-          summaryAndAcceptOwnHidingFields
+          summaryAndAcceptOwnHidingFields,
         )(formValues)
       }
       onSubmit={(submitted) =>
         onSubmit(
-          removeHidden(submitted, submitted, summaryAndAcceptOwnHidingFields)
+          removeHidden(submitted, submitted, summaryAndAcceptOwnHidingFields),
         )
       }
     >
@@ -126,7 +126,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
           acceptanceOfQuote: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     const dispute = screen.getByLabelText(DISPUTE_LABEL);
@@ -158,7 +158,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
           acceptanceOfQuote: false,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
@@ -167,10 +167,10 @@ describe(SummaryAndAcceptFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(ACCEPT_MESSAGE)
+      screen.findByText(ACCEPT_MESSAGE),
     ).resolves.toBeInTheDocument();
     expect(
-      screen.getByText('Associated dispute is a required field')
+      screen.getByText('Associated dispute is a required field'),
     ).toBeInTheDocument();
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInvalid();
     expect(onSubmit).not.toHaveBeenCalled();
@@ -197,7 +197,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
           saveAndExit: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -219,20 +219,20 @@ describe(SummaryAndAcceptFormikBridge, () => {
           saveAndExit: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(/300/, { selector: '.invalid-feedback' })
+      screen.findByText(/300/, { selector: '.invalid-feedback' }),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('follows the hide rules from the form status', () => {
     const { unmount } = render(
-      <Harness values={{ associatedDisputes: YesNo.No }} />
+      <Harness values={{ associatedDisputes: YesNo.No }} />,
     );
 
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
@@ -243,7 +243,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
       <Harness
         withHiddenRules={false}
         values={{ associatedDisputes: YesNo.No }}
-      />
+      />,
     );
 
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();

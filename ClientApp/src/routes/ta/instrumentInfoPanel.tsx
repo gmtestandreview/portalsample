@@ -36,10 +36,10 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
 }) => {
   const { accounts, instance } = useMsal();
   const [resourceLinks, setResourceLinks] = React.useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [resourceText, setResourceText] = React.useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [isDataLoading, setIsDataLoading] = React.useState<boolean>(false);
 
@@ -48,12 +48,12 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
       setIsDataLoading(true);
       const client = new LookupClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const infoPanelContent = await client.getInfoPanelContent(
         selectedInstrumentTypeId,
-        selectedInstrumentCategoryId
+        selectedInstrumentCategoryId,
       );
       setResourceLinks(infoPanelContent[0]?.requirementsLink);
       setResourceText(infoPanelContent[0]?.requirements);

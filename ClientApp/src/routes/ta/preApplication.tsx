@@ -132,7 +132,7 @@ const PreApplication = () => {
                           'https://www.industry.gov.au/sites/default/files/2025-07/NMI-credit-application-form.pdf',
                           instance,
                           accounts,
-                          'NMI-credit-application-form.pdf'
+                          'NMI-credit-application-form.pdf',
                         );
                       }}
                     >

@@ -53,7 +53,7 @@ describe(CheckboxGroup, () => {
           legendClassName='contact-legend'
           className='contact-checkbox'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const fieldset = screen.getByTestId('fs-contactMethod');
@@ -61,23 +61,23 @@ describe(CheckboxGroup, () => {
     expect(fieldset).toHaveAccessibleName('Contact method');
     expect(fieldset).toHaveAttribute(
       'aria-describedby',
-      'contactMethod-validation-msg'
+      'contactMethod-validation-msg',
     );
     expect(screen.getByText('Select every method we can use')).toHaveAttribute(
       'id',
-      'help-contactMethod'
+      'help-contactMethod',
     );
     expect(screen.getAllByText('Choose at least one method')).toHaveLength(3);
     expect(screen.getAllByText('Choose at least one method')[0]).toHaveClass(
-      'form-validation-message'
+      'form-validation-message',
     );
     expect(screen.getByRole('group', { name: 'Contact method' })).toBe(
-      fieldset
+      fieldset,
     );
     expect(screen.getByText('Contact method')).toHaveClass('contact-legend');
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     expect(screen.getByText('Email').closest('.checkbox')).toHaveClass(
-      'contact-checkbox'
+      'contact-checkbox',
     );
     expect(screen.getByText('SMS')).toBeInTheDocument();
     expect(document.querySelector('.contact-container')).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe(CheckboxGroup, () => {
           displayHorizontally
           onChange={onChange}
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     const fieldset = screen.getByTestId('fs-contactMethod');
@@ -114,8 +114,8 @@ describe(CheckboxGroup, () => {
     await user.click(
       defined(
         within(row as HTMLElement).getAllByRole('checkbox')[0],
-        'first checkbox'
-      )
+        'first checkbox',
+      ),
     );
 
     expect(onChange).toHaveBeenCalledTimes(1);
@@ -129,11 +129,11 @@ describe(CheckboxGroup, () => {
           legend='Contact method'
           options={contactOptions}
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByTestId('fs-contactMethod')).not.toHaveAttribute(
-      'aria-describedby'
+      'aria-describedby',
     );
   });
 
@@ -148,7 +148,7 @@ describe(CheckboxGroup, () => {
           containerClassName='summary-container'
           className='summary-value'
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(screen.getByText('Contact method')).toBeInTheDocument();
@@ -165,7 +165,7 @@ describe(CheckboxGroup, () => {
           options={contactOptions}
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(container).not.toHaveTextContent('Contact method');
@@ -181,7 +181,7 @@ describe(CheckboxGroup, () => {
           options={contactOptions}
           isSummary
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     expect(container).not.toHaveTextContent('Contact method');

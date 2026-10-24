@@ -20,12 +20,12 @@ const loadAppDetails =
       try {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const instrumentAndRequest = await client.getAppDetails(
           id as string,
-          abortSignal
+          abortSignal,
         );
         const values: SinglePageFormValues<RequestForPatternApprovalAppDetails> =
           {
@@ -47,7 +47,7 @@ const loadAppDetails =
         Accounts: accounts,
       });
       throw new Error(
-        `There are no accounts available to load app details. Id: ${id}`
+        `There are no accounts available to load app details. Id: ${id}`,
       );
     }
   };
@@ -55,7 +55,7 @@ const loadAppDetails =
 const appDetailsProps = (
   id: string,
   accounts: AccountInfo[],
-  instance: IPublicClientApplication
+  instance: IPublicClientApplication,
 ): SinglePageFormProps<RequestForPatternApprovalAppDetails> => ({
   initialValues: {},
   loadStepValues: loadAppDetails(id, accounts, instance),

@@ -6,11 +6,11 @@ import ViewPdfButton from '@/components/Utilities/ViewPdfButton';
 const trackGAEventMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: trackGAEventMock,
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 describe(ViewPdfButton, () => {
@@ -26,15 +26,15 @@ describe(ViewPdfButton, () => {
         isLoaded
         getPdf={vi.fn()}
         gaLabel='Quote'
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('button', { name: /Download PDF/i })
+      screen.getByRole('button', { name: /Download PDF/i }),
     ).toBeInTheDocument();
     // fileSize and its label text share a single <span>, so check the full content together
     expect(
-      screen.getByText(/Requires Acrobat PDF reader - PDF file size/)
+      screen.getByText(/Requires Acrobat PDF reader - PDF file size/),
     ).toHaveTextContent('1.2 MB');
   });
 
@@ -45,13 +45,13 @@ describe(ViewPdfButton, () => {
         isLoaded={false}
         getPdf={vi.fn()}
         gaLabel='Quote'
-      />
+      />,
     );
 
     expect(screen.getByRole('alert')).toHaveTextContent('Loading data...');
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/Requires Acrobat PDF reader/)
+      screen.queryByText(/Requires Acrobat PDF reader/),
     ).not.toBeInTheDocument();
   });
 
@@ -66,7 +66,7 @@ describe(ViewPdfButton, () => {
         isLoaded
         getPdf={getPdf}
         gaLabel='QuoteLabel'
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Download/i }));
@@ -82,7 +82,7 @@ describe(ViewPdfButton, () => {
         isLoaded
         getPdf={vi.fn()}
         gaLabel='TestLabel'
-      />
+      />,
     );
 
     expect(screen.getByRole('button')).toBeInTheDocument();

@@ -29,7 +29,7 @@ const formattedDate = (dateToFormat: Date | string | undefined) =>
     : '';
 
 const isNonEmptyReferenceId = (
-  referenceId: string | undefined
+  referenceId: string | undefined,
 ): referenceId is string =>
   typeof referenceId === 'string' && referenceId.trim().length > 0;
 
@@ -73,7 +73,7 @@ const PaRequestItem = ({
     PaDashboardItemStatus.PaCompleted,
   ];
   const isViewApplicationVisible = viewApplicationVisibleStatuses.includes(
-    status as PaDashboardItemStatus
+    status as PaDashboardItemStatus,
   );
 
   const cardRef = useRef<HTMLDivElement>(null);
@@ -100,7 +100,7 @@ const PaRequestItem = ({
     try {
       const client = new ApplicationClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 
@@ -152,7 +152,7 @@ const PaRequestItem = ({
               onDelete()(e);
               trackGAEvent('Deleteapplication');
             },
-          }
+          },
         );
         break;
       case PaDashboardItemStatus.PaSubmitted:
@@ -170,7 +170,7 @@ const PaRequestItem = ({
             action: PaRequestAction.Messages,
             text: 'View messages',
             onClick: routeToMessages,
-          }
+          },
         );
         break;
       default:

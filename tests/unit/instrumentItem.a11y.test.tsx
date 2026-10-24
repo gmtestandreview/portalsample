@@ -124,12 +124,12 @@ describe('instrumentItem accessibility', () => {
             </ModalStateCtx.Provider>
           </AccountDispatchCtx.Provider>
         </AccountStateCtx.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const results = await axe.run(document.body);
     const target = results.incomplete.find(
-      (item) => item.id === 'aria-prohibited-attr'
+      (item) => item.id === 'aria-prohibited-attr',
     );
 
     expect(target).toBeUndefined();

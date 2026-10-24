@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import type { FileProgress } from '../../api/web-api-client';
@@ -42,11 +43,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Uploading = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
@@ -69,10 +67,7 @@ export const Uploading = meta.story({
 });
 
 export const CancelInvokesCallback = meta.story({
-  play: async ({
-    canvasElement,
-    args,
-  }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const cancel = canvas.getByRole('button', {
@@ -92,9 +87,7 @@ export const Empty = meta.story({
   args: {
     files: [],
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(

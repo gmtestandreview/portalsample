@@ -25,20 +25,20 @@ describe(PortalStoryRouter, () => {
           { path: '/complete/:reference', element: <Destination /> },
         ]}
         observeLocation={(location) => observations.push(location)}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('link', { name: 'Complete request' }));
 
     await expect(
-      screen.findByText('Destination reference: returned-42')
+      screen.findByText('Destination reference: returned-42'),
     ).resolves.toBeVisible();
 
     await waitFor(() =>
       expect(observations).toContainEqual({
         pathname: '/complete/returned-42',
         params: { reference: 'returned-42' },
-      })
+      }),
     );
   });
 
@@ -53,7 +53,7 @@ describe(PortalStoryRouter, () => {
         routePath='/request/:requestId'
         destinationRoutes={[]}
         observeLocation={observeLocation}
-      />
+      />,
     );
 
     expect(screen.getByText('Current value: first')).toBeVisible();
@@ -62,7 +62,7 @@ describe(PortalStoryRouter, () => {
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/request/123',
         params: { requestId: '123' },
-      })
+      }),
     );
 
     view.rerender(
@@ -72,11 +72,11 @@ describe(PortalStoryRouter, () => {
         routePath='/request/:requestId'
         destinationRoutes={[]}
         observeLocation={observeLocation}
-      />
+      />,
     );
 
     await expect(
-      screen.findByText('Current value: second')
+      screen.findByText('Current value: second'),
     ).resolves.toBeVisible();
     expect(observeLocation).not.toHaveBeenCalledWith({
       pathname: '/request/999',
@@ -99,20 +99,20 @@ describe(PortalStoryRouter, () => {
         routePath='*'
         destinationRoutes={[]}
         observeLocation={observeLocation}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByRole('link', { name: 'Open unmatched path' }));
 
     await expect(
-      screen.findByText('Wildcard story remains mounted')
+      screen.findByText('Wildcard story remains mounted'),
     ).resolves.toBeVisible();
 
     await waitFor(() =>
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/unmatched/path',
         params: { '*': 'unmatched/path' },
-      })
+      }),
     );
   });
 });

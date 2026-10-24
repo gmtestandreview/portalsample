@@ -5,7 +5,7 @@ import CustomPagination from '@/components/Pagination';
 
 const originalInnerWidth = Object.getOwnPropertyDescriptor(
   globalThis,
-  'innerWidth'
+  'innerWidth',
 );
 
 const setViewportWidth = (width: number) => {
@@ -30,7 +30,11 @@ describe(CustomPagination, () => {
 
   it('hides the navigation when there is only one page', () => {
     render(
-      <CustomPagination currentPage={1} totalPages={1} onPageChange={vi.fn()} />
+      <CustomPagination
+        currentPage={1}
+        totalPages={1}
+        onPageChange={vi.fn()}
+      />,
     );
 
     const nav = screen.getByRole('navigation', { hidden: true });
@@ -48,7 +52,7 @@ describe(CustomPagination, () => {
         currentPage={6}
         totalPages={20}
         onPageChange={onPageChange}
-      />
+      />,
     );
 
     await user.click(screen.getByLabelText('Page 7'));
@@ -73,7 +77,7 @@ describe(CustomPagination, () => {
         currentPage={1}
         totalPages={3}
         onPageChange={onPageChange}
-      />
+      />,
     );
     await user.click(screen.getByTitle('Go back a page'));
     firstPage.unmount();
@@ -83,7 +87,7 @@ describe(CustomPagination, () => {
         currentPage={3}
         totalPages={3}
         onPageChange={onPageChange}
-      />
+      />,
     );
     await user.click(screen.getByTitle('Go forward a page'));
 
@@ -96,7 +100,7 @@ describe(CustomPagination, () => {
         currentPage={2}
         totalPages={20}
         onPageChange={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByLabelText('Page 1')).toBeInTheDocument();
@@ -108,7 +112,7 @@ describe(CustomPagination, () => {
         currentPage={19}
         totalPages={20}
         onPageChange={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.queryByLabelText('Page 10')).not.toBeInTheDocument();
@@ -125,7 +129,7 @@ describe(CustomPagination, () => {
         currentPage={6}
         totalPages={20}
         onPageChange={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByLabelText('Page 1')).toBeInTheDocument();
@@ -162,7 +166,7 @@ describe(CustomPagination, () => {
           currentPage={6}
           totalPages={20}
           onPageChange={vi.fn()}
-        />
+        />,
       );
 
       visibleLabels.forEach((label) => {
@@ -171,6 +175,6 @@ describe(CustomPagination, () => {
       hiddenLabels.forEach((label) => {
         expect(screen.queryByLabelText(label)).not.toBeInTheDocument();
       });
-    }
+    },
   );
 });

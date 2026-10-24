@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => {
 // ─── module mocks ─────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -36,25 +36,25 @@ vi.mock(
         inProgress: 'none',
       }),
       useAccount: () => ({ homeAccountId: 'mock-id' }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
         isLoading: false,
         details: { homeAccountId: 'mock-id' },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 // AcceptQuoteClient, AccountsClient, Title, and State are all consumed by the
 // component or its children. Title must be a real-shaped object so that
 // ContactDetailsInput's getTitles() can iterate over it without crashing.
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       AcceptQuoteClient: class {
@@ -84,15 +84,15 @@ vi.mock(
         SA: 'SA',
         WA: 'WA',
       },
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // ─── render helper ────────────────────────────────────────────────────────────
@@ -168,14 +168,14 @@ describe(DeliveryAndReturn, () => {
       renderComponent();
       await waitFor(() =>
         expect(
-          screen.getByText(/does not require the delivery or return/i)
-        ).toBeInTheDocument()
+          screen.getByText(/does not require the delivery or return/i),
+        ).toBeInTheDocument(),
       );
 
       expect(
         screen.queryByRole('heading', {
           name: /Instrument\/artefact delivery/i,
-        })
+        }),
       ).not.toBeInTheDocument();
 
       // Drain setIsLoading(false) and any Formik re-renders still in the
@@ -190,14 +190,14 @@ describe(DeliveryAndReturn, () => {
       renderComponent({ isSummary: true });
       await waitFor(() =>
         expect(
-          screen.getByText(/does not require the delivery or return/i)
-        ).toBeInTheDocument()
+          screen.getByText(/does not require the delivery or return/i),
+        ).toBeInTheDocument(),
       );
 
       expect(
         screen.queryByRole('heading', {
           name: /Instrument\/artefact delivery/i,
-        })
+        }),
       ).not.toBeInTheDocument();
 
       await act(async () => {});
@@ -213,7 +213,7 @@ describe(DeliveryAndReturn, () => {
       });
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument()
+        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
       );
       await act(async () => {});
     });
@@ -229,7 +229,7 @@ describe(DeliveryAndReturn, () => {
       });
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument()
+        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
       );
       await act(async () => {});
     });
@@ -241,7 +241,7 @@ describe(DeliveryAndReturn, () => {
       });
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(screen.getByText(/Melbourne VIC 3000/)).toBeInTheDocument()
+        expect(screen.getByText(/Melbourne VIC 3000/)).toBeInTheDocument(),
       );
       await act(async () => {});
     });
@@ -250,14 +250,14 @@ describe(DeliveryAndReturn, () => {
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id')
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id'),
       );
       await act(async () => {});
 
       expect(
         screen.queryByRole('heading', {
           name: /Instrument\/artefact return address/i,
-        })
+        }),
       ).not.toBeInTheDocument();
     });
 
@@ -268,7 +268,7 @@ describe(DeliveryAndReturn, () => {
       });
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(screen.getByText(/Brisbane QLD 4000/)).toBeInTheDocument()
+        expect(screen.getByText(/Brisbane QLD 4000/)).toBeInTheDocument(),
       );
       await act(async () => {});
     });
@@ -282,12 +282,12 @@ describe(DeliveryAndReturn, () => {
       });
       const { rerender } = render(makeTree('q-1'));
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1')
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1'),
       );
 
       rerender(makeTree('q-2'));
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2')
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2'),
       );
 
       expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(2);
@@ -303,7 +303,7 @@ describe(DeliveryAndReturn, () => {
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id')
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id'),
       );
       // Drain queued state updates (setIsLoading(false) from catch block,
       // plus any Formik re-renders) so they don't fire outside act().

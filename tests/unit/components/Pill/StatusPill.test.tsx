@@ -14,7 +14,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.QuoteAvailable} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAvailable)
+          screen.getByText(DashboardItemStatus.QuoteAvailable),
         ).toBeInTheDocument();
       });
     });
@@ -23,7 +23,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.QuoteAccepted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAccepted)
+          screen.getByText(DashboardItemStatus.QuoteAccepted),
         ).toBeInTheDocument();
       });
     });
@@ -32,7 +32,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.QuoteDrafted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteDrafted)
+          screen.getByText(DashboardItemStatus.QuoteDrafted),
         ).toBeInTheDocument();
       });
     });
@@ -41,7 +41,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.QuoteDeclined} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteDeclined)
+          screen.getByText(DashboardItemStatus.QuoteDeclined),
         ).toBeInTheDocument();
       });
     });
@@ -50,7 +50,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.QuoteExpired} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteExpired)
+          screen.getByText(DashboardItemStatus.QuoteExpired),
         ).toBeInTheDocument();
       });
     });
@@ -59,7 +59,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.QuoteSubmitted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteSubmitted)
+          screen.getByText(DashboardItemStatus.QuoteSubmitted),
         ).toBeInTheDocument();
       });
     });
@@ -68,7 +68,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.ReportIssued} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportIssued)
+          screen.getByText(DashboardItemStatus.ReportIssued),
         ).toBeInTheDocument();
       });
     });
@@ -77,7 +77,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.ReportInProgress} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportInProgress)
+          screen.getByText(DashboardItemStatus.ReportInProgress),
         ).toBeInTheDocument();
       });
     });
@@ -86,7 +86,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.ReportWithdrawn} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportWithdrawn)
+          screen.getByText(DashboardItemStatus.ReportWithdrawn),
         ).toBeInTheDocument();
       });
     });
@@ -95,7 +95,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={DashboardItemStatus.ArtifactReceived} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ArtifactReceived)
+          screen.getByText(DashboardItemStatus.ArtifactReceived),
         ).toBeInTheDocument();
       });
     });
@@ -106,7 +106,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.QuoteAccepted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAccepted)
+          screen.getByText(DashboardItemStatus.QuoteAccepted),
         ).toBeInTheDocument();
       });
     });
@@ -115,7 +115,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.QuoteAvailable} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteAvailable)
+          screen.getByText(DashboardItemStatus.QuoteAvailable),
         ).toBeInTheDocument();
       });
     });
@@ -124,7 +124,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.QuoteDeclined} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteDeclined)
+          screen.getByText(DashboardItemStatus.QuoteDeclined),
         ).toBeInTheDocument();
       });
     });
@@ -133,7 +133,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.QuoteExpired} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteExpired)
+          screen.getByText(DashboardItemStatus.QuoteExpired),
         ).toBeInTheDocument();
       });
     });
@@ -142,7 +142,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.QuoteSubmitted} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.QuoteSubmitted)
+          screen.getByText(DashboardItemStatus.QuoteSubmitted),
         ).toBeInTheDocument();
       });
     });
@@ -151,7 +151,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.ReportIssued} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportIssued)
+          screen.getByText(DashboardItemStatus.ReportIssued),
         ).toBeInTheDocument();
       });
     });
@@ -160,7 +160,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.ReportInProgress} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportInProgress)
+          screen.getByText(DashboardItemStatus.ReportInProgress),
         ).toBeInTheDocument();
       });
     });
@@ -169,7 +169,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.ReportWithdrawn} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ReportWithdrawn)
+          screen.getByText(DashboardItemStatus.ReportWithdrawn),
         ).toBeInTheDocument();
       });
     });
@@ -178,7 +178,7 @@ describe(StatusPill, () => {
       render(<StatusPill status={QuoteStatus.ArtifactReceived} />);
       await waitFor(() => {
         expect(
-          screen.getByText(DashboardItemStatus.ArtifactReceived)
+          screen.getByText(DashboardItemStatus.ArtifactReceived),
         ).toBeInTheDocument();
       });
     });

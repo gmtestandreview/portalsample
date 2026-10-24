@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import AccountDetails from './accountDetails';
@@ -40,11 +41,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const OrganisationDetails = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const tradingName = canvas.getByLabelText(
       'Business or Trading name (optional)',

@@ -65,7 +65,7 @@ describe(RhfRadioButtonGroup, () => {
     render(
       <Harness defaultValue='open'>
         <RhfRadioButtonGroup name='status' legend='Status' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByLabelText('Open')).toBeChecked();
@@ -82,7 +82,7 @@ describe(RhfRadioButtonGroup, () => {
           options={options}
           onChange={onChange}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByLabelText('Open'));
@@ -103,7 +103,7 @@ describe(RhfRadioButtonGroup, () => {
             { label: 'No', value: false, id: 'agree-no' },
           ]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByLabelText('No')).toBeChecked();
@@ -123,7 +123,7 @@ describe(RhfRadioButtonGroup, () => {
           options={options}
           disabled
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByLabelText('All')).toBeDisabled();
@@ -163,11 +163,11 @@ describe(RhfRadioButtonGroup, () => {
 
     await expect(screen.findByText('Choose a status')).resolves.toHaveAttribute(
       'id',
-      'q-status-validation-msg'
+      'q-status-validation-msg',
     );
     expect(screen.getByTestId('fs-q-status')).toHaveAttribute(
       'aria-describedby',
-      'q-status-validation-msg'
+      'q-status-validation-msg',
     );
   });
 
@@ -180,7 +180,7 @@ describe(RhfRadioButtonGroup, () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Open')).toBeInTheDocument();
@@ -196,7 +196,7 @@ describe(RhfRadioButtonGroup, () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('Status')).not.toBeInTheDocument();
@@ -219,14 +219,14 @@ describe(RhfRadioButtonGroup, () => {
             { label: 'Open', value: 'open', id: 'opt-open' },
           ]}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Every status')).toBeInTheDocument();
     expect(screen.getByText('All sub-field')).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: /^All/ })).toHaveAttribute(
       'aria-controls',
-      'opt-all-sub-field'
+      'opt-all-sub-field',
     );
     expect(screen.getByLabelText('Open')).not.toHaveAttribute('aria-controls');
   });
@@ -240,7 +240,7 @@ describe(RhfRadioButtonGroup, () => {
           options={options}
           displayHorizontally
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByLabelText('All').closest('.row')).not.toBeNull();
@@ -258,7 +258,7 @@ describe(RhfRadioButtonGroup, () => {
           inlineHelpTitle='Need help?'
           options={options}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Need help?')).toBeInTheDocument();
@@ -273,7 +273,7 @@ describe(RhfRadioButtonGroup, () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -344,7 +344,7 @@ describe(RhfRadioButtonGroup, () => {
       if (inlineHelp) {
         expect(screen.getByText(inlineHelp)).toHaveAttribute(
           'id',
-          'help-q-status'
+          'help-q-status',
         );
       }
 
@@ -352,7 +352,7 @@ describe(RhfRadioButtonGroup, () => {
 
       if (required) {
         await expect(
-          screen.findByText('Choose a status')
+          screen.findByText('Choose a status'),
         ).resolves.toBeInTheDocument();
       }
 
@@ -363,6 +363,6 @@ describe(RhfRadioButtonGroup, () => {
         expect(radio).not.toHaveAttribute('aria-describedby');
         expect(radio).not.toHaveAttribute('aria-invalid');
       });
-    }
+    },
   );
 });

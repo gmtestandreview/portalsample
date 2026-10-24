@@ -140,7 +140,7 @@ const fetchRequestsByTab = async ({
         filterSearchText,
         currentPage,
         pageSize,
-        signal
+        signal,
       );
     case DashboardTab.Instruments:
       return client.getDashboardArtefactsByPortalID(
@@ -151,7 +151,7 @@ const fetchRequestsByTab = async ({
         filterSearchText,
         currentPage,
         pageSize,
-        signal
+        signal,
       );
     default:
       return client.getDashboardDraftsByPortalID(
@@ -162,13 +162,13 @@ const fetchRequestsByTab = async ({
         filterSearchText,
         currentPage,
         pageSize,
-        signal
+        signal,
       );
   }
 };
 
 const checkAcceptedQuoteStatus = (
-  requestsResponse: PagedListOfDashboardItemDto
+  requestsResponse: PagedListOfDashboardItemDto,
 ) => {
   const newlyAcceptedQuoteId =
     SessionStorageCache().getItem('accepted-quote-id');
@@ -180,7 +180,7 @@ const checkAcceptedQuoteStatus = (
     }
 
     const requestResponse = items.find(
-      (x) => x.referenceId === newlyAcceptedQuoteId
+      (x) => x.referenceId === newlyAcceptedQuoteId,
     );
     if (requestResponse?.status === DashboardItemStatus.QuoteAvailable) {
       requestResponse.status = DashboardItemStatus.QuoteAccepted;
@@ -190,14 +190,14 @@ const checkAcceptedQuoteStatus = (
       requestResponse.lastUpdated = new Date();
 
       const index = items.findIndex(
-        (x) => x.referenceId === newlyAcceptedQuoteId
+        (x) => x.referenceId === newlyAcceptedQuoteId,
       );
       items.unshift(...items.splice(index, 1));
 
       // Non-null assertion required: property is typed nullable but guaranteed non-null here
       SessionStorageCache().setItem(
         requestResponse.referenceId!,
-        'view-quote-id'
+        'view-quote-id',
       );
     }
     SessionStorageCache().removeItem('accepted-quote-id');
@@ -213,7 +213,7 @@ const handleDashboardLoadError = (
       forbidden: boolean;
       noThirdPartyAccess: boolean;
     }>
-  >
+  >,
 ) => {
   const problemDetails = error as ProblemDetails;
   if ((problemDetails.status ?? 0) > 0) {
@@ -250,14 +250,14 @@ const applyErrorNotifications = (
       forbidden: boolean;
       noThirdPartyAccess: boolean;
     }>
-  >
+  >,
 ) => {
   if (forbidden) {
     setDashboardNotification(DashBoardNotifications.getForbiddenNotification());
   }
   if (noThirdPartyAccess) {
     setDashboardNotification(
-      DashBoardNotifications.getThirdPartyAccessNotification(orgName ?? '')
+      DashBoardNotifications.getThirdPartyAccessNotification(orgName ?? ''),
     );
     if (accountDispatch) {
       accountDispatch.setTargetOrganisation(abn ?? '', organisation ?? '');
@@ -293,7 +293,7 @@ const Dashboard = () => {
     () =>
       accountDetails?.userProfile
         ? mapToUserProfile(accountDetails.userProfile)
-        : undefined
+        : undefined,
   );
   const dashboardMessage = setNotification();
   const dashboardInfoMessage = setInfoNotification();
@@ -309,11 +309,11 @@ const Dashboard = () => {
 
   // Paging
   const [currentPage, setCurrentPage] = useState(
-    initialFilters?.filterCurrentPage ?? 1
+    initialFilters?.filterCurrentPage ?? 1,
   );
   const [totalPages, setTotalPages] = useState(1);
   const [activeTab, setActiveTab] = useState(
-    initialFilters?.filterActiveTab ?? DashboardTab.Drafts
+    initialFilters?.filterActiveTab ?? DashboardTab.Drafts,
   );
   const [totalCount, setTotalCount] = useState(0);
   const searchPlaceholder = useMemo(
@@ -321,11 +321,11 @@ const Dashboard = () => {
       activeTab === DashboardTab.Instruments
         ? 'Search by instrument/artefact...'
         : DEFAULT_SEARCH_PLACEHOLDER,
-    [activeTab]
+    [activeTab],
   );
 
   const onShowBranchSelectorClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
     e.preventDefault();
     modalDispatch?.setShowBranchSelector(true);
@@ -435,7 +435,7 @@ const Dashboard = () => {
 
   const debouncedSearchText = useDebounce(
     initialFilters?.filterSearchText,
-    300
+    300,
   );
   const stableFilters = useMemo(
     () => ({
@@ -453,12 +453,12 @@ const Dashboard = () => {
       initialFilters?.filterStatusType,
       initialFilters?.filterSortOrder,
       debouncedSearchText,
-    ]
+    ],
   );
 
   const resolveFilterParams = (
     filterYearType: string | undefined,
-    filterStatusType: string | undefined
+    filterStatusType: string | undefined,
   ) => ({
     actualYear:
       filterYearType === defaultFilter.filterYearType
@@ -486,17 +486,17 @@ const Dashboard = () => {
         });
         const client = new DashboardClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
-          showBranchSelector || showRFQDeleteModal || !userAcceptedTermsOfUse
+          showBranchSelector || showRFQDeleteModal || !userAcceptedTermsOfUse,
         );
         setIsDataLoading(true);
         const { actualYear, actualStatus } = resolveFilterParams(
           stableFilters.filterYearType,
-          stableFilters.filterStatusType
+          stableFilters.filterStatusType,
         );
         // SEC-010 (IDOR): Verified by backend team 2026-06-04. Finding identified in
         // pentest prior to go-live and remediated before production deployment. Server-side
@@ -517,7 +517,7 @@ const Dashboard = () => {
         checkAcceptedQuoteStatus(requestsResponse);
         setRequests(requestsResponse.items ?? []);
         setCurrentPage(
-          requestsResponse.currentPage ?? defaultFilter.filterCurrentPage
+          requestsResponse.currentPage ?? defaultFilter.filterCurrentPage,
         );
         setTotalPages(requestsResponse.totalPages ?? 0);
         setTotalCount(requestsResponse.totalCount ?? 0);
@@ -555,7 +555,7 @@ const Dashboard = () => {
       accountState?.details?.abn,
       accountState?.details?.organisation,
       accountDispatch,
-      setErrorStatus
+      setErrorStatus,
     );
   }, [
     errorStatus.forbidden,
@@ -602,7 +602,7 @@ const Dashboard = () => {
 
   const showRequestList = (
     trequests: DashboardItemDto[],
-    userAcceptedTermsOfUse?: boolean
+    userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
       {requests !== undefined &&
@@ -621,7 +621,7 @@ const Dashboard = () => {
 
   const showInstrumentList = (
     trequests: DashboardItemDto[],
-    userAcceptedTermsOfUse?: boolean
+    userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
       {requests !== undefined &&
@@ -654,7 +654,7 @@ const Dashboard = () => {
             <div className='dashboard-items mb-5'>
               {showRequestList(
                 requests,
-                accountDetails?.userAcceptedTermsOfUse
+                accountDetails?.userAcceptedTermsOfUse,
               )}
             </div>
             <CustomPagination
@@ -689,7 +689,7 @@ const Dashboard = () => {
             <div className='dashboard-items mb-5'>
               {showInstrumentList(
                 requests,
-                accountDetails?.userAcceptedTermsOfUse
+                accountDetails?.userAcceptedTermsOfUse,
               )}
             </div>
             <CustomPagination

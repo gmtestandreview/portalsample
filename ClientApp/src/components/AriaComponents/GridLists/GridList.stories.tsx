@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { GridList, GridListItem } from './GridList';

@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { linkTo } from '@storybook/addon-links';
 import { expect } from 'storybook/test';
@@ -16,7 +17,6 @@ const meta = preview.meta({
     },
   },
 });
-
 
 export const Default = meta.story({
   args: {
@@ -54,9 +54,7 @@ export const CssCheck = meta.story({
   args: {
     children: 'Submit',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: /submit/i });
 
     // In jsdom, external CSS files don't affect computed styles.

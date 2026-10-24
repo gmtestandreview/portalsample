@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { Button, Alert } from 'react-bootstrap';
@@ -60,16 +61,13 @@ const meta = preview.meta({
   parameters: { layout: 'padded' },
 });
 
-
 export const NoError = meta.story({
   render: () => (
     <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
       <WorkingComponent />
     </ErrorBoundary>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('alert')).toHaveTextContent('All good!');

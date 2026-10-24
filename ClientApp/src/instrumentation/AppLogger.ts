@@ -21,7 +21,7 @@ class AppLogger {
   static trace(
     message: string,
     severityLevel: SeverityLevel,
-    properties?: any
+    properties?: any,
   ) {
     const obj = {
       message,

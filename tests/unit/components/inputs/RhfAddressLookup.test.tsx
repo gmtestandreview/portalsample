@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useAccount: () => mocks.account,
@@ -30,16 +30,16 @@ vi.mock(
         inProgress: mocks.inProgress,
         instance: { acquireTokenSilent: mocks.acquireTokenSilent },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/api/web-api-client',
+  import('@/api/web-api-client'),
   async (importOriginal) =>
     ({
       ...(await importOriginal<typeof WebApiClientModule>()),
       AddressClient,
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 const match = {
@@ -67,13 +67,13 @@ const renderLookup = (
     searchText: '',
     isManuallyEntered: false,
   },
-  props: Record<string, unknown> = {}
+  props: Record<string, unknown> = {},
 ) =>
   render(
     <FieldHarness field='address' defaultValue={address}>
       <RhfAddressLookup name='address' label='Postal address' {...props} />
       <TouchedProbe />
-    </FieldHarness>
+    </FieldHarness>,
   );
 
 const formValue = () =>
@@ -85,7 +85,7 @@ const formValue = () =>
 const search = (text: string) =>
   userEvent.type(
     screen.getByRole('combobox', { name: 'Postal address' }),
-    text
+    text,
   );
 
 const resetMocks = (matches: unknown = [match]) => {
@@ -102,12 +102,12 @@ describe('rhfAddressLookup selection', () => {
     resetMocks();
     renderLookup(
       { id: 7, type: 'postal', timeStamp: 'stamp', searchText: '' },
-      { maxResults: 1 }
+      { maxResults: 1 },
     );
 
     await search('barton');
     await userEvent.click(
-      await screen.findByRole('option', { name: /1 National Circuit/ })
+      await screen.findByRole('option', { name: /1 National Circuit/ }),
     );
 
     await waitFor(() =>
@@ -123,13 +123,13 @@ describe('rhfAddressLookup selection', () => {
         postcode: '2600',
         isManuallyEntered: false,
         searchText: match.displayText,
-      })
+      }),
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('unit-token');
     expect(mocks.addressSearch).toHaveBeenCalledWith(
       'barton',
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -141,7 +141,7 @@ describe('rhfAddressLookup selection', () => {
 
     await userEvent.type(
       screen.getByRole('combobox', { name: 'Address' }),
-      'sparse'
+      'sparse',
     );
     await userEvent.click((await screen.findAllByRole('option'))[0]!);
 
@@ -152,7 +152,7 @@ describe('rhfAddressLookup selection', () => {
         suburb: '',
         postcode: '',
         searchText: '',
-      })
+      }),
     );
   });
 
@@ -166,7 +166,7 @@ describe('rhfAddressLookup selection', () => {
     });
 
     await userEvent.clear(
-      screen.getByRole('combobox', { name: 'Postal address' })
+      screen.getByRole('combobox', { name: 'Postal address' }),
     );
 
     await waitFor(() => expect(formValue()['line1']).toBe(''));
@@ -192,7 +192,7 @@ describe('rhfAddressLookup results', () => {
     await search('query');
 
     await expect(
-      screen.findByRole('option', { name: /No matches found/ })
+      screen.findByRole('option', { name: /No matches found/ }),
     ).resolves.toBeInTheDocument();
     expect(mocks.addressSearch).not.toHaveBeenCalled();
   });
@@ -205,7 +205,7 @@ describe('rhfAddressLookup results', () => {
     await search('query');
 
     await expect(
-      screen.findByRole('option', { name: /No matches found/ })
+      screen.findByRole('option', { name: /No matches found/ }),
     ).resolves.toBeInTheDocument();
   });
 
@@ -217,7 +217,7 @@ describe('rhfAddressLookup results', () => {
     await search('query');
 
     await expect(
-      screen.findByRole('option', { name: /No matches found/ })
+      screen.findByRole('option', { name: /No matches found/ }),
     ).resolves.toBeInTheDocument();
   });
 
@@ -233,11 +233,11 @@ describe('rhfAddressLookup results', () => {
     await waitFor(() =>
       expect(logError).toHaveBeenCalledWith(
         'Failed to execute address search',
-        failure
-      )
+        failure,
+      ),
     );
     logError.mock.calls.forEach(([message]) =>
-      expect(String(message)).not.toContain('Secret')
+      expect(String(message)).not.toContain('Secret'),
     );
     logError.mockRestore();
   });
@@ -250,7 +250,7 @@ describe('rhfAddressLookup results', () => {
     await search('query');
 
     await expect(
-      screen.findByRole('option', { name: /currently unavailable/ })
+      screen.findByRole('option', { name: /currently unavailable/ }),
     ).resolves.toBeInTheDocument();
   });
 
@@ -276,23 +276,23 @@ describe('rhfAddressLookup manual entry', () => {
     resetMocks();
     renderLookup(
       { searchText: 'Existing', isManuallyEntered: false },
-      { disabled: true, inlineHelp: 'Help' }
+      { disabled: true, inlineHelp: 'Help' },
     );
     await search('ab');
     await userEvent.tab();
     await waitFor(() =>
-      expect(screen.getByTestId('touched')).toHaveTextContent('searchText')
+      expect(screen.getByTestId('touched')).toHaveTextContent('searchText'),
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: /Enter it manually/ })
+      screen.getByRole('button', { name: /Enter it manually/ }),
     );
 
     expect(
-      screen.getByRole('group', { name: /Postal address.*manually/ })
+      screen.getByRole('group', { name: /Postal address.*manually/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('textbox', { name: 'Address line 1' })
+      screen.getByRole('textbox', { name: 'Address line 1' }),
     ).toBeDisabled();
     expect(formValue()).toMatchObject({
       isManuallyEntered: true,
@@ -301,11 +301,11 @@ describe('rhfAddressLookup manual entry', () => {
     expect(screen.getByTestId('touched')).not.toHaveTextContent('searchText');
 
     await userEvent.click(
-      screen.getByRole('button', { name: /Find an address/ })
+      screen.getByRole('button', { name: /Find an address/ }),
     );
 
     expect(
-      screen.getByRole('combobox', { name: 'Postal address' })
+      screen.getByRole('combobox', { name: 'Postal address' }),
     ).toHaveValue('Existing');
     expect(formValue()['isManuallyEntered']).toBe(false);
   });
@@ -316,11 +316,11 @@ describe('rhfAddressLookup manual entry', () => {
 
     await search('missing');
     await userEvent.click(
-      await screen.findByRole('option', { name: /No matches found/ })
+      await screen.findByRole('option', { name: /No matches found/ }),
     );
 
     expect(
-      screen.getByRole('group', { name: /Postal address.*manually/ })
+      screen.getByRole('group', { name: /Postal address.*manually/ }),
     ).toBeInTheDocument();
     expect(formValue()).toMatchObject({
       id: 1,
@@ -341,12 +341,12 @@ describe('rhfAddressLookup summary', () => {
         state: 'ACT',
         postcode: '2600',
       },
-      { isSummary: true }
+      { isSummary: true },
     );
 
     expect(screen.getByText('Postal address')).toBeInTheDocument();
     expect(document.body).toHaveTextContent(
-      /1 National Circuit.*Barton ACT 2600/s
+      /1 National Circuit.*Barton ACT 2600/s,
     );
   });
 
@@ -355,7 +355,7 @@ describe('rhfAddressLookup summary', () => {
     render(
       <FieldHarness field='address' defaultValue={undefined}>
         <RhfAddressLookup name='address' label='Postal address' isSummary />
-      </FieldHarness>
+      </FieldHarness>,
     );
 
     expect(screen.getByText('-')).toBeInTheDocument();

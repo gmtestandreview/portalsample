@@ -44,31 +44,31 @@ const selectNamed = (name: string) =>
 const checkboxGroupNamed = (name: string) =>
   defined(captured.checkboxGroups.get(name), `checkbox group "${name}"`);
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
 vi.mock(
-  '../../../../ClientApp/src/components/forms/HidableField',
+  import('../../../../ClientApp/src/components/forms/HidableField'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule70>
+    }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/SelectInput',
+  import('../../../../ClientApp/src/components/Inputs/SelectInput'),
   () =>
     ({
       default: ({
@@ -104,11 +104,11 @@ vi.mock(
           </select>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule131>
+    }) satisfies __ExactMockModule<__TestMockModule131>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/CheckboxGroup',
+  import('../../../../ClientApp/src/components/Inputs/CheckboxGroup'),
   () =>
     ({
       default: ({
@@ -124,11 +124,11 @@ vi.mock(
           <div data-testid={`checkboxes-${name}`} data-count={options.length} />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule132>
+    }) satisfies __ExactMockModule<__TestMockModule132>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/RadioButton',
+  import('../../../../ClientApp/src/components/Inputs/RadioButton'),
   () =>
     ({
       default: ({
@@ -156,41 +156,41 @@ vi.mock(
           {label}
         </label>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule133>
+    }) satisfies __ExactMockModule<__TestMockModule133>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/TextInput',
+  import('../../../../ClientApp/src/components/Inputs/TextInput'),
   () =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`text-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/TextAreaInput',
+  import('../../../../ClientApp/src/components/Inputs/TextAreaInput'),
   () =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`textarea-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule134>
+    }) satisfies __ExactMockModule<__TestMockModule134>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/CertificateNumberLookup',
+  import('../../../../ClientApp/src/components/Inputs/CertificateNumberLookup'),
   () =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`certificate-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule135>
+    }) satisfies __ExactMockModule<__TestMockModule135>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
+  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
   () =>
     ({
       default: ({
@@ -207,11 +207,11 @@ vi.mock(
 
         return <div data-testid='instrument-info-panel' />;
       },
-    }) satisfies __ExactMockModule<__TestMockModule136>
+    }) satisfies __ExactMockModule<__TestMockModule136>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/SummaryDisplay',
+  import('../../../../ClientApp/src/components/SummaryDisplay'),
   () =>
     ({
       default: ({
@@ -227,7 +227,7 @@ vi.mock(
           {value}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule137>
+    }) satisfies __ExactMockModule<__TestMockModule137>,
 );
 
 const categoryLookup = () => [
@@ -278,7 +278,7 @@ const renderStep = async ({
       }}
     >
       <ApplicationAndInstrument name={name} isSummary={isSummary} />
-    </FormikWrapper>
+    </FormikWrapper>,
   );
 
   await act(async () => {
@@ -303,10 +303,10 @@ describe('application and instrument step', () => {
       await renderStep();
 
       expect(
-        screen.getByLabelText('New Certificate of Approval (CoA)')
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();
       expect(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       ).not.toBeChecked();
       expect(screen.getByLabelText('Other options')).not.toBeChecked();
     });
@@ -317,7 +317,7 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(screen.getByText('Loading data...')).toBeInTheDocument()
+        expect(screen.getByText('Loading data...')).toBeInTheDocument(),
       );
     });
 
@@ -329,7 +329,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       ).toBeChecked();
     });
 
@@ -349,7 +349,7 @@ describe('application and instrument step', () => {
 
       expect(screen.getByLabelText('Other options')).not.toBeChecked();
       expect(
-        screen.getByLabelText('New Certificate of Approval (CoA)')
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();
     });
 
@@ -366,7 +366,7 @@ describe('application and instrument step', () => {
       });
 
       await user.click(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       );
 
       // Switching type changes which fields even apply, so errors about the old branch go.
@@ -384,7 +384,7 @@ describe('application and instrument step', () => {
       });
 
       await user.click(
-        screen.getByLabelText('Variation or request a minor edit')
+        screen.getByLabelText('Variation or request a minor edit'),
       );
 
       expect(formik?.errors).toEqual({
@@ -397,10 +397,10 @@ describe('application and instrument step', () => {
 
       expect(checkboxGroupNamed('newSubOptions').options).toHaveLength(3);
       expect(
-        checkboxGroupNamed('varSubOptions').options.length
+        checkboxGroupNamed('varSubOptions').options.length,
       ).toBeGreaterThan(0);
       expect(
-        checkboxGroupNamed('othSubOptions').options.length
+        checkboxGroupNamed('othSubOptions').options.length,
       ).toBeGreaterThan(0);
     });
   });
@@ -410,10 +410,10 @@ describe('application and instrument step', () => {
       await renderStep();
 
       await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
       const labels = selectNamed('instrumentCategory').options.map(
-        (o) => o.displayText
+        (o) => o.displayText,
       );
 
       expect(labels).toEqual([
@@ -427,7 +427,7 @@ describe('application and instrument step', () => {
       await renderStep();
 
       await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
       expect(selectNamed('instrumentType').options).toEqual([]);
@@ -442,11 +442,11 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0)
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0),
       );
 
       expect(
-        selectNamed('instrumentType').options.map((o) => o.displayText)
+        selectNamed('instrumentType').options.map((o) => o.displayText),
       ).toEqual(['Automatic scale', 'Beam balance']);
     });
 
@@ -457,12 +457,12 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
       // Summary is a record of what was chosen, so it must resolve any stored id to a label.
       expect(selectNamed('instrumentType').options).toHaveLength(
-        typeLookup().length
+        typeLookup().length,
       );
     });
 
@@ -475,7 +475,7 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
       expect(selectNamed('instrumentType').options).toEqual([]);
@@ -491,7 +491,7 @@ describe('application and instrument step', () => {
       await renderStep({ values });
 
       await waitFor(() =>
-        expect(captured.selects.get('instrumentType')).toBeDefined()
+        expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
       expect(selectNamed('instrumentType').options).toEqual([]);
@@ -505,7 +505,7 @@ describe('application and instrument step', () => {
         }),
       });
       await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
 
       await act(async () => {
@@ -533,8 +533,8 @@ describe('application and instrument step', () => {
       await waitFor(() =>
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to retrieve look ups',
-          expect.any(Error)
-        )
+          expect.any(Error),
+        ),
       );
     });
   });
@@ -544,18 +544,18 @@ describe('application and instrument step', () => {
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
 
       await user.selectOptions(
         screen.getByTestId('select-instrumentCategory'),
-        'cat-length'
+        'cat-length',
       );
 
       await waitFor(() =>
         expect(
-          selectNamed('instrumentType').options.map((o) => o.displayText)
-        ).toEqual(['Tape measure'])
+          selectNamed('instrumentType').options.map((o) => o.displayText),
+        ).toEqual(['Tape measure']),
       );
 
       expect(formik?.values['instrumentType']).toBe('');
@@ -565,23 +565,23 @@ describe('application and instrument step', () => {
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
-        expect(captured.selects.get('instrumentCategory')).toBeDefined()
+        expect(captured.selects.get('instrumentCategory')).toBeDefined(),
       );
 
       await user.selectOptions(
         screen.getByTestId('select-instrumentCategory'),
-        'cat-none'
+        'cat-none',
       );
 
       // Choosing "no measurement instrument" has exactly one valid type, so it is chosen for
       // the user and the field is locked rather than left as an empty required box.
       await waitFor(() =>
-        expect(formik?.values['instrumentType']).toBe('type-none')
+        expect(formik?.values['instrumentType']).toBe('type-none'),
       );
 
       expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
         'data-readonly',
-        'true'
+        'true',
       );
     });
 
@@ -596,8 +596,8 @@ describe('application and instrument step', () => {
       await waitFor(() =>
         expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
           'data-readonly',
-          'true'
-        )
+          'true',
+        ),
       );
     });
   });
@@ -612,7 +612,7 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument()
+        expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument(),
       );
 
       expect(captured.infoPanel).toEqual({
@@ -620,7 +620,7 @@ describe('application and instrument step', () => {
         type: 'type-beam',
       });
       expect(screen.getByRole('alert')).toHaveTextContent(
-        'OIML certificates apply only to specific instrument types'
+        'OIML certificates apply only to specific instrument types',
       );
     });
 
@@ -628,7 +628,7 @@ describe('application and instrument step', () => {
       await renderStep({ isSummary: true });
 
       expect(
-        screen.queryByTestId('instrument-info-panel')
+        screen.queryByTestId('instrument-info-panel'),
       ).not.toBeInTheDocument();
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
@@ -647,12 +647,12 @@ describe('application and instrument step', () => {
       });
 
       expect(screen.getByTestId('summary-applicationType')).toHaveTextContent(
-        'New Certificate of Approval (CoA)'
+        'New Certificate of Approval (CoA)',
       );
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent(
-        'NMI Pattern Approval Certificate, International Organisation of Legal Metrology (OIML) Certificate'
+        'NMI Pattern Approval Certificate, International Organisation of Legal Metrology (OIML) Certificate',
       );
     });
 
@@ -666,7 +666,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Conversion Certificate');
     });
 
@@ -677,7 +677,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
@@ -688,7 +688,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
@@ -699,7 +699,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
@@ -710,7 +710,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-newCertificateSubOptions')
+        screen.getByTestId('summary-newCertificateSubOptions'),
       ).toHaveTextContent('Not selected');
     });
 
@@ -723,7 +723,7 @@ describe('application and instrument step', () => {
       });
 
       expect(screen.getByTestId('summary-applicationType')).toHaveTextContent(
-        'Not selected'
+        'Not selected',
       );
     });
 
@@ -734,7 +734,7 @@ describe('application and instrument step', () => {
       });
 
       expect(screen.getByTestId('summary-applicationType')).toHaveTextContent(
-        'Not selected'
+        'Not selected',
       );
     });
 
@@ -750,10 +750,10 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-variationSubOptions')
+        screen.getByTestId('summary-variationSubOptions'),
       ).toBeInTheDocument();
       expect(
-        screen.queryByTestId('summary-newCertificateSubOptions')
+        screen.queryByTestId('summary-newCertificateSubOptions'),
       ).not.toBeInTheDocument();
     });
 
@@ -766,7 +766,7 @@ describe('application and instrument step', () => {
       });
 
       expect(
-        screen.getByTestId('summary-otherApprovalSubOptions')
+        screen.getByTestId('summary-otherApprovalSubOptions'),
       ).toBeInTheDocument();
     });
   });
@@ -783,13 +783,13 @@ describe('application and instrument step', () => {
       await renderStep({ name: 'applicationAndInstrument' });
 
       expect(
-        captured.selects.get('applicationAndInstrument.instrumentCategory')
+        captured.selects.get('applicationAndInstrument.instrumentCategory'),
       ).toBeDefined();
       expect(
-        captured.selects.get('applicationAndInstrument.instrumentType')
+        captured.selects.get('applicationAndInstrument.instrumentType'),
       ).toBeDefined();
       expect(
-        captured.checkboxGroups.get('applicationAndInstrument.newSubOptions')
+        captured.checkboxGroups.get('applicationAndInstrument.newSubOptions'),
       ).toBeDefined();
     });
 
@@ -802,7 +802,7 @@ describe('application and instrument step', () => {
 
       // Selection came from the root value, not from applicationAndInstrument.*.
       expect(
-        screen.getByLabelText('New Certificate of Approval (CoA)')
+        screen.getByLabelText('New Certificate of Approval (CoA)'),
       ).toBeChecked();
     });
   });

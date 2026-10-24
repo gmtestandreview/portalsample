@@ -143,7 +143,7 @@ const ToolbarButton = ({
 function getCharCount(v: CustomElement[]): number {
   // Check emptiness at the model level — avoids HTML serialisation purely for the empty check.
   const hasContent = v.some((el) =>
-    el.children.some((child) => child.text.trim() !== '')
+    el.children.some((child) => child.text.trim() !== ''),
   );
   if (!hasContent) return 0;
   return serializeToHtml(v).length;
@@ -170,12 +170,12 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
 
     if (nextCount <= max) {
       setErrors((prev) =>
-        prev.filter((e) => !e.startsWith('Message cannot exceed'))
+        prev.filter((e) => !e.startsWith('Message cannot exceed')),
       );
     } else {
       const errorMsg = `Message cannot exceed ${max} characters (including formatting)`;
       setErrors((prev) =>
-        prev.includes(errorMsg) ? prev : [...prev, errorMsg]
+        prev.includes(errorMsg) ? prev : [...prev, errorMsg],
       );
     }
   };

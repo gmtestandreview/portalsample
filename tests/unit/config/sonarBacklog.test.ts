@@ -20,12 +20,12 @@ const CHILD_TIMEOUT_MS = 30_000;
 const TEST_TIMEOUT_MS = 45_000;
 type RequestHandler = (
   request: IncomingMessage,
-  response: ServerResponse
+  response: ServerResponse,
 ) => void;
 
 function runScript(
   args: string[],
-  environment: Record<string, string> = {}
+  environment: Record<string, string> = {},
 ): Promise<{ status: number | null; stdout: string; stderr: string }> {
   return new Promise((resolve) => {
     const child = spawn(process.execPath, args, {
@@ -65,7 +65,7 @@ function runScript(
 
 async function withSonarServer(
   handler: RequestHandler,
-  callback: (host: string) => Promise<void>
+  callback: (host: string) => Promise<void>,
 ) {
   const server = createServer(handler);
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -79,7 +79,7 @@ async function withSonarServer(
     await callback(`http://127.0.0.1:${address.port}`);
   } finally {
     await new Promise<void>((resolve, reject) =>
-      server.close((error) => (error ? reject(error) : resolve()))
+      server.close((error) => (error ? reject(error) : resolve())),
     );
   }
 }
@@ -101,7 +101,7 @@ function runBacklog() {
         cwd: repoRoot,
         encoding: 'utf8',
         timeout: CHILD_TIMEOUT_MS,
-      }
+      },
     );
 
     return {
@@ -129,7 +129,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       expect(output).toContain('SONAR-UNKNOWN-SEVERITY');
       expect(output).toContain('SONAR-INFO-LOW');
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -138,13 +138,13 @@ describe('sonar all-issue backlog pressure tests', () => {
       const { output } = runBacklog();
 
       expect(output.indexOf('SONAR-SECURITY-HIGH')).toBeLessThan(
-        output.indexOf('SONAR-BUG-MEDIUM')
+        output.indexOf('SONAR-BUG-MEDIUM'),
       );
       expect(output.indexOf('SONAR-BUG-MEDIUM')).toBeLessThan(
-        output.indexOf('SONAR-INFO-LOW')
+        output.indexOf('SONAR-INFO-LOW'),
       );
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -156,7 +156,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       expect(output).toContain('Needs triage');
       expect(output).toContain('SONAR-UNKNOWN-SEVERITY');
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -167,7 +167,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       expect(output).not.toContain('SONAR_TOKEN');
       expect(output).not.toContain('Bearer ');
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it('rejects fixture files with malformed issue entries', () => {
@@ -178,7 +178,7 @@ describe('sonar all-issue backlog pressure tests', () => {
       JSON.stringify({
         issues: [{ key: 'INVALID', message: { text: 'wrong type' } }],
       }),
-      fixtureDirectory
+      fixtureDirectory,
     );
 
     try {
@@ -191,7 +191,7 @@ describe('sonar all-issue backlog pressure tests', () => {
           '--out',
           outputPath,
         ],
-        { cwd: repoRoot, encoding: 'utf8' }
+        { cwd: repoRoot, encoding: 'utf8' },
       );
 
       expect(result.status).not.toBe(0);
@@ -204,7 +204,7 @@ describe('sonar all-issue backlog pressure tests', () => {
 
   it('rejects fixture pages with duplicate issue keys', () => {
     const fixtureDirectory = mkdtempSync(
-      path.join(tmpdir(), 'sonar-duplicate-')
+      path.join(tmpdir(), 'sonar-duplicate-'),
     );
     const outputPath = path.join(fixtureDirectory, 'output.md');
     const issue = {
@@ -218,12 +218,12 @@ describe('sonar all-issue backlog pressure tests', () => {
     writeTextFileSync(
       path.join(fixtureDirectory, 'page-1.json'),
       JSON.stringify({ issues: [issue] }),
-      fixtureDirectory
+      fixtureDirectory,
     );
     writeTextFileSync(
       path.join(fixtureDirectory, 'page-2.json'),
       JSON.stringify({ issues: [issue] }),
-      fixtureDirectory
+      fixtureDirectory,
     );
 
     try {
@@ -236,7 +236,7 @@ describe('sonar all-issue backlog pressure tests', () => {
           '--out',
           outputPath,
         ],
-        { cwd: repoRoot, encoding: 'utf8' }
+        { cwd: repoRoot, encoding: 'utf8' },
       );
 
       expect(result.status).not.toBe(0);
@@ -260,7 +260,7 @@ describe('sonar all-issue backlog pressure tests', () => {
           },
         ],
       }),
-      fixtureDirectory
+      fixtureDirectory,
     );
 
     try {
@@ -273,12 +273,12 @@ describe('sonar all-issue backlog pressure tests', () => {
           '--out',
           outputPath,
         ],
-        { cwd: repoRoot, encoding: 'utf8' }
+        { cwd: repoRoot, encoding: 'utf8' },
       );
 
       expect(result.status).not.toBe(0);
       expect(result.stderr).toContain(
-        'impactSeverities must be an array of strings'
+        'impactSeverities must be an array of strings',
       );
       expect(pathExists(outputPath, fixtureDirectory)).toBe(false);
     } finally {
@@ -315,12 +315,12 @@ describe('sonar all-issue backlog pressure tests', () => {
                   message: 'retried',
                 },
               ],
-            })
+            }),
           );
         },
         async (host) => {
           const outputDirectory = mkdtempSync(
-            path.join(tmpdir(), 'sonar-retry-')
+            path.join(tmpdir(), 'sonar-retry-'),
           );
           try {
             const outputPath = path.join(outputDirectory, 'backlog.md');
@@ -330,21 +330,21 @@ describe('sonar all-issue backlog pressure tests', () => {
                 SONAR_HOST_URL: host,
                 SONAR_TOKEN: 'test-token',
                 SONAR_PROJECT_KEY: 'demo-project',
-              }
+              },
             );
 
             expect(result.status).toBe(0);
             expect(requestCount).toBe(2);
             expect(readTextFileSync(outputPath, outputDirectory)).toContain(
-              'LIVE-RETRY'
+              'LIVE-RETRY',
             );
           } finally {
             rmSync(outputDirectory, { recursive: true, force: true });
           }
-        }
+        },
       );
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -373,12 +373,12 @@ describe('sonar all-issue backlog pressure tests', () => {
                       },
                     ]
                   : [],
-            })
+            }),
           );
         },
         async (host) => {
           const outputDirectory = mkdtempSync(
-            path.join(tmpdir(), 'sonar-empty-page-')
+            path.join(tmpdir(), 'sonar-empty-page-'),
           );
           try {
             const outputPath = path.join(outputDirectory, 'backlog.md');
@@ -388,21 +388,21 @@ describe('sonar all-issue backlog pressure tests', () => {
                 SONAR_HOST_URL: host,
                 SONAR_TOKEN: 'test-token',
                 SONAR_PROJECT_KEY: 'demo-project',
-              }
+              },
             );
 
             expect(result.status).not.toBe(0);
             expect(`${result.stdout}\n${result.stderr}`).toContain(
-              'pagination made no progress'
+              'pagination made no progress',
             );
             expect(requestCount).toBe(2);
           } finally {
             rmSync(outputDirectory, { recursive: true, force: true });
           }
-        }
+        },
       );
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -418,7 +418,7 @@ describe('sonar all-issue backlog pressure tests', () => {
         },
         async (host) => {
           const outputDirectory = mkdtempSync(
-            path.join(tmpdir(), 'sonar-timeout-')
+            path.join(tmpdir(), 'sonar-timeout-'),
           );
           try {
             const outputPath = path.join(outputDirectory, 'backlog.md');
@@ -430,7 +430,7 @@ describe('sonar all-issue backlog pressure tests', () => {
                 SONAR_PROJECT_KEY: 'demo-project',
                 SONAR_REQUEST_TIMEOUT_MS: '10',
                 SONAR_MAX_REQUEST_ATTEMPTS: '1',
-              }
+              },
             );
 
             expect(result.status).not.toBe(0);
@@ -439,10 +439,10 @@ describe('sonar all-issue backlog pressure tests', () => {
           } finally {
             rmSync(outputDirectory, { recursive: true, force: true });
           }
-        }
+        },
       );
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -467,7 +467,7 @@ describe('sonar all-issue backlog pressure tests', () => {
                   message: 'missing total',
                 },
               ],
-            })
+            }),
           );
         },
         async (host) => {
@@ -479,13 +479,13 @@ describe('sonar all-issue backlog pressure tests', () => {
 
           expect(result.status).not.toBe(0);
           expect(result.stderr).toContain(
-            'must include a non-negative integer total'
+            'must include a non-negative integer total',
           );
           expect(requestCount).toBe(1);
-        }
+        },
       );
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 
   it(
@@ -511,7 +511,7 @@ describe('sonar all-issue backlog pressure tests', () => {
                   message: 'duplicate',
                 },
               ],
-            })
+            }),
           );
         },
         async (host) => {
@@ -524,9 +524,9 @@ describe('sonar all-issue backlog pressure tests', () => {
           expect(result.status).not.toBe(0);
           expect(result.stderr).toContain('duplicate issue key LIVE-DUPLICATE');
           expect(requestCount).toBe(2);
-        }
+        },
       );
     },
-    TEST_TIMEOUT_MS
+    TEST_TIMEOUT_MS,
   );
 });

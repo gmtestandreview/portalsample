@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from './index';
@@ -19,14 +20,11 @@ const meta = preview.meta({
   tags: ['ai-generated', 'needs-work', '!autodocs'],
 });
 
-
 export const Info = meta.story({
   args: {
     children: 'This is informational guidance for users.',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('This is informational guidance for users.'),
     ).toBeVisible();
@@ -34,29 +32,21 @@ export const Info = meta.story({
 });
 
 export const Success = meta.story({
-  render: (args) => (
-    <AlertSuccess {...args} />
-  ),
+  render: (args) => <AlertSuccess {...args} />,
   args: {
     children: 'Saved successfully.',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(canvas.getByText('Saved successfully.')).toBeVisible();
   },
 });
 
 export const Warning = meta.story({
-  render: (args) => (
-    <AlertWarning {...args} />
-  ),
+  render: (args) => <AlertWarning {...args} />,
   args: {
     children: 'Please review this warning before you continue.',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('Please review this warning before you continue.'),
     ).toBeVisible();
@@ -64,16 +54,12 @@ export const Warning = meta.story({
 });
 
 export const ErrorDismissible = meta.story({
-  render: (args) => (
-    <AlertError {...args} />
-  ),
+  render: (args) => <AlertError {...args} />,
   args: {
     children: 'Something went wrong. Try again shortly.',
     canClose: true,
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const closeButton = canvas.getByRole('button', { name: 'Close alert' });
 
     await expect(closeButton).toBeVisible();

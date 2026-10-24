@@ -20,33 +20,33 @@ import type { FormikValues } from 'formik';
 // the RHF shell (see the design addendum, parity contract).
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // The real WizardStep wraps an error boundary and analytics that are not under
 // test; render its children directly.
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>
+    }) satisfies __ExactMockModule<__TestMockModule24>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 const accountState = {
@@ -96,7 +96,7 @@ const stepElement = (
 );
 
 const renderStep = (
-  overrides: Partial<WizardRoutedStepProps<FormikValues>>
+  overrides: Partial<WizardRoutedStepProps<FormikValues>>,
 ) => {
   const props: WizardRoutedStepProps<FormikValues> = {
     title: 'Step',
@@ -126,7 +126,7 @@ const renderStep = (
       },
       { path: '/done', element: <div>Done Page</div> },
     ],
-    { initialEntries: ['/step-1'] }
+    { initialEntries: ['/step-1'] },
   );
   render(<RouterProvider router={router} />);
 };
@@ -157,7 +157,7 @@ describe('formik wizard shell characterisation', () => {
   it('focuses the summary again on each further failed submit', async () => {
     const user = userEvent.setup();
     vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
-      () => {}
+      () => {},
     );
     renderStep({ onSaveAndNext: vi.fn() });
     await screen.findByLabelText('Name');
@@ -168,11 +168,11 @@ describe('formik wizard shell characterisation', () => {
 
     await user.click(screen.getByTestId(NEXT));
     await waitFor(() =>
-      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(2)
+      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(2),
     );
 
     expect(document.activeElement).toBe(
-      screen.getByTestId('form-error-summary')
+      screen.getByTestId('form-error-summary'),
     );
   });
 
@@ -194,14 +194,14 @@ describe('formik wizard shell characterisation', () => {
     await waitFor(() => expect(loadStepValues).toHaveBeenCalledTimes(2));
     await waitFor(() =>
       expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
-        'from server'
-      )
+        'from server',
+      ),
     );
 
     // Decision D-1: the banner stays up so the user knows why their edits
     // were replaced (Formik cleared it immediately).
     expect(screen.getByTestId('form-error-summary').textContent).toContain(
-      'Another person has already saved this page'
+      'Another person has already saved this page',
     );
   });
 
@@ -237,7 +237,7 @@ describe('formik wizard shell characterisation', () => {
     await user.tab();
 
     await expect(
-      screen.findByText('Name is required')
+      screen.findByText('Name is required'),
     ).resolves.toBeInTheDocument();
   });
 

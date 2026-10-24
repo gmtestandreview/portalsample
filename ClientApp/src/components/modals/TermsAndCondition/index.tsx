@@ -20,7 +20,7 @@ interface DefaultTermsAndConditionModalHeaderProps {
 }
 
 const DefaultTermsAndConditionModalHeader = (
-  props: Readonly<DefaultTermsAndConditionModalHeaderProps>
+  props: Readonly<DefaultTermsAndConditionModalHeaderProps>,
 ): ReactElement => {
   const { userName } = props;
 
@@ -48,7 +48,7 @@ interface SavingTermsAndConditionErrorProps {
 }
 
 const SavingTermsAndConditionError = (
-  props: Readonly<SavingTermsAndConditionErrorProps>
+  props: Readonly<SavingTermsAndConditionErrorProps>,
 ): ReactElement | null => {
   const { showError } = props;
   if (showError) {
@@ -110,7 +110,7 @@ interface TermAndConditionButtonsProps {
 }
 
 const TermAndConditionButtons = (
-  props: Readonly<TermAndConditionButtonsProps>
+  props: Readonly<TermAndConditionButtonsProps>,
 ) => {
   const { left, right } = props;
   return <ButtonGroup left={left} right={right} />;
@@ -127,7 +127,7 @@ const TermsAndConditionModal = () => {
     if (inProgress === InteractionStatus.None && accounts.length > 0) {
       const client = new UsersClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
 

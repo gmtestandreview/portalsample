@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import { buildMeasurementReport } from '../support/mock-builders';
@@ -7,7 +8,7 @@ Given(
   'instrument {string} has an issued report',
   async ({ scenarioState }, name: string) => {
     scenarioState.activeReferenceId = name;
-  }
+  },
 );
 
 When(
@@ -15,10 +16,10 @@ When(
   async ({ page, scenarioState }) => {
     await page.goto(
       `/instrument-reports/${encodeURIComponent(
-        scenarioState.activeReferenceId!
-      )}`
+        scenarioState.activeReferenceId!,
+      )}`,
     );
-  }
+  },
 );
 
 Then('the instrument report history is displayed', async ({ page }) => {
@@ -28,12 +29,12 @@ Then('the instrument report history is displayed', async ({ page }) => {
         name: 'Measurement reports',
         exact: true,
       })
-      .first()
+      .first(),
   ).toBeVisible();
   await expect(
     page.getByRole('table', {
       name: /Measurement reports history/i,
-    })
+    }),
   ).toBeVisible();
 });
 
@@ -41,7 +42,7 @@ When(
   'the user follows the report link {string}',
   async ({ page }, name: string) => {
     await page.getByRole('link', { name, exact: true }).click();
-  }
+  },
 );
 
 Then('report {string} is displayed', async ({ page }, reportId: string) => {
@@ -54,7 +55,7 @@ Given(
   async ({ scenarioState }, referenceId: string) => {
     scenarioState.activeReferenceId = referenceId;
     scenarioState.quotes.set(referenceId, buildMeasurementReport(referenceId));
-  }
+  },
 );
 
 Given(
@@ -62,9 +63,9 @@ Given(
   async ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
       failureKey('GET', '/api/dashboard/get-quote-report-pdf'),
-      { status, once: false }
+      { status, once: false },
     );
-  }
+  },
 );
 
 When(
@@ -76,15 +77,15 @@ When(
       page.getByRole('heading', {
         name: 'Report',
         exact: true,
-      })
+      }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then('the report file error notification is displayed', async ({ page }) => {
   await expect(
     page.getByRole('alert').filter({
       hasText: /unexpected error has occurred with downloading the PDF report/i,
-    })
+    }),
   ).toBeVisible();
 });

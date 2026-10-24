@@ -24,10 +24,10 @@ describe('report recipient validation', () => {
       reportRecipientSubmitValidation.validate({
         organisationName: 'NMI',
         reportAddressType: ReturnAddressTypeValues.BusinessAddress,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(reportRecipientSaveValidation.validate({})).resolves.toEqual(
-      {}
+      {},
     );
   });
 
@@ -39,7 +39,7 @@ describe('report recipient validation', () => {
           isManuallyEntered: false,
           searchText: '',
         },
-      })
+      }),
     ).rejects.toThrow('Organisation address for report is required');
   });
 
@@ -47,14 +47,14 @@ describe('report recipient validation', () => {
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'a'.repeat(400),
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'a'.repeat(401),
-      })
+      }),
     ).rejects.toThrow(
-      'Organisation name cannot be greater than 400 characters'
+      'Organisation name cannot be greater than 400 characters',
     );
   });
 });
@@ -76,13 +76,13 @@ describe('delivery and return validation', () => {
 
   it('accepts valid submit and save objects', async () => {
     await expect(
-      deliveryAndReturnSubmitValidation.validate(validDelivery)
+      deliveryAndReturnSubmitValidation.validate(validDelivery),
     ).resolves.toMatchObject(validDelivery);
     await expect(
       deliveryAndReturnSaveValidation.validate({
         returnMethod: ReturnMethodValues.ClientWillProvide,
         packagingNotes: '',
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
@@ -101,8 +101,8 @@ describe('delivery and return validation', () => {
           carrierName: '',
           carrierAccountNumber: '',
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'First name is required',
@@ -123,8 +123,8 @@ describe('delivery and return validation', () => {
           carrierContactPerson: 'C',
           carrierContactPhone: 'bad',
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Carrier name cannot be less than 2 characters',
@@ -146,7 +146,7 @@ describe('delivery and return validation', () => {
         insuranceNotes: 'i'.repeat(300),
         specialInstructions: 's'.repeat(300),
         returnOrganisationName: 'r'.repeat(400),
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       deliveryAndReturnSubmitValidation.validate(
@@ -160,8 +160,8 @@ describe('delivery and return validation', () => {
           specialInstructions: 's'.repeat(301),
           returnOrganisationName: 'r'.repeat(401),
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Packaging notes cannot be greater than 300 characters',
@@ -182,12 +182,12 @@ describe('payment details validation', () => {
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'PO-123',
         invoiceSentTo: InvoiceSentToValues.SamePerson,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       paymentDetailsSaveValidation.validate({
         purchaseOrderNo: '',
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
@@ -198,7 +198,7 @@ describe('payment details validation', () => {
         contact: {
           email: '',
         },
-      })
+      }),
     ).rejects.toThrow('Email address is required');
     await expect(
       paymentDetailsSubmitValidation.validate({
@@ -206,7 +206,7 @@ describe('payment details validation', () => {
         contact: {
           email: 'billing@example.com',
         },
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
@@ -214,12 +214,12 @@ describe('payment details validation', () => {
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'p'.repeat(20),
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'p'.repeat(21),
-      })
+      }),
     ).rejects.toThrow('Purchase Order No cannot be greater than 20 characters');
   });
 });
@@ -230,12 +230,12 @@ describe('summary and accept validation', () => {
       summaryAndAcceptSubmitValidation.validate({
         associatedDisputes: YesNo.No,
         acceptanceOfQuote: true,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       summaryAndAcceptSaveValidation.validate({
         associatedDisputes: YesNo.No,
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
@@ -247,8 +247,8 @@ describe('summary and accept validation', () => {
           associatedDispute: '',
           acceptanceOfQuote: false,
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Associated dispute is a required field',
@@ -263,15 +263,15 @@ describe('summary and accept validation', () => {
         associatedDisputes: YesNo.Yes,
         associatedDispute: 'a'.repeat(300),
         acceptanceOfQuote: true,
-      })
+      }),
     ).resolves.toBeDefined();
     await expect(
       summaryAndAcceptSaveValidation.validate({
         associatedDisputes: YesNo.Yes,
         associatedDispute: 'a'.repeat(301),
-      })
+      }),
     ).rejects.toThrow(
-      'Associated dispute cannot be greater than 300 characters'
+      'Associated dispute cannot be greater than 300 characters',
     );
   });
 });

@@ -15,7 +15,7 @@ const Providers = ({
 
 export const renderWithProviders = (
   ui: ReactElement,
-  { route = '/', ...options }: RenderWithProvidersOptions = {}
+  { route = '/', ...options }: RenderWithProvidersOptions = {},
 ) =>
   render(ui, {
     ...options,

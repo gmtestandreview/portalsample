@@ -137,7 +137,7 @@ describe('unit coverage denominator', () => {
       expect(
         allowedExclusionCategories.some((category) => category.test(pattern)) ||
           allowedExactExclusions.has(pattern),
-        `coverage exclude "${pattern}" is outside the reviewed policy — narrowing the denominator is not an acceptable way to reach 100%`
+        `coverage exclude "${pattern}" is outside the reviewed policy — narrowing the denominator is not an acceptable way to reach 100%`,
       ).toBe(true);
     }
   });
@@ -163,7 +163,7 @@ describe('remap inputs', () => {
     for (const pattern of coverage.include ?? []) {
       expect(
         pattern.endsWith('.json') || pattern.includes('.json'),
-        `coverage include "${pattern}" must not admit JSON assets`
+        `coverage include "${pattern}" must not admit JSON assets`,
       ).toBe(false);
     }
   });
@@ -185,7 +185,7 @@ describe('remap inputs', () => {
         'ClientApp/src/components/AriaComponents/main.tsx',
         'ClientApp/src/components/reactaria_components/**',
         'ClientApp/src/**/*.stories.{ts,tsx}',
-      ])
+      ]),
     );
   });
 

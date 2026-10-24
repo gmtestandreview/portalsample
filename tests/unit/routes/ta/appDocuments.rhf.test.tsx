@@ -25,14 +25,14 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -42,36 +42,36 @@ vi.mock(
       'getAppDocuments',
       'addDocuments',
       'commitAppDocuments',
-      'updateCategory'
+      'updateCategory',
     );
     clients.progress = createClientMockFor(
       'getProgressUploadId',
       'getProgress',
       'deleteProgressStatistics',
-      'cancelFile'
+      'cancelFile',
     );
 
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
       ProgressClient: clients.progress,
     }) satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
@@ -89,7 +89,7 @@ const document1 = (overrides: Record<string, unknown> = {}) => ({
 
 const appDocuments = (
   documents: unknown[],
-  form: Record<string, unknown> = {}
+  form: Record<string, unknown> = {},
 ) => ({
   form: {
     documents,
@@ -101,7 +101,7 @@ const appDocuments = (
 
 const renderRoute = async (
   path = '/ta/manage/APP-1/documents',
-  routePath = '/ta/manage/:id/documents'
+  routePath = '/ta/manage/:id/documents',
 ) => {
   const ApplicationDocuments = (
     await import('../../../../ClientApp/src/routes/ta/manage/appDocuments')
@@ -121,7 +121,7 @@ const renderRoute = async (
 
 const renderLoaded = async (documents: unknown[]) => {
   clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
-    appDocuments(documents)
+    appDocuments(documents),
   );
   const result = await renderRoute();
   await screen.findByRole('heading', { name: 'Documents' });
@@ -142,7 +142,7 @@ describe('application documents with the real RHF form', () => {
       }
     }
     clients.patternApproval.methods.commitAppDocuments.mockResolvedValue(
-      undefined
+      undefined,
     );
     clients.patternApproval.methods.updateCategory.mockResolvedValue(undefined);
   });
@@ -155,11 +155,11 @@ describe('application documents with the real RHF form', () => {
 
     await waitFor(() =>
       expect(
-        clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object))
+        clients.patternApproval.methods.commitAppDocuments,
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
     );
     const [applicationId, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
+      clients.patternApproval.methods.commitAppDocuments.mock.calls[0],
     );
 
     expect(applicationId).toBe('APP-1');
@@ -177,10 +177,10 @@ describe('application documents with the real RHF form', () => {
     await expect(
       screen.findByText(ValidationMessages.RequiredTag, {
         selector: 'li',
-      })
+      }),
     ).resolves.toBeInTheDocument();
     expect(
-      clients.patternApproval.methods.commitAppDocuments
+      clients.patternApproval.methods.commitAppDocuments,
     ).not.toHaveBeenCalled();
   });
 
@@ -190,24 +190,24 @@ describe('application documents with the real RHF form', () => {
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
     expect(clients.patternApproval.methods.updateCategory).toHaveBeenCalledWith(
       'APP-1',
       'doc-1',
-      'Certificate'
+      'Certificate',
     );
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
     await waitFor(() =>
       expect(
-        clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object))
+        clients.patternApproval.methods.commitAppDocuments,
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
     );
     const [, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
+      clients.patternApproval.methods.commitAppDocuments.mock.calls[0],
     );
 
     expect(values.form.documents[0].attachmentCategory).toBe('Certificate');
@@ -220,7 +220,7 @@ describe('application documents with the real RHF form', () => {
 
     expect(row).not.toBeNull();
     expect(
-      within(row as HTMLElement).getByRole('combobox', { name: 'Category' })
+      within(row as HTMLElement).getByRole('combobox', { name: 'Category' }),
     ).toHaveValue('Certificate');
   });
 });

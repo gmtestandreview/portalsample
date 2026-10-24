@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -22,15 +23,12 @@ const meta = preview.meta({
   decorators: [withPortalProviders],
 });
 
-
 /**
  * Default — renders the button with no additional props.
  * Requires router context (Link) provided by withPortalProviders.
  */
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: /back to dashboard/i });
 

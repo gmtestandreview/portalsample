@@ -101,22 +101,22 @@ export interface WizardStepProps<T extends FormikValues> {
   isSummaryPage?: boolean;
   getRedirectionLocationOnError?: (
     errorCode: number,
-    errorType: ErrorType
+    errorType: ErrorType,
   ) => string | undefined;
   discard?: DiscardProps;
   onSaveAndExit?: (
     values: T,
     isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => void | Promise<any>;
   onSaveAndNext?: (
     values: T,
     isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => void | Promise<any>;
   stepStatuses: FormStepStatusDto[];
   loadStepValues: (
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
   validateHard?: any;
   validateSoft?: any;
@@ -171,7 +171,7 @@ export interface WizardFormProps {
   confirmationOnSubmission?: ModalProps;
   getRedirectionLocationOnError?: (
     errorCode: number,
-    errorType: ErrorType
+    errorType: ErrorType,
   ) => string | undefined;
   [key: string]: any;
 }

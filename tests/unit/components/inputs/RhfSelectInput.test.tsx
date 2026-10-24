@@ -68,14 +68,14 @@ describe(RhfSelectInput, () => {
           containerClassName='extra'
           className='form-select-sm'
         />
-      </Harness>
+      </Harness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
 
     expect(select).toHaveClass('form-select-sm');
     expect(screen.getByRole('option', { name: 'Please select' })).toHaveValue(
-      ''
+      '',
     );
     expect(screen.getByRole('option', { name: 'Manuals' })).toBeDisabled();
   });
@@ -89,7 +89,7 @@ describe(RhfSelectInput, () => {
           addBlank
           defaultDisplayText='Select'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getAllByRole('option')).toHaveLength(1);
@@ -100,7 +100,7 @@ describe(RhfSelectInput, () => {
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getAllByRole('option')).toHaveLength(2);
@@ -116,7 +116,7 @@ describe(RhfSelectInput, () => {
           options={options}
           disabled
         />
-      </Harness>
+      </Harness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
@@ -137,7 +137,7 @@ describe(RhfSelectInput, () => {
           addBlank
           onChange={onChange}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), 'cert');
@@ -157,7 +157,7 @@ describe(RhfSelectInput, () => {
             { displayText: 'Two', value: 2 },
           ]}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), 'Two');
@@ -176,7 +176,7 @@ describe(RhfSelectInput, () => {
           addBlank
           onChange={onChange}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), '');
@@ -189,7 +189,7 @@ describe(RhfSelectInput, () => {
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.selectOptions(screen.getByRole('combobox'), 'cert');
@@ -206,7 +206,7 @@ describe(RhfSelectInput, () => {
           options={options}
           addBlank
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox')).toHaveValue('');
@@ -216,7 +216,7 @@ describe(RhfSelectInput, () => {
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput name='category' label='Category' addBlank />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('combobox')).toHaveValue('');
@@ -226,7 +226,7 @@ describe(RhfSelectInput, () => {
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
     const select = screen.getByRole('combobox', { name: 'Category' });
 
@@ -238,12 +238,12 @@ describe(RhfSelectInput, () => {
 
     expect(screen.getByText('Select a category')).toHaveAttribute(
       'id',
-      'category-validation-msg'
+      'category-validation-msg',
     );
     expect(select).toHaveClass('is-invalid');
     expect(select).toHaveAttribute(
       'aria-describedby',
-      'category-validation-msg'
+      'category-validation-msg',
     );
     expect(select).toHaveAttribute('aria-invalid', 'true');
   });
@@ -252,7 +252,7 @@ describe(RhfSelectInput, () => {
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
-      </Harness>
+      </Harness>,
     );
 
     const select = screen.getByRole('combobox', { name: 'Category' });
@@ -266,7 +266,7 @@ describe(RhfSelectInput, () => {
       <Harness resolver={failingResolver}>
         <RhfSelectInput name='category' label='Category' options={options} />
         <button type='button'>Elsewhere</button>
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByRole('combobox'));
@@ -287,7 +287,7 @@ describe(RhfSelectInput, () => {
           options={options}
           inlineHelp='Pick the closest match'
         />
-      </Harness>
+      </Harness>,
     );
 
     const help = screen.getByText('Pick the closest match');
@@ -295,7 +295,7 @@ describe(RhfSelectInput, () => {
     expect(help).toHaveAttribute('id', 'help-category');
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
       'aria-describedby',
-      'help-category'
+      'help-category',
     );
   });
 
@@ -308,7 +308,7 @@ describe(RhfSelectInput, () => {
           options={options}
           inlineHelp='Pick the closest match'
         />
-      </Harness>
+      </Harness>,
     );
 
     await act(async () => {
@@ -317,7 +317,7 @@ describe(RhfSelectInput, () => {
 
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
       'aria-describedby',
-      'help-category category-validation-msg'
+      'help-category category-validation-msg',
     );
   });
 
@@ -330,7 +330,7 @@ describe(RhfSelectInput, () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Category')).toBeInTheDocument();
@@ -342,7 +342,7 @@ describe(RhfSelectInput, () => {
     render(
       <Harness defaultValue='other'>
         <RhfSelectInput name='category' label='Category' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Category')).toBeInTheDocument();
@@ -357,7 +357,7 @@ describe(RhfSelectInput, () => {
           options={options}
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(container.querySelector('form')).toBeEmptyDOMElement();

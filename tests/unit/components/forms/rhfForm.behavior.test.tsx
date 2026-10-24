@@ -7,11 +7,11 @@ import type { Hideable } from '../../../../ClientApp/src/components/forms/types'
 import { renderRhfShell } from '../../helpers/rhfShell';
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 interface Values {
@@ -79,13 +79,13 @@ describe('rhfForm shell behavior', () => {
     await user.tab();
 
     await expect(
-      screen.findByText('Name is required')
+      screen.findByText('Name is required'),
     ).resolves.toBeInTheDocument();
     expect(screen.queryByText('Other is required')).toBeNull();
 
     await user.type(screen.getByLabelText('Name'), 'a');
     await waitFor(() =>
-      expect(screen.queryByText('Name is required')).toBeNull()
+      expect(screen.queryByText('Name is required')).toBeNull(),
     );
   });
 
@@ -95,7 +95,7 @@ describe('rhfForm shell behavior', () => {
     await user.click(screen.getByTestId('next'));
 
     await expect(
-      screen.findByText('Name is required')
+      screen.findByText('Name is required'),
     ).resolves.toBeInTheDocument();
     expect(screen.getByText('Other is required')).toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
@@ -156,7 +156,7 @@ describe('rhfForm shell behavior', () => {
     await user.tab();
 
     await expect(
-      screen.findByText('Name is required')
+      screen.findByText('Name is required'),
     ).resolves.toBeInTheDocument();
   });
 
@@ -181,7 +181,7 @@ describe('rhfForm shell behavior', () => {
     await settle();
 
     expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
-      'typed'
+      'typed',
     );
     expect(screen.getByText('Other is required')).toBeInTheDocument();
 
@@ -191,8 +191,8 @@ describe('rhfForm shell behavior', () => {
     });
     await waitFor(() =>
       expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
-        'from server'
-      )
+        'from server',
+      ),
     );
 
     expect(screen.queryByText('Other is required')).toBeNull();

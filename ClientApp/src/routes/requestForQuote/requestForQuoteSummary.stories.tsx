@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
@@ -37,11 +38,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Editable = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
@@ -60,9 +58,7 @@ export const Submitted = meta.story({
   args: {
     isSubmitted: true,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expectInstrumentSectionReady(canvas);
 

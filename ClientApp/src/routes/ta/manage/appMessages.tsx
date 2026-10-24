@@ -23,7 +23,7 @@ import CustomPaginationHeader from '../../../components/PaginationHeader';
 import { sanitiseHtml } from '../../common/helperFunctions';
 
 const SlateEditor = lazy(
-  () => import('../../../components/SlateEditor/SlateEditor')
+  () => import('../../../components/SlateEditor/SlateEditor'),
 );
 
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
@@ -40,7 +40,7 @@ const ApplicationMessages = () => {
   const [editorResetKey, setEditorResetKey] = useState(0);
   const [refreshTick, setRefreshTick] = useState(0);
   const [messageView, setMessageView] = useState<FilterMessages>(
-    FilterMessages.ShowAllMessages
+    FilterMessages.ShowAllMessages,
   );
 
   useHtmlTitle('Application Messages | NMI Services portal');
@@ -63,7 +63,7 @@ const ApplicationMessages = () => {
         if (accounts.length > 0 && id) {
           const client = new RequestForPatternApprovalClient();
           const tokenResult = await instance.acquireTokenSilent(
-            silentRequestFor(accounts[0])
+            silentRequestFor(accounts[0]),
           );
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
@@ -71,21 +71,21 @@ const ApplicationMessages = () => {
             DEFAULT_DASHBOARD_PAGESIZE,
             currentPage,
             messageView,
-            id
+            id,
           );
           if (response.requestForPatternApprovalMessageDetails!.currentPage) {
             setCurrentPage(
-              response.requestForPatternApprovalMessageDetails!.currentPage
+              response.requestForPatternApprovalMessageDetails!.currentPage,
             );
           }
           if (response.requestForPatternApprovalMessageDetails!.totalPages) {
             setTotalPages(
-              response.requestForPatternApprovalMessageDetails!.totalPages
+              response.requestForPatternApprovalMessageDetails!.totalPages,
             );
           }
           if (response.requestForPatternApprovalMessageDetails!.totalCount) {
             setTotalCount(
-              response.requestForPatternApprovalMessageDetails!.totalCount
+              response.requestForPatternApprovalMessageDetails!.totalCount,
             );
           }
           setMessage(response);
@@ -117,7 +117,7 @@ const ApplicationMessages = () => {
       if (accounts.length > 0 && id) {
         const client = new RequestForPatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
@@ -294,7 +294,7 @@ const ApplicationMessages = () => {
                       </Card.Body>
                     </Card>
                   </li>
-                )
+                ),
               )}
           </ol>
         )}

@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn, waitFor } from 'storybook/test';
 import type { ComponentType } from 'react';
@@ -95,11 +96,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Populated = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const tabList = await canvas.findByRole('tablist', {
       name: 'Select your dashboard view',
@@ -127,9 +125,7 @@ export const EmptyState = meta.story({
       ),
     );
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // The empty message also exists before loading starts, so first wait for the request.
     await waitFor(() => expect(emptyDraftsResponse).toHaveBeenCalled());
@@ -165,9 +161,7 @@ export const RequestsTabWithNotification = meta.story({
     },
   },
   // SB-016: notification renders and dismiss button is present
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const notifications = await canvas.findAllByText(
       /quote request saved as draft/i,
@@ -191,9 +185,7 @@ export const RequestsTabWithNotification = meta.story({
 
 // SB-016: clicking a tab changes the visible tab panel
 export const TabNavigation = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
 

@@ -17,7 +17,7 @@ describe('Layout AppShell — WCAG accessibility', () => {
         <Layout>
           <div>content</div>
         </Layout>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     const region = screen.getByRole('status');
     expect(region).toHaveAttribute('aria-live', 'polite');
@@ -30,7 +30,7 @@ describe('Layout AppShell — WCAG accessibility', () => {
         <Layout>
           <div>content</div>
         </Layout>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getAllByRole('status')).toHaveLength(1);
   });
@@ -42,13 +42,13 @@ describe('Layout AppShell — WCAG accessibility', () => {
         <Layout>
           <div>content</div>
         </Layout>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     act(() => {
       vi.advanceTimersByTime(100);
     });
     expect(screen.getByRole('status').textContent).toBe(
-      'Navigated to Dashboard | NMI Portal page.'
+      'Navigated to Dashboard | NMI Portal page.',
     );
   });
 });

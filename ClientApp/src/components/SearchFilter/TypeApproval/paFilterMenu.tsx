@@ -124,7 +124,7 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
   function countChangedFilters(
     filters: Partial<{
       [K in keyof typeof defaultFilter]: (typeof defaultFilter)[K] | undefined;
-    }>
+    }>,
   ): number {
     let changedCount = 0;
     if (

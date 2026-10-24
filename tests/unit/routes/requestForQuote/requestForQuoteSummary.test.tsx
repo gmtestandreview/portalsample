@@ -26,14 +26,14 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -44,15 +44,15 @@ vi.mock(
     return webApiClientModuleMock(original, {
       LookupClient: clients.lookup,
     }) satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const REQUEST_ID = 'RFQ-1';
@@ -80,7 +80,7 @@ const renderPage = async (
     isSubmitted = false,
     status = { hidden: summaryHidden },
     account,
-  }: RenderOptions = {}
+  }: RenderOptions = {},
 ) => {
   const page = (
     <Formik
@@ -113,7 +113,7 @@ const renderPage = async (
           element={<LocationProbe />}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
   await result.findByText('Request details');
   return result;
@@ -129,7 +129,7 @@ describe(RequestForQuoteSummary, () => {
 
   it('shows both sections with the values held by Formik', async () => {
     await renderPage(
-      fixtureValues('fully populated with the principal contact')
+      fixtureValues('fully populated with the principal contact'),
     );
 
     expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe(RequestForQuoteSummary, () => {
       fixtureValues('fully populated with the principal contact'),
       {
         status: null,
-      }
+      },
     );
 
     expect(screen.getByText('Lovelace', { exact: false })).toBeInTheDocument();
@@ -181,7 +181,7 @@ describe(RequestForQuoteSummary, () => {
           familyName: 'Hamilton',
           email: 'margaret@example.com',
         },
-      }
+      },
     );
 
     const descriptor = document.querySelector('#q-currentContact');
@@ -193,7 +193,7 @@ describe(RequestForQuoteSummary, () => {
   it('leaves the account holder out when the account has no name or email', async () => {
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
-      { account: { givenName: 'Margaret' } }
+      { account: { givenName: 'Margaret' } },
     );
 
     expect(document.querySelector('#q-currentContact')).toBeNull();
@@ -214,11 +214,11 @@ describe(RequestForQuoteSummary, () => {
 
   it('offers review guidance and no back button while editable', async () => {
     await renderPage(
-      fixtureValues('fully populated with the principal contact')
+      fixtureValues('fully populated with the principal contact'),
     );
 
     expect(
-      screen.getByText(/before you submit your request/i)
+      screen.getByText(/before you submit your request/i),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('back-button')).toBeNull();
   });
@@ -228,7 +228,7 @@ describe(RequestForQuoteSummary, () => {
     [1, 'instrument-and-request'],
   ])('edit button %i leads to %s while editable', async (index, step) => {
     await renderPage(
-      fixtureValues('fully populated with the principal contact')
+      fixtureValues('fully populated with the principal contact'),
     );
 
     const editButtons = screen.getAllByRole('button', {
@@ -240,7 +240,7 @@ describe(RequestForQuoteSummary, () => {
     fireEvent.click(editButtons.at(index) as HTMLElement);
 
     expect(
-      screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`)
+      screen.getByText(`/request-for-quote/${REQUEST_ID}/${step}`),
     ).toBeInTheDocument();
   });
 
@@ -249,7 +249,7 @@ describe(RequestForQuoteSummary, () => {
       fixtureValues('fully populated with the principal contact'),
       {
         isSubmitted: true,
-      }
+      },
     );
 
     expect(screen.queryByText(/before you submit your request/i)).toBeNull();

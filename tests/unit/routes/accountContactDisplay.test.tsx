@@ -2,57 +2,57 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/TextInput',
+  import('../../../ClientApp/src/components/Inputs/TextInput'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`text-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/NumberInput',
+  import('../../../ClientApp/src/components/Inputs/NumberInput'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`number-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule30>
+    }) satisfies __ExactMockModule<__TestMockModule30>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/Checkbox',
+  import('../../../ClientApp/src/components/Inputs/Checkbox'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`checkbox-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule79>
+    }) satisfies __ExactMockModule<__TestMockModule79>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/AddressLookup',
+  import('../../../ClientApp/src/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`address-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>
+    }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Inputs/OrganisationNameLookup',
+  import('../../../ClientApp/src/components/Inputs/OrganisationNameLookup'),
   () =>
     ({
       default: ({ label, name }: { label: string; name: string }) => (
         <div data-testid={`organisation-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule80>
+    }) satisfies __ExactMockModule<__TestMockModule80>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/HidableField',
+  import('../../../ClientApp/src/components/forms/HidableField'),
   () =>
     ({
       default: ({
@@ -62,11 +62,11 @@ vi.mock(
         children: React.ReactNode;
         name: string;
       }) => <div data-testid={`hidable-${name}`}>{children}</div>,
-    }) satisfies __ExactMockModule<__TestMockModule70>
+    }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
+  import('../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
   () =>
     ({
       default: ({ name, roleLabel }: { name: string; roleLabel: string }) => (
@@ -74,7 +74,7 @@ vi.mock(
           {roleLabel}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule71>
+    }) satisfies __ExactMockModule<__TestMockModule71>,
 );
 
 describe('account and contact display sections', () => {
@@ -86,11 +86,11 @@ describe('account and contact display sections', () => {
     render(<AccountDetails />);
 
     expect(
-      screen.getByRole('heading', { name: 'Organisation details' })
+      screen.getByRole('heading', { name: 'Organisation details' }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('number-abn')).toHaveTextContent('ABN');
     expect(
-      screen.getByTestId('organisation-businessOrTradingName')
+      screen.getByTestId('organisation-businessOrTradingName'),
     ).toBeInTheDocument();
     expect(screen.getAllByTestId('address-streetAddress')).toHaveLength(1);
     expect(screen.getByTestId('address-postalAddress')).toBeInTheDocument();
@@ -104,13 +104,13 @@ describe('account and contact display sections', () => {
     render(<OrganisationDetails />);
 
     expect(
-      screen.getByRole('heading', { name: 'Organisation details' })
+      screen.getByRole('heading', { name: 'Organisation details' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId('checkbox-isDefaultOrganisation')
+      screen.getByTestId('checkbox-isDefaultOrganisation'),
     ).toBeInTheDocument();
     expect(
-      screen.getByTestId('checkbox-postalAddressSameAsStreetAddress')
+      screen.getByTestId('checkbox-postalAddressSameAsStreetAddress'),
     ).toBeInTheDocument();
     expect(screen.getByTestId('hidable-postalAddress')).toBeInTheDocument();
   });
@@ -123,17 +123,17 @@ describe('account and contact display sections', () => {
     render(<ContactDetails />);
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Important information'
+      'Important information',
     );
     expect(
-      screen.getByRole('heading', { name: 'Contact' })
+      screen.getByRole('heading', { name: 'Contact' }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('contact-details-input')).toHaveAttribute(
       'data-name',
-      'contact'
+      'contact',
     );
     expect(screen.getByTestId('contact-details-input')).toHaveTextContent(
-      'Role (optional)'
+      'Role (optional)',
     );
   });
 });

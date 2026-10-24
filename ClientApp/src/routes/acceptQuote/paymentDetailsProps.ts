@@ -32,7 +32,7 @@ const loadPaymentDetails =
       if (accounts.length > 0) {
         const client = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const paymentDetails = await client.getPaymentDetails(id, abortSignal);
@@ -54,18 +54,18 @@ const saveStep =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    isComplete: boolean
+    isComplete: boolean,
   ) =>
   async (
     values: PaymentDetailsStep,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.savePaymentDetails(
@@ -75,7 +75,7 @@ const saveStep =
             formStep: values,
             isCompletingStep: isComplete,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (e) {
         AppLogger.error('Failed to save payment details:', e as Error, {
@@ -120,7 +120,7 @@ const paymentDetailsProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<PaymentDetailsStep> => ({
   initialValues: {},
   stepStatuses: statuses,

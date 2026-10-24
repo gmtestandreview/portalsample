@@ -28,7 +28,7 @@ export interface CertificateNumberLookupProps {
 
 const getLookupFieldValue = (
   item: unknown,
-  fieldName: string | undefined
+  fieldName: string | undefined,
 ): string | undefined => {
   if (fieldName === undefined || item === null || typeof item !== 'object') {
     return undefined;
@@ -41,7 +41,7 @@ const getLookupFieldValue = (
 const matchesLookupValue = (
   value: string | undefined,
   input: string,
-  matchType: CertificateNumberLookupProps['matchType']
+  matchType: CertificateNumberLookupProps['matchType'],
 ) => {
   if (value === undefined) return false;
 
@@ -57,7 +57,7 @@ const matchesLookupValue = (
 };
 
 const CertificateNumberLookup = (
-  props: Readonly<CertificateNumberLookupProps>
+  props: Readonly<CertificateNumberLookupProps>,
 ) => {
   const {
     id,
@@ -113,23 +113,23 @@ const CertificateNumberLookup = (
                   matchesLookupValue(
                     getLookupFieldValue(item, parentOptionsName),
                     _parentField.value.toLowerCase(),
-                    matchType
-                  )
+                    matchType,
+                  ),
                 )
                 .filter((item) =>
                   matchesLookupValue(
                     getLookupFieldValue(item, optionsFieldName),
                     inputValue.toLowerCase(),
-                    matchType
-                  )
+                    matchType,
+                  ),
                 )
                 .slice(0, maxResults)
                 .map((item) => item)
                 .sort((left, right) =>
                   getLookupFieldValue(left, optionsFieldName)!.localeCompare(
-                    getLookupFieldValue(right, optionsFieldName)!
-                  )
-                )
+                    getLookupFieldValue(right, optionsFieldName)!,
+                  ),
+                ),
             ),
           ];
           setFilteredSuggestions(filteredParentOptions);
@@ -142,16 +142,16 @@ const CertificateNumberLookup = (
                   matchesLookupValue(
                     getLookupFieldValue(item, optionsFieldName),
                     inputValue.toLowerCase(),
-                    matchType
-                  )
+                    matchType,
+                  ),
                 )
                 .slice(0, maxResults)
                 .map((item) => item)
                 .sort((left, right) =>
                   getLookupFieldValue(left, optionsFieldName)!.localeCompare(
-                    getLookupFieldValue(right, optionsFieldName)!
-                  )
-                )
+                    getLookupFieldValue(right, optionsFieldName)!,
+                  ),
+                ),
             ),
           ];
           setFilteredSuggestions(filteredOptions);
@@ -204,7 +204,7 @@ const CertificateNumberLookup = (
   const handleSelect = (
     value: string,
     valueId: string,
-    callback?: () => void
+    callback?: () => void,
   ) => {
     void _fieldHelper.setValue(value);
     void _fieldHelper.setTouched(true);
@@ -225,7 +225,7 @@ const CertificateNumberLookup = (
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActiveIndex((prev) =>
-        prev <= 0 ? filteredSuggestions.length - 1 : prev - 1
+        prev <= 0 ? filteredSuggestions.length - 1 : prev - 1,
       );
     } else if (e.key === 'Enter') {
       e.preventDefault();
@@ -342,7 +342,7 @@ const CertificateNumberLookup = (
                     className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? 'highlighted' : ''}`}
                     onClick={() => {
                       handleSelect(item.lookupName!, item.id!, () =>
-                        setActiveIndex(index)
+                        setActiveIndex(index),
                       );
                     }}
                     // onMouseEnter={() => setActiveIndex(index)}

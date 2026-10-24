@@ -84,7 +84,7 @@ describe('eslint-plugin-react-hooks owns the hook rules alone', () => {
     'keeps %s at error',
     (ruleId) => {
       expect(severityOf(ruleId)).toBe(2);
-    }
+    },
   );
 
   it.each([
@@ -102,7 +102,7 @@ describe('eslint-plugin-react-hooks owns the hook rules alone', () => {
     // eslint-plugin-react-hooks is the single owner; C3 owns re-enabling the
     // 56 sites this disables once their settlement is repaired.
     expect(
-      severityOf('@eslint-react/hooks-extra/no-direct-set-state-in-use-effect')
+      severityOf('@eslint-react/hooks-extra/no-direct-set-state-in-use-effect'),
     ).toBe(0);
   });
 });
@@ -142,7 +142,7 @@ describe('deliberate convention deviations stay disabled', () => {
     'keeps the API advisory %s off',
     (ruleId) => {
       expect(severityOf(ruleId)).toBe(0);
-    }
+    },
   );
 });
 
@@ -156,7 +156,7 @@ describe('the outgoing plugin is fully retired', () => {
       (ruleId) =>
         ruleId.startsWith('react/') &&
         !ruleId.startsWith('react-hooks/') &&
-        severityOf(ruleId) !== 0
+        severityOf(ruleId) !== 0,
     );
 
     expect(enabledLegacyRules).toEqual([]);
@@ -203,7 +203,7 @@ describe('unsupported compatibility deltas stay honest', () => {
     'records $outgoing as unsupported rather than silently dropped',
     ({ coveredBy }) => {
       expect(coveredBy.length).toBeGreaterThan(0);
-    }
+    },
   );
 
   it.each(['duplicate-props', 'string-ref'])(
@@ -212,10 +212,10 @@ describe('unsupported compatibility deltas stay honest', () => {
       // A tripwire, not a preference: if an upgrade adds a real replacement,
       // this fails and the delta above should be adopted instead of documented.
       const matches = pluginRuleNames.filter((name) =>
-        name.toLowerCase().includes(fragment.toLowerCase())
+        name.toLowerCase().includes(fragment.toLowerCase()),
       );
 
       expect(matches).toEqual([]);
-    }
+    },
   );
 });

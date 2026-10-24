@@ -20,14 +20,14 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -38,15 +38,15 @@ vi.mock(
     return webApiClientModuleMock(original, {
       LookupClient: clients.lookup,
     }) satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 /**
@@ -55,7 +55,7 @@ vi.mock(
  */
 const stateSetterCalls = vi.hoisted(() => ({ calls: [] as unknown[] }));
 
-vi.mock('react', async (importOriginal) => {
+vi.mock(import('react'), async (importOriginal) => {
   const actual = await importOriginal<typeof React>();
 
   return {
@@ -77,21 +77,21 @@ vi.mock('react', async (importOriginal) => {
 const setLookupsCalls = () =>
   stateSetterCalls.calls.filter(
     (next) =>
-      typeof next === 'object' && next !== null && 'artefactTypes' in next
+      typeof next === 'object' && next !== null && 'artefactTypes' in next,
   );
 
 type Values = RfqSummarySectionProps['values'];
 
 const populated = (() => {
   const found = summaryFixtures.find(
-    (f) => f.name === 'fully populated with the principal contact'
+    (f) => f.name === 'fully populated with the principal contact',
   );
   if (!found) throw new Error('Missing populated fixture');
   return found.values;
 })();
 
 const instrumentValues = (
-  overrides: NonNullable<Values['instrumentAndRequest']>
+  overrides: NonNullable<Values['instrumentAndRequest']>,
 ): Values => ({
   ...populated,
   instrumentAndRequest: { ...populated.instrumentAndRequest, ...overrides },
@@ -126,7 +126,7 @@ describe(RfqInstrumentSummary, () => {
     expect(result.queryByText('Request details')).not.toBeInTheDocument();
 
     await expect(
-      result.findByText('Request details')
+      result.findByText('Request details'),
     ).resolves.toBeInTheDocument();
     expect(result.getByText('Instrument/artefact details')).toBeInTheDocument();
     expect(result.queryByText('Loading...')).not.toBeInTheDocument();
@@ -141,8 +141,8 @@ describe(RfqInstrumentSummary, () => {
     await waitFor(() =>
       expect(AppLogger.error).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
-        failure
-      )
+        failure,
+      ),
     );
 
     expect(result.getByText('Loading...')).toBeInTheDocument();
@@ -157,8 +157,8 @@ describe(RfqInstrumentSummary, () => {
     await waitFor(() =>
       expect(AppLogger.error).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
-        new Error('boom')
-      )
+        new Error('boom'),
+      ),
     );
   });
 
@@ -176,17 +176,17 @@ describe(RfqInstrumentSummary, () => {
     clients.lookup.methods.getLookup.mockReturnValue(
       new Promise((resolve) => {
         release = resolve;
-      })
+      }),
     );
 
     const { unmount } = renderHook(() => useRfqInstrumentLookups());
     await waitFor(() =>
-      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2)
+      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2),
     );
     unmount();
     release([]);
     await vi.waitFor(() =>
-      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2)
+      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2),
     );
     await new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -205,7 +205,7 @@ describe(RfqInstrumentSummary, () => {
     const container = await renderLoaded(populated);
 
     expect(container).toHaveTextContent(
-      'Does this instrument/artefact have a serial number available?'
+      'Does this instrument/artefact have a serial number available?',
     );
     expect(container).toHaveTextContent('SN-0042');
     expect(container).toHaveTextContent('Mettler');
@@ -214,7 +214,7 @@ describe(RfqInstrumentSummary, () => {
     expect(container).not.toHaveTextContent('cat-mass');
     expect(container).toHaveTextContent('15 Mar 2031');
     expect(container).toHaveTextContent(
-      'Regulation 13 with measurement report'
+      'Regulation 13 with measurement report',
     );
   });
 
@@ -223,25 +223,25 @@ describe(RfqInstrumentSummary, () => {
       instrumentValues({
         measurementCategory: 'cat-none',
         instrumentOrArtefactType: 'type-none',
-      })
+      }),
     );
 
     expect(container).toHaveTextContent('No measurement category available');
     expect(container).toHaveTextContent(
-      'No instrument/artefact type available'
+      'No instrument/artefact type available',
     );
   });
 
   it('hides the serial number when the answer is No, and shows it when the answer is Yes', async () => {
     const hidden = await renderLoaded(
-      instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: 'SN-STALE' })
+      instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: 'SN-STALE' }),
     );
 
     expect(hidden).not.toHaveTextContent('SN-STALE');
     expect(hidden).not.toHaveTextContent('Serial number');
 
     const shown = await renderLoaded(
-      instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: 'SN-0042' })
+      instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: 'SN-0042' }),
     );
 
     expect(shown).toHaveTextContent('Serial number');
@@ -250,7 +250,7 @@ describe(RfqInstrumentSummary, () => {
 
   it('hides the serial number row when the answer is No or unanswered, even with no value', async () => {
     const no = await renderLoaded(
-      instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: undefined })
+      instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: undefined }),
     );
 
     expect(no).not.toHaveTextContent('Serial number');
@@ -262,7 +262,7 @@ describe(RfqInstrumentSummary, () => {
 
   it('shows the serial number row when the answer is Yes, with a placeholder when empty', async () => {
     const container = await renderLoaded(
-      instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: undefined })
+      instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: undefined }),
     );
 
     expect(container).toHaveTextContent('Serial number');
@@ -274,7 +274,7 @@ describe(RfqInstrumentSummary, () => {
       instrumentValues({
         measurementCategory: 'cat-unknown',
         instrumentOrArtefactType: 'type-unknown',
-      })
+      }),
     );
 
     expect(container).not.toHaveTextContent('cat-unknown');
@@ -283,10 +283,10 @@ describe(RfqInstrumentSummary, () => {
     const view = within(container);
 
     expect(
-      view.getByText('Measurement category').parentElement
+      view.getByText('Measurement category').parentElement,
     ).toHaveTextContent('Measurement category- No details added');
     expect(
-      view.getByText('Instrument/artefact type').parentElement
+      view.getByText('Instrument/artefact type').parentElement,
     ).toHaveTextContent('Instrument/artefact type- No details added');
   });
 
@@ -294,7 +294,7 @@ describe(RfqInstrumentSummary, () => {
     const container = await renderLoaded(
       instrumentValues({
         hasSerialNumber: 'Maybe' as unknown as YesNo,
-      })
+      }),
     );
 
     expect(container).toHaveTextContent('No details added');
@@ -305,7 +305,7 @@ describe(RfqInstrumentSummary, () => {
       instrumentValues({
         preferredInstrumentOrArtefactAvailabilityDate:
           'next week' as unknown as Date,
-      })
+      }),
     );
 
     expect(typed).toHaveTextContent('next week');
@@ -313,7 +313,7 @@ describe(RfqInstrumentSummary, () => {
     const invalid = await renderLoaded(
       instrumentValues({
         preferredInstrumentOrArtefactAvailabilityDate: new Date(Number.NaN),
-      })
+      }),
     );
 
     expect(invalid).not.toHaveTextContent('Invalid');
@@ -321,7 +321,7 @@ describe(RfqInstrumentSummary, () => {
 
   it('shows an empty number of items as a dash, including zero', async () => {
     const container = await renderLoaded(
-      instrumentValues({ numberOfItems: 0 })
+      instrumentValues({ numberOfItems: 0 }),
     );
 
     expect(container).not.toHaveTextContent('Number of items0');
@@ -357,7 +357,7 @@ describe(useRfqInstrumentLookups, () => {
     await waitFor(() => expect(result.current).toBeDefined());
 
     expect(
-      result.current?.measurementCategories.map((o) => o.displayText)
+      result.current?.measurementCategories.map((o) => o.displayText),
     ).toEqual(['Mass', 'Temperature', 'No measurement category available']);
     expect(result.current?.artefactTypes.map((o) => o.displayText)).toEqual([
       'Balance',

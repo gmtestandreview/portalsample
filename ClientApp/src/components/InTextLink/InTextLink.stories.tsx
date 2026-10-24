@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import InTextLink from './index';
@@ -7,16 +8,13 @@ const meta = preview.meta({
   tags: ['ai-generated'],
 });
 
-
 export const External = meta.story({
   args: {
     children: 'Read external guidance',
     href: 'https://www.measurement.gov.au/',
     target: '_blank',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const link = canvas.getByRole('link', { name: /read external guidance/i });
 
     await expect(link).toHaveAttribute('rel', 'nofollow noreferrer noopener');
@@ -30,9 +28,7 @@ export const SameTab = meta.story({
     href: 'https://www.measurement.gov.au/terms',
     target: '_self',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const link = canvas.getByRole('link', {
       name: /view terms and conditions/i,
     });
@@ -46,9 +42,7 @@ export const InlineText = meta.story({
     children: 'Open support content',
     href: 'https://www.measurement.gov.au/help',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const link = canvas.getByRole('link', { name: /open support content/i });
 
     await expect(link).toBeVisible();

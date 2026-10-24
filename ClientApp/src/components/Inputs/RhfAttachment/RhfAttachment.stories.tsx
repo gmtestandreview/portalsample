@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, fn, userEvent } from 'storybook/test';
 import type { AttachmentDto } from '../../../api/web-api-client';
@@ -43,11 +44,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const EmptyUploader = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
@@ -58,10 +56,7 @@ export const EmptyUploader = meta.story({
 });
 
 export const UploadsAFile = meta.story({
-  play: async ({
-    canvasElement,
-    args,
-  }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const file = new File(['pdf'], 'saved.pdf', { type: 'application/pdf' });
 
@@ -81,9 +76,7 @@ export const WithSavedDocument = meta.story({
       rhf: { defaultValues: { documents: [savedDocument] } },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('saved.pdf')).toBeVisible();
@@ -100,9 +93,7 @@ export const Summary = meta.story({
       rhf: { defaultValues: { documents: [savedDocument] } },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('saved.pdf')).toBeVisible();

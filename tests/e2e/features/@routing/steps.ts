@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Then } from '../../support/fixtures';
 

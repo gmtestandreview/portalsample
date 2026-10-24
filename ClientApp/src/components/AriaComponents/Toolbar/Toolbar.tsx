@@ -14,11 +14,11 @@ export function Toolbar(props: Readonly<ToolbarProps>) {
     orientation === 'horizontal' ? 'vertical' : 'horizontal';
   const toggleButtonGroupValue = useMemo(
     () => ({ orientation }),
-    [orientation]
+    [orientation],
   );
   const separatorValue = useMemo(
     () => ({ orientation: separatorOrientation }),
-    [separatorOrientation]
+    [separatorOrientation],
   );
 
   return (

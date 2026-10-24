@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import AutoSuggest from './index';
@@ -32,7 +33,6 @@ const meta = preview.meta({
   decorators: [withPortalProviders],
 });
 
-
 export const WithSuggestions = meta.story({
   args: {
     name: 'suburb',
@@ -57,9 +57,7 @@ export const WithSuggestions = meta.story({
       placeholder='Type to search...'
     />
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
@@ -112,9 +110,7 @@ export const EmptyState = meta.story({
       placeholder='Type to search...'
     />
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
@@ -159,9 +155,7 @@ export const Loading = meta.story({
       placeholder='Loading...'
     />
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const loadingText = canvas.getByText(/loading options/i);
 

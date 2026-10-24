@@ -34,7 +34,7 @@ const occurrences = (needle: string, haystack: string = workflow): number =>
 
 const nodeVersions = (contents: string): string[] =>
   [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].flatMap(
-    (match) => (match[1] === undefined ? [] : [match[1]])
+    (match) => (match[1] === undefined ? [] : [match[1]]),
   );
 
 /**
@@ -79,7 +79,7 @@ const stepBlocks = (contents: string): string[] => {
   });
 
   return starts.map((start, index) =>
-    lines.slice(start, starts[index + 1]).join('\n')
+    lines.slice(start, starts[index + 1]).join('\n'),
   );
 };
 
@@ -178,14 +178,14 @@ describe('pR workflow runs each test environment as its own partition', () => {
     'invokes $command exactly once through the PR gate',
     ({ command }) => {
       expect(occurrences(command)).toBe(1);
-    }
+    },
   );
 
   it.each(testCommands)(
     'writes the $name JUnit report to its own path exactly once',
     ({ name }) => {
       expect(occurrences(`reports/vitest/${name}-junit.xml`)).toBe(1);
-    }
+    },
   );
 
   it.each([
@@ -196,7 +196,7 @@ describe('pR workflow runs each test environment as its own partition', () => {
     (_name, contents) => {
       expect(contents).not.toMatch(/run: npm run test:ci\s*$/m);
       expect(contents).not.toContain('npm run test:ci\n');
-    }
+    },
   );
 
   it('does not route CI coverage through the aggregate root config', () => {
@@ -211,10 +211,10 @@ describe('the PR workflow keeps slow surfaces independently named', () => {
 
   it('renders the long-running vitest statuses from the retained matrix', () => {
     expect(jobBlock(workflow, 'vitest')).toContain(
-      'name: vitest-${{ matrix.partition.name }}'
+      'name: vitest-${{ matrix.partition.name }}',
     );
     expect(jobBlock(workflow, 'vitest')).not.toContain(
-      'npm run test:ci:quality'
+      'npm run test:ci:quality',
     );
   });
 
@@ -247,7 +247,7 @@ describe('the PR workflow keeps slow surfaces independently named', () => {
 describe('a new push supersedes the in-flight PR run', () => {
   it('scopes a cancel-in-progress concurrency group to the ref', () => {
     expect(workflow).toContain(
-      'group: ${{ github.workflow }}-${{ github.ref }}'
+      'group: ${{ github.workflow }}-${{ github.ref }}',
     );
     expect(workflow).toContain('cancel-in-progress: true');
   });
@@ -260,16 +260,16 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   it("classifies the PR's changed files against the merge base", () => {
     expect(detect).toContain('fetch-depth: 0');
     expect(detect).toContain(
-      'git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD'
+      'git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD',
     );
   });
 
   it('exposes one boolean output per gated job', () => {
     expect(detect).toContain(
-      'agent-tooling: ${{ steps.scope.outputs.agent-tooling }}'
+      'agent-tooling: ${{ steps.scope.outputs.agent-tooling }}',
     );
     expect(detect).toContain(
-      'date-logic: ${{ steps.scope.outputs.date-logic }}'
+      'date-logic: ${{ steps.scope.outputs.date-logic }}',
     );
     expect(detect).toContain('deps: ${{ steps.scope.outputs.deps }}');
   });
@@ -277,7 +277,7 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   it('runs the agent-orchestration checks only when their trees change', () => {
     expect(quality).toContain('needs: detect-changes');
     expect(quality).toContain(
-      "needs.detect-changes.outputs.agent-tooling == 'true'"
+      "needs.detect-changes.outputs.agent-tooling == 'true'",
     );
     expect(quality).toContain('python3 tests/hooks/test_pre_tool_use.py');
     expect(quality).toContain('python3 tests/hooks/test_watcher_pid.py');
@@ -310,14 +310,14 @@ describe('workflows pin every action to an immutable commit', () => {
     'pins checkout in the %s workflow',
     (_name, contents) => {
       expect(contents).toContain(`uses: ${CHECKOUT_PIN} # v7`);
-    }
+    },
   );
 
   it.each(nodeWorkflows)(
     'pins setup-node in the %s workflow',
     (_name, contents) => {
       expect(contents).toContain(`uses: ${SETUP_NODE_PIN} # v7`);
-    }
+    },
   );
 
   it.each(pinnedActionWorkflows)(
@@ -329,17 +329,17 @@ describe('workflows pin every action to an immutable commit', () => {
 
       expect(actionRefs.length).toBeGreaterThan(0);
       expect(
-        actionRefs.every((reference) => /^[0-9a-f]{40}$/.test(reference))
+        actionRefs.every((reference) => /^[0-9a-f]{40}$/.test(reference)),
       ).toBe(true);
-    }
+    },
   );
 
   it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
     expect(codeqlWorkflow).toContain(
-      `uses: github/codeql-action/init@${CODEQL_ACTION_SHA} # v4`
+      `uses: github/codeql-action/init@${CODEQL_ACTION_SHA} # v4`,
     );
     expect(codeqlWorkflow).toContain(
-      `uses: github/codeql-action/analyze@${CODEQL_ACTION_SHA} # v4`
+      `uses: github/codeql-action/analyze@${CODEQL_ACTION_SHA} # v4`,
     );
     expect(occurrences('github/codeql-action/', codeqlWorkflow)).toBe(2);
   });
@@ -348,27 +348,27 @@ describe('workflows pin every action to an immutable commit', () => {
     // setup-node v7 auto-detects a package manager; the explicit input keeps
     // cache ownership where A1 put it rather than letting the major change it.
     expect(occurrences(`uses: ${SETUP_NODE_PIN}`)).toBe(
-      occurrences("cache: 'npm'")
+      occurrences("cache: 'npm'"),
     );
   });
 });
 
 describe('every partition reports its evidence unconditionally', () => {
   const artifactUploads = stepBlocks(workflow).filter((step) =>
-    step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`)
+    step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`),
   );
   // Report paths identify the artifacts covered by this evidence policy. An
   // unrelated diagnostic artifact can therefore choose its own metadata.
   const evidenceUploads = artifactUploads.filter((step) =>
-    step.includes('reports/')
+    step.includes('reports/'),
   );
 
   it('pins upload-artifact to an immutable commit rather than a floating tag', () => {
     expect(artifactUploads.length).toBeGreaterThanOrEqual(2);
     expect(
       artifactUploads.every((step) =>
-        step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`)
-      )
+        step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`),
+      ),
     ).toBe(true);
     expect(workflow).not.toMatch(/actions\/upload-artifact@v\d/);
   });
@@ -380,13 +380,15 @@ describe('every partition reports its evidence unconditionally', () => {
 
   it('fails the job when an expected artifact is missing', () => {
     expect(
-      evidenceUploads.every((step) => /if-no-files-found:\s*error\b/.test(step))
+      evidenceUploads.every((step) =>
+        /if-no-files-found:\s*error\b/.test(step),
+      ),
     ).toBe(true);
   });
 
   it('retains evidence for 14 days', () => {
     expect(
-      evidenceUploads.every((step) => /retention-days:\s*14\b/.test(step))
+      evidenceUploads.every((step) => /retention-days:\s*14\b/.test(step)),
     ).toBe(true);
   });
 
@@ -416,23 +418,23 @@ describe('the scoped date-timezone step re-runs the focused date suite off UTC',
   it('is path-gated, not run on every PR', () => {
     expect(block).toContain('needs: detect-changes');
     expect(block).toContain(
-      "needs.detect-changes.outputs.date-logic == 'true'"
+      "needs.detect-changes.outputs.date-logic == 'true'",
     );
   });
 
   it('writes a single JUnit report for the Sydney run', () => {
     expect(block).toContain(
-      '--outputFile.junit=reports/vitest/date-sydney-junit.xml'
+      '--outputFile.junit=reports/vitest/date-sydney-junit.xml',
     );
   });
 
   it('runs the focused date files rather than the whole unit partition', () => {
     expect(block).toContain(
-      'tests/unit/components/inputs/datePickerWrapper.test.tsx'
+      'tests/unit/components/inputs/datePickerWrapper.test.tsx',
     );
     expect(block).toContain('tests/unit/routes/requestForQuote/props.test.ts');
     expect(block).toContain(
-      'tests/unit/routes/requestForQuote/validation.test.ts'
+      'tests/unit/routes/requestForQuote/validation.test.ts',
     );
     expect(block).toContain('tests/unit/utils/dateOnly.test.ts');
     expect(block).not.toContain('npm run test:ci:unit');
@@ -538,7 +540,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   it('uses the official scanner action at the intended immutable commit', () => {
     const scannerReferences = [
       ...block.matchAll(
-        /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm
+        /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm,
       ),
     ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
@@ -547,7 +549,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
       'd209202bc7d53ff1cc128f7f907dac145c9d6ae9',
     ]);
     expect(
-      scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))
+      scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference)),
     ).toBe(true);
   });
 
@@ -560,7 +562,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
           lines.some((line) => line.trimStart().startsWith('run:')) &&
           lines.some(hasNpxScannerInvocation)
         );
-      })()
+      })(),
     );
 
     expect(scannerRunSteps).toEqual([]);
@@ -607,7 +609,7 @@ describe('no partition may mask a failure', () => {
     for (const contents of [workflow, releaseWorkflow]) {
       expect(contents).not.toContain('npx playwright');
       expect(contents).toContain(
-        './node_modules/.bin/playwright install --with-deps chromium'
+        './node_modules/.bin/playwright install --with-deps chromium',
       );
     }
   });
@@ -618,14 +620,14 @@ describe('no partition may mask a failure', () => {
     // force-reinstalls the exact binding the lockfile pins.
     const action = readFileSync(
       '.github/actions/verify-rolldown-binding/action.yml',
-      'utf8'
+      'utf8',
     );
 
     expect(workflow).toContain(
-      'uses: ./.github/actions/verify-rolldown-binding'
+      'uses: ./.github/actions/verify-rolldown-binding',
     );
     expect(releaseWorkflow).toContain(
-      'uses: ./.github/actions/verify-rolldown-binding'
+      'uses: ./.github/actions/verify-rolldown-binding',
     );
     expect(action).toContain('@rolldown/binding-linux-x64-gnu');
     expect(action).toContain('--no-save --force');
@@ -664,7 +666,7 @@ describe("cI uses the repository's enforced Node runtime", () => {
 
     expect(configuredVersions.length).toBeGreaterThan(0);
     expect(
-      configuredVersions.every((version) => /^24(?:\.|$)/.test(version))
+      configuredVersions.every((version) => /^24(?:\.|$)/.test(version)),
     ).toBe(true);
   });
 
@@ -677,7 +679,7 @@ describe("cI uses the repository's enforced Node runtime", () => {
       expect(contents).not.toMatch(/node-version:\s*["']?20/);
       expect(contents).not.toContain('node20');
       expect(contents).not.toContain('20.19');
-    }
+    },
   );
 });
 
@@ -762,7 +764,7 @@ describe('chromatic publishing reports asynchronously through GitHub', () => {
   it('pins the Chromatic action and reads its protected repository secret', () => {
     expect(chromaticWorkflow).toContain(`uses: ${CHROMATIC_ACTION_PIN}`);
     expect(chromaticWorkflow).toContain(
-      'projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}'
+      'projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}',
     );
     expect(chromaticWorkflow).not.toMatch(/chpt_[a-zA-Z0-9]+/);
   });

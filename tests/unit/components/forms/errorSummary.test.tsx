@@ -31,7 +31,7 @@ describe(ErrorSummary, () => {
           }
           prefixToRemove='formStep.'
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     const link = screen.getByRole('link', { name: 'Contact: (#1): Required' });
@@ -53,7 +53,7 @@ describe(ErrorSummary, () => {
           prefixToRemove='formStep.'
           disableLinkedError
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
@@ -64,14 +64,14 @@ describe(ErrorSummary, () => {
     render(
       <TestRouter>
         <ErrorSummary isWafViolation />
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(
-      screen.getByText(/This form contains invalid characters/i)
+      screen.getByText(/This form contains invalid characters/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Please avoid special characters/i)
+      screen.getByText(/Please avoid special characters/i),
     ).toBeInTheDocument();
   });
 
@@ -81,14 +81,14 @@ describe(ErrorSummary, () => {
         <ErrorSummary
           serverErrors={{ status: HttpStatusCode.UnprocessableEntity } as any}
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(
-      screen.getByText(/Another person has already submitted this form/i)
+      screen.getByText(/Another person has already submitted this form/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /go to the Dashboard/i })
+      screen.getByRole('link', { name: /go to the Dashboard/i }),
     ).toHaveAttribute('href', '/dashboard');
   });
 
@@ -105,11 +105,11 @@ describe(ErrorSummary, () => {
             } as any
           }
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(
-      screen.getByRole('link', { name: 'First name: Required' })
+      screen.getByRole('link', { name: 'First name: Required' }),
     ).toHaveAttribute('href', '#firstName');
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
@@ -127,14 +127,14 @@ describe(ErrorSummary, () => {
             } as any
           }
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(
-      screen.getByRole('link', { name: 'Contact name: Required' })
+      screen.getByRole('link', { name: 'Contact name: Required' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Phone number: Invalid' })
+      screen.getByRole('link', { name: 'Phone number: Invalid' }),
     ).toBeInTheDocument();
   });
 
@@ -152,7 +152,7 @@ describe(ErrorSummary, () => {
             } as any
           }
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(screen.getByRole('link', { name: /Required/ })).toBeInTheDocument();
@@ -164,7 +164,7 @@ describe(ErrorSummary, () => {
         <Formik initialValues={{}} onSubmit={vi.fn()}>
           <ErrorSummary serverErrors={{ errors: undefined } as any} />
         </Formik>
-      </TestRouter>
+      </TestRouter>,
     );
 
     expect(screen.getByText('Server error')).toBeInTheDocument();
@@ -180,11 +180,11 @@ describe(ErrorSummary, () => {
           serverErrors={{ errors: { FirstName: ['Required'] } } as any}
           disableLinkedError
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     const summaryEl = document.querySelector(
-      '#form-error-summary'
+      '#form-error-summary',
     ) as HTMLElement;
 
     expect(summaryEl).not.toBeNull();
@@ -206,7 +206,7 @@ describe(ErrorSummary, () => {
         <ErrorSummary
           serverErrors={{ errors: { FirstName: ['Required'] } } as any}
         />
-      </TestRouter>
+      </TestRouter>,
     );
 
     // Simulate document.querySelector('#form-error-summary') finding nothing when the
@@ -242,7 +242,7 @@ describe(ErrorSummary, () => {
             <ErrorSummary />
           </Form>
         </Formik>
-      </TestRouter>
+      </TestRouter>,
     );
 
     await act(async () => {
@@ -273,7 +273,7 @@ describe(ErrorSummary, () => {
             <ErrorSummary />
           </Form>
         </Formik>
-      </TestRouter>
+      </TestRouter>,
     );
 
     // Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true

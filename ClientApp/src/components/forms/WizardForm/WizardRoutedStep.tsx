@@ -14,7 +14,7 @@ import useBodyClass from '../../Utilities/useBodyClass';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
 const WizardRoutedStep = (
-  props: Readonly<WizardRoutedStepProps<FormikValues>>
+  props: Readonly<WizardRoutedStepProps<FormikValues>>,
 ) => {
   const {
     initialValues,
@@ -76,7 +76,7 @@ const WizardRoutedStep = (
         getRedirectionLocationOnError,
       }),
     },
-    initialValues
+    initialValues,
   );
 
   if (view.kind === 'navigate') {

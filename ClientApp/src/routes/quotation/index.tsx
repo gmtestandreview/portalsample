@@ -74,7 +74,7 @@ const handleAlertScroll = () => {
   window.scrollTo(0, 0);
   setTimeout(() => {
     const el: HTMLElement = document.querySelector(
-      '[id^="#notif-"]'
+      '[id^="#notif-"]',
     ) as HTMLElement;
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     el?.focus();
@@ -110,9 +110,9 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     () =>
       quotationData?.quoteRequestStatus !== undefined &&
       proceedDeclineValidStatuses.includes(
-        quotationData.quoteRequestStatus as QuoteStatus
+        quotationData.quoteRequestStatus as QuoteStatus,
       ),
-    [quotationData?.quoteRequestStatus]
+    [quotationData?.quoteRequestStatus],
   );
 
   const declineQuote = async () => {
@@ -120,7 +120,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     try {
       const client = new QuoteClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
 
       client.setAuthToken(tokenResult.accessToken);
@@ -128,7 +128,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         await client.declineQuote(
           quotationData?.crmQuoteRequestId,
           accountState?.details?.givenName,
-          accountState?.details?.familyName
+          accountState?.details?.familyName,
         );
         void navigate('/');
       }
@@ -171,13 +171,13 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         setFileError(false);
         const quoteclient = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         quoteclient.setAuthToken(tokenResult.accessToken);
 
         const quoteData = await quoteclient.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteRequest,
-          id
+          id,
         );
         if (!isActive) return;
 
@@ -234,7 +234,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
   }, [fileError]);
 
   useHtmlTitle(
-    'Quotation - Testing and calibration service | NMI Services portal'
+    'Quotation - Testing and calibration service | NMI Services portal',
   );
   useBodyClass('quotation');
 

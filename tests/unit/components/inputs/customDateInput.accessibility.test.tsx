@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import CustomDateInput from '@/components/Inputs/DatePicker/CustomDateInput';
 
 const renderInput = (
-  props: Partial<React.ComponentProps<typeof CustomDateInput>> = {}
+  props: Partial<React.ComponentProps<typeof CustomDateInput>> = {},
 ) =>
   render(
     <Formik initialValues={{ calibrationDate: '' }} onSubmit={vi.fn()}>
@@ -22,7 +22,7 @@ const renderInput = (
           {...props}
         />
       </div>
-    </Formik>
+    </Formik>,
   );
 
 describe('customDateInput accessibility', () => {
@@ -82,11 +82,11 @@ describe('customDateInput accessibility', () => {
     expect(input).toHaveClass('extra-input');
     expect(screen.getByText('Use day, month, year')).toHaveAttribute(
       'id',
-      'help-calibrationDate'
+      'help-calibrationDate',
     );
     expect(screen.getByText('Choose a valid date')).toHaveAttribute(
       'id',
-      'calibrationDate-validation-msg'
+      'calibrationDate-validation-msg',
     );
 
     fireEvent.focus(input, { relatedTarget: null });
@@ -111,15 +111,15 @@ describe('customDateInput accessibility', () => {
     fireEvent.change(input, { target: { value: '18/05/2026' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onChange).toHaveBeenCalled();
-    expect(onKeyDown).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledWith();
+    expect(onKeyDown).toHaveBeenCalledWith();
   });
 
   it('disables the calendar button for disabled and read-only inputs', () => {
     const { rerender } = renderInput({ disabled: true });
 
     expect(
-      screen.getByRole('button', { name: 'Choose your calibration date' })
+      screen.getByRole('button', { name: 'Choose your calibration date' }),
     ).toBeDisabled();
 
     rerender(
@@ -137,11 +137,11 @@ describe('customDateInput accessibility', () => {
             wrapperUUID='date-wrapper'
           />
         </div>
-      </Formik>
+      </Formik>,
     );
 
     expect(
-      screen.getByRole('button', { name: 'Choose your calibration date' })
+      screen.getByRole('button', { name: 'Choose your calibration date' }),
     ).toBeDisabled();
   });
 
@@ -165,11 +165,11 @@ describe('customDateInput accessibility', () => {
             wrapperUUID='date-wrapper'
           />
         </div>
-      </Formik>
+      </Formik>,
     );
 
     expect(
-      screen.getByRole('textbox', { name: 'Calibration date' })
+      screen.getByRole('textbox', { name: 'Calibration date' }),
     ).toHaveClass('is-invalid');
   });
 });

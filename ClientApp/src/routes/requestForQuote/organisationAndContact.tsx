@@ -32,7 +32,7 @@ const OrganisationAndContact = () => {
     getIn(values, 'isCorrectBranchOrLocation') ?? '';
 
   const onShowBranchSelectorClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
     e.preventDefault();
     modalDispatch?.setShowRFQSelectModal(true, rFQId, location.pathname);
@@ -153,7 +153,7 @@ const OrganisationAndContact = () => {
               }),
               GetFieldValueString({
                 fieldName: 'branchOrLocationName',
-              })
+              }),
             )}
           </span>
           <span className='d-block text-break'>
@@ -179,7 +179,7 @@ const OrganisationAndContact = () => {
       </Row>
       {Number.parseInt(
         GetFieldValueString({ fieldName: 'organisationCount' }),
-        10
+        10,
       ) > 1 && (
         <Row className='mb-4'>
           <RadioButtonGroup

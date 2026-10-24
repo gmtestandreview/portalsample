@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ComboBox, ComboBoxItem } from './ComboBox';
@@ -14,7 +15,6 @@ const meta = preview.meta({
     placeholder: 'Choose a flavor',
   },
 });
-
 
 export const Example = meta.story({
   render: (args) => (
@@ -58,9 +58,7 @@ const flavours = (
 );
 
 export const WithDescription = meta.story({
-  render: (args) => (
-    <ComboBox {...args}>{flavours}</ComboBox>
-  ),
+  render: (args) => <ComboBox {...args}>{flavours}</ComboBox>,
 
   args: {
     label: 'Ice cream flavor',
@@ -94,9 +92,7 @@ export const Unlabelled = meta.story({
 });
 
 export const Invalid = meta.story({
-  render: (args) => (
-    <ComboBox {...args}>{flavours}</ComboBox>
-  ),
+  render: (args) => <ComboBox {...args}>{flavours}</ComboBox>,
 
   args: {
     label: 'Ice cream flavor',
@@ -113,9 +109,7 @@ export const Invalid = meta.story({
 });
 
 export const SelectsAFlavour = meta.story({
-  render: (args) => (
-    <ComboBox {...args}>{flavours}</ComboBox>
-  ),
+  render: (args) => <ComboBox {...args}>{flavours}</ComboBox>,
 
   args: {
     label: 'Ice cream flavor',
@@ -133,9 +127,7 @@ export const SelectsAFlavour = meta.story({
 });
 
 export const MultipleSelection = meta.story({
-  render: (args) => (
-    <ComboBox {...args}>{flavours}</ComboBox>
-  ),
+  render: (args) => <ComboBox {...args}>{flavours}</ComboBox>,
 
   args: {
     label: 'Ice cream flavor',

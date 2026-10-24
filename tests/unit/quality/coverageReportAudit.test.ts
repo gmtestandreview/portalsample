@@ -40,7 +40,7 @@ describe('storybook coverage report audit', () => {
     const audit = auditCoverageReport(
       Object.fromEntries([entry('C:/repo/ClientApp/src/env.ts')]),
       3,
-      repositoryRoot
+      repositoryRoot,
     );
 
     expect(audit.executableEntryCount).toBe(1);

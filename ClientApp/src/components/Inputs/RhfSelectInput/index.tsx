@@ -11,7 +11,7 @@ import { useRhfFieldA11y } from '../useRhfFieldA11y';
  * string; `onChange` is a side-effect hook run after the update.
  */
 const RhfSelectInput = <T extends string | number = string>(
-  props: Readonly<RhfSelectInputProps<T>>
+  props: Readonly<RhfSelectInputProps<T>>,
 ) => {
   const {
     label,
@@ -54,7 +54,7 @@ const RhfSelectInput = <T extends string | number = string>(
 
   const onSelectChange = (rawValue: string) => {
     const selected = options?.find(
-      (option) => String(option.value) === rawValue
+      (option) => String(option.value) === rawValue,
     );
     const nextValue = selected ? selected.value : defaultValue;
     field.onChange(nextValue);

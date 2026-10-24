@@ -22,40 +22,40 @@ import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput'
 // say what should happen. See the design addendum, parity contract.
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // The real WizardStep wraps an error boundary and analytics; render children.
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>
+    }) satisfies __ExactMockModule<__TestMockModule24>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/components/SteppedNavigation',
+  import('../../../../../ClientApp/src/components/SteppedNavigation'),
   () =>
     ({
       default: () => <div data-testid='stepped-navigation' />,
-    }) satisfies __ExactMockModule<__TestMockModule25>
+    }) satisfies __ExactMockModule<__TestMockModule25>,
 );
 
 const accountState = {
@@ -164,7 +164,7 @@ const renderWizard = (saves: Saves, step1Validation = requiredName) => {
       { path: '/done', element: <div>Done Page</div> },
       { path: '/elsewhere', element: <div>Elsewhere Page</div> },
     ],
-    { initialEntries: ['/wizard/step-1'] }
+    { initialEntries: ['/wizard/step-1'] },
   );
   render(<RouterProvider router={router} />);
   return router;
@@ -238,14 +238,14 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await user.keyboard('{Enter}');
 
     await expect(
-      screen.findByTestId('form-error-summary')
+      screen.findByTestId('form-error-summary'),
     ).resolves.toBeInTheDocument();
     expect(saves.step1).not.toHaveBeenCalled();
 
     await user.type(screen.getByLabelText('Name one'), 'abc{Enter}');
 
     await expect(
-      screen.findByLabelText('Name two')
+      screen.findByLabelText('Name two'),
     ).resolves.toBeInTheDocument();
     expect(saves.step1).toHaveBeenCalledTimes(1);
   });
@@ -257,7 +257,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await act(() => router.navigate('/elsewhere'));
 
     await expect(
-      screen.findByText('Elsewhere Page')
+      screen.findByText('Elsewhere Page'),
     ).resolves.toBeInTheDocument();
     expect(screen.queryByTestId(MODAL)).toBeNull();
   });
@@ -294,7 +294,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await user.click(screen.getByTestId('prompt-leave-button'));
 
     await expect(
-      screen.findByText('Elsewhere Page')
+      screen.findByText('Elsewhere Page'),
     ).resolves.toBeInTheDocument();
   });
 });

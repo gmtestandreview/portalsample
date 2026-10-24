@@ -49,7 +49,7 @@ describe('validateProducerIdentity', () => {
           pid: number;
           createdAt: string;
         },
-      })
+      }),
     ).toEqual({ ok: true, errors: [] });
   });
 
@@ -83,7 +83,7 @@ describe('validateProducerIdentity', () => {
         expectedChildEpoch:
           overrides.expectedChildEpoch ??
           (receipt.childEpoch as { pid: number; createdAt: string }),
-      })
+      }),
     ).toMatchObject({ ok: false, errors: expect.any(Array) });
   });
 });

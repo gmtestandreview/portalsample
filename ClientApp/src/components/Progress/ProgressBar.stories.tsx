@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import ProgressBar from './ProgressBar';
@@ -19,11 +20,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const InProgress = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // A progressbar has to carry its own name and value: the visible caption and
     // percentage sit inside the role, so a screen reader announces "progress bar" and
@@ -42,9 +40,7 @@ export const JustStarted = meta.story({
     percent: 0,
     status: 'Preparing upload',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText(/0%/)).toBeVisible();
@@ -56,9 +52,7 @@ export const Complete = meta.story({
     percent: 100,
     status: 'Upload complete',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText(/100%/)).toBeVisible();

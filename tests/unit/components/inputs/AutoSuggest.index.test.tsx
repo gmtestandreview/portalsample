@@ -8,7 +8,7 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/components/Inputs/AutoSuggest/AutoSuggestContainer',
+  import('@/components/Inputs/AutoSuggest/AutoSuggestContainer'),
   () =>
     ({
       default: (props: any) => {
@@ -25,7 +25,7 @@ vi.mock(
           </div>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule32>
+    }) satisfies __ExactMockModule<__TestMockModule32>,
 );
 
 const renderAutoSuggest = (
@@ -33,7 +33,7 @@ const renderAutoSuggest = (
     .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
     .mockResolvedValue([]),
   onSelectedOption = vi.fn(),
-  selectedOption?: string
+  selectedOption?: string,
 ) => {
   render(
     <AutoSuggest
@@ -42,7 +42,7 @@ const renderAutoSuggest = (
       getOptions={getOptions}
       onSelectedOption={onSelectedOption}
       {...(selectedOption === undefined ? {} : { selectedOption })}
-    />
+    />,
   );
 
   return { getOptions, onSelectedOption };
@@ -93,7 +93,7 @@ describe('autoSuggest parent state', () => {
 
   it('ignores a stale successful search response after cancel resets the field', async () => {
     let resolveSearch: (
-      options: AutoSuggestOption<string>[]
+      options: AutoSuggestOption<string>[],
     ) => void = () => {};
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
@@ -101,7 +101,7 @@ describe('autoSuggest parent state', () => {
       () =>
         new Promise((resolve) => {
           resolveSearch = resolve;
-        })
+        }),
     );
     renderAutoSuggest(getOptions, vi.fn(), 'Original');
 
@@ -137,7 +137,7 @@ describe('autoSuggest parent state', () => {
       () =>
         new Promise((_, reject) => {
           rejectSearch = reject;
-        })
+        }),
     );
     renderAutoSuggest(getOptions);
 

@@ -16,7 +16,7 @@ describe('runtime smoke coverage for restored local type modules', () => {
         <CustomAccordionBody name='Section title' eventKey='0'>
           Accordion content
         </CustomAccordionBody>
-      </CustomAccordion>
+      </CustomAccordion>,
     );
 
     expect(screen.getByText('Section title')).toBeInTheDocument();

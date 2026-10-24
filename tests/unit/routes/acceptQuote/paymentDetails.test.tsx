@@ -25,14 +25,14 @@ const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => msalContext,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -40,23 +40,23 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
-      this.setAuthToken = vi.fn();
+      vi.spyOn(this, 'setAuthToken').mockImplementation();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // Stub form-input children — they require Formik context which is outside this component's scope
 vi.mock(
-  '@/components/Inputs/TextInput',
+  import('@/components/Inputs/TextInput'),
   () =>
     ({
       default: ({
@@ -70,46 +70,46 @@ vi.mock(
           {inlineHelp}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>
+    }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 vi.mock(
-  '@/components/Inputs/RadioButtonGroup',
+  import('@/components/Inputs/RadioButtonGroup'),
   () =>
     ({
       default: ({ name }: { name: string }) => (
         <div data-testid={`radio-group`} data-name={name} />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule52>
+    }) satisfies __ExactMockModule<__TestMockModule52>,
 );
 vi.mock(
-  '@/components/forms/HidableField',
+  import('@/components/forms/HidableField'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule70>
+    }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 vi.mock(
-  '@/components/forms/CommonForms/ContactDetails',
+  import('@/components/forms/CommonForms/ContactDetails'),
   () =>
     ({
       default: () => <div data-testid='contact-details' />,
-    }) satisfies __ExactMockModule<__TestMockModule71>
+    }) satisfies __ExactMockModule<__TestMockModule71>,
 );
 vi.mock(
-  '@/components/BlockUISpinner',
+  import('@/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='spinner'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>
+    }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makePreInfo(
   paymentTerms: string,
-  quotationIdNum?: string
+  quotationIdNum?: string,
 ): {
   acceptQuotePreInfo: AcceptQuotePreInfoDto;
 } {
@@ -124,7 +124,7 @@ function makePreInfo(
 const defaultProps = { id: 'TEST-001' };
 
 const renderPaymentDetails = (
-  props: React.ComponentProps<typeof PaymentDetails> = defaultProps
+  props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
 ) =>
   render(
     <Formik
@@ -141,7 +141,7 @@ const renderPaymentDetails = (
       onSubmit={() => {}}
     >
       <PaymentDetails {...props} />
-    </Formik>
+    </Formik>,
   );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -177,7 +177,7 @@ describe(PaymentDetails, () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/30 days of NMI invoice date/)
+          screen.getByText(/30 days of NMI invoice date/),
         ).toBeInTheDocument();
       });
 
@@ -193,7 +193,7 @@ describe(PaymentDetails, () => {
       });
 
       expect(
-        screen.queryByText(/30 days of NMI invoice date/)
+        screen.queryByText(/30 days of NMI invoice date/),
       ).not.toBeInTheDocument();
     });
   });
@@ -225,41 +225,41 @@ describe(PaymentDetails, () => {
       });
 
       expect(
-        screen.getByLabelText('Purchase Order (PO) number (optional)')
+        screen.getByLabelText('Purchase Order (PO) number (optional)'),
       ).toHaveAttribute('name', 'purchaseOrderNo');
       expect(
-        screen.getByLabelText('The main contact person for this request')
+        screen.getByLabelText('The main contact person for this request'),
       ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
     it('prefixes key names with paymentDetails. in summary mode', async () => {
       mockGetPaymentDetails.mockResolvedValue(
-        makePreInfo('Standard', 'Q-SUMMARY-001')
+        makePreInfo('Standard', 'Q-SUMMARY-001'),
       );
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.getByTestId('text-input')).toHaveAttribute(
         'data-name',
-        'paymentDetails.purchaseOrderNo'
+        'paymentDetails.purchaseOrderNo',
       );
       await expect(
-        screen.findByText(/Q-SUMMARY-001/)
+        screen.findByText(/Q-SUMMARY-001/),
       ).resolves.toBeInTheDocument();
       expect(screen.getByTestId('radio-group')).toHaveAttribute(
         'data-name',
-        'paymentDetails.invoiceSentTo'
+        'paymentDetails.invoiceSentTo',
       );
     });
 
     it('includes the loaded quotation ID in summary help copy', async () => {
       mockGetPaymentDetails.mockResolvedValue(
-        makePreInfo('Standard', 'RFQ-2026-042')
+        makePreInfo('Standard', 'RFQ-2026-042'),
       );
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       await expect(
-        screen.findByText('Your NMI Quotation ID RFQ-2026-042')
+        screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
       ).resolves.toBeInTheDocument();
     });
   });
@@ -275,7 +275,7 @@ describe(PaymentDetails, () => {
         expect(AppLogger.error).toHaveBeenCalledWith(
           'Failed to load Payment details',
           expect.any(Error),
-          { Id: 'TEST-001' }
+          { Id: 'TEST-001' },
         );
       });
 

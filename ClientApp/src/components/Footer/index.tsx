@@ -31,7 +31,7 @@ const Footer = () => {
   };
 
   const onAccessibilityDialog = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
     e.preventDefault();
     setAccessibilityDialogOpen(true);

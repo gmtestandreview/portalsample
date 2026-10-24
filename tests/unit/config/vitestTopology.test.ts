@@ -93,6 +93,12 @@ describe('vitest config loading stays explicit and shim-free', () => {
     }
   });
 
+  it('runs the unit and Storybook leaves in separate Node processes', () => {
+    expect(packageScripts()['test:all']).toBe(
+      'npm run test:unit && npm run test:storybook',
+    );
+  });
+
   it.each(['vitest.config.ts', 'vitest.unit.config.ts'])(
     "does not rely on the bundled config loader's __dirname shim in %s",
     (configFile) => {

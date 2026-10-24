@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import SummaryDisplay from './index';
@@ -10,7 +11,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const TextValue = meta.story({
   args: {
     label: 'Organisation name',
@@ -18,9 +18,7 @@ export const TextValue = meta.story({
     as: 'p',
   },
   // SB-021: label and value both render
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Organisation name')).toBeVisible();
@@ -35,9 +33,7 @@ export const PhoneValue = meta.story({
     as: 'span',
   },
   // SB-021: phone label triggers WCAG screen-reader split — visually-hidden node present
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Business phone')).toBeVisible();
@@ -59,9 +55,7 @@ export const FormattedNumber = meta.story({
     format: '## ### ### ###',
   },
   // SB-021: formatted number renders a visually-hidden spaced version for screen readers
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('ABN')).toBeVisible();
@@ -75,9 +69,7 @@ export const EmptyValue = meta.story({
     value: undefined,
     as: 'span',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // Visible dash
@@ -95,9 +87,7 @@ export const WithDescriptor = meta.story({
     as: 'span',
     descriptor: 'Certificate valid for 12 months from this date.',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('15 March 2024')).toBeVisible();
@@ -115,9 +105,7 @@ export const CustomBody = meta.story({
     as: 'custom',
     bodyText: <em data-testid='custom-body'>Special formatted content</em>,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByTestId('custom-body')).toBeVisible();

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 
 const useHtmlTitle = (
-  title = 'NMI' // default props
+  title = 'NMI', // default props
 ): void => {
   const location = useLocation();
   useEffect(() => {

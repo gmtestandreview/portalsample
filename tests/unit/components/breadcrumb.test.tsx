@@ -12,15 +12,15 @@ describe(CustomBreadcrumb, () => {
           { to: '/dashboard', text: 'Dashboard' },
           { text: 'Request for quote' },
         ]}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('navigation', { name: /breadcrumb/i })
+      screen.getByRole('navigation', { name: /breadcrumb/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/request for quote/i)).toHaveAttribute(
       'aria-current',
-      'page'
+      'page',
     );
   });
 
@@ -28,12 +28,12 @@ describe(CustomBreadcrumb, () => {
     renderWithProviders(
       <CustomBreadcrumb
         breadcrumbs={[{ to: '/', text: 'Home' }, { text: 'Request for quote' }]}
-      />
+      />,
     );
 
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute(
       'href',
-      '/'
+      '/',
     );
   });
 });

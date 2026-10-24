@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
@@ -35,11 +36,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const EditStep = meta.story({
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const organisationType = await canvas.findByText('Organisation type');
     const organisationName = await canvas.findByLabelText(/organisation name/i);
 

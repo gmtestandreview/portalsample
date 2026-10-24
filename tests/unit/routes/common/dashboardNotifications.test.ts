@@ -28,12 +28,12 @@ describe(DashBoardNotifications, () => {
     'returns the default dashboard error notification for %s',
     (_name, factory) => {
       expect(factory()).toEqual(defaultError);
-    }
+    },
   );
 
   it('returns contextual third-party access and report generated notifications', () => {
     expect(
-      DashBoardNotifications.getThirdPartyAccessNotification('NMI Branch')
+      DashBoardNotifications.getThirdPartyAccessNotification('NMI Branch'),
     ).toEqual({
       message:
         'You no longer have access to the records for NMI Branch.  Your changes have not been saved.',
@@ -41,7 +41,7 @@ describe(DashBoardNotifications, () => {
     });
 
     expect(
-      DashBoardNotifications.getReportFormsGeneratedNotification()
+      DashBoardNotifications.getReportFormsGeneratedNotification(),
     ).toEqual({
       message:
         'New initial reporting and/or ongoing reporting forms have been generated',
@@ -60,7 +60,7 @@ describe(DashBoardNotifications, () => {
     [HttpStatusCode.NotFound],
   ])('maps dashboard error status %s to an error notification', (status) => {
     expect(
-      DashBoardNotifications.getDashboardErrorNotification(status)
+      DashBoardNotifications.getDashboardErrorNotification(status),
     ).toEqual(defaultError);
   });
 });

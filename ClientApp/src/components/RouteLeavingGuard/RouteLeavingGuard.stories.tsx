@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, userEvent, screen, waitFor, within } from 'storybook/test';
 import { Routes, Route, Link } from 'react-router';
@@ -111,7 +112,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const Idle = meta.story({
   name: 'Idle — guard inactive',
   render: () => <GuardHarness when={false} />,
@@ -120,9 +120,7 @@ export const Idle = meta.story({
 export const InterceptedNavigation = meta.story({
   name: 'Active — confirmation modal on navigation',
   render: () => <GuardHarness when={true} />,
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     // Link is in the canvas (inside Routes); modal renders via Bootstrap portal into document.body
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
@@ -151,9 +149,7 @@ export const CustomCopy = meta.story({
       confirmBtn='Yes, logout'
     />
   ),
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {
@@ -173,9 +169,7 @@ export const CustomCopy = meta.story({
 export const ProceedAfterConfirm = meta.story({
   name: 'Confirm navigation — modal clears and user proceeds',
   render: () => <GuardHarness when={true} />,
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {

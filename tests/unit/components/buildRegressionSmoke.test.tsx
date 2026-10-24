@@ -19,7 +19,7 @@ describe('build regression smoke coverage', () => {
       const module = await import(modulePath);
 
       expect(module.default).toBeDefined();
-    }
+    },
   );
 
   it.each([
@@ -39,6 +39,6 @@ describe('build regression smoke coverage', () => {
       expect(yup.string().fixedDigits).toBeTypeOf('function');
       expect(yup.string().maxLength).toBeTypeOf('function');
       expect(yup.string().minEntered).toBeTypeOf('function');
-    }
+    },
   );
 });

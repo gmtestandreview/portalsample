@@ -8,7 +8,7 @@ type FreshnessModule = {
   }): string;
   validateReferences(
     manifest: unknown,
-    index: unknown
+    index: unknown,
   ): { ok: boolean; errors: Array<{ code: string; message: string }> };
 };
 
@@ -71,7 +71,7 @@ describe('computeInputDigest', () => {
     const originalLocaleCompare = String.prototype.localeCompare;
     String.prototype.localeCompare = function localeCompare(
       this: string,
-      other: string
+      other: string,
     ) {
       return this < other ? 1 : this > other ? -1 : 0;
     };
@@ -84,7 +84,7 @@ describe('computeInputDigest', () => {
       String.prototype.localeCompare = originalLocaleCompare;
 
       expect(reversedLocaleDigest).toBe(
-        moduleUnderTest.computeInputDigest({ files })
+        moduleUnderTest.computeInputDigest({ files }),
       );
     } finally {
       String.prototype.localeCompare = originalLocaleCompare;
@@ -116,7 +116,7 @@ describe('computeInputDigest', () => {
     }));
 
     expect(moduleUnderTest.computeInputDigest({ files })).toBe(
-      moduleUnderTest.computeInputDigest({ files: reordered })
+      moduleUnderTest.computeInputDigest({ files: reordered }),
     );
   });
 
@@ -129,7 +129,7 @@ describe('computeInputDigest', () => {
     }));
 
     expect(moduleUnderTest.computeInputDigest({ files: byteFiles })).toBe(
-      moduleUnderTest.computeInputDigest({ files })
+      moduleUnderTest.computeInputDigest({ files }),
     );
   });
 
@@ -142,7 +142,7 @@ describe('computeInputDigest', () => {
     };
 
     expect(
-      moduleUnderTest.validateReferences(referenceManifest, index)
+      moduleUnderTest.validateReferences(referenceManifest, index),
     ).toEqual({
       ok: true,
       errors: [],
@@ -150,7 +150,7 @@ describe('computeInputDigest', () => {
     expect(
       moduleUnderTest.validateReferences(referenceManifest, {
         entries: { docs: { id: 'components-app--docs', type: 'docs' } },
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: [expect.objectContaining({ code: 'REFERENCE_MISSING' })],
@@ -165,19 +165,19 @@ describe('computeInputDigest', () => {
     const reordered = files.map((file) =>
       file.path.endsWith('coverageManifest.json')
         ? { ...file, content: reorderedManifest }
-        : file
+        : file,
     );
     const changedSource = files.map((file) =>
       file.path.endsWith('App.tsx')
         ? { path: file.path, content: 'export const App = 2;\n' }
-        : file
+        : file,
     );
 
     expect(moduleUnderTest.computeInputDigest({ files: reordered })).not.toBe(
-      moduleUnderTest.computeInputDigest({ files })
+      moduleUnderTest.computeInputDigest({ files }),
     );
     expect(
-      moduleUnderTest.computeInputDigest({ files: changedSource })
+      moduleUnderTest.computeInputDigest({ files: changedSource }),
     ).not.toBe(moduleUnderTest.computeInputDigest({ files }));
   });
 
@@ -185,7 +185,7 @@ describe('computeInputDigest', () => {
     expect(() =>
       moduleUnderTest.computeInputDigest({
         files: [{ path: 'ClientApp/src/App.tsx', content: 'source' }],
-      })
+      }),
     ).toThrow(/coverage manifest/i);
   });
 
@@ -202,7 +202,7 @@ describe('computeInputDigest', () => {
     ],
   ])('rejects %s', (_name, invalidFiles) => {
     expect(() =>
-      moduleUnderTest.computeInputDigest({ files: invalidFiles })
+      moduleUnderTest.computeInputDigest({ files: invalidFiles }),
     ).toThrow();
   });
 });

@@ -70,7 +70,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
         callingPath,
       }));
     },
-    []
+    [],
   );
 
   const modalDispatch = useMemo(
@@ -79,7 +79,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
       setShowRFQDeleteModal,
       setShowRFQSelectModal,
     }),
-    [setShowBranchSelector, setShowRFQDeleteModal, setShowRFQSelectModal]
+    [setShowBranchSelector, setShowRFQDeleteModal, setShowRFQSelectModal],
   );
 
   // Loose `!= null` is deliberate: it means "an organisation exists", covering both
@@ -141,7 +141,7 @@ const PreConditions = (props: Readonly<PreConditionsProps>) => {
 
   useEffect(() => {
     setIsModalOpen(
-      !!(showBranchSelector || showRFQDelete || showTermsAndConditions)
+      !!(showBranchSelector || showRFQDelete || showTermsAndConditions),
     );
   }, [showBranchSelector, showRFQDelete, showTermsAndConditions, isModalOpen]);
 

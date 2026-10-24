@@ -8,12 +8,12 @@ const publicDirectory = path.join(repositoryRoot, 'ClientApp/public');
 
 const getPublicAsset = async (document: Document, selector: string) => {
   const element = document.querySelector<HTMLLinkElement | HTMLMetaElement>(
-    selector
+    selector,
   );
 
   expect(
     element,
-    `index.html declares no element matching ${selector}`
+    `index.html declares no element matching ${selector}`,
   ).not.toBeNull();
 
   const publicUrl =
@@ -35,21 +35,21 @@ describe('application shell identity assets', () => {
   it('publishes favicon and tile metadata backed by public files', async () => {
     const html = await readTextFile(
       path.join(repositoryRoot, 'index.html'),
-      repositoryRoot
+      repositoryRoot,
     );
     const document = new DOMParser().parseFromString(html, 'text/html');
 
     await expect(getPublicAsset(document, 'link[rel="icon"]')).resolves.toBe(
-      '/favicon.ico'
+      '/favicon.ico',
     );
     await expect(
-      getPublicAsset(document, 'meta[property="og:image"]')
+      getPublicAsset(document, 'meta[property="og:image"]'),
     ).resolves.toBe('/NMI-tile.png');
     await expect(
-      getPublicAsset(document, 'link[rel="apple-touch-icon"]')
+      getPublicAsset(document, 'link[rel="apple-touch-icon"]'),
     ).resolves.toBe('/NMI-tile.png');
     await expect(
-      getPublicAsset(document, 'meta[name="msapplication-TileImage"]')
+      getPublicAsset(document, 'meta[name="msapplication-TileImage"]'),
     ).resolves.toBe('/NMI-tile.png');
   });
 });

@@ -82,7 +82,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         getMode: () => modeRef.current,
         getHidden: () => hiddenRef.current,
       }),
-    [validateSoft, validateHard]
+    [validateSoft, validateHard],
   );
 
   const methods = useForm<T>({
@@ -120,7 +120,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         modeRef.current = 'next';
       }
     },
-    [handleSubmit, onSaveAndExit, onSubmit]
+    [handleSubmit, onSaveAndExit, onSubmit],
   );
 
   const api = useMemo<RhfFormApi>(
@@ -131,7 +131,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         void submit('next');
       },
     }),
-    [submit]
+    [submit],
   );
 
   return (

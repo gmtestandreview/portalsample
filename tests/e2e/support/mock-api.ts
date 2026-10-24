@@ -39,11 +39,11 @@ const json = (route: Route, body: unknown, status = 200) =>
 
 const fulfillConfiguredFailure = async (
   route: Route,
-  state: ScenarioState
+  state: ScenarioState,
 ): Promise<boolean> => {
   const key = failureKey(
     route.request().method(),
-    new URL(route.request().url()).pathname
+    new URL(route.request().url()).pathname,
   );
   const failure = state.failures.get(key);
   if (!failure) {
@@ -58,7 +58,7 @@ const fulfillConfiguredFailure = async (
       status: failure.status,
       title: 'Configured E2E failure',
     },
-    failure.status
+    failure.status,
   );
   return true;
 };
@@ -184,7 +184,7 @@ const buildDashboardItem = (referenceId: string, status: string) => ({
 
 const dashboardResponse = (state: ScenarioState) => {
   const items = Array.from(state.requests, ([referenceId, status]) =>
-    buildDashboardItem(referenceId, status)
+    buildDashboardItem(referenceId, status),
   );
   return {
     items,
@@ -196,7 +196,7 @@ const dashboardResponse = (state: ScenarioState) => {
 
 export async function installMockApi(
   page: Page,
-  state: ScenarioState
+  state: ScenarioState,
 ): Promise<void> {
   await page.route('**/api/users/sign-in**', async (route) => {
     await json(route, buildSignInResponse(state));
@@ -218,7 +218,7 @@ export async function installMockApi(
     '**/api/dashboard/get-filtered-dashboard-**',
     async (route) => {
       await json(route, dashboardResponse(state));
-    }
+    },
   );
 
   await page.route('/api/dashboard/**', async (route) => {
@@ -257,9 +257,9 @@ export async function installMockApi(
         'RFQ-TEST-0001';
       await json(
         route,
-        state.quotes.get(referenceId) ?? buildMeasurementReport(referenceId)
+        state.quotes.get(referenceId) ?? buildMeasurementReport(referenceId),
       );
-    }
+    },
   );
 
   await page.route(
@@ -271,9 +271,9 @@ export async function installMockApi(
       await json(
         route,
         quote ??
-          buildMeasurementReport(state.activeReferenceId ?? 'RFQ-REPORT-0001')
+          buildMeasurementReport(state.activeReferenceId ?? 'RFQ-REPORT-0001'),
       );
-    }
+    },
   );
 
   await page.route('**/api/quote/decline-quote**', async (route) => {
@@ -288,26 +288,26 @@ export async function installMockApi(
 
   await page.route('**/api/accept-quote/*/step-statuses', async (route) => {
     const referenceId = decodeURIComponent(
-      new URL(route.request().url()).pathname.split('/').at(-2) ?? ''
+      new URL(route.request().url()).pathname.split('/').at(-2) ?? '',
     );
     await json(route, buildAcceptQuoteStatuses(`crm-${referenceId}`));
   });
 
   await page.route(
     '**/api/accept-quote/*/report-recipient',
-    acceptQuoteStepHandler(state, buildReportRecipient)
+    acceptQuoteStepHandler(state, buildReportRecipient),
   );
   await page.route(
     '**/api/accept-quote/*/delivery-and-return',
-    acceptQuoteStepHandler(state, buildDeliveryAndReturn)
+    acceptQuoteStepHandler(state, buildDeliveryAndReturn),
   );
   await page.route(
     '**/api/accept-quote/*/payment-details',
-    acceptQuoteStepHandler(state, buildPaymentDetails)
+    acceptQuoteStepHandler(state, buildPaymentDetails),
   );
   await page.route(
     '**/api/accept-quote/*/summary-and-accept',
-    acceptQuoteStepHandler(state, buildAcceptQuoteSummary)
+    acceptQuoteStepHandler(state, buildAcceptQuoteSummary),
   );
   await page.route('**/api/accept-quote/*/submit', async (route) => {
     if (await fulfillConfiguredFailure(route, state)) {
@@ -346,7 +346,7 @@ export async function installMockApi(
       return;
     }
     const sourceReferenceId = decodeURIComponent(
-      new URL(route.request().url()).pathname.split('/').at(-2) ?? ''
+      new URL(route.request().url()).pathname.split('/').at(-2) ?? '',
     );
     const copiedReferenceId = `${sourceReferenceId}-COPY`;
     const application = {
@@ -363,7 +363,7 @@ export async function installMockApi(
     '**/api/request-for-quote/*/step-statuses',
     async (route) => {
       const referenceId = decodeURIComponent(
-        new URL(route.request().url()).pathname.split('/').at(-2) ?? ''
+        new URL(route.request().url()).pathname.split('/').at(-2) ?? '',
       );
       const statuses = state.rfqStepStatuses.get(referenceId);
       await json(
@@ -377,9 +377,9 @@ export async function installMockApi(
         ).map((status) => ({
           status,
           crmQuoteRequestId: `crm-${referenceId}`,
-        }))
+        })),
       );
-    }
+    },
   );
 
   await page.route(
@@ -402,14 +402,14 @@ export async function installMockApi(
         return;
       }
       await json(route, {});
-    }
+    },
   );
 
   await page.route(
     '**/api/request-for-quote/*/instrument-and-request',
     async (route) => {
       const referenceId = decodeURIComponent(
-        new URL(route.request().url()).pathname.split('/').at(-2) ?? ''
+        new URL(route.request().url()).pathname.split('/').at(-2) ?? '',
       );
       if (route.request().method() === 'GET') {
         await json(route, {
@@ -437,12 +437,12 @@ export async function installMockApi(
       };
       state.instrumentDrafts.set(referenceId, command.formStep ?? {});
       await json(route, {});
-    }
+    },
   );
 
   await page.route('**/api/lookup?**', async (route) => {
     const lookupType = new URL(route.request().url()).searchParams.get(
-      'LookupType'
+      'LookupType',
     );
     if (lookupType === CRMLookupTypes.TCPortalMeasurementCategory) {
       await json(route, [
@@ -471,7 +471,7 @@ export async function installMockApi(
 
   await page.route('**/api/request-for-quote/*/view-summary', async (route) => {
     const referenceId = decodeURIComponent(
-      new URL(route.request().url()).pathname.split('/').at(-2) ?? ''
+      new URL(route.request().url()).pathname.split('/').at(-2) ?? '',
     );
     await json(route, state.rfqSummaries.get(referenceId) ?? buildRfqSummary());
   });
@@ -506,7 +506,7 @@ export async function installMockApi(
           status: FormStepStatus.NotStarted,
         },
       });
-    }
+    },
   );
 
   await page.route('**/api/forms/accounts/1', async (route) => {
@@ -524,11 +524,11 @@ export async function installMockApi(
         return;
       }
       state.lastAccountSubmission = JSON.parse(
-        route.request().postData() ?? '{}'
+        route.request().postData() ?? '{}',
       ) as Record<string, unknown>;
       state.accountCreationCompleted = true;
       await json(route, {});
-    }
+    },
   );
 
   await page.route(
@@ -538,10 +538,10 @@ export async function installMockApi(
         return;
       }
       state.lastAccountSubmission = JSON.parse(
-        route.request().postData() ?? '{}'
+        route.request().postData() ?? '{}',
       ) as Record<string, unknown>;
       await json(route, {});
-    }
+    },
   );
 
   await page.route('**/api/contact/usercontact**', async (route) => {
@@ -553,7 +553,7 @@ export async function installMockApi(
       return;
     }
     state.lastContactSubmission = JSON.parse(
-      route.request().postData() ?? '{}'
+      route.request().postData() ?? '{}',
     ) as Record<string, unknown>;
     state.accountContactCompleted = true;
     await json(route, {});
@@ -563,7 +563,7 @@ export async function installMockApi(
     '**/api/dashboard/get-dashboard-instrument-artefact-reports?**',
     async (route) => {
       await json(route, buildInstrumentReports());
-    }
+    },
   );
 
   await page.route(
@@ -578,7 +578,7 @@ export async function installMockApi(
         fileSizeBytes: 14,
         mimeType: 'application/pdf',
       });
-    }
+    },
   );
 
   await page.route('**/api/address/search**', async (route) => {

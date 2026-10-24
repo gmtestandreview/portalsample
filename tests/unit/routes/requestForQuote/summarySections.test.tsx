@@ -13,7 +13,7 @@ type Hidden = RfqSummarySectionProps['hidden'];
 
 const populated = (() => {
   const found = summaryFixtures.find(
-    (f) => f.name === 'fully populated with the principal contact'
+    (f) => f.name === 'fully populated with the principal contact',
   );
   if (!found) throw new Error('Missing populated fixture');
   return found.values;
@@ -22,14 +22,14 @@ const populated = (() => {
 const renderOrganisation = (
   values: Values,
   hidden: Hidden = summaryHidden,
-  currentContact?: RfqCurrentContact
+  currentContact?: RfqCurrentContact,
 ) =>
   render(
     <RfqOrganisationSummary
       values={values}
       hidden={hidden}
       {...(currentContact && { currentContact })}
-    />
+    />,
   ).container;
 
 const accountHolder: RfqCurrentContact = {
@@ -45,7 +45,7 @@ describe(RfqOrganisationSummary, () => {
     expect(container).toHaveTextContent('Acme Pty Ltd');
     expect(container).toHaveTextContent('ABN: 12 345 678 901');
     expect(container.querySelector('.visually-hidden')).toHaveTextContent(
-      '1 2 3 4 5 6 7 8 9 0 1'
+      '1 2 3 4 5 6 7 8 9 0 1',
     );
   });
 
@@ -87,7 +87,7 @@ describe(RfqOrganisationSummary, () => {
     const container = renderOrganisation(
       populated,
       summaryHidden,
-      accountHolder
+      accountHolder,
     );
 
     const descriptor = container.querySelector('#q-currentContact');
@@ -107,7 +107,7 @@ describe(RfqOrganisationSummary, () => {
         },
       },
       summaryHidden,
-      accountHolder
+      accountHolder,
     );
 
     expect(container).toHaveTextContent('A different contact person');
@@ -157,7 +157,7 @@ describe(RfqOrganisationSummary, () => {
             titleOther: () => true,
           },
         },
-      }
+      },
     );
 
     expect(container).not.toHaveTextContent('Title, if "Other"');
@@ -189,7 +189,7 @@ describe(RfqOrganisationSummary, () => {
     const container = renderOrganisation({ organisationAndContact: {} }, {});
 
     expect(container.querySelector('h2.h3.mb-0')).not.toHaveTextContent(
-      'undefined'
+      'undefined',
     );
   });
 

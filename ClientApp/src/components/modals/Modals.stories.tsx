@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
@@ -48,7 +49,6 @@ const meta = preview.meta({
     layout: 'centered',
   },
 });
-
 
 const jsonResponse = (body: unknown, init?: ResponseInit) =>
   new Response(JSON.stringify(body), {
@@ -123,9 +123,7 @@ const SaveAndExitDemo = () => {
 
 export const ConfirmationOpen = meta.story({
   render: () => <DeleteConfirmationDemo />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Modal renders via React Bootstrap portal into document.body — use screen
     const dialog = await screen.findByRole('dialog', {
@@ -158,9 +156,7 @@ export const ConfirmationOpen = meta.story({
 
 export const ConfirmationClosed = meta.story({
   render: () => <SaveAndExitDemo />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const openButton = await canvas.findByRole('button', {
       name: 'Open confirmation modal',

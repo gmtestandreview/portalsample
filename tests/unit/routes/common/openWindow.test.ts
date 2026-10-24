@@ -23,7 +23,7 @@ describe('openWindow helpers', () => {
     expect(open).toHaveBeenCalledWith(
       '/request-for-quote/123/view-summary',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
     expect(openedWindow.opener).toBeNull();
   });
@@ -45,13 +45,13 @@ describe('openWindow helpers', () => {
 
     openPdfPageInSecureNewTab(
       'blob:https://portal.measurement.gov.au/pdf-id',
-      '2&evil=1'
+      '2&evil=1',
     );
 
     expect(open).toHaveBeenCalledWith(
       'blob:https://portal.measurement.gov.au/pdf-id#page=2%26evil%3D1',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
   });
 
@@ -64,7 +64,7 @@ describe('openWindow helpers', () => {
     expect(open).toHaveBeenCalledWith(
       'blob:https://portal.measurement.gov.au/pdf-id',
       '_blank',
-      'noopener,noreferrer'
+      'noopener,noreferrer',
     );
   });
 });

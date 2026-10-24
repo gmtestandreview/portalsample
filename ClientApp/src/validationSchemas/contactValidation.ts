@@ -44,7 +44,7 @@ const phoneRequired =
 export const phoneSchema = (
   label: string,
   required = true,
-  message = 'Please enter a valid Business phone'
+  message = 'Please enter a valid Business phone',
 ) =>
   nullableString(label)
     .minEntered(6)
@@ -53,12 +53,12 @@ export const phoneSchema = (
     .test(
       'Please provide at least one phone number.',
       `${label} is required`,
-      required ? phoneRequired() : () => true
+      required ? phoneRequired() : () => true,
     );
 
 export const phoneRequiredSchema = (
   label: string,
-  message = 'Please enter a valid Business phone'
+  message = 'Please enter a valid Business phone',
 ) =>
   nullableString(label)
     .minEntered(6)
@@ -74,7 +74,7 @@ export const mobileSchema = (label: string, required = true) =>
     .test(
       'Please provide at least one phone number.',
       `${label} is required`,
-      required ? phoneRequired() : () => true
+      required ? phoneRequired() : () => true,
     );
 
 export const contactSchema = () =>

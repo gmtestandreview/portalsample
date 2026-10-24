@@ -43,14 +43,14 @@ const attachmentControl = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -58,44 +58,44 @@ vi.mock(
 
     clients.patternApproval = createClientMockFor(
       'deleteDocument',
-      'updateCategory'
+      'updateCategory',
     );
 
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
     }) satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: () => mocks.accountContext(),
       useAccountDispatch: () => ({
         setTargetOrganisation: mocks.setTargetOrganisation,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/notification',
+  import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
+  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
   () =>
     ({
       default: ({
@@ -111,11 +111,11 @@ vi.mock(
           data-type={selectedInstrumentTypeId}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule136>
+    }) satisfies __ExactMockModule<__TestMockModule136>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/Attachment/index-new',
+  import('../../../../ClientApp/src/components/Inputs/Attachment/index-new'),
   () =>
     ({
       default: (props: typeof attachmentControl.props) => {
@@ -129,7 +129,7 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule146>
+    }) satisfies __ExactMockModule<__TestMockModule146>,
 );
 
 const defaultValues = {
@@ -176,7 +176,7 @@ const renderDocs = async ({
     >
       <SupportingDocuments {...(componentProps as any)} />
     </FormikWrapper>,
-    { path: '/ta/:id', initialPath: '/ta/APP-1' }
+    { path: '/ta/:id', initialPath: '/ta/APP-1' },
   );
 
   await act(async () => {
@@ -198,7 +198,7 @@ const setFormikErrors = async (errors: Record<string, unknown>) => {
 
 const alertItems = () =>
   Array.from(document.querySelectorAll('#form-error-summary-custom li')).map(
-    (li) => li.textContent
+    (li) => li.textContent,
   );
 
 describe('supporting documents', () => {
@@ -390,7 +390,7 @@ describe('supporting documents', () => {
       const scrollIntoView = vi.fn();
       const focus = vi.fn();
       vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
-        scrollIntoView
+        scrollIntoView,
       );
       vi.spyOn(HTMLElement.prototype, 'focus').mockImplementation(focus);
 
@@ -402,7 +402,7 @@ describe('supporting documents', () => {
         expect(scrollIntoView).toHaveBeenCalledWith({
           behavior: 'smooth',
           block: 'start',
-        })
+        }),
       );
 
       expect(focus).toHaveBeenCalledWith();
@@ -416,7 +416,7 @@ describe('supporting documents', () => {
       await renderDocs({ props: { onUploadAttachment: vi.fn() } });
 
       await expect(attachmentControl.props.onUploadFiles([])).rejects.toThrow(
-        'No file to upload'
+        'No file to upload',
       );
     });
 
@@ -441,7 +441,7 @@ describe('supporting documents', () => {
             homeAccountId: 'test-home-account-id',
           }),
           scopes: ['api://ta/.default'],
-        })
+        }),
       );
       expect(onUploadAttachment).toHaveBeenCalledTimes(1);
       expect(onUploadAttachment).toHaveBeenCalledWith(DEFAULT_ACCESS_TOKEN, [
@@ -525,19 +525,19 @@ describe('supporting documents', () => {
           expect.objectContaining({
             message: expect.stringContaining('Client Org'),
             severity: 'Error',
-          })
-        )
+          }),
+        ),
       );
 
       expect(
         defined(
           mocks.setDashboardNotification.mock.calls[0],
-          'dashboard notification call'
-        )[0].message
+          'dashboard notification call',
+        )[0].message,
       ).toContain('Client Org');
       expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(
         '11111111111',
-        'Test Org'
+        'Test Org',
       );
     });
 
@@ -558,7 +558,7 @@ describe('supporting documents', () => {
       });
 
       await waitFor(() =>
-        expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', '')
+        expect(mocks.setTargetOrganisation).toHaveBeenCalledWith('', ''),
       );
     });
 
@@ -588,10 +588,10 @@ describe('supporting documents', () => {
       });
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
-        DEFAULT_ACCESS_TOKEN
+        DEFAULT_ACCESS_TOKEN,
       );
       expect(
-        clients.patternApproval.methods['deleteDocument']
+        clients.patternApproval.methods['deleteDocument'],
       ).toHaveBeenCalledWith('APP-1', 'doc-9');
       expect(onDeleteSuccess).toHaveBeenCalledWith(true);
     });
@@ -604,7 +604,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        clients.patternApproval.methods['deleteDocument']
+        clients.patternApproval.methods['deleteDocument'],
       ).toHaveBeenCalledWith('APP-1', 'doc-9');
     });
 
@@ -614,12 +614,12 @@ describe('supporting documents', () => {
       await act(async () => {
         await attachmentControl.props.onCategoryUpdate(
           'doc-9',
-          'Specification'
+          'Specification',
         );
       });
 
       expect(
-        clients.patternApproval.methods['updateCategory']
+        clients.patternApproval.methods['updateCategory'],
       ).toHaveBeenCalledWith('APP-1', 'doc-9', 'Specification');
     });
 
@@ -631,7 +631,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        clients.patternApproval.methods['updateCategory']
+        clients.patternApproval.methods['updateCategory'],
       ).not.toHaveBeenCalled();
     });
   });
@@ -642,11 +642,11 @@ describe('supporting documents', () => {
 
       expect(screen.getByTestId('instrument-info-panel')).toHaveAttribute(
         'data-category',
-        'cat-1'
+        'cat-1',
       );
       expect(screen.getByTestId('instrument-info-panel')).toHaveAttribute(
         'data-type',
-        'type-1'
+        'type-1',
       );
     });
 
@@ -661,7 +661,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        screen.queryByTestId('instrument-info-panel')
+        screen.queryByTestId('instrument-info-panel'),
       ).not.toBeInTheDocument();
     });
 
@@ -673,7 +673,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        screen.queryByTestId('instrument-info-panel')
+        screen.queryByTestId('instrument-info-panel'),
       ).not.toBeInTheDocument();
     });
 
@@ -681,7 +681,7 @@ describe('supporting documents', () => {
       await renderDocs({ props: { isSummary: true } });
 
       expect(
-        screen.queryByTestId('instrument-info-panel')
+        screen.queryByTestId('instrument-info-panel'),
       ).not.toBeInTheDocument();
     });
   });
@@ -691,10 +691,10 @@ describe('supporting documents', () => {
       await renderDocs();
 
       expect(
-        screen.getByText(/you may be asked to provide additional documents/)
+        screen.getByText(/you may be asked to provide additional documents/),
       ).toBeInTheDocument();
       expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
-        'Upload one or more supporting documents'
+        'Upload one or more supporting documents',
       );
     });
 
@@ -702,7 +702,7 @@ describe('supporting documents', () => {
       await renderDocs({ props: { suppressDocChanges: true } });
 
       expect(
-        screen.getByText(/Documents cannot be changed once committed/)
+        screen.getByText(/Documents cannot be changed once committed/),
       ).toBeInTheDocument();
     });
 
@@ -710,11 +710,11 @@ describe('supporting documents', () => {
       await renderDocs({ props: { isSummary: true } });
 
       expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
-        'Uploaded supporting documents'
+        'Uploaded supporting documents',
       );
       expect(screen.getByTestId('attachment')).toHaveAttribute(
         'data-is-summary',
-        'true'
+        'true',
       );
     });
 
@@ -723,7 +723,7 @@ describe('supporting documents', () => {
 
       expect(screen.getByTestId('attachment')).toHaveAttribute(
         'data-disable-upload',
-        'true'
+        'true',
       );
     });
   });

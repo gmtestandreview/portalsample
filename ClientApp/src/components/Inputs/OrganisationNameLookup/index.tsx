@@ -22,7 +22,7 @@ export interface OrganisationNameLookupProps {
 }
 
 const OrganisationNameLookup = (
-  props: Readonly<OrganisationNameLookupProps>
+  props: Readonly<OrganisationNameLookupProps>,
 ) => {
   const {
     id,
@@ -156,7 +156,7 @@ const OrganisationNameLookup = (
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActiveIndex((prev) =>
-        prev <= 0 ? filteredSuggestions.length - 1 : prev - 1
+        prev <= 0 ? filteredSuggestions.length - 1 : prev - 1,
       );
     } else if (e.key === 'Enter') {
       e.preventDefault();

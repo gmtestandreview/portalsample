@@ -35,8 +35,8 @@ describe('storybook dashboard API contracts', () => {
   it('returns only file metadata when ReturnFile is false', async () => {
     const response = await fetch(
       apiUrl(
-        '/api/dashboard/get-quote-report-pdf?QuoteRequestID=QR-100245&ReturnFile=false'
-      )
+        '/api/dashboard/get-quote-report-pdf?QuoteRequestID=QR-100245&ReturnFile=false',
+      ),
     );
 
     expect(response.status).toBe(200);
@@ -46,8 +46,8 @@ describe('storybook dashboard API contracts', () => {
   it('returns a downloadable PDF payload when ReturnFile is true', async () => {
     const response = await fetch(
       apiUrl(
-        '/api/dashboard/get-quote-report-pdf?QuoteRequestID=QR-100245&ReturnFile=true'
-      )
+        '/api/dashboard/get-quote-report-pdf?QuoteRequestID=QR-100245&ReturnFile=true',
+      ),
     );
 
     expect(response.status).toBe(200);
@@ -61,8 +61,8 @@ describe('storybook dashboard API contracts', () => {
   it('returns the instrument-report paginated DTO from its own endpoint', async () => {
     const response = await fetch(
       apiUrl(
-        '/api/dashboard/get-dashboard-instrument-artefact-reports?PortalId=org-crm-guid-001&Name=INS-1&PageSize=10&PageNumber=1'
-      )
+        '/api/dashboard/get-dashboard-instrument-artefact-reports?PortalId=org-crm-guid-001&Name=INS-1&PageSize=10&PageNumber=1',
+      ),
     );
 
     expect(response.status).toBe(200);

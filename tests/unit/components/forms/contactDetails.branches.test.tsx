@@ -34,7 +34,7 @@ describe('contactDetails branch coverage', () => {
         onSubmit={vi.fn()}
       >
         <ContactDetails name='contact' {...customLabels} />
-      </Formik>
+      </Formik>,
     );
 
     for (const label of Object.values(customLabels)) {
@@ -62,7 +62,7 @@ describe('contactDetails branch coverage', () => {
         onSubmit={vi.fn()}
       >
         <ContactDetails name='contact' isSummary {...customLabels} />
-      </Formik>
+      </Formik>,
     );
 
     expect(screen.getByText('Dr')).toBeInTheDocument();

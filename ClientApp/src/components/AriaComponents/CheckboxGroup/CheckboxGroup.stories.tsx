@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, userEvent } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
@@ -13,7 +14,6 @@ const meta = preview.meta({
   },
 });
 
-
 const services = (
   <>
     <Checkbox value='testing'>Testing and calibration</Checkbox>
@@ -22,16 +22,12 @@ const services = (
 );
 
 export const WithLabelAndDescription = meta.story({
-  render: (args) => (
-    <CheckboxGroup {...args}>{services}</CheckboxGroup>
-  ),
+  render: (args) => <CheckboxGroup {...args}>{services}</CheckboxGroup>,
   args: {
     label: 'NMI services',
     description: 'Choose every service that applies to your business.',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(canvas.getByText('NMI services')).toBeVisible();
     await expect(
       canvas.getByText('Choose every service that applies to your business.'),
@@ -51,9 +47,7 @@ export const WithLabelAndDescription = meta.story({
 });
 
 export const Bare = meta.story({
-  render: (args) => (
-    <CheckboxGroup {...args}>{services}</CheckboxGroup>
-  ),
+  render: (args) => <CheckboxGroup {...args}>{services}</CheckboxGroup>,
   args: {
     // No visible <Label>/<Description>: the group renders its items and nothing
     // else. React Aria still requires an accessible name, so the group is named
@@ -61,9 +55,7 @@ export const Bare = meta.story({
     // warning and the group is exposed to assistive tech as unnamed.
     'aria-label': 'NMI services',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByRole('checkbox', { name: 'Testing and calibration' }),
     ).toBeInTheDocument();
@@ -76,16 +68,12 @@ export const Bare = meta.story({
 });
 
 export const Horizontal = meta.story({
-  render: (args) => (
-    <CheckboxGroup {...args}>{services}</CheckboxGroup>
-  ),
+  render: (args) => <CheckboxGroup {...args}>{services}</CheckboxGroup>,
   args: {
     label: 'NMI services',
     orientation: 'horizontal',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     // Orientation is published as a data attribute for the stylesheet to lay out against.
     const group = canvas.getByRole('group', { name: 'NMI services' });
 
@@ -94,17 +82,13 @@ export const Horizontal = meta.story({
 });
 
 export const Invalid = meta.story({
-  render: (args) => (
-    <CheckboxGroup {...args}>{services}</CheckboxGroup>
-  ),
+  render: (args) => <CheckboxGroup {...args}>{services}</CheckboxGroup>,
   args: {
     label: 'NMI services',
     isInvalid: true,
     errorMessage: 'Select at least one service before continuing.',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await expect(
       canvas.getByText('Select at least one service before continuing.'),
     ).toBeVisible();

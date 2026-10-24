@@ -65,7 +65,7 @@ describe('common validation helpers', () => {
 
     await expect(schema.validate('01/01/2026')).resolves.toBeDefined();
     await expect(schema.validate('')).rejects.toThrow(
-      'Preferred date is required'
+      'Preferred date is required',
     );
     await expect(schema.validate('31/02/2026')).rejects.toThrow('DD/MM/YYYY');
     await expect(schema.validate({})).rejects.toThrow('DD/MM/YYYY');
@@ -107,41 +107,41 @@ describe('common validation helpers', () => {
     const nonEmptyWebsite = websiteUrlSchema('Invalid website', false);
 
     await expect(
-      optionalWebsite.validate('https://measurement.gov.au')
+      optionalWebsite.validate('https://measurement.gov.au'),
     ).resolves.toBe('https://measurement.gov.au');
     await expect(
-      optionalWebsite.validate('https://example-domain.com')
+      optionalWebsite.validate('https://example-domain.com'),
     ).resolves.toBe('https://example-domain.com');
     await expect(
-      optionalWebsite.validate('http://example.com/path?query=value')
+      optionalWebsite.validate('http://example.com/path?query=value'),
     ).resolves.toBe('http://example.com/path?query=value');
     await expect(optionalWebsite.validate('www.example.com')).resolves.toBe(
-      'www.example.com'
+      'www.example.com',
     );
     await expect(optionalWebsite.validate('')).resolves.toBe('');
     await expect(optionalWebsite.validate('not a website')).rejects.toThrow(
-      'Invalid website'
+      'Invalid website',
     );
     await expect(optionalWebsite.validate('.example.com')).rejects.toThrow(
-      'Invalid website'
+      'Invalid website',
     );
     await expect(optionalWebsite.validate('example.com.')).rejects.toThrow(
-      'Invalid website'
+      'Invalid website',
     );
     await expect(nonEmptyWebsite.validate('')).rejects.toThrow(
-      'Invalid website'
+      'Invalid website',
     );
   });
 
   it('validates required and optional email schemas', async () => {
     await expect(
-      emailSchema('Email').validate('user@example.com')
+      emailSchema('Email').validate('user@example.com'),
     ).resolves.toBe('user@example.com');
     await expect(emailSchema('Email').validate('bad')).rejects.toThrow(
-      'Email is not a valid email address'
+      'Email is not a valid email address',
     );
     await expect(emailSchema('Email').validate('')).rejects.toThrow(
-      'Email is required'
+      'Email is required',
     );
     await expect(emailSchema('Email', false).validate('')).resolves.toBe('');
   });

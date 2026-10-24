@@ -2,7 +2,7 @@ import { LogLevel } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  '@/env',
+  import('@/env'),
   () =>
     ({
       env: {
@@ -14,7 +14,7 @@ vi.mock(
         VITE_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
         VITE_B2C_REDIRECT_URL: 'https://example.test/redirect',
       },
-    }) satisfies __ExactMockModule<__TestMockModule10>
+    }) satisfies __ExactMockModule<__TestMockModule10>,
 );
 
 describe('auth configuration', () => {
@@ -52,7 +52,7 @@ describe('auth configuration', () => {
     expect(configuration.system).not.toHaveProperty('windowHashTimeout');
     expect(configuration.system).not.toHaveProperty('iframeHashTimeout');
     expect(
-      configuration.auth.onRedirectNavigate?.('https://example.test/')
+      configuration.auth.onRedirectNavigate?.('https://example.test/'),
     ).toBe(true);
   });
 
@@ -65,7 +65,7 @@ describe('auth configuration', () => {
     configuration.system?.loggerOptions?.loggerCallback?.(
       LogLevel.Error,
       'secret',
-      true
+      true,
     );
 
     expect(consoleError).not.toHaveBeenCalled();
@@ -82,7 +82,7 @@ describe('auth configuration', () => {
     configuration.system?.loggerOptions?.loggerCallback?.(
       LogLevel.Error,
       'visible error',
-      false
+      false,
     );
 
     expect(consoleError).toHaveBeenCalledWith('visible error');
@@ -99,7 +99,7 @@ describe('auth configuration', () => {
     configuration.system?.loggerOptions?.loggerCallback?.(
       LogLevel.Info,
       'info message',
-      false
+      false,
     );
 
     expect(consoleError).not.toHaveBeenCalled();
@@ -110,7 +110,7 @@ describe('auth configuration', () => {
   it('falls back to empty strings when optional runtime auth env values are missing', async () => {
     vi.resetModules();
     vi.doMock(
-      '@/env',
+      import('@/env'),
       () =>
         ({
           env: {
@@ -122,7 +122,7 @@ describe('auth configuration', () => {
             VITE_B2C_USER_IMPERSONATION_SCOPE: undefined,
             VITE_B2C_REDIRECT_URL: undefined,
           },
-        }) satisfies __ExactMockModule<__TestMockModule10>
+        }) satisfies __ExactMockModule<__TestMockModule10>,
     );
 
     const { authRequest, configuration, redirectUri, scopes, tokenRequest } =

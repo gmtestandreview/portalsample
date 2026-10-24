@@ -56,7 +56,7 @@ export interface TypeApprovalApplicationState {
 
 const buildTypeApprovalApplication = (
   referenceId: string,
-  submitted: boolean
+  submitted: boolean,
 ): TypeApprovalApplicationState => ({
   referenceId,
   submitted,
@@ -147,7 +147,7 @@ const buildTypeApprovalApplication = (
       : FormStepStatus.NotStarted,
   },
   stepStatuses: new Array<FormStepStatus>(4).fill(
-    submitted ? FormStepStatus.Completed : FormStepStatus.NotStarted
+    submitted ? FormStepStatus.Completed : FormStepStatus.NotStarted,
   ),
   messages: submitted
     ? [
@@ -170,7 +170,7 @@ const buildTypeApprovalApplication = (
 export const createScenarioState = (): ScenarioState => {
   const submittedTypeApproval = buildTypeApprovalApplication(
     'PA-2026-000001',
-    true
+    true,
   );
   return {
     authenticated: true,
@@ -199,13 +199,13 @@ export const createScenarioState = (): ScenarioState => {
 };
 
 export const createDraftTypeApprovalApplication = (
-  referenceId: string
+  referenceId: string,
 ): TypeApprovalApplicationState =>
   buildTypeApprovalApplication(referenceId, false);
 
 export const buildQuote = (
   referenceId: string,
-  quoteRequestStatus: QuoteStatus = QuoteStatus.QuoteAvailable
+  quoteRequestStatus: QuoteStatus = QuoteStatus.QuoteAvailable,
 ): RequestForQuoteDetails => ({
   quoteRequestIdNum: referenceId,
   quotationIdNum: `Q-${referenceId}`,

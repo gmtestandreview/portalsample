@@ -30,5 +30,5 @@ root.render(
         </AccountProvider>
       </MsalProvider>
     </ErrorBoundary>
-  </StrictMode>
+  </StrictMode>,
 );

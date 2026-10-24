@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { Container, Row, Col } from 'react-bootstrap';
@@ -38,7 +39,6 @@ const meta = preview.meta({
   parameters: { layout: 'fullscreen' },
   decorators: [withPortalProviders],
 });
-
 
 export const Step1ContactDetails = meta.story({
   parameters: { portal: { initialEntries: ['/step-1'] } },
@@ -81,9 +81,7 @@ export const Step1ContactDetails = meta.story({
       </WizardStep>
     </WizardForm>
   ),
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Progress is announced once, by the stepper. The h1 used to repeat it as a
     // visually-hidden "Step 1 of 2", which duplicated the same information for screen
@@ -158,10 +156,7 @@ export const Step2WithPreviousCompleted = meta.story({
       </WizardStep>
     </WizardForm>
   ),
-  play: async ({
-    canvasElement,
-    userEvent,
-  }) => {
+  play: async ({ canvasElement, userEvent }) => {
     const canvas = within(canvasElement);
 
     await expect(

@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, waitFor } from 'storybook/test';
 import RouteAccessibleNavigation from './routeAccessibleNavigation';
@@ -21,11 +22,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const LiveRegion = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // The announcer is a polite live region exposed to assistive technology only.
     const status = canvas.getByRole('status');

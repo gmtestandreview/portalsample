@@ -13,7 +13,7 @@ const mockInstance = {
 };
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: vi.fn(() => ({
@@ -30,21 +30,21 @@ vi.mock(
         ],
         instance: mockInstance,
       })),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
-    }) satisfies __ExactMockModule<__TestMockModule3>
+    }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => {
+vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
   return {
     UsersClient: class {
       setAuthToken = vi.fn();
@@ -55,44 +55,44 @@ vi.mock('../../../ClientApp/src/api/web-api-client', () => {
 });
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
+  import('../../../ClientApp/src/storage/targetOrganisation'),
   () =>
     ({
       default: vi.fn(),
       getTargetOrganisation: vi.fn().mockReturnValue(null),
-    }) satisfies __ExactMockModule<__TestMockModule6>
+    }) satisfies __ExactMockModule<__TestMockModule6>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/terms-config.json',
+  import('../../../ClientApp/src/terms-config.json'),
   () =>
     ({
       default: { TermsVersion: '1' },
-    }) satisfies __ExactMockModule<__TestMockModule7>
+    }) satisfies __ExactMockModule<__TestMockModule7>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
       mapToUserProfile: vi.fn().mockReturnValue(undefined),
-    }) satisfies __ExactMockModule<__TestMockModule9>
+    }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: [] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -124,14 +124,14 @@ describe('accountProvider — errored state', () => {
     render(
       <AccountProvider>
         <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
-      expect(screen.getByTestId('protected-content')).toBeInTheDocument()
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument(),
     );
 
-    expect(mockSignIn).toHaveBeenCalled();
+    expect(mockSignIn).toHaveBeenCalledWith();
     expect(mockSignIn).toHaveBeenCalledWith({});
   });
 
@@ -139,7 +139,7 @@ describe('accountProvider — errored state', () => {
     render(
       <AccountProvider>
         <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     // Wait for the error state to be set (loading spinner disappears)
@@ -152,7 +152,7 @@ describe('accountProvider — errored state', () => {
 
     // The error message should be displayed
     expect(
-      screen.getByText(/Unable to load account details/i)
+      screen.getByText(/Unable to load account details/i),
     ).toBeInTheDocument();
 
     // Protected content must NOT be visible while errored
@@ -166,46 +166,46 @@ describe('accountProvider — errored state', () => {
 
   it('still requests logout when redirect response handling fails', async () => {
     mockInstance.handleRedirectPromise.mockRejectedValueOnce(
-      new Error('redirect response failed')
+      new Error('redirect response failed'),
     );
 
     render(
       <AccountProvider>
         <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
       expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
         account: null,
-      })
+      }),
     );
 
     expect(
-      screen.getByText(/Unable to load account details/i)
+      screen.getByText(/Unable to load account details/i),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
   });
 
   it('keeps the recoverable error state when logout redirect rejects', async () => {
     mockInstance.logoutRedirect.mockRejectedValueOnce(
-      new Error('logout redirect failed')
+      new Error('logout redirect failed'),
     );
 
     render(
       <AccountProvider>
         <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>
+      </AccountProvider>,
     );
 
     await waitFor(() =>
       expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
         account: null,
-      })
+      }),
     );
 
     expect(
-      screen.getByText(/Unable to load account details/i)
+      screen.getByText(/Unable to load account details/i),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
   });

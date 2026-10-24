@@ -58,7 +58,7 @@ const ApplicationDetails = () => {
   const { accounts, instance } = useMsal();
   const options = useMemo(
     () => appDetailsProps(id!, accounts, instance),
-    [accounts, id, instance]
+    [accounts, id, instance],
   );
   const { loadStepValues, hidingFields } = options;
   const hidden = hidingFields ?? {};
@@ -83,7 +83,7 @@ const ApplicationDetails = () => {
     try {
       const client = new RequestForPatternApprovalClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const count = await client.getAppMessageCount(id, id);
@@ -114,7 +114,7 @@ const ApplicationDetails = () => {
 
   const [activeTab, setActiveTab] = useState(getTabFromQuery);
   const [loadMessagesTab, setLoadMessagesTab] = useState(
-    () => getTabFromQuery() === 'messages'
+    () => getTabFromQuery() === 'messages',
   );
   const [messagesRefreshKey, setMessagesRefreshKey] = useState(0);
 
@@ -152,7 +152,7 @@ const ApplicationDetails = () => {
       disposedRef.current = true;
       clearPollTimeout();
     },
-    []
+    [],
   );
 
   const refreshMessagesTab = () => {
@@ -373,7 +373,7 @@ const ApplicationDetails = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             const params = new URLSearchParams(
-                              window.location.search
+                              window.location.search,
                             );
                             params.set('tab', 'documents');
                             const newUrl = `${window.location.pathname}?${params.toString()}`;

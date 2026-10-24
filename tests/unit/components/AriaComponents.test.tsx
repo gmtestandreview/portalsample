@@ -126,20 +126,20 @@ describe('react Aria evaluation wrappers', () => {
           className='status-icon'
         />
         <ChevronDown aria-label='Expand services' />
-      </>
+      </>,
     );
 
     expect(
-      screen.getByRole('heading', { level: 2, name: 'Calibration services' })
+      screen.getByRole('heading', { level: 2, name: 'Calibration services' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Choose a service type')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'NMI' })).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     expect(screen.getByRole('separator')).toHaveAttribute(
       'aria-orientation',
-      'vertical'
+      'vertical',
     );
 
     const decorativeIcon = screen.getByTestId('decorative-icon');
@@ -147,13 +147,13 @@ describe('react Aria evaluation wrappers', () => {
     expect(decorativeIcon).toHaveClass(
       'nmi-react-aria-icon',
       'icon-tick',
-      'status-icon'
+      'status-icon',
     );
     expect(decorativeIcon).toHaveAttribute('aria-hidden', 'true');
     expect(decorativeIcon).toHaveStyle({ fontSize: '20px' });
 
     const labelledIcon = container.querySelector(
-      '[data-nmi-icon="chevron-down"]'
+      '[data-nmi-icon="chevron-down"]',
     );
 
     expect(labelledIcon).toHaveAttribute('aria-label', 'Expand services');
@@ -165,14 +165,14 @@ describe('react Aria evaluation wrappers', () => {
       <ListBox aria-label='Ice cream flavor' selectionMode='single'>
         <ListBoxItem id='chocolate'>Chocolate</ListBoxItem>
         <ListBoxItem id='mint'>Mint</ListBoxItem>
-      </ListBox>
+      </ListBox>,
     );
 
     expect(
-      screen.getByRole('listbox', { name: 'Ice cream flavor' })
+      screen.getByRole('listbox', { name: 'Ice cream flavor' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('option', { name: 'Chocolate' })
+      screen.getByRole('option', { name: 'Chocolate' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Mint' })).toBeInTheDocument();
   });
@@ -185,11 +185,11 @@ describe('react Aria evaluation wrappers', () => {
           <ListBoxItem id='length'>Length</ListBoxItem>
         </ListBoxSection>
         <ListBoxLoadMoreItem onLoadMore={vi.fn()} />
-      </ListBox>
+      </ListBox>,
     );
 
     expect(
-      screen.getByRole('listbox', { name: 'Available services' })
+      screen.getByRole('listbox', { name: 'Available services' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Dimensional services')).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Length' })).toBeInTheDocument();
@@ -211,18 +211,18 @@ describe('react Aria evaluation wrappers', () => {
             </Menu>
           </SubmenuTrigger>
         </Menu>
-      </MenuTrigger>
+      </MenuTrigger>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
 
     expect(screen.getByRole('menu')).toBeInTheDocument();
     expect(
-      screen.getByRole('menuitemcheckbox', { name: 'Copy' })
+      screen.getByRole('menuitemcheckbox', { name: 'Copy' }),
     ).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByRole('menuitem', { name: 'Share' })).toBeInTheDocument();
     expect(
-      document.querySelector('[data-nmi-icon="chevron-right"]')
+      document.querySelector('[data-nmi-icon="chevron-right"]'),
     ).toBeInTheDocument();
   });
 
@@ -238,7 +238,7 @@ describe('react Aria evaluation wrappers', () => {
       >
         <SelectItem id='chocolate'>Chocolate</SelectItem>
         <SelectItem id='mint'>Mint</SelectItem>
-      </Select>
+      </Select>,
     );
 
     expect(screen.getByText('Choose one flavor')).toBeInTheDocument();
@@ -248,7 +248,7 @@ describe('react Aria evaluation wrappers', () => {
 
     expect(screen.getByRole('listbox')).toHaveClass('dropdown-listbox');
     expect(screen.getByRole('option', { name: 'Chocolate' })).toHaveClass(
-      'dropdown-item'
+      'dropdown-item',
     );
     expect(screen.getByRole('option', { name: 'Mint' })).toBeInTheDocument();
   });
@@ -267,15 +267,15 @@ describe('react Aria evaluation wrappers', () => {
           New certificate
         </Radio>
         <Radio value='variation'>Variation</Radio>
-      </RadioGroup>
+      </RadioGroup>,
     );
 
     expect(
-      screen.getByRole('radiogroup', { name: 'Certificate type' })
+      screen.getByRole('radiogroup', { name: 'Certificate type' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Select one certificate')).toBeInTheDocument();
     expect(
-      screen.getByText('Certificate type is required')
+      screen.getByText('Certificate type is required'),
     ).toBeInTheDocument();
     expect(screen.getByText('Create a new certificate')).toBeInTheDocument();
 
@@ -292,18 +292,23 @@ describe('react Aria evaluation wrappers', () => {
     'maps %s meter values to the expected fill state',
     (_state, value, fillColor) => {
       const { container } = render(
-        <Meter label='Storage used' value={value} minValue={0} maxValue={100} />
+        <Meter
+          label='Storage used'
+          value={value}
+          minValue={0}
+          maxValue={100}
+        />,
       );
 
       expect(
-        screen.getByRole('meter', { name: 'Storage used' })
+        screen.getByRole('meter', { name: 'Storage used' }),
       ).toHaveTextContent(`${value}%`);
 
       const fill = container.querySelector('.fill') as HTMLElement;
 
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
-    }
+    },
   );
 
   it('renders determinate and indeterminate progress affordances', () => {
@@ -313,24 +318,24 @@ describe('react Aria evaluation wrappers', () => {
         value={30}
         minValue={0}
         maxValue={100}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('progressbar', { name: 'Upload progress' })
+      screen.getByRole('progressbar', { name: 'Upload progress' }),
     ).toHaveTextContent('30%');
     expect(
       (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent'
-      )
+        '--percent',
+      ),
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
 
     expect(
       (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
-        '--percent'
-      )
+        '--percent',
+      ),
     ).toBe('100%');
   });
 
@@ -342,7 +347,7 @@ describe('react Aria evaluation wrappers', () => {
         minValue={0}
         maxValue={100}
         size={24}
-      />
+      />,
     );
 
     expect(screen.getByRole('progressbar', { name: 'Saving' })).toHaveStyle({
@@ -351,7 +356,7 @@ describe('react Aria evaluation wrappers', () => {
     });
     expect(container.querySelectorAll('circle')[1]).toHaveAttribute(
       'stroke-dashoffset',
-      '40'
+      '40',
     );
 
     rerender(<ProgressCircle aria-label='Loading' isIndeterminate />);
@@ -362,7 +367,7 @@ describe('react Aria evaluation wrappers', () => {
     });
     expect(container.querySelectorAll('circle')[1]).toHaveAttribute(
       'stroke-dashoffset',
-      '75'
+      '75',
     );
     expect(container.querySelector('animateTransform')).toBeInTheDocument();
   });
@@ -377,22 +382,22 @@ describe('react Aria evaluation wrappers', () => {
           end: parseDate('2026-01-12'),
         }}
         errorMessage='Select an available date range'
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('application', { name: /Booking window/ })
+      screen.getByRole('application', { name: /Booking window/ }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /previous/i })).toHaveAttribute(
       'data-variant',
-      'quiet'
+      'quiet',
     );
     expect(screen.getAllByRole('button', { name: /next/i })[0]).toHaveAttribute(
       'data-variant',
-      'quiet'
+      'quiet',
     );
     expect(
-      screen.getByText('Select an available date range')
+      screen.getByText('Select an available date range'),
     ).toBeInTheDocument();
     expect(document.querySelectorAll('.month')).toHaveLength(2);
   });
@@ -407,21 +412,21 @@ describe('react Aria evaluation wrappers', () => {
         thumbLabels={['Minimum target', 'Maximum target']}
         fillOffset={10}
         isDisabled
-      />
+      />,
     );
 
     expect(screen.getByRole('slider', { name: /Minimum target/ })).toHaveValue(
-      '25'
+      '25',
     );
     expect(screen.getByRole('slider', { name: /Maximum target/ })).toHaveValue(
-      '75'
+      '75',
     );
     expect(container.querySelector('.track')).toHaveAttribute(
       'data-disabled',
-      'true'
+      'true',
     );
     expect(container.querySelector('.react-aria-SliderThumb')).toHaveClass(
-      'indicator'
+      'indicator',
     );
   });
 
@@ -471,31 +476,31 @@ describe('react Aria evaluation wrappers', () => {
         >
           Expedited handling
         </Switch>
-      </>
+      </>,
     );
 
     expect(
-      screen.getByRole('textbox', { name: 'Certificate holder' })
+      screen.getByRole('textbox', { name: 'Certificate holder' }),
     ).toHaveAttribute('placeholder', 'Legal name');
     expect(
-      screen.getByRole('textbox', { name: 'Instructions' })
+      screen.getByRole('textbox', { name: 'Instructions' }),
     ).toHaveAttribute('rows', '4');
     expect(screen.getByRole('textbox', { name: 'Quantity' })).toHaveValue('2');
     expect(
-      screen.getByRole('button', { name: 'Decrease Quantity' })
+      screen.getByRole('button', { name: 'Decrease Quantity' }),
     ).toHaveAttribute('data-variant', 'secondary');
     expect(
-      screen.getByRole('button', { name: 'Increase Quantity' })
+      screen.getByRole('button', { name: 'Increase Quantity' }),
     ).toHaveAttribute('data-variant', 'secondary');
     expect(
-      screen.getByRole('searchbox', { name: 'Find service' })
+      screen.getByRole('searchbox', { name: 'Find service' }),
     ).toHaveAttribute('placeholder', 'Mass');
     expect(screen.getByText('Collection time')).toBeInTheDocument();
     expect(
-      screen.getByRole('group', { name: 'Collection time' })
+      screen.getByRole('group', { name: 'Collection time' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('switch', { name: 'Expedited handling' })
+      screen.getByRole('switch', { name: 'Expedited handling' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Choose an option')).toBeInTheDocument();
   });
@@ -519,39 +524,39 @@ describe('react Aria evaluation wrappers', () => {
             <SegmentedControlItem id='list'>List</SegmentedControlItem>
             <SegmentedControlItem id='grid'>Grid</SegmentedControlItem>
           </SegmentedControl>
-        </>
+        </>,
       );
     });
 
     expect(screen.getByRole('radio', { name: 'List' })).toHaveAttribute(
       'aria-checked',
-      'true'
+      'true',
     );
     expect(screen.getByRole('radio', { name: 'Grid' })).toHaveAttribute(
       'aria-checked',
-      'false'
+      'false',
     );
     expect(screen.getByRole('button', { name: 'Pin' })).toHaveAttribute(
       'data-variant',
-      'secondary'
+      'secondary',
     );
     expect(screen.getByRole('button', { name: 'Bold' })).toHaveAttribute(
       'data-variant',
-      'quiet'
+      'quiet',
     );
     expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute(
       'data-variant',
-      'primary'
+      'primary',
     );
     expect(screen.getByRole('toolbar', { name: 'Text style' })).toHaveAttribute(
       'aria-orientation',
-      'horizontal'
+      'horizontal',
     );
     expect(screen.getByRole('radio', { name: 'List' })).toHaveClass(
-      'segmented-control-item'
+      'segmented-control-item',
     );
     expect(screen.getByRole('radio', { name: 'Grid' })).toHaveClass(
-      'segmented-control-item'
+      'segmented-control-item',
     );
   });
 
@@ -578,20 +583,20 @@ describe('react Aria evaluation wrappers', () => {
             <TableLoadMoreItem onLoadMore={vi.fn()} />
           </TableBody>
         </Table>
-      </ResizableTableContainer>
+      </ResizableTableContainer>,
     );
 
     expect(screen.getByRole('grid', { name: 'Files' })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveClass(
-      'button-base'
+      'button-base',
     );
     expect(
-      screen.getByRole('rowheader', { name: 'Games' })
+      screen.getByRole('rowheader', { name: 'Games' }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     expect(
-      document.querySelector('[data-nmi-icon="chevron-up"]')
+      document.querySelector('[data-nmi-icon="chevron-up"]'),
     ).toBeInTheDocument();
   });
 
@@ -609,21 +614,21 @@ describe('react Aria evaluation wrappers', () => {
           <TabPanel id='details'>Application details</TabPanel>
           <TabPanel id='documents'>Supporting documents</TabPanel>
         </TabPanels>
-      </Tabs>
+      </Tabs>,
     );
 
     expect(screen.getByRole('tabpanel')).toHaveTextContent(
-      'Application details'
+      'Application details',
     );
 
     await user.click(screen.getByRole('tab', { name: 'Documents' }));
 
     expect(screen.getByRole('tab', { name: 'Documents' })).toHaveAttribute(
       'aria-selected',
-      'true'
+      'true',
     );
     expect(screen.getByRole('tabpanel')).toHaveTextContent(
-      'Supporting documents'
+      'Supporting documents',
     );
     expect(onSelectionChange).toHaveBeenCalledWith('documents');
   });
@@ -642,20 +647,20 @@ describe('react Aria evaluation wrappers', () => {
         <Tag id='volume' textValue='Volume'>
           <span>Volume</span>
         </Tag>
-      </TagGroup>
+      </TagGroup>,
     );
 
     expect(
-      screen.getByRole('grid', { name: 'Selected services' })
+      screen.getByRole('grid', { name: 'Selected services' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Remove services no longer required')
+      screen.getByText('Remove services no longer required'),
     ).toBeInTheDocument();
     expect(screen.getByText('Select at least one service')).toBeInTheDocument();
     expect(
       within(screen.getByRole('row', { name: /Mass/ })).getByRole('button', {
         name: 'Remove Mass',
-      })
+      }),
     ).toBeInTheDocument();
 
     rerender(
@@ -664,7 +669,7 @@ describe('react Aria evaluation wrappers', () => {
         renderEmptyState={() => 'No services selected'}
       >
         {[]}
-      </TagGroup>
+      </TagGroup>,
     );
 
     expect(screen.getByText('No services selected')).toBeInTheDocument();
@@ -676,11 +681,11 @@ describe('react Aria evaluation wrappers', () => {
         <div role='dialog' aria-label='Review application'>
           Modal content
         </div>
-      </Modal>
+      </Modal>,
     );
 
     expect(
-      screen.getByRole('dialog', { name: 'Review application' })
+      screen.getByRole('dialog', { name: 'Review application' }),
     ).toHaveTextContent('Modal content');
   });
 
@@ -694,13 +699,13 @@ describe('react Aria evaluation wrappers', () => {
           <SheetHeading slot='title'>Sheet title</SheetHeading>
           <p>Sheet content</p>
         </Sheet>
-      </DialogTrigger>
+      </DialogTrigger>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Open sheet' }));
 
     expect(
-      screen.getByRole('dialog', { name: 'Sheet title' })
+      screen.getByRole('dialog', { name: 'Sheet title' }),
     ).toHaveTextContent('Sheet content');
   });
 
@@ -713,14 +718,14 @@ describe('react Aria evaluation wrappers', () => {
         <Popover>
           <div>Popover content</div>
         </Popover>
-      </DialogTrigger>
+      </DialogTrigger>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Open popover' }));
 
     expect(screen.getByText('Popover content')).toBeInTheDocument();
     expect(screen.getByRole('dialog', { name: 'Open popover' })).toHaveClass(
-      'react-aria-Popover'
+      'react-aria-Popover',
     );
   });
 
@@ -731,13 +736,13 @@ describe('react Aria evaluation wrappers', () => {
       <TooltipTrigger delay={0}>
         <Button>Help</Button>
         <Tooltip>Tooltip content</Tooltip>
-      </TooltipTrigger>
+      </TooltipTrigger>,
     );
 
     await user.hover(screen.getByRole('button', { name: 'Help' }));
 
     await expect(screen.findByRole('tooltip')).resolves.toHaveTextContent(
-      'Tooltip content'
+      'Tooltip content',
     );
   });
 
@@ -756,10 +761,10 @@ describe('react Aria evaluation wrappers', () => {
     await screen.findByText('Files uploaded');
 
     expect(
-      screen.getByRole('alertdialog', { name: 'Files uploaded' })
+      screen.getByRole('alertdialog', { name: 'Files uploaded' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('3 files uploaded successfully.')
+      screen.getByText('3 files uploaded successfully.'),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
@@ -783,17 +788,17 @@ describe('react Aria evaluation wrappers', () => {
           </TreeItem>
         </TreeSection>
         <TreeLoadMoreItem onLoadMore={vi.fn()} />
-      </Tree>
+      </Tree>,
     );
 
     expect(screen.getByRole('treegrid', { name: 'Files' })).toBeInTheDocument();
     expect(screen.getByText('Shared files')).toBeInTheDocument();
     expect(screen.getByRole('row', { name: /Documents/ })).toHaveAttribute(
       'aria-expanded',
-      'true'
+      'true',
     );
     expect(
-      screen.getByRole('row', { name: /Weekly Report/ })
+      screen.getByRole('row', { name: /Weekly Report/ }),
     ).toBeInTheDocument();
     expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
   });
@@ -805,12 +810,12 @@ describe('react Aria evaluation wrappers', () => {
           <ToggleButton id='bold'>Bold</ToggleButton>
         </ToggleButtonGroup>
         <Separator />
-      </Toolbar>
+      </Toolbar>,
     );
 
     expect(screen.getByRole('toolbar', { name: 'Formatting' })).toHaveAttribute(
       'aria-orientation',
-      'horizontal'
+      'horizontal',
     );
     expect(screen.getByRole('separator')).toBeInTheDocument();
 
@@ -820,12 +825,12 @@ describe('react Aria evaluation wrappers', () => {
           <ToggleButton id='bold'>Bold</ToggleButton>
         </ToggleButtonGroup>
         <Separator />
-      </Toolbar>
+      </Toolbar>,
     );
 
     expect(screen.getByRole('toolbar', { name: 'Formatting' })).toHaveAttribute(
       'aria-orientation',
-      'vertical'
+      'vertical',
     );
     expect(screen.getByRole('separator')).toBeInTheDocument();
   });

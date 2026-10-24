@@ -24,7 +24,7 @@ const loadSummary =
       if (accounts.length > 0) {
         const client = new RequestForQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const summaryStep = await client.getSummary(id, abortSignal);
@@ -49,18 +49,18 @@ const submitForm =
     id: string,
     accounts: AccountInfo[],
     instance: IPublicClientApplication,
-    _isComplete: boolean
+    _isComplete: boolean,
   ) =>
   async (
     values: RequestForQuoteSummary,
     _isDirty: boolean,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         await client.submit(
@@ -70,7 +70,7 @@ const submitForm =
             formStep: values,
             isCompletingStep: true,
           },
-          abortSignal
+          abortSignal,
         );
       } catch (error) {
         AppLogger.error('failoed to submit form', error as Error, { Id: id });
@@ -86,7 +86,7 @@ const requestForQuoteSummaryProps = (
   instance: IPublicClientApplication,
   accountDetails: AccountDetails,
   statuses: FormStepStatusDto[],
-  bannerTitle: string
+  bannerTitle: string,
 ): WizardStepProps<RequestForQuoteSummary> => ({
   initialValues: {},
   stepStatuses: statuses,

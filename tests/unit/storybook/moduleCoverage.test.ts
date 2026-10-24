@@ -49,7 +49,7 @@ type CoverageModule = {
   parseJsonDocument(text: string): unknown;
   validateSourceClaims(
     manifest: unknown,
-    discovery: Discovery
+    discovery: Discovery,
   ): ValidationResult;
   generateInventory(input: { manifest: unknown }): {
     ok: boolean;
@@ -112,11 +112,11 @@ const validManifest = {
 
 const sourceModeFixtureDirectory = join(
   process.cwd(),
-  'tests/fixtures/storybook/module-coverage'
+  'tests/fixtures/storybook/module-coverage',
 );
 const sourceModeManifestPath = join(
   sourceModeFixtureDirectory,
-  'coverageManifest.json'
+  'coverageManifest.json',
 );
 
 describe('storybook coverage manifest schema v1', () => {
@@ -132,7 +132,7 @@ describe('storybook coverage manifest schema v1', () => {
       validateManifest({
         ...validManifest,
         schemaVersion: 2,
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: [{ code: 'MANIFEST_SCHEMA_INVALID' }],
@@ -142,7 +142,7 @@ describe('storybook coverage manifest schema v1', () => {
       validateManifest({
         ...validManifest,
         records: [{ ...validRecord, unexpected: true }],
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: [{ code: 'MANIFEST_SCHEMA_INVALID' }],
@@ -159,7 +159,7 @@ describe('storybook coverage manifest schema v1', () => {
       validateManifest({
         ...validManifest,
         records: [{ ...validRecord, source }],
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: [{ code: 'MANIFEST_SCHEMA_INVALID' }],
@@ -189,7 +189,7 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(
-      result.exports.filter((entry) => entry.export === 'Field')
+      result.exports.filter((entry) => entry.export === 'Field'),
     ).toHaveLength(1);
   });
 
@@ -270,7 +270,7 @@ describe('recursive canonical source/export discovery', () => {
           export: 'Legacy',
           kind: 'renderable',
         },
-      ])
+      ]),
     );
   });
 
@@ -291,7 +291,7 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(result.exports).not.toContainEqual(
-      expect.objectContaining({ export: 'Field' })
+      expect.objectContaining({ export: 'Field' }),
     );
   });
 
@@ -317,10 +317,10 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(result.exports).not.toContainEqual(
-      expect.objectContaining({ export: 'Heading' })
+      expect.objectContaining({ export: 'Heading' }),
     );
     expect(
-      result.exports.filter((entry) => entry.export === 'Text')
+      result.exports.filter((entry) => entry.export === 'Text'),
     ).toHaveLength(1);
   });
 
@@ -344,7 +344,7 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(result.exports).not.toContainEqual(
-      expect.objectContaining({ export: 'emailSchema' })
+      expect.objectContaining({ export: 'emailSchema' }),
     );
   });
 });
@@ -357,17 +357,17 @@ describe('renderable evidence and claim validation', () => {
         validateManifest({
           ...validManifest,
           records: [{ ...validRecord, classification }],
-        })
+        }),
       ).toEqual({ ok: true, errors: [] });
-    }
+    },
   );
 
   it('rejects an empty source inventory', () => {
     expect(
       validateSourceClaims(
         { schemaVersion: 1, records: [] },
-        { exports: [], unresolved: [] }
-      )
+        { exports: [], unresolved: [] },
+      ),
     ).toMatchObject({
       ok: false,
       errors: [expect.objectContaining({ code: 'EVIDENCE_MISSING' })],
@@ -408,7 +408,7 @@ describe('renderable evidence and claim validation', () => {
       validateManifest({
         ...validManifest,
         records: [{ ...validRecord, states }],
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -430,8 +430,8 @@ describe('renderable evidence and claim validation', () => {
             },
           ],
           unresolved: [],
-        }
-      )
+        },
+      ),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -462,7 +462,7 @@ describe('renderable evidence and claim validation', () => {
       expect.objectContaining({
         code: 'EVIDENCE_MISSING',
         path: 'ClientApp/src/components/Unclaimed.tsx',
-      })
+      }),
     );
   });
 
@@ -478,7 +478,7 @@ describe('renderable evidence and claim validation', () => {
             reason: 'ambiguous module resolution',
           },
         ],
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -509,8 +509,8 @@ describe('renderable evidence and claim validation', () => {
             },
           ],
           unresolved: [],
-        }
-      )
+        },
+      ),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -523,7 +523,7 @@ describe('renderable evidence and claim validation', () => {
 describe('guarded Storybook coverage CLI', () => {
   it('rejects duplicate JSON keys before parsing the document', () => {
     expect(() =>
-      coverageModule.parseJsonDocument('{"records": [], "records": []}')
+      coverageModule.parseJsonDocument('{"records": [], "records": []}'),
     ).toThrow(/duplicate manifest JSON key: records/u);
   });
 
@@ -544,7 +544,7 @@ describe('guarded Storybook coverage CLI', () => {
         sourceModeManifestPath,
         '--source-root',
         sourceModeFixtureDirectory,
-      ])
+      ]),
     ).toMatchObject({ exitCode: 0, errors: [] });
   });
 });
@@ -586,26 +586,26 @@ describe('deterministic inventory generation', () => {
 
     expect(result).toMatchObject({ ok: true, errors: [] });
     expect(result.regions?.components).toContain(
-      'ClientApp/src/components/Field.tsx#Field'
+      'ClientApp/src/components/Field.tsx#Field',
     );
     expect(result.regions?.routes).toContain(
-      'ClientApp/src/routes/Example.tsx#ExampleRoute'
+      'ClientApp/src/routes/Example.tsx#ExampleRoute',
     );
     expect(result.regions?.matrix).toContain('Renderable records: 3');
     expect(result.regions?.matrix).not.toMatch(
-      /generatedAt|receiptId|timestamp/u
+      /generatedAt|receiptId|timestamp/u,
     );
 
     const componentRegion = result.regions?.components ?? '';
 
     expect(componentRegion.indexOf('Field.tsx#Field')).toBeLessThan(
-      componentRegion.indexOf('Zed.tsx#Zed')
+      componentRegion.indexOf('Zed.tsx#Zed'),
     );
   });
 
   it('refuses to generate regions from an invalid manifest', () => {
     expect(
-      generateInventory({ manifest: { schemaVersion: 2, records: [] } })
+      generateInventory({ manifest: { schemaVersion: 2, records: [] } }),
     ).toMatchObject({
       ok: false,
       errors: [expect.objectContaining({ code: 'MANIFEST_SCHEMA_INVALID' })],

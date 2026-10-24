@@ -38,7 +38,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -47,52 +47,52 @@ vi.mock(
           acquireTokenSilent: mocks.acquireTokenSilent,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       clearDashboardNotification: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         verbose: vi.fn(),
         error: vi.fn(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
+  import('../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       DashboardClient: vi.fn(function (this: {
         setAuthToken: ReturnType<typeof vi.fn>;
         getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
       }) {
-        this.setAuthToken = vi.fn();
+        vi.spyOn(this, 'setAuthToken').mockImplementation();
         this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
       getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
@@ -102,7 +102,7 @@ vi.mock(
       handleReportFileError: vi.fn(),
       openInNewTab: vi.fn(),
       openPdfPageInNewTab: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule9>
+    }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 const quotationData = {
@@ -133,7 +133,7 @@ const RouteHarness = ({ showTitle }: { showTitle: boolean }) => (
 describe('utility component coverage slice', () => {
   const originalClipboard = Object.getOwnPropertyDescriptor(
     navigator,
-    'clipboard'
+    'clipboard',
   );
 
   beforeEach(() => {
@@ -180,7 +180,7 @@ describe('utility component coverage slice', () => {
     render(
       <HashLink to='#target-section' scrollToBlock='center'>
         Target
-      </HashLink>
+      </HashLink>,
     );
     fireEvent.click(screen.getByRole('link', { name: 'Target' }));
     act(() => vi.runOnlyPendingTimers());
@@ -204,7 +204,7 @@ describe('utility component coverage slice', () => {
         `;
     const target = document.querySelector('#inside-accordion') as HTMLElement;
     const collapse = document.querySelector(
-      '.accordion-collapse'
+      '.accordion-collapse',
     ) as HTMLElement;
     const button = document.querySelector('button') as HTMLButtonElement;
     const buttonClick = vi.spyOn(button, 'click');
@@ -214,7 +214,7 @@ describe('utility component coverage slice', () => {
 
     expect(collapse).toHaveAttribute(
       'class',
-      'accordion-collapse collapse show'
+      'accordion-collapse collapse show',
     );
     expect(buttonClick).toHaveBeenCalledWith();
     expect(target.scrollIntoView).not.toHaveBeenCalled();
@@ -268,7 +268,7 @@ describe('utility component coverage slice', () => {
         nmiTestOfficerName='Alex Officer'
         nmiFacilityName='NMI Lab'
         nmiFacilityAddress='1 Measurement Way'
-      />
+      />,
     );
     Object.defineProperty(
       document.querySelector('#printable-label'),
@@ -277,7 +277,7 @@ describe('utility component coverage slice', () => {
         configurable: true,
         value:
           'Deliver to:\nQuotation ID: Q-123\nATTN: Alex Officer\nNMI Lab\n1 Measurement Way',
-      }
+      },
     );
 
     fireEvent.click(screen.getByRole('button', { name: /print/i }));
@@ -287,21 +287,21 @@ describe('utility component coverage slice', () => {
     fireEvent.click(screen.getByRole('button', { name: /copy/i }));
     await waitFor(() =>
       expect(
-        screen.getByRole('button', { name: /copied/i })
-      ).toBeInTheDocument()
+        screen.getByRole('button', { name: /copied/i }),
+      ).toBeInTheDocument(),
     );
 
     expect(writeText).toHaveBeenCalledWith(
-      expect.stringContaining('Quotation ID: Q-123')
+      expect.stringContaining('Quotation ID: Q-123'),
     );
 
     rerender(<MailingLabel showPrintOrCopy={false} />);
 
     expect(
-      screen.queryByRole('button', { name: /print/i })
+      screen.queryByRole('button', { name: /print/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /copy/i })
+      screen.queryByRole('button', { name: /copy/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -320,18 +320,18 @@ describe('utility component coverage slice', () => {
       {
         configurable: true,
         value: 'Quotation ID: Q-123',
-      }
+      },
     );
 
     fireEvent.click(screen.getByRole('button', { name: /copy/i }));
 
     await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith('Quotation ID: Q-123')
+      expect(writeText).toHaveBeenCalledWith('Quotation ID: Q-123'),
     );
 
     expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /copied/i })
+      screen.queryByRole('button', { name: /copied/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -345,7 +345,7 @@ describe('utility component coverage slice', () => {
         isLoaded
         getPdf={getPdf}
         gaLabel='report'
-      />
+      />,
     );
     fireEvent.click(screen.getByRole('button', { name: /download pdf/i }));
 
@@ -362,12 +362,12 @@ describe('utility component coverage slice', () => {
         isLoaded={false}
         getPdf={vi.fn()}
         gaLabel='report'
-      />
+      />,
     );
 
     expect(screen.getByText('Loading data...')).toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /download pdf/i })
+      screen.queryByRole('button', { name: /download pdf/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -381,8 +381,8 @@ describe('utility component coverage slice', () => {
                 mimeType: 'application/pdf',
                 filename: 'quote.pdf',
               }
-            : ({ fileSizeBytes: 4096 } as any)
-        )
+            : ({ fileSizeBytes: 4096 } as any),
+        ),
     );
     const setFileError = vi.fn();
     const setIsLoading = vi.fn();
@@ -393,14 +393,14 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view quote/i });
     fireEvent.click(screen.getByRole('button', { name: /view quote/i }));
 
     await waitFor(() =>
-      expect(openInNewTab).toHaveBeenCalledWith('blob:quote-data')
+      expect(openInNewTab).toHaveBeenCalledWith('blob:quote-data'),
     );
 
     expect(getFileSize).toHaveBeenCalledWith(4096);
@@ -411,7 +411,7 @@ describe('utility component coverage slice', () => {
 
   it('reports an offered quote PDF size load failure', async () => {
     vi.mocked(getQuotationFileDetails).mockRejectedValueOnce(
-      new Error('size failed')
+      new Error('size failed'),
     );
     const setFileError = vi.fn();
 
@@ -421,7 +421,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={vi.fn()}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view quote/i });
@@ -434,7 +434,7 @@ describe('utility component coverage slice', () => {
       (_token, _data, getFile) =>
         getFile
           ? Promise.reject(new Error('download failed'))
-          : Promise.resolve({ fileSizeBytes: 4096 } as any)
+          : Promise.resolve({ fileSizeBytes: 4096 } as any),
     );
     const setFileError = vi.fn();
     const setIsLoading = vi.fn();
@@ -445,7 +445,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view quote/i });
@@ -466,8 +466,8 @@ describe('utility component coverage slice', () => {
                 mimeType: 'application/pdf',
                 filename: 'report.pdf',
               }
-            : { fileSizeBytes: 8192 }
-        )
+            : { fileSizeBytes: 8192 },
+        ),
     );
     const setFileError = vi.fn();
     const setIsLoading = vi.fn();
@@ -478,24 +478,24 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view report/i });
     fireEvent.click(screen.getByRole('button', { name: /view report/i }));
 
     await waitFor(() =>
-      expect(openInNewTab).toHaveBeenCalledWith('blob:report-data')
+      expect(openInNewTab).toHaveBeenCalledWith('blob:report-data'),
     );
 
     expect(DashboardClient).toHaveBeenCalledWith();
     expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
       'crm-quote-1',
-      false
+      false,
     );
     expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
       'crm-quote-1',
-      true
+      true,
     );
     expect(setIsLoading).toHaveBeenCalledWith(false);
   });
@@ -505,7 +505,7 @@ describe('utility component coverage slice', () => {
       (_id: string, getFile: boolean) =>
         getFile
           ? Promise.reject(new Error('download failed'))
-          : Promise.resolve({ fileSizeBytes: 8192 })
+          : Promise.resolve({ fileSizeBytes: 8192 }),
     );
     const setFileError = vi.fn();
     const setIsLoading = vi.fn();
@@ -516,7 +516,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view report/i });
@@ -538,7 +538,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={vi.fn()}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view report/i });
@@ -558,7 +558,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view report/i });
@@ -566,8 +566,8 @@ describe('utility component coverage slice', () => {
     await waitFor(() =>
       expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
         'crm-quote-1',
-        true
-      )
+        true,
+      ),
     );
 
     expect(openInNewTab).not.toHaveBeenCalled();
@@ -579,11 +579,11 @@ describe('utility component coverage slice', () => {
         quotationData={undefined}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('button', { name: /view report/i })
+      screen.getByRole('button', { name: /view report/i }),
     ).toBeInTheDocument();
   });
 
@@ -597,7 +597,7 @@ describe('utility component coverage slice', () => {
         quotationData={{ quoteRequestStatus: 'QuoteAccepted' } as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view report/i });
@@ -618,7 +618,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={vi.fn()}
         setIsLoading={vi.fn()}
-      />
+      />,
     );
 
     await screen.findByRole('button', { name: /view quote/i });
@@ -627,8 +627,8 @@ describe('utility component coverage slice', () => {
       expect(getQuotationFileDetails).toHaveBeenCalledWith(
         'token-1',
         quotationData,
-        true
-      )
+        true,
+      ),
     );
 
     expect(openInNewTab).not.toHaveBeenCalled();
@@ -653,13 +653,13 @@ describe('utility component coverage slice', () => {
         }
         setFileError={vi.fn()}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByText('Terms'));
 
     await waitFor(() =>
-      expect(openPdfPageInNewTab).toHaveBeenCalledWith('blob:terms-data', '3')
+      expect(openPdfPageInNewTab).toHaveBeenCalledWith('blob:terms-data', '3'),
     );
 
     expect(trackGAEvent).toHaveBeenCalledWith('Terms', 'download');
@@ -669,7 +669,7 @@ describe('utility component coverage slice', () => {
 
   it('sets a file error when quote terms cannot be downloaded', async () => {
     vi.mocked(getQuotationFileDetails).mockRejectedValueOnce(
-      new Error('terms failed')
+      new Error('terms failed'),
     );
     const setFileError = vi.fn();
     const setIsLoading = vi.fn();
@@ -681,7 +681,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByText('Terms'));
@@ -701,7 +701,7 @@ describe('utility component coverage slice', () => {
         quotationData={quotationData as any}
         setFileError={vi.fn()}
         setIsLoading={vi.fn()}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByText('Terms'));
@@ -710,8 +710,8 @@ describe('utility component coverage slice', () => {
       expect(getQuotationFileDetails).toHaveBeenCalledWith(
         'token-1',
         quotationData,
-        true
-      )
+        true,
+      ),
     );
 
     expect(openPdfPageInNewTab).not.toHaveBeenCalled();

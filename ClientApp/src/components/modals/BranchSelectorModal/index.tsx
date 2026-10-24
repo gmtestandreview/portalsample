@@ -51,7 +51,7 @@ const setNotification = () => {
 };
 
 const SavingBranchSelectorError = (
-  props: Readonly<SavingBranchSelectorErrorProps>
+  props: Readonly<SavingBranchSelectorErrorProps>,
 ): ReactElement | null => {
   const { showError } = props;
   if (showError) {
@@ -130,7 +130,7 @@ const applyAccountDispatchUpdates = (
   selectedCRMGuid: string | undefined,
   selectedOrganisation: string | undefined,
   selectedTradingName: string | undefined,
-  selectedBranchName: string | undefined
+  selectedBranchName: string | undefined,
 ) => {
   if (!accountDispatch) return;
   accountDispatch.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
@@ -138,7 +138,7 @@ const applyAccountDispatchUpdates = (
     accountDispatch.setOrganisationAndBranch(
       selectedOrganisation,
       selectedTradingName ?? '',
-      selectedBranchName ?? ''
+      selectedBranchName ?? '',
     );
   }
 };
@@ -150,7 +150,7 @@ const finaliseAccountCreation = (
   selectedBranch: number | undefined,
   selectedCRMGuid: string | undefined,
   selectedOrganisation: string | undefined,
-  selectedABN: string | undefined
+  selectedABN: string | undefined,
 ) => {
   const accountCreationIncomplete =
     !accountState?.details?.accountCreationCompleted;
@@ -191,7 +191,7 @@ const BranchSelectorModal = () => {
   }>({ key: 'branchOrLocationName', direction: 'asc' });
 
   const defaultOrganisationIdSet = hasDefaultOrganisationId(
-    accountState?.details?.defaultOrganisationId
+    accountState?.details?.defaultOrganisationId,
   );
   const branchSelectionModalMode = modalState?.branchSelectionModalMode;
 
@@ -203,7 +203,7 @@ const BranchSelectorModal = () => {
       let reloadAfterSave = false;
       const client = new UsersClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       try {
@@ -214,13 +214,13 @@ const BranchSelectorModal = () => {
             omitUndefined({
               defaultOrganisationId: selectedBranch,
               rfqId: modalState?.rfqId,
-            })
+            }),
           );
         } else if (
           branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg
         ) {
           await client.setDefaultOrganisation(
-            omitUndefined({ defaultOrganisationId: selectedBranch })
+            omitUndefined({ defaultOrganisationId: selectedBranch }),
           );
         }
         // Fix 11 — S3776: replaced inline accountDispatch guard with helper (Fix 4 absorbed)
@@ -230,7 +230,7 @@ const BranchSelectorModal = () => {
           selectedCRMGuid,
           selectedOrganisation,
           selectedTradingName,
-          selectedBranchName
+          selectedBranchName,
         );
         // Fix 11 — S3776: replaced inline accountCreationCompleted block with helper (Fix 6 absorbed)
         finaliseAccountCreation(
@@ -239,7 +239,7 @@ const BranchSelectorModal = () => {
           selectedBranch,
           selectedCRMGuid,
           selectedOrganisation,
-          selectedABN
+          selectedABN,
         );
         reloadAfterSave =
           branchSelectionModalMode === BranchSelectionModalMode.RFQSelectOrg;
@@ -266,7 +266,7 @@ const BranchSelectorModal = () => {
     tradingName: string | undefined,
     branchName: string | undefined,
     abn: string | undefined,
-    crmGuid: string | undefined
+    crmGuid: string | undefined,
   ) => {
     setSelectedBranch(branchId);
     setSelectedOrganisation(organisationName);
@@ -284,7 +284,7 @@ const BranchSelectorModal = () => {
       if (accountState?.details?.abn) {
         const client = new OrganisationsClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
 
@@ -292,7 +292,7 @@ const BranchSelectorModal = () => {
           setIsModalDataLoading(true); // Modal data
           const result = await client.getOrganisationsByABN(
             accountState.details?.abn,
-            true
+            true,
           );
           if (!isActive) return;
 
@@ -303,7 +303,7 @@ const BranchSelectorModal = () => {
           }
           if (
             hasDefaultOrganisationId(
-              accountState.details?.defaultOrganisationId
+              accountState.details?.defaultOrganisationId,
             )
           ) {
             setSelectedBranch(accountState.details?.defaultOrganisationId);
@@ -577,7 +577,7 @@ const BranchSelectorModal = () => {
                                           branch.businessOrTradingName,
                                           branch.branchOrLocationName,
                                           branch.abn,
-                                          branch.crmGuid
+                                          branch.crmGuid,
                                         )
                                       }
                                     />

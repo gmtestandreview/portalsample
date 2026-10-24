@@ -70,7 +70,7 @@ const deleteEnv = (key: string): void => {
 
 const migrationDesign = readTextFileSync(
   path.join(repositoryRoot, 'docs/specs/2026-10-20-webpack-to-vite-design.md'),
-  repositoryRoot
+  repositoryRoot,
 );
 const legacyToViteMapping = [
   ...migrationDesign.matchAll(/^\|\s*`([^`]+)`\s*\|\s*(.*?)\s*\|$/gmu),
@@ -83,10 +83,10 @@ const viteEnvironmentNames = legacyToViteMapping
   .filter((name) => name?.startsWith('VITE_'));
 const envSource = readTextFileSync(
   path.join(repositoryRoot, 'ClientApp/src/env.ts'),
-  repositoryRoot
+  repositoryRoot,
 );
 const tsconfig = JSON.parse(
-  readTextFileSync(path.join(repositoryRoot, 'tsconfig.json'), repositoryRoot)
+  readTextFileSync(path.join(repositoryRoot, 'tsconfig.json'), repositoryRoot),
 ) as { exclude: string[] };
 const CLIENT_ID_WITH_REPLACEMENT_TOKENS = "literal-$&-$'-$`";
 const ESCAPED_CLIENT_ID = 'literal-$&amp;-$&#39;-$`';
@@ -148,7 +148,7 @@ describe('vite config', () => {
 
   it('defines the Vite environment contract for application code', () => {
     expect(config.define['import.meta.env.VITE_ENVIRONMENT']).toBe(
-      JSON.stringify('development')
+      JSON.stringify('development'),
     );
   });
 
@@ -162,20 +162,20 @@ describe('vite config', () => {
 
   it('blocks legacy generated and vendor paths from application imports', () => {
     const blockedPathsPlugin = config.plugins.find(
-      (plugin) => plugin.name === 'blocked-generated-paths'
+      (plugin) => plugin.name === 'blocked-generated-paths',
     );
 
     expect(blockedPathsPlugin).toBeDefined();
     expect(() => blockedPathsPlugin?.resolveId?.('ClientApp/src/main')).toThrow(
-      /blocked/i
+      /blocked/i,
     );
     expect(() =>
       blockedPathsPlugin?.resolveId?.(
-        'ClientApp/src/parent/node_modules/module'
-      )
+        'ClientApp/src/parent/node_modules/module',
+      ),
     ).toThrow(/blocked/i);
     expect(() =>
-      blockedPathsPlugin?.resolveId?.('ClientApp/src/external/vendor')
+      blockedPathsPlugin?.resolveId?.('ClientApp/src/external/vendor'),
     ).toThrow(/blocked/i);
     expect(blockedPathsPlugin?.resolveId?.('@/components/Button')).toBeNull();
   });
@@ -235,14 +235,14 @@ describe('vite config', () => {
     const assetFileNames = config.build.rolldownOptions.output.assetFileNames;
 
     expect(assetFileNames({ name: 'main.css' })).toBe(
-      'css/[name].[hash:8][extname]'
+      'css/[name].[hash:8][extname]',
     );
     expect(assetFileNames({ name: 'logo.svg' })).toBe('images/[name][extname]');
     expect(assetFileNames({ name: 'brand.woff2' })).toBe(
-      'fonts/[name][extname]'
+      'fonts/[name][extname]',
     );
     expect(assetFileNames({ name: 'NMI-tile.png' })).toBe(
-      'assets/[name].[hash:8][extname]'
+      'assets/[name].[hash:8][extname]',
     );
   });
 
@@ -268,13 +268,13 @@ describe('vite config', () => {
 
     expect(matches('react-runtime', '/node_modules/react/index.js')).toBe(true);
     expect(matches('react-runtime', '/node_modules/react-dom/client.js')).toBe(
-      true
+      true,
     );
     expect(
-      matches('react-runtime', '/node_modules/react-router/index.js')
+      matches('react-runtime', '/node_modules/react-router/index.js'),
     ).toBe(true);
     expect(matches('auth', '/node_modules/@azure/msal-react/index.js')).toBe(
-      true
+      true,
     );
     expect(matches('forms', '/node_modules/formik/index.js')).toBe(true);
     expect(matches('forms', '/node_modules/yup/index.js')).toBe(true);
@@ -284,8 +284,8 @@ describe('vite config', () => {
     expect(
       matches(
         'react-runtime',
-        '/ClientApp/src/authentication/redirectBridge.ts'
-      )
+        '/ClientApp/src/authentication/redirectBridge.ts',
+      ),
     ).toBe(false);
   });
 
@@ -340,7 +340,7 @@ describe('vite config', () => {
 
   it('includes the env template plugin for EJS variable injection', () => {
     const envPlugin = config.plugins.find(
-      (plugin) => plugin.name === 'env-template'
+      (plugin) => plugin.name === 'env-template',
     );
 
     expect(envPlugin).toBeDefined();
@@ -354,7 +354,7 @@ describe('vite config', () => {
 
   it('includes the MSAL redirect CSP plugin for dev server', () => {
     const cspPlugin = config.plugins.find(
-      (plugin) => plugin.name === 'msal-redirect-csp'
+      (plugin) => plugin.name === 'msal-redirect-csp',
     );
 
     expect(cspPlugin).toBeDefined();
@@ -363,11 +363,11 @@ describe('vite config', () => {
 
   it('passes configured environment variables through the template plugin', () => {
     const envPlugin = config.plugins.find(
-      (plugin) => plugin.name === 'env-template'
+      (plugin) => plugin.name === 'env-template',
     );
 
     const transformedHtml = envPlugin?.transformIndexHtml?.(
-      ENVIRONMENT_TEMPLATE_HTML
+      ENVIRONMENT_TEMPLATE_HTML,
     );
 
     for (const [key, value] of Object.entries(TEST_ENVIRONMENT)) {
@@ -389,32 +389,32 @@ describe('vite config', () => {
       mode: 'production',
     });
     const envPlugin = buildConfig.plugins.find(
-      (plugin) => plugin.name === 'env-template'
+      (plugin) => plugin.name === 'env-template',
     );
 
     expect(envPlugin?.transformIndexHtml?.('<%= VITE_B2C_AUTHORITY %>')).toBe(
-      'test-authority'
+      'test-authority',
     );
   });
 
   it('substitutes VITE_ENVIRONMENT and defaults it for development serve mode', () => {
     const serveConfig = configFn({ command: 'serve', mode: 'development' });
     const envPlugin = serveConfig.plugins.find(
-      (plugin) => plugin.name === 'env-template'
+      (plugin) => plugin.name === 'env-template',
     );
 
     expect(envPlugin?.transformIndexHtml?.('<%= VITE_ENVIRONMENT %>')).toBe(
-      'development'
+      'development',
     );
 
     writeEnv('VITE_ENVIRONMENT', 'production');
     const explicitConfig = configFn({ command: 'build', mode: 'production' });
     const explicitEnvPlugin = explicitConfig.plugins.find(
-      (plugin) => plugin.name === 'env-template'
+      (plugin) => plugin.name === 'env-template',
     );
 
     expect(
-      explicitEnvPlugin?.transformIndexHtml?.('<%= VITE_ENVIRONMENT %>')
+      explicitEnvPlugin?.transformIndexHtml?.('<%= VITE_ENVIRONMENT %>'),
     ).toBe('production');
 
     writeEnv('VITE_ENVIRONMENT', TEST_ENVIRONMENT.VITE_ENVIRONMENT);
@@ -436,20 +436,20 @@ describe('vite config', () => {
         mode: 'development',
       });
       const envPlugin = serveConfig.plugins.find(
-        (plugin) => plugin.name === 'env-template'
+        (plugin) => plugin.name === 'env-template',
       );
 
       expect(envPlugin?.transformIndexHtml?.('<%= VITE_ENVIRONMENT %>')).toBe(
-        'development'
+        'development',
       );
       expect(() => configFn({ command: 'build', mode: 'production' })).toThrow(
-        /VITE_ENVIRONMENT/i
+        /VITE_ENVIRONMENT/i,
       );
       expect(() => configFn({ command: 'build', mode: 'staging' })).toThrow(
-        /VITE_ENVIRONMENT/i
+        /VITE_ENVIRONMENT/i,
       );
       expect(() => configFn({ command: 'build', mode: 'development' })).toThrow(
-        /VITE_ENVIRONMENT/i
+        /VITE_ENVIRONMENT/i,
       );
     } finally {
       for (const [key, value] of previous) {
@@ -464,7 +464,7 @@ describe('vite config', () => {
 
   it('sets the MSAL redirect bridge CSP headers for redirect.html requests', () => {
     const cspPlugin = config.plugins.find(
-      (plugin) => plugin.name === 'msal-redirect-csp'
+      (plugin) => plugin.name === 'msal-redirect-csp',
     );
 
     const setHeader = vi.fn();
@@ -490,7 +490,7 @@ describe('vite config', () => {
     const middleware = middlewares.use.mock.calls[0]?.[0] as (
       req: { url?: string },
       res: typeof response,
-      cb: typeof next
+      cb: typeof next,
     ) => void;
 
     middleware({ url: '/redirect.html?code=redacted' }, response, next);
@@ -501,10 +501,10 @@ describe('vite config', () => {
     expect(setHeader.mock.lastCall).toEqual(['Cache-Control', 'no-store']);
     expect(setHeader).toHaveBeenCalledWith(
       'Content-Security-Policy',
-      "default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'"
+      "default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'",
     );
     expect(response.removeHeader).toHaveBeenCalledWith(
-      'Cross-Origin-Opener-Policy'
+      'Cross-Origin-Opener-Policy',
     );
     expect(next).toHaveBeenCalledWith();
 

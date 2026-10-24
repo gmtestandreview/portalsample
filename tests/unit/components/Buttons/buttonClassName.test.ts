@@ -8,13 +8,13 @@ describe(getButtonClassName, () => {
 
   it('prefixes a variant and appends an optional class name', () => {
     expect(getButtonClassName('secondary', 'download-link')).toBe(
-      'btn btn-secondary download-link'
+      'btn btn-secondary download-link',
     );
   });
 
   it('preserves an already-prefixed Bootstrap button variant', () => {
     expect(getButtonClassName('btn btn-outline-primary', 'download-link')).toBe(
-      'btn btn-outline-primary download-link'
+      'btn btn-outline-primary download-link',
     );
   });
 });

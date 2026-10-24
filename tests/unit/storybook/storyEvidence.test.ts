@@ -85,7 +85,7 @@ const index = {
 describe('reviewed Storybook source and story evidence', () => {
   it('accepts a declaration, story play function, marker, index ID, and exact digest', () => {
     expect(
-      moduleUnderTest.validateStoryEvidence({ manifest, files, index })
+      moduleUnderTest.validateStoryEvidence({ manifest, files, index }),
     ).toEqual({ ok: true, errors: [] });
   });
 
@@ -124,7 +124,7 @@ describe('reviewed Storybook source and story evidence', () => {
           path: storyPath,
           content: storyContent.replaceAll(
             'expect-visible-label',
-            'different-marker'
+            'different-marker',
           ),
         },
       ],
@@ -153,7 +153,7 @@ describe('reviewed Storybook source and story evidence', () => {
         manifest: changedManifest,
         files: evidenceFiles,
         index,
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([expect.objectContaining({ code })]),
@@ -182,7 +182,7 @@ describe('reviewed Storybook source and story evidence', () => {
         manifest: invalidAssertion,
         files,
         index,
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -195,7 +195,7 @@ describe('reviewed Storybook source and story evidence', () => {
         manifest,
         files,
         index: { entries: { docs: index.entries.docs } },
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: [expect.objectContaining({ code: 'REFERENCE_MISSING' })],
@@ -227,7 +227,7 @@ describe('reviewed Storybook source and story evidence', () => {
           { path: storyPath, content: typedPlayWithoutAssertion },
         ],
         index,
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([
@@ -237,7 +237,7 @@ describe('reviewed Storybook source and story evidence', () => {
 
     const nonAssertionMarker = storyContent.replace(
       "    expect('expect-visible-label').toBe('expect-visible-label');",
-      "    console.log('expect-visible-label');"
+      "    console.log('expect-visible-label');",
     );
 
     expect(
@@ -248,7 +248,7 @@ describe('reviewed Storybook source and story evidence', () => {
           { path: storyPath, content: nonAssertionMarker },
         ],
         index,
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([

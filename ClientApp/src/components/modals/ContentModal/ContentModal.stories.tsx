@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
@@ -10,7 +11,6 @@ const meta = preview.meta({
   component: ContentModal,
   decorators: [withPortalProviders],
 });
-
 
 const DismissibleContentModalDemo = ({
   onCancelModal,
@@ -40,12 +40,8 @@ export const OpenWithContent = meta.story({
     modalTitle: 'Example Modal Title',
     modalBody: <p>Modal body content for Storybook preview.</p>,
   },
-  render: (args) => (
-    <DismissibleContentModalDemo {...args} />
-  ),
-  play: async ({
-    args,
-  }) => {
+  render: (args) => <DismissibleContentModalDemo {...args} />,
+  play: async ({ args }) => {
     const dialog = await screen.findByRole('dialog', {
       name: /example modal title/i,
     });

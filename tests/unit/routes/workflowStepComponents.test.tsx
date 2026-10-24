@@ -113,12 +113,12 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/organisation-and-contact',
       <OrganisationAndContact />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     expect(screen.getByText('Organisation details')).toBeInTheDocument();
     expect(
-      screen.getByText(/This "Recalibration Request" is prefilled/)
+      screen.getByText(/This "Recalibration Request" is prefilled/),
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
@@ -126,7 +126,7 @@ describe('workflow step components', () => {
     expect(mocks.setShowRFQSelectModal).toHaveBeenCalledWith(
       true,
       'RFQ-1',
-      '/request-for-quote/RFQ-1/organisation-and-contact'
+      '/request-for-quote/RFQ-1/organisation-and-contact',
     );
   }, 30_000);
 
@@ -139,11 +139,11 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/organisation-and-contact',
       <OrganisationAndContact />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     expect(
-      screen.getByTestId('open-manage-branch-division-button')
+      screen.getByTestId('open-manage-branch-division-button'),
     ).toBeDisabled();
   }, 30_000);
 
@@ -155,14 +155,14 @@ describe('workflow step components', () => {
     renderRoute(
       '/organisation-and-contact',
       <OrganisationAndContact />,
-      '/organisation-and-contact'
+      '/organisation-and-contact',
     );
     fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
 
     expect(mocks.setShowRFQSelectModal).toHaveBeenCalledWith(
       true,
       '',
-      '/organisation-and-contact'
+      '/organisation-and-contact',
     );
   });
 
@@ -174,17 +174,17 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
+        screen.getByText('Instrument/artefact details'),
+      ).toBeInTheDocument(),
     );
 
     expect(
-      screen.getByText('Testing/calibration requirements')
+      screen.getByText('Testing/calibration requirements'),
     ).toBeInTheDocument();
 
     await act(async () => {
@@ -194,20 +194,20 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(mocks.setFieldValue).toHaveBeenCalledWith(
         'instrumentOrArtefactType',
-        'no-instrument'
-      )
+        'no-instrument',
+      ),
     );
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
       'instrumentOrArtefactType',
-      ''
+      '',
     );
     expect(mocks.setFieldTouched).toHaveBeenCalledWith(
       'instrumentOrArtefactType',
-      false
+      false,
     );
     expect(
-      screen.getByTestId('select-instrumentOrArtefactType')
+      screen.getByTestId('select-instrumentOrArtefactType'),
     ).toHaveAttribute('data-readonly', 'true');
   });
 
@@ -219,7 +219,7 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/summary',
       <RequestForQuoteSummary name='' />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     const editLinks = screen.getAllByTestId('edit-button');
@@ -241,13 +241,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByTestId('select-instrumentOrArtefactType')
-      ).toHaveAttribute('data-readonly', 'true')
+        screen.getByTestId('select-instrumentOrArtefactType'),
+      ).toHaveAttribute('data-readonly', 'true'),
     );
   });
 
@@ -260,17 +260,17 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
+        screen.getByText('Instrument/artefact details'),
+      ).toBeInTheDocument(),
     );
 
     expect(
-      screen.getByTestId('select-instrumentOrArtefactType')
+      screen.getByTestId('select-instrumentOrArtefactType'),
     ).toBeInTheDocument();
   });
 
@@ -296,13 +296,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
+        screen.getByText('Instrument/artefact details'),
+      ).toBeInTheDocument(),
     );
     await act(async () => {
       triggerInputChange('measurementCategory', 'measurement-1');
@@ -310,11 +310,11 @@ describe('workflow step components', () => {
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
       'instrumentOrArtefactType',
-      ''
+      '',
     );
     expect(mocks.setFieldValue).not.toHaveBeenCalledWith(
       'instrumentOrArtefactType',
-      'no-instrument'
+      'no-instrument',
     );
   });
 
@@ -325,13 +325,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Instrument/artefact details')
-      ).toBeInTheDocument()
+        screen.getByText('Instrument/artefact details'),
+      ).toBeInTheDocument(),
     );
     await act(async () => {
       triggerInputChange('measurementCategory', '');
@@ -340,7 +340,7 @@ describe('workflow step components', () => {
 
     expect(mocks.setFieldValue).toHaveBeenCalledWith(
       'instrumentOrArtefactType',
-      ''
+      '',
     );
   });
 
@@ -353,7 +353,7 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
@@ -368,7 +368,7 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/request-for-quote/RFQ-1/summary',
       <RequestForQuoteSummary />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     expect(screen.getByTestId('header-intro')).toBeInTheDocument();
@@ -380,13 +380,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/summary',
       <RequestForQuoteSummary isSubmitted />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     expect(screen.queryByTestId('header-intro')).not.toBeInTheDocument();
     expect(screen.getByTestId('back-button')).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
 
     await screen.findByText('Request details');
@@ -399,21 +399,21 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/accept-quote/AQ-1/report-recipient',
       <ReportRecipient id='AQ-1' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Report recipient organisation')
-      ).toBeInTheDocument()
+        screen.getByText('Report recipient organisation'),
+      ).toBeInTheDocument(),
     );
 
     expect(
-      screen.getByText('Organisation address for report')
+      screen.getByText('Organisation address for report'),
     ).toBeInTheDocument();
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-name',
-      'businessStreetAddress'
+      'businessStreetAddress',
     );
 
     unmount();
@@ -428,14 +428,14 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/report-recipient',
       <ReportRecipient id='AQ-1' name='reportRecipient' isSummary />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(screen.getByTestId('address-lookup')).toHaveAttribute(
         'data-name',
-        'reportRecipient.businessStreetAddress'
-      )
+        'reportRecipient.businessStreetAddress',
+      ),
     );
   });
 
@@ -446,18 +446,18 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/accept-quote/AQ-1/delivery-and-return',
       <DeliveryAndReturn id='AQ-1' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Instrument/artefact delivery')
-      ).toBeInTheDocument()
+        screen.getByText('Instrument/artefact delivery'),
+      ).toBeInTheDocument(),
     );
 
     expect(screen.getByTestId('mailing-label')).toHaveTextContent('Q-100');
     expect(screen.getByTestId('delivery-instructions')).toHaveTextContent(
-      'Use the loading dock.'
+      'Use the loading dock.',
     );
 
     unmount();
@@ -468,13 +468,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/delivery-and-return',
       <DeliveryAndReturn id='AQ-1' name='deliveryAndReturn' isSummary />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText(/does not require the delivery or return/)
-      ).toBeInTheDocument()
+        screen.getByText(/does not require the delivery or return/),
+      ).toBeInTheDocument(),
     );
   });
 
@@ -489,13 +489,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/delivery-and-return',
       <DeliveryAndReturn id='AQ-1' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText(/does not require the delivery or return/)
-      ).toBeInTheDocument()
+        screen.getByText(/does not require the delivery or return/),
+      ).toBeInTheDocument(),
     );
 
     expect(screen.getByRole('status')).toHaveClass('alert-info');
@@ -534,15 +534,15 @@ describe('workflow step components', () => {
       renderRoute(
         '/accept-quote/AQ-1/delivery-and-return',
         <DeliveryAndReturn id='AQ-1' name='deliveryAndReturn' isSummary />,
-        '/accept-quote/:id/*'
+        '/accept-quote/:id/*',
       );
 
       await waitFor(() =>
         expect(
-          screen.getByText(expectedAddress, { exact: false })
-        ).toBeInTheDocument()
+          screen.getByText(expectedAddress, { exact: false }),
+        ).toBeInTheDocument(),
       );
-    }
+    },
   );
 
   it('renders a return organisation name in the delivery summary', async () => {
@@ -558,17 +558,17 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/delivery-and-return',
       <DeliveryAndReturn id='AQ-1' name='deliveryAndReturn' isSummary />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getByText('Return Organisation')).toBeInTheDocument()
+      expect(screen.getByText('Return Organisation')).toBeInTheDocument(),
     );
   });
 
   it('logs delivery and lookup load failures', async () => {
     mocks.getDeliveryAndReturn.mockRejectedValueOnce(
-      new Error('delivery failed')
+      new Error('delivery failed'),
     );
     const DeliveryAndReturn = (
       await import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn')
@@ -576,15 +576,15 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/accept-quote/AQ-1/delivery-and-return',
       <DeliveryAndReturn id='AQ-1' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load AcceptQuotePreInfo',
         expect.any(Error),
-        { Id: 'AQ-1' }
-      )
+        { Id: 'AQ-1' },
+      ),
     );
     unmount();
 
@@ -596,14 +596,14 @@ describe('workflow step components', () => {
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
       <InstrumentAndRequest />,
-      '/request-for-quote/:id/*'
+      '/request-for-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to retrieve look ups',
-        expect.any(Error)
-      )
+        expect.any(Error),
+      ),
     );
   });
 
@@ -614,15 +614,15 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getByText(/Prepayment required/)).toBeInTheDocument()
+      expect(screen.getByText(/Prepayment required/)).toBeInTheDocument(),
     );
 
     expect(
-      screen.getByText('Purchase Order (PO) number (optional)')
+      screen.getByText('Purchase Order (PO) number (optional)'),
     ).toBeInTheDocument();
 
     unmount();
@@ -633,11 +633,11 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='paymentDetails' isSummary />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getAllByText('Invoice contact person')).toHaveLength(2)
+      expect(screen.getAllByText('Invoice contact person')).toHaveLength(2),
     );
 
     expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
@@ -651,20 +651,20 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/accept-quote/AQ-1/payment-details',
       <PaymentDetails id='AQ-1' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load Payment details',
         expect.any(Error),
-        { Id: 'AQ-1' }
-      )
+        { Id: 'AQ-1' },
+      ),
     );
     unmount();
 
     mocks.getReportRecipient.mockRejectedValueOnce(
-      new Error('recipient failed')
+      new Error('recipient failed'),
     );
     const ReportRecipient = (
       await import('../../../ClientApp/src/routes/acceptQuote/reportRecipient')
@@ -672,15 +672,15 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-2/report-recipient',
       <ReportRecipient id='AQ-2' name='' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load AcceptQuotePreInfo',
         expect.any(Error),
-        { Id: 'AQ-2' }
-      )
+        { Id: 'AQ-2' },
+      ),
     );
   });
 
@@ -705,11 +705,11 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/report-recipient',
       <ReportRecipient id='AQ-1' name='reportRecipient' isSummary />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getByText(/PO Box 44/)).toBeInTheDocument()
+      expect(screen.getByText(/PO Box 44/)).toBeInTheDocument(),
     );
   });
 
@@ -728,11 +728,11 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/delivery-and-return',
       <DeliveryAndReturn id='AQ-1' name='deliveryAndReturn' isSummary />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getByText(/1 National Circuit/)).toBeInTheDocument()
+      expect(screen.getByText(/1 National Circuit/)).toBeInTheDocument(),
     );
   });
 
@@ -745,13 +745,13 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(
-        screen.getByText('Quotation terms and conditions')
-      ).toBeInTheDocument()
+        screen.getByText('Quotation terms and conditions'),
+      ).toBeInTheDocument(),
     );
 
     expect(screen.getByText('Saved draft')).toBeInTheDocument();
@@ -765,19 +765,19 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
         'CRM-Q-100',
-        true
-      )
+        true,
+      ),
     );
 
     expect(mocks.openPdfPageInNewTab).toHaveBeenCalledWith(
       expect.stringContaining('blob:'),
-      '2'
+      '2',
     );
   });
 
   it('sets the dashboard notification when quote terms download fails and renders submitted action', async () => {
     mocks.getQuoteOfferPDFByQuoteID.mockRejectedValueOnce(
-      new Error('download failed')
+      new Error('download failed'),
     );
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
@@ -791,14 +791,14 @@ describe('workflow step components', () => {
         isSubmitted
         cRMQuoteRequestId='CRM-2'
       />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(screen.getByTestId('back-button')).toHaveAttribute(
         'href',
-        '/submitted-success/AQ-2'
-      )
+        '/submitted-success/AQ-2',
+      ),
     );
     const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
     if (!termsButton) throw new Error('expected a Terms button to be rendered');
@@ -808,8 +808,8 @@ describe('workflow step components', () => {
       expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           severity: 'error',
-        })
-      )
+        }),
+      ),
     );
   });
 
@@ -820,11 +820,11 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getAllByRole('button', { name: /terms/i })).toHaveLength(2)
+      expect(screen.getAllByRole('button', { name: /terms/i })).toHaveLength(2),
     );
     const secondTermsButton = screen.getAllByRole('button', {
       name: /terms/i,
@@ -837,8 +837,8 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
         'CRM-Q-100',
-        true
-      )
+        true,
+      ),
     );
   });
 
@@ -870,11 +870,11 @@ describe('workflow step components', () => {
     const { unmount } = renderRoute(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getByText('Trading only')).toBeInTheDocument()
+      expect(screen.getByText('Trading only')).toBeInTheDocument(),
     );
 
     expect(screen.getByText('Level 2')).toBeInTheDocument();
@@ -886,8 +886,8 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
         'CRM-Q-100',
-        true
-      )
+        true,
+      ),
     );
 
     expect(mocks.openPdfPageInNewTab).not.toHaveBeenCalled();
@@ -904,17 +904,17 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-2/summary-and-accept',
       <SummaryAndAccept id='AQ-2' name='' cRMQuoteRequestId='CRM-2' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
-      expect(screen.getByText('Branch only')).toBeInTheDocument()
+      expect(screen.getByText('Branch only')).toBeInTheDocument(),
     );
   });
 
   it('logs summary-and-accept load failures', async () => {
     mocks.getSummaryAndAccept.mockRejectedValueOnce(
-      new Error('summary failed')
+      new Error('summary failed'),
     );
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
@@ -923,15 +923,15 @@ describe('workflow step components', () => {
     renderRoute(
       '/accept-quote/AQ-1/summary-and-accept',
       <SummaryAndAccept id='AQ-1' name='' cRMQuoteRequestId='CRM-1' />,
-      '/accept-quote/:id/*'
+      '/accept-quote/:id/*',
     );
 
     await waitFor(() =>
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to retrieve getAcceptQuotePreInfo',
         expect.any(Error),
-        { Id: 'AQ-1' }
-      )
+        { Id: 'AQ-1' },
+      ),
     );
   });
 });

@@ -9,7 +9,7 @@ import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
 
 vi.mock(
-  '@/components/Actions',
+  import('@/components/Actions'),
   () =>
     ({
       default: ({
@@ -21,7 +21,7 @@ vi.mock(
           Invoke fallback action
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule50>
+    }) satisfies __ExactMockModule<__TestMockModule50>,
 );
 
 const modalDispatch = {
@@ -47,7 +47,7 @@ const renderItem = (item: React.ReactNode) =>
       <ModalDispatchCtx.Provider value={modalDispatch}>
         <ul>{item}</ul>
       </ModalDispatchCtx.Provider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe('requestList fallback action wiring', () => {
@@ -68,13 +68,13 @@ describe('requestList fallback action wiring', () => {
       renderItem(item);
 
       await user.click(
-        screen.getByRole('button', { name: 'Invoke fallback action' })
+        screen.getByRole('button', { name: 'Invoke fallback action' }),
       );
 
       expect(modalDispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(
         true,
-        'RFQ-FALLBACK'
+        'RFQ-FALLBACK',
       );
-    }
+    },
   );
 });

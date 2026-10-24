@@ -18,7 +18,7 @@ export const configuration: Configuration = {
       loggerCallback: (
         level: LogLevel,
         message: string,
-        containsPii: boolean
+        containsPii: boolean,
       ): void => {
         if (containsPii) {
           return;

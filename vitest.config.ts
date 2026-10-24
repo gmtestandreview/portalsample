@@ -20,8 +20,10 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 // was killed with SIGTERM before it could report readiness.
 //
 // Handing the addon the Storybook project directly removes that overhead. No
-// other entry point sets VITEST_STORYBOOK, so `vitest`, `test:all`, `test:unit`
-// and `test:storybook` keep the aggregated workspace unchanged.
+// other entry point sets VITEST_STORYBOOK, so direct `vitest`, `test:unit` and
+// `test:storybook` invocations keep their existing config selection. The
+// `test:all` script deliberately runs the two leaf scripts sequentially instead
+// of keeping both project graphs in one Node process.
 
 const isStorybookAddonChild = process.env['VITEST_STORYBOOK'] === 'true';
 

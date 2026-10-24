@@ -40,7 +40,7 @@ describe(QuoteStatusPill, () => {
       const pill = await screen.findByText(label);
 
       expect(pill).toHaveClass(bgClass, textClass);
-    }
+    },
   );
 
   it('renders the raw value for an unmapped status', async () => {
@@ -51,7 +51,7 @@ describe(QuoteStatusPill, () => {
     await waitFor(() => {
       expect(screen.getByText(customStatus)).toHaveClass(
         'bg-info',
-        'text-light'
+        'text-light',
       );
     });
   });

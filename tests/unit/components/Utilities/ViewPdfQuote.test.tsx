@@ -27,32 +27,32 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => msalContext,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/routes/common/helperFunctions',
-  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>
+  import('@/routes/common/helperFunctions'),
+  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -101,14 +101,14 @@ describe(ViewPdfQuote, () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('button', { name: /Download Quote/i })
+        screen.getByRole('button', { name: /Download Quote/i }),
       ).toBeInTheDocument();
     });
 
     expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
       'test-token',
       mockQuotationData,
-      false // size-only flag
+      false, // size-only flag
     );
     expect(helperMocks.getFileSize).toHaveBeenCalledWith(1234567);
     expect(screen.getByText(/1\.2 MB/)).toBeInTheDocument();
@@ -145,7 +145,7 @@ describe(ViewPdfQuote, () => {
 
     render(<ViewPdfQuote {...defaultProps} setIsLoading={setIsLoading} />);
     await waitFor(() =>
-      screen.getByRole('button', { name: /Download Quote/i })
+      screen.getByRole('button', { name: /Download Quote/i }),
     );
 
     await user.click(screen.getByRole('button', { name: /Download Quote/i }));
@@ -154,10 +154,10 @@ describe(ViewPdfQuote, () => {
       expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
         'test-token',
         mockQuotationData,
-        true // full-file flag
+        true, // full-file flag
       );
       expect(helperMocks.getFileUrlFromBase64).toHaveBeenCalledWith(
-        'base64data'
+        'base64data',
       );
       expect(helperMocks.openInNewTab).toHaveBeenCalledWith('blob:test-url');
       expect(setIsLoading).toHaveBeenCalledWith(true);
@@ -175,10 +175,10 @@ describe(ViewPdfQuote, () => {
         {...defaultProps}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
-      />
+      />,
     );
     await waitFor(() =>
-      screen.getByRole('button', { name: /Download Quote/i })
+      screen.getByRole('button', { name: /Download Quote/i }),
     );
 
     acquireTokenSilentMock.mockRejectedValueOnce(new Error('Network failure'));
@@ -200,7 +200,7 @@ describe(ViewPdfQuote, () => {
 
     render(<ViewPdfQuote {...defaultProps} />);
     await waitFor(() =>
-      screen.getByRole('button', { name: /Download Quote/i })
+      screen.getByRole('button', { name: /Download Quote/i }),
     );
 
     await user.click(screen.getByRole('button', { name: /Download Quote/i }));
@@ -223,10 +223,10 @@ describe(ViewPdfQuote, () => {
 
     // First render: completes successfully — firstSetter is called with false
     const { rerender } = render(
-      <ViewPdfQuote {...defaultProps} setFileError={firstSetter} />
+      <ViewPdfQuote {...defaultProps} setFileError={firstSetter} />,
     );
     await waitFor(() =>
-      screen.getByRole('button', { name: /Download Quote/i })
+      screen.getByRole('button', { name: /Download Quote/i }),
     );
 
     expect(firstSetter).not.toHaveBeenCalledWith(true);
@@ -238,7 +238,7 @@ describe(ViewPdfQuote, () => {
         {...defaultProps}
         quotationData={updatedQuotationData}
         setFileError={secondSetter}
-      />
+      />,
     );
 
     // With the fix: the re-run effect captures the fresh secondSetter

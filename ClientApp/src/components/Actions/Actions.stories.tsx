@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import Actions from './index';
@@ -35,11 +36,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const TextButton = meta.story({
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await canvas.getByRole('button', { name: 'Actions' }).click();
 
     await expect(
@@ -53,9 +51,7 @@ export const IconButton = meta.story({
     as: 'icon',
     buttonAriaTitle: 'for request RFQ-2024-001234',
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     await canvas
       .getByRole('button', { name: 'Actions for request RFQ-2024-001234' })
       .click();

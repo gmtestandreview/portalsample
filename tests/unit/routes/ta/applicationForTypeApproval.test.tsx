@@ -40,7 +40,7 @@ const documentsStep = vi.hoisted(() => ({
   props: undefined as unknown as {
     onUploadAttachment: (
       token: string,
-      files: FileParameter[]
+      files: FileParameter[],
     ) => Promise<AttachmentDto[]>;
     handleCancelFile: (fileName: string) => Promise<void>;
     attachment: { onUploadFiles: () => Promise<unknown[]> };
@@ -50,14 +50,14 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -65,92 +65,92 @@ vi.mock(
 
     clients.patternApproval = createClientMockFor(
       'getStepStatuses',
-      'addDocuments'
+      'addDocuments',
     );
     clients.progress = createClientMockFor(
       'getProgressUploadId',
       'getProgress',
       'deleteProgressStatistics',
-      'cancelFile'
+      'cancelFile',
     );
 
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
       ProgressClient: clients.progress,
     }) satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: () => mocks.accountContext(),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm',
+  import('../../../../ClientApp/src/components/forms/WizardForm'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <section data-testid='wizard-form'>{children}</section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule60>
+    }) satisfies __ExactMockModule<__TestMockModule60>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <article data-testid='wizard-step'>{children}</article>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>
+    }) satisfies __ExactMockModule<__TestMockModule24>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/organisationAndContact',
+  import('../../../../ClientApp/src/routes/ta/organisationAndContact'),
   () =>
     ({
       default: () => <div>Organisation and contact step</div>,
-    }) satisfies __ExactMockModule<__TestMockModule138>
+    }) satisfies __ExactMockModule<__TestMockModule138>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/applicationAndInstrument',
+  import('../../../../ClientApp/src/routes/ta/applicationAndInstrument'),
   () =>
     ({
       default: () => <div>Application and instrument step</div>,
-    }) satisfies __ExactMockModule<__TestMockModule139>
+    }) satisfies __ExactMockModule<__TestMockModule139>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/summaryAndSubmit',
+  import('../../../../ClientApp/src/routes/ta/summaryAndSubmit'),
   () =>
     ({
       default: () => <div>Summary and submit step</div>,
-    }) satisfies __ExactMockModule<__TestMockModule140>
+    }) satisfies __ExactMockModule<__TestMockModule140>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/supportingDocuments',
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
   () =>
     ({
       default: (props: typeof documentsStep.props) => {
@@ -165,7 +165,7 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule141>
+    }) satisfies __ExactMockModule<__TestMockModule141>,
 );
 
 const statuses = [{ name: 'Organisation and contact', status: 'current' }];
@@ -191,7 +191,7 @@ const renderRoute = async (path = '/ta/APP-1') => {
 const renderLoadedWizard = async () => {
   const result = await renderRoute();
   await waitFor(() =>
-    expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
+    expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
   );
 
   return result;
@@ -229,7 +229,7 @@ describe('application for type approval', () => {
       status: 'Completed',
     });
     clients.progress.methods.deleteProgressStatistics.mockResolvedValue(
-      undefined
+      undefined,
     );
     clients.progress.methods.cancelFile.mockResolvedValue(undefined);
   });
@@ -239,14 +239,14 @@ describe('application for type approval', () => {
       await renderLoadedWizard();
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
-        DEFAULT_ACCESS_TOKEN
+        DEFAULT_ACCESS_TOKEN,
       );
       expect(
-        clients.patternApproval.methods.getStepStatuses
+        clients.patternApproval.methods.getStepStatuses,
       ).toHaveBeenCalledWith('APP-1');
       expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
       expect(
-        screen.getByText('Organisation and contact step')
+        screen.getByText('Organisation and contact step'),
       ).toBeInTheDocument();
       expect(screen.getByText('Summary and submit step')).toBeInTheDocument();
     });
@@ -256,7 +256,7 @@ describe('application for type approval', () => {
       clients.patternApproval.methods.getStepStatuses.mockReturnValue(
         new Promise((resolve) => {
           releaseStatuses = resolve;
-        })
+        }),
       );
 
       await renderRoute();
@@ -268,13 +268,13 @@ describe('application for type approval', () => {
       });
 
       await waitFor(() =>
-        expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
+        expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
       );
     });
 
     it('redirects to not found when the statuses fail to load', async () => {
       clients.patternApproval.methods.getStepStatuses.mockRejectedValue(
-        new Error('load failed')
+        new Error('load failed'),
       );
 
       const { currentPath } = await renderRoute();
@@ -285,7 +285,7 @@ describe('application for type approval', () => {
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application steps',
         expect.any(Error),
-        { Id: 'APP-1' }
+        { Id: 'APP-1' },
       );
     });
 
@@ -297,7 +297,7 @@ describe('application for type approval', () => {
 
       expect(screen.getByText('Loading...')).toBeInTheDocument();
       expect(
-        clients.patternApproval.methods.getStepStatuses
+        clients.patternApproval.methods.getStepStatuses,
       ).not.toHaveBeenCalled();
     });
   });
@@ -333,7 +333,7 @@ describe('application for type approval', () => {
         'upload-1',
         [],
         null,
-        null
+        null,
       );
       expect(attachments).toHaveLength(1);
       expect(attachments[0]).toMatchObject({
@@ -388,14 +388,14 @@ describe('application for type approval', () => {
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
-          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.'
-        )
+          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
+        ),
       );
 
       expect(mocks.appLoggerError).toHaveBeenCalledWith(
         'Failed to load application documents',
         expect.anything(),
-        { Id: 'APP-1', Status: 403 }
+        { Id: 'APP-1', Status: 403 },
       );
     });
 
@@ -412,15 +412,15 @@ describe('application for type approval', () => {
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
-          'A server error occurred. Please try again.'
-        )
+          'A server error occurred. Please try again.',
+        ),
       );
     });
 
     it('falls back to a generic message when the failure carries no status', async () => {
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue(
-        new Error('network')
+        new Error('network'),
       );
 
       await act(async () => {
@@ -430,8 +430,8 @@ describe('application for type approval', () => {
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-errors',
-          'Failed to commit documents.'
-        )
+          'Failed to commit documents.',
+        ),
       );
     });
 
@@ -443,7 +443,7 @@ describe('application for type approval', () => {
       await renderLoadedWizard();
 
       await expect(
-        documentsStep.props.attachment.onUploadFiles()
+        documentsStep.props.attachment.onUploadFiles(),
       ).resolves.toEqual([]);
     });
 
@@ -472,14 +472,14 @@ describe('application for type approval', () => {
 
       await waitFor(() =>
         expect(
-          clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalledWith('upload-1')
+          clients.progress.methods.deleteProgressStatistics,
+        ).toHaveBeenCalledWith('upload-1'),
       );
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
           'data-uploading',
-          'false'
-        )
+          'false',
+        ),
       );
     });
 
@@ -496,15 +496,15 @@ describe('application for type approval', () => {
 
       await waitFor(() =>
         expect(
-          clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalledWith('upload-1')
+          clients.progress.methods.deleteProgressStatistics,
+        ).toHaveBeenCalledWith('upload-1'),
       );
     });
 
     it('logs a failed cleanup without disturbing the upload', async () => {
       await renderLoadedWizard();
       clients.progress.methods.deleteProgressStatistics.mockRejectedValue(
-        new Error('gone')
+        new Error('gone'),
       );
 
       await act(async () => {
@@ -515,8 +515,8 @@ describe('application for type approval', () => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to delete progress statistics',
           expect.any(Error),
-          { uploadId: 'upload-1' }
-        )
+          { uploadId: 'upload-1' },
+        ),
       );
     });
 
@@ -536,9 +536,9 @@ describe('application for type approval', () => {
       await waitFor(
         () =>
           expect(
-            clients.progress.methods.deleteProgressStatistics
+            clients.progress.methods.deleteProgressStatistics,
           ).toHaveBeenCalledWith('upload-1'),
-        { timeout: 10000 }
+        { timeout: 10000 },
       );
 
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
@@ -551,7 +551,7 @@ describe('application for type approval', () => {
       clients.progress.methods.getProgress.mockReturnValue(
         new Promise((_resolve, reject) => {
           failPoll = reject;
-        })
+        }),
       );
 
       await act(async () => {
@@ -562,8 +562,8 @@ describe('application for type approval', () => {
         expect(clients.progress.methods.getProgress).toHaveBeenCalledWith(
           'upload-1',
           -1,
-          expect.any(AbortSignal)
-        )
+          expect.any(AbortSignal),
+        ),
       );
 
       // Unmount aborts the controller, so the in-flight poll's rejection must break the loop
@@ -580,7 +580,7 @@ describe('application for type approval', () => {
       });
 
       expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(
-        callsAfterUnmount
+        callsAfterUnmount,
       );
     });
   });
@@ -608,14 +608,14 @@ describe('application for type approval', () => {
 
       expect(clients.progress.methods.cancelFile).toHaveBeenCalledWith(
         'upload-1',
-        'spec.pdf'
+        'spec.pdf',
       );
     });
 
     it('swallows a failed cancellation because polling reports the real state', async () => {
       await renderLoadedWizard();
       clients.progress.methods.cancelFile.mockRejectedValue(
-        new Error('too late')
+        new Error('too late'),
       );
 
       await act(async () => {
@@ -625,7 +625,7 @@ describe('application for type approval', () => {
       await expect(
         act(async () => {
           await documentsStep.props.handleCancelFile('spec.pdf');
-        })
+        }),
       ).resolves.toBeUndefined();
     });
 
@@ -649,7 +649,7 @@ describe('application for type approval', () => {
             homeAccountId: 'test-home-account-id',
           }),
           scopes: ['api://ta/.default'],
-        })
+        }),
       );
     });
   });

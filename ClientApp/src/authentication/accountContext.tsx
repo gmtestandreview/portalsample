@@ -43,22 +43,22 @@ export interface AccountDispatchContext {
   setContactCompleted: () => void;
   setDefaultOrganisationId: (
     defaultOrganisationId: number | undefined,
-    defaultOrganisationCRMId: string | undefined
+    defaultOrganisationCRMId: string | undefined,
   ) => void;
   setTargetOrganisation: (
     targetOrganisationAbn: string,
-    targetOrganisationName: string
+    targetOrganisationName: string,
   ) => void;
   setOrganisationAndBranch: (
     organisationName: string,
     tradingName: string,
-    branchName: string
+    branchName: string,
   ) => void;
   setShowBranchSelector: (show: boolean) => void;
   setShowRFQSelectModal: (
     show: boolean,
     rfqId: string,
-    callingPath: string
+    callingPath: string,
   ) => void;
   setUserProfile: (userProfile: UserProfileDto) => Promise<boolean>;
 }
@@ -68,5 +68,5 @@ export type AccountContextState = AccountStateContext & AccountDispatchContext;
 
 export const AccountStateCtx = createContext<AccountStateContext | null>(null);
 export const AccountDispatchCtx = createContext<AccountDispatchContext | null>(
-  null
+  null,
 );

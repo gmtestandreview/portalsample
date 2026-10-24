@@ -725,7 +725,7 @@ describe('isRequired', () => {
 
   it('provides the correct error message when label is supplied', async () => {
     await expect(
-      Yup.string().isRequired('Email').validate(undefined)
+      Yup.string().isRequired('Email').validate(undefined),
     ).rejects.toThrow('Email is required');
   });
 
@@ -733,7 +733,7 @@ describe('isRequired', () => {
     await expect(
       Yup.object({ myField: Yup.string().isRequired() }).validate({
         myField: '',
-      })
+      }),
     ).rejects.toThrow('is required');
   });
 });

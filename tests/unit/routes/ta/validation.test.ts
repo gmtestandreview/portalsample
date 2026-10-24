@@ -26,14 +26,14 @@ import { ValidationMessages } from '../../../../ClientApp/src/routes/ta/types';
 type ValidatableSchema = {
   validate(
     value: unknown,
-    options?: { abortEarly?: boolean }
+    options?: { abortEarly?: boolean },
   ): Promise<unknown>;
 };
 
 /** Collects every message so conditional branches are asserted, not just the first. */
 const errorsFor = async (
   schema: ValidatableSchema,
-  value: unknown
+  value: unknown,
 ): Promise<string[]> => {
   try {
     await schema.validate(value, { abortEarly: false });
@@ -110,7 +110,7 @@ describe('organisation and contact submit validation', () => {
     });
 
     expect(errors).toContain(
-      'Business website address is not a valid website address'
+      'Business website address is not a valid website address',
     );
   });
 });
@@ -140,7 +140,7 @@ describe('organisation and contact save validation', () => {
     });
 
     expect(errors).toContain(
-      'Business website address is not a valid website address'
+      'Business website address is not a valid website address',
     );
   });
 });
@@ -214,7 +214,7 @@ describe('pattern approval organisation and contact submit validation', () => {
   it('skips every nominated party when the principal is used throughout', async () => {
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
-      allPrincipal
+      allPrincipal,
     );
 
     expect(errors).toEqual([]);
@@ -223,13 +223,13 @@ describe('pattern approval organisation and contact submit validation', () => {
   it('validates the contact, invoice contact and authorised agent separately', async () => {
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
-      allNominated
+      allNominated,
     );
 
     // Each of the three nominated parties contributes its own required-field
     // set, so a shared message appears once per party.
     expect(errors.filter((e) => e === 'First name is required')).toHaveLength(
-      3
+      3,
     );
     expect(errors).toContain('Email address is required');
   });
@@ -239,7 +239,7 @@ describe('pattern approval organisation and contact save validation', () => {
   it('skips every nominated party when the principal is used throughout', async () => {
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
-      allPrincipal
+      allPrincipal,
     );
 
     expect(errors).toEqual([]);
@@ -248,7 +248,7 @@ describe('pattern approval organisation and contact save validation', () => {
   it('accepts empty nominated parties because save uses the soft schemas', async () => {
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
-      allNominated
+      allNominated,
     );
 
     expect(errors).toEqual([]);
@@ -267,7 +267,7 @@ describe('application and instrument submit validation', () => {
     });
 
     expect(errors).toContain(
-      'At least one New Certificate of Approval option is required'
+      'At least one New Certificate of Approval option is required',
     );
   });
 
@@ -300,7 +300,7 @@ describe('application and instrument submit validation', () => {
     });
 
     expect(errors).toContain(
-      'At least one Variation or request a minor edit options option is required'
+      'At least one Variation or request a minor edit options option is required',
     );
     expect(errors.some((e) => e.includes('Certificate Number'))).toBe(true);
   });
@@ -325,7 +325,7 @@ describe('application and instrument submit validation', () => {
       });
 
       expect(errors.some((e) => e.includes('cannot select'))).toBe(true);
-    }
+    },
   );
 
   it('reports the required rule when no options array is supplied', async () => {
@@ -375,7 +375,7 @@ describe('application and instrument submit validation', () => {
       value: 'CertificateCancellation',
     });
     const customTest = otherOptionsSchema.tests.find(
-      (test) => test.OPTIONS?.name === 'mutually-exclusive-options'
+      (test) => test.OPTIONS?.name === 'mutually-exclusive-options',
     );
 
     expect(customTest?.OPTIONS?.test?.('CertificateCancellation')).toBe(true);
@@ -422,7 +422,7 @@ describe('application and instrument submit validation', () => {
     });
 
     expect(
-      errors.some((e) => e.includes('Summary of application is a required'))
+      errors.some((e) => e.includes('Summary of application is a required')),
     ).toBe(false);
   });
 
@@ -436,7 +436,7 @@ describe('application and instrument submit validation', () => {
       });
 
       expect(errors.some((e) => e.includes('invalid characters'))).toBe(true);
-    }
+    },
   );
 
   it('skips the character check for a blank summary', async () => {

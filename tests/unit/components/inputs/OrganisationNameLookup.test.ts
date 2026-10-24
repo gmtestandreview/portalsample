@@ -31,7 +31,7 @@ describe(getFilteredSuggestions, () => {
         inputValue: 'a',
         optionsFieldName: 'name',
         options: [{ name: 'Alpha Pty Ltd' }],
-      })
+      }),
     ).toEqual([]);
 
     expect(
@@ -39,7 +39,7 @@ describe(getFilteredSuggestions, () => {
         inputValue: '  ',
         optionsFieldName: 'name',
         options: [{ name: 'Alpha Pty Ltd' }],
-      })
+      }),
     ).toEqual([]);
   });
 

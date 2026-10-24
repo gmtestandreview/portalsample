@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { http, HttpResponse } from 'msw/http';
 import { expect, within } from 'storybook/test';
@@ -122,12 +123,9 @@ const meta = preview.meta({
   },
 });
 
-
 export const ReportRecipientStep = meta.story({
   render: () => <ReportRecipient id='123' />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -174,9 +172,7 @@ export const ReportRecipientSummaryOtherAddress = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -213,9 +209,7 @@ export const PaymentDetailsStep = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // The Prepaid paragraph is rendered only once acceptQuotePreInfo has loaded and
@@ -258,9 +252,7 @@ export const PaymentDetailsPostpaid = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // This story's handler returns paymentTerms 'Invoice', whose paragraph also renders
@@ -319,9 +311,7 @@ export const DeliveryAndReturnStep = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
@@ -363,9 +353,7 @@ export const QuotationSummaryStep = meta.story({
       },
     },
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // QuoteDetails renders the quotation id only when quotationData has arrived, so this
@@ -431,9 +419,7 @@ export const SummaryAndAcceptStep = meta.story({
       },
     },
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const heading = await canvas.findByText(
       /Before you accept and submit our offer/i,
     );

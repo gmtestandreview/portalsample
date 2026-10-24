@@ -33,13 +33,13 @@ describe('route accessibility behavior', () => {
     render(
       <MemoryRouter initialEntries={['/start']}>
         <AccessibilityProbe />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await act(() => vi.advanceTimersByTimeAsync(100));
 
     expect(
-      screen.getByRole('status', { name: 'Route announcement' })
+      screen.getByRole('status', { name: 'Route announcement' }),
     ).toHaveTextContent('Navigated to Dashboard page.');
     expect(screen.getByRole('main')).toHaveFocus();
 
@@ -50,7 +50,7 @@ describe('route accessibility behavior', () => {
     await act(() => vi.advanceTimersByTimeAsync(100));
 
     expect(
-      screen.getByRole('status', { name: 'Route announcement' })
+      screen.getByRole('status', { name: 'Route announcement' }),
     ).toHaveTextContent('Navigated to page.');
   });
 
@@ -59,7 +59,7 @@ describe('route accessibility behavior', () => {
     const { unmount } = render(
       <MemoryRouter>
         <AccessibilityProbe />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     unmount();

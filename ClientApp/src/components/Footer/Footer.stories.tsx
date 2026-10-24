@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 import Footer from './index';
@@ -12,12 +13,9 @@ const meta = preview.meta({
   },
 });
 
-
 // SB-023: Footer Default — landmark and link a11y assertions
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Footer renders a contentinfo (footer) landmark
     const footer =

@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import CustomPaginationHeader from './index';
@@ -15,11 +16,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const MidPage = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     await expect(canvasElement).toHaveTextContent(
       'Displaying 21 - 30 of 56 Results',
     );
@@ -32,9 +30,7 @@ export const LastPage = meta.story({
     pageSize: 10,
     currentPage: 6,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     await expect(canvasElement).toHaveTextContent(
       'Displaying 51 - 56 of 56 Results',
     );

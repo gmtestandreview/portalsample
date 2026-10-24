@@ -100,11 +100,11 @@ const seedMsalCache = ({
       idToken: [idTokenKey],
       accessToken: [accessTokenKey],
       refreshToken: [],
-    })
+    }),
   );
   sessionStorage.setItem(
     `msal.${clientId}.active-account`,
-    mockAccount.localAccountId
+    mockAccount.localAccountId,
   );
   sessionStorage.setItem(
     `msal.${clientId}.active-account-filters`,
@@ -113,13 +113,13 @@ const seedMsalCache = ({
       localAccountId: mockAccount.localAccountId,
       tenantId: mockAccount.realm,
       lastUpdatedAt: Date.now().toString(),
-    })
+    }),
   );
 };
 
 export async function installMockAuthentication(
   page: Page,
-  state: ScenarioState
+  state: ScenarioState,
 ): Promise<void> {
   const seedArgs = { email: state.email, disabledKey: AUTH_DISABLED_KEY };
   await page.addInitScript(seedMsalCache, seedArgs);
@@ -157,7 +157,7 @@ export async function expireMockAuthentication(page: Page): Promise<void> {
 }
 
 export async function disableMockAuthenticationReseed(
-  page: Page
+  page: Page,
 ): Promise<void> {
   await page.evaluate((disabledKey) => {
     localStorage.setItem(disabledKey, 'true');

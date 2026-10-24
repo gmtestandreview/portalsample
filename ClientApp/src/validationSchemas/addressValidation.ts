@@ -32,7 +32,7 @@ const addressSchema = (label: string) =>
         requiredNullableString('Postcode').fixedDigits(
           4,
           'Postcode',
-          'Please enter a valid postcode'
+          'Please enter a valid postcode',
         ),
       otherwise: (_addressSchema) => yup.string(),
     }),

@@ -22,13 +22,13 @@ export const containsWhitespace = (value: string) => /\s/.test(value);
 
 export const removeEmptyKeys = <T extends Record<string, unknown>>(
   obj: T,
-  filter?: FilterKeys
+  filter?: FilterKeys,
 ): T =>
   Object.fromEntries(
     Object.entries(obj)
       .filter(
         ([_, v]) =>
-          v !== null && v !== '' && v !== undefined && trimIfString(v) !== ''
+          v !== null && v !== '' && v !== undefined && trimIfString(v) !== '',
       )
       .filter((keyValue) => (filter ? filter(keyValue) : true))
       .map(([k, v]) => {
@@ -47,7 +47,7 @@ export const removeEmptyKeys = <T extends Record<string, unknown>>(
           k,
           v === Object(v) ? removeEmptyKeys(v as Record<string, unknown>) : v,
         ];
-      })
+      }),
   ) as T;
 
 export const tail = <T>([_, ...rest]: T[]) => rest;
@@ -60,7 +60,7 @@ export function prefixedPropertyOf<T>(prefix: string) {
 }
 
 export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
-  obj: T
+  obj: T,
 ): T =>
   Object.fromEntries(
     Object.entries(obj).map(([k, v]) => {
@@ -86,7 +86,7 @@ export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(
           ? nullOrUndefinedToEmpty(v as Record<string, unknown>)
           : v,
       ];
-    })
+    }),
   ) as T;
 
 export const parseDate = (value: Date | string): Date | undefined => {
@@ -157,7 +157,7 @@ export const parseDateUTC = (value: Date | string): Date | undefined => {
 };
 
 export const isDateValid = (
-  value: Date | string | null | undefined
+  value: Date | string | null | undefined,
 ): boolean => {
   if (value === null || value === undefined || value.toString().trim() === '') {
     return false;
@@ -200,7 +200,7 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
 
 export const formatDate = (
   date: Date | null | undefined,
-  formatStr = 'dd MMM yyyy'
+  formatStr = 'dd MMM yyyy',
 ) => {
   if (date === null || date === undefined) {
     return '';
@@ -210,7 +210,7 @@ export const formatDate = (
 
 export const formatDateToString = (
   value: Date | string | null | undefined,
-  formatter = 'd MMM yyyy'
+  formatter = 'd MMM yyyy',
 ): string | null => {
   if (value === null || !isDateValid(value) || value === undefined) {
     return null;
@@ -227,7 +227,7 @@ export const formatDateToString = (
 
 export const formatDateTimeToString = (
   value: Date | string | null | undefined,
-  formatter = 'd MMM yyyy h:mm a'
+  formatter = 'd MMM yyyy h:mm a',
 ): string | null => {
   if (value === null || value === undefined || !isDateValid(value)) {
     return null;
@@ -281,7 +281,7 @@ export const splitPascalCase = (word: string, casing: SplitCase) => {
 export const base64toBlob = (
   base64Data: string,
   contentType: string,
-  sliceSize = 512
+  sliceSize = 512,
 ) => {
   const byteCharacters = atob(base64Data);
   const byteArrays = [];
@@ -299,7 +299,7 @@ export const base64toBlob = (
 };
 
 export const formatCurrencyAmount = (
-  amount: number | undefined
+  amount: number | undefined,
 ): string | null => {
   if (amount === null || amount === undefined) {
     return null;

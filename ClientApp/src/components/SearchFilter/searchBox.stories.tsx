@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import SearchBox from './searchBox';
@@ -20,11 +21,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Empty = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('textbox')).toBeVisible();
@@ -34,10 +32,7 @@ export const Empty = meta.story({
 });
 
 export const TypeAndSubmit = meta.story({
-  play: async ({
-    canvasElement,
-    args,
-  }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('textbox');
@@ -56,9 +51,7 @@ export const Prefilled = meta.story({
   args: {
     initialSearchValue: 'Fluke',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByRole('textbox')).toHaveValue('Fluke');

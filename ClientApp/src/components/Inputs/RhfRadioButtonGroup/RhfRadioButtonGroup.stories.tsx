@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfRadioButtonGroup from '.';
@@ -37,11 +38,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
 
@@ -62,9 +60,7 @@ export const Default = meta.story({
 
 export const Disabled = meta.story({
   args: { disabled: true },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -78,9 +74,7 @@ export const Disabled = meta.story({
 
 export const WithInlineHelp = meta.story({
   args: { inlineHelp: 'Invoices are emailed to the chosen contact.' },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(

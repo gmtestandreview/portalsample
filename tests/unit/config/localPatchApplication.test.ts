@@ -9,7 +9,7 @@ import { readTextFile } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = join(
   dirname(fileURLToPath(import.meta.url)),
-  '../../..'
+  '../../..',
 );
 const temporaryRoots: string[] = [];
 
@@ -21,7 +21,7 @@ function runPatchApplicator(root: string) {
       cwd: repositoryRoot,
       encoding: 'utf8',
       env: { ...process.env, NMI_PATCH_ROOT: root },
-    }
+    },
   );
 }
 
@@ -70,7 +70,7 @@ afterEach(async () => {
   await Promise.all(
     temporaryRoots
       .splice(0)
-      .map((root) => rm(root, { force: true, recursive: true }))
+      .map((root) => rm(root, { force: true, recursive: true })),
   );
 });
 
@@ -83,20 +83,20 @@ describe('repository-owned local patches', () => {
     await expect(
       readTextFile(
         join(root, 'node_modules/html-react-parser/package.json'),
-        root
-      )
+        root,
+      ),
     ).resolves.toContain('"default": "./esm/index.mjs"');
     await expect(
       readTextFile(
         join(root, 'node_modules/@storybook/addon-mcp/dist/preset.js'),
-        root
-      )
+        root,
+      ),
     ).resolves.toContain('function normalizeTestRunData(data)');
 
     const firstRun = await Promise.all([
       readTextFile(
         join(root, 'node_modules/html-react-parser/package.json'),
-        root
+        root,
       ),
     ]);
 
@@ -106,9 +106,9 @@ describe('repository-owned local patches', () => {
       Promise.all([
         readTextFile(
           join(root, 'node_modules/html-react-parser/package.json'),
-          root
+          root,
         ),
-      ])
+      ]),
     ).resolves.toEqual(firstRun);
   });
 });

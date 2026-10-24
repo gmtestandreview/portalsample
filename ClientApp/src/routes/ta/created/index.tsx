@@ -15,7 +15,7 @@ const RequestForPatternApprovalCreated = () => {
   const navigate = useNavigate();
 
   useHtmlTitle(
-    'Application for Pattern/type approval created successfully | NMI Services portal'
+    'Application for Pattern/type approval created successfully | NMI Services portal',
   );
   useBodyClass('application-created');
 
@@ -23,7 +23,7 @@ const RequestForPatternApprovalCreated = () => {
   function goToDashboard() {
     SessionStorageCache().setItem(
       DashboardTab.Requests,
-      'set-tabop-after-save'
+      'set-tabop-after-save',
     );
     navigate('/dashboard-ta');
   }
@@ -92,7 +92,7 @@ const RequestForPatternApprovalCreated = () => {
                   onClick={() => {
                     SessionStorageCache().setItem(
                       DashboardTab.Requests,
-                      'set-tabop-after-save'
+                      'set-tabop-after-save',
                     );
                   }}
                   to='/dashboard-ta'

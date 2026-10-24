@@ -6,7 +6,7 @@ import { AZURE_WAF_SERVER_PREFIX } from '../../../../../ClientApp/src/types/wafE
 function makeError(
   status: number,
   title?: string,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
 ) {
   return { status, title: title ?? '', headers: headers ?? {} };
 }
@@ -15,19 +15,19 @@ describe(resolveErrorState, () => {
   describe('load errors — HttpStatus dispatch', () => {
     it('returns notFound for 404', () => {
       expect(
-        resolveErrorState(makeError(404), undefined, ErrorType.Load)
+        resolveErrorState(makeError(404), undefined, ErrorType.Load),
       ).toEqual({ kind: 'notFound' });
     });
 
     it('returns gone for 410', () => {
       expect(
-        resolveErrorState(makeError(410), undefined, ErrorType.Load)
+        resolveErrorState(makeError(410), undefined, ErrorType.Load),
       ).toEqual({ kind: 'gone' });
     });
 
     it('returns gone for 401', () => {
       expect(
-        resolveErrorState(makeError(401), undefined, ErrorType.Load)
+        resolveErrorState(makeError(401), undefined, ErrorType.Load),
       ).toEqual({ kind: 'gone' });
     });
 
@@ -36,8 +36,8 @@ describe(resolveErrorState, () => {
         resolveErrorState(
           makeError(403, 'No third-party access to this resource'),
           undefined,
-          ErrorType.Load
-        )
+          ErrorType.Load,
+        ),
       ).toEqual({ kind: 'noThirdPartyAccess' });
     });
 
@@ -45,7 +45,7 @@ describe(resolveErrorState, () => {
       const result = resolveErrorState(
         makeError(403, 'Forbidden'),
         undefined,
-        ErrorType.Load
+        ErrorType.Load,
       );
 
       expect(result.kind).toBe('serverError');
@@ -53,7 +53,7 @@ describe(resolveErrorState, () => {
 
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
       expect(
-        resolveErrorState(makeError(500), undefined, ErrorType.Load)
+        resolveErrorState(makeError(500), undefined, ErrorType.Load),
       ).toEqual({
         kind: 'loading',
       });
@@ -61,14 +61,14 @@ describe(resolveErrorState, () => {
 
     it('returns loading for a network error with no status property', () => {
       expect(
-        resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load)
+        resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load),
       ).toEqual({ kind: 'loading' });
     });
 
     it('returns none for an aborted request — stays silent', () => {
       const abort = new DOMException(
         'The operation was aborted.',
-        'AbortError'
+        'AbortError',
       );
 
       expect(resolveErrorState(abort, undefined, ErrorType.Load)).toEqual({
@@ -107,7 +107,7 @@ describe(resolveErrorState, () => {
       const result = resolveErrorState(
         makeError(500),
         undefined,
-        ErrorType.Update
+        ErrorType.Update,
       );
 
       expect(result.kind).toBe('serverError');
@@ -129,7 +129,7 @@ describe(resolveErrorState, () => {
       const cb = () => undefined;
 
       expect(resolveErrorState(makeError(404), cb, ErrorType.Load).kind).toBe(
-        'notFound'
+        'notFound',
       );
     });
 

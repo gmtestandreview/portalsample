@@ -34,6 +34,12 @@ const applicationVendorGroups = [
   },
 ];
 
+// The Chromatic addon registers as a Storybook test provider. In development,
+// that makes the component-test runner start a remote Chromatic build as well,
+// which can exhaust Node's heap before the tests finish starting. Keep the
+// provider in production builds, where the visual-test workflow is supported.
+const isStorybookDevelopment = process.env['NODE_ENV'] !== 'production';
+
 export default defineMain({
   framework: '@storybook/react-vite',
 
@@ -62,7 +68,7 @@ export default defineMain({
     '@storybook/addon-a11y',
     '@storybook/addon-links',
     '@storybook/addon-vitest',
-    '@chromatic-com/storybook',
+    ...(!isStorybookDevelopment ? ['@chromatic-com/storybook'] : []),
     {
       name: '@storybook/addon-docs',
       options: {

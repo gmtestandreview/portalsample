@@ -21,7 +21,7 @@ describe('form button controls', () => {
       >
         <SaveAndExitButton />
         <ValuesProbe />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(screen.getByTestId('save-and-exit-button'));
@@ -29,13 +29,13 @@ describe('form button controls', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExit":true'
-      )
+        '"saveAndExit":true',
+      ),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExitClick":false'
-      )
+        '"saveAndExitClick":false',
+      ),
     );
   });
 
@@ -53,7 +53,7 @@ describe('form button controls', () => {
             </button>
           )}
         </SaveAndExitButton>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'Custom save' }));
@@ -70,7 +70,7 @@ describe('form button controls', () => {
       >
         <SubmitFormButton />
         <ValuesProbe />
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(screen.getByTestId('submit-button'));
@@ -78,13 +78,13 @@ describe('form button controls', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"saveAndExit":false'
-      )
+        '"saveAndExit":false',
+      ),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"submitClick":false'
-      )
+        '"submitClick":false',
+      ),
     );
   });
 
@@ -102,11 +102,11 @@ describe('form button controls', () => {
             </button>
           )}
         </SubmitFormButton>
-      </FormikWrapper>
+      </FormikWrapper>,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Custom submit' })
+      screen.getByRole('button', { name: 'Custom submit' }),
     );
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));

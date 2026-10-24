@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import { failureKey } from '../support/mock-failure';
@@ -8,11 +9,11 @@ Given(
     scenarioState.failures.set(
       failureKey(
         'PUT',
-        `/api/request-for-quote/${scenarioState.activeReferenceId}/instrument-and-request`
+        `/api/request-for-quote/${scenarioState.activeReferenceId}/instrument-and-request`,
       ),
-      { status }
+      { status },
     );
-  }
+  },
 );
 
 Given(
@@ -23,9 +24,9 @@ Given(
       {
         status,
         body: { status, title: 'Precondition Failed' },
-      }
+      },
     );
-  }
+  },
 );
 
 Then('an RFQ save error is displayed', async ({ page }) => {
@@ -34,7 +35,7 @@ Then('an RFQ save error is displayed', async ({ page }) => {
 
 Then('the manufacturer remains {string}', async ({ page }, value: string) => {
   await expect(page.getByLabel('Manufacturer', { exact: true })).toHaveValue(
-    value
+    value,
   );
 });
 
@@ -58,11 +59,11 @@ Given(
     scenarioState.failures.set(
       failureKey(
         'PUT',
-        `/api/accept-quote/QA-${scenarioState.activeReferenceId}/report-recipient`
+        `/api/accept-quote/QA-${scenarioState.activeReferenceId}/report-recipient`,
       ),
-      { status }
+      { status },
     );
-  }
+  },
 );
 
 Given(
@@ -71,11 +72,11 @@ Given(
     scenarioState.failures.set(
       failureKey(
         'PUT',
-        '/api/request-for-pattern-approval/*/application-and-instrument'
+        '/api/request-for-pattern-approval/*/application-and-instrument',
       ),
-      { status }
+      { status },
     );
-  }
+  },
 );
 
 Then('a save error is displayed', async ({ page }) => {

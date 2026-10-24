@@ -26,17 +26,17 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
         accounts: mocks.msalAccounts,
         instance: mocks.instance,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -45,23 +45,23 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: mocks.useAccountState,
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -79,114 +79,114 @@ vi.mock(
         };
       }),
     } satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: mocks.appLoggerError,
         verbose: mocks.appLoggerVerbose,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='block-spinner'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>
+    }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule59>
+    }) satisfies __ExactMockModule<__TestMockModule59>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm',
+  import('../../../../ClientApp/src/components/forms/WizardForm'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='wizard-form'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule60>
+    }) satisfies __ExactMockModule<__TestMockModule60>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='wizard-step'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>
+    }) satisfies __ExactMockModule<__TestMockModule24>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/reportRecipient',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
   () =>
     ({
       default: () => <div data-testid='step-report-recipient' />,
-    }) satisfies __ExactMockModule<__TestMockModule61>
+    }) satisfies __ExactMockModule<__TestMockModule61>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
   () =>
     ({
       default: () => <div data-testid='step-delivery-and-return' />,
-    }) satisfies __ExactMockModule<__TestMockModule62>
+    }) satisfies __ExactMockModule<__TestMockModule62>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/paymentDetails',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
   () =>
     ({
       default: () => <div data-testid='step-payment-details' />,
-    }) satisfies __ExactMockModule<__TestMockModule63>
+    }) satisfies __ExactMockModule<__TestMockModule63>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
+  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
   () =>
     ({
       default: () => <div data-testid='step-summary-and-accept' />,
-    }) satisfies __ExactMockModule<__TestMockModule64>
+    }) satisfies __ExactMockModule<__TestMockModule64>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps'),
   () =>
     ({
       default: () => ({}),
-    }) satisfies __ExactMockModule<__TestMockModule65>
+    }) satisfies __ExactMockModule<__TestMockModule65>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps'),
   () =>
     ({
       default: () => ({}),
-    }) satisfies __ExactMockModule<__TestMockModule66>
+    }) satisfies __ExactMockModule<__TestMockModule66>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps'),
   () =>
     ({
       default: () => ({}),
-    }) satisfies __ExactMockModule<__TestMockModule67>
+    }) satisfies __ExactMockModule<__TestMockModule67>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps'),
   () =>
     ({
       default: () => ({}),
-    }) satisfies __ExactMockModule<__TestMockModule68>
+    }) satisfies __ExactMockModule<__TestMockModule68>,
 );
 
 const accountDetails = {
@@ -220,7 +220,7 @@ describe('acceptQuote container', () => {
           <Route path='/accept-quote/:id' element={<AcceptQuote />} />
           <Route path='/not-found' element={<div data-testid='not-found' />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -237,7 +237,7 @@ describe('acceptQuote container', () => {
     await renderAcceptQuote();
 
     await waitFor(() =>
-      expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
+      expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
     );
 
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
@@ -252,7 +252,7 @@ describe('acceptQuote container', () => {
     await renderAcceptQuote();
 
     await waitFor(() =>
-      expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42')
+      expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-Q-42'),
     );
 
     expect(screen.getByTestId('wizard-form')).toBeInTheDocument();
@@ -263,13 +263,13 @@ describe('acceptQuote container', () => {
     await renderAcceptQuote();
 
     await waitFor(() =>
-      expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found'),
     );
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
       expect.any(Error),
-      { Id: 'Q-42' }
+      { Id: 'Q-42' },
     );
   });
 
@@ -278,7 +278,7 @@ describe('acceptQuote container', () => {
     await renderAcceptQuote();
 
     await waitFor(() =>
-      expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found'),
     );
 
     expect(mocks.getQuoteRequestDetails).not.toHaveBeenCalled();
@@ -287,24 +287,24 @@ describe('acceptQuote container', () => {
       expect.objectContaining({
         message: 'Quote request has no step statuses',
       }),
-      { Id: 'Q-42' }
+      { Id: 'Q-42' },
     );
   });
 
   it('navigates to /not-found and logs when getQuoteRequestDetails rejects', async () => {
     mocks.getQuoteRequestDetails.mockRejectedValue(
-      new Error('quote details error')
+      new Error('quote details error'),
     );
     await renderAcceptQuote();
 
     await waitFor(() =>
-      expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found'),
     );
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
       expect.any(Error),
-      { Id: 'Q-42' }
+      { Id: 'Q-42' },
     );
   });
 

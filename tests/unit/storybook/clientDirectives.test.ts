@@ -55,7 +55,7 @@ describe('storybook client directives', () => {
   it('handles TypeScript and JSX before Rolldown internal transforms', async () => {
     const { chunk, warnings } = await bundleClientModule(
       "'use client';\nexport const element = <div>{42 as number}</div>;",
-      'tsx'
+      'tsx',
     );
 
     expect(warnings).toEqual([]);
@@ -65,7 +65,7 @@ describe('storybook client directives', () => {
 
   it('retains other directive diagnostics and ordinary client strings', async () => {
     const { chunk, warnings } = await bundleClientModule(
-      '"use client"; "use custom"; export const label = "use client";'
+      '"use client"; "use custom"; export const label = "use client";',
     );
 
     expect(warnings).toHaveLength(1);

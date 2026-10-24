@@ -26,7 +26,7 @@ const resolveWithinRoot = (filePath: string, root: string): string => {
 
 export const readTextFile = async (
   filePath: string,
-  root: string
+  root: string,
 ): Promise<string> => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
@@ -44,7 +44,7 @@ export const readTextFileSync = (filePath: string, root: string): string => {
 export const writeTextFile = async (
   filePath: string,
   contents: string,
-  root: string
+  root: string,
 ): Promise<void> => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
@@ -55,7 +55,7 @@ export const writeTextFile = async (
 export const writeTextFileSync = (
   filePath: string,
   contents: string,
-  root: string
+  root: string,
 ): void => {
   const safePath = resolveWithinRoot(filePath, root);
   // The path is resolved and confined to the caller-provided test root above.
@@ -65,7 +65,7 @@ export const writeTextFileSync = (
 
 export const readDirectory = async (
   directory: string,
-  root: string
+  root: string,
 ): Promise<TextDirectoryEntries> => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.
@@ -75,7 +75,7 @@ export const readDirectory = async (
 
 export const readDirectorySync = (
   directory: string,
-  root: string
+  root: string,
 ): TextDirectoryEntries => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.
@@ -85,7 +85,7 @@ export const readDirectorySync = (
 
 export const makeDirectory = async (
   directory: string,
-  root: string
+  root: string,
 ): Promise<void> => {
   const safePath = resolveWithinRoot(directory, root);
   // The path is resolved and confined to the caller-provided test root above.

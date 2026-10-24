@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
@@ -27,11 +28,11 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
   }
 
   await expect(page).toHaveURL(
-    new RegExp(`/request-for-quote/[^/]+/${location}$`)
+    new RegExp(`/request-for-quote/[^/]+/${location}$`),
   );
   await expect(page.getByTestId('form')).toBeVisible();
   await expect(page.locator('.stepped-navigation .current-step')).toContainText(
-    `${step}`
+    `${step}`,
   );
 
   if (title) {
@@ -42,7 +43,7 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
       page.getByRole('heading', {
         name: heading,
         exact: true,
-      })
+      }),
     ).toBeVisible();
   }
 };
@@ -60,7 +61,7 @@ Given(
     await installMockApi(page, scenarioState);
     await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
     await waitForAppReady(page);
-  }
+  },
 );
 
 Given('the user is on the dashboard', async ({ page }) => {
@@ -103,42 +104,42 @@ When(
   'the user fills in the instrument manufacturer {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('Manufacturer', { exact: true }).fill(value);
-  }
+  },
 );
 
 When(
   'the user fills in the instrument model {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('Model', { exact: true }).fill(value);
-  }
+  },
 );
 
 When(
   'the user fills in the serial number {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('Serial number', { exact: true }).fill(value);
-  }
+  },
 );
 
 When(
   'the user fills in the contact first name {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('First name', { exact: true }).fill(value);
-  }
+  },
 );
 
 When(
   'the user fills in the contact last name {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('Last name', { exact: true }).fill(value);
-  }
+  },
 );
 
 When(
   'the user fills in the contact email {string}',
   async ({ page }, value: string) => {
     await page.getByLabel('Email address', { exact: true }).fill(value);
-  }
+  },
 );
 
 When('the user confirms the dialog', async ({ page }) => {
@@ -153,12 +154,12 @@ Then(
   'the user should be redirected to the B2C sign-in page',
   async ({ page }) => {
     await expect(page).toHaveURL(/login\.microsoftonline\.com|b2clogin\.com/);
-  }
+  },
 );
 
 Then('the user should see the dashboard heading', async ({ page }) => {
   await expect(
-    page.getByRole('heading', { name: /currently managing/i })
+    page.getByRole('heading', { name: /currently managing/i }),
   ).toBeVisible();
 });
 
@@ -167,7 +168,7 @@ Then('the user should see their organisation name', async ({ page }) => {
     page
       .locator('#main')
       .getByText('Test Organisation', { exact: true })
-      .first()
+      .first(),
   ).toBeVisible();
 });
 
@@ -183,21 +184,21 @@ Then(
   'the stepped navigation should show {int} steps',
   async ({ page }, count: number) => {
     await expect(page.locator('.stepped-navigation li')).toHaveCount(count);
-  }
+  },
 );
 
 Then(
   'the user should be on the RFQ wizard step {int} {string}',
   async ({ page }, _step: number, title: string) => {
     await waitForRfqStep(page, _step, title);
-  }
+  },
 );
 
 Then(
   'the user should be on the RFQ wizard step {int}',
   async ({ page }, step: number) => {
     await waitForRfqStep(page, step);
-  }
+  },
 );
 
 Then('the user should be redirected to the dashboard', async ({ page }) => {
@@ -212,7 +213,7 @@ Then(
   'the dashboard should show the draft request {string}',
   async ({ page }, text: string) => {
     await expect(page.getByText(text, { exact: false }).first()).toBeVisible();
-  }
+  },
 );
 
 Then(
@@ -220,19 +221,19 @@ Then(
   async ({ page }, title: string) => {
     await expect
       .poll(async () =>
-        (await page.getByRole('dialog').innerText()).toLowerCase()
+        (await page.getByRole('dialog').innerText()).toLowerCase(),
       )
       .toContain(title.toLowerCase());
-  }
+  },
 );
 
 Then(
   'the instrument manufacturer field should contain {string}',
   async ({ page }, value: string) => {
     await expect(page.getByLabel('Manufacturer', { exact: true })).toHaveValue(
-      value
+      value,
     );
-  }
+  },
 );
 
 Then('the RFQ submitted page should be displayed', async ({ page }) => {
@@ -241,7 +242,7 @@ Then('the RFQ submitted page should be displayed', async ({ page }) => {
     page.getByRole('heading', {
       name: 'Your request has been submitted',
       exact: true,
-    })
+    }),
   ).toBeVisible();
 });
 

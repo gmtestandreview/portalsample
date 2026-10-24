@@ -32,7 +32,7 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
         });
         const client = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const result = await client.getQuoteRequestDetails(cRMQuoteRequestId);
@@ -41,7 +41,7 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
         setFileError(true);
         AppLogger.error(
           `Failed to get Quotedetails: ${cRMQuoteRequestId}`,
-          e as Error
+          e as Error,
         );
       }
     };

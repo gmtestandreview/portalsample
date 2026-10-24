@@ -33,19 +33,19 @@ describe('date-only utilities', () => {
 
     expect(dateOnlyValue).toBeDefined();
     expect(dateOnlyToStoredDateTimeString(dateOnlyValue!)).toBe(
-      '2026-06-11T00:00:00+00:00'
+      '2026-06-11T00:00:00+00:00',
     );
     expect(dateOnlyToApiDate(dateOnlyValue!).toISOString()).toBe(
-      '2026-06-11T00:00:00.000Z'
+      '2026-06-11T00:00:00.000Z',
     );
     expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
   });
 
   it('reads API Date objects by UTC calendar components', () => {
     expect(parseApiDateOnlyInput(new Date('2026-06-12T00:00:00.000Z'))).toBe(
-      '2026-06-12'
+      '2026-06-12',
     );
     expect(parseApiDateOnlyInput(new Date(Number.NaN))).toBeUndefined();
     expect(parseApiDateOnlyInput(undefined)).toBeUndefined();
@@ -63,10 +63,10 @@ describe('date-only utilities', () => {
 
     expect(dateOnlyValue).toBeDefined();
     expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
     expect(parseApiDateOnlyInput(dateOnlyToApiDate(dateOnlyValue!))).toBe(
-      '2026-06-11'
+      '2026-06-11',
     );
   });
 

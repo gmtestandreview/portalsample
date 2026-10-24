@@ -85,7 +85,7 @@ describe(AttachmentNew, () => {
           {...baseProps}
           onUploadFiles={vi.fn(async () => [uploaded])}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
@@ -103,7 +103,7 @@ describe(AttachmentNew, () => {
           {...baseProps}
           onUploadFiles={vi.fn(async () => [uploaded])}
         />
-      </Harness>
+      </Harness>,
     );
 
     // Untouched the button describes itself with the inline help; once touched and invalid it
@@ -111,7 +111,7 @@ describe(AttachmentNew, () => {
     // a blocking message.
     expect(screen.getByTestId('files')).toHaveAttribute(
       'aria-describedby',
-      'files-validation-msg'
+      'files-validation-msg',
     );
   });
 
@@ -123,12 +123,12 @@ describe(AttachmentNew, () => {
           inlineHelp='PDF only, 5MB each'
           onUploadFiles={vi.fn(async () => [uploaded])}
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByTestId('files')).toHaveAttribute(
       'aria-describedby',
-      'help-files'
+      'help-files',
     );
   });
 
@@ -138,18 +138,18 @@ describe(AttachmentNew, () => {
       () =>
         new Promise<AttachmentDto[]>((resolve) => {
           finishUpload = resolve;
-        })
+        }),
     );
 
     const { unmount } = render(
       <Harness initialValues={{ files: [] as AttachmentDto[] }}>
         <AttachmentNew {...baseProps} onUploadFiles={onUploadFiles} />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.upload(
       screen.getByTestId('drag-upload-files'),
-      new File(['pdf'], 'manual.pdf', { type: 'application/pdf' })
+      new File(['pdf'], 'manual.pdf', { type: 'application/pdf' }),
     );
     await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
 
@@ -169,7 +169,7 @@ describe(AttachmentNew, () => {
       () =>
         new Promise<void>((resolve) => {
           finishDelete = resolve;
-        })
+        }),
     );
 
     const { unmount } = render(
@@ -179,7 +179,7 @@ describe(AttachmentNew, () => {
           onDeleteFile={onDeleteFile}
           onUploadFiles={vi.fn(async () => [uploaded])}
         />
-      </Harness>
+      </Harness>,
     );
 
     await userEvent.click(screen.getByTestId('cancel-button-doc-1'));

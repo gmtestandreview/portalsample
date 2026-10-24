@@ -33,7 +33,7 @@ const DateColumn = (props: Readonly<{ date: Date | string | undefined }>) => {
 
 const renderRequestContent = (
   requestForQuote: RequestForQuoteDto,
-  sourceReferenceId: string | undefined
+  sourceReferenceId: string | undefined,
 ) => {
   const {
     serialNumber,
@@ -138,7 +138,7 @@ const renderInstrumentReportsContent = (
   requestForQuoteId: string | undefined,
   artefact: InstrumentArtefactDto,
   navigate: NavigateFunction,
-  referenceId: string | undefined
+  referenceId: string | undefined,
 ) => (
   <>
     <Table
@@ -256,7 +256,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
     () =>
       status !== undefined &&
       (viewArtefactHeadingStatus as string[]).includes(status),
-    [status]
+    [status],
   );
   const headingNoArtefact = requestForQuote?.manufacturer
     ? `${requestForQuote?.manufacturer} ${requestForQuote?.model || ''}` // If Model null display empty string
@@ -297,7 +297,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
               onShowRFQDeleteModalClick();
               trackGAEvent('Delete request');
             },
-          }
+          },
         );
         break;
       case DashboardItemStatus.ReportIssued:
@@ -313,7 +313,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
             text: 'Request recalibration',
             route: `/request-for-quote-copy/${referenceId}`,
             onClick: () => trackGAEvent('Request recalibration'),
-          }
+          },
         );
         break;
       // RULE-015: BA confirmation pending — OPEN-ITEMS-BACKLOG P2 item 21.
@@ -437,7 +437,7 @@ const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
                         requestForQuoteId,
                         artefact,
                         navigate,
-                        referenceId
+                        referenceId,
                       )}
                   </Tab.Pane>
                 </Tab.Content>

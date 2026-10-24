@@ -28,7 +28,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
       placeholder,
       ...props
     }: Readonly<SearchFieldProps>,
-    ref
+    ref,
   ) {
     return (
       <AriaSearchField {...props}>
@@ -46,5 +46,5 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
         <FieldError>{errorMessage}</FieldError>
       </AriaSearchField>
     );
-  }
+  },
 );

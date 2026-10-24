@@ -12,25 +12,25 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountDispatch: () => ({
         setUserProfile: mocks.setUserProfile,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: mocks.trackGAEvent,
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/components/Inputs/RadioButtonGroup',
+  import('@/components/Inputs/RadioButtonGroup'),
   () =>
     ({
       default: ({
@@ -63,13 +63,13 @@ vi.mock(
           ))}
         </fieldset>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule52>
+    }) satisfies __ExactMockModule<__TestMockModule52>,
 );
 
 const renderMenu = (
   initialFilters: PatternApprovalDashboardDto | undefined,
   setInitialFilters = vi.fn(),
-  setCurrentPage = vi.fn()
+  setCurrentPage = vi.fn(),
 ) => {
   render(
     <PaFilterMenu
@@ -77,7 +77,7 @@ const renderMenu = (
       initialFilters={initialFilters}
       setInitialFilters={setInitialFilters}
       setCurrentPage={setCurrentPage}
-    />
+    />,
   );
 
   return { setInitialFilters, setCurrentPage };
@@ -107,7 +107,7 @@ describe(PaFilterMenu, () => {
 
     expect(document.querySelector('[aria-label="Filter Menu"]')).toHaveClass(
       'filter-menu',
-      'show'
+      'show',
     );
     expect(mocks.trackGAEvent).toHaveBeenCalledWith('search-filter-dropdown');
   });
@@ -139,7 +139,7 @@ describe(PaFilterMenu, () => {
     const user = await openMenu();
 
     await user.click(
-      screen.getByRole('radio', { name: 'On hold - waiting on customer' })
+      screen.getByRole('radio', { name: 'On hold - waiting on customer' }),
     );
     await user.click(screen.getByRole('radio', { name: 'Within 2 years' }));
     await user.click(screen.getByRole('button', { name: 'Show results' }));
@@ -202,7 +202,7 @@ describe(PaFilterMenu, () => {
         filterYearType: 'withintwoyears',
         filterStatusType: 'allStatuses',
         filtersChanged: true,
-      })
+      }),
     );
   });
 
@@ -281,10 +281,10 @@ describe(PaFilterMenu, () => {
     await openMenu();
 
     expect(
-      screen.getByRole('radio', { name: 'Show all statuses' })
+      screen.getByRole('radio', { name: 'Show all statuses' }),
     ).toBeDisabled();
     expect(
-      screen.getByRole('radio', { name: 'Show all years' })
+      screen.getByRole('radio', { name: 'Show all years' }),
     ).not.toBeDisabled();
   });
 });

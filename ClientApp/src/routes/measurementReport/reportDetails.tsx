@@ -14,7 +14,7 @@ const ReportDetails = (
   props: Readonly<{
     reportData: RequestForQuoteDetails | undefined;
     fileError: boolean | undefined;
-  }>
+  }>,
 ) => {
   const { reportData, fileError } = props;
   const setNotification = () => {
@@ -32,7 +32,7 @@ const ReportDetails = (
   const showQuoteRequest = () => {
     if (reportData?.quoteRequestIdNum) {
       openInternalRouteInNewTab(
-        `/request-for-quote/${encodeURIComponent(reportData.quoteRequestIdNum)}/view-summary`
+        `/request-for-quote/${encodeURIComponent(reportData.quoteRequestIdNum)}/view-summary`,
       );
     }
   };

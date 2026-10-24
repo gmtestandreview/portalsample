@@ -40,7 +40,7 @@ const RhfSupportingDocuments = (
     TASupportingDocumentsProps & {
       onDeleteSuccess?: (success: boolean) => void;
     }
-  >
+  >,
 ) => {
   const { accounts, instance } = useMsal();
   const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);
@@ -74,7 +74,7 @@ const RhfSupportingDocuments = (
   const filteredUploadErrors = uploadErrors.filter(
     (err) =>
       err !== ValidationMessages.RequiredDoc &&
-      err !== ValidationMessages.RequiredTag
+      err !== ValidationMessages.RequiredTag,
   );
 
   const validationMessage: unknown = getIn(formErrors, name)?.message;
@@ -87,7 +87,7 @@ const RhfSupportingDocuments = (
       ...formFieldErrors,
       ...fileErrors,
       ...externalErrors,
-    ])
+    ]),
   );
 
   // Only allow handleAlertScroll to run once
@@ -108,15 +108,15 @@ const RhfSupportingDocuments = (
         setProgress?.(undefined);
       }
     },
-    [setProgress, uploading]
+    [setProgress, uploading],
   );
 
   const uploadAttachment = async (
     files: File[],
     uploadFunc: (
       token: string,
-      fileData: FileParameter[]
-    ) => Promise<AttachmentDto[]>
+      fileData: FileParameter[],
+    ) => Promise<AttachmentDto[]>,
   ) => {
     if (files.length === 0) {
       throw new Error('No file to upload');
@@ -126,7 +126,7 @@ const RhfSupportingDocuments = (
     setExternalErrors?.([]);
 
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
 
     const fileDataArray: FileParameter[] = files.map((file) => ({
@@ -150,7 +150,7 @@ const RhfSupportingDocuments = (
         // If server returns error messages, set as upload errors (strings only)
         const flatErrors = Object.values(uploadServerError['errors']).flat();
         setUploadErrors(
-          flatErrors.filter((e): e is string => typeof e === 'string')
+          flatErrors.filter((e): e is string => typeof e === 'string'),
         );
       } else if (uploadServerError.title) {
         setUploadErrors([uploadServerError.title]);
@@ -172,14 +172,14 @@ const RhfSupportingDocuments = (
     });
     accountDispatch?.setTargetOrganisation(
       accountContext?.details?.abn ?? '',
-      accountContext?.details?.organisation ?? ''
+      accountContext?.details?.organisation ?? '',
     );
   }
 
   const onDeleteAttachment = async (docId: string) => {
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
 
     client.setAuthToken(tokenResult.accessToken);
@@ -191,7 +191,7 @@ const RhfSupportingDocuments = (
     if (!id || !category) return;
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent(
-      silentRequestFor(accounts[0])
+      silentRequestFor(accounts[0]),
     );
     client.setAuthToken(tokenResult.accessToken);
     await client.updateCategory(id, docId, category);

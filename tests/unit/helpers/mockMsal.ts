@@ -122,7 +122,7 @@ export const grantToken = (accessToken: string = DEFAULT_ACCESS_TOKEN) => {
 
 /** Token acquisition rejects - the state that exposed the request-for-quote wizard hang. */
 export const rejectToken = (
-  error: Error = new Error('interaction_required')
+  error: Error = new Error('interaction_required'),
 ) => {
   msalMocks.acquireTokenSilent.mockRejectedValue(error);
 
@@ -142,7 +142,7 @@ export const pendingToken = () => {
       settle = (accessToken = DEFAULT_ACCESS_TOKEN) =>
         resolve({ accessToken, account: msalState.accounts[0] ?? testAccount });
       fail = (error = new Error('interaction_required')) => reject(error);
-    })
+    }),
   );
 
   return {

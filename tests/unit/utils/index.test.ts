@@ -82,7 +82,7 @@ describe('object and array helpers', () => {
         removeByFilter: 'value',
         removeEmptyBeforeFilter: '',
       },
-      ([key]) => key !== 'removeByFilter'
+      ([key]) => key !== 'removeByFilter',
     );
 
     expect(result).toEqual({ keep: 'value' });
@@ -102,7 +102,7 @@ describe('object and array helpers', () => {
 
     expect(utils.propertyOf<Example>('child')).toBe('child');
     expect(utils.prefixedPropertyOf<Example>('parent')('child')).toBe(
-      'parent.child'
+      'parent.child',
     );
   });
 
@@ -178,7 +178,7 @@ describe('date helpers', () => {
   it('parses UTC-format date-time values and normalizes time to local midnight', () => {
     const parsedString = utils.parseDateUTC('2024-05-10T15:30:45+10:00');
     const parsedDate = utils.parseDateUTC(
-      new Date(2024, 4, 10, 15, 30, 45, 250)
+      new Date(2024, 4, 10, 15, 30, 45, 250),
     );
 
     expect(parsedString?.getFullYear()).toBe(2024);
@@ -217,7 +217,7 @@ describe('date helpers', () => {
     expect(utils.formatDateToUTC('not-a-date')).toBeNull();
     expect(utils.formatDateToUTC(0 as unknown as Date)).toBeNull();
     expect(utils.formatDateToUTC('10/05/2024')).toMatch(
-      /^2024-05-10T00:00:00[+-]\d{2}:\d{2}$/
+      /^2024-05-10T00:00:00[+-]\d{2}:\d{2}$/,
     );
   });
 
@@ -226,7 +226,7 @@ describe('date helpers', () => {
 
     expect(utils.formatDateStringToUTC()).toBeUndefined();
     expect(utils.formatDateStringToUTC(localDate)?.toISOString()).toBe(
-      '2024-05-10T00:00:00.000Z'
+      '2024-05-10T00:00:00.000Z',
     );
   });
 
@@ -248,7 +248,7 @@ describe('date helpers', () => {
     expect(utils.formatDateToString(0 as unknown as Date)).toBeNull();
     expect(utils.formatDateToString('10/05/2024')).toBe('10 May 2024');
     expect(utils.formatDateToString('10/05/2024', 'yyyy/MM/dd')).toBe(
-      '2024/05/10'
+      '2024/05/10',
     );
     expect(utils.formatDateToString(date)).toBe('10 May 2024');
   });
@@ -269,12 +269,12 @@ describe('date helpers', () => {
     const sameInstant = new Date(Date.UTC(2024, 4, 10, 5, 30));
 
     expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00')).toBe(
-      utils.formatDateTimeToString(sameInstant)
+      utils.formatDateTimeToString(sameInstant),
     );
 
     // Local components in, local components out - no zone conversion, so this one is literal.
     expect(utils.formatDateTimeToString(date, 'yyyy/MM/dd HH:mm')).toBe(
-      '2024/05/10 15:30'
+      '2024/05/10 15:30',
     );
   });
 });
@@ -294,13 +294,13 @@ describe('formatting helpers', () => {
 
   it('splits PascalCase words using lower, sentence, and upper/default casing', () => {
     expect(utils.splitPascalCase('MeasurementReportStatus', 'lower')).toBe(
-      'measurement report status'
+      'measurement report status',
     );
     expect(utils.splitPascalCase('MeasurementReportStatus', 'sentence')).toBe(
-      'Measurement report status'
+      'Measurement report status',
     );
     expect(utils.splitPascalCase('MeasurementReportStatus', 'upper')).toBe(
-      'Measurement Report Status'
+      'Measurement Report Status',
     );
     expect(utils.splitPascalCase('lowercase', 'lower')).toBe('lowercase');
     expect(utils.splitPascalCase('lowercase', 'sentence')).toBe('lowercase');

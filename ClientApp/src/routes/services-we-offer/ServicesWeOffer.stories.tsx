@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, waitFor } from 'storybook/test';
 import ServicesWeOffer from './index';
@@ -18,11 +19,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     // The services lookup is not served here, so the route reaches its settled state
     // through the effect's finally rather than through rendered data. aria-busy is the
     // route's own contract for that: true while the lookup is in flight, false once it

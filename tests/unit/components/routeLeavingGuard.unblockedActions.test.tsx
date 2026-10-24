@@ -7,7 +7,7 @@ const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 
 vi.mock(
-  'react-router',
+  import('react-router'),
   () =>
     ({
       useBlocker: () => ({
@@ -15,10 +15,10 @@ vi.mock(
         reset: resetBlocker,
         proceed: proceedBlocker,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule11>
+    }) satisfies __ExactMockModule<__TestMockModule11>,
 );
 
-vi.mock('react-bootstrap/Modal', () => {
+vi.mock(import('react-bootstrap/Modal'), () => {
   const Modal = ({
     children,
     onHide,
@@ -65,7 +65,7 @@ describe('routeLeavingGuard unblocked actions', () => {
     render(
       <Formik initialValues={{}} onSubmit={vi.fn()}>
         <RouteLeavingGuard />
-      </Formik>
+      </Formik>,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Hide modal' }));

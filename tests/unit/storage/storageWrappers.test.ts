@@ -95,7 +95,7 @@ describe('notification storage wrappers', () => {
 
       expect(sessionStorage.getItem(key)).toBeNull();
       expect(getNotification()).toBeUndefined();
-    }
+    },
   );
 });
 
@@ -115,7 +115,7 @@ describe('target organisation storage wrapper', () => {
     setTargetOrganisation(targetOrganisation);
 
     expect(sessionStorage.getItem('targetOrganisation')).toBe(
-      JSON.stringify(targetOrganisation)
+      JSON.stringify(targetOrganisation),
     );
     expect(getTargetOrganisation()).toEqual(targetOrganisation);
 

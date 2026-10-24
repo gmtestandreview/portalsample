@@ -29,14 +29,14 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
 const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => msalContext,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -44,18 +44,18 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
-      this.setAuthToken = vi.fn();
+      vi.spyOn(this, 'setAuthToken').mockImplementation();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const hidingFields = {
@@ -97,7 +97,7 @@ function Harness({ values = initialValues, onSubmit = vi.fn() }: HarnessProps) {
       onSubmit={(submittedValues, helpers) =>
         onSubmit(
           removeHidden(submittedValues, submittedValues, hidingFields),
-          helpers
+          helpers,
         )
       }
     >
@@ -160,14 +160,14 @@ describe('paymentDetails form behavior', () => {
 
     await user.type(
       screen.getByLabelText('Purchase Order (PO) number (optional)'),
-      'PO-123'
+      'PO-123',
     );
     await user.click(
-      screen.getByLabelText('A different invoice contact person')
+      screen.getByLabelText('A different invoice contact person'),
     );
     await user.type(
       screen.getByLabelText('Email address'),
-      'billing@nmi.gov.au'
+      'billing@nmi.gov.au',
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -179,7 +179,7 @@ describe('paymentDetails form behavior', () => {
         invoiceSentTo: InvoiceSentToValues.DifferentPerson,
         contact: expect.objectContaining({ email: 'billing@nmi.gov.au' }),
       }),
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -191,7 +191,7 @@ describe('paymentDetails form behavior', () => {
     expect(screen.queryByLabelText('Email address')).not.toBeInTheDocument();
 
     await user.click(
-      screen.getByLabelText('A different invoice contact person')
+      screen.getByLabelText('A different invoice contact person'),
     );
 
     expect(screen.getByLabelText('Email address')).toBeInTheDocument();
@@ -199,7 +199,7 @@ describe('paymentDetails form behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText('Email address is required')
+      screen.findByText('Email address is required'),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -220,7 +220,7 @@ describe('paymentDetails form behavior', () => {
           },
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await expect(screen.findByText(/Q-TEST-001/)).resolves.toBeInTheDocument();
@@ -237,7 +237,7 @@ describe('paymentDetails form behavior', () => {
           titleOther: 'Mx',
           email: 'billing@nmi.gov.au',
         }),
-      })
+      }),
     );
   });
 
@@ -256,16 +256,16 @@ describe('paymentDetails form behavior', () => {
             email: 'billing@nmi.gov.au',
           },
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText('Title cannot be less than 2 characters')
+      screen.findByText('Title cannot be less than 2 characters'),
     ).resolves.toBeInTheDocument();
     await expect(
-      screen.findByText('Business phone cannot be less than 6 characters')
+      screen.findByText('Business phone cannot be less than 6 characters'),
     ).resolves.toBeInTheDocument();
     expect(screen.getByLabelText('Mobile phone (optional)')).toHaveValue('');
   });
@@ -278,11 +278,11 @@ describe('paymentDetails form behavior', () => {
           ...initialValues,
           purchaseOrderNo: undefined,
         }}
-      />
+      />,
     );
 
     const purchaseOrder = await screen.findByLabelText(
-      'Purchase Order (PO) number (optional)'
+      'Purchase Order (PO) number (optional)',
     );
 
     expect(purchaseOrder).toHaveValue('');
@@ -302,13 +302,13 @@ describe('paymentDetails form behavior', () => {
           ...initialValues,
           purchaseOrderNo: 'PO-LOADED',
         }}
-      />
+      />,
     );
 
     await waitFor(() =>
       expect(
-        screen.getByLabelText('Purchase Order (PO) number (optional)')
-      ).toHaveValue('PO-LOADED')
+        screen.getByLabelText('Purchase Order (PO) number (optional)'),
+      ).toHaveValue('PO-LOADED'),
     );
   });
 
@@ -320,13 +320,13 @@ describe('paymentDetails form behavior', () => {
           ...initialValues,
           invoiceSentTo: InvoiceSentToValues.DifferentPerson,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText('Email address is required')
+      screen.findByText('Email address is required'),
     ).resolves.toBeInTheDocument();
 
     rerender(
@@ -336,18 +336,18 @@ describe('paymentDetails form behavior', () => {
           purchaseOrderNo: 'PO-RELOADED',
           invoiceSentTo: InvoiceSentToValues.DifferentPerson,
         }}
-      />
+      />,
     );
 
     await waitFor(() =>
       expect(
-        screen.queryByText('Email address is required')
-      ).not.toBeInTheDocument()
+        screen.queryByText('Email address is required'),
+      ).not.toBeInTheDocument(),
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText('Email address is required')
+      screen.findByText('Email address is required'),
     ).resolves.toBeInTheDocument();
   });
 
@@ -362,11 +362,11 @@ describe('paymentDetails form behavior', () => {
             phone: '0212345678',
           },
         }}
-      />
+      />,
     );
 
     await expect(
-      screen.findByLabelText('Business phone (optional)')
+      screen.findByLabelText('Business phone (optional)'),
     ).resolves.toHaveValue('02 1234 5678');
   });
 
@@ -382,19 +382,19 @@ describe('paymentDetails form behavior', () => {
             ...initialValues,
             invoiceSentTo: InvoiceSentToValues.DifferentPerson,
           }}
-        />
+        />,
       );
 
       await expect(
-        screen.findByLabelText('Business phone (optional)')
+        screen.findByLabelText('Business phone (optional)'),
       ).resolves.toBeInTheDocument();
       expect(
-        screen.getByLabelText('Mobile phone (optional)')
+        screen.getByLabelText('Mobile phone (optional)'),
       ).toBeInTheDocument();
       expect(
         consoleError.mock.calls.filter(([message]) =>
-          String(message).includes('Function components cannot be given refs')
-        )
+          String(message).includes('Function components cannot be given refs'),
+        ),
       ).toHaveLength(0);
     } finally {
       consoleError.mockRestore();
@@ -412,7 +412,7 @@ describe('paymentDetails form behavior', () => {
     render(<Harness />);
 
     await expect(
-      screen.findByText('Your NMI Quotation ID RFQ-2026-042')
+      screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
     ).resolves.toBeInTheDocument();
   });
 
@@ -424,7 +424,7 @@ describe('paymentDetails form behavior', () => {
           ...initialValues,
           invoiceSentTo: InvoiceSentToValues.DifferentPerson,
         }}
-      />
+      />,
     );
 
     await user.selectOptions(screen.getByLabelText('Title (optional)'), [
@@ -439,13 +439,13 @@ describe('paymentDetails form behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(/Title other has invalid characters/)
+      screen.findByText(/Title other has invalid characters/),
     ).resolves.toBeInTheDocument();
     await expect(
-      screen.findByText('Business phone cannot be less than 6 characters')
+      screen.findByText('Business phone cannot be less than 6 characters'),
     ).resolves.toBeInTheDocument();
     await expect(
-      screen.findByText('Mobile phone cannot be less than 10 characters')
+      screen.findByText('Mobile phone cannot be less than 10 characters'),
     ).resolves.toBeInTheDocument();
   });
 
@@ -454,16 +454,16 @@ describe('paymentDetails form behavior', () => {
     render(
       <DirectFieldsHarness
         errors={[{ name: 'contact.title', message: 'Select a title' }]}
-      />
+      />,
     );
 
     await user.click(
-      screen.getByLabelText('Purchase Order (PO) number (optional)')
+      screen.getByLabelText('Purchase Order (PO) number (optional)'),
     );
     await user.tab();
 
     await expect(
-      screen.findByText('Select a title')
+      screen.findByText('Select a title'),
     ).resolves.toBeInTheDocument();
     expect(screen.getByLabelText('Business phone (optional)')).toHaveValue('');
   });
@@ -474,14 +474,14 @@ describe('paymentDetails form behavior', () => {
     render(<Harness onSubmit={onSubmit} />);
 
     await user.click(
-      screen.getByLabelText('A different invoice contact person')
+      screen.getByLabelText('A different invoice contact person'),
     );
     await user.type(
       screen.getByLabelText('Email address'),
-      'private@example.com'
+      'private@example.com',
     );
     await user.click(
-      screen.getByLabelText('The main contact person for this request')
+      screen.getByLabelText('The main contact person for this request'),
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -489,7 +489,7 @@ describe('paymentDetails form behavior', () => {
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',
-      'private@example.com'
+      'private@example.com',
     );
   });
 
@@ -507,11 +507,11 @@ describe('paymentDetails form behavior', () => {
           },
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     expect(screen.getByLabelText('Email address')).toHaveValue(
-      'private@example.com'
+      'private@example.com',
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -520,7 +520,7 @@ describe('paymentDetails form behavior', () => {
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',
-      'private@example.com'
+      'private@example.com',
     );
   });
 });

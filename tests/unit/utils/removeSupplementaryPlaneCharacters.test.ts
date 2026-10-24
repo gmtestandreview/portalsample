@@ -8,7 +8,7 @@ describe(removeSupplementaryPlaneCharacters, () => {
 
   it('preserves BMP characters and removes supplementary-plane characters', () => {
     expect(removeSupplementaryPlaneCharacters('NMI 😀 portal')).toBe(
-      'NMI  portal'
+      'NMI  portal',
     );
   });
 

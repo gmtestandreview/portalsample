@@ -76,7 +76,7 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
 
   const fetchAddressOptions = async (
     term: string,
-    controller: AbortController
+    controller: AbortController,
   ): Promise<AutoSuggestOption<MatchedAddress>[]> => {
     if (inProgress !== 'none' || accounts.length === 0 || !account) return [];
 
@@ -92,7 +92,7 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
         displayText: a.displayText || '',
         id: a.unqiueId || i.toString(),
         value: a,
-      })
+      }),
     );
 
     if (maxResults) {

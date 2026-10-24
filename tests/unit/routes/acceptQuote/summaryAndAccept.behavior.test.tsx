@@ -30,7 +30,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -39,21 +39,21 @@ vi.mock(
         inProgress: 'none',
       }),
       useAccount: () => ({ homeAccountId: 'mock-id' }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
         isLoading: false,
         details: { givenName: 'Taylor', familyName: 'Nguyen' },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -68,42 +68,42 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: mocks.error },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // The read-only summaries of the other steps are separate components with
 // their own suites; stand in markers so this suite pins only this step.
 vi.mock(
-  '@/routes/acceptQuote/reportRecipient',
+  import('@/routes/acceptQuote/reportRecipient'),
   () =>
     ({
       default: () => <div>Report recipient summary</div>,
-    }) satisfies __ExactMockModule<__TestMockModule61>
+    }) satisfies __ExactMockModule<__TestMockModule61>,
 );
 vi.mock(
-  '@/routes/acceptQuote/deliveryAndReturn',
+  import('@/routes/acceptQuote/deliveryAndReturn'),
   () =>
     ({
       default: () => <div>Delivery and return summary</div>,
-    }) satisfies __ExactMockModule<__TestMockModule62>
+    }) satisfies __ExactMockModule<__TestMockModule62>,
 );
 vi.mock(
-  '@/routes/acceptQuote/paymentDetails',
+  import('@/routes/acceptQuote/paymentDetails'),
   () =>
     ({
       default: () => <div>Payment details summary</div>,
-    }) satisfies __ExactMockModule<__TestMockModule63>
+    }) satisfies __ExactMockModule<__TestMockModule63>,
 );
 vi.mock(
-  '@/routes/acceptQuote/quotationSummary',
+  import('@/routes/acceptQuote/quotationSummary'),
   () =>
     ({
       default: () => <div>Quotation summary marker</div>,
-    }) satisfies __ExactMockModule<__TestMockModule73>
+    }) satisfies __ExactMockModule<__TestMockModule73>,
 );
 
 type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
@@ -133,7 +133,7 @@ function StepHarness({
                   formValues.saveAndExit
                     ? summaryAndAcceptSaveValidation
                     : summaryAndAcceptSubmitValidation,
-                  summaryAndAcceptOwnHidingFields
+                  summaryAndAcceptOwnHidingFields,
                 )(formValues)
               }
               onSubmit={(submitted) =>
@@ -141,8 +141,8 @@ function StepHarness({
                   removeHidden(
                     submitted,
                     submitted,
-                    summaryAndAcceptOwnHidingFields
-                  )
+                    summaryAndAcceptOwnHidingFields,
+                  ),
                 )
               }
             >
@@ -227,7 +227,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
     await user.type(
       screen.getByLabelText(DISPUTE_LABEL),
-      'Pricing disagreement'
+      'Pricing disagreement',
     );
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -289,10 +289,10 @@ describe('summaryAndAccept behavior', () => {
     expect(disputeId).toBe('associatedDispute');
     expect(acceptanceId).toBe('acceptanceOfQuote');
     expect(document.getElementById(defined(disputeId, 'dispute id'))).toBe(
-      screen.getByLabelText(DISPUTE_LABEL)
+      screen.getByLabelText(DISPUTE_LABEL),
     );
     expect(document.getElementById(defined(acceptanceId, 'accept id'))).toBe(
-      screen.getByLabelText(ACCEPT_LABEL)
+      screen.getByLabelText(ACCEPT_LABEL),
     );
   });
 
@@ -337,10 +337,10 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(ACCEPT_MESSAGE)
+      screen.findByText(ACCEPT_MESSAGE),
     ).resolves.toBeInTheDocument();
     expect(
-      screen.getByLabelText(DISPUTE_LABEL).closest('.form-field-container')
+      screen.getByLabelText(DISPUTE_LABEL).closest('.form-field-container'),
     ).toHaveTextContent('Associated dispute is a required field');
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -356,7 +356,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(ACCEPT_MESSAGE)
+      screen.findByText(ACCEPT_MESSAGE),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -390,7 +390,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(/300/, { selector: '.invalid-feedback' })
+      screen.findByText(/300/, { selector: '.invalid-feedback' }),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -423,7 +423,7 @@ describe('summaryAndAccept behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
     await expect(
-      screen.findByText(/300/, { selector: '.invalid-feedback' })
+      screen.findByText(/300/, { selector: '.invalid-feedback' }),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -437,7 +437,7 @@ describe('summaryAndAccept behavior', () => {
     rerender(<StepHarness values={{ acceptanceOfQuote: true }} />);
 
     await waitFor(() =>
-      expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked()
+      expect(screen.getByLabelText(ACCEPT_LABEL)).toBeChecked(),
     );
   });
 
@@ -445,7 +445,7 @@ describe('summaryAndAccept behavior', () => {
     mocks.getSummaryAndAccept.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalled());
+    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
 
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInTheDocument();
   });

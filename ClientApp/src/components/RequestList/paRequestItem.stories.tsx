@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { PatternApprovalDashboardDetailsDto } from '../../api/web-api-client';
@@ -53,11 +54,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const DraftApplication = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
@@ -75,9 +73,7 @@ export const SubmittedApplication = meta.story({
     request: submittedRequest,
     tab: DashboardTab.Requests,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(

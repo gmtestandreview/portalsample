@@ -10,7 +10,7 @@ const renderLookup = (
   options: unknown[] = [],
   props: Partial<ComponentProps<typeof CertificateNumberLookup>> = {},
   initialValues: Record<string, unknown> = {},
-  omitOptionsFieldName = false
+  omitOptionsFieldName = false,
 ) =>
   render(
     <Formik
@@ -31,7 +31,7 @@ const renderLookup = (
           {...props}
         />
       </Form>
-    </Formik>
+    </Formik>,
   );
 
 describe('certificateNumberLookup debounce', () => {
@@ -56,7 +56,7 @@ describe('certificateNumberLookup debounce', () => {
 
     expect(screen.getByRole('combobox')).toHaveAttribute(
       'aria-expanded',
-      'false'
+      'false',
     );
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
@@ -78,9 +78,9 @@ describe('certificateNumberLookup debounce', () => {
       });
 
       expect(
-        screen.getByRole('option', { name: /Alpha Certificate/ })
+        screen.getByRole('option', { name: /Alpha Certificate/ }),
       ).toBeInTheDocument();
-    }
+    },
   );
 
   it('filters malformed lookup records without throwing', async () => {
@@ -99,7 +99,7 @@ describe('certificateNumberLookup debounce', () => {
     });
 
     expect(
-      screen.getByRole('option', { name: /Alpha Certificate/ })
+      screen.getByRole('option', { name: /Alpha Certificate/ }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole('option')).toHaveLength(1);
   });
@@ -129,7 +129,7 @@ describe('certificateNumberLookup debounce', () => {
         parentOptionsName: 'parent',
         matchType: 'startsWith',
       },
-      { parent: 'NMI' }
+      { parent: 'NMI' },
     );
 
     await act(async () => {
@@ -140,10 +140,10 @@ describe('certificateNumberLookup debounce', () => {
     });
 
     expect(
-      screen.getByRole('option', { name: /Alpha Certificate/ })
+      screen.getByRole('option', { name: /Alpha Certificate/ }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole('option', { name: /Alpha Industry/ })
+      screen.queryByRole('option', { name: /Alpha Industry/ }),
     ).not.toBeInTheDocument();
   });
 });

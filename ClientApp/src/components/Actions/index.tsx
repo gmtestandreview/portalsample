@@ -62,7 +62,7 @@ type ActionMenuLinkProps = ComponentPropsWithoutRef<typeof Link> & {
 const ActionMenuLink = forwardRef<HTMLAnchorElement, ActionMenuLinkProps>(
   ({ 'aria-selected': _ariaSelected, ...props }, ref) => (
     <Link ref={ref} {...props} />
-  )
+  ),
 );
 
 type ActionMenuButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -72,7 +72,7 @@ type ActionMenuButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 const ActionMenuButton = forwardRef<HTMLButtonElement, ActionMenuButtonProps>(
   ({ 'aria-selected': _ariaSelected, ...props }, ref) => (
     <button ref={ref} {...props} />
-  )
+  ),
 );
 
 const Actions = (props: Readonly<ActionsProps>) => {
@@ -95,7 +95,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
 
   const createDropdownItem = (
     itemAction: DropdownActionItem,
-    index: number
+    index: number,
   ) => {
     if (itemAction.route) {
       return (
@@ -151,7 +151,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
       </Dropdown.Toggle>
       <Dropdown.Menu variant='dark' role='menu'>
         {dropDownActions.map((action, index) =>
-          createDropdownItem(action, index)
+          createDropdownItem(action, index),
         )}
       </Dropdown.Menu>
     </Dropdown>

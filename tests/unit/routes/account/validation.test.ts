@@ -29,7 +29,7 @@ const validAccount = {
 describe('account submit validation', () => {
   it('accepts a valid account object', async () => {
     await expect(
-      accountSubmitValidation.validate(validAccount)
+      accountSubmitValidation.validate(validAccount),
     ).resolves.toMatchObject({
       businessOrTradingName: validAccount.businessOrTradingName,
       branchOrLocationName: validAccount.branchOrLocationName,
@@ -51,8 +51,8 @@ describe('account submit validation', () => {
             state: undefined,
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Address line 1 is required',
@@ -75,8 +75,8 @@ describe('account submit validation', () => {
             postcode: 'ABCD',
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Business or trading name cannot be less than 2 characters',
@@ -99,7 +99,7 @@ describe('account submit validation', () => {
           line1: 'c'.repeat(250),
           suburb: 'd'.repeat(80),
         },
-      })
+      }),
     ).resolves.toBeDefined();
   });
 
@@ -117,8 +117,8 @@ describe('account submit validation', () => {
             suburb: 'd'.repeat(81),
           },
         },
-        { abortEarly: false }
-      )
+        { abortEarly: false },
+      ),
     ).rejects.toMatchObject({
       errors: expect.arrayContaining([
         'Business or trading name cannot be greater than 160 characters',
@@ -139,14 +139,14 @@ describe('account submit validation', () => {
           isManuallyEntered: false,
           searchText: '',
         },
-      })
+      }),
     ).rejects.toThrow('Postal address is required');
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
         postalAddressSameAsStreetAddress: false,
         postalAddress: validAddress,
-      })
+      }),
     ).resolves.toBeDefined();
   });
 });
@@ -178,8 +178,8 @@ describe('branch and organisation account validation modules', () => {
             isManuallyEntered: false,
             searchText: '',
           },
-        })
+        }),
       ).rejects.toThrow('Postal address is required');
-    }
+    },
   );
 });

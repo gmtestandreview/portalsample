@@ -7,7 +7,7 @@ import { tokenRequest } from './authConfig';
  * (MSAL then reports its own no-account error, as it did for an `undefined` value).
  */
 export const silentRequestFor = (
-  account: AccountInfo | undefined
+  account: AccountInfo | undefined,
 ): SilentRequest => ({
   ...tokenRequest,
   ...(account ? { account } : {}),

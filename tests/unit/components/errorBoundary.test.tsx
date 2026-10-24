@@ -10,7 +10,7 @@ const renderErrorDisplay = (status: HttpStatusCode | number) =>
   render(
     <MemoryRouter>
       <ErrorDisplay status={status} />
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe(ErrorDisplay, () => {
@@ -69,16 +69,16 @@ describe(ErrorDisplay, () => {
     renderErrorDisplay(status);
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName(
-      heading
+      heading,
     );
     expect(
-      screen.getByRole('link', { name: 'Go to dashboard' })
+      screen.getByRole('link', { name: 'Go to dashboard' }),
     ).toHaveAttribute('href', '/');
     expect(
-      screen.getByRole('link', { name: 'infotm@measurement.gov.au' })
+      screen.getByRole('link', { name: 'infotm@measurement.gov.au' }),
     ).toHaveAttribute(
       'href',
-      'mailto:infotm@measurement.gov.au?Subject=Error on NMI Services portal'
+      'mailto:infotm@measurement.gov.au?Subject=Error on NMI Services portal',
     );
     expect(document.title).toBe(title);
     expect(document.body).toHaveClass('http-error');
@@ -92,7 +92,7 @@ describe(ErrorBoundary, () => {
 
   const renderWithExpectedError = (
     expectedError: Error,
-    ui: React.ReactElement
+    ui: React.ReactElement,
   ) => {
     const unexpectedConsoleErrors: unknown[][] = [];
     const preventExpectedError = (event: ErrorEvent) => {
@@ -135,7 +135,7 @@ describe(ErrorBoundary, () => {
         >
           <p>Healthy child</p>
         </ErrorBoundary>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Healthy child')).toBeInTheDocument();
@@ -167,11 +167,11 @@ describe(ErrorBoundary, () => {
         >
           <ThrowingChild />
         </ErrorBoundary>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName(
-      'Oops - Conflict 409'
+      'Oops - Conflict 409',
     );
   });
 
@@ -199,11 +199,11 @@ describe(ErrorBoundary, () => {
         >
           <ThrowingChild />
         </ErrorBoundary>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('heading', { level: 1, name: /Oops - Conflict/i })
+      screen.getByRole('heading', { level: 1, name: /Oops - Conflict/i }),
     ).toBeInTheDocument();
     expect(trackException).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -213,7 +213,7 @@ describe(ErrorBoundary, () => {
         properties: expect.objectContaining({
           componentStack: expect.any(String),
         }),
-      })
+      }),
     );
   });
 
@@ -238,14 +238,14 @@ describe(ErrorBoundary, () => {
         >
           <ThrowingChild />
         </ErrorBoundary>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
       screen.getByRole('heading', {
         level: 1,
         name: /Oops - An unexpected error has occurred/i,
-      })
+      }),
     ).toBeInTheDocument();
   });
 
@@ -281,7 +281,7 @@ describe(ErrorBoundary, () => {
           >
             <ThrowingChild />
           </ErrorBoundary>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
     } finally {
       globalThis.removeEventListener('error', preventError);

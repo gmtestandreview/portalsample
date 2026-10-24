@@ -23,7 +23,7 @@ const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
 const runtimeFixtureValue = (
   source: string,
-  key: string
+  key: string,
 ): string | undefined => {
   const line = source
     .split(/\r?\n/)
@@ -46,15 +46,15 @@ describe('storybook runtime fixtures', () => {
     (key, expectedValue) => {
       expect(runtimeFixtureValue(previewSetup, key)).toBe(expectedValue);
       expect(runtimeFixtureValue(browserSetup, key)).toBe(expectedValue);
-    }
+    },
   );
 
   it('does not retain the legacy browser environment fixture names', () => {
     expect(previewSetup).not.toMatch(
-      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/
+      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
     );
     expect(browserSetup).not.toMatch(
-      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/
+      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
     );
   });
 
@@ -69,7 +69,7 @@ describe('storybook MSW diagnostic policy', () => {
       .join(repositoryRoot, '.storybook/msw-policy.ts')
       .replaceAll('\\', '/');
     const policy = await import(/* @vite-ignore */ policySpecifier).catch(
-      () => ({ isStorybookMswDebugEnabled: undefined })
+      () => ({ isStorybookMswDebugEnabled: undefined }),
     );
 
     expect(policy.isStorybookMswDebugEnabled).toBeTypeOf('function');
@@ -94,6 +94,13 @@ describe('storybook MSW diagnostic policy', () => {
       pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot),
     ).toBe(true);
   });
+
+  it('does not load Chromatic in the Storybook development process', () => {
+    expect(storybookMain).toContain("process.env['NODE_ENV'] !== 'production'");
+    expect(storybookMain).toMatch(
+      /\.\.\.\(!isStorybookDevelopment \? \['@chromatic-com\/storybook'\] : \[\]\)/,
+    );
+  });
 });
 
 describe('storybook closure child diagnostics', () => {
@@ -114,7 +121,7 @@ describe('storybook closure child diagnostics', () => {
       tempRoot,
       'reports',
       'storybook-coverage',
-      'closure-run'
+      'closure-run',
     );
     makeDirectorySync(receiptRoot, tempRoot);
     const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
@@ -149,7 +156,7 @@ describe('storybook closure child diagnostics', () => {
       tempRoot,
       'reports',
       'storybook-coverage',
-      'closure-run'
+      'closure-run',
     );
     makeDirectorySync(receiptRoot, tempRoot);
     const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
@@ -167,7 +174,7 @@ describe('storybook closure child diagnostics', () => {
       expect(files).toHaveLength(1);
 
       const record = JSON.parse(
-        readTextFileSync(path.join(receiptRoot, files[0]!.name), tempRoot)
+        readTextFileSync(path.join(receiptRoot, files[0]!.name), tempRoot),
       ) as Record<string, unknown>;
 
       expect(record).toMatchObject({

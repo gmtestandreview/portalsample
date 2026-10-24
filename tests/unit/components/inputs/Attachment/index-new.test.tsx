@@ -117,14 +117,14 @@ const changeFileInput = (files: File[]) => {
 const renderAttachment = (
   initialAttachmentValue: AttachmentHarnessProps['initialAttachmentValue'],
   props?: AttachmentHarnessProps['props'],
-  useComponentDefaults = false
+  useComponentDefaults = false,
 ) =>
   render(
     <AttachmentHarness
       initialAttachmentValue={initialAttachmentValue}
       {...(props === undefined ? {} : { props })}
       useComponentDefaults={useComponentDefaults}
-    />
+    />,
   );
 
 describe(AttachmentNew, () => {
@@ -136,22 +136,22 @@ describe(AttachmentNew, () => {
     });
 
     expect(
-      screen.getByLabelText('Upload supporting documents')
+      screen.getByLabelText('Upload supporting documents'),
     ).toBeInTheDocument();
     expect(screen.getByText('Upload files for assessment')).toHaveAttribute(
       'id',
-      'help-supporting-documents'
+      'help-supporting-documents',
     );
     expect(
-      screen.getByTestId('drag-upload-supporting-documents')
+      screen.getByTestId('drag-upload-supporting-documents'),
     ).toBeDisabled();
     expect(screen.getByTestId('supporting-documents')).toBeDisabled();
     expect(screen.getByText('.pdf, .jpg')).toBeInTheDocument();
     expect(
       screen.getByText(
         (_, element) =>
-          element?.textContent === 'Maximum size for each file: 1MB each'
-      )
+          element?.textContent === 'Maximum size for each file: 1MB each',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -162,7 +162,7 @@ describe(AttachmentNew, () => {
 
     expect(screen.getByTestId('drag-upload-attachments')).toHaveAttribute(
       'title',
-      'Drag files here'
+      'Drag files here',
     );
 
     await user.click(screen.getByTestId('attachments'));
@@ -221,11 +221,11 @@ describe(AttachmentNew, () => {
       <AttachmentHarness
         initialAttachmentValue={[uploadedAttachment]}
         props={{ isSummary: true }}
-      />
+      />,
     );
 
     expect(
-      screen.getByRole('link', { name: 'manual.pdf' })
+      screen.getByRole('link', { name: 'manual.pdf' }),
     ).toBeInTheDocument();
     expect(screen.queryByText('No details added')).not.toBeInTheDocument();
   });
@@ -244,12 +244,12 @@ describe(AttachmentNew, () => {
 
     expect(onUploadFiles).not.toHaveBeenCalled();
     expect(
-      screen.getByText('Files must be one of the following types: .pdf, .jpg')
+      screen.getByText('Files must be one of the following types: .pdf, .jpg'),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'The files selected have not been uploaded as you have selected more files than the maximum number allowed - (1).'
-      )
+        'The files selected have not been uploaded as you have selected more files than the maximum number allowed - (1).',
+      ),
     ).toBeInTheDocument();
   });
 
@@ -264,7 +264,7 @@ describe(AttachmentNew, () => {
 
     expect(onUploadFiles).not.toHaveBeenCalled();
     expect(
-      screen.getByText('File must be of the following type: .pdf')
+      screen.getByText('File must be of the following type: .pdf'),
     ).toBeInTheDocument();
   });
 
@@ -280,12 +280,12 @@ describe(AttachmentNew, () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('large.pdf', 1024 * 1024 + 1)
+      file('large.pdf', 1024 * 1024 + 1),
     );
 
     expect(onUploadFiles).not.toHaveBeenCalled();
     expect(
-      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.')
+      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
     ).toBeInTheDocument();
   });
 
@@ -296,18 +296,18 @@ describe(AttachmentNew, () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
 
     await waitFor(() =>
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
-      ])
+      ]),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachments":[{"id":"doc-1"'
-      )
+        '"attachments":[{"id":"doc-1"',
+      ),
     );
   });
 
@@ -334,16 +334,16 @@ describe(AttachmentNew, () => {
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'manual.pdf' }),
         expect.objectContaining({ name: 'diagram.jpg' }),
-      ])
+      ]),
     );
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentName":"diagram.jpg"'
-      )
+        '"attachmentName":"diagram.jpg"',
+      ),
     );
 
     expect(screen.getByTestId('values')).not.toHaveTextContent(
-      '"attachmentName":"manual.pdf"'
+      '"attachmentName":"manual.pdf"',
     );
   });
 
@@ -366,17 +366,17 @@ describe(AttachmentNew, () => {
     await waitFor(() =>
       expect(onUploadFiles).toHaveBeenCalledWith([
         expect.objectContaining({ name: 'small.pdf' }),
-      ])
+      ]),
     );
 
     expect(
-      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.')
+      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
     ).toBeInTheDocument();
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentName":"small.pdf"'
-      )
+        '"attachmentName":"small.pdf"',
+      ),
     );
   });
 
@@ -399,17 +399,17 @@ describe(AttachmentNew, () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachments":[{"id":"doc-1"'
-      )
+        '"attachments":[{"id":"doc-1"',
+      ),
     );
 
     expect(
-      screen.getByRole('progressbar', { name: 'Uploading' })
+      screen.getByRole('progressbar', { name: 'Uploading' }),
     ).toBeInTheDocument();
   });
 
@@ -437,13 +437,13 @@ describe(AttachmentNew, () => {
           onDeleteFile={async () => {}}
           setErrors={() => {}}
         />
-      </FormikHarness>
+      </FormikHarness>,
     );
 
     // The browse button carries the description, since that is the control the user operates.
     expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
       'aria-describedby',
-      'supporting-documents-validation-msg'
+      'supporting-documents-validation-msg',
     );
   });
 
@@ -459,14 +459,14 @@ describe(AttachmentNew, () => {
 
     await user.upload(
       screen.getByTestId('drag-upload-supporting-documents'),
-      file('manual.pdf', 10)
+      file('manual.pdf', 10),
     );
 
     await expect(
-      screen.findByText('Virus scan failed')
+      screen.findByText('Virus scan failed'),
     ).resolves.toBeInTheDocument();
     expect(
-      screen.getByText('Document could not be stored')
+      screen.getByText('Document could not be stored'),
     ).toBeInTheDocument();
   });
 
@@ -492,12 +492,12 @@ describe(AttachmentNew, () => {
     });
 
     expect(
-      screen.getByRole('progressbar', { name: 'Uploading' })
+      screen.getByRole('progressbar', { name: 'Uploading' }),
     ).toHaveAttribute('aria-valuenow', '25');
     expect(screen.getByText('1 / 4 files processed')).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole('button', { name: 'Cancel uploading manual.pdf' })
+      screen.getByRole('button', { name: 'Cancel uploading manual.pdf' }),
     );
 
     expect(handleCancelFile).toHaveBeenCalledWith('manual.pdf');
@@ -516,13 +516,13 @@ describe(AttachmentNew, () => {
     });
 
     expect(
-      screen.queryByRole('progressbar', { name: 'Completed' })
+      screen.queryByRole('progressbar', { name: 'Completed' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: '1 files uploaded' })
+      screen.getByRole('heading', { name: '1 files uploaded' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('Select a category to classify each document')
+      screen.getByText('Select a category to classify each document'),
     ).toBeInTheDocument();
   });
 
@@ -537,7 +537,9 @@ describe(AttachmentNew, () => {
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
 
     await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"attachments":[]')
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[]',
+      ),
     );
   });
 
@@ -553,7 +555,7 @@ describe(AttachmentNew, () => {
             id: undefined,
           },
         ],
-        { onDeleteFile }
+        { onDeleteFile },
       );
 
       await user.click(screen.getByRole('button', { name: 'Delete' }));
@@ -561,7 +563,7 @@ describe(AttachmentNew, () => {
 
       expect(onDeleteFile).not.toHaveBeenCalled();
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentName":"manual.pdf"'
+        '"attachmentName":"manual.pdf"',
       );
       expect(consoleError).not.toHaveBeenCalled();
     } finally {
@@ -578,10 +580,10 @@ describe(AttachmentNew, () => {
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     await expect(
-      screen.findByText('Delete failed')
+      screen.findByText('Delete failed'),
     ).resolves.toBeInTheDocument();
     expect(screen.getByTestId('values')).toHaveTextContent(
-      '"attachmentName":"manual.pdf"'
+      '"attachmentName":"manual.pdf"',
     );
   });
 
@@ -601,7 +603,7 @@ describe(AttachmentNew, () => {
     expect(
       within(attachmentRegion as HTMLElement).queryByRole('button', {
         name: 'Delete',
-      })
+      }),
     ).not.toBeInTheDocument();
   });
 
@@ -617,10 +619,10 @@ describe(AttachmentNew, () => {
     });
 
     expect(
-      screen.queryByRole('progressbar', { name: 'CompletedWithErrors' })
+      screen.queryByRole('progressbar', { name: 'CompletedWithErrors' }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: '1 files uploaded' })
+      screen.getByRole('heading', { name: '1 files uploaded' }),
     ).toBeInTheDocument();
   });
 });

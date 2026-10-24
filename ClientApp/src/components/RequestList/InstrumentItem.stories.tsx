@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, userEvent, within } from 'storybook/test';
 import type { ComponentType } from 'react';
@@ -78,14 +79,11 @@ const meta = preview.meta({
   },
 });
 
-
 export const ReportsTab = meta.story({
   args: {
     request: instrumentFixture,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Default tab is 'reports' — report table is rendered
     const reportsTable = await canvas.findByTestId('instReports-table');
@@ -103,9 +101,7 @@ export const DetailsTab = meta.story({
   args: {
     request: instrumentFixture,
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     // Click the Details tab — react-bootstrap Tab.Container may not expose

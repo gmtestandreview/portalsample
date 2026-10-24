@@ -11,18 +11,18 @@ const draft7Validator = addFormats(
   new Ajv({
     allErrors: true,
     strict: true,
-  })
+  }),
 );
 
 const draft2020Validator = addFormats(
   new Ajv2020({
     allErrors: true,
     strict: true,
-  })
+  }),
 );
 
 const isJsonSchemaObject = (
-  schema: AnySchema
+  schema: AnySchema,
 ): schema is Record<string, unknown> =>
   typeof schema === 'object' && schema !== null && !Array.isArray(schema);
 
@@ -51,7 +51,7 @@ const formatError = (error: ErrorObject) => {
 export const expectValueToMatchSchema = (
   value: unknown,
   schema: AnySchema,
-  options: ContractValidationOptions = {}
+  options: ContractValidationOptions = {},
 ): void => {
   const validate = validatorForSchema(schema).compile(schema);
 
@@ -64,19 +64,19 @@ export const expectValueToMatchSchema = (
     validate.errors?.map(formatError).join('\n') ?? 'Unknown schema error';
 
   throw new Error(
-    `${contractName} did not match its JSON Schema contract:\n${errors}`
+    `${contractName} did not match its JSON Schema contract:\n${errors}`,
   );
 };
 
 export const expectJsonResponseToMatchSchema = async <T = unknown>(
   response: APIResponse,
   schema: AnySchema,
-  options: ContractValidationOptions = {}
+  options: ContractValidationOptions = {},
 ): Promise<T> => {
   const contentType = response.headers()['content-type'] ?? '';
   if (!contentType.toLowerCase().includes('application/json')) {
     throw new Error(
-      `${options.name ?? 'API response'} returned content-type "${contentType}", not JSON`
+      `${options.name ?? 'API response'} returned content-type "${contentType}", not JSON`,
     );
   }
 

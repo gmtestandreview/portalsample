@@ -11,7 +11,7 @@ const repositoryRoot = path.resolve(__dirname, '../../..');
 const componentsRoot = path.join(repositoryRoot, 'ClientApp/src/components');
 
 const evaluationDirectories = ['AriaComponents'].map((directory) =>
-  path.join(componentsRoot, directory)
+  path.join(componentsRoot, directory),
 );
 
 function collectFiles(directory: string): string[] {
@@ -25,15 +25,15 @@ const evaluationFiles = evaluationDirectories.flatMap(collectFiles);
 const storyFiles = evaluationFiles.filter((file) => {
   if (!file.endsWith('.stories.tsx')) return false;
   return /title:\s*['"]Evaluation\/React Aria\//.test(
-    readTextFileSync(file, repositoryRoot)
+    readTextFileSync(file, repositoryRoot),
   );
 });
 const sourceFiles = evaluationFiles.filter(
   (file) =>
     /\.(?:css|ts|tsx)$/.test(file) &&
     !/(?:\.stories copy\.tsx|\/main\.tsx|\\main\.tsx|setup(?:Browser)?Tests\.ts|testStyleMock\.ts)$/.test(
-      file
-    )
+      file,
+    ),
 );
 
 function findRelativeImports(file: string): string[] {
@@ -47,7 +47,7 @@ function findRelativeImports(file: string): string[] {
   return patterns.flatMap((pattern) =>
     [...source.matchAll(pattern)]
       .map((match) => match[1])
-      .filter((specifier): specifier is string => specifier !== undefined)
+      .filter((specifier): specifier is string => specifier !== undefined),
   );
 }
 
@@ -81,7 +81,7 @@ describe('react Aria Storybook evaluation contract', () => {
   it('uses NMI icons rather than Lucide in the first-instance evaluation', () => {
     for (const file of sourceFiles.filter((file) => /\.tsx?$/.test(file))) {
       expect(readTextFileSync(file, repositoryRoot), file).not.toContain(
-        'lucide-react'
+        'lucide-react',
       );
     }
   });
@@ -92,8 +92,8 @@ describe('react Aria Storybook evaluation contract', () => {
         .filter((specifier) => !importResolves(file, specifier))
         .map(
           (specifier) =>
-            `${path.relative(repositoryRoot, file)} -> ${specifier}`
-        )
+            `${path.relative(repositoryRoot, file)} -> ${specifier}`,
+        ),
     );
 
     expect(unresolved).toEqual([]);
@@ -116,22 +116,22 @@ describe('react Aria Storybook evaluation contract', () => {
     // carve-outs are gone and `tsc --noEmit` covers it like any other source.
     const tsconfig = readTextFileSync(
       path.join(repositoryRoot, 'tsconfig.json'),
-      repositoryRoot
+      repositoryRoot,
     );
 
     expect(tsconfig).not.toContain('ClientApp/src/components/App/**');
     expect(tsconfig).not.toContain(
-      'ClientApp/src/components/AriaComponents/main.tsx'
+      'ClientApp/src/components/AriaComponents/main.tsx',
     );
     expect(tsconfig).not.toContain(
-      'ClientApp/src/components/reactaria_components/**'
+      'ClientApp/src/components/reactaria_components/**',
     );
   });
 
   it('keeps the retained reactaria_components scaffold import-resolvable', () => {
     const scaffoldRoot = path.join(componentsRoot, 'reactaria_components');
     const scaffoldSources = collectFiles(scaffoldRoot).filter((file) =>
-      /\.tsx?$/.test(file)
+      /\.tsx?$/.test(file),
     );
 
     expect(scaffoldSources.length).toBeGreaterThan(0);
@@ -141,8 +141,8 @@ describe('react Aria Storybook evaluation contract', () => {
         .filter((specifier) => !importResolves(file, specifier))
         .map(
           (specifier) =>
-            `${path.relative(repositoryRoot, file)} -> ${specifier}`
-        )
+            `${path.relative(repositoryRoot, file)} -> ${specifier}`,
+        ),
     );
 
     expect(unresolved).toEqual([]);
@@ -152,8 +152,8 @@ describe('react Aria Storybook evaluation contract', () => {
     expect(
       pathExists(
         path.join(componentsRoot, 'AriaComponents/main.tsx'),
-        repositoryRoot
-      )
+        repositoryRoot,
+      ),
     ).toBe(false);
   });
 });

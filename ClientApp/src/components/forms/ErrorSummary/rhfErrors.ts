@@ -1,7 +1,7 @@
 type FlatErrors = Record<string, string>;
 
 const isFieldError = (
-  value: object
+  value: object,
 ): value is { type: string; message?: unknown } =>
   'type' in value && typeof value.type === 'string';
 
@@ -17,7 +17,7 @@ const isFieldError = (
 export const flattenRhfErrors = (
   errors: unknown,
   prefix = '',
-  result: FlatErrors = {}
+  result: FlatErrors = {},
 ): FlatErrors => {
   if (errors === null || typeof errors !== 'object') {
     return result;

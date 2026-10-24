@@ -6,7 +6,7 @@ import { ai } from '../../../instrumentation/AppInsightsService';
 import GoogleAnalytics from '../../../analytics/GoogleAnalytics';
 
 const WizardStep = <T extends FormikValues>(
-  props: Readonly<WizardStepProps<T>>
+  props: Readonly<WizardStepProps<T>>,
 ) => {
   const { children } = props;
 

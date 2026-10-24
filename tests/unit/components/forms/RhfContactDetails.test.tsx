@@ -94,12 +94,12 @@ const contactValue = (): ContactValues =>
 const renderDetails = (
   contact: ContactValues | '',
   props: Partial<ComponentProps<typeof RhfContactDetails>> = {},
-  rules?: Hideable
+  rules?: Hideable,
 ) =>
   render(
     <Harness contact={contact} {...(rules ? { rules } : {})}>
       <RhfContactDetails name={CONTACT_NAME} {...props} />
-    </Harness>
+    </Harness>,
   );
 
 describe('rhfContactDetails edit mode', () => {
@@ -181,7 +181,7 @@ describe('rhfContactDetails edit mode', () => {
 
     await user.selectOptions(
       screen.getByLabelText('Title (optional)'),
-      'Other'
+      'Other',
     );
 
     expect(screen.getByLabelText('If "Other"')).toBeInTheDocument();
@@ -222,7 +222,7 @@ describe('rhfContactDetails summary mode', () => {
   it('renders the supplied labels and the "Other" title label', () => {
     renderDetails(
       { ...FILLED_CONTACT, title: 'Other', titleOther: 'Chief' },
-      { isSummary: true, ...CUSTOM_LABELS }
+      { isSummary: true, ...CUSTOM_LABELS },
     );
 
     for (const label of Object.values(CUSTOM_LABELS)) {

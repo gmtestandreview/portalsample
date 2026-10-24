@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import Home from './Home';
@@ -21,11 +22,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const PublicLanding = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // GetStarted renders a heading; assert the landing surface mounts.
     const heading = await canvas.findByRole('heading', { level: 1 });

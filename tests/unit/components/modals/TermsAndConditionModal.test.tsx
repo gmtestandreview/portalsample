@@ -11,7 +11,7 @@ const mockMsal = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -21,19 +21,19 @@ vi.mock(
           acquireTokenSilent: mockMsal.acquireTokenSilent,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 const mockSetAgree = vi.fn();
 const mockDispatch = { setAgree: mockSetAgree };
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: vi.fn(),
       useAccountDispatch: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 // UsersClient must be a constructor (class/function), not an arrow function,
@@ -42,30 +42,30 @@ const mockAcceptTermsAndCondition = vi.fn().mockResolvedValue(undefined);
 const mockSetAuthToken = vi.fn();
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       UsersClient: vi.fn(function (this: any) {
         this.setAuthToken = mockSetAuthToken;
         this.acceptTermsAndCondition = mockAcceptTermsAndCondition;
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://mock/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/terms-config.json',
+  import('../../../../ClientApp/src/terms-config.json'),
   () =>
     ({
       default: { TermsVersion: '2' },
-    }) satisfies __ExactMockModule<__TestMockModule7>
+    }) satisfies __ExactMockModule<__TestMockModule7>,
 );
 
 import {
@@ -100,7 +100,7 @@ describe(TermsAndConditionModal, () => {
     render(<TermsAndConditionModal />);
 
     expect(
-      screen.getByTestId('prompt-termsandcondition-modal')
+      screen.getByTestId('prompt-termsandcondition-modal'),
     ).toBeInTheDocument();
     expect(screen.getByTestId('termsofuse-heading')).toBeInTheDocument();
   });
@@ -117,7 +117,7 @@ describe(TermsAndConditionModal, () => {
     render(<TermsAndConditionModal />);
 
     expect(
-      screen.queryByTestId('prompt-termsandcondition-modal')
+      screen.queryByTestId('prompt-termsandcondition-modal'),
     ).not.toBeInTheDocument();
   });
 
@@ -132,7 +132,7 @@ describe(TermsAndConditionModal, () => {
 
     render(<TermsAndConditionModal />);
     fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i })
+      screen.getByRole('button', { name: /agree and continue/i }),
     );
 
     await waitFor(() => {
@@ -151,7 +151,7 @@ describe(TermsAndConditionModal, () => {
 
     render(<TermsAndConditionModal />);
     fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i })
+      screen.getByRole('button', { name: /agree and continue/i }),
     );
 
     await waitFor(() => {
@@ -170,7 +170,7 @@ describe(TermsAndConditionModal, () => {
     render(<TermsAndConditionModal />);
 
     expect(
-      screen.getByRole('heading', { name: /welcome, solo/i })
+      screen.getByRole('heading', { name: /welcome, solo/i }),
     ).toBeInTheDocument();
   });
 
@@ -186,7 +186,7 @@ describe(TermsAndConditionModal, () => {
     render(<TermsAndConditionModal />);
 
     expect(
-      screen.getByRole('button', { name: /exit portal/i })
+      screen.getByRole('button', { name: /exit portal/i }),
     ).toHaveAttribute('href', '/sign-out');
   });
 
@@ -202,7 +202,7 @@ describe(TermsAndConditionModal, () => {
 
     render(<TermsAndConditionModal />);
     fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i })
+      screen.getByRole('button', { name: /agree and continue/i }),
     );
 
     await waitFor(() => {
@@ -222,7 +222,7 @@ describe(TermsAndConditionModal, () => {
 
     render(<TermsAndConditionModal />);
     fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i })
+      screen.getByRole('button', { name: /agree and continue/i }),
     );
 
     await waitFor(() => {
@@ -242,7 +242,7 @@ describe(TermsAndConditionModal, () => {
 
     render(<TermsAndConditionModal />);
     fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i })
+      screen.getByRole('button', { name: /agree and continue/i }),
     );
 
     await waitFor(() => {
@@ -256,7 +256,7 @@ describe(TermsAndConditionModal, () => {
 
   it('shows the error alert when acceptTermsAndCondition API call fails', async () => {
     mockAcceptTermsAndCondition.mockRejectedValueOnce(
-      new Error('Network error')
+      new Error('Network error'),
     );
 
     vi.mocked(useAccountState).mockReturnValue({
@@ -269,13 +269,13 @@ describe(TermsAndConditionModal, () => {
 
     render(<TermsAndConditionModal />);
     fireEvent.click(
-      screen.getByRole('button', { name: /agree and continue/i })
+      screen.getByRole('button', { name: /agree and continue/i }),
     );
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
       expect(
-        screen.getByText(/error found trying to save/i)
+        screen.getByText(/error found trying to save/i),
       ).toBeInTheDocument();
     });
   });

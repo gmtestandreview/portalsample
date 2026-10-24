@@ -9,7 +9,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-aria-components/Link',
+  import('react-aria-components/Link'),
   () =>
     ({
       Link: ({
@@ -38,14 +38,14 @@ vi.mock(
               : {
                   children,
                   ...(className === undefined ? {} : { className }),
-                }
+                },
           )
         ) : (
           <a className={className} href={href}>
             {children}
           </a>
         ),
-    }) satisfies __ExactMockModule<__TestMockModule18>
+    }) satisfies __ExactMockModule<__TestMockModule18>,
 );
 
 describe('linkButton React Aria render fallback', () => {
@@ -58,7 +58,7 @@ describe('linkButton React Aria render fallback', () => {
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/dashboard' variant='btn btn-outline-primary'>
         Dashboard
-      </LinkButton>
+      </LinkButton>,
     );
 
     const fallback = screen.getByText('Dashboard');
@@ -66,7 +66,7 @@ describe('linkButton React Aria render fallback', () => {
     expect(fallback.tagName).toBe('SPAN');
     expect(fallback).toHaveClass('btn', 'btn-outline-primary');
     expect(
-      screen.queryByRole('link', { name: 'Dashboard' })
+      screen.queryByRole('link', { name: 'Dashboard' }),
     ).not.toBeInTheDocument();
   });
 
@@ -79,16 +79,16 @@ describe('linkButton React Aria render fallback', () => {
         <LinkButton as='Link' to='/dashboard' variant='secondary'>
           Dashboard
         </LinkButton>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveClass(
       'btn',
-      'btn-secondary'
+      'btn-secondary',
     );
   });
 
@@ -100,16 +100,16 @@ describe('linkButton React Aria render fallback', () => {
         variant='nmi-primary'
       >
         NMI
-      </LinkButton>
+      </LinkButton>,
     );
 
     expect(screen.getByRole('link', { name: 'NMI' })).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     expect(screen.getByRole('link', { name: 'NMI' })).toHaveClass(
       'btn',
-      'btn-nmi-primary'
+      'btn-nmi-primary',
     );
   });
 
@@ -117,12 +117,12 @@ describe('linkButton React Aria render fallback', () => {
     render(
       <LinkButton as='a' href='/requests'>
         Requests
-      </LinkButton>
+      </LinkButton>,
     );
 
     expect(screen.getByRole('link', { name: 'Requests' })).toHaveClass(
       'btn',
-      'btn-nmi-primary'
+      'btn-nmi-primary',
     );
   });
 });

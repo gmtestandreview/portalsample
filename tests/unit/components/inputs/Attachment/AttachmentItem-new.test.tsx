@@ -54,7 +54,7 @@ const renderItem = (
     attachments: AttachmentDto[];
   }>['initialTouched'],
   initialAttachment: AttachmentDto = attachment,
-  includeDocumentId = true
+  includeDocumentId = true,
 ) =>
   render(
     <FormikHarness
@@ -72,7 +72,7 @@ const renderItem = (
         {...props}
       />
       <ValuesProbe />
-    </FormikHarness>
+    </FormikHarness>,
   );
 
 describe(AttachmentItemNew, () => {
@@ -85,13 +85,13 @@ describe(AttachmentItemNew, () => {
     expect(fileLink.getAttribute('href')).toMatch(/^blob:/);
     expect(screen.getByText('2 kb')).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveClass(
-      'is-invalid'
+      'is-invalid',
     );
     expect(
-      screen.getByText('Select a category that best describes this document.')
+      screen.getByText('Select a category that best describes this document.'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('option', { name: 'Photos or diagrams' })
+      screen.getByRole('option', { name: 'Photos or diagrams' }),
     ).toHaveValue('Photos or diagrams');
   });
 
@@ -102,20 +102,20 @@ describe(AttachmentItemNew, () => {
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate'
+      'Certificate',
     );
 
     expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentCategory":"Certificate"'
-      )
+        '"attachmentCategory":"Certificate"',
+      ),
     );
     await waitFor(() =>
       expect(screen.getByTestId('touched')).toHaveTextContent(
-        '"attachmentCategory":true'
-      )
+        '"attachmentCategory":true',
+      ),
     );
   });
 
@@ -129,12 +129,12 @@ describe(AttachmentItemNew, () => {
         ...attachment,
         attachmentSize: undefined,
       },
-      false
+      false,
     );
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),
-      'Manuals'
+      'Manuals',
     );
 
     expect(onCategoryUpdate).not.toHaveBeenCalled();
@@ -142,8 +142,8 @@ describe(AttachmentItemNew, () => {
 
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"attachmentCategory":"Manuals"'
-      )
+        '"attachmentCategory":"Manuals"',
+      ),
     );
   });
 
@@ -155,13 +155,13 @@ describe(AttachmentItemNew, () => {
     });
 
     expect(screen.getByText('manual.pdf').closest('a')).not.toHaveAttribute(
-      'href'
+      'href',
     );
     expect(
-      screen.queryByRole('button', { name: 'Delete' })
+      screen.queryByRole('button', { name: 'Delete' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('manual.pdf').closest('.attachment')).toHaveClass(
-      'p-1'
+      'p-1',
     );
   });
 
@@ -173,7 +173,7 @@ describe(AttachmentItemNew, () => {
     await user.click(screen.getByRole('button', { name: 'Delete' }));
 
     expect(
-      screen.getByRole('heading', { name: 'Confirm deletion' })
+      screen.getByRole('heading', { name: 'Confirm deletion' }),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -182,8 +182,8 @@ describe(AttachmentItemNew, () => {
 
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: 'Confirm deletion' })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', { name: 'Confirm deletion' }),
+      ).not.toBeInTheDocument(),
     );
   });
 
@@ -199,8 +199,8 @@ describe(AttachmentItemNew, () => {
 
     await waitFor(() =>
       expect(
-        screen.queryByRole('heading', { name: 'Confirm deletion' })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('heading', { name: 'Confirm deletion' }),
+      ).not.toBeInTheDocument(),
     );
   });
 });

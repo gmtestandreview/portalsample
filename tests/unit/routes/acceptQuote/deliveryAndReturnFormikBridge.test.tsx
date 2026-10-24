@@ -28,7 +28,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -37,10 +37,10 @@ vi.mock(
         inProgress: 'none',
       }),
       useAccount: () => mocks.account,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -52,11 +52,11 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const hidingFields = deliveryAndReturnHidingFields;
@@ -97,7 +97,7 @@ function Harness({
             formValues.saveAndExit
               ? deliveryAndReturnSaveValidation
               : deliveryAndReturnSubmitValidation,
-            hidingFields
+            hidingFields,
           )(formValues)
         }
         onSubmit={(submitted) =>
@@ -132,7 +132,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
@@ -173,11 +173,11 @@ describe(DeliveryAndReturnFormikBridge, () => {
           returnOrganisationName: 'Loaded return organisation',
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     const organisationName = screen.getByLabelText(
-      'Return organisation name (optional)'
+      'Return organisation name (optional)',
     );
 
     expect(organisationName).toHaveValue('Loaded return organisation');
@@ -212,15 +212,15 @@ describe(DeliveryAndReturnFormikBridge, () => {
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.type(
       screen.getByRole('combobox', { name: /Return address/ }),
-      '1 Street'
+      '1 Street',
     );
     await user.click(
-      await screen.findByText('1 Street Road, Lindfield NSW 2070')
+      await screen.findByText('1 Street Road, Lindfield NSW 2070'),
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -243,7 +243,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
@@ -253,7 +253,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(/Address line 1 is required/i)
+      screen.findByText(/Address line 1 is required/i),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -266,18 +266,18 @@ describe(DeliveryAndReturnFormikBridge, () => {
           returnContactType: ReturnContactTypeValues.DifferentPerson,
           returnMethod: ReturnMethodValues.ClientWillProvide,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText('Carrier name is required')
+      screen.findByText('Carrier name is required'),
     ).resolves.toBeInTheDocument();
     expect(screen.getByText('First name is required')).toBeInTheDocument();
     expect(screen.getByLabelText('Carrier name')).toBeInvalid();
     expect(screen.getByLabelText('Carrier name')).toHaveAccessibleDescription(
-      'Carrier name is required'
+      'Carrier name is required',
     );
   });
 
@@ -289,7 +289,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
           returnAddressType: ReturnAddressTypeValues.Other,
           returnAddress: undefined as never,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -312,7 +312,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
           saveAndExit: true,
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -326,13 +326,13 @@ describe(DeliveryAndReturnFormikBridge, () => {
     const { unmount } = render(
       <Harness
         values={{ returnContactType: ReturnContactTypeValues.SamePerson }}
-      />
+      />,
     );
 
     expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
     expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('combobox', { name: /Return address/ })
+      screen.queryByRole('combobox', { name: /Return address/ }),
     ).not.toBeInTheDocument();
 
     unmount();
@@ -342,7 +342,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
     expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
     expect(screen.getByLabelText('First name')).toBeInTheDocument();
     expect(
-      screen.getByRole('combobox', { name: /Return address/ })
+      screen.getByRole('combobox', { name: /Return address/ }),
     ).toBeInTheDocument();
   });
 
@@ -356,7 +356,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
           returnAddressType: ReturnAddressTypeValues.Other,
           returnMethod: ReturnMethodValues.ClientWillProvide,
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -367,12 +367,12 @@ describe(DeliveryAndReturnFormikBridge, () => {
       .map((link) => link.getAttribute('href')?.replace(/^#/, '') ?? '');
 
     expect(keys).toEqual(
-      expect.arrayContaining(['carrierName', 'contact.firstName'])
+      expect.arrayContaining(['carrierName', 'contact.firstName']),
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
 
     keys.forEach((key) =>
-      expect(document.getElementById(key), key).not.toBeNull()
+      expect(document.getElementById(key), key).not.toBeNull(),
     );
   });
 });

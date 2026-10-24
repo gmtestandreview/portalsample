@@ -20,7 +20,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -29,10 +29,10 @@ vi.mock(
         inProgress: 'none',
       }),
       useAccount: () => mocks.account,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -44,11 +44,11 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const hidingFields = {
@@ -108,7 +108,7 @@ describe(ReportRecipientFormikBridge, () => {
       <Harness
         values={{ reportAddressType: ReportAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
@@ -149,11 +149,11 @@ describe(ReportRecipientFormikBridge, () => {
           organisationName: 'Loaded report organisation',
         }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     const organisationName = screen.getByLabelText(
-      'Organisation name for report'
+      'Organisation name for report',
     );
 
     expect(organisationName).toHaveValue('Loaded report organisation');
@@ -188,12 +188,12 @@ describe(ReportRecipientFormikBridge, () => {
       <Harness
         values={{ reportAddressType: ReportAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.type(screen.getByRole('combobox'), '1 Street');
     await user.click(
-      await screen.findByText('1 Street Road, Lindfield NSW 2070')
+      await screen.findByText('1 Street Road, Lindfield NSW 2070'),
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
@@ -216,7 +216,7 @@ describe(ReportRecipientFormikBridge, () => {
       <Harness
         values={{ reportAddressType: ReportAddressTypeValues.Other }}
         onSubmit={onSubmit}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
@@ -226,7 +226,7 @@ describe(ReportRecipientFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByText(/Address line 1 is required/i)
+      screen.findByText(/Address line 1 is required/i),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -239,7 +239,7 @@ describe(ReportRecipientFormikBridge, () => {
           reportAddressType: ReportAddressTypeValues.Other,
           businessStreetAddress: {},
         }}
-      />
+      />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -254,7 +254,7 @@ describe(ReportRecipientFormikBridge, () => {
   it('leaves an undefined address undefined and the outer form clean after a failed submit', async () => {
     const user = userEvent.setup();
     render(
-      <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />
+      <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
@@ -269,13 +269,13 @@ describe(ReportRecipientFormikBridge, () => {
   it('describes the failed address search field by its message', async () => {
     const user = userEvent.setup();
     render(
-      <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />
+      <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(
-      screen.findByRole('combobox')
+      screen.findByRole('combobox'),
     ).resolves.toHaveAccessibleDescription(/is required/i);
   });
 

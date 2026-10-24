@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, waitFor, within } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';

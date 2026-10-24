@@ -97,7 +97,7 @@ const LookupField = ({ label, field, value, options }: LookupFieldProps) =>
   ) : null;
 
 const formatAvailabilityDate = (
-  raw: InstrumentAndRequestStep['preferredInstrumentOrArtefactAvailabilityDate']
+  raw: InstrumentAndRequestStep['preferredInstrumentOrArtefactAvailabilityDate'],
 ) => {
   const dateOnly = parseApiDateOnlyInput(raw);
   if (dateOnly) return formatDateOnlyForDisplay(dateOnly);
@@ -181,7 +181,7 @@ const RequestDetails = ({ step }: SectionProps) => (
       id='q-preferredInstrumentOrArtefactAvailabilityDate'
       label='Preferred Instrument/artefact availability date (optional)'
       value={formatAvailabilityDate(
-        step?.preferredInstrumentOrArtefactAvailabilityDate
+        step?.preferredInstrumentOrArtefactAvailabilityDate,
       )}
     />
     <ChoiceField

@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -32,11 +33,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Date of test')).toBeVisible();
@@ -52,9 +50,7 @@ export const WithError = meta.story({
     hasError: true,
     errorMessage: 'Enter a valid date in dd/mm/yyyy format.',
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText(/enter a valid date/i)).toBeVisible();

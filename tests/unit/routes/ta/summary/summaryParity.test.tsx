@@ -16,18 +16,18 @@ import ApplicationSummary from '../../../../../ClientApp/src/routes/ta/summary/A
 import OrganisationSummary from '../../../../../ClientApp/src/routes/ta/summary/OrganisationSummary';
 import { resetMsalMock } from '../../../helpers/mockMsal';
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 const hidden = appDetailsProps('APP-1', [], {} as never).hidingFields ?? {};
@@ -147,7 +147,7 @@ const lines = (html: string) => html.split('><');
 const withoutSubOptionValues = (html: string) =>
   html.replace(
     /(Applying for<\/div>)<p class="mb-0 text-break mb-0">[^<]*<\/p>/g,
-    '$1'
+    '$1',
   );
 
 const renderLegacy = async (values: RequestForPatternApprovalAppDetails) => {
@@ -161,7 +161,7 @@ const renderLegacy = async (values: RequestForPatternApprovalAppDetails) => {
         <OrganisationAndContact isSummary name='organisationAndContact' />
         <ApplicationAndInstrument isSummary name='applicationAndInstrument' />
       </>
-    </Formik>
+    </Formik>,
   );
   await act(async () => {
     await Promise.resolve();
@@ -174,7 +174,7 @@ const renderSummary = (values: RequestForPatternApprovalAppDetails) =>
     <>
       <OrganisationSummary values={values} hidden={hidden} />
       <ApplicationSummary values={values} hidden={hidden} />
-    </>
+    </>,
   ).container.innerHTML;
 
 describe('form-free TA summary parity with the Formik summary', () => {
@@ -190,7 +190,7 @@ describe('form-free TA summary parity with the Formik summary', () => {
       const summary = renderSummary(values);
 
       expect(lines(withoutSubOptionValues(summary))).toEqual(lines(legacy));
-    }
+    },
   );
 
   it('shows the chosen sub-options that the Formik summary leaves blank', () => {
@@ -198,11 +198,11 @@ describe('form-free TA summary parity with the Formik summary', () => {
       <ApplicationSummary
         values={fixtures['new certificate by a manufacturer']!}
         hidden={hidden}
-      />
+      />,
     );
 
     expect(container).toHaveTextContent(
-      'NMI Pattern Approval Certificate, International Organisation of Legal Metrology (OIML) Certificate'
+      'NMI Pattern Approval Certificate, International Organisation of Legal Metrology (OIML) Certificate',
     );
   });
 });

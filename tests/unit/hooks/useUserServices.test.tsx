@@ -37,7 +37,7 @@ describe(useUserServices, () => {
     render(<ServicesProbe />);
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
-      'none'
+      'none',
     );
   });
 
@@ -59,11 +59,11 @@ describe(useUserServices, () => {
         <AccountDispatchCtx.Provider value={dispatchContext}>
           <ServicesProbe />
         </AccountDispatchCtx.Provider>
-      </AccountStateCtx.Provider>
+      </AccountStateCtx.Provider>,
     );
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
-      'Pattern approval,Calibration'
+      'Pattern approval,Calibration',
     );
   });
 
@@ -79,11 +79,11 @@ describe(useUserServices, () => {
         <AccountDispatchCtx.Provider value={dispatchContext}>
           <ServicesProbe />
         </AccountDispatchCtx.Provider>
-      </AccountStateCtx.Provider>
+      </AccountStateCtx.Provider>,
     );
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
-      'none'
+      'none',
     );
   });
 });

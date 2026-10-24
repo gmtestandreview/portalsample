@@ -20,7 +20,7 @@ describe(RouteAccessibleNavigation, () => {
     const { unmount } = render(
       <MemoryRouter initialEntries={['/dashboard']}>
         <RouteAccessibleNavigation />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('status')).toHaveTextContent('Dashboard');
@@ -30,7 +30,7 @@ describe(RouteAccessibleNavigation, () => {
     });
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Navigated to Dashboard page.'
+      'Navigated to Dashboard page.',
     );
 
     unmount();
@@ -42,11 +42,11 @@ describe(RouteAccessibleNavigation, () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <RouteAccessibleNavigation />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      'Navigated to Dashboard page.'
+      'Navigated to Dashboard page.',
     );
   });
 
@@ -57,7 +57,7 @@ describe(RouteAccessibleNavigation, () => {
     const { unmount } = render(
       <MemoryRouter initialEntries={['/']}>
         <RouteAccessibleNavigation />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('status').textContent).toBe('Navigated to  page.');

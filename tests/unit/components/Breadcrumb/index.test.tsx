@@ -9,7 +9,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-aria-components/Breadcrumbs',
+  import('react-aria-components/Breadcrumbs'),
   () =>
     ({
       Breadcrumbs: ({
@@ -26,11 +26,11 @@ vi.mock(
         children: React.ReactNode;
         className?: string;
       }) => <li className={className}>{children}</li>,
-    }) satisfies __ExactMockModule<__TestMockModule17>
+    }) satisfies __ExactMockModule<__TestMockModule17>,
 );
 
 vi.mock(
-  'react-aria-components/Link',
+  import('react-aria-components/Link'),
   () =>
     ({
       Link: ({
@@ -49,12 +49,12 @@ vi.mock(
           renderLink(
             ariaLinkMockState.includeHref && href !== undefined
               ? { children, href }
-              : { children }
+              : { children },
           )
         ) : (
           <a href={href ?? '#'}>{children}</a>
         ),
-    }) satisfies __ExactMockModule<__TestMockModule18>
+    }) satisfies __ExactMockModule<__TestMockModule18>,
 );
 
 describe('customBreadcrumb React Aria render fallback', () => {
@@ -72,9 +72,9 @@ describe('customBreadcrumb React Aria render fallback', () => {
     expect(() =>
       CustomBreadcrumb({
         breadcrumbs: [{ text: 'Missing link' }, { text: 'Current page' }],
-      })
+      }),
     ).toThrow(
-      'Breadcrumb item "Missing link" must include "to" because it is not the current page.'
+      'Breadcrumb item "Missing link" must include "to" because it is not the current page.',
     );
   });
 
@@ -84,18 +84,18 @@ describe('customBreadcrumb React Aria render fallback', () => {
         <CustomBreadcrumb
           breadcrumbs={[{ to: '/', text: 'Home' }, { text: 'Request details' }]}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const fallback = screen.getByText('Home');
 
     expect(fallback.tagName).toBe('SPAN');
     expect(
-      screen.queryByRole('link', { name: 'Home' })
+      screen.queryByRole('link', { name: 'Home' }),
     ).not.toBeInTheDocument();
     expect(screen.getByText('Request details')).toHaveAttribute(
       'aria-current',
-      'page'
+      'page',
     );
   });
 
@@ -112,15 +112,15 @@ describe('customBreadcrumb React Aria render fallback', () => {
             { text: 'Request details' },
           ]}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByRole('navigation', { name: 'Request breadcrumbs' })
+      screen.getByRole('navigation', { name: 'Request breadcrumbs' }),
     ).toHaveClass('request-breadcrumbs');
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
   });
 });

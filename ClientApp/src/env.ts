@@ -88,7 +88,7 @@ const isAllowedRedirectHost = (urlStr: string): boolean => {
   try {
     const { hostname } = new URL(urlStr);
     return ALLOWED_REDIRECT_HOSTS.some(
-      (host) => hostname === host || hostname.endsWith(`.${host}`)
+      (host) => hostname === host || hostname.endsWith(`.${host}`),
     );
   } catch {
     return false;
@@ -98,7 +98,7 @@ const isAllowedRedirectHost = (urlStr: string): boolean => {
 const externalRedirectUrl = getEnvValue('VITE_EXTERNAL_REDIRECT_URL');
 if (externalRedirectUrl && !isAllowedRedirectHost(externalRedirectUrl)) {
   throw new Error(
-    `[env] VITE_EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`
+    `[env] VITE_EXTERNAL_REDIRECT_URL "${externalRedirectUrl}" is not in the allowed domain list (measurement.gov.au or localhost).`,
   );
 }
 
@@ -107,16 +107,16 @@ export const env: EnvType = {
   VITE_B2C_AUTHORITY: getEnvValue('VITE_B2C_AUTHORITY'),
   VITE_B2C_KNOWN_AUTHORITIES: getEnvValue('VITE_B2C_KNOWN_AUTHORITIES'),
   VITE_B2C_POST_LOGOUT_REDIRECT_URL: getEnvValue(
-    'VITE_B2C_POST_LOGOUT_REDIRECT_URL'
+    'VITE_B2C_POST_LOGOUT_REDIRECT_URL',
   ),
   VITE_B2C_READ_SCOPE: getEnvValue('VITE_B2C_READ_SCOPE'),
   VITE_B2C_USER_IMPERSONATION_SCOPE: getEnvValue(
-    'VITE_B2C_USER_IMPERSONATION_SCOPE'
+    'VITE_B2C_USER_IMPERSONATION_SCOPE',
   ),
   VITE_B2C_REDIRECT_URL: getEnvValue('VITE_B2C_REDIRECT_URL'),
   VITE_EXTERNAL_REDIRECT_URL: externalRedirectUrl,
   VITE_APPINSIGHTS_INSTRUMENTATIONKEY: getEnvValue(
-    'VITE_APPINSIGHTS_INSTRUMENTATIONKEY'
+    'VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
   ),
   VITE_APPINSIGHTS_CONN_STRING: getEnvValue('VITE_APPINSIGHTS_CONN_STRING'),
   VITE_GA_TRACKINGID: getEnvValue('VITE_GA_TRACKINGID'),

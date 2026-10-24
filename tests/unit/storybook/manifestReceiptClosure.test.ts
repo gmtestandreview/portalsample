@@ -89,7 +89,7 @@ describe('manifest receipt closure', () => {
         receipts: [receipt],
         freeze,
         producer,
-      })
+      }),
     ).toMatchObject({ ok: true, errors: [] });
   });
 
@@ -102,7 +102,7 @@ describe('manifest receipt closure', () => {
         receipts: [{ ...receipt, requestedStoryIds: [], executedStoryIds: [] }],
         freeze,
         producer,
-      })
+      }),
     ).toMatchObject({
       ok: false,
       errors: expect.arrayContaining([

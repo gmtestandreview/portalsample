@@ -51,7 +51,7 @@ async function filesIn(directory) {
     entries.map(async (entry) => {
       const entryPath = distPath(path.join(safeDirectory, entry.name));
       return entry.isDirectory() ? filesIn(entryPath) : [entryPath];
-    })
+    }),
   );
 
   return nested.flat();
@@ -59,7 +59,7 @@ async function filesIn(directory) {
 
 function htmlScriptSources(html) {
   return [...html.matchAll(/<script[^>]+src="([^"]+)"/gu)].map(
-    ([, source]) => source.split(/[?#]/u, 1)[0]
+    ([, source]) => source.split(/[?#]/u, 1)[0],
   );
 }
 
@@ -80,7 +80,7 @@ const htmlAttributeEscapes = new Map([
 const escapeHtmlAttributeValue = (value) =>
   value.replace(
     /[&"'<>]/gu,
-    (character) => htmlAttributeEscapes.get(character) ?? character
+    (character) => htmlAttributeEscapes.get(character) ?? character,
   );
 
 async function readDistFile(filePath) {
@@ -97,21 +97,21 @@ async function verifyHtmlEntry(fileName, expectedEntryName) {
   const html = await readDistFile(htmlPath);
   assert(
     !html.includes('<%='),
-    `${fileName} still contains an HTML template placeholder`
+    `${fileName} still contains an HTML template placeholder`,
   );
 
   const scripts = htmlScriptSources(html);
   assert(scripts.length > 0, `${fileName} has no emitted script entry`);
   assert(
     scripts.some((source) => source.includes(`/${expectedEntryName}.`)),
-    `${fileName} does not reference the ${expectedEntryName} entry`
+    `${fileName} does not reference the ${expectedEntryName} entry`,
   );
 
   for (const source of scripts) {
     const scriptPath = distPath(path.join(dist, source.replace(/^\/+/, '')));
     assert(
       await exists(scriptPath),
-      `${fileName} references missing script ${source}`
+      `${fileName} references missing script ${source}`,
     );
   }
 }
@@ -124,7 +124,7 @@ const requiredRootAssets = ['favicon.ico', 'NMI-tile.png'];
 for (const asset of requiredRootAssets) {
   assert(
     await exists(path.join(dist, asset)),
-    `${asset} was not copied to dist`
+    `${asset} was not copied to dist`,
   );
 }
 
@@ -136,30 +136,30 @@ const expectedEnvironment =
   process.env.VITE_ENVIRONMENT ??
   loadEnv('production', root, '').VITE_ENVIRONMENT;
 const environmentMeta = indexHtml.match(
-  /<meta[^>]+name="nmi-environment"[^>]+content="([^"]+)"/u
+  /<meta[^>]+name="nmi-environment"[^>]+content="([^"]+)"/u,
 );
 assert(
   expectedEnvironment,
-  'VITE_ENVIRONMENT was not available to the verifier'
+  'VITE_ENVIRONMENT was not available to the verifier',
 );
 const expectedEnvironmentInHtml = escapeHtmlAttributeValue(expectedEnvironment);
 assert(
   environmentMeta?.[1],
-  'index.html is missing a resolved VITE_ENVIRONMENT value'
+  'index.html is missing a resolved VITE_ENVIRONMENT value',
 );
 assert(
   environmentMeta?.[1] === expectedEnvironmentInHtml,
-  `index.html VITE_ENVIRONMENT does not match the build input (${expectedEnvironment})`
+  `index.html VITE_ENVIRONMENT does not match the build input (${expectedEnvironment})`,
 );
 assert(
   !indexHtml.includes('globalThis.REACT_APP_') &&
     !indexHtml.includes('globalThis.EXTERNAL_REDIRECT_URL') &&
     !indexHtml.includes('process.env.'),
-  'index.html still contains the legacy runtime environment bridge'
+  'index.html still contains the legacy runtime environment bridge',
 );
 assert(
   !indexHtml.includes('import.meta.env.'),
-  'index.html must not contain unresolved import.meta.env expressions'
+  'index.html must not contain unresolved import.meta.env expressions',
 );
 
 const allFiles = await filesIn(dist);
@@ -167,7 +167,7 @@ const jsFiles = allFiles.filter((file) => file.endsWith('.js'));
 const cssFiles = allFiles.filter((file) => file.endsWith('.css'));
 const sourceMaps = allFiles.filter((file) => file.endsWith('.js.map'));
 const fontFiles = allFiles.filter((file) =>
-  /\.(woff2?|eot|ttf|otf)$/iu.test(file)
+  /\.(woff2?|eot|ttf|otf)$/iu.test(file),
 );
 const svgFiles = allFiles.filter((file) => file.endsWith('.svg'));
 const publicCssFiles = new Set(['fonts/fonts.css', 'fonts/nmi-iconfonts.css']);
@@ -180,7 +180,7 @@ const isMaplessRuntimeFile = (file) => {
   );
 };
 const maplessJavaScript = jsFiles.filter(
-  (file) => !sourceMaps.includes(`${file}.map`) && !isMaplessRuntimeFile(file)
+  (file) => !sourceMaps.includes(`${file}.map`) && !isMaplessRuntimeFile(file),
 );
 const javaScriptSources = await Promise.all(jsFiles.map(readJavaScript));
 const applicationJavaScript = javaScriptSources.join('\n');
@@ -193,66 +193,66 @@ assert(svgFiles.length > 0, 'no SVG files were emitted');
 for (const publicCssFile of publicCssFiles) {
   assert(
     await exists(path.join(dist, publicCssFile)),
-    `${publicCssFile} was not copied to dist`
+    `${publicCssFile} was not copied to dist`,
   );
 }
 assert(
   !/\b(?:REACT_APP_[A-Z0-9_]+|EXTERNAL_REDIRECT_URL)\b/u.test(
-    applicationJavaScript
+    applicationJavaScript,
   ),
-  'application JavaScript still contains legacy environment names'
+  'application JavaScript still contains legacy environment names',
 );
 assert(
   !/\bprocess\.env(?:\.|\[)/u.test(applicationJavaScript),
-  'application JavaScript still contains custom process.env access'
+  'application JavaScript still contains custom process.env access',
 );
 assert(
   !/import\.meta\.env\./u.test(applicationJavaScript),
-  'application JavaScript contains unresolved import.meta.env access'
+  'application JavaScript contains unresolved import.meta.env access',
 );
 assert(
   maplessJavaScript.length === 0,
-  `application JavaScript files without source maps: ${maplessJavaScript.join(', ')}`
+  `application JavaScript files without source maps: ${maplessJavaScript.join(', ')}`,
 );
 assert(
   vendorChunkNames.some((name) =>
-    jsFiles.some((file) => path.basename(file).includes(name))
+    jsFiles.some((file) => path.basename(file).includes(name)),
   ),
-  'code splitting did not emit a named application vendor chunk'
+  'code splitting did not emit a named application vendor chunk',
 );
 const redirectHtml = await readDistFile(path.join(dist, 'redirect.html'));
 const redirectEntryScripts = htmlScriptSources(redirectHtml);
 const redirectScripts = htmlJavaScriptReferences(redirectHtml);
 const redirectPreloads = redirectScripts.filter(
-  (source) => !redirectEntryScripts.includes(source)
+  (source) => !redirectEntryScripts.includes(source),
 );
 const redirectAllowedPreloads =
   /\/(?:auth|react-runtime|rolldown-runtime|modulepreload-polyfill)\.[^/]+\.js$/u;
 assert(
   redirectEntryScripts.length === 1 &&
     /\/redirect\.[^/]+\.js$/u.test(redirectEntryScripts[0] ?? ''),
-  `redirect.html must have exactly one redirect entry script: ${redirectEntryScripts.join(', ')}`
+  `redirect.html must have exactly one redirect entry script: ${redirectEntryScripts.join(', ')}`,
 );
 for (const source of redirectScripts) {
   assert(
     await exists(distPath(path.join(dist, source.replace(/^\/+/, '')))),
-    `redirect.html references missing JavaScript ${source}`
+    `redirect.html references missing JavaScript ${source}`,
   );
 }
 const redirectEntrySource = await readJavaScript(
-  distPath(path.join(dist, redirectEntryScripts[0].replace(/^\/+/, '')))
+  distPath(path.join(dist, redirectEntryScripts[0].replace(/^\/+/, ''))),
 );
 const authPreload = redirectPreloads.find((source) =>
-  /\/auth\.[^/]+\.js$/u.test(source)
+  /\/auth\.[^/]+\.js$/u.test(source),
 );
 assert(
   authPreload &&
     redirectEntrySource.includes(`./${path.basename(authPreload)}`),
-  'redirect.html auth preload is not a dependency of the redirect entry'
+  'redirect.html auth preload is not a dependency of the redirect entry',
 );
 assert(
   redirectPreloads.every((source) => redirectAllowedPreloads.test(source)),
-  `redirect.html preloads an application chunk: ${redirectPreloads.join(', ')}`
+  `redirect.html preloads an application chunk: ${redirectPreloads.join(', ')}`,
 );
 assert(
   cssFiles
@@ -261,17 +261,17 @@ assert(
       return !publicCssFiles.has(relativePath);
     })
     .every((file) => path.dirname(file) === path.join(dist, 'css')),
-  'compiled CSS files must be emitted under dist/css'
+  'compiled CSS files must be emitted under dist/css',
 );
 assert(
   fontFiles.every((file) => path.dirname(file) === path.join(dist, 'fonts')),
-  'font files must be emitted under dist/fonts'
+  'font files must be emitted under dist/fonts',
 );
 assert(
   svgFiles.every((file) => path.dirname(file) === path.join(dist, 'images')),
-  'SVG files must be emitted under dist/images'
+  'SVG files must be emitted under dist/images',
 );
 
 process.stdout.write(
-  `[vite-build] passed: ${jsFiles.length} JS, ${cssFiles.length} CSS, ${sourceMaps.length} JS maps`
+  `[vite-build] passed: ${jsFiles.length} JS, ${cssFiles.length} CSS, ${sourceMaps.length} JS maps`,
 );

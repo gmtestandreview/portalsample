@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { MyToastRegion } from './Toast';
@@ -49,7 +50,6 @@ const meta = preview.meta<
     buttonLabel: 'Show toast',
   },
 });
-
 
 export const Example = meta.story({
   args: {
@@ -120,12 +120,7 @@ function MyToastRegion() {
       },
     },
   },
-  play: async ({
-    args,
-    canvas,
-    canvasElement,
-    userEvent,
-  }) => {
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
     const page = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(

@@ -42,7 +42,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness defaultValue='123'>
         <RhfNumberInput name='amount' label='Amount' />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox', { name: 'Amount' });
 
@@ -55,7 +55,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness defaultValue={null}>
         <RhfNumberInput name='amount' />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByRole('textbox')).toHaveValue('');
@@ -75,7 +75,7 @@ describe(RhfNumberInput, () => {
           disabled
           readonly
         />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox');
 
@@ -92,7 +92,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Mobile' format='#### ### ###' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '0412345678');
 
@@ -104,7 +104,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Phone' format='checkPhoneFormat' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '0291234567');
 
@@ -124,12 +124,12 @@ describe(RhfNumberInput, () => {
           allowNegative={false}
           valueIsNumericString
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('AUD$')).toHaveAttribute(
       'id',
-      'input-prepend-amount'
+      'input-prepend-amount',
     );
 
     await userEvent.type(screen.getByRole('textbox'), '1234.5');
@@ -142,7 +142,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Value' allowNegative={false} />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '-5');
 
@@ -153,7 +153,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Amount' format='#### ### ###' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '04');
     // The pattern input pads the unfilled slots with its default space mask.
@@ -174,16 +174,16 @@ describe(RhfNumberInput, () => {
           label='Amount'
           inlineHelp='Include area'
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Include area')).toHaveAttribute(
       'id',
-      'help-amount'
+      'help-amount',
     );
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
-      'help-amount'
+      'help-amount',
     );
   });
 
@@ -196,7 +196,7 @@ describe(RhfNumberInput, () => {
           label='Amount'
           inlineHelp='Include area'
         />
-      </Harness>
+      </Harness>,
     );
     const input = screen.getByRole('textbox');
 
@@ -208,13 +208,13 @@ describe(RhfNumberInput, () => {
 
     expect(screen.getByText('Enter an amount')).toHaveAttribute(
       'id',
-      'amount-validation-msg'
+      'amount-validation-msg',
     );
     expect(input).toHaveClass('is-invalid');
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'help-amount amount-validation-msg'
+      'help-amount amount-validation-msg',
     );
     expect(input).toHaveFocus();
   });
@@ -224,7 +224,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness form={form} resolver={failingResolver}>
         <RhfNumberInput name='amount' label='Amount' prepend='+61' />
-      </Harness>
+      </Harness>,
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
@@ -242,7 +242,7 @@ describe(RhfNumberInput, () => {
           label='Amount'
           supressFieldLevelMessages
         />
-      </Harness>
+      </Harness>,
     );
     await form.submit();
 
@@ -259,7 +259,7 @@ describe(RhfNumberInput, () => {
           format='#### ### ###'
           isSummary
         />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('Mobile')).toBeInTheDocument();
@@ -271,7 +271,7 @@ describe(RhfNumberInput, () => {
     render(
       <Harness defaultValue='1,234.50'>
         <RhfNumberInput name='amount' label='Value' prepend='AUD$' isSummary />
-      </Harness>
+      </Harness>,
     );
 
     expect(screen.getByText('1,234.50')).toBeInTheDocument();
@@ -286,7 +286,7 @@ describe(RhfNumberInput, () => {
           format='#### ### ###'
           valueIsNumericString
         />
-      </Harness>
+      </Harness>,
     );
     await userEvent.type(screen.getByRole('textbox'), '0412345678');
 

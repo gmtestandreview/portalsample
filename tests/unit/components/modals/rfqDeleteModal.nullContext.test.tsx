@@ -10,37 +10,37 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
         accounts: [],
         instance: { acquireTokenSilent: mocks.acquireTokenSilent },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 vi.mock(
-  'react-router',
+  import('react-router'),
   () =>
     ({
       useNavigate: () => mocks.navigate,
-    }) satisfies __ExactMockModule<__TestMockModule11>
+    }) satisfies __ExactMockModule<__TestMockModule11>,
 );
 
 vi.mock(
-  '@/components/modals/ModalContext',
+  import('@/components/modals/ModalContext'),
   () =>
     ({
       useModalState: () => null,
       useModalDispatch: () => ({
         setShowRFQDeleteModal: mocks.setShowRFQDeleteModal,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule27>
+    }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
 vi.mock(
-  '@/api/web-api-client',
+  import('@/api/web-api-client'),
   () =>
     ({
       ApplicationType: { QuoteRequest: 'QuoteRequest' },
@@ -50,34 +50,34 @@ vi.mock(
           deleteApplication: mocks.deleteApplication,
         };
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>
+    }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
 vi.mock(
-  '@/authentication/authConfig',
+  import('@/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-vi.mock('react-bootstrap', () => {
+vi.mock(import('react-bootstrap'), () => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );

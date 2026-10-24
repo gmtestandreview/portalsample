@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect, type Page } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from '../../support/fixtures';
@@ -24,9 +25,9 @@ Given(
 
     await expect(page).toHaveURL(/\/dashboard-ta$/);
     await expect(
-      page.getByRole('heading', { name: /manage pattern\/type approval/i })
+      page.getByRole('heading', { name: /manage pattern\/type approval/i }),
     ).toBeVisible();
-  }
+  },
 );
 
 When(
@@ -35,7 +36,7 @@ When(
     await page
       .getByRole('link', { name: 'New application', exact: true })
       .click();
-  }
+  },
 );
 
 Then(
@@ -45,9 +46,9 @@ Then(
     await expect(
       page.getByRole('heading', {
         name: 'Application for Pattern/type approval',
-      })
+      }),
     ).toBeVisible();
-  }
+  },
 );
 
 When('the applicant begins the application', async ({ page }) => {
@@ -70,18 +71,18 @@ Then(
     await expect
       .poll(async () =>
         (await page.getByRole('heading', { level: 1 }).allInnerTexts()).some(
-          (heading) => heading.toLowerCase().includes(title.toLowerCase())
-        )
+          (heading) => heading.toLowerCase().includes(title.toLowerCase()),
+        ),
       )
       .toBe(true);
-  }
+  },
 );
 
 When(
   'the applicant confirms the organisation and contact details',
   async ({ page }) => {
     await page.getByTestId('save-and-next-button').click();
-  }
+  },
 );
 
 When(
@@ -120,7 +121,7 @@ When(
     await page.getByLabel('Model (optional)').fill(model);
     await page.getByLabel('Summary of application').fill(summary);
     await page.getByTestId('save-and-next-button').click();
-  }
+  },
 );
 
 When(
@@ -136,7 +137,7 @@ When(
 
     await page.getByLabel('Category').selectOption(category);
     await page.getByTestId('save-and-next-button').click();
-  }
+  },
 );
 
 When(
@@ -150,19 +151,21 @@ When(
       .getByRole('dialog')
       .getByRole('button', { name: 'Yes, submit', exact: true })
       .click();
-  }
+  },
 );
 
 Then(
   'the type-approval submission success page is displayed',
   async ({ page }) => {
     await expect(page).toHaveURL(
-      /\/ta\/type-approval-success\/PA-2026-000002$/
+      /\/ta\/type-approval-success\/PA-2026-000002$/,
     );
     await expect(
-      page.getByRole('heading', { name: 'Your application has been submitted' })
+      page.getByRole('heading', {
+        name: 'Your application has been submitted',
+      }),
     ).toBeVisible();
-  }
+  },
 );
 
 When(
@@ -172,7 +175,7 @@ When(
       .getByRole('button', { name: 'Go to dashboard', exact: true })
       .click();
     await waitForAppReady(page);
-  }
+  },
 );
 
 Then(
@@ -182,9 +185,9 @@ Then(
     await expect(
       page
         .getByRole('tabpanel', { name: 'Applications' })
-        .locator(`#RefId-${referenceId}`)
+        .locator(`#RefId-${referenceId}`),
     ).toBeVisible();
-  }
+  },
 );
 
 Given(
@@ -195,9 +198,9 @@ Given(
     await expect(
       page
         .getByRole('tabpanel', { name: 'Applications' })
-        .locator(`#RefId-${referenceId}`)
+        .locator(`#RefId-${referenceId}`),
     ).toBeVisible();
-  }
+  },
 );
 
 When(
@@ -207,13 +210,13 @@ When(
       .getByRole('button', { name: 'View application details', exact: true })
       .first()
       .click();
-  }
+  },
 );
 
 Then('its application details are displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/ta\/PA-2026-000001\/manage$/);
   await expect(
-    page.getByRole('heading', { name: 'Record of application submitted' })
+    page.getByRole('heading', { name: 'Record of application submitted' }),
   ).toBeVisible();
 });
 
@@ -225,7 +228,7 @@ Then('document {string} is displayed', async ({ page }, fileName: string) => {
   await expect(
     page
       .getByRole('tabpanel', { name: 'Documents' })
-      .getByText(fileName, { exact: true })
+      .getByText(fileName, { exact: true }),
   ).toBeVisible();
 });
 
@@ -235,12 +238,12 @@ When(
     await page.getByRole('tab', { name: 'Messages', exact: true }).click();
     await page.getByRole('textbox', { name: 'Message NMI' }).fill(message);
     await page.getByRole('button', { name: 'Send', exact: true }).click();
-  }
+  },
 );
 
 Then('the message appears in the application thread', async ({ page }) => {
   await expect(page.locator('#application-messages')).toContainText(
-    'Please confirm that the certificate was received.'
+    'Please confirm that the certificate was received.',
   );
 });
 
@@ -248,5 +251,5 @@ When(
   'the applicant chooses the new-certificate application option',
   async ({ page }) => {
     await page.locator('label[for="q-appl-new-nmiapprcert"]').click();
-  }
+  },
 );

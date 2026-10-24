@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import CustomBreadcrumb from './index';
@@ -20,7 +21,6 @@ const meta = preview.meta({
   tags: ['ai-generated', 'needs-work'],
 });
 
-
 export const ThreeLevels = meta.story({
   args: {
     breadcrumbs: [
@@ -29,9 +29,7 @@ export const ThreeLevels = meta.story({
       { text: 'Request for quote' },
     ],
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const navigation = await canvas.findByRole('navigation', {
       name: /breadcrumb/i,
     });
@@ -46,9 +44,7 @@ export const TwoLevels = meta.story({
   args: {
     breadcrumbs: [{ to: '/', text: 'Home' }, { text: 'Help guide' }],
   },
-  play: async ({
-    canvas,
-  }) => {
+  play: async ({ canvas }) => {
     const navigation = await canvas.findByRole('navigation', {
       name: /breadcrumb/i,
     });

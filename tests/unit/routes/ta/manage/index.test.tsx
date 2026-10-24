@@ -3,11 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 import TAApplicationManage from '@/routes/ta/manage';
 
 vi.mock(
-  '@/routes/ta/manage/appDetails',
+  import('@/routes/ta/manage/appDetails'),
   () =>
     ({
       default: () => <div>Application details route</div>,
-    }) satisfies __ExactMockModule<__TestMockModule144>
+    }) satisfies __ExactMockModule<__TestMockModule144>,
 );
 
 describe(TAApplicationManage, () => {

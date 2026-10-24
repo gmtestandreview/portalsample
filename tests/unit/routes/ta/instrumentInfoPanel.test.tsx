@@ -20,14 +20,14 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => mocks.msalContext,
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -61,7 +61,7 @@ describe(InstrumentInfoPanel, () => {
     render(<InstrumentInfoPanel name='instrument' />);
 
     expect(
-      screen.getByText('There are no References for this instrument type.')
+      screen.getByText('There are no References for this instrument type.'),
     ).toHaveClass('visually-hidden');
     expect(mocks.acquireTokenSilent).not.toHaveBeenCalled();
     expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
@@ -72,30 +72,30 @@ describe(InstrumentInfoPanel, () => {
       <InstrumentInfoPanel
         name='instrument'
         selectedInstrumentCategoryId={categoryId}
-      />
+      />,
     );
 
     expect(screen.getByRole('alert')).toHaveAttribute('id', 'instrument-panel');
     expect(
-      screen.getByText('References for this instrument type')
+      screen.getByText('References for this instrument type'),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/select an instrument category and type/i)
+      screen.getByText(/select an instrument category and type/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', {
         name: /download credit check application form/i,
-      })
+      }),
     ).toHaveAttribute(
       'href',
-      'https://www.industry.gov.au/sites/default/files/2025-07/NMI-credit-application-form.pdf'
+      'https://www.industry.gov.au/sites/default/files/2025-07/NMI-credit-application-form.pdf',
     );
     expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
   });
 
   it('loads and renders lookup resource links for a valid category and type', async () => {
     let resolveInfoPanelContent: (
-      value: Array<{ requirements: string; requirementsLink: string }>
+      value: Array<{ requirements: string; requirementsLink: string }>,
     ) => void;
     const infoPanelContent = new Promise<
       Array<{ requirements: string; requirementsLink: string }>
@@ -110,11 +110,11 @@ describe(InstrumentInfoPanel, () => {
         selectedInstrumentCategoryId={categoryId}
         selectedInstrumentTypeId={typeId}
         isNewCustomer={false}
-      />
+      />,
     );
 
     await expect(
-      screen.findByText('Loading data...')
+      screen.findByText('Loading data...'),
     ).resolves.toBeInTheDocument();
 
     await act(async () => {
@@ -134,19 +134,19 @@ describe(InstrumentInfoPanel, () => {
 
     expect(requirementsLink).toHaveAttribute(
       'href',
-      'https://example.test/pattern-approval-requirements'
+      'https://example.test/pattern-approval-requirements',
     );
     expect(
-      screen.queryByText(/select an instrument category and type/i)
+      screen.queryByText(/select an instrument category and type/i),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('link', {
         name: /download credit check application form/i,
-      })
+      }),
     ).not.toBeInTheDocument();
 
     await waitFor(() =>
-      expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token')
+      expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token'),
     );
 
     expect(mocks.getInfoPanelContent).toHaveBeenCalledWith(typeId, categoryId);
@@ -158,12 +158,12 @@ describe(InstrumentInfoPanel, () => {
         name='instrument'
         selectedInstrumentCategoryId={emptyGuid}
         selectedInstrumentTypeId={typeId}
-      />
+      />,
     );
 
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(
-      screen.getByText(/select an instrument category and type/i)
+      screen.getByText(/select an instrument category and type/i),
     ).toBeInTheDocument();
     expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
 
@@ -172,12 +172,12 @@ describe(InstrumentInfoPanel, () => {
         name='instrument'
         selectedInstrumentCategoryId='not-a-guid'
         selectedInstrumentTypeId='also-not-a-guid'
-      />
+      />,
     );
 
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(
-      screen.getByText(/select an instrument category and type/i)
+      screen.getByText(/select an instrument category and type/i),
     ).toBeInTheDocument();
     expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
   });

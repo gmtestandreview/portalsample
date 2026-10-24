@@ -128,7 +128,7 @@ const fetchRequestsByTab = async ({
         filterSearchText,
         currentPage,
         pageSize,
-        signal
+        signal,
       );
     case DashboardTab.Requests:
       return client.getPatternApprovalApplications(
@@ -139,7 +139,7 @@ const fetchRequestsByTab = async ({
         filterSearchText,
         currentPage,
         pageSize,
-        signal
+        signal,
       );
     default:
       throw new Error(`Unsupported tab: ${tab}`);
@@ -148,7 +148,7 @@ const fetchRequestsByTab = async ({
 
 const resolveFilterParams = (
   filterYearType: string | undefined,
-  filterStatusType: string | undefined
+  filterStatusType: string | undefined,
 ) => ({
   actualYear:
     filterYearType === defaultFilter.filterYearType
@@ -227,15 +227,15 @@ const DashboardTA = () => {
         .catch((error) => {
           AppLogger.error(
             'T & C Dashboard failed to save user profile.',
-            error as Error
+            error as Error,
           );
         });
     },
-    [accountDispatch]
+    [accountDispatch],
   );
 
   const saveUserProfileDebounced = (
-    userProfile: PatternApprovalDashboardDto
+    userProfile: PatternApprovalDashboardDto,
   ) => {
     if (tabSaveTimeoutRef.current !== null) {
       window.clearTimeout(tabSaveTimeoutRef.current);
@@ -296,7 +296,7 @@ const DashboardTA = () => {
       }
       clearDashboardNotification();
     },
-    []
+    [],
   );
 
   // Set values from the userprofile
@@ -371,7 +371,7 @@ const DashboardTA = () => {
     const userProfileLoaded = accountDetails?.userProfile !== undefined;
     const patternApprovalIsActive = services.some(
       (service: ServicesOffered) =>
-        service.service === ServiceType.PatternApproval && service.isActive
+        service.service === ServiceType.PatternApproval && service.isActive,
     );
     if (userProfileLoaded && !patternApprovalIsActive) {
       void navigate('/services-we-offer');
@@ -392,23 +392,23 @@ const DashboardTA = () => {
       try {
         AppLogger.verbose(
           'Dashboard.loadDataForDisplay',
-          accountContext.details
+          accountContext.details,
         );
         const client = new PatternApprovalClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
           // List and check all Actionable modals across portal app
           !!accountDetails?.showBranchSelector ||
-            !accountDetails?.userAcceptedTermsOfUse
+            !accountDetails?.userAcceptedTermsOfUse,
         );
         setIsDataLoading(true);
         const { actualYear, actualStatus } = resolveFilterParams(
           initialFilters.filterYearType,
-          initialFilters.filterStatusType
+          initialFilters.filterStatusType,
         );
         const requestsResponse = await fetchRequestsByTab({
           tab: initialFilters.filterActiveTab as DashboardTab,
@@ -502,7 +502,7 @@ const DashboardTA = () => {
 
   const showRequestList = (
     trequests: PatternApprovalDashboardDetailsDto[],
-    userAcceptedTermsOfUse?: boolean
+    userAcceptedTermsOfUse?: boolean,
   ) => (
     <>
       {requests !== undefined &&
@@ -550,7 +550,7 @@ const DashboardTA = () => {
             <div className='dashboard-items mb-5'>
               {showRequestList(
                 requests,
-                accountDetails?.userAcceptedTermsOfUse
+                accountDetails?.userAcceptedTermsOfUse,
               )}
             </div>
             <CustomPagination
@@ -661,7 +661,7 @@ const DashboardTA = () => {
     setDashboardNotification(message);
     accountDispatch?.setTargetOrganisation(
       accountContext?.details?.abn ?? '',
-      accountContext?.details?.organisation ?? ''
+      accountContext?.details?.organisation ?? '',
     );
     setErrorStatus((prevState) => ({
       ...prevState,

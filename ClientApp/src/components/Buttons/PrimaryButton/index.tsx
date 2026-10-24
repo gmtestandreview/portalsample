@@ -36,7 +36,7 @@ const PrimaryButton = ({
       {...omitUndefined({ isDisabled: disabled })}
       className={getButtonClassName(
         mode === 'dark' ? 'primary-dark' : 'primary',
-        className
+        className,
       )}
     />
   );

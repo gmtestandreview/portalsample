@@ -46,7 +46,7 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
       }
       const client = new DashboardClient();
       const tokenResult = await instance.acquireTokenSilent(
-        silentRequestFor(accounts[0])
+        silentRequestFor(accounts[0]),
       );
       client.setAuthToken(tokenResult.accessToken);
       const fileResponse = await client.getQuoteReportPDFByID(reportId, true);
@@ -83,12 +83,12 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
         setPdfSizeLoaded(false);
         const client = new DashboardClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         const fileResponse = await client.getQuoteReportPDFByID(
           reportId,
-          false
+          false,
         );
         if (fileResponse?.fileSizeBytes) {
           const spnFileSize = getFileSize(fileResponse.fileSizeBytes);

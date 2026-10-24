@@ -109,13 +109,13 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
   }
 
   function handleClose(
-    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ): void {
     setShow(false);
   }
 
   function handleResetFilters(
-    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    _event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ): void {
     setCurrentPage(1);
     const profile = {
@@ -137,7 +137,7 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
   function countChangedFilters(
     filters: Partial<{
       [K in keyof typeof defaultFilter]: (typeof defaultFilter)[K] | undefined;
-    }>
+    }>,
   ): number {
     let changedCount = 0;
     if (

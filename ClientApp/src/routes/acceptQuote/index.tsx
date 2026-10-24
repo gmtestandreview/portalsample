@@ -58,7 +58,7 @@ const AcceptQuote = () => {
         const client = new AcceptQuoteClient();
         const quoteClient = new QuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         client.setAuthToken(tokenResult.accessToken);
         quoteClient.setAuthToken(tokenResult.accessToken);
@@ -77,7 +77,7 @@ const AcceptQuote = () => {
           AppLogger.error(
             'Failed to load quote request details',
             error as Error,
-            { Id: id }
+            { Id: id },
           );
           void navigate('/not-found');
         }
@@ -102,7 +102,7 @@ const AcceptQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <ReportRecipient name='' id={id} />
@@ -114,7 +114,7 @@ const AcceptQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <DeliveryAndReturn name='' id={id} />
@@ -126,7 +126,7 @@ const AcceptQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <PaymentDetails name='' id={id} />
@@ -138,7 +138,7 @@ const AcceptQuote = () => {
           instance,
           accountDetails,
           statuses,
-          bannerTitle
+          bannerTitle,
         )}
       >
         <SummaryAndAccept name='' cRMQuoteRequestId={crmQuoteRequestId} />

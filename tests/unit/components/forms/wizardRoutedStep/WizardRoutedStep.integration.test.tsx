@@ -20,33 +20,33 @@ import { defined } from '../../../helpers/defined';
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // WizardStep wraps ErrorBoundary (needs AppInsights) + GoogleAnalytics.
 // Both are irrelevant to these tests; stub them out.
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>
+    }) satisfies __ExactMockModule<__TestMockModule24>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>
+    }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
@@ -121,7 +121,7 @@ function makeRouter(
   propsOverride: Partial<WizardRoutedStepProps<FormikValues>>,
   extraRoutes: Array<{ path: string; element: React.ReactNode }> = [],
   accountState = mockStateValue,
-  accountDispatch: typeof mockDispatch | null = mockDispatch
+  accountDispatch: typeof mockDispatch | null = mockDispatch,
 ) {
   const defaultStatuses: FormStepStatusDto[] = [
     { status: FormStepStatus.NotStarted },
@@ -159,7 +159,7 @@ function makeRouter(
       { path: '/done', element: <div>Done Page</div> },
       ...extraRoutes,
     ],
-    { initialEntries: ['/step-1'] }
+    { initialEntries: ['/step-1'] },
   );
 }
 
@@ -183,7 +183,7 @@ describe('wizardRoutedStep — error navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Not Found Page')).toBeInTheDocument()
+      expect(screen.getByText('Not Found Page')).toBeInTheDocument(),
     );
   });
 
@@ -196,7 +196,7 @@ describe('wizardRoutedStep — error navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Server Error Page')).toBeInTheDocument()
+      expect(screen.getByText('Server Error Page')).toBeInTheDocument(),
     );
   });
 
@@ -208,12 +208,12 @@ describe('wizardRoutedStep — error navigation', () => {
           .mockRejectedValue({ status: 404, title: 'Not Found' }),
         getRedirectionLocationOnError: () => '/custom-gone',
       },
-      [{ path: '/custom-gone', element: <div>Custom Gone Page</div> }]
+      [{ path: '/custom-gone', element: <div>Custom Gone Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Custom Gone Page')).toBeInTheDocument()
+      expect(screen.getByText('Custom Gone Page')).toBeInTheDocument(),
     );
   });
 
@@ -260,12 +260,12 @@ describe('wizardRoutedStep — error navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
     );
 
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith(
       '12345678901',
-      'Test Org'
+      'Test Org',
     );
   });
 
@@ -279,12 +279,12 @@ describe('wizardRoutedStep — error navigation', () => {
       },
       [],
       mockStateValue,
-      null
+      null,
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
     );
 
     expect(mockDispatch.setTargetOrganisation).not.toHaveBeenCalled();
@@ -307,12 +307,12 @@ describe('wizardRoutedStep — error navigation', () => {
         }),
       },
       [],
-      accountWithoutOrganisation as unknown as typeof mockStateValue
+      accountWithoutOrganisation as unknown as typeof mockStateValue,
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
+      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
     );
 
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith('', '');
@@ -361,12 +361,12 @@ describe('wizardRoutedStep — error navigation', () => {
         },
         { path: '/step-1', element: <div>First Step Page</div> },
       ],
-      { initialEntries: ['/step-2'] }
+      { initialEntries: ['/step-2'] },
     );
 
     render(<RouterProvider router={router} />);
     await waitFor(() =>
-      expect(screen.getByText('First Step Page')).toBeInTheDocument()
+      expect(screen.getByText('First Step Page')).toBeInTheDocument(),
     );
   });
 });
@@ -402,7 +402,7 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     expect(stepStatuses[0]).not.toBe(originalDto);
     // And it has the updated status
     expect(defined(stepStatuses[0], 'first step status').status).toBe(
-      FormStepStatus.Completed
+      FormStepStatus.Completed,
     );
   });
 
@@ -424,7 +424,12 @@ describe('wizardRoutedStep — prop mutation fix', () => {
         ],
         onSaveAndNext,
       },
-      [{ path: '/alternate/step-2', element: <div>Alternate Second Step</div> }]
+      [
+        {
+          path: '/alternate/step-2',
+          element: <div>Alternate Second Step</div>,
+        },
+      ],
     );
     render(<RouterProvider router={router} />);
 
@@ -432,13 +437,13 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     await user.click(screen.getByTestId('save-and-next-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('Alternate Second Step')).toBeInTheDocument()
+      expect(screen.getByText('Alternate Second Step')).toBeInTheDocument(),
     );
 
     expect(onSaveAndNext).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -453,23 +458,23 @@ describe('wizardRoutedStep — prop mutation fix', () => {
         canSaveDraft: true,
         locationAfterExit: '/after-exit',
       },
-      [{ path: '/after-exit', element: <div>After Exit Page</div> }]
+      [{ path: '/after-exit', element: <div>After Exit Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument()
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('save-and-exit-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('After Exit Page')).toBeInTheDocument()
+      expect(screen.getByText('After Exit Page')).toBeInTheDocument(),
     );
 
     expect(onSaveAndExit).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -479,16 +484,16 @@ describe('wizardRoutedStep — prop mutation fix', () => {
       {
         canSaveDraft: true,
       },
-      [{ path: '/', element: <div>Root Page</div> }]
+      [{ path: '/', element: <div>Root Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument()
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('save-and-exit-button'));
     await waitFor(() =>
-      expect(screen.getByText('Root Page')).toBeInTheDocument()
+      expect(screen.getByText('Root Page')).toBeInTheDocument(),
     );
   });
 
@@ -506,18 +511,18 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument()
+      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('save-and-next-button'));
 
     await expect(
-      screen.findByText('Server error')
+      screen.findByText('Server error'),
     ).resolves.toBeInTheDocument();
 
     await user.click(screen.getByTestId('save-and-next-button'));
 
     await expect(
-      screen.findByText(/form contains invalid characters/i)
+      screen.findByText(/form contains invalid characters/i),
     ).resolves.toBeInTheDocument();
   });
 
@@ -533,12 +538,12 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument()
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('save-and-exit-button'));
 
     await expect(
-      screen.findByText('Server error')
+      screen.findByText('Server error'),
     ).resolves.toBeInTheDocument();
     expect(screen.getByTestId('form')).toBeInTheDocument();
   });
@@ -549,7 +554,7 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument()
+      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('save-and-next-button'));
 
@@ -565,12 +570,12 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument()
+      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('save-and-exit-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('Root Page')).toBeInTheDocument()
+      expect(screen.getByText('Root Page')).toBeInTheDocument(),
     );
   });
 
@@ -588,17 +593,17 @@ describe('wizardRoutedStep — prop mutation fix', () => {
           locationOnCancel: '/cancelled',
         },
       },
-      [{ path: '/cancelled', element: <div>Cancelled Page</div> }]
+      [{ path: '/cancelled', element: <div>Cancelled Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('cancel-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('Cancelled Page')).toBeInTheDocument()
+      expect(screen.getByText('Cancelled Page')).toBeInTheDocument(),
     );
 
     expect(onDiscard).toHaveBeenCalledWith();
@@ -616,22 +621,22 @@ describe('wizardRoutedStep — prop mutation fix', () => {
           locationOnDiscard: '/discarded',
         },
       },
-      [{ path: '/discarded', element: <div>Discarded Page</div> }]
+      [{ path: '/discarded', element: <div>Discarded Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
     );
 
     expect(
-      screen.queryByTestId('save-and-next-button')
+      screen.queryByTestId('save-and-next-button'),
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByTestId('cancel-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('Discarded Page')).toBeInTheDocument()
+      expect(screen.getByText('Discarded Page')).toBeInTheDocument(),
     );
   });
 
@@ -644,17 +649,17 @@ describe('wizardRoutedStep — prop mutation fix', () => {
           cancelButtonTitle: 'Leave wizard',
         },
       },
-      [{ path: '/', element: <div>Root Cancel Page</div> }]
+      [{ path: '/', element: <div>Root Cancel Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('cancel-button'));
 
     await waitFor(() =>
-      expect(screen.getByText('Root Cancel Page')).toBeInTheDocument()
+      expect(screen.getByText('Root Cancel Page')).toBeInTheDocument(),
     );
   });
 
@@ -670,7 +675,7 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
+      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
     );
     await user.click(screen.getByTestId('cancel-button'));
 

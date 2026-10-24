@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -57,26 +57,26 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/storage/notification',
+  import('@/storage/notification'),
   () =>
     ({
       getBranchModalNotification: () => mocks.getBranchModalNotification(),
       clearBranchModalNotification: () => mocks.clearBranchModalNotification(),
-    }) satisfies __ExactMockModule<__TestMockModule46>
+    }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: {
         error: (...args: any[]) => mocks.appLoggerError(...args),
         verbose: vi.fn(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -85,13 +85,13 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/components/Alert/NotificationMessage',
+  import('@/components/Alert/NotificationMessage'),
   () =>
     ({
       default: ({ id }: { id: string }) => (
         <div data-testid={id}>notification message</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule48>
+    }) satisfies __ExactMockModule<__TestMockModule48>,
 );
 
 // ─── test data ────────────────────────────────────────────────────────────────
@@ -240,7 +240,7 @@ const renderModal = (opts: RenderOptions = {}) => {
           </AccountDispatchCtx.Provider>
         </AccountStateCtx.Provider>
       </MsalContext.Provider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -293,7 +293,7 @@ describe(BranchSelectorModal, () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/No branch\/locations available/i)
+        screen.getByText(/No branch\/locations available/i),
       ).toBeInTheDocument();
     });
   });
@@ -305,13 +305,13 @@ describe(BranchSelectorModal, () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Error trying to save default branch\/location/i)
+        screen.getByText(/Error trying to save default branch\/location/i),
       ).toBeInTheDocument();
     });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load branches',
-      expect.any(Error)
+      expect.any(Error),
     );
   });
 
@@ -320,7 +320,7 @@ describe(BranchSelectorModal, () => {
     getOrganisationsByABN.mockReturnValueOnce(
       new Promise((resolve) => {
         resolveLoad = resolve;
-      })
+      }),
     );
 
     const { unmount } = renderModal();
@@ -339,7 +339,7 @@ describe(BranchSelectorModal, () => {
     getOrganisationsByABN.mockReturnValueOnce(
       new Promise((_, reject) => {
         rejectLoad = reject;
-      })
+      }),
     );
 
     const { unmount } = renderModal();
@@ -371,7 +371,7 @@ describe(BranchSelectorModal, () => {
 
     expect(screen.getByText('Change branch/location')).toBeInTheDocument();
     expect(
-      screen.getByText(/Select default branch or location name/i)
+      screen.getByText(/Select default branch or location name/i),
     ).toBeInTheDocument();
   });
 
@@ -419,7 +419,7 @@ describe(BranchSelectorModal, () => {
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
 
     expect(
-      screen.queryByRole('button', { name: /cancel/i })
+      screen.queryByRole('button', { name: /cancel/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -474,7 +474,7 @@ describe(BranchSelectorModal, () => {
 
     await waitFor(() => {
       expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
-        expect.objectContaining({ defaultOrganisationId: 1 })
+        expect.objectContaining({ defaultOrganisationId: 1 }),
       );
     });
 
@@ -484,7 +484,7 @@ describe(BranchSelectorModal, () => {
     expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
       'ACME Corporation',
       'ACME Corporation',
-      'Sydney Office'
+      'Sydney Office',
     );
   });
 
@@ -509,7 +509,7 @@ describe(BranchSelectorModal, () => {
 
     await waitFor(() => {
       expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
-        expect.objectContaining({ defaultOrganisationId: 1, rfqId: 'RFQ-123' })
+        expect.objectContaining({ defaultOrganisationId: 1, rfqId: 'RFQ-123' }),
       );
     });
 
@@ -535,13 +535,13 @@ describe(BranchSelectorModal, () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Error trying to save default branch\/location/i)
+        screen.getByText(/Error trying to save default branch\/location/i),
       ).toBeInTheDocument();
     });
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to select organisation',
-      expect.any(Error)
+      expect.any(Error),
     );
   });
 
@@ -577,7 +577,7 @@ describe(BranchSelectorModal, () => {
 
     expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith(
       undefined,
-      undefined
+      undefined,
     );
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
   });
@@ -595,7 +595,7 @@ describe(BranchSelectorModal, () => {
 
     expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(
       'ACME Corporation',
-      '00000000001'
+      '00000000001',
     );
   });
 
@@ -636,7 +636,7 @@ describe(BranchSelectorModal, () => {
       expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
         'No-Name Corp',
         '',
-        ''
+        '',
       );
     });
   });

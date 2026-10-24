@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
@@ -71,7 +72,6 @@ const meta = preview.meta({
   },
 });
 
-
 export const DashboardFilters = meta.story({
   args: {
     initialFilters,
@@ -80,9 +80,7 @@ export const DashboardFilters = meta.story({
   },
   render: () => <SearchFilterStory />,
   // SB-020: search input is accessible and submits correctly
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     // Search box renders with a text input
@@ -112,9 +110,7 @@ export const WithSearchTerm = meta.story({
     setCurrentPage: () => undefined,
   },
   render: () => <SearchFilterWithSearchTermStory />,
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // Pre-populated value appears in the search box
     const searchInput = canvas.getByRole('textbox');

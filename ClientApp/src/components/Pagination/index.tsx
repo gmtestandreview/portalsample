@@ -43,7 +43,7 @@ const CustomPagination = (props: Readonly<CustomPaginationProps>) => {
           aria-label={`Page ${page}`}
         >
           {page}
-        </Pagination.Item>
+        </Pagination.Item>,
       );
     }
     return { items, startPage, endPage };

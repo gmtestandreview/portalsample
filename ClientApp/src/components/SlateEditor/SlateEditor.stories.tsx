@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { within, expect, fn, userEvent } from 'storybook/test';
@@ -45,11 +46,8 @@ const meta = preview.meta({
   },
 });
 
-
 export const Default = meta.story({
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     // The Slate Editable surface is exposed as a textbox. Slate renders a contenteditable
@@ -80,9 +78,7 @@ export const Empty = meta.story({
   args: {
     value: [{ type: 'paragraph', children: [{ text: '' }] }],
   },
-  play: async ({
-    canvasElement,
-  }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText(/0\s*\/\s*500/)).toBeVisible();

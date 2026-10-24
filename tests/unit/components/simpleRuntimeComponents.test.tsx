@@ -23,19 +23,19 @@ import { useAccountState } from '@/authentication/hooks';
 import { NotificationSeverity } from '@/storage/types';
 
 vi.mock(
-  '@/components/get-started/get-started',
+  import('@/components/get-started/get-started'),
   () =>
     ({
       default: () => <main>Get started content</main>,
-    }) satisfies __ExactMockModule<__TestMockModule54>
+    }) satisfies __ExactMockModule<__TestMockModule54>,
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountState: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule26>
+    }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
 const renderWithRouter = (ui: React.ReactNode) =>
@@ -67,23 +67,25 @@ describe('simple reusable runtime components', () => {
         >
           Calibration request details
         </CustomAccordionBody>
-      </CustomAccordion>
+      </CustomAccordion>,
     );
 
     expect(container.querySelector('#quote-accordion')).toHaveClass(
-      'quote-wrapper'
+      'quote-wrapper',
     );
     expect(
       screen.getByRole('button', {
         name: /Quote details\s*Required\s*Reference ABC-123/i,
-      })
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText('Required').parentElement).toHaveClass(
-      'text-muted'
+      'text-muted',
     );
     expect(screen.getByText('Reference ABC-123')).toHaveClass('reference-line');
     expect(
-      screen.getByText('Calibration request details').closest('.accordion-body')
+      screen
+        .getByText('Calibration request details')
+        .closest('.accordion-body'),
     ).toHaveClass('quote-body');
   });
 
@@ -93,15 +95,15 @@ describe('simple reusable runtime components', () => {
         <CustomAccordionBody eventKey='0' name='Simple section'>
           Simple content
         </CustomAccordionBody>
-      </CustomAccordion>
+      </CustomAccordion>,
     );
 
     expect(container.querySelector('#simple-accordion')).toHaveAttribute(
       'class',
-      ''
+      '',
     );
     expect(
-      screen.getByRole('button', { name: 'Simple section' })
+      screen.getByRole('button', { name: 'Simple section' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Simple content')).toBeInTheDocument();
   });
@@ -113,7 +115,7 @@ describe('simple reusable runtime components', () => {
     render(
       <AlertWarning canClose onClose={onClose}>
         Review this warning
-      </AlertWarning>
+      </AlertWarning>,
     );
     await user.click(screen.getByRole('button', { name: 'Close alert' }));
 
@@ -146,7 +148,7 @@ describe('simple reusable runtime components', () => {
       expect(alert).toHaveTextContent(message);
       expect(alert).toHaveAttribute('aria-live', ariaLive);
       expect(alert).toHaveClass(className);
-    }
+    },
   );
 
   it.each([
@@ -187,7 +189,7 @@ describe('simple reusable runtime components', () => {
           onClose={onClose}
           role='status'
           ariaLive='assertive'
-        />
+        />,
       );
 
       const notification = screen.getByRole('status');
@@ -196,7 +198,7 @@ describe('simple reusable runtime components', () => {
       expect(notification).toHaveTextContent(message);
       expect(container.querySelector(`.${iconClassName}`)).toBeInTheDocument();
       expect(notification).toHaveAttribute('aria-live', 'assertive');
-    }
+    },
   );
 
   it('uses a supplied notification id instead of the default id', () => {
@@ -205,7 +207,7 @@ describe('simple reusable runtime components', () => {
         id='custom-notification'
         severity={NotificationSeverity.Success}
         message='Saved with a custom id'
-      />
+      />,
     );
 
     const notification = container.querySelector('#custom-notification');
@@ -225,7 +227,7 @@ describe('simple reusable runtime components', () => {
 
   it('renders full-page and partial block UI spinners with different announcement priority', () => {
     const { rerender } = render(
-      <BlockUISpinner>Loading the page</BlockUISpinner>
+      <BlockUISpinner>Loading the page</BlockUISpinner>,
     );
 
     expect(screen.getByRole('alert')).toHaveAttribute('aria-live', 'assertive');
@@ -246,7 +248,7 @@ describe('simple reusable runtime components', () => {
           { text: 'Dashboard', to: '/dashboard' },
           { text: 'Request details' },
         ]}
-      />
+      />,
     );
 
     const navigation = screen.getByRole('navigation', {
@@ -257,11 +259,11 @@ describe('simple reusable runtime components', () => {
     expect(navigation.querySelector('.custom-breadcrumb')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByText('Request details')).toHaveAttribute(
       'aria-current',
-      'page'
+      'page',
     );
   });
 
@@ -275,18 +277,18 @@ describe('simple reusable runtime components', () => {
     expect(() =>
       Breadcrumb({
         breadcrumbs: [{ text: 'Missing link' }, { text: 'Current page' }],
-      })
+      }),
     ).toThrow('Breadcrumb item "Missing link" must include "to"');
   });
 
   it('renders a dashboard link with supplied wrapper and link classes', () => {
     const { container } = renderWithRouter(
-      <BackToDashboardButton containerClassName='mt-4' className='wide-link' />
+      <BackToDashboardButton containerClassName='mt-4' className='wide-link' />,
     );
 
     expect(container.firstElementChild).toHaveClass('mt-4');
     expect(
-      screen.getByRole('link', { name: /Back to dashboard/i })
+      screen.getByRole('link', { name: /Back to dashboard/i }),
     ).toHaveAttribute('href', '/dashboard');
     expect(screen.getByTestId('back-button')).toHaveClass('wide-link');
   });
@@ -302,7 +304,7 @@ describe('simple reusable runtime components', () => {
       <>
         <EditButton link='/profile/edit' />
         <LocationDisplay />
-      </>
+      </>,
     );
     await user.click(screen.getByRole('button', { name: 'Edit this section' }));
 
@@ -320,7 +322,7 @@ describe('simple reusable runtime components', () => {
       <>
         <EditButton />
         <LocationDisplay />
-      </>
+      </>,
     );
     await user.click(screen.getByRole('button', { name: 'Edit this section' }));
 
@@ -338,7 +340,7 @@ describe('simple reusable runtime components', () => {
         onClick={onClick}
       >
         NMI website
-      </LinkButton>
+      </LinkButton>,
     );
 
     const externalButtonLink = screen.getByRole('link', {
@@ -347,7 +349,7 @@ describe('simple reusable runtime components', () => {
 
     expect(externalButtonLink).toHaveAttribute(
       'href',
-      'https://measurement.gov.au'
+      'https://measurement.gov.au',
     );
     expect(externalButtonLink).toHaveAttribute('target', '_blank');
     expect(externalButtonLink).toHaveClass('btn-nmi-primary');
@@ -367,7 +369,7 @@ describe('simple reusable runtime components', () => {
         >
           Dashboard
         </LinkButton>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const internalLink = screen.getByRole('link', { name: 'Dashboard' });
@@ -381,11 +383,11 @@ describe('simple reusable runtime components', () => {
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/help'>
         Help
-      </LinkButton>
+      </LinkButton>,
     );
 
     expect(screen.getByRole('link', { name: 'Help' })).toHaveClass(
-      'btn-nmi-primary'
+      'btn-nmi-primary',
     );
   });
 
@@ -393,26 +395,26 @@ describe('simple reusable runtime components', () => {
     const { rerender } = render(
       <InTextLink href='https://example.gov.au' target='_blank'>
         External resource
-      </InTextLink>
+      </InTextLink>,
     );
 
     expect(
       screen.getByRole('link', {
         name: /External resource\s*Opens in a new tab/i,
-      })
+      }),
     ).toHaveAttribute('rel', 'nofollow noreferrer noopener');
 
     rerender(<InTextLink href='/help'>Internal resource</InTextLink>);
 
     expect(
-      screen.getByRole('link', { name: 'Internal resource' })
+      screen.getByRole('link', { name: 'Internal resource' }),
     ).not.toHaveAttribute('rel');
     expect(screen.queryByText('Opens in a new tab')).not.toBeInTheDocument();
   });
 
   it('shows pagination ranges and hides the summary when there are no results', () => {
     const { rerender } = render(
-      <PaginationHeader totalCount={25} pageSize={10} currentPage={3} />
+      <PaginationHeader totalCount={25} pageSize={10} currentPage={3} />,
     );
 
     expect(screen.getByText('21 - 25')).toBeInTheDocument();
@@ -441,19 +443,19 @@ describe('simple reusable runtime components', () => {
 
     expect(screen.getByTestId('welcome-banner')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: /Welcome Alex/i })
+      screen.getByRole('heading', { name: /Welcome Alex/i }),
     ).toBeInTheDocument();
   });
 
   it('renders the welcome banner without a name when account details are absent', () => {
     vi.mocked(useAccountState).mockReturnValue(
-      {} as ReturnType<typeof useAccountState>
+      {} as ReturnType<typeof useAccountState>,
     );
 
     render(<Welcome />);
 
     expect(
-      screen.getByRole('heading', { name: 'Welcome' })
+      screen.getByRole('heading', { name: 'Welcome' }),
     ).toBeInTheDocument();
   });
 });

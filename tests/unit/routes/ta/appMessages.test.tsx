@@ -35,14 +35,14 @@ const editor = vi.hoisted(() => ({
   lastKey: null as string | null,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -50,34 +50,34 @@ vi.mock(
 
     clients.patternApproval = createClientMockFor(
       'getAppMessages',
-      'addAppMessage'
+      'addAppMessage',
     );
 
     // FilterMessages must stay the real enum - the view select compares against its members.
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
     }) satisfies __ExactMockModule<__TestMockModule4>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>
+    }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>
+    }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions'),
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
@@ -85,11 +85,11 @@ vi.mock(
       ...original,
       sanitiseHtml: mocks.sanitiseHtml,
     } satisfies __ExactMockModule<__TestMockModule9>;
-  }
+  },
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/SlateEditor/SlateEditor',
+  import('../../../../ClientApp/src/components/SlateEditor/SlateEditor'),
   () =>
     ({
       default: (props: typeof editor.props) => {
@@ -104,11 +104,11 @@ vi.mock(
         );
       },
       serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
-    }) satisfies __ExactMockModule<__TestMockModule142>
+    }) satisfies __ExactMockModule<__TestMockModule142>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Pagination',
+  import('../../../../ClientApp/src/components/Pagination'),
   () =>
     ({
       default: ({
@@ -130,11 +130,11 @@ vi.mock(
           next page
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule98>
+    }) satisfies __ExactMockModule<__TestMockModule98>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/PaginationHeader',
+  import('../../../../ClientApp/src/components/PaginationHeader'),
   () =>
     ({
       default: ({
@@ -150,7 +150,7 @@ vi.mock(
           data-total-count={totalCount}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule99>
+    }) satisfies __ExactMockModule<__TestMockModule99>,
 );
 
 const messageItem = (overrides: Record<string, unknown> = {}) => ({
@@ -167,7 +167,7 @@ const messageItem = (overrides: Record<string, unknown> = {}) => ({
 
 const messagesResponse = (
   items: unknown[],
-  details: Record<string, unknown> = {}
+  details: Record<string, unknown> = {},
 ) => ({
   requestForPatternApprovalMessageDetails: {
     currentPage: 1,
@@ -180,7 +180,7 @@ const messagesResponse = (
 
 const renderRoute = async (
   path = '/ta/manage/APP-1/messages',
-  routePath = '/ta/manage/:id/messages'
+  routePath = '/ta/manage/:id/messages',
 ) => {
   const ApplicationMessages = (
     await import('../../../../ClientApp/src/routes/ta/manage/appMessages')
@@ -218,8 +218,8 @@ describe('application messages', { timeout: 15_000 }, () => {
       .mockReset()
       .mockImplementation((_id: string, _pageSize: number, page: number) =>
         Promise.resolve(
-          messagesResponse([messageItem()], { currentPage: page })
-        )
+          messagesResponse([messageItem()], { currentPage: page }),
+        ),
       );
     clients.patternApproval.methods.addAppMessage
       .mockReset()
@@ -231,40 +231,40 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument()
+        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
       );
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
-        DEFAULT_ACCESS_TOKEN
+        DEFAULT_ACCESS_TOKEN,
       );
       expect(
-        clients.patternApproval.methods.getAppMessages
+        clients.patternApproval.methods.getAppMessages,
       ).toHaveBeenCalledWith(
         'APP-1',
         10,
         1,
         FilterMessages.ShowAllMessages,
-        'APP-1'
+        'APP-1',
       );
       expect(screen.getByTestId('pagination')).toHaveAttribute(
         'data-total',
-        '3'
+        '3',
       );
       expect(screen.getByTestId('pagination-header')).toHaveAttribute(
         'data-total-count',
-        '25'
+        '25',
       );
     });
 
     it('says so when the application has no messages', async () => {
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
-        messagesResponse([])
+        messagesResponse([]),
       );
 
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('No messages to display')).toBeInTheDocument()
+        expect(screen.getByText('No messages to display')).toBeInTheDocument(),
       );
 
       // The count header is for a populated list only.
@@ -286,22 +286,22 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument()
+        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
       );
 
       expect(screen.getByTestId('pagination')).toHaveAttribute(
         'data-current',
-        '1'
+        '1',
       );
       expect(screen.getByTestId('pagination')).toHaveAttribute(
         'data-total',
-        '1'
+        '1',
       );
     });
 
     it('logs a failed load and stops the spinner', async () => {
       clients.patternApproval.methods.getAppMessages.mockRejectedValue(
-        new Error('messages down')
+        new Error('messages down'),
       );
 
       await renderRoute();
@@ -310,8 +310,8 @@ describe('application messages', { timeout: 15_000 }, () => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to load application messages',
           expect.any(Error),
-          { Id: 'APP-1' }
-        )
+          { Id: 'APP-1' },
+        ),
       );
 
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
@@ -323,7 +323,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute();
 
       expect(
-        clients.patternApproval.methods.getAppMessages
+        clients.patternApproval.methods.getAppMessages,
       ).not.toHaveBeenCalled();
     });
 
@@ -331,7 +331,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute('/ta/manage/messages', '/ta/manage/messages');
 
       expect(
-        clients.patternApproval.methods.getAppMessages
+        clients.patternApproval.methods.getAppMessages,
       ).not.toHaveBeenCalled();
     });
 
@@ -340,7 +340,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       clients.patternApproval.methods.getAppMessages.mockReturnValue(
         new Promise((resolve) => {
           release = resolve;
-        })
+        }),
       );
 
       await renderRoute();
@@ -354,7 +354,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       });
 
       await waitFor(() =>
-        expect(screen.getByTestId('pagination')).toBeInTheDocument()
+        expect(screen.getByTestId('pagination')).toBeInTheDocument(),
       );
     });
   });
@@ -364,17 +364,17 @@ describe('application messages', { timeout: 15_000 }, () => {
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ body: '<p>Safe body</p><script>evil()</script>' }),
-        ])
+        ]),
       );
 
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('Safe body')).toBeInTheDocument()
+        expect(screen.getByText('Safe body')).toBeInTheDocument(),
       );
 
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(
-        '<p>Safe body</p><script>evil()</script>'
+        '<p>Safe body</p><script>evil()</script>',
       );
     });
 
@@ -382,13 +382,13 @@ describe('application messages', { timeout: 15_000 }, () => {
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ body: undefined, subject: 'Empty body' }),
-        ])
+        ]),
       );
 
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('Empty body')).toBeInTheDocument()
+        expect(screen.getByText('Empty body')).toBeInTheDocument(),
       );
 
       expect(mocks.sanitiseHtml).not.toHaveBeenCalled();
@@ -399,13 +399,13 @@ describe('application messages', { timeout: 15_000 }, () => {
         messagesResponse([
           messageItem({ id: 'with-footer', footer: 'The NMI team' }),
           messageItem({ id: 'no-footer', subject: 'Terse', footer: '' }),
-        ])
+        ]),
       );
 
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('The NMI team')).toBeInTheDocument()
+        expect(screen.getByText('The NMI team')).toBeInTheDocument(),
       );
 
       expect(screen.getAllByText('Regards,')).toHaveLength(1);
@@ -420,7 +420,7 @@ describe('application messages', { timeout: 15_000 }, () => {
             avatar: 'GM',
             subject: 'From the applicant',
           }),
-        ])
+        ]),
       );
 
       await renderRoute();
@@ -441,14 +441,14 @@ describe('application messages', { timeout: 15_000 }, () => {
               messageRead: false,
             }),
           ],
-          { currentPage: 1 }
-        )
+          { currentPage: 1 },
+        ),
       );
 
       const { container } = await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('Action required')).toBeInTheDocument()
+        expect(screen.getByText('Action required')).toBeInTheDocument(),
       );
 
       expect(container.querySelectorAll('.read')).toHaveLength(1);
@@ -457,7 +457,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('falls back to placeholder initials when a sender has no avatar', async () => {
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
-        messagesResponse([messageItem({ id: 'anon', avatar: undefined })])
+        messagesResponse([messageItem({ id: 'anon', avatar: undefined })]),
       );
 
       await renderRoute();
@@ -470,13 +470,13 @@ describe('application messages', { timeout: 15_000 }, () => {
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ messageSent: undefined, subject: 'Draft note' }),
-        ])
+        ]),
       );
 
       await renderRoute();
 
       await waitFor(() =>
-        expect(screen.getByText('Draft note')).toBeInTheDocument()
+        expect(screen.getByText('Draft note')).toBeInTheDocument(),
       );
     });
   });
@@ -485,7 +485,7 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('sanitises, submits and resets the editor', async () => {
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument()
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
       );
 
       const rendersBefore = editor.renderCount;
@@ -496,12 +496,12 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.addAppMessage
-        ).toHaveBeenCalledWith('APP-1', expect.any(String))
+          clients.patternApproval.methods.addAppMessage,
+        ).toHaveBeenCalledWith('APP-1', expect.any(String)),
       );
       const [applicationId, html] = defined(
         clients.patternApproval.methods.addAppMessage.mock.calls[0],
-        'addAppMessage call'
+        'addAppMessage call',
       );
 
       expect(applicationId).toBe('APP-1');
@@ -509,14 +509,14 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       // A changed key remounts Slate, which is how the composer is cleared.
       await waitFor(() =>
-        expect(editor.renderCount).toBeGreaterThan(rendersBefore)
+        expect(editor.renderCount).toBeGreaterThan(rendersBefore),
       );
     });
 
     it('refetches the first page after a successful send', async () => {
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument()
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
       );
 
       const fetchesBefore =
@@ -528,19 +528,19 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.getAppMessages.mock.calls.length
-        ).toBeGreaterThan(fetchesBefore)
+          clients.patternApproval.methods.getAppMessages.mock.calls.length,
+        ).toBeGreaterThan(fetchesBefore),
       );
     });
 
     it('logs a failed send without clearing what was typed', async () => {
       clients.patternApproval.methods.addAppMessage.mockRejectedValue(
-        new Error('send failed')
+        new Error('send failed'),
       );
 
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument()
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
       );
 
       await act(async () => {
@@ -551,8 +551,8 @@ describe('application messages', { timeout: 15_000 }, () => {
         expect(mocks.appLoggerError).toHaveBeenCalledWith(
           'Failed to submit application message',
           expect.any(Error),
-          { Id: 'APP-1' }
-        )
+          { Id: 'APP-1' },
+        ),
       );
     });
 
@@ -564,7 +564,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByTestId('slate-editor')).toBeInTheDocument()
+        expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
       );
 
       await act(async () => {
@@ -572,7 +572,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       });
 
       expect(
-        clients.patternApproval.methods.addAppMessage
+        clients.patternApproval.methods.addAppMessage,
       ).not.toHaveBeenCalled();
     });
   });
@@ -582,24 +582,24 @@ describe('application messages', { timeout: 15_000 }, () => {
       const user = userEvent.setup();
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument()
+        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
       );
 
       await user.selectOptions(
         screen.getByLabelText('Select your view'),
-        FilterMessages.ShowNmiMessages
+        FilterMessages.ShowNmiMessages,
       );
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.getAppMessages
+          clients.patternApproval.methods.getAppMessages,
         ).toHaveBeenLastCalledWith(
           'APP-1',
           10,
           1,
           FilterMessages.ShowNmiMessages,
-          'APP-1'
-        )
+          'APP-1',
+        ),
       );
     });
 
@@ -613,7 +613,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       const user = userEvent.setup();
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument()
+        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
       );
 
       const select = screen.getByLabelText('Select your view');
@@ -623,8 +623,8 @@ describe('application messages', { timeout: 15_000 }, () => {
         await user.selectOptions(select, member);
         await waitFor(() =>
           expect(
-            clients.patternApproval.methods.getAppMessages
-          ).toHaveBeenLastCalledWith('APP-1', 10, 1, member, 'APP-1')
+            clients.patternApproval.methods.getAppMessages,
+          ).toHaveBeenLastCalledWith('APP-1', 10, 1, member, 'APP-1'),
         );
       }
 
@@ -639,11 +639,11 @@ describe('application messages', { timeout: 15_000 }, () => {
       // option matched it, so the control displayed a selection the component did not hold.
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByText('Assessment update')).toBeInTheDocument()
+        expect(screen.getByText('Assessment update')).toBeInTheDocument(),
       );
 
       expect(screen.getByLabelText('Select your view')).toHaveValue(
-        FilterMessages.ShowAllMessages
+        FilterMessages.ShowAllMessages,
       );
     });
 
@@ -653,7 +653,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByTestId('pagination')).toBeInTheDocument()
+        expect(screen.getByTestId('pagination')).toBeInTheDocument(),
       );
       const messagesSection = document.getElementById('application-messages');
       if (!messagesSection) {
@@ -665,14 +665,14 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.getAppMessages
+          clients.patternApproval.methods.getAppMessages,
         ).toHaveBeenLastCalledWith(
           'APP-1',
           10,
           2,
           FilterMessages.ShowAllMessages,
-          'APP-1'
-        )
+          'APP-1',
+        ),
       );
 
       expect(scrollIntoView).toHaveBeenCalledWith({
@@ -685,13 +685,13 @@ describe('application messages', { timeout: 15_000 }, () => {
       const user = userEvent.setup();
       await renderRoute();
       await waitFor(() =>
-        expect(screen.getByTestId('pagination')).toBeInTheDocument()
+        expect(screen.getByTestId('pagination')).toBeInTheDocument(),
       );
       const getElementById = document.getElementById.bind(document);
       const getElementByIdSpy = vi
         .spyOn(document, 'getElementById')
         .mockImplementation((id) =>
-          id === 'application-messages' ? null : getElementById(id)
+          id === 'application-messages' ? null : getElementById(id),
         );
 
       try {
@@ -702,14 +702,14 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await waitFor(() =>
         expect(
-          clients.patternApproval.methods.getAppMessages
+          clients.patternApproval.methods.getAppMessages,
         ).toHaveBeenLastCalledWith(
           'APP-1',
           10,
           2,
           FilterMessages.ShowAllMessages,
-          'APP-1'
-        )
+          'APP-1',
+        ),
       );
     });
   });

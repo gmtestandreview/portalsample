@@ -19,7 +19,7 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer',
+  import('@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer'),
   () =>
     ({
       default: (props: MockContainerProps) => {
@@ -36,7 +36,7 @@ vi.mock(
           </div>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule36>
+    }) satisfies __ExactMockModule<__TestMockModule36>,
 );
 
 const options: AutoSuggestOption<string>[] = [
@@ -48,7 +48,7 @@ const renderAutoSuggest = (
     .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
     .mockResolvedValue([]),
   onSelectedOption = vi.fn(),
-  selectedOption?: string
+  selectedOption?: string,
 ) => {
   render(
     <RhfAutoSuggest
@@ -57,7 +57,7 @@ const renderAutoSuggest = (
       getOptions={getOptions}
       onSelectedOption={onSelectedOption}
       {...(selectedOption === undefined ? {} : { selectedOption })}
-    />
+    />,
   );
 
   return { getOptions, onSelectedOption };
@@ -99,7 +99,7 @@ describe('rhfAutoSuggest parent state', () => {
     const { getOptions } = renderAutoSuggest(
       undefined,
       onSelectedOption,
-      'Sydney'
+      'Sydney',
     );
 
     await act(async () => {
@@ -120,7 +120,7 @@ describe('rhfAutoSuggest parent state', () => {
 
   it('ignores stale responses after cancellation and restores the selected value', async () => {
     let resolveSearch: (
-      options: AutoSuggestOption<string>[]
+      options: AutoSuggestOption<string>[],
     ) => void = () => {};
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
@@ -128,7 +128,7 @@ describe('rhfAutoSuggest parent state', () => {
       () =>
         new Promise((resolve) => {
           resolveSearch = resolve;
-        })
+        }),
     );
     renderAutoSuggest(getOptions, vi.fn(), 'Original');
 
@@ -157,7 +157,7 @@ describe('rhfAutoSuggest parent state', () => {
       () =>
         new Promise((_, reject) => {
           rejectSearch = reject;
-        })
+        }),
     );
     renderAutoSuggest(getOptions);
 
@@ -180,7 +180,7 @@ describe('rhfAutoSuggest parent state', () => {
   it('updates loading around selection and reflects selectedOption changes', async () => {
     let resolveSelection: () => void = () => {};
     const onSelectedOption = vi.fn(
-      () => new Promise<void>((resolve) => (resolveSelection = resolve))
+      () => new Promise<void>((resolve) => (resolveSelection = resolve)),
     );
     renderAutoSuggest(undefined, onSelectedOption);
 

@@ -12,7 +12,7 @@ const RouteAccessibleNavigation = () => {
     if (path.slice(1)) {
       timeoutId = setTimeout(
         () => setMessage(`Navigated to ${document.title} page.`),
-        100
+        100,
       );
     } else {
       setMessage(`Navigated to ${document.title || ''} page.`);

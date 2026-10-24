@@ -43,7 +43,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
         });
         const acceptQuoteClient = new AcceptQuoteClient();
         const tokenResult = await instance.acquireTokenSilent(
-          silentRequestFor(accounts[0])
+          silentRequestFor(accounts[0]),
         );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 

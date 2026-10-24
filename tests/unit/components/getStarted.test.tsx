@@ -11,11 +11,11 @@ import {
 import { NotificationSeverity } from '@/storage/types';
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useIsAuthenticated: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule2>
+    }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
 const renderGetStarted = () =>
@@ -29,7 +29,7 @@ const renderGetStarted = () =>
           element={<main>Setup guide</main>}
         />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
 describe(GetStarted, () => {
@@ -47,21 +47,21 @@ describe(GetStarted, () => {
       screen.getByRole('heading', {
         name: /National Measurement Institute .* Services portal/i,
         level: 1,
-      })
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/request, receive and accept quotes/i)
+      screen.getByText(/request, receive and accept quotes/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /How to set up access/i })
+      screen.getByRole('link', { name: /How to set up access/i }),
     ).toHaveAttribute('href', '/help-guide/how-to-setup-access');
     expect(screen.getByRole('link', { name: /Log in/i })).toHaveAttribute(
       'href',
-      '/dashboard'
+      '/dashboard',
     );
     expect(screen.getByRole('link', { name: /^Digital ID/i })).toHaveAttribute(
       'href',
-      'https://www.digitalidsystem.gov.au'
+      'https://www.digitalidsystem.gov.au',
     );
     expect(document.title).toBe('NMI Services portal | NMI');
     expect(document.body).toHaveClass('home');
@@ -77,14 +77,14 @@ describe(GetStarted, () => {
     renderGetStarted();
 
     expect(
-      screen.getByText('Your session expired. Please sign in again.')
+      screen.getByText('Your session expired. Please sign in again.'),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /close alert/i }));
 
     await waitFor(() => {
       expect(
-        screen.queryByText('Your session expired. Please sign in again.')
+        screen.queryByText('Your session expired. Please sign in again.'),
       ).not.toBeInTheDocument();
     });
   });
@@ -96,7 +96,9 @@ describe(GetStarted, () => {
 
     expect(screen.getByRole('main')).toHaveTextContent('Dashboard route');
     expect(
-      screen.queryByRole('heading', { name: /National Measurement Institute/i })
+      screen.queryByRole('heading', {
+        name: /National Measurement Institute/i,
+      }),
     ).not.toBeInTheDocument();
   });
 });

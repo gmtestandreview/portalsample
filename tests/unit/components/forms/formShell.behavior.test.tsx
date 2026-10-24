@@ -16,21 +16,21 @@ import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
 vi.mock(
-  '@/components/forms/UnsavedFormPrompt',
+  import('@/components/forms/UnsavedFormPrompt'),
   () =>
     ({
       default: () => <div data-testid='unsaved-form-prompt' />,
-    }) satisfies __ExactMockModule<__TestMockModule21>
+    }) satisfies __ExactMockModule<__TestMockModule21>,
 );
 
 vi.mock(
-  '@/components/BlockUISpinner',
+  import('@/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <output>{children}</output>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>
+    }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
 function ValuesProbe() {
@@ -92,13 +92,13 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
     await expect(
-      screen.findByText('First name is required')
+      screen.findByText('First name is required'),
     ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
 
@@ -108,8 +108,8 @@ describe('form shell behavior slice', () => {
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
         { firstName: 'Alex', keep: 'value' },
-        expect.objectContaining({ setSubmitting: expect.any(Function) })
-      )
+        expect.objectContaining({ setSubmitting: expect.any(Function) }),
+      ),
     );
   });
 
@@ -138,18 +138,18 @@ describe('form shell behavior slice', () => {
             <ValuesProbe />
           </Form>
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Save draft' }));
 
     await waitFor(() => {
       expect(validateSoft).toHaveBeenCalledWith(
-        expect.objectContaining({ saveAndExit: true })
+        expect.objectContaining({ saveAndExit: true }),
       );
       expect(onSaveAndExit).toHaveBeenCalledWith(
         { notes: 'draft' },
-        expect.objectContaining({ setSubmitting: expect.any(Function) })
+        expect.objectContaining({ setSubmitting: expect.any(Function) }),
       );
     });
 
@@ -170,7 +170,7 @@ describe('form shell behavior slice', () => {
             <span>Loaded form</span>
           </Form>
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Custom banner')).toBeInTheDocument();
@@ -200,15 +200,15 @@ describe('form shell behavior slice', () => {
             </button>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Validate soft' })
+      screen.getByRole('button', { name: 'Validate soft' }),
     );
 
     await expect(
-      screen.findByRole('button', { name: 'Draft name required' })
+      screen.findByRole('button', { name: 'Draft name required' }),
     ).resolves.toBeInTheDocument();
 
     rerender(
@@ -225,15 +225,15 @@ describe('form shell behavior slice', () => {
             </button>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Validate hard' })
+      screen.getByRole('button', { name: 'Validate hard' }),
     );
 
     await expect(
-      screen.findByRole('button', { name: 'Final name required' })
+      screen.findByRole('button', { name: 'Final name required' }),
     ).resolves.toBeInTheDocument();
 
     rerender(
@@ -241,7 +241,7 @@ describe('form shell behavior slice', () => {
         <FormikForm initialValues={{}} onSubmit={vi.fn()} showBanner={false}>
           {null}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -263,7 +263,7 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Pending form')).toBeInTheDocument();
@@ -280,11 +280,11 @@ describe('form shell behavior slice', () => {
         <ErrorSummary
           serverErrors={{ status: HttpStatusCode.Conflict } as any}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByText(/Another person has already saved this page/i)
+      screen.getByText(/Another person has already saved this page/i),
     ).toBeInTheDocument();
 
     rerender(
@@ -292,7 +292,7 @@ describe('form shell behavior slice', () => {
         <ErrorSummary
           serverErrors={{ status: HttpStatusCode.Forbidden } as any}
         />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText(/Please contact support/i)).toBeInTheDocument();
@@ -300,7 +300,7 @@ describe('form shell behavior slice', () => {
     rerender(
       <MemoryRouter>
         <ErrorSummary serverErrors={{ status: 500 } as any} />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('Server error')).toBeInTheDocument();
@@ -320,16 +320,16 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await expect(screen.findByRole('alert')).resolves.toHaveTextContent(
-      'Contacts: (#1): Required'
+      'Contacts: (#1): Required',
     );
     expect(
-      screen.getByRole('link', { name: 'Contacts: (#1): Required' })
+      screen.getByRole('link', { name: 'Contacts: (#1): Required' }),
     ).toHaveAttribute('href', '#contacts.0.firstName');
   });
 
@@ -356,13 +356,13 @@ describe('form shell behavior slice', () => {
             </Form>
           )}
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     try {
       await act(async () => {
         fireEvent.click(
-          screen.getByRole('button', { name: 'Validate empty group' })
+          screen.getByRole('button', { name: 'Validate empty group' }),
         );
         await Promise.resolve();
       });
@@ -373,7 +373,7 @@ describe('form shell behavior slice', () => {
       expect(scrollIntoView).not.toHaveBeenCalled();
       expect(screen.queryByText('[object Object]')).not.toBeInTheDocument();
       expect(
-        screen.queryByTestId('form-error-summary')
+        screen.queryByTestId('form-error-summary'),
       ).not.toBeInTheDocument();
     } finally {
       vi.useRealTimers();
@@ -411,24 +411,24 @@ describe('form shell behavior slice', () => {
             <ValuesProbe />
           </Form>
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.type(
       screen.getByRole('textbox', { name: 'Given name' }),
-      'Priya'
+      'Priya',
     );
     await user.type(
       screen.getByRole('textbox', { name: 'Office phone' }),
-      '0299998888'
+      '0299998888',
     );
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"firstName":"Priya"'
+        '"firstName":"Priya"',
       );
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"phone":"02 9999 8888"'
+        '"phone":"02 9999 8888"',
       );
     });
 
@@ -456,7 +456,7 @@ describe('form shell behavior slice', () => {
             isSummary
           />
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('First name')).toBeInTheDocument();
@@ -476,7 +476,7 @@ describe('form shell behavior slice', () => {
             isSummary
           />
         </FormikForm>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
