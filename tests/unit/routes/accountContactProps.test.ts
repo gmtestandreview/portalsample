@@ -36,50 +36,55 @@ const mocks = vi.hoisted(() => ({
   setBranchModalNotification: vi.fn(),
 }));
 
-vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const actual = await importOriginal();
-    if (typeof actual !== 'object' || actual === null) {
-      throw new TypeError('Expected module exports object');
-    }
-    return {
-      ...actual,
-      AccountsClient: vi.fn(function AccountsClientMock() {
-        return {
-          setAuthToken: mocks.accountSetAuthToken,
-          getNewAccountDetails: mocks.getNewAccountDetails,
-          completeAccountDetails: mocks.completeAccountDetails,
-          getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
-          getBranchDetails: mocks.getBranchDetails,
-          completeBranchAdd: mocks.completeBranchAdd,
-        };
-      }),
-      ContactClient: vi.fn(function ContactClientMock() {
-        return {
-          setAuthToken: mocks.contactSetAuthToken,
-          getUserContact: mocks.getUserContact,
-          saveContactDetails: mocks.saveContactDetails,
-        };
-      }),
-      UsersClient: vi.fn(function UsersClientMock() {
-        return {
-          setAuthToken: mocks.userSetAuthToken,
-          signIn: mocks.signIn,
-        };
-      }),
-    };
+vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+  const actual = await importOriginal();
+  if (typeof actual !== 'object' || actual === null) {
+    throw new TypeError('Expected module exports object');
   }
+  return {
+    ...actual,
+    AccountsClient: vi.fn(function AccountsClientMock() {
+      return {
+        setAuthToken: mocks.accountSetAuthToken,
+        getNewAccountDetails: mocks.getNewAccountDetails,
+        completeAccountDetails: mocks.completeAccountDetails,
+        getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
+        getBranchDetails: mocks.getBranchDetails,
+        completeBranchAdd: mocks.completeBranchAdd,
+      };
+    }),
+    ContactClient: vi.fn(function ContactClientMock() {
+      return {
+        setAuthToken: mocks.contactSetAuthToken,
+        getUserContact: mocks.getUserContact,
+        saveContactDetails: mocks.saveContactDetails,
+      };
+    }),
+    UsersClient: vi.fn(function UsersClientMock() {
+      return {
+        setAuthToken: mocks.userSetAuthToken,
+        signIn: mocks.signIn,
+      };
+    }),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+});
+
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
 );
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
-
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: mocks.setDashboardNotification,
-  setBranchModalNotification: mocks.setBranchModalNotification,
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: mocks.setDashboardNotification,
+      setBranchModalNotification: mocks.setBranchModalNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
 const emptyAccounts = [] as AccountInfo[];

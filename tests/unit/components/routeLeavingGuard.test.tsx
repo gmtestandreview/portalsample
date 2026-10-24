@@ -9,9 +9,13 @@ const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 const useBlockerMock = vi.fn();
 
-vi.mock('react-router', () => ({
-  useBlocker: (callback: unknown) => useBlockerMock(callback),
-}));
+vi.mock(
+  'react-router',
+  () =>
+    ({
+      useBlocker: (callback: unknown) => useBlockerMock(callback),
+    }) satisfies __ExactMockModule<__TestMockModule11>
+);
 
 const renderGuard = (
   props: React.ComponentProps<typeof RouteLeavingGuard> = {}

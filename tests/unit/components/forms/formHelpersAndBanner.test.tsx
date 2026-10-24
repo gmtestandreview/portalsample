@@ -13,27 +13,31 @@ import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
 import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 
-vi.mock('@/components/RouteLeavingGuard', () => ({
-  default: ({
-    when,
-    title,
-    body,
-    confirmBtn,
-  }: {
-    when?: boolean;
-    title?: string;
-    body?: string;
-    confirmBtn?: string;
-  }) => (
-    <div
-      data-testid='route-leaving-guard'
-      data-when={String(Boolean(when))}
-      data-title={title ?? ''}
-      data-body={body ?? ''}
-      data-confirm={confirmBtn ?? ''}
-    />
-  ),
-}));
+vi.mock(
+  '@/components/RouteLeavingGuard',
+  () =>
+    ({
+      default: ({
+        when,
+        title,
+        body,
+        confirmBtn,
+      }: {
+        when?: boolean;
+        title?: string;
+        body?: string;
+        confirmBtn?: string;
+      }) => (
+        <div
+          data-testid='route-leaving-guard'
+          data-when={String(Boolean(when))}
+          data-title={title ?? ''}
+          data-body={body ?? ''}
+          data-confirm={confirmBtn ?? ''}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule20>
+);
 
 interface FormikHarnessProps<TValues extends FormikValues> {
   readonly initialValues: TValues;

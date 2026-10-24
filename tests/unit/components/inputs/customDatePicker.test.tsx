@@ -6,59 +6,63 @@ import CustomDatePicker from '@/components/Inputs/DatePicker/CustomDatePicker';
 
 const mockDate = new Date('2026-05-18T00:00:00.000Z');
 
-vi.mock('@/components/Inputs/DatePicker/CustomDateInput', () => ({
-  default: ({
-    calendarOnKeyDown,
-    forwardedControlRef,
-    forwardedFeedbackRef,
-    forwardedInlineHelpRef,
-    handleEnsureCalendarClosed,
-    handleOpenCalendar,
-    handleCloseCalendar,
-    hasError,
-    label,
-    onBlur,
-    onKeyDown,
-  }: {
-    calendarOnKeyDown: (event: React.KeyboardEvent) => void;
-    forwardedControlRef: React.Ref<HTMLInputElement>;
-    forwardedFeedbackRef: React.Ref<HTMLDivElement>;
-    forwardedInlineHelpRef: React.Ref<HTMLDivElement>;
-    handleEnsureCalendarClosed: () => void;
-    handleOpenCalendar: () => void;
-    handleCloseCalendar: () => void;
-    hasError?: boolean;
-    label?: string;
-    onBlur?: (event: React.FocusEvent) => void;
-    onKeyDown?: (event: React.KeyboardEvent) => void;
-  }) => (
-    <div>
-      <input
-        aria-label='Date input'
-        className={hasError ? 'is-invalid' : ''}
-        ref={forwardedControlRef}
-        onBlur={onBlur}
-        onKeyDown={onKeyDown}
-        required
-      />
-      <div ref={forwardedInlineHelpRef} data-testid='inline-help-ref' />
-      <div ref={forwardedFeedbackRef} data-testid='feedback-ref' />
-      <button type='button' onClick={handleOpenCalendar}>
-        Open calendar
-      </button>
-      <button type='button' onClick={handleCloseCalendar}>
-        Close trigger
-      </button>
-      <button type='button' onClick={handleEnsureCalendarClosed}>
-        Ensure closed
-      </button>
-      <button type='button' onKeyDown={calendarOnKeyDown}>
-        Calendar key target
-      </button>
-      {label ? <span>{label}</span> : null}
-    </div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/DatePicker/CustomDateInput',
+  () =>
+    ({
+      default: ({
+        calendarOnKeyDown,
+        forwardedControlRef,
+        forwardedFeedbackRef,
+        forwardedInlineHelpRef,
+        handleEnsureCalendarClosed,
+        handleOpenCalendar,
+        handleCloseCalendar,
+        hasError,
+        label,
+        onBlur,
+        onKeyDown,
+      }: {
+        calendarOnKeyDown: (event: React.KeyboardEvent) => void;
+        forwardedControlRef: React.Ref<HTMLInputElement>;
+        forwardedFeedbackRef: React.Ref<HTMLDivElement>;
+        forwardedInlineHelpRef: React.Ref<HTMLDivElement>;
+        handleEnsureCalendarClosed: () => void;
+        handleOpenCalendar: () => void;
+        handleCloseCalendar: () => void;
+        hasError?: boolean;
+        label?: string;
+        onBlur?: (event: React.FocusEvent) => void;
+        onKeyDown?: (event: React.KeyboardEvent) => void;
+      }) => (
+        <div>
+          <input
+            aria-label='Date input'
+            className={hasError ? 'is-invalid' : ''}
+            ref={forwardedControlRef}
+            onBlur={onBlur}
+            onKeyDown={onKeyDown}
+            required
+          />
+          <div ref={forwardedInlineHelpRef} data-testid='inline-help-ref' />
+          <div ref={forwardedFeedbackRef} data-testid='feedback-ref' />
+          <button type='button' onClick={handleOpenCalendar}>
+            Open calendar
+          </button>
+          <button type='button' onClick={handleCloseCalendar}>
+            Close trigger
+          </button>
+          <button type='button' onClick={handleEnsureCalendarClosed}>
+            Ensure closed
+          </button>
+          <button type='button' onKeyDown={calendarOnKeyDown}>
+            Calendar key target
+          </button>
+          {label ? <span>{label}</span> : null}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule33>
+);
 
 vi.mock('react-datepicker', () => {
   const MockDatePicker = React.forwardRef((props: any, ref: any) => {
@@ -174,7 +178,7 @@ vi.mock('react-datepicker', () => {
 
   return {
     default: MockDatePicker,
-  };
+  } satisfies __ExactMockModule<__TestMockModule34>;
 });
 
 describe(CustomDatePicker, () => {

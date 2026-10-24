@@ -28,9 +28,13 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
 
 const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => msalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -40,12 +44,16 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       vi.spyOn(this, 'setAuthToken').mockImplementation();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const hidingFields = {
   contactHide: (values: PaymentDetailsStep) =>

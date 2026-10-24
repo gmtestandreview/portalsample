@@ -13,9 +13,13 @@ import SubmitFormButton from '../../../../ClientApp/src/components/forms/SubmitF
 import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 /**
  * The shell contract: one suite, run against the Formik shell and the RHF

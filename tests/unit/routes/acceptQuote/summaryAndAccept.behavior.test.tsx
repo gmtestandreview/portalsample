@@ -29,21 +29,29 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: mocks.instance,
-    accounts: mocks.accounts,
-    inProgress: 'none',
-  }),
-  useAccount: () => ({ homeAccountId: 'mock-id' }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: mocks.instance,
+        accounts: mocks.accounts,
+        inProgress: 'none',
+      }),
+      useAccount: () => ({ homeAccountId: 'mock-id' }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: () => ({
-    isLoading: false,
-    details: { givenName: 'Taylor', familyName: 'Nguyen' },
-  }),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({
+        isLoading: false,
+        details: { givenName: 'Taylor', familyName: 'Nguyen' },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -56,27 +64,47 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
     DashboardClient: class {
       setAuthToken = vi.fn();
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: mocks.error },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: mocks.error },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The read-only summaries of the other steps are separate components with
 // their own suites; stand in markers so this suite pins only this step.
-vi.mock('@/routes/acceptQuote/reportRecipient', () => ({
-  default: () => <div>Report recipient summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/deliveryAndReturn', () => ({
-  default: () => <div>Delivery and return summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/paymentDetails', () => ({
-  default: () => <div>Payment details summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/quotationSummary', () => ({
-  default: () => <div>Quotation summary marker</div>,
-}));
+vi.mock(
+  '@/routes/acceptQuote/reportRecipient',
+  () =>
+    ({
+      default: () => <div>Report recipient summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule61>
+);
+vi.mock(
+  '@/routes/acceptQuote/deliveryAndReturn',
+  () =>
+    ({
+      default: () => <div>Delivery and return summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule62>
+);
+vi.mock(
+  '@/routes/acceptQuote/paymentDetails',
+  () =>
+    ({
+      default: () => <div>Payment details summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule63>
+);
+vi.mock(
+  '@/routes/acceptQuote/quotationSummary',
+  () =>
+    ({
+      default: () => <div>Quotation summary marker</div>,
+    }) satisfies __ExactMockModule<__TestMockModule73>
+);
 
 type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 

@@ -17,42 +17,54 @@ const wrapperMocks = vi.hoisted(() => ({
   )),
 }));
 
-vi.mock('@/components/ErrorBoundary', () => ({
-  default: wrapperMocks.errorBoundary,
-}));
+vi.mock(
+  '@/components/ErrorBoundary',
+  () =>
+    ({
+      default: wrapperMocks.errorBoundary,
+    }) satisfies __ExactMockModule<__TestMockModule13>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  default: wrapperMocks.analytics,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      default: wrapperMocks.analytics,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/components/modals/ConfirmationModal', () => ({
-  default: ({
-    closeModal,
-    isOpen,
-    onModalNo,
-    onModalYes,
-    titleText,
-  }: {
-    closeModal: () => void;
-    isOpen: boolean;
-    onModalNo: () => void;
-    onModalYes: () => void;
-    titleText: string;
-  }) =>
-    isOpen ? (
-      <dialog open aria-label={titleText}>
-        <button type='button' onClick={onModalYes}>
-          Confirm yes
-        </button>
-        <button type='button' onClick={onModalNo}>
-          Confirm no
-        </button>
-        <button type='button' onClick={closeModal}>
-          Close confirmation
-        </button>
-      </dialog>
-    ) : null,
-}));
+vi.mock(
+  '@/components/modals/ConfirmationModal',
+  () =>
+    ({
+      default: ({
+        closeModal,
+        isOpen,
+        onModalNo,
+        onModalYes,
+        titleText,
+      }: {
+        closeModal: () => void;
+        isOpen: boolean;
+        onModalNo: () => void;
+        onModalYes: () => void;
+        titleText: string;
+      }) =>
+        isOpen ? (
+          <dialog open aria-label={titleText}>
+            <button type='button' onClick={onModalYes}>
+              Confirm yes
+            </button>
+            <button type='button' onClick={onModalNo}>
+              Confirm no
+            </button>
+            <button type='button' onClick={closeModal}>
+              Close confirmation
+            </button>
+          </dialog>
+        ) : null,
+    }) satisfies __ExactMockModule<__TestMockModule23>
+);
 
 const step = (location: string) => (
   <WizardStep

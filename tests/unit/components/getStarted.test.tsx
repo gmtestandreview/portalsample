@@ -10,9 +10,13 @@ import {
 } from '@/storage/notification';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: vi.fn(),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useIsAuthenticated: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 const renderGetStarted = () =>
   render(

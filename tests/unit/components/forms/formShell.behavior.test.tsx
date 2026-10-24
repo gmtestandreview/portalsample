@@ -15,15 +15,23 @@ import ContactDetailsInput from '@/components/forms/CommonForms/ContactDetails';
 import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
-vi.mock('@/components/forms/UnsavedFormPrompt', () => ({
-  default: () => <div data-testid='unsaved-form-prompt' />,
-}));
+vi.mock(
+  '@/components/forms/UnsavedFormPrompt',
+  () =>
+    ({
+      default: () => <div data-testid='unsaved-form-prompt' />,
+    }) satisfies __ExactMockModule<__TestMockModule21>
+);
 
-vi.mock('@/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <output>{children}</output>
-  ),
-}));
+vi.mock(
+  '@/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <output>{children}</output>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
 function ValuesProbe() {
   const { values, setFieldValue, submitForm } =

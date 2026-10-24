@@ -4,29 +4,33 @@ import { Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
-vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({
-    name,
-    label,
-    onChange,
-    onKeyDown,
-    inlineHelpTitle: _inlineHelpTitle,
-    inlineHelp: _inlineHelp,
-    containerClassName: _containerClassName,
-    ...rest
-  }: any) => (
-    <div>
-      <label htmlFor={name}>{label}</label>
-      <input
-        id={name}
-        name={name}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        {...rest}
-      />
-    </div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/TextInput',
+  () =>
+    ({
+      default: ({
+        name,
+        label,
+        onChange,
+        onKeyDown,
+        inlineHelpTitle: _inlineHelpTitle,
+        inlineHelp: _inlineHelp,
+        containerClassName: _containerClassName,
+        ...rest
+      }: any) => (
+        <div>
+          <label htmlFor={name}>{label}</label>
+          <input
+            id={name}
+            name={name}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            {...rest}
+          />
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>
+);
 
 const renderLookup = (
   props: Partial<React.ComponentProps<typeof OrganisationNameLookup>> = {}

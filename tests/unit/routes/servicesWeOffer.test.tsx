@@ -36,37 +36,48 @@ const clients = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
+});
+
+vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
+
+  clients.lookup = createClientMockFor('getServices');
+
+  // Spreading the original keeps ServiceType a real enum. The component compares
+  // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
+  // every branch down the default arm and the redirect tests would pass for the wrong reason.
+  return webApiClientModuleMock(original, {
+    LookupClient: clients.lookup,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
-
-    clients.lookup = createClientMockFor('getServices');
-
-    // Spreading the original keeps ServiceType a real enum. The component compares
-    // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
-    // every branch down the default arm and the redirect tests would pass for the wrong reason.
-    return webApiClientModuleMock(original, { LookupClient: clients.lookup });
-  }
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://services/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
 );
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://services/.default'] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: () => mocks.accountContext(),
+      useAccountDispatch: () => ({ setUserProfile: mocks.setUserProfile }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  default: () => mocks.accountContext(),
-  useAccountDispatch: () => ({ setUserProfile: mocks.setUserProfile }),
-}));
-
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: mocks.appLoggerInfo },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: mocks.appLoggerInfo },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const serviceDtos: ServiceDto[] = [
   {

@@ -15,20 +15,32 @@ const mocks = vi.hoisted(() => ({
   setDashboardNotification: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'account-id' }],
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'account-id' }],
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/storage/notification', () => ({
-  setDashboardNotification: mocks.setDashboardNotification,
-}));
+vi.mock(
+  '@/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: mocks.setDashboardNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -41,19 +53,23 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
         setAuthToken: vi.fn(),
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 // The real modal only opens after a delete target is chosen, so its confirm
 // handler is unreachable without one. This stand-in is always rendered so the
 // "confirmed with no delete target" guard in PaRequestItem can be exercised.
-vi.mock('@/components/modals/ConfirmationModal', () => ({
-  default: ({ onModalYes }: { onModalYes: () => void }) => (
-    <button type='button' onClick={onModalYes}>
-      Confirm without target
-    </button>
-  ),
-}));
+vi.mock(
+  '@/components/modals/ConfirmationModal',
+  () =>
+    ({
+      default: ({ onModalYes }: { onModalYes: () => void }) => (
+        <button type='button' onClick={onModalYes}>
+          Confirm without target
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule23>
+);
 
 const request: PatternApprovalDashboardDetailsDto = {
   referenceId: 'NMI-PA-2024-001',

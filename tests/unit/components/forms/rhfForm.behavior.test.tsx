@@ -6,9 +6,13 @@ import RhfTextInput from '../../../../ClientApp/src/components/Inputs/RhfTextInp
 import type { Hideable } from '../../../../ClientApp/src/components/forms/types';
 import { renderRhfShell } from '../../helpers/rhfShell';
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 interface Values {
   name: string;

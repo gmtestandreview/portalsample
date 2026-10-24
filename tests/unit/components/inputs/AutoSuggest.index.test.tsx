@@ -7,20 +7,26 @@ const containerState = vi.hoisted(() => ({
   props: undefined as any,
 }));
 
-vi.mock('@/components/Inputs/AutoSuggest/AutoSuggestContainer', () => ({
-  default: (props: any) => {
-    containerState.props = props;
-    return (
-      <div>
-        <span data-testid='search-term'>{props.searchTerm}</span>
-        <span data-testid='loading'>{String(props.loading)}</span>
-        <span data-testid='error'>{String(props.error)}</span>
-        <span data-testid='no-result'>{String(props.noResult)}</span>
-        <span data-testid='option-count'>{String(props.options.length)}</span>
-      </div>
-    );
-  },
-}));
+vi.mock(
+  '@/components/Inputs/AutoSuggest/AutoSuggestContainer',
+  () =>
+    ({
+      default: (props: any) => {
+        containerState.props = props;
+        return (
+          <div>
+            <span data-testid='search-term'>{props.searchTerm}</span>
+            <span data-testid='loading'>{String(props.loading)}</span>
+            <span data-testid='error'>{String(props.error)}</span>
+            <span data-testid='no-result'>{String(props.noResult)}</span>
+            <span data-testid='option-count'>
+              {String(props.options.length)}
+            </span>
+          </div>
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule32>
+);
 
 const renderAutoSuggest = (
   getOptions = vi

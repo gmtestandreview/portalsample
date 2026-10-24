@@ -72,229 +72,295 @@ const {
 
 let mockAccountDetails: AccountDetails | null;
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
-  PatternApprovalClient: vi.fn().mockImplementation(function (
-    this: Record<string, unknown>
-  ) {
-    this['setAuthToken'] = mockSetAuthToken;
-    this['getPatternApprovalApplicationDrafts'] = mockGetDrafts;
-    this['getPatternApprovalApplications'] = mockGetApplications;
-  }),
-  ServiceType: {
-    TestingCalibration: 'TestingCalibration',
-    PatternApproval: 'PatternApproval',
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      PatternApprovalClient: vi.fn().mockImplementation(function (
+        this: Record<string, unknown>
+      ) {
+        this['setAuthToken'] = mockSetAuthToken;
+        this['getPatternApprovalApplicationDrafts'] = mockGetDrafts;
+        this['getPatternApprovalApplications'] = mockGetApplications;
+      }),
+      ServiceType: {
+        TestingCalibration: 'TestingCalibration',
+        PatternApproval: 'PatternApproval',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => mockMsalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => mockMsalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@azure/msal-browser', () => ({
-  InteractionStatus: { None: 'none' },
-}));
+vi.mock(
+  '@azure/msal-browser',
+  () =>
+    ({
+      InteractionStatus: { None: 'none' },
+    }) satisfies __ExactMockModule<__TestMockModule3>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  default: () => mockAccountContextState.value,
-  useAccountDispatch: () => mockAccountDispatchState.value,
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: () => mockAccountContextState.value,
+      useAccountDispatch: () => mockAccountDispatchState.value,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../../ClientApp/src/hooks/useUserServices', () => ({
-  default: () => mockServicesState.value,
-}));
+vi.mock(
+  '../../../../ClientApp/src/hooks/useUserServices',
+  () =>
+    ({
+      default: () => mockServicesState.value,
+    }) satisfies __ExactMockModule<__TestMockModule92>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['openid'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['openid'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/components/Welcome', () => ({
-  default: () => <div data-testid='welcome' />,
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Welcome',
+  () =>
+    ({
+      default: () => <div data-testid='welcome' />,
+    }) satisfies __ExactMockModule<__TestMockModule93>
+);
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='block-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/Alert/NotificationMessage',
-  () => ({
-    default: ({
-      id,
-      message,
-      onClose,
-    }: {
-      id: string;
-      message: string;
-      onClose: () => void;
-    }) => (
-      <button data-testid={id} type='button' onClick={onClose}>
-        {message}
-      </button>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        id,
+        message,
+        onClose,
+      }: {
+        id: string;
+        message: string;
+        onClose: () => void;
+      }) => (
+        <button data-testid={id} type='button' onClick={onClose}>
+          {message}
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule48>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
-  () => ({
-    default: () => {},
-  })
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>
 );
 vi.mock(
   '../../../../ClientApp/src/components/Utilities/useBodyClass',
-  () => ({
-    default: () => {},
-  })
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
 );
 vi.mock(
   '../../../../ClientApp/src/components/tiles/StandardPathway',
-  () => ({
-    default: ({ title }: { title: string }) => (
-      <div data-testid='standard-pathway'>{title}</div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ title }: { title: string }) => (
+        <div data-testid='standard-pathway'>{title}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule94>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/RequestList/noRequests',
-  () => ({
-    default: () => <div data-testid='no-requests' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='no-requests' />,
+    }) satisfies __ExactMockModule<__TestMockModule95>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/RequestList/paRequestItem',
-  () => ({
-    default: ({ request, setDeleteSuccess, tab }: any) => (
-      <div data-testid='request-item' data-tab={tab}>
-        {request.referenceId}
-        <button type='button' onClick={() => setDeleteSuccess(true)}>
-          Delete
-        </button>
-      </div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ request, setDeleteSuccess, tab }: any) => (
+        <div data-testid='request-item' data-tab={tab}>
+          {request.referenceId}
+          <button type='button' onClick={() => setDeleteSuccess(true)}>
+            Delete
+          </button>
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule96>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter',
-  () => ({
-    default: ({ initialFilters, setCurrentPage, setInitialFilters }: any) => (
-      <div
-        data-testid='pa-search-filter'
-        data-tab={initialFilters.filterActiveTab}
-      >
-        <button
-          type='button'
-          onClick={() => {
-            setCurrentPage(1);
-            setInitialFilters({
-              ...initialFilters,
-              filterCurrentPage: 1,
-              filterYearType: '2024',
-              filterStatusType: 'Submitted',
-              filterSearchText: 'meter',
-            });
-          }}
+  () =>
+    ({
+      default: ({ initialFilters, setCurrentPage, setInitialFilters }: any) => (
+        <div
+          data-testid='pa-search-filter'
+          data-tab={initialFilters.filterActiveTab}
         >
-          Apply filters
-        </button>
-        <button type='button' onClick={() => setInitialFilters(undefined)}>
-          Clear filters
-        </button>
-      </div>
-    ),
-  })
+          <button
+            type='button'
+            onClick={() => {
+              setCurrentPage(1);
+              setInitialFilters({
+                ...initialFilters,
+                filterCurrentPage: 1,
+                filterYearType: '2024',
+                filterStatusType: 'Submitted',
+                filterSearchText: 'meter',
+              });
+            }}
+          >
+            Apply filters
+          </button>
+          <button type='button' onClick={() => setInitialFilters(undefined)}>
+            Clear filters
+          </button>
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule97>
 );
 
-vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
-  default: ({ currentPage, onPageChange, totalPages }: any) => (
-    <button
-      data-testid='pagination'
-      data-current={currentPage}
-      data-total={totalPages}
-      type='button'
-      onClick={() => onPageChange(currentPage + 1)}
-    >
-      Next
-    </button>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Pagination',
+  () =>
+    ({
+      default: ({ currentPage, onPageChange, totalPages }: any) => (
+        <button
+          data-testid='pagination'
+          data-current={currentPage}
+          data-total={totalPages}
+          type='button'
+          onClick={() => onPageChange(currentPage + 1)}
+        >
+          Next
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule98>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/PaginationHeader',
-  () => ({
-    default: ({ currentPage, pageSize, totalCount }: any) => (
-      <div
-        data-testid='pagination-header'
-        data-current={currentPage}
-        data-size={pageSize}
-        data-total={totalCount}
-      />
-    ),
-  })
+  () =>
+    ({
+      default: ({ currentPage, pageSize, totalCount }: any) => (
+        <div
+          data-testid='pagination-header'
+          data-current={currentPage}
+          data-size={pageSize}
+          data-total={totalCount}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule99>
 );
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mockAppLoggerError,
-    info: mockAppLoggerInfo,
-    verbose: vi.fn(),
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mockAppLoggerError,
+        info: mockAppLoggerInfo,
+        verbose: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../../ClientApp/src/routes/common/errorRoutes', () => ({
-  default: (status: number) => `/server-error/${status}`,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/common/errorRoutes',
+  () =>
+    ({
+      default: (status: number) => `/server-error/${status}`,
+    }) satisfies __ExactMockModule<__TestMockModule100>
+);
 
 vi.mock(
   '../../../../ClientApp/src/routes/common/dashboardNotifications',
-  () => ({
-    DashBoardNotifications: {
-      getForbiddenNotification: () => ({
-        message: 'forbidden',
-        severity: 'error',
-      }),
-      getThirdPartyAccessNotification: (organisation: string) => ({
-        message: `no-third-party:${organisation}`,
-        severity: 'error',
-      }),
-      getReportFormsGeneratedNotification: () => ({
-        message: 'reports-ready',
-        severity: 'info',
-      }),
-    },
-  })
+  () =>
+    ({
+      DashBoardNotifications: {
+        getForbiddenNotification: () => ({
+          message: 'forbidden',
+          severity: 'error',
+        }),
+        getThirdPartyAccessNotification: (organisation: string) => ({
+          message: `no-third-party:${organisation}`,
+          severity: 'error',
+        }),
+        getReportFormsGeneratedNotification: () => ({
+          message: 'reports-ready',
+          severity: 'info',
+        }),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule101>
 );
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
-  getDashboardNotification: mockGetDashboardNotification,
-  clearDashboardNotification: mockClearDashboardNotification,
-  setDashboardNotification: mockSetDashboardNotification,
-  getDashboardInfoNotification: mockGetDashboardInfoNotification,
-  setDashboardInfoNotification: mockSetDashboardInfoNotification,
-  clearDashboardInfoNotification: mockClearDashboardInfoNotification,
-}));
+vi.mock(
+  '../../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      getDashboardNotification: mockGetDashboardNotification,
+      clearDashboardNotification: mockClearDashboardNotification,
+      setDashboardNotification: mockSetDashboardNotification,
+      getDashboardInfoNotification: mockGetDashboardInfoNotification,
+      setDashboardInfoNotification: mockSetDashboardInfoNotification,
+      clearDashboardInfoNotification: mockClearDashboardInfoNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
-  () => ({
-    default: () => ({
-      getItem: mockSessionGetItem,
-      removeItem: mockSessionRemoveItem,
-    }),
-  })
+  () =>
+    ({
+      default: () => ({
+        getItem: mockSessionGetItem,
+        removeItem: mockSessionRemoveItem,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule72>
 );
 
-vi.mock('../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: mockTrackGAEvent,
-}));
+vi.mock(
+  '../../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: mockTrackGAEvent,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('react-number-format', () => ({
-  PatternFormat: ({ value }: { value: string }) => <span>{value}</span>,
-}));
+vi.mock(
+  'react-number-format',
+  () =>
+    ({
+      PatternFormat: ({ value }: { value: string }) => <span>{value}</span>,
+    }) satisfies __ExactMockModule<__TestMockModule102>
+);
 
 const ACTIVE_PATTERN_APPROVAL: ServicesOffered[] = [
   {

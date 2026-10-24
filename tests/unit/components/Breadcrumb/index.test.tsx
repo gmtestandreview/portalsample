@@ -8,46 +8,54 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock('react-aria-components/Breadcrumbs', () => ({
-  Breadcrumbs: ({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) => <ol className={className}>{children}</ol>,
-  Breadcrumb: ({
-    children,
-    className,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-  }) => <li className={className}>{children}</li>,
-}));
+vi.mock(
+  'react-aria-components/Breadcrumbs',
+  () =>
+    ({
+      Breadcrumbs: ({
+        children,
+        className,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+      }) => <ol className={className}>{children}</ol>,
+      Breadcrumb: ({
+        children,
+        className,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+      }) => <li className={className}>{children}</li>,
+    }) satisfies __ExactMockModule<__TestMockModule17>
+);
 
-vi.mock('react-aria-components/Link', () => ({
-  Link: ({
-    children,
-    href,
-    render: renderLink,
-  }: {
-    children: React.ReactNode;
-    href?: string;
-    render?: (props: {
-      children: React.ReactNode;
-      href?: string;
-    }) => React.ReactNode;
-  }) =>
-    renderLink ? (
-      renderLink(
-        ariaLinkMockState.includeHref && href !== undefined
-          ? { children, href }
-          : { children }
-      )
-    ) : (
-      <a href={href ?? '#'}>{children}</a>
-    ),
-}));
+vi.mock(
+  'react-aria-components/Link',
+  () =>
+    ({
+      Link: ({
+        children,
+        href,
+        render: renderLink,
+      }: {
+        children: React.ReactNode;
+        href?: string;
+        render?: (props: {
+          children: React.ReactNode;
+          href?: string;
+        }) => React.ReactNode;
+      }) =>
+        renderLink ? (
+          renderLink(
+            ariaLinkMockState.includeHref && href !== undefined
+              ? { children, href }
+              : { children }
+          )
+        ) : (
+          <a href={href ?? '#'}>{children}</a>
+        ),
+    }) satisfies __ExactMockModule<__TestMockModule18>
+);
 
 describe('customBreadcrumb React Aria render fallback', () => {
   afterEach(() => {

@@ -8,17 +8,21 @@ import RequestItem from '@/components/RequestList/requestItem';
 import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
 
-vi.mock('@/components/Actions', () => ({
-  default: ({
-    onItemClick,
-  }: {
-    onItemClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }) => (
-    <button type='button' onClick={onItemClick}>
-      Invoke fallback action
-    </button>
-  ),
-}));
+vi.mock(
+  '@/components/Actions',
+  () =>
+    ({
+      default: ({
+        onItemClick,
+      }: {
+        onItemClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+      }) => (
+        <button type='button' onClick={onItemClick}>
+          Invoke fallback action
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule50>
+);
 
 const modalDispatch = {
   setShowBranchSelector: vi.fn(),

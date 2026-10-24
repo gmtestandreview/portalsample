@@ -21,25 +21,32 @@ import { defined } from '../../../helpers/defined';
 
 vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () => ({
-    default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-  })
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
 // WizardStep wraps ErrorBoundary (needs AppInsights) + GoogleAnalytics.
 // Both are irrelevant to these tests; stub them out.
 vi.mock(
   '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
 vi.mock(
   '../../../../../ClientApp/src/analytics/GoogleAnalytics',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule22>
 );
 
 // ── Test helpers ─────────────────────────────────────────────────────────────

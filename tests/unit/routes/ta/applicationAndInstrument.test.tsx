@@ -47,172 +47,188 @@ const checkboxGroupNamed = (name: string) =>
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
 vi.mock(
   '../../../../ClientApp/src/components/forms/HidableField',
-  () => ({
-    default: ({ children }: { children: ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children: ReactNode }) => <>{children}</>,
+    }) satisfies __ExactMockModule<__TestMockModule70>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Inputs/SelectInput',
-  () => ({
-    default: ({
-      name,
-      label,
-      options,
-      onChange,
-      readOnly,
-    }: {
-      name: string;
-      label: string;
-      options: { displayText: string; value: string }[];
-      onChange?: (event: unknown) => void;
-      readOnly?: boolean;
-    }) => {
-      captured.selects.set(name, { options, readOnly, onChange });
+  () =>
+    ({
+      default: ({
+        name,
+        label,
+        options,
+        onChange,
+        readOnly,
+      }: {
+        name: string;
+        label: string;
+        options: { displayText: string; value: string }[];
+        onChange?: (event: unknown) => void;
+        readOnly?: boolean;
+      }) => {
+        captured.selects.set(name, { options, readOnly, onChange });
 
-      return (
-        <select
-          aria-label={label}
-          data-testid={`select-${name}`}
-          data-readonly={String(readOnly ?? false)}
-          onChange={(event: ChangeEvent<HTMLSelectElement>) =>
-            onChange?.(event)
-          }
-        >
-          <option value='' />
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.displayText}
-            </option>
-          ))}
-        </select>
-      );
-    },
-  })
+        return (
+          <select
+            aria-label={label}
+            data-testid={`select-${name}`}
+            data-readonly={String(readOnly ?? false)}
+            onChange={(event: ChangeEvent<HTMLSelectElement>) =>
+              onChange?.(event)
+            }
+          >
+            <option value='' />
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.displayText}
+              </option>
+            ))}
+          </select>
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule131>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Inputs/CheckboxGroup',
-  () => ({
-    default: ({
-      name,
-      options,
-    }: {
-      name: string;
-      options: { label: string; value: string }[];
-    }) => {
-      captured.checkboxGroups.set(name, { options });
+  () =>
+    ({
+      default: ({
+        name,
+        options,
+      }: {
+        name: string;
+        options: { label: string; value: string }[];
+      }) => {
+        captured.checkboxGroups.set(name, { options });
 
-      return (
-        <div data-testid={`checkboxes-${name}`} data-count={options.length} />
-      );
-    },
-  })
+        return (
+          <div data-testid={`checkboxes-${name}`} data-count={options.length} />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule132>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Inputs/RadioButton',
-  () => ({
-    default: ({
-      id,
-      label,
-      checked,
-      onChange,
-      value,
-    }: {
-      id: string;
-      label: string;
-      checked: boolean;
-      onChange: (event: unknown) => void;
-      value: string;
-    }) => (
-      <label htmlFor={id}>
-        <input
-          type='radio'
-          id={id}
-          name='applicationType'
-          value={value}
-          checked={checked}
-          onChange={onChange}
-        />
-        {label}
-      </label>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        id,
+        label,
+        checked,
+        onChange,
+        value,
+      }: {
+        id: string;
+        label: string;
+        checked: boolean;
+        onChange: (event: unknown) => void;
+        value: string;
+      }) => (
+        <label htmlFor={id}>
+          <input
+            type='radio'
+            id={id}
+            name='applicationType'
+            value={value}
+            checked={checked}
+            onChange={onChange}
+          />
+          {label}
+        </label>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule133>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Inputs/TextInput',
-  () => ({
-    default: ({ name, label }: { name: string; label: string }) => (
-      <div data-testid={`text-${name}`}>{label}</div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ name, label }: { name: string; label: string }) => (
+        <div data-testid={`text-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Inputs/TextAreaInput',
-  () => ({
-    default: ({ name, label }: { name: string; label: string }) => (
-      <div data-testid={`textarea-${name}`}>{label}</div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ name, label }: { name: string; label: string }) => (
+        <div data-testid={`textarea-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule134>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Inputs/CertificateNumberLookup',
-  () => ({
-    default: ({ name, label }: { name: string; label: string }) => (
-      <div data-testid={`certificate-${name}`}>{label}</div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ name, label }: { name: string; label: string }) => (
+        <div data-testid={`certificate-${name}`}>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule135>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
-  () => ({
-    default: ({
-      selectedInstrumentCategoryId,
-      selectedInstrumentTypeId,
-    }: {
-      selectedInstrumentCategoryId?: string;
-      selectedInstrumentTypeId?: string;
-    }) => {
-      captured.infoPanel = {
-        category: selectedInstrumentCategoryId,
-        type: selectedInstrumentTypeId,
-      };
+  () =>
+    ({
+      default: ({
+        selectedInstrumentCategoryId,
+        selectedInstrumentTypeId,
+      }: {
+        selectedInstrumentCategoryId?: string;
+        selectedInstrumentTypeId?: string;
+      }) => {
+        captured.infoPanel = {
+          category: selectedInstrumentCategoryId,
+          type: selectedInstrumentTypeId,
+        };
 
-      return <div data-testid='instrument-info-panel' />;
-    },
-  })
+        return <div data-testid='instrument-info-panel' />;
+      },
+    }) satisfies __ExactMockModule<__TestMockModule136>
 );
 
-vi.mock('../../../../ClientApp/src/components/SummaryDisplay', () => ({
-  default: ({
-    id,
-    label,
-    value,
-  }: {
-    id: string;
-    label: string;
-    value: string;
-  }) => (
-    <div data-testid={`summary-${id}`} data-label={label}>
-      {value}
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/SummaryDisplay',
+  () =>
+    ({
+      default: ({
+        id,
+        label,
+        value,
+      }: {
+        id: string;
+        label: string;
+        value: string;
+      }) => (
+        <div data-testid={`summary-${id}`} data-label={label}>
+          {value}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule137>
+);
 
 const categoryLookup = () => [
   { id: 'cat-weighing', label: 'Weighing instruments', parentId: undefined },

@@ -11,48 +11,60 @@ const mocks = vi.hoisted(() => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountDispatch: () => ({
-    setUserProfile: mocks.setUserProfile,
-  }),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountDispatch: () => ({
+        setUserProfile: mocks.setUserProfile,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: mocks.trackGAEvent,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: mocks.trackGAEvent,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
-  default: ({
-    legend,
-    name,
-    options,
-    onChange,
-    disabled,
-  }: {
-    legend: string;
-    name: string;
-    options: { id?: string; label: string; value: string }[];
-    onChange: React.ChangeEventHandler<HTMLInputElement>;
-    disabled?: boolean;
-  }) => (
-    <fieldset>
-      <legend>{legend}</legend>
-      {options.map((option) => (
-        <label key={option.value} htmlFor={option.id}>
-          <input
-            id={option.id}
-            type='radio'
-            name={name}
-            value={option.value}
-            disabled={disabled}
-            onChange={onChange}
-          />
-          {option.label}
-        </label>
-      ))}
-    </fieldset>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/RadioButtonGroup',
+  () =>
+    ({
+      default: ({
+        legend,
+        name,
+        options,
+        onChange,
+        disabled,
+      }: {
+        legend: string;
+        name: string;
+        options: { id?: string; label: string; value: string }[];
+        onChange: React.ChangeEventHandler<HTMLInputElement>;
+        disabled?: boolean;
+      }) => (
+        <fieldset>
+          <legend>{legend}</legend>
+          {options.map((option) => (
+            <label key={option.value} htmlFor={option.id}>
+              <input
+                id={option.id}
+                type='radio'
+                name={name}
+                value={option.value}
+                disabled={disabled}
+                onChange={onChange}
+              />
+              {option.label}
+            </label>
+          ))}
+        </fieldset>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule52>
+);
 
 const renderMenu = (
   initialFilters: PatternApprovalDashboardDto | undefined,

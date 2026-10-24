@@ -61,31 +61,44 @@ vi.mock(
           saveSummaryAndAccept: mocks.saveSummaryAndAccept,
         };
       }),
-    };
+    } satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: mocks.setDashboardNotification,
-}));
+vi.mock(
+  '../../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: mocks.setDashboardNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
-  () => ({
-    default: () => ({
-      setItem: mocks.sessionSetItem,
-    }),
-  })
+  () =>
+    ({
+      default: () => ({
+        setItem: mocks.sessionSetItem,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule72>
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];

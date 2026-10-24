@@ -54,21 +54,25 @@ const mocks: {
   setAuthToken: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useAccount: () => mocks.account,
-  useMsal: () => ({
-    accounts: mocks.accounts,
-    inProgress: mocks.inProgress,
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useAccount: () => mocks.account,
+      useMsal: () => ({
+        accounts: mocks.accounts,
+        inProgress: mocks.inProgress,
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AddressClient,
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 interface FormikHarnessProps {

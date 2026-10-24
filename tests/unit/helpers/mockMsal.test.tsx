@@ -19,7 +19,7 @@ import {
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('./mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 /**

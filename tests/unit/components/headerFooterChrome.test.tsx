@@ -23,55 +23,83 @@ const msalState = vi.hoisted(() => ({
   authenticated: false,
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
-    msalState.authenticated ? children : null,
-  UnauthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
-    msalState.authenticated ? null : children,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
+        msalState.authenticated ? children : null,
+      UnauthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
+        msalState.authenticated ? null : children,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: vi.fn(),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('@/components/modals/ModalContext', () => ({
-  useModalDispatch: vi.fn(),
-}));
+vi.mock(
+  '@/components/modals/ModalContext',
+  () =>
+    ({
+      useModalDispatch: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule27>
+);
 
-vi.mock('@/routes/common/helperFunctions', () => ({
-  getEnvironment: vi.fn(),
-}));
+vi.mock(
+  '@/routes/common/helperFunctions',
+  () =>
+    ({
+      getEnvironment: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule9>
+);
 
-vi.mock('@/assets/GovCrest.svg', () => ({
-  default: 'gov-crest.svg',
-}));
+vi.mock(
+  '@/assets/GovCrest.svg',
+  () =>
+    ({
+      default: 'gov-crest.svg',
+    }) satisfies __ExactMockModule<__TestMockModule19>
+);
 
-vi.mock('@/components/modals/ContentModal', () => ({
-  default: ({
-    showModal,
-    onCancelModal,
-    modalBody,
-    modalTitle,
-  }: {
-    showModal: boolean;
-    onCancelModal: () => void;
-    modalBody: React.ReactNode;
-    modalTitle: string;
-  }) =>
-    showModal ? (
-      <dialog open aria-label={modalTitle}>
-        <h2>{modalTitle}</h2>
-        <div>{modalBody}</div>
-        <button type='button' onClick={onCancelModal}>
-          Close modal
-        </button>
-      </dialog>
-    ) : null,
-}));
+vi.mock(
+  '@/components/modals/ContentModal',
+  () =>
+    ({
+      default: ({
+        showModal,
+        onCancelModal,
+        modalBody,
+        modalTitle,
+      }: {
+        showModal: boolean;
+        onCancelModal: () => void;
+        modalBody: React.ReactNode;
+        modalTitle: string;
+      }) =>
+        showModal ? (
+          <dialog open aria-label={modalTitle}>
+            <h2>{modalTitle}</h2>
+            <div>{modalBody}</div>
+            <button type='button' onClick={onCancelModal}>
+              Close modal
+            </button>
+          </dialog>
+        ) : null,
+    }) satisfies __ExactMockModule<__TestMockModule28>
+);
 
 const renderWithRouter = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);

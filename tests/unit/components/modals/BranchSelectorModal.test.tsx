@@ -53,31 +53,46 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
         setDefaultOrganisation: mocks.setDefaultOrganisation,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/storage/notification', () => ({
-  getBranchModalNotification: () => mocks.getBranchModalNotification(),
-  clearBranchModalNotification: () => mocks.clearBranchModalNotification(),
-}));
+vi.mock(
+  '@/storage/notification',
+  () =>
+    ({
+      getBranchModalNotification: () => mocks.getBranchModalNotification(),
+      clearBranchModalNotification: () => mocks.clearBranchModalNotification(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: {
-    error: (...args: any[]) => mocks.appLoggerError(...args),
-    verbose: vi.fn(),
-  },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: (...args: any[]) => mocks.appLoggerError(...args),
+        verbose: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
-  return { ...actual, useNavigate: () => mocks.navigate };
+  return {
+    ...actual,
+    useNavigate: () => mocks.navigate,
+  } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
-vi.mock('@/components/Alert/NotificationMessage', () => ({
-  default: ({ id }: { id: string }) => (
-    <div data-testid={id}>notification message</div>
-  ),
-}));
+vi.mock(
+  '@/components/Alert/NotificationMessage',
+  () =>
+    ({
+      default: ({ id }: { id: string }) => (
+        <div data-testid={id}>notification message</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule48>
+);
 
 // ─── test data ────────────────────────────────────────────────────────────────
 

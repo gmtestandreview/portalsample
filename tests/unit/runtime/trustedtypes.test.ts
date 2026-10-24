@@ -5,11 +5,15 @@ const mocks = vi.hoisted(() => ({
   sanitize: vi.fn((value: string) => `sanitized:${value}`),
 }));
 
-vi.mock('dompurify', () => ({
-  default: {
-    sanitize: mocks.sanitize,
-  },
-}));
+vi.mock(
+  'dompurify',
+  () =>
+    ({
+      default: {
+        sanitize: mocks.sanitize,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule159>
+);
 
 describe('trustedTypes', () => {
   afterEach(() => {

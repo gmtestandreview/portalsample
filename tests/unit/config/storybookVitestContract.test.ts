@@ -4,9 +4,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
-vi.mock('@storybook/addon-vitest/vitest-plugin', () => ({
-  storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
-}));
+vi.mock(
+  '@storybook/addon-vitest/vitest-plugin',
+  () =>
+    ({
+      storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
+    }) satisfies __ExactMockModule<__TestMockModule56>
+);
 
 import { storybookVitestRuntimePlugin } from '../../../vitest.storybook.runtime';
 import storybookConfig from '../../../vitest.storybook.config';

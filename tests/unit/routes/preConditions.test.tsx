@@ -17,103 +17,129 @@ let mockAccountDispatchAvailable = true;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: () => mockIsAuthenticated,
-  useMsal: vi.fn(() => ({
-    inProgress: 'none',
-    accounts: [],
-    instance: {},
-  })),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useIsAuthenticated: () => mockIsAuthenticated,
+      useMsal: vi.fn(() => ({
+        inProgress: 'none',
+        accounts: [],
+        instance: {},
+      })),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: () => ({ details: mockAccountStateDetails }),
-  useAccountDispatch: () =>
-    mockAccountDispatchAvailable
-      ? {
-          setAgree: vi.fn(),
-          setCompleted: vi.fn(),
-          setContactCompleted: vi.fn(),
-          setDefaultOrganisationId: vi.fn(),
-          setTargetOrganisation: vi.fn(),
-          setOrganisationAndBranch: vi.fn(),
-          setUserProfile: vi.fn(),
-        }
-      : undefined,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({ details: mockAccountStateDetails }),
+      useAccountDispatch: () =>
+        mockAccountDispatchAvailable
+          ? {
+              setAgree: vi.fn(),
+              setCompleted: vi.fn(),
+              setContactCompleted: vi.fn(),
+              setDefaultOrganisationId: vi.fn(),
+              setTargetOrganisation: vi.fn(),
+              setOrganisationAndBranch: vi.fn(),
+              setUserProfile: vi.fn(),
+            }
+          : undefined,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../ClientApp/src/components/Layout', () => ({
-  default: ({ children }: any) => <div data-testid='layout'>{children}</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Layout',
+  () =>
+    ({
+      default: ({ children }: any) => (
+        <div data-testid='layout'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule110>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/modals/TermsAndCondition',
-  () => ({
-    default: () => <div data-testid='terms-modal'>Terms Modal</div>,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='terms-modal'>Terms Modal</div>,
+    }) satisfies __ExactMockModule<__TestMockModule111>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/modals/BranchSelectorModal',
-  () => ({
-    default: () => (
-      <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
-    ),
-  })
+  () =>
+    ({
+      default: () => (
+        <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule112>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
-  () => ({
-    BranchSelectionModalMode: {
-      SelectAndEditOrg: 'SelectAndEditOrg',
-      RFQSelectOrg: 'RFQSelectOrg',
-    },
-  })
+  () =>
+    ({
+      BranchSelectionModalMode: {
+        SelectAndEditOrg: 'SelectAndEditOrg',
+        RFQSelectOrg: 'RFQSelectOrg',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule109>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/modals/RFQDeleteModal',
-  () => ({
-    default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
+    }) satisfies __ExactMockModule<__TestMockModule113>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/modals/ModalContext',
-  () => ({
-    ModalStateCtx: React.createContext(null),
-    ModalDispatchCtx: React.createContext(null),
-    useModalState: vi.fn(),
-    useModalDispatch: vi.fn(),
-  })
+  () =>
+    ({
+      ModalStateCtx: React.createContext(null),
+      ModalDispatchCtx: React.createContext(null),
+      useModalState: vi.fn(),
+      useModalDispatch: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule27>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/routeChangeScrollTop',
-  () => ({
-    default: () => null,
-  })
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule44>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/backToTopButton',
-  () => ({
-    default: () => null,
-  })
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule43>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
-  () => ({
-    default: () => null,
-  })
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule114>
 );
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  clearDashboardNotification: vi.fn(),
-  getBranchModalNotification: vi.fn(() => undefined),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      clearDashboardNotification: vi.fn(),
+      getBranchModalNotification: vi.fn(() => undefined),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────
 

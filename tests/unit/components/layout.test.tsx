@@ -3,35 +3,63 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import Layout from '@/components/Layout';
 
-vi.mock('@/components/Header', () => ({
-  default: () => <header>Mock header</header>,
-}));
+vi.mock(
+  '@/components/Header',
+  () =>
+    ({
+      default: () => <header>Mock header</header>,
+    }) satisfies __ExactMockModule<__TestMockModule40>
+);
 
-vi.mock('@/components/Footer', () => ({
-  default: () => <footer>Mock footer</footer>,
-}));
+vi.mock(
+  '@/components/Footer',
+  () =>
+    ({
+      default: () => <footer>Mock footer</footer>,
+    }) satisfies __ExactMockModule<__TestMockModule41>
+);
 
-vi.mock('@/components/Utilities/skipLinks', () => ({
-  default: () => <a href='#main'>Skip to main content</a>,
-}));
+vi.mock(
+  '@/components/Utilities/skipLinks',
+  () =>
+    ({
+      default: () => <a href='#main'>Skip to main content</a>,
+    }) satisfies __ExactMockModule<__TestMockModule42>
+);
 
-vi.mock('@/components/Utilities/backToTopButton', () => ({
-  default: () => <nav aria-label='Back to top'>Back to top</nav>,
-}));
+vi.mock(
+  '@/components/Utilities/backToTopButton',
+  () =>
+    ({
+      default: () => <nav aria-label='Back to top'>Back to top</nav>,
+    }) satisfies __ExactMockModule<__TestMockModule43>
+);
 
-vi.mock('@/components/Utilities/routeChangeScrollTop', () => ({
-  default: () => null,
-}));
+vi.mock(
+  '@/components/Utilities/routeChangeScrollTop',
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule44>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/hooks/useRouteAccessibility', () => ({
-  useRouteAccessibility: () => ({
-    announcement: 'Navigated to Dashboard page.',
-  }),
-}));
+vi.mock(
+  '@/hooks/useRouteAccessibility',
+  () =>
+    ({
+      useRouteAccessibility: () => ({
+        announcement: 'Navigated to Dashboard page.',
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule45>
+);
 
 describe(Layout, () => {
   it('renders page chrome, main content, and the route announcement region', () => {

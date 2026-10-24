@@ -29,7 +29,7 @@ const clients = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -41,13 +41,19 @@ vi.mock(
 
     clients.lookup = createClientMockFor('getLookup');
 
-    return webApiClientModuleMock(original, { LookupClient: clients.lookup });
+    return webApiClientModuleMock(original, {
+      LookupClient: clients.lookup,
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const REQUEST_ID = 'RFQ-1';
 

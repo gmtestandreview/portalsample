@@ -10,14 +10,15 @@ const guardProps = vi.hoisted(() => ({
 
 vi.mock(
   '../../../../ClientApp/src/components/RouteLeavingGuard',
-  () => ({
-    default: (props: { when?: boolean; onProceed?: () => void }) => {
-      guardProps.last = props;
-      return (
-        <div data-testid='guard' data-when={String(Boolean(props.when))} />
-      );
-    },
-  })
+  () =>
+    ({
+      default: (props: { when?: boolean; onProceed?: () => void }) => {
+        guardProps.last = props;
+        return (
+          <div data-testid='guard' data-when={String(Boolean(props.when))} />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule20>
 );
 
 const base = { isDirty: false, isValid: true, submitCount: 0 };

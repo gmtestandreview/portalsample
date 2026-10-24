@@ -38,7 +38,7 @@ const editor = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -56,81 +56,101 @@ vi.mock(
     // FilterMessages must stay the real enum - the view select compares against its members.
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock(
   '../../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
-    return { ...original, sanitiseHtml: mocks.sanitiseHtml };
+    return {
+      ...original,
+      sanitiseHtml: mocks.sanitiseHtml,
+    } satisfies __ExactMockModule<__TestMockModule9>;
   }
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/SlateEditor/SlateEditor',
-  () => ({
-    default: (props: typeof editor.props) => {
-      editor.props = props;
-      editor.renderCount += 1;
+  () =>
+    ({
+      default: (props: typeof editor.props) => {
+        editor.props = props;
+        editor.renderCount += 1;
 
-      return (
-        <div data-testid='slate-editor' data-placeholder={props.placeholder} />
-      );
-    },
-    serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
-  })
+        return (
+          <div
+            data-testid='slate-editor'
+            data-placeholder={props.placeholder}
+          />
+        );
+      },
+      serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
+    }) satisfies __ExactMockModule<__TestMockModule142>
 );
 
-vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
-  default: ({
-    currentPage,
-    totalPages,
-    onPageChange,
-  }: {
-    currentPage: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-  }) => (
-    <button
-      type='button'
-      data-testid='pagination'
-      data-current={currentPage}
-      data-total={totalPages}
-      onClick={() => onPageChange(2)}
-    >
-      next page
-    </button>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Pagination',
+  () =>
+    ({
+      default: ({
+        currentPage,
+        totalPages,
+        onPageChange,
+      }: {
+        currentPage: number;
+        totalPages: number;
+        onPageChange: (page: number) => void;
+      }) => (
+        <button
+          type='button'
+          data-testid='pagination'
+          data-current={currentPage}
+          data-total={totalPages}
+          onClick={() => onPageChange(2)}
+        >
+          next page
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule98>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/PaginationHeader',
-  () => ({
-    default: ({
-      currentPage,
-      totalCount,
-    }: {
-      currentPage: number;
-      totalCount: number;
-    }) => (
-      <span
-        data-testid='pagination-header'
-        data-current={currentPage}
-        data-total-count={totalCount}
-      />
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        currentPage,
+        totalCount,
+      }: {
+        currentPage: number;
+        totalCount: number;
+      }) => (
+        <span
+          data-testid='pagination-header'
+          data-current={currentPage}
+          data-total-count={totalCount}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule99>
 );
 
 const messageItem = (overrides: Record<string, unknown> = {}) => ({

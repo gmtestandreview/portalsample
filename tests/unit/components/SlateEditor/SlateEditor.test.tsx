@@ -33,7 +33,7 @@ vi.mock('slate', async (importOriginal) => {
       captured.editors.push(editor);
       return editor;
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule55>;
 });
 
 /** The editor belonging to the most recently rendered SlateEditor. */

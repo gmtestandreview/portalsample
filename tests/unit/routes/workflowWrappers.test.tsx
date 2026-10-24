@@ -23,245 +23,295 @@ const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: mocks.msalAccounts,
-    instance: mocks.msalInstance,
-  }),
-}));
-
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
-
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-}));
-
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof WebApiClientModule>();
-
-    return {
-      ...actual,
-      ApplicationType: {
-        QuoteAccept: 'QuoteAccept',
-        QuoteRequest: 'QuoteRequest',
-      },
-      RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getStepStatuses: mocks.requestForQuoteGetStepStatuses,
-        };
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: mocks.msalAccounts,
+        instance: mocks.msalInstance,
       }),
-      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getStepStatuses: mocks.acceptQuoteGetStepStatuses,
-          getPaymentDetails: mocks.getPaymentDetails,
-        };
-      }),
-      ApplicationClient: vi.fn(function ApplicationClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          createApplication: mocks.createApplication,
-          copyApplication: mocks.copyApplication,
-        };
-      }),
-      QuoteClient: vi.fn(function QuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getQuoteRequestDetails: mocks.getQuoteRequestDetails,
-          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-        };
-      }),
-    };
-  }
+    }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
-  default: ({
-    children,
-    locationOnCompletion,
-    lastStepNextButtonTitle,
-  }: {
-    children: React.ReactNode;
-    locationOnCompletion: string;
-    lastStepNextButtonTitle: string;
-  }) => (
-    <section
-      data-testid='wizard-form'
-      data-complete-location={locationOnCompletion}
-      data-last-button={lastStepNextButtonTitle}
-    >
-      {children}
-    </section>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
+
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: mocks.useAccountState,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
+
+vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof WebApiClientModule>();
+
+  return {
+    ...actual,
+    ApplicationType: {
+      QuoteAccept: 'QuoteAccept',
+      QuoteRequest: 'QuoteRequest',
+    },
+    RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getStepStatuses: mocks.requestForQuoteGetStepStatuses,
+      };
+    }),
+    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getStepStatuses: mocks.acceptQuoteGetStepStatuses,
+        getPaymentDetails: mocks.getPaymentDetails,
+      };
+    }),
+    ApplicationClient: vi.fn(function ApplicationClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        createApplication: mocks.createApplication,
+        copyApplication: mocks.copyApplication,
+      };
+    }),
+    QuoteClient: vi.fn(function QuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getQuoteRequestDetails: mocks.getQuoteRequestDetails,
+        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+      };
+    }),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+});
+
+vi.mock(
+  '../../../ClientApp/src/components/forms/WizardForm',
+  () =>
+    ({
+      default: ({
+        children,
+        locationOnCompletion,
+        lastStepNextButtonTitle,
+      }: {
+        children: React.ReactNode;
+        locationOnCompletion: string;
+        lastStepNextButtonTitle: string;
+      }) => (
+        <section
+          data-testid='wizard-form'
+          data-complete-location={locationOnCompletion}
+          data-last-button={lastStepNextButtonTitle}
+        >
+          {children}
+        </section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule60>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({
-      children,
-      bannerTitle,
-      bannerRefTitle,
-    }: {
-      children: React.ReactNode;
-      bannerTitle?: string;
-      bannerRefTitle?: string;
-    }) => (
-      <article
-        data-testid='wizard-step'
-        data-banner-title={bannerTitle}
-        data-ref-title={bannerRefTitle}
-      >
-        {children}
-      </article>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        children,
+        bannerTitle,
+        bannerRefTitle,
+      }: {
+        children: React.ReactNode;
+        bannerTitle?: string;
+        bannerRefTitle?: string;
+      }) => (
+        <article
+          data-testid='wizard-step'
+          data-banner-title={bannerTitle}
+          data-ref-title={bannerRefTitle}
+        >
+          {children}
+        </article>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
-vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
-  default: ({
-    title,
-    refTitle,
-    subTitle,
-  }: {
-    title: string;
-    refTitle?: string;
-    subTitle?: string;
-  }) => (
-    <div
-      data-testid='form-banner'
-      data-ref-title={refTitle}
-      data-sub-title={subTitle}
-    >
-      {title}
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/forms/FormBanner',
+  () =>
+    ({
+      default: ({
+        title,
+        refTitle,
+        subTitle,
+      }: {
+        title: string;
+        refTitle?: string;
+        subTitle?: string;
+      }) => (
+        <div
+          data-testid='form-banner'
+          data-ref-title={refTitle}
+          data-sub-title={subTitle}
+        >
+          {title}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule90>
+);
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='block-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <p data-testid='header-intro'>{children}</p>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/HeaderIntroText',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <p data-testid='header-intro'>{children}</p>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule76>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/useBodyClass',
-  () => ({
-    default: () => {},
-  })
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/useHtmlTitle',
-  () => ({
-    default: () => {},
-  })
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>
 );
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-    verbose: mocks.appLoggerVerbose,
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        verbose: mocks.appLoggerVerbose,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 vi.mock(
   '../../../ClientApp/src/routes/requestForQuote/organisationAndContact',
-  () => ({
-    default: () => <div>Organisation and contact step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Organisation and contact step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule149>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest',
-  () => ({
-    default: () => <div>Instrument and request step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Instrument and request step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule150>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary',
-  () => ({
-    default: () => <div>Request summary step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Request summary step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule151>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/acceptQuote/reportRecipient',
-  () => ({
-    default: () => <div>Report recipient step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Report recipient step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule61>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
-  () => ({
-    default: () => <div>Delivery and return step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Delivery and return step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule62>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/acceptQuote/paymentDetails',
-  () => ({
-    default: () => <div>Payment details step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Payment details step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule63>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
-  () => ({
-    default: () => <div>Summary and accept step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Summary and accept step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule64>
 );
 
-vi.mock('../../../ClientApp/src/routes/quotation/quoteDetails', () => ({
-  default: ({
-    quotationData,
-    fileError,
-  }: {
-    quotationData?: { quotationIdNum?: string };
-    fileError?: boolean;
-  }) => (
-    <div data-testid='quotation-details' data-file-error={fileError}>
-      {quotationData?.quotationIdNum}
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/quotation/quoteDetails',
+  () =>
+    ({
+      default: ({
+        quotationData,
+        fileError,
+      }: {
+        quotationData?: { quotationIdNum?: string };
+        fileError?: boolean;
+      }) => (
+        <div data-testid='quotation-details' data-file-error={fileError}>
+          {quotationData?.quotationIdNum}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule152>
+);
 
 vi.mock(
   '../../../ClientApp/src/routes/quotation/nMIContactDetails',
-  () => ({
-    default: () => <div>NMI contact details</div>,
-  })
+  () =>
+    ({
+      default: () => <div>NMI contact details</div>,
+    }) satisfies __ExactMockModule<__TestMockModule153>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
-  () => ({
-    default: () => <div>Quote terms</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Quote terms</div>,
+    }) satisfies __ExactMockModule<__TestMockModule116>
 );
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/ViewPdfQuote',
-  () => ({
-    default: () => <div>Detailed quote PDF</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Detailed quote PDF</div>,
+    }) satisfies __ExactMockModule<__TestMockModule117>
 );
 
 const accountDetails = {

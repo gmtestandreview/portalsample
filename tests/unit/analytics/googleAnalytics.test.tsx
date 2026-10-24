@@ -9,9 +9,13 @@ const reactGaMock = vi.hoisted(() => ({
   send: vi.fn(),
 }));
 
-vi.mock('react-ga4', () => ({
-  default: reactGaMock,
-}));
+vi.mock(
+  'react-ga4',
+  () =>
+    ({
+      default: reactGaMock,
+    }) satisfies __ExactMockModule<__TestMockModule1>
+);
 
 describe('googleAnalytics', () => {
   afterEach(() => {

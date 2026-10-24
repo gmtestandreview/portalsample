@@ -19,9 +19,13 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => mocks.msalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => mocks.msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -34,7 +38,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
         setAuthToken: mocks.setAuthToken,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 const categoryId = '11111111-1111-4111-8111-111111111111';

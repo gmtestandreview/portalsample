@@ -17,43 +17,50 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  default: () => mocks.account,
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: () => mocks.account,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
-  () => ({
-    default: mocks.useHtmlTitle,
-  })
+  () =>
+    ({
+      default: mocks.useHtmlTitle,
+    }) satisfies __ExactMockModule<__TestMockModule89>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/Utilities/useBodyClass',
-  () => ({
-    default: mocks.useBodyClass,
-  })
+  () =>
+    ({
+      default: mocks.useBodyClass,
+    }) satisfies __ExactMockModule<__TestMockModule59>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/forms/FormBanner',
-  () => ({
-    default: ({
-      title,
-      refTitle,
-      subTitle,
-    }: {
-      title: string;
-      refTitle: string;
-      subTitle: string;
-    }) => (
-      <div data-testid='form-banner'>
-        <span>{title}</span>
-        <span>{refTitle}</span>
-        <span>{subTitle}</span>
-      </div>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        title,
+        refTitle,
+        subTitle,
+      }: {
+        title: string;
+        refTitle: string;
+        subTitle: string;
+      }) => (
+        <div data-testid='form-banner'>
+          <span>{title}</span>
+          <span>{refTitle}</span>
+          <span>{subTitle}</span>
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule90>
 );
 
 const renderCreatedRoute = () =>

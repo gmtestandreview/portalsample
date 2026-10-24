@@ -9,45 +9,73 @@ const mocks = vi.hoisted(() => ({
   setShowRFQDeleteModal: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [],
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [],
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('react-router', () => ({
-  useNavigate: () => mocks.navigate,
-}));
+vi.mock(
+  'react-router',
+  () =>
+    ({
+      useNavigate: () => mocks.navigate,
+    }) satisfies __ExactMockModule<__TestMockModule11>
+);
 
-vi.mock('@/components/modals/ModalContext', () => ({
-  useModalState: () => null,
-  useModalDispatch: () => ({
-    setShowRFQDeleteModal: mocks.setShowRFQDeleteModal,
-  }),
-}));
+vi.mock(
+  '@/components/modals/ModalContext',
+  () =>
+    ({
+      useModalState: () => null,
+      useModalDispatch: () => ({
+        setShowRFQDeleteModal: mocks.setShowRFQDeleteModal,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule27>
+);
 
-vi.mock('@/api/web-api-client', () => ({
-  ApplicationType: { QuoteRequest: 'QuoteRequest' },
-  ApplicationClient: vi.fn(function ApplicationClientMock() {
-    return {
-      setAuthToken: vi.fn(),
-      deleteApplication: mocks.deleteApplication,
-    };
-  }),
-}));
+vi.mock(
+  '@/api/web-api-client',
+  () =>
+    ({
+      ApplicationType: { QuoteRequest: 'QuoteRequest' },
+      ApplicationClient: vi.fn(function ApplicationClientMock() {
+        return {
+          setAuthToken: vi.fn(),
+          deleteApplication: mocks.deleteApplication,
+        };
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('@/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  '@/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 vi.mock('react-bootstrap', () => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
@@ -88,7 +116,7 @@ vi.mock('react-bootstrap', () => {
       </button>
     ),
     Modal,
-  };
+  } satisfies __ExactMockModule<__TestMockModule49>;
 });
 
 describe('rFQDeleteModal null context', () => {

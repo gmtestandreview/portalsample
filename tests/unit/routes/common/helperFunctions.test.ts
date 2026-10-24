@@ -71,24 +71,36 @@ vi.mock(
           getQuoteReportPDFByID: mocks.getQuoteReportPDFByID,
         };
       }),
-    };
+    } satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: mocks.setDashboardNotification,
-}));
+vi.mock(
+  '../../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: mocks.setDashboardNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../../ClientApp/src/routes/common/openWindow', () => ({
-  openUrlInSecureNewTab: mocks.openUrlInSecureNewTab,
-  openPdfPageInSecureNewTab: mocks.openPdfPageInSecureNewTab,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/common/openWindow',
+  () =>
+    ({
+      openUrlInSecureNewTab: mocks.openUrlInSecureNewTab,
+      openPdfPageInSecureNewTab: mocks.openPdfPageInSecureNewTab,
+    }) satisfies __ExactMockModule<__TestMockModule91>
+);
 
-vi.mock('react-ga4', () => ({
-  default: {
-    send: vi.fn(),
-  },
-}));
+vi.mock(
+  'react-ga4',
+  () =>
+    ({
+      default: {
+        send: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule1>
+);
 
 const baseRequest = {
   crmQuoteRequestId: 'request-1',

@@ -33,21 +33,29 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: mocks.instance,
-    accounts: mocks.accounts,
-    inProgress: 'none',
-  }),
-  useAccount: () => ({ homeAccountId: 'mock-id' }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: mocks.instance,
+        accounts: mocks.accounts,
+        inProgress: 'none',
+      }),
+      useAccount: () => ({ homeAccountId: 'mock-id' }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: () => ({
-    isLoading: false,
-    details: { homeAccountId: 'mock-id' },
-  }),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({
+        isLoading: false,
+        details: { homeAccountId: 'mock-id' },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -60,25 +68,37 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
     AccountsClient: class {
       setAuthToken = vi.fn();
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: mocks.error },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: mocks.error },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The lookup talks to the address service; stand in a marker element. The edit
 // form renders the RHF twin once migrated; the summary keeps the Formik one.
-vi.mock('@/components/Inputs/AddressLookup', () => ({
-  default: ({ label }: { label: string }) => (
-    <div data-testid='address-lookup'>{label}</div>
-  ),
-}));
-vi.mock('@/components/Inputs/RhfAddressLookup', () => ({
-  default: ({ label }: { label: string }) => (
-    <div data-testid='address-lookup'>{label}</div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/AddressLookup',
+  () =>
+    ({
+      default: ({ label }: { label: string }) => (
+        <div data-testid='address-lookup'>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule31>
+);
+vi.mock(
+  '@/components/Inputs/RhfAddressLookup',
+  () =>
+    ({
+      default: ({ label }: { label: string }) => (
+        <div data-testid='address-lookup'>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule69>
+);
 
 const hidingFields = deliveryAndReturnHidingFields;
 

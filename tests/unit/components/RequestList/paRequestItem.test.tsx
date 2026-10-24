@@ -28,31 +28,43 @@ const mocks = vi.hoisted(() => ({
   loggerError: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'account-id' }],
-    instance: {
-      acquireTokenSilent: mocks.acquireTokenSilent,
-    },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'account-id' }],
+        instance: {
+          acquireTokenSilent: mocks.acquireTokenSilent,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: mocks.trackGAEvent,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: mocks.trackGAEvent,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.loggerError,
-  },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.loggerError,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock('@/storage/notification', async (importOriginal) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
     setDashboardNotification: mocks.setDashboardNotification,
-  };
+  } satisfies __ExactMockModule<__TestMockModule46>;
 });
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
@@ -66,7 +78,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
         setAuthToken: mocks.setAuthToken,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 const LocationDisplay = () => {

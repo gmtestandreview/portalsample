@@ -17,116 +17,142 @@ const authElementMocks = vi.hoisted(() => ({
   setActiveAccount: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  MsalAuthenticationTemplate: ({
-    authenticationRequest,
-    children,
-    errorComponent: ErrorComponent,
-    interactionType,
-    loadingComponent: LoadingComponent,
-  }: {
-    authenticationRequest: unknown;
-    children: ReactNode;
-    errorComponent: ComponentType;
-    interactionType: unknown;
-    loadingComponent: ComponentType;
-  }) => {
-    authElementMocks.msalTemplateProps = {
-      authenticationRequest,
-      errorComponent: ErrorComponent,
-      interactionType,
-      loadingComponent: LoadingComponent,
-    };
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      MsalAuthenticationTemplate: ({
+        authenticationRequest,
+        children,
+        errorComponent: ErrorComponent,
+        interactionType,
+        loadingComponent: LoadingComponent,
+      }: {
+        authenticationRequest: unknown;
+        children: ReactNode;
+        errorComponent: ComponentType;
+        interactionType: unknown;
+        loadingComponent: ComponentType;
+      }) => {
+        authElementMocks.msalTemplateProps = {
+          authenticationRequest,
+          errorComponent: ErrorComponent,
+          interactionType,
+          loadingComponent: LoadingComponent,
+        };
 
-    if (authElementMocks.msalTemplateMode === 'loading') {
-      return <LoadingComponent />;
-    }
+        if (authElementMocks.msalTemplateMode === 'loading') {
+          return <LoadingComponent />;
+        }
 
-    if (authElementMocks.msalTemplateMode === 'error') {
-      return <ErrorComponent />;
-    }
+        if (authElementMocks.msalTemplateMode === 'error') {
+          return <ErrorComponent />;
+        }
 
-    return <div data-testid='msal-template'>{children}</div>;
-  },
-  useMsal: () => ({
-    instance: {
-      setActiveAccount: authElementMocks.setActiveAccount,
-    },
-  }),
-}));
+        return <div data-testid='msal-template'>{children}</div>;
+      },
+      useMsal: () => ({
+        instance: {
+          setActiveAccount: authElementMocks.setActiveAccount,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@azure/msal-browser', () => ({
-  InteractionType: {
-    Redirect: 'Redirect',
-  },
-}));
+vi.mock(
+  '@azure/msal-browser',
+  () =>
+    ({
+      InteractionType: {
+        Redirect: 'Redirect',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule3>
+);
 
-vi.mock('react-router', () => ({
-  isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
-  Navigate: ({ to }: { to: string }) => (
-    <span data-testid='navigate'>{to}</span>
-  ),
-  useRouteError: () => authElementMocks.routeError,
-}));
+vi.mock(
+  'react-router',
+  () =>
+    ({
+      isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
+      Navigate: ({ to }: { to: string }) => (
+        <span data-testid='navigate'>{to}</span>
+      ),
+      useRouteError: () => authElementMocks.routeError,
+    }) satisfies __ExactMockModule<__TestMockModule11>
+);
 
 vi.mock(
   '../../../ClientApp/src/routes/preConditions/PreConditions',
-  () => ({
-    default: ({
-      children,
-      displayHeaderAndFooter,
-    }: {
-      children: ReactNode;
-      displayHeaderAndFooter: boolean;
-    }) => (
-      <section
-        data-header-and-footer={String(displayHeaderAndFooter)}
-        data-testid='preconditions'
-      >
-        {children}
-      </section>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        children,
+        displayHeaderAndFooter,
+      }: {
+        children: ReactNode;
+        displayHeaderAndFooter: boolean;
+      }) => (
+        <section
+          data-header-and-footer={String(displayHeaderAndFooter)}
+          data-testid='preconditions'
+        >
+          {children}
+        </section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule12>
 );
 
-vi.mock('../../../ClientApp/src/components/ErrorBoundary', () => ({
-  default: ({
-    appInsights,
-    children,
-  }: {
-    appInsights: unknown;
-    children: ReactNode;
-  }) => (
-    <div
-      data-has-app-insights={String(Boolean(appInsights))}
-      data-testid='error-boundary'
-    >
-      {children}
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/ErrorBoundary',
+  () =>
+    ({
+      default: ({
+        appInsights,
+        children,
+      }: {
+        appInsights: unknown;
+        children: ReactNode;
+      }) => (
+        <div
+          data-has-app-insights={String(Boolean(appInsights))}
+          data-testid='error-boundary'
+        >
+          {children}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule13>
+);
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: ReactNode }) => (
-    <output>{children}</output>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: ReactNode }) => (
+        <output>{children}</output>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
 vi.mock(
   '../../../ClientApp/src/instrumentation/AppInsightsService',
-  () => ({
-    ai: {
-      reactPlugin: { name: 'react-plugin' },
-    },
-  })
+  () =>
+    ({
+      ai: {
+        reactPlugin: { name: 'react-plugin' },
+      },
+    }) satisfies __ExactMockModule<__TestMockModule15>
 );
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  authRequest: {
-    redirectUri: '/redirect',
-    scopes: ['read'],
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      authRequest: {
+        redirectUri: '/redirect',
+        scopes: ['read'],
+      },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
 describe('authenticatedElement', () => {
   afterEach(() => {

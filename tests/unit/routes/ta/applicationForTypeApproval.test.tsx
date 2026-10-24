@@ -53,7 +53,7 @@ const documentsStep = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -77,74 +77,95 @@ vi.mock(
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
       ProgressClient: clients.progress,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  default: () => mocks.accountContext(),
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: () => mocks.accountContext(),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/forms/WizardForm',
-  () => ({
-    default: ({ children }: { children: React.ReactNode }) => (
-      <section data-testid='wizard-form'>{children}</section>
-    ),
-  })
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <section data-testid='wizard-form'>{children}</section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule60>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children: React.ReactNode }) => (
-      <article data-testid='wizard-step'>{children}</article>
-    ),
-  })
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <article data-testid='wizard-step'>{children}</article>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/organisationAndContact',
-  () => ({
-    default: () => <div>Organisation and contact step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Organisation and contact step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule138>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/applicationAndInstrument',
-  () => ({
-    default: () => <div>Application and instrument step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Application and instrument step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule139>
 );
 
-vi.mock('../../../../ClientApp/src/routes/ta/summaryAndSubmit', () => ({
-  default: () => <div>Summary and submit step</div>,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/ta/summaryAndSubmit',
+  () =>
+    ({
+      default: () => <div>Summary and submit step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule140>
+);
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/supportingDocuments',
-  () => ({
-    default: (props: typeof documentsStep.props) => {
-      documentsStep.props = props;
+  () =>
+    ({
+      default: (props: typeof documentsStep.props) => {
+        documentsStep.props = props;
 
-      return (
-        <div
-          data-testid='supporting-documents'
-          data-uploading={String(props.uploading)}
-          data-percent={props.progress?.percent ?? ''}
-          data-errors={props.externalErrors.join('|')}
-        />
-      );
-    },
-  })
+        return (
+          <div
+            data-testid='supporting-documents'
+            data-uploading={String(props.uploading)}
+            data-percent={props.progress?.percent ?? ''}
+            data-errors={props.externalErrors.join('|')}
+          />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule141>
 );
 
 const statuses = [{ name: 'Organisation and contact', status: 'current' }];

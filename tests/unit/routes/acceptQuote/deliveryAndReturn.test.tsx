@@ -26,58 +26,74 @@ const mocks = vi.hoisted(() => {
 
 // ─── module mocks ─────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: mocks.instance,
-    accounts: mocks.accounts,
-    inProgress: 'none',
-  }),
-  useAccount: () => ({ homeAccountId: 'mock-id' }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: mocks.instance,
+        accounts: mocks.accounts,
+        inProgress: 'none',
+      }),
+      useAccount: () => ({ homeAccountId: 'mock-id' }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: () => ({
-    isLoading: false,
-    details: { homeAccountId: 'mock-id' },
-  }),
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({
+        isLoading: false,
+        details: { homeAccountId: 'mock-id' },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 // AcceptQuoteClient, AccountsClient, Title, and State are all consumed by the
 // component or its children. Title must be a real-shaped object so that
 // ContactDetailsInput's getTitles() can iterate over it without crashing.
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
-  AcceptQuoteClient: class {
-    setAuthToken = vi.fn();
-    getDeliveryAndReturn = mocks.getDeliveryAndReturn;
-  },
-  AccountsClient: class {
-    setAuthToken = vi.fn();
-  },
-  Title: {
-    Mr: 'Mr',
-    Mrs: 'Mrs',
-    Miss: 'Miss',
-    Ms: 'Ms',
-    Dr: 'Dr',
-    Sir: 'Sir',
-    AssociateProfessor: 'AssociateProfessor',
-    Professor: 'Professor',
-  },
-  State: {
-    ACT: 'ACT',
-    NSW: 'NSW',
-    TAS: 'TAS',
-    VIC: 'VIC',
-    QLD: 'QLD',
-    NT: 'NT',
-    SA: 'SA',
-    WA: 'WA',
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      AcceptQuoteClient: class {
+        setAuthToken = vi.fn();
+        getDeliveryAndReturn = mocks.getDeliveryAndReturn;
+      },
+      AccountsClient: class {
+        setAuthToken = vi.fn();
+      },
+      Title: {
+        Mr: 'Mr',
+        Mrs: 'Mrs',
+        Miss: 'Miss',
+        Ms: 'Ms',
+        Dr: 'Dr',
+        Sir: 'Sir',
+        AssociateProfessor: 'AssociateProfessor',
+        Professor: 'Professor',
+      },
+      State: {
+        ACT: 'ACT',
+        NSW: 'NSW',
+        TAS: 'TAS',
+        VIC: 'VIC',
+        QLD: 'QLD',
+        NT: 'NT',
+        SA: 'SA',
+        WA: 'WA',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // ─── render helper ────────────────────────────────────────────────────────────
 

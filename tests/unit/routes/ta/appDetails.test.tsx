@@ -36,7 +36,7 @@ const captured = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -50,93 +50,118 @@ vi.mock(
 
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/manage/appDetailsProps',
-  () => ({
-    default: () => ({
-      loadStepValues: mocks.loadStepValues,
-      hidingFields: mocks.hidingFields,
-    }),
-  })
+  () =>
+    ({
+      default: () => ({
+        loadStepValues: mocks.loadStepValues,
+        hidingFields: mocks.hidingFields,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule126>
 );
 
-vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
-  CustomAccordion: ({ children }: { children: ReactNode }) => (
-    <div>{children}</div>
-  ),
-  CustomAccordionBody: ({
-    name,
-    nameRHS,
-    children,
-  }: {
-    name: string;
-    nameRHS?: ReactNode;
-    children: ReactNode;
-  }) => (
-    <section aria-label={name}>
-      <h3>{name}</h3>
-      {nameRHS}
-      {children}
-    </section>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Accordion',
+  () =>
+    ({
+      CustomAccordion: ({ children }: { children: ReactNode }) => (
+        <div>{children}</div>
+      ),
+      CustomAccordionBody: ({
+        name,
+        nameRHS,
+        children,
+      }: {
+        name: string;
+        nameRHS?: ReactNode;
+        children: ReactNode;
+      }) => (
+        <section aria-label={name}>
+          <h3>{name}</h3>
+          {nameRHS}
+          {children}
+        </section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule74>
+);
 
-vi.mock('../../../../ClientApp/src/components/Breadcrumb', () => ({
-  default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
-    <nav data-testid='breadcrumb'>
-      {breadcrumbs.map((b) => b.text).join(' / ')}
-    </nav>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Breadcrumb',
+  () =>
+    ({
+      default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
+        <nav data-testid='breadcrumb'>
+          {breadcrumbs.map((b) => b.text).join(' / ')}
+        </nav>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule115>
+);
 
-vi.mock('../../../../ClientApp/src/components/Pill/StatusPill', () => ({
-  default: ({ status }: { status: string }) => (
-    <span data-testid='status-pill'>{status}</span>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Pill/StatusPill',
+  () =>
+    ({
+      default: ({ status }: { status: string }) => (
+        <span data-testid='status-pill'>{status}</span>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule122>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/Buttons/BackToDashboardButton',
-  () => ({
-    default: () => <a href='/dashboard'>Back to dashboard</a>,
-  })
+  () =>
+    ({
+      default: () => <a href='/dashboard'>Back to dashboard</a>,
+    }) satisfies __ExactMockModule<__TestMockModule127>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/summary/OrganisationSummary',
-  () => ({
-    default: () => <div data-testid='organisation-and-contact' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='organisation-and-contact' />,
+    }) satisfies __ExactMockModule<__TestMockModule128>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/summary/ApplicationSummary',
-  () => ({
-    default: () => <div data-testid='application-and-instrument' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='application-and-instrument' />,
+    }) satisfies __ExactMockModule<__TestMockModule129>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/rhfSupportingDocuments',
-  () => ({
-    default: (props: typeof captured.docsProps) => {
-      captured.docsProps = props;
+  () =>
+    ({
+      default: (props: typeof captured.docsProps) => {
+        captured.docsProps = props;
 
-      return <div data-testid='supporting-documents' />;
-    },
-  })
+        return <div data-testid='supporting-documents' />;
+      },
+    }) satisfies __ExactMockModule<__TestMockModule130>
 );
 
 // Everything real except a hook onto Tab.Container's onSelect, so the guard that rejects an unknown
@@ -152,21 +177,26 @@ vi.mock('react-bootstrap', async (importOriginal) => {
   };
 
   // Tab is a component with statics, so its members are copied rather than spread.
-  return { ...actual, Tab: Object.assign({}, actual.Tab, { Container }) };
+  return {
+    ...actual,
+    Tab: Object.assign({}, actual.Tab, { Container }),
+  } satisfies __ExactMockModule<__TestMockModule49>;
 });
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/manage/appDocuments',
-  () => ({
-    default: () => <div data-testid='application-documents' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='application-documents' />,
+    }) satisfies __ExactMockModule<__TestMockModule124>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/manage/appMessages',
-  () => ({
-    default: () => <div data-testid='application-messages' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='application-messages' />,
+    }) satisfies __ExactMockModule<__TestMockModule125>
 );
 
 const auDate = (iso: string) =>

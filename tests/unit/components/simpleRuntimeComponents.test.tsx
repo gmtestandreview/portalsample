@@ -22,13 +22,21 @@ import Welcome from '@/components/Welcome';
 import { useAccountState } from '@/authentication/hooks';
 import { NotificationSeverity } from '@/storage/types';
 
-vi.mock('@/components/get-started/get-started', () => ({
-  default: () => <main>Get started content</main>,
-}));
+vi.mock(
+  '@/components/get-started/get-started',
+  () =>
+    ({
+      default: () => <main>Get started content</main>,
+    }) satisfies __ExactMockModule<__TestMockModule54>
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: vi.fn(),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 const renderWithRouter = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);

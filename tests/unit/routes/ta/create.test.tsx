@@ -17,42 +17,62 @@ const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: mocks.accounts,
-    instance: {
-      acquireTokenSilent: mocks.acquireTokenSilent,
-    } as unknown as IPublicClientApplication,
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: mocks.accounts,
+        instance: {
+          acquireTokenSilent: mocks.acquireTokenSilent,
+        } as unknown as IPublicClientApplication,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['type-approval.scope'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['type-approval.scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
-  ApplicationType: {
-    PatternApproval: 'PatternApproval',
-  },
-  ApplicationClient: vi.fn(function ApplicationClientMock() {
-    return {
-      setAuthToken: mocks.setAuthToken,
-      createApplication: mocks.createApplication,
-    };
-  }),
-}));
+vi.mock(
+  '../../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      ApplicationType: {
+        PatternApproval: 'PatternApproval',
+      },
+      ApplicationClient: vi.fn(function ApplicationClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          createApplication: mocks.createApplication,
+        };
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: ReactNode }) => (
-    <div data-testid='block-ui-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: ReactNode }) => (
+        <div data-testid='block-ui-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const renderCreateRoute = () =>
   render(

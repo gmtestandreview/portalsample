@@ -20,19 +20,27 @@ const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useAccount: () => mocks.account,
-  useMsal: () => ({
-    accounts: mocks.accounts,
-    inProgress: mocks.inProgress,
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useAccount: () => mocks.account,
+      useMsal: () => ({
+        accounts: mocks.accounts,
+        inProgress: mocks.inProgress,
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/api/web-api-client', async (importOriginal) => ({
-  ...(await importOriginal<typeof WebApiClientModule>()),
-  AddressClient,
-}));
+vi.mock(
+  '@/api/web-api-client',
+  async (importOriginal) =>
+    ({
+      ...(await importOriginal<typeof WebApiClientModule>()),
+      AddressClient,
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
 const match = {
   displayText: '1 National Circuit, Barton ACT 2600',

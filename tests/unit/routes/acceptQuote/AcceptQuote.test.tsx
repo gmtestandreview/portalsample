@@ -25,28 +25,40 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: mocks.msalAccounts,
-    instance: mocks.instance,
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: mocks.msalAccounts,
+        instance: mocks.instance,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
     useNavigate: () => mocks.navigate,
-  };
+  } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: mocks.useAccountState,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
@@ -66,96 +78,115 @@ vi.mock(
           getQuoteRequestDetails: mocks.getQuoteRequestDetails,
         };
       }),
-    };
+    } satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-    verbose: mocks.appLoggerVerbose,
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        verbose: mocks.appLoggerVerbose,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='block-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
 vi.mock(
   '../../../../ClientApp/src/components/Utilities/useBodyClass',
-  () => ({
-    default: () => {},
-  })
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/forms/WizardForm',
-  () => ({
-    default: ({ children }: { children: React.ReactNode }) => (
-      <div data-testid='wizard-form'>{children}</div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='wizard-form'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule60>
 );
 
 vi.mock(
   '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children: React.ReactNode }) => (
-      <div data-testid='wizard-step'>{children}</div>
-    ),
-  })
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='wizard-step'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/reportRecipient',
-  () => ({
-    default: () => <div data-testid='step-report-recipient' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='step-report-recipient' />,
+    }) satisfies __ExactMockModule<__TestMockModule61>
 );
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
-  () => ({
-    default: () => <div data-testid='step-delivery-and-return' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='step-delivery-and-return' />,
+    }) satisfies __ExactMockModule<__TestMockModule62>
 );
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/paymentDetails',
-  () => ({
-    default: () => <div data-testid='step-payment-details' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='step-payment-details' />,
+    }) satisfies __ExactMockModule<__TestMockModule63>
 );
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
-  () => ({
-    default: () => <div data-testid='step-summary-and-accept' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='step-summary-and-accept' />,
+    }) satisfies __ExactMockModule<__TestMockModule64>
 );
 
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps',
-  () => ({
-    default: () => ({}),
-  })
+  () =>
+    ({
+      default: () => ({}),
+    }) satisfies __ExactMockModule<__TestMockModule65>
 );
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps',
-  () => ({
-    default: () => ({}),
-  })
+  () =>
+    ({
+      default: () => ({}),
+    }) satisfies __ExactMockModule<__TestMockModule66>
 );
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps',
-  () => ({
-    default: () => ({}),
-  })
+  () =>
+    ({
+      default: () => ({}),
+    }) satisfies __ExactMockModule<__TestMockModule67>
 );
 vi.mock(
   '../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps',
-  () => ({
-    default: () => ({}),
-  })
+  () =>
+    ({
+      default: () => ({}),
+    }) satisfies __ExactMockModule<__TestMockModule68>
 );
 
 const accountDetails = {

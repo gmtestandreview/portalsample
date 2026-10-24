@@ -12,26 +12,34 @@ const mockInstance = {
   getActiveAccount: vi.fn().mockReturnValue(null),
 };
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: vi.fn(() => ({
-    inProgress: 'none',
-    accounts: [
-      {
-        homeAccountId: 'test-id',
-        idTokenClaims: {
-          email: 'test@example.com',
-          given_name: 'Test',
-          family_name: 'User',
-        },
-      },
-    ],
-    instance: mockInstance,
-  })),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: vi.fn(() => ({
+        inProgress: 'none',
+        accounts: [
+          {
+            homeAccountId: 'test-id',
+            idTokenClaims: {
+              email: 'test@example.com',
+              given_name: 'Test',
+              family_name: 'User',
+            },
+          },
+        ],
+        instance: mockInstance,
+      })),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@azure/msal-browser', () => ({
-  InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
-}));
+vi.mock(
+  '@azure/msal-browser',
+  () =>
+    ({
+      InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
+    }) satisfies __ExactMockModule<__TestMockModule3>
+);
 
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
@@ -43,29 +51,49 @@ vi.mock('../../../ClientApp/src/api/web-api-client', () => {
       signIn = mockSignIn;
       setUserProfile = vi.fn();
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
-  default: vi.fn(),
-  getTargetOrganisation: vi.fn().mockReturnValue(null),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/targetOrganisation',
+  () =>
+    ({
+      default: vi.fn(),
+      getTargetOrganisation: vi.fn().mockReturnValue(null),
+    }) satisfies __ExactMockModule<__TestMockModule6>
+);
 
-vi.mock('../../../ClientApp/src/terms-config.json', () => ({
-  default: { TermsVersion: '1' },
-}));
+vi.mock(
+  '../../../ClientApp/src/terms-config.json',
+  () =>
+    ({
+      default: { TermsVersion: '1' },
+    }) satisfies __ExactMockModule<__TestMockModule7>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
-  mapToUserProfile: vi.fn().mockReturnValue(undefined),
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/helperFunctions',
+  () =>
+    ({
+      mapToUserProfile: vi.fn().mockReturnValue(undefined),
+    }) satisfies __ExactMockModule<__TestMockModule9>
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: [] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: [] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 

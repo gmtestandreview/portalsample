@@ -37,49 +37,73 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'account-1' }],
-    instance: {
-      acquireTokenSilent: mocks.acquireTokenSilent,
-    },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'account-1' }],
+        instance: {
+          acquireTokenSilent: mocks.acquireTokenSilent,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  clearDashboardNotification: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      clearDashboardNotification: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    verbose: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        verbose: vi.fn(),
+        error: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
-  DashboardClient: vi.fn(function (this: {
-    setAuthToken: ReturnType<typeof vi.fn>;
-    getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
-  }) {
-    vi.spyOn(this, 'setAuthToken').mockImplementation();
-    this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
-  }),
-}));
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      DashboardClient: vi.fn(function (this: {
+        setAuthToken: ReturnType<typeof vi.fn>;
+        getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
+      }) {
+        vi.spyOn(this, 'setAuthToken').mockImplementation();
+        this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
-  getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
-  getFileUrlFromBase64: vi.fn((fileData: string) => `blob:${fileData}`),
-  getQuotationFileDetails: vi.fn(),
-  getQuoteOfferPageNumber: vi.fn(() => '5'),
-  handleReportFileError: vi.fn(),
-  openInNewTab: vi.fn(),
-  openPdfPageInNewTab: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/helperFunctions',
+  () =>
+    ({
+      getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
+      getFileUrlFromBase64: vi.fn((fileData: string) => `blob:${fileData}`),
+      getQuotationFileDetails: vi.fn(),
+      getQuoteOfferPageNumber: vi.fn(() => '5'),
+      handleReportFileError: vi.fn(),
+      openInNewTab: vi.fn(),
+      openPdfPageInNewTab: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule9>
+);
 
 const quotationData = {
   crmQuoteRequestId: 'crm-quote-1',

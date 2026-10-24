@@ -53,25 +53,35 @@ vi.mock('react-aria-components/ComboBox', async () => {
   const Popover = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'popover' }, children);
 
-  return { ComboBox, ComboBoxStateContext, Input, Label, Popover };
+  return {
+    ComboBox,
+    ComboBoxStateContext,
+    Input,
+    Label,
+    Popover,
+  } satisfies __ExactMockModule<__TestMockModule37>;
 });
 
 vi.mock('react-aria-components/Group', async () => {
   const React = await import('react');
   const Group = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'group' }, children);
-  return { Group };
+  return { Group } satisfies __ExactMockModule<__TestMockModule38>;
 });
 
-vi.mock('@/components/Inputs/AutoSuggest/AutoSuggestOptions', () => ({
-  default: ({ options }: { options: AutoSuggestOption<string>[] }) => (
-    <ul data-testid='options'>
-      {options.map((option) => (
-        <li key={option.id}>{option.displayText}</li>
-      ))}
-    </ul>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/AutoSuggest/AutoSuggestOptions',
+  () =>
+    ({
+      default: ({ options }: { options: AutoSuggestOption<string>[] }) => (
+        <ul data-testid='options'>
+          {options.map((option) => (
+            <li key={option.id}>{option.displayText}</li>
+          ))}
+        </ul>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule39>
+);
 
 interface Values {
   suburb: string;

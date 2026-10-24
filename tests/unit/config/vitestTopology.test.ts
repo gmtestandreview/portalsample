@@ -3,9 +3,13 @@ import { readFileSync } from 'node:fs';
 import type { ViteUserConfig } from 'vitest/config';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@storybook/addon-vitest/vitest-plugin', () => ({
-  storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
-}));
+vi.mock(
+  '@storybook/addon-vitest/vitest-plugin',
+  () =>
+    ({
+      storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
+    }) satisfies __ExactMockModule<__TestMockModule56>
+);
 
 import rootConfig from '../../../vitest.config';
 import storybookConfig from '../../../vitest.storybook.config';

@@ -24,9 +24,13 @@ const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => msalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -36,43 +40,67 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       vi.spyOn(this, 'setAuthToken').mockImplementation();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // Stub form-input children — they require Formik context which is outside this component's scope
-vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({
-    inlineHelp,
-    name,
-  }: {
-    inlineHelp?: React.ReactNode;
-    name: string;
-  }) => (
-    <div data-testid={`text-input`} data-name={name}>
-      {inlineHelp}
-    </div>
-  ),
-}));
-vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid={`radio-group`} data-name={name} />
-  ),
-}));
-vi.mock('@/components/forms/HidableField', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-vi.mock('@/components/forms/CommonForms/ContactDetails', () => ({
-  default: () => <div data-testid='contact-details' />,
-}));
-vi.mock('@/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/TextInput',
+  () =>
+    ({
+      default: ({
+        inlineHelp,
+        name,
+      }: {
+        inlineHelp?: React.ReactNode;
+        name: string;
+      }) => (
+        <div data-testid={`text-input`} data-name={name}>
+          {inlineHelp}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>
+);
+vi.mock(
+  '@/components/Inputs/RadioButtonGroup',
+  () =>
+    ({
+      default: ({ name }: { name: string }) => (
+        <div data-testid={`radio-group`} data-name={name} />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule52>
+);
+vi.mock(
+  '@/components/forms/HidableField',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    }) satisfies __ExactMockModule<__TestMockModule70>
+);
+vi.mock(
+  '@/components/forms/CommonForms/ContactDetails',
+  () =>
+    ({
+      default: () => <div data-testid='contact-details' />,
+    }) satisfies __ExactMockModule<__TestMockModule71>
+);
+vi.mock(
+  '@/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

@@ -6,13 +6,17 @@ import RouteLeavingGuard from '@/components/RouteLeavingGuard';
 const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 
-vi.mock('react-router', () => ({
-  useBlocker: () => ({
-    state: 'unblocked',
-    reset: resetBlocker,
-    proceed: proceedBlocker,
-  }),
-}));
+vi.mock(
+  'react-router',
+  () =>
+    ({
+      useBlocker: () => ({
+        state: 'unblocked',
+        reset: resetBlocker,
+        proceed: proceedBlocker,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule11>
+);
 
 vi.mock('react-bootstrap/Modal', () => {
   const Modal = ({
@@ -53,7 +57,7 @@ vi.mock('react-bootstrap/Modal', () => {
   }) {
     return <div>{children}</div>;
   };
-  return { default: Modal };
+  return { default: Modal } satisfies __ExactMockModule<__TestMockModule51>;
 });
 
 describe('routeLeavingGuard unblocked actions', () => {

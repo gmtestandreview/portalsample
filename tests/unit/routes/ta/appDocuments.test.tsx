@@ -51,7 +51,7 @@ const documentsStep = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -76,34 +76,43 @@ vi.mock(
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
       ProgressClient: clients.progress,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock(
   '../../../../ClientApp/src/routes/ta/rhfSupportingDocuments',
-  () => ({
-    default: (props: typeof documentsStep.props) => {
-      documentsStep.props = props;
+  () =>
+    ({
+      default: (props: typeof documentsStep.props) => {
+        documentsStep.props = props;
 
-      return (
-        <div
-          data-testid='supporting-documents'
-          data-uploading={String(props.uploading)}
-          data-disable-upload={String(props.disableUpload)}
-          data-errors={props.externalErrors.join('|')}
-        />
-      );
-    },
-  })
+        return (
+          <div
+            data-testid='supporting-documents'
+            data-uploading={String(props.uploading)}
+            data-disable-upload={String(props.disableUpload)}
+            data-errors={props.externalErrors.join('|')}
+          />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule130>
 );
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({

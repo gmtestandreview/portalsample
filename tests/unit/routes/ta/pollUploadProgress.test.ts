@@ -9,9 +9,13 @@ import {
 } from '../../../../ClientApp/src/routes/ta/pollUploadProgress';
 
 const appLoggerError = vi.hoisted(() => vi.fn());
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: appLoggerError },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: appLoggerError },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const makeClient = () => {
   const getProgress = vi.fn();

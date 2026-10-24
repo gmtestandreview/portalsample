@@ -27,14 +27,18 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-    accounts: [mocks.account],
-    inProgress: 'none',
-  }),
-  useAccount: () => mocks.account,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+        accounts: [mocks.account],
+        inProgress: 'none',
+      }),
+      useAccount: () => mocks.account,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -44,12 +48,16 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken = vi.fn();
       search = mocks.search;
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const hidingFields = deliveryAndReturnHidingFields;
 

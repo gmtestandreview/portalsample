@@ -7,9 +7,13 @@ import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import type { DashboardItemDto } from '@/api/web-api-client';
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 const modalDispatch = {
   setShowBranchSelector: vi.fn(),

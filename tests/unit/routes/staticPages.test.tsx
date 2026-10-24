@@ -23,19 +23,31 @@ const mocks = vi.hoisted(() => ({
   useAccountDispatch: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: mocks.useIsAuthenticated,
-  useMsal: mocks.useMsal,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useIsAuthenticated: mocks.useIsAuthenticated,
+      useMsal: mocks.useMsal,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
-  clearTargetOrganisation: mocks.clearTargetOrganisation,
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/targetOrganisation',
+  () =>
+    ({
+      clearTargetOrganisation: mocks.clearTargetOrganisation,
+    }) satisfies __ExactMockModule<__TestMockModule6>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  default: mocks.useAccountContext,
-  useAccountDispatch: mocks.useAccountDispatch,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: mocks.useAccountContext,
+      useAccountDispatch: mocks.useAccountDispatch,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 const renderRoute = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);

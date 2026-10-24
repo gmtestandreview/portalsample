@@ -23,31 +23,39 @@ import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput'
 
 vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () => ({
-    default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-  })
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
 // The real WizardStep wraps an error boundary and analytics; render children.
 vi.mock(
   '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
 vi.mock(
   '../../../../../ClientApp/src/analytics/GoogleAnalytics',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule22>
 );
 
 vi.mock(
   '../../../../../ClientApp/src/components/SteppedNavigation',
-  () => ({
-    default: () => <div data-testid='stepped-navigation' />,
-  })
+  () =>
+    ({
+      default: () => <div data-testid='stepped-navigation' />,
+    }) satisfies __ExactMockModule<__TestMockModule25>
 );
 
 const accountState = {

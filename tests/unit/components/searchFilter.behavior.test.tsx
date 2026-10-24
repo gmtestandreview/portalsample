@@ -15,13 +15,21 @@ const accountDispatchMock = vi.hoisted(() => ({
   setUserProfile: vi.fn(),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountDispatch: () => accountDispatchMock,
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountDispatch: () => accountDispatchMock,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 const defaultFilters: UserProfile = {
   filterYearType: 'allYears',
