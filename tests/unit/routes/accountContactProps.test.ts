@@ -36,38 +36,41 @@ const mocks = vi.hoisted(() => ({
   setBranchModalNotification: vi.fn(),
 }));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal();
-  if (typeof actual !== 'object' || actual === null) {
-    throw new TypeError('Expected module exports object');
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  async (importOriginal) => {
+    const actual = await importOriginal();
+    if (typeof actual !== 'object' || actual === null) {
+      throw new TypeError('Expected module exports object');
+    }
+    return {
+      ...actual,
+      AccountsClient: vi.fn(function AccountsClientMock() {
+        return {
+          setAuthToken: mocks.accountSetAuthToken,
+          getNewAccountDetails: mocks.getNewAccountDetails,
+          completeAccountDetails: mocks.completeAccountDetails,
+          getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
+          getBranchDetails: mocks.getBranchDetails,
+          completeBranchAdd: mocks.completeBranchAdd,
+        };
+      }),
+      ContactClient: vi.fn(function ContactClientMock() {
+        return {
+          setAuthToken: mocks.contactSetAuthToken,
+          getUserContact: mocks.getUserContact,
+          saveContactDetails: mocks.saveContactDetails,
+        };
+      }),
+      UsersClient: vi.fn(function UsersClientMock() {
+        return {
+          setAuthToken: mocks.userSetAuthToken,
+          signIn: mocks.signIn,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
   }
-  return {
-    ...actual,
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return {
-        setAuthToken: mocks.accountSetAuthToken,
-        getNewAccountDetails: mocks.getNewAccountDetails,
-        completeAccountDetails: mocks.completeAccountDetails,
-        getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
-        getBranchDetails: mocks.getBranchDetails,
-        completeBranchAdd: mocks.completeBranchAdd,
-      };
-    }),
-    ContactClient: vi.fn(function ContactClientMock() {
-      return {
-        setAuthToken: mocks.contactSetAuthToken,
-        getUserContact: mocks.getUserContact,
-        saveContactDetails: mocks.saveContactDetails,
-      };
-    }),
-    UsersClient: vi.fn(function UsersClientMock() {
-      return {
-        setAuthToken: mocks.userSetAuthToken,
-        signIn: mocks.signIn,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+);
 
 vi.mock(
   '../../../ClientApp/src/authentication/authConfig',

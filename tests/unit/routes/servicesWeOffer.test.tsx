@@ -39,20 +39,23 @@ vi.mock('@azure/msal-react', async () => {
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const { createClientMockFor, webApiClientModuleMock } =
-    await import('../helpers/mockApiClient');
-  const original = await importOriginal<typeof WebApiClient>();
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  async (importOriginal) => {
+    const { createClientMockFor, webApiClientModuleMock } =
+      await import('../helpers/mockApiClient');
+    const original = await importOriginal<typeof WebApiClient>();
 
-  clients.lookup = createClientMockFor('getServices');
+    clients.lookup = createClientMockFor('getServices');
 
-  // Spreading the original keeps ServiceType a real enum. The component compares
-  // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
-  // every branch down the default arm and the redirect tests would pass for the wrong reason.
-  return webApiClientModuleMock(original, {
-    LookupClient: clients.lookup,
-  }) satisfies __ExactMockModule<__TestMockModule4>;
-});
+    // Spreading the original keeps ServiceType a real enum. The component compares
+    // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
+    // every branch down the default arm and the redirect tests would pass for the wrong reason.
+    return webApiClientModuleMock(original, {
+      LookupClient: clients.lookup,
+    }) satisfies __ExactMockModule<__TestMockModule4>;
+  }
+);
 
 vi.mock(
   '../../../ClientApp/src/authentication/authConfig',

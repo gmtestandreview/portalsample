@@ -156,7 +156,9 @@ describe('formik wizard shell characterisation', () => {
 
   it('focuses the summary again on each further failed submit', async () => {
     const user = userEvent.setup();
-    vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation();
+    vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
+      () => {}
+    );
     renderStep({ onSaveAndNext: vi.fn() });
     await screen.findByLabelText('Name');
 

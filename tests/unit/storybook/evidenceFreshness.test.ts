@@ -67,6 +67,30 @@ const referenceManifest = {
 };
 
 describe('computeInputDigest', () => {
+  it('keeps digest ordering independent of the process locale', () => {
+    const originalLocaleCompare = String.prototype.localeCompare;
+    String.prototype.localeCompare = function localeCompare(
+      this: string,
+      other: string
+    ) {
+      return this < other ? 1 : this > other ? -1 : 0;
+    };
+
+    try {
+      const reversedLocaleDigest = moduleUnderTest.computeInputDigest({
+        files,
+      });
+
+      String.prototype.localeCompare = originalLocaleCompare;
+
+      expect(reversedLocaleDigest).toBe(
+        moduleUnderTest.computeInputDigest({ files })
+      );
+    } finally {
+      String.prototype.localeCompare = originalLocaleCompare;
+    }
+  });
+
   it('canonicalizes manifest object-key order and ignores reviewedSourceDigest refreshes', () => {
     const [appFile, manifestFile] = files;
     if (appFile === undefined || manifestFile === undefined) {

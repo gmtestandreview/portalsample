@@ -19,12 +19,10 @@ export const serializeToHtml = (value: CustomElement[]): string =>
         })
         .join('');
 
-      switch (element.type) {
-        case 'paragraph':
-          return `<p>${children}</p>`;
-        default:
-          return children; // Add more cases for other block types if needed
+      if (element.type === 'paragraph') {
+        return `<p>${children}</p>`;
       }
+      return children;
     })
     .join('');
 export type CustomElement = {
@@ -73,8 +71,6 @@ const toggleMark = (editor: Editor, format: keyof CustomText) => {
   }
 };
 
-const EMPTY_PARAGRAPH_PATTERN = /<p>[\s\S]*?<\/p>/gi;
-
 export const isBreakTag = (value: string) => {
   const normalized = value.toLowerCase();
   if (!normalized.startsWith('<br') || !normalized.endsWith('>')) {
@@ -113,15 +109,6 @@ export const isEmptyParagraphContent = (content: string) => {
   }
   return true;
 };
-
-const removeEmptyParagraphs = (html: string) =>
-  html.replace(EMPTY_PARAGRAPH_PATTERN, (block) => {
-    const contentStart = block.indexOf('>') + 1;
-    const contentEnd = block.lastIndexOf('<');
-    return isEmptyParagraphContent(block.slice(contentStart, contentEnd))
-      ? ''
-      : block;
-  });
 
 const renderHtmlBody = (html: string) => {
   const safeHtml = DOMPurify.sanitize(html);
@@ -166,14 +153,12 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
   const [liveCharCount, setLiveCharCount] = React.useState<number>(0);
 
   function getCharCount(v: CustomElement[]): number {
-    const serializedHtml = serializeToHtml(v);
-
-    // Treat editor scaffolding as empty
-    const htmlWithoutEmptyBlocks = removeEmptyParagraphs(serializedHtml).trim();
-
-    if (!htmlWithoutEmptyBlocks) return 0;
-
-    return serializedHtml.length;
+    // Check emptiness at the model level — avoids HTML serialisation purely for the empty check.
+    const hasContent = v.some((el) =>
+      el.children.some((child) => child.text.trim() !== '')
+    );
+    if (!hasContent) return 0;
+    return serializeToHtml(v).length;
   }
 
   const handleChange = (newValue: Descendant[]) => {

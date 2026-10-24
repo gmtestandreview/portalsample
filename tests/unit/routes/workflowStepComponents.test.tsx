@@ -835,7 +835,10 @@ describe('workflow step components', () => {
     fireEvent.click(secondTermsButton);
 
     await waitFor(() =>
-      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith()
+      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
+        'CRM-Q-100',
+        true
+      )
     );
   });
 
@@ -881,7 +884,10 @@ describe('workflow step components', () => {
     if (!termsButton) throw new Error('expected a Terms button to be rendered');
     fireEvent.click(termsButton);
     await waitFor(() =>
-      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith()
+      expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
+        'CRM-Q-100',
+        true
+      )
     );
 
     expect(mocks.openPdfPageInNewTab).not.toHaveBeenCalled();

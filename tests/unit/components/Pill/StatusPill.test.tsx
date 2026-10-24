@@ -9,7 +9,7 @@ import {
 } from '../../../../ClientApp/src/routes/common/enums';
 
 describe(StatusPill, () => {
-  describe(DashboardItemStatus, () => {
+  describe('dashboard item status', () => {
     it('renders QuoteAvailable text', async () => {
       render(<StatusPill status={DashboardItemStatus.QuoteAvailable} />);
       await waitFor(() => {

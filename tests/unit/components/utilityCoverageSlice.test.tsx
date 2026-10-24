@@ -85,7 +85,7 @@ vi.mock(
         setAuthToken: ReturnType<typeof vi.fn>;
         getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
       }) {
-        vi.spyOn(this, 'setAuthToken').mockImplementation();
+        vi.spyOn(this, 'setAuthToken').mockImplementation(() => undefined);
         this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
       }),
     }) satisfies __ExactMockModule<__TestMockModule4>
@@ -706,7 +706,13 @@ describe('utility component coverage slice', () => {
 
     fireEvent.click(screen.getByText('Terms'));
 
-    await waitFor(() => expect(getQuotationFileDetails).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(getQuotationFileDetails).toHaveBeenCalledWith(
+        'token-1',
+        quotationData,
+        true
+      )
+    );
 
     expect(openPdfPageInNewTab).not.toHaveBeenCalled();
   });

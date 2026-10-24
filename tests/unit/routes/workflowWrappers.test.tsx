@@ -50,44 +50,47 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>
 );
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
-  return {
-    ...actual,
-    ApplicationType: {
-      QuoteAccept: 'QuoteAccept',
-      QuoteRequest: 'QuoteRequest',
-    },
-    RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getStepStatuses: mocks.requestForQuoteGetStepStatuses,
-      };
-    }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getStepStatuses: mocks.acceptQuoteGetStepStatuses,
-        getPaymentDetails: mocks.getPaymentDetails,
-      };
-    }),
-    ApplicationClient: vi.fn(function ApplicationClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        createApplication: mocks.createApplication,
-        copyApplication: mocks.copyApplication,
-      };
-    }),
-    QuoteClient: vi.fn(function QuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteRequestDetails: mocks.getQuoteRequestDetails,
-        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+    return {
+      ...actual,
+      ApplicationType: {
+        QuoteAccept: 'QuoteAccept',
+        QuoteRequest: 'QuoteRequest',
+      },
+      RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getStepStatuses: mocks.requestForQuoteGetStepStatuses,
+        };
+      }),
+      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getStepStatuses: mocks.acceptQuoteGetStepStatuses,
+          getPaymentDetails: mocks.getPaymentDetails,
+        };
+      }),
+      ApplicationClient: vi.fn(function ApplicationClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          createApplication: mocks.createApplication,
+          copyApplication: mocks.copyApplication,
+        };
+      }),
+      QuoteClient: vi.fn(function QuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteRequestDetails: mocks.getQuoteRequestDetails,
+          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
+  }
+);
 
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm',

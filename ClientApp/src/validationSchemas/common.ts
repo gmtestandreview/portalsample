@@ -95,7 +95,7 @@ export const isFutureDate =
     return isAfter(dateValue!, startOfDayValue);
   };
 
-const URL_HOST_PREFIX = /^[a-zA-Z0-9@:%._+~#=]{2,256}$/;
+const URL_HOST_PREFIX = /^[-a-zA-Z0-9@:%._+~#=]{2,256}$/;
 const URL_PATH = /^[-a-zA-Z0-9@:%_+.~#?&/=]*$/;
 const URL_TLD = /^[a-z]{2,6}$/;
 
@@ -114,7 +114,7 @@ const isValidWebsiteUrl = (value: string): boolean => {
     remainder = remainder.slice('www.'.length);
   }
 
-  const pathStart = remainder.search(/[/?&-]/);
+  const pathStart = remainder.search(/[/?&]/);
   const host = pathStart === -1 ? remainder : remainder.slice(0, pathStart);
   const path = pathStart === -1 ? '' : remainder.slice(pathStart);
   const lastDot = host.lastIndexOf('.');

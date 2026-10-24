@@ -91,38 +91,41 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule8>
 );
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
-  return {
-    ...actual,
-    CRMLookupTypes: {
-      TCPortalMeasurementCategory: 'TCPortalMeasurementCategory',
-      TCArtefactTypePortalCategory: 'TCArtefactTypePortalCategory',
-    },
-    LookupClient: vi.fn(function LookupClientMock() {
-      return { setAuthToken: mocks.setAuthToken, getLookup: mocks.getLookup };
-    }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getReportRecipient: mocks.getReportRecipient,
-        getDeliveryAndReturn: mocks.getDeliveryAndReturn,
-        getPaymentDetails: mocks.getPaymentDetails,
-        getSummaryAndAccept: mocks.getSummaryAndAccept,
-      };
-    }),
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return { setAuthToken: mocks.setAuthToken };
-    }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+    return {
+      ...actual,
+      CRMLookupTypes: {
+        TCPortalMeasurementCategory: 'TCPortalMeasurementCategory',
+        TCArtefactTypePortalCategory: 'TCArtefactTypePortalCategory',
+      },
+      LookupClient: vi.fn(function LookupClientMock() {
+        return { setAuthToken: mocks.setAuthToken, getLookup: mocks.getLookup };
+      }),
+      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getReportRecipient: mocks.getReportRecipient,
+          getDeliveryAndReturn: mocks.getDeliveryAndReturn,
+          getPaymentDetails: mocks.getPaymentDetails,
+          getSummaryAndAccept: mocks.getSummaryAndAccept,
+        };
+      }),
+      AccountsClient: vi.fn(function AccountsClientMock() {
+        return { setAuthToken: mocks.setAuthToken };
+      }),
+      DashboardClient: vi.fn(function DashboardClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
+  }
+);
 
 vi.mock('formik', () => {
   const getPath = (path: string, values = mocks.formikValues) =>

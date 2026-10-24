@@ -247,7 +247,9 @@ const canonicaliseJson = (value, segments = []) => {
 
   return Object.fromEntries(
     Object.entries(value)
-      .sort(([leftKey], [rightKey]) => leftKey.localeCompare(rightKey))
+      .sort(([leftKey], [rightKey]) =>
+        leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0
+      )
       .filter(
         ([key]) =>
           !(

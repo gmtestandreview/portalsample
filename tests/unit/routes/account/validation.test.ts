@@ -26,7 +26,7 @@ const validAccount = {
   postalAddress: undefined,
 };
 
-describe(accountSubmitValidation, () => {
+describe('account submit validation', () => {
   it('accepts a valid account object', async () => {
     await expect(
       accountSubmitValidation.validate(validAccount)

@@ -40,8 +40,11 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
-    AcceptQuoteClient: vi.fn(function (this: Record<string, unknown>) {
-      vi.spyOn(this, 'setAuthToken').mockImplementation();
+    AcceptQuoteClient: vi.fn(function (this: {
+      setAuthToken: (token: string) => void;
+      getPaymentDetails: typeof mockGetPaymentDetails;
+    }) {
+      vi.spyOn(this, 'setAuthToken').mockImplementation(() => undefined);
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;

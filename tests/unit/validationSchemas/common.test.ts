@@ -110,6 +110,9 @@ describe('common validation helpers', () => {
       optionalWebsite.validate('https://measurement.gov.au')
     ).resolves.toBe('https://measurement.gov.au');
     await expect(
+      optionalWebsite.validate('https://example-domain.com')
+    ).resolves.toBe('https://example-domain.com');
+    await expect(
       optionalWebsite.validate('http://example.com/path?query=value')
     ).resolves.toBe('http://example.com/path?query=value');
     await expect(optionalWebsite.validate('www.example.com')).resolves.toBe(

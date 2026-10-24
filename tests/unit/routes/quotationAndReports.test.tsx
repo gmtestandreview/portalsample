@@ -12,6 +12,7 @@ import type { AccountDetails } from '../../../ClientApp/src/authentication/accou
 import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 import type * as MsalBrowserModule from '@azure/msal-browser';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import { ApplicationType } from '../../../ClientApp/src/api/web-api-client';
 import { QuoteStatus } from '../../../ClientApp/src/routes/common/enums';
 
 const mocks = vi.hoisted(() => ({
@@ -81,31 +82,34 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule8>
 );
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
-  return {
-    ...actual,
-    ApplicationType: {
-      QuoteAccept: 'QuoteAccept',
-      QuoteRequest: 'QuoteRequest',
-    },
-    QuoteClient: vi.fn(function QuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-        declineQuote: mocks.declineQuote,
-      };
-    }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
-          mocks.getDashboardInstrumentReports,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+    return {
+      ...actual,
+      ApplicationType: {
+        QuoteAccept: 'QuoteAccept',
+        QuoteRequest: 'QuoteRequest',
+      },
+      QuoteClient: vi.fn(function QuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+          declineQuote: mocks.declineQuote,
+        };
+      }),
+      DashboardClient: vi.fn(function DashboardClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
+            mocks.getDashboardInstrumentReports,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
+  }
+);
 
 vi.mock(
   '../../../ClientApp/src/storage/notification',
@@ -482,7 +486,10 @@ const renderRoute = (
 
 const settleQuotationEffects = async () => {
   await waitFor(() =>
-    expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith()
+    expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith(
+      ApplicationType.QuoteRequest,
+      'RFQ-100'
+    )
   );
   await act(async () => {
     await Promise.resolve();
