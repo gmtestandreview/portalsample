@@ -91,9 +91,12 @@ export const ReportsTab: Story = {
     const canvas = within(canvasElement);
     // Default tab is 'reports' — report table is rendered
     const reportsTable = await canvas.findByTestId('instReports-table');
+
     await expect(reportsTable).toBeVisible();
+
     // Report name appears in multiple cells — scope within the table
     const reportName = within(reportsTable).getAllByText('RPT-2023-12345')[0];
+
     await expect(reportName).toBeVisible();
   },
 };
@@ -114,6 +117,7 @@ export const DetailsTab: Story = {
     // Details tab shows requestForQuote data — manufacturer appears in heading
     // and manufacturer row; take the first match (card heading)
     const manufacturers = await canvas.findAllByText(/mettler toledo/i);
+
     await expect(manufacturers[0]).toBeVisible();
   },
 };

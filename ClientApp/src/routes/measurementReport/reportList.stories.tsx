@@ -61,6 +61,7 @@ export const Populated: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('instReports-table')).toBeVisible();
     await expect(canvas.getByText('RPT-1001')).toBeVisible();
     // Issued report exposes a View report link…
@@ -85,6 +86,7 @@ export const WithdrawnHidesView: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('RPT-1002')).toBeVisible();
     await expect(
       canvas.queryByRole('link', { name: 'View report' })

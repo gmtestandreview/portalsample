@@ -53,6 +53,7 @@ export const OrganisationDetails: Story = {
     );
     await userEvent.clear(tradingName);
     await userEvent.type(tradingName, 'Prec');
+
     // The lookup filters behind a 300ms debounce, so the suggestion is the settled state.
     // Without driving and awaiting it the debounce fired after the story had ended, which
     // is what left OrganisationNameLookup updating outside act - twice, once per instance
@@ -60,6 +61,7 @@ export const OrganisationDetails: Story = {
     await expect(
       await canvas.findByRole('option', { name: /Precision Testing/ })
     ).toBeVisible();
+
     // A listbox may only own `option` and `group` children. The "Did you mean?" heading
     // row sits inside the list, so it has to stay out of the accessibility tree; if it
     // is exposed as a listitem, axe reports aria-required-children and listitem, and the
@@ -68,6 +70,7 @@ export const OrganisationDetails: Story = {
     const suggestions = canvas.getByRole('listbox', {
       name: 'Suggested options',
     });
+
     await expect(within(suggestions).queryAllByRole('listitem')).toHaveLength(
       0
     );

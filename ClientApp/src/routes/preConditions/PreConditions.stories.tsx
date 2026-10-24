@@ -44,8 +44,10 @@ export const RendersProtectedContent: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('protected-content')).toBeVisible();
     await expect(canvas.getByText('Protected dashboard content')).toBeVisible();
+
     // Both assertions above pass on the first render. The route announcement does not:
     // useRouteAccessibility starts it empty and fills it from a 100ms setTimeout, which
     // is what left PreConditions and Layout updating after the story had ended.

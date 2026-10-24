@@ -134,6 +134,7 @@ export const ConfirmationOpen: Story = {
       name: /delete this request\?/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByRole('button', { name: /yes, delete/i })
     ).toBeInTheDocument();
@@ -144,6 +145,7 @@ export const ConfirmationOpen: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Open confirmation' })
     ).toBeInTheDocument();
+
     // SB-018: clicking No closes the modal
     await userEvent.click(
       within(dialog).getByRole('button', { name: /^cancel$/i })
@@ -171,6 +173,7 @@ export const ConfirmationClosed: Story = {
       name: /save and exit\?/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(within(dialog).getByText(/saved as a draft/i)).toBeVisible();
     await expect(
       within(dialog).getByRole('button', { name: /save and exit/i })
@@ -215,6 +218,7 @@ export const BranchSelectorSelectAndEdit: Story = {
       name: /manage your branch or location/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByText(/branches or locations are available/i)
     ).toBeVisible();
@@ -235,6 +239,7 @@ export const BranchSelectorSelectAndEdit: Story = {
     const editLinks = within(dialog).getAllByRole('link', {
       name: /edit details for this branch\/location/i,
     });
+
     await expect(editLinks).toHaveLength(2);
 
     await userEvent.click(alternateBranch);
@@ -264,6 +269,7 @@ export const BranchSelectorRFQMode: Story = {
       name: /change branch\/location/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByText(
         /select default branch or location name to manage/i
@@ -313,6 +319,7 @@ export const RFQDeleteConfirmation: Story = {
       name: /confirm deletion/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByText(/RFQ-2024-001234/)
     ).toBeInTheDocument();

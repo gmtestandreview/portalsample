@@ -30,13 +30,16 @@ export const ContextDrivenOpenAndDismiss: Story = {
   ),
   play: async ({ canvas, canvasElement, userEvent }) => {
     const trigger = canvas.getByRole('button', { name: 'Open settings' });
+
     await expect(trigger).toBeInTheDocument();
+
     await userEvent.click(trigger);
 
     const documentBody = within(canvasElement.ownerDocument.body);
     const dialog = await documentBody.findByRole('dialog', {
       name: 'Settings',
     });
+
     await expect(dialog).toBeInTheDocument();
     await expect(
       documentBody.getByText('Choose which notifications you receive.')
@@ -45,6 +48,7 @@ export const ContextDrivenOpenAndDismiss: Story = {
     await expect(
       documentBody.getByRole('button', { name: 'Close' })
     ).toBeInTheDocument();
+
     await userEvent.click(documentBody.getByRole('button', { name: 'Close' }));
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());

@@ -8,7 +8,7 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/components/Inputs/AutoSuggest/AutoSuggestContainer',
+  import('@/components/Inputs/AutoSuggest/AutoSuggestContainer'),
   () =>
     ({
       default: (props: any) => {
@@ -57,7 +57,7 @@ describe('autoSuggest parent state', () => {
       await containerState.props.onSearchTermChange('');
     });
 
-    expect(onSelectedOption).toHaveBeenCalledOnce();
+    expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
     expect(onSelectedOption.mock.calls[0]).toEqual([]);
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
     expect(screen.getByTestId('option-count')).toHaveTextContent('0');

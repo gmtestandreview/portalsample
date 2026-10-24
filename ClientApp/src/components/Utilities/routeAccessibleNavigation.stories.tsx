@@ -31,8 +31,10 @@ export const LiveRegion: Story = {
     const canvas = within(canvasElement);
     // The announcer is a polite live region exposed to assistive technology only.
     const status = canvas.getByRole('status');
+
     await expect(status).toHaveAttribute('aria-live', 'polite');
     await expect(status).toHaveClass('visually-hidden');
+
     // The announcement itself, not just the region's presence. The component seeds the
     // region with document.title and replaces it from a 100ms setTimeout, so this is the
     // only assertion here that reaches the settled state - and the one that stops that

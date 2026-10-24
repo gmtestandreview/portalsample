@@ -32,10 +32,13 @@ export const SelectionChanges: Story = {
   render: (args) => <SegmentedControl {...args}>{segments()}</SegmentedControl>,
   play: async ({ args, canvas, userEvent }) => {
     const reports = canvas.getByRole('radio', { name: 'Reports' });
+
     await expect(
       canvas.getByRole('radio', { name: 'Overview' })
     ).toHaveAttribute('aria-checked', 'true');
+
     await userEvent.click(reports);
+
     await expect(reports).toHaveAttribute('aria-checked', 'true');
     await expect(args.onSelectionChange).toHaveBeenCalledWith(
       new Set(['reports'])
@@ -52,8 +55,11 @@ export const KeyboardSelection: Story = {
   play: async ({ canvas, userEvent }) => {
     const overview = canvas.getByRole('radio', { name: 'Overview' });
     await userEvent.tab();
+
     await expect(overview).toHaveFocus();
+
     await userEvent.keyboard('{Enter}');
+
     await expect(overview).toHaveAttribute('aria-checked', 'true');
   },
 };
@@ -68,8 +74,11 @@ export const DisabledItem: Story = {
   ),
   play: async ({ canvas, userEvent }) => {
     const reports = canvas.getByRole('radio', { name: 'Reports' });
+
     await expect(reports).toBeDisabled();
+
     await userEvent.click(reports);
+
     await expect(reports).toHaveAttribute('aria-checked', 'false');
   },
 };

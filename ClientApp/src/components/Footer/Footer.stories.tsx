@@ -25,11 +25,14 @@ export const Default: Story = {
     const footer =
       canvasElement.querySelector('footer') ??
       canvasElement.querySelector('[role="contentinfo"]');
+
     await expect(footer).toBeTruthy();
+
     // All footer trigger buttons are accessible — they have visible text or aria-label
     const footerBtns = canvas.getAllByRole('button');
     for (const btn of footerBtns) {
       const label = btn.getAttribute('aria-label') ?? btn.textContent?.trim();
+
       await expect(label).toBeTruthy();
     }
   },

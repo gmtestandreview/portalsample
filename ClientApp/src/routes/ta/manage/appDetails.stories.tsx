@@ -71,6 +71,7 @@ export const DetailsTab: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // Once the application loads, the status section and reference render.
     await expect(
       await canvas.findByRole('heading', { name: 'Application status' })

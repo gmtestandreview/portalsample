@@ -294,7 +294,12 @@ export default defineConfig(
     },
   },
   {
-    files: ['tests/**'], // or any other pattern
+    files: [
+      'tests/**',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
     ...vitest.configs.all,
   },
   eslintPluginPrettierRecommended

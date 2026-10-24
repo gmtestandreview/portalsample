@@ -37,6 +37,7 @@ export const WithReferences: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByText('References for this instrument type')
     ).toBeVisible();
@@ -57,6 +58,7 @@ export const NoSelection: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByText(/no references for this instrument type/i)
     ).toBeInTheDocument();

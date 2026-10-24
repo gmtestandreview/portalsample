@@ -24,6 +24,7 @@ export const TextValue: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Organisation name')).toBeVisible();
     await expect(canvas.getByText('Storybook Organisation')).toBeVisible();
   },
@@ -40,11 +41,14 @@ export const PhoneValue: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Business phone')).toBeVisible();
     // Visible value rendered (aria-hidden span is still in the DOM)
     await expect(canvas.getByText('02 6213 6800')).toBeInTheDocument();
+
     // A visually-hidden span is rendered for screen readers
     const hidden = canvasElement.querySelector('.visually-hidden');
+
     await expect(hidden).not.toBeNull();
   },
 };
@@ -61,6 +65,7 @@ export const FormattedNumber: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('ABN')).toBeVisible();
   },
 };
@@ -76,6 +81,7 @@ export const EmptyValue: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // Visible dash
     await expect(canvas.getByText('-', { exact: false })).toBeInTheDocument();
     // Screen-reader text
@@ -95,6 +101,7 @@ export const WithDescriptor: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('15 March 2024')).toBeVisible();
     await expect(
       canvas.getByText('Certificate valid for 12 months from this date.')
@@ -114,6 +121,7 @@ export const CustomBody: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('custom-body')).toBeVisible();
   },
 };

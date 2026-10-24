@@ -91,13 +91,18 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const combobox = canvas.getByRole('combobox');
+
     await expect(combobox).toBeVisible();
+
     await user.type(combobox, 'Main');
     const addressOption = await screen.findByRole('option', {
       name: '1 Main Street, Canberra ACT 2600 (1 of 2)',
     });
+
     await expect(addressOption).toBeVisible();
+
     await user.click(addressOption);
+
     await expect(combobox).toHaveValue('1 Main Street, Canberra ACT 2600');
     await expect(canvas.getByLabelText('Selected address')).toHaveTextContent(
       '1 Main Street, Canberra, ACT, 2600'
@@ -136,8 +141,11 @@ export const ManualEntry: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const line1 = canvas.getByLabelText(/address line 1/i);
+
     await expect(line1).toBeVisible();
+
     const suburb = canvas.getByLabelText(/suburb/i);
+
     await expect(suburb).toBeVisible();
   },
 };

@@ -89,13 +89,16 @@ export const DashboardFilters: Story = {
     const user = userEvent.setup();
     // Search box renders with a text input
     const searchInput = canvas.getByRole('textbox');
+
     await expect(searchInput).toBeVisible();
+
     // Typing and submitting updates the displayed filter state
     await user.clear(searchInput);
     await user.type(searchInput, 'Keysight');
     await user.keyboard('{Enter}');
     // The debug output below the component shows the current search text
     const searchLabel = await canvas.findByText(/Keysight/i);
+
     await expect(searchLabel).toBeVisible();
   },
 };
@@ -117,6 +120,7 @@ export const WithSearchTerm: Story = {
     const canvas = within(canvasElement);
     // Pre-populated value appears in the search box
     const searchInput = canvas.getByRole('textbox');
+
     await expect(searchInput).toHaveValue('Fluke');
     // Status line reflects it
     await expect(canvas.getByText(/Fluke/i)).toBeVisible();

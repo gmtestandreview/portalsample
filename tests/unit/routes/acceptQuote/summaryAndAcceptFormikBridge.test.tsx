@@ -106,7 +106,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
 
     expect(submitted(onSubmit)).toEqual({
       associatedDisputes: 'Yes',
@@ -139,7 +139,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
     await user.type(dispute, 'Edited dispute');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
 
     expect(submitted(onSubmit)).toEqual({
       associatedDisputes: YesNo.Yes,
@@ -202,7 +202,7 @@ describe(SummaryAndAcceptFormikBridge, () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
     expect(screen.queryByText(/is a required field/)).not.toBeInTheDocument();

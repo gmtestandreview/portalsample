@@ -5,7 +5,7 @@ const importLoggerWithInsights = async (insights: unknown) => {
   vi.resetModules();
   const getAppInsights = vi.fn(() => insights);
   vi.doMock(
-    '@/instrumentation/AppInsightsService',
+    import('@/instrumentation/AppInsightsService'),
     () =>
       ({
         getAppInsights,

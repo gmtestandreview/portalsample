@@ -39,7 +39,9 @@ export const Example: ObjectStory = {
     });
 
     await expect(input).toBeInTheDocument();
+
     await userEvent.click(suggestions);
+
     await expect(suggestions).toHaveAttribute('aria-expanded', 'true');
     await expect(
       within(canvasElement.ownerDocument.body).getByRole('option', {

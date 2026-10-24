@@ -16,7 +16,7 @@ import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
 
 vi.mock(
-  '@/components/forms/UnsavedFormPrompt',
+  import('@/components/forms/UnsavedFormPrompt'),
   () =>
     ({
       default: () => <div data-testid='unsaved-form-prompt' />,
@@ -24,7 +24,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/components/BlockUISpinner',
+  import('@/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (

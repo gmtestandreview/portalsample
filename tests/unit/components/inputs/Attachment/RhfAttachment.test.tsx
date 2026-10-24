@@ -167,7 +167,7 @@ describe('rhfAttachment', () => {
 
     await user.click(screen.getByTestId('attachments'));
 
-    expect(inputClick).toHaveBeenCalled();
+    expect(inputClick).toHaveBeenCalledWith();
 
     inputClick.mockRestore();
   });
@@ -184,7 +184,7 @@ describe('rhfAttachment', () => {
       .getByLabelText('Upload supporting documents')
       .dispatchEvent(clickEvent);
 
-    expect(preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalledWith();
   });
 
   it('ignores a change event that carries no file list', () => {
@@ -503,7 +503,7 @@ describe('rhfAttachment', () => {
       file('manual.pdf', 10)
     );
 
-    await waitFor(() => expect(onUploadFiles).toHaveBeenCalled());
+    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledWith());
 
     expect(
       within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(

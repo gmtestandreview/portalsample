@@ -40,6 +40,7 @@ export const Collapsed: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Date of test')).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
   },
@@ -53,6 +54,7 @@ export const Prefilled: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByRole('textbox')).toHaveValue('01/04/2024');
   },
 };

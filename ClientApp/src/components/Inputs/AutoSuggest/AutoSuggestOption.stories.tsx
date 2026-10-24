@@ -39,6 +39,7 @@ export const Default: Story = {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });
+
     await expect(option).toBeVisible();
   },
 };
@@ -53,6 +54,7 @@ export const Highlighted: Story = {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });
+
     await expect(option).toHaveClass('highlighted');
   },
 };

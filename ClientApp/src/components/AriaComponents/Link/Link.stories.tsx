@@ -19,6 +19,7 @@ export const NavigatesWithHref: Story = {
   },
   play: async ({ canvas }) => {
     const link = canvas.getByRole('link', { name: 'View details' });
+
     await expect(link).toHaveAttribute('href', '#details');
   },
 };
@@ -30,9 +31,12 @@ export const LinkRoleWithoutHref: Story = {
   },
   play: async ({ args, canvas, userEvent }) => {
     const link = canvas.getByRole('link', { name: 'Open help' });
+
     await expect(link.tagName).toBe('SPAN');
     await expect(link).not.toHaveAttribute('href');
+
     await userEvent.click(link);
+
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
 };
@@ -46,8 +50,11 @@ export const Disabled: Story = {
   },
   play: async ({ args, canvas, userEvent }) => {
     const link = canvas.getByRole('link', { name: 'Unavailable resource' });
+
     await expect(link).toHaveAttribute('aria-disabled', 'true');
+
     await userEvent.click(link);
+
     await expect(args.onPress).not.toHaveBeenCalled();
   },
 };

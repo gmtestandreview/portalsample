@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
 vi.mock(
-  '@/components/Inputs/TextInput',
+  import('@/components/Inputs/TextInput'),
   () =>
     ({
       default: ({

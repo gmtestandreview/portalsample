@@ -40,6 +40,7 @@ export const Default: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Date of test')).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
     await expect(
@@ -57,6 +58,7 @@ export const WithError: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText(/enter a valid date/i)).toBeVisible();
   },
 };

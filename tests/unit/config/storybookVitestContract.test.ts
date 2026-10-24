@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 vi.mock(
-  '@storybook/addon-vitest/vitest-plugin',
+  import('@storybook/addon-vitest/vitest-plugin'),
   () =>
     ({
       storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
@@ -110,7 +110,7 @@ describe('storybook/Vitest runtime bridge contract', () => {
 
     void vitest.init();
 
-    expect(standalone).toHaveBeenCalledOnce();
+    expect(standalone).toHaveBeenCalledExactlyOnceWith();
     expect(legacyInit).not.toHaveBeenCalled();
     expect(vitest.config.coverage.exclude).toContain('ClientApp/src/**/*.json');
   });

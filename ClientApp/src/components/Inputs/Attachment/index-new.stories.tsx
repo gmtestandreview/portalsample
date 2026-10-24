@@ -57,6 +57,7 @@ export const EmptyUploader: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
     // The browse control and the file input are both present.
     await expect(canvas.getByTestId('documents')).toBeVisible();

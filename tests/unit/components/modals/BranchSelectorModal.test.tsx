@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -57,7 +57,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/storage/notification',
+  import('@/storage/notification'),
   () =>
     ({
       getBranchModalNotification: () => mocks.getBranchModalNotification(),
@@ -66,7 +66,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -76,7 +76,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -85,7 +85,7 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/components/Alert/NotificationMessage',
+  import('@/components/Alert/NotificationMessage'),
   () =>
     ({
       default: ({ id }: { id: string }) => (
@@ -431,7 +431,7 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
+    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
   });
 
   // ── sorting ─────────────────────────────────────────────────────────────
@@ -480,7 +480,7 @@ describe(BranchSelectorModal, () => {
 
     expect(mocks.navigate).toHaveBeenCalledWith('/');
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
+    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
     expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
       'ACME Corporation',
       'ACME Corporation',
@@ -513,7 +513,7 @@ describe(BranchSelectorModal, () => {
       );
     });
 
-    expect(reloadMock).toHaveBeenCalled();
+    expect(reloadMock).toHaveBeenCalledWith();
     expect(mocks.navigate).not.toHaveBeenCalled();
 
     Object.defineProperty(globalThis, 'location', {
@@ -555,7 +555,7 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith();
     });
 
     // Helper returned early — no dispatch calls made
@@ -570,10 +570,10 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith();
     });
 
-    expect(mocks.setDefaultOrganisationId).toHaveBeenCalled();
+    expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith();
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
   });
 
@@ -585,7 +585,7 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setCompleted).toHaveBeenCalled();
+      expect(mocks.setCompleted).toHaveBeenCalledWith();
     });
 
     expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(

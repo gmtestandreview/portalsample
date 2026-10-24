@@ -53,7 +53,9 @@ export const Example = {
     await expect(
       canvas.getByText('Personal information form here.')
     ).toBeInTheDocument();
+
     await userEvent.click(billingTrigger);
+
     await expect(personalTrigger).toHaveAttribute('aria-expanded', 'false');
     await expect(billingTrigger).toHaveAttribute('aria-expanded', 'true');
     await expect(

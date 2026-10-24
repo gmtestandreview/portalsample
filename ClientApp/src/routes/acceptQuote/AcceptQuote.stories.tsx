@@ -131,6 +131,7 @@ export const ReportRecipientStep: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', { name: /report recipient organisation/i })
     ).toBeVisible();
@@ -140,12 +141,14 @@ export const ReportRecipientStep: Story = {
     await expect(
       canvas.getByText(/organisation address for report/i)
     ).toBeVisible();
+
     // The spinner here overlays the form rather than replacing it, so the headings above
     // are present before the fetch resolves. The address descriptors are not: they are
     // rendered from the loaded rfqOrganisation, so awaiting them is the settled-state
     // contract for all three setters in the effect. Both the street and postal options
     // carry it, because this fixture sets postalAddressSameAsStreetAddress.
     const addressDescriptors = await canvas.findAllByText(/100 Example Street/);
+
     await expect(addressDescriptors).toHaveLength(2);
   },
 };
@@ -177,6 +180,7 @@ export const ReportRecipientSummaryOtherAddress: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByText(/report recipient organisation/i)
     ).toBeVisible();
@@ -215,6 +219,7 @@ export const PaymentDetailsStep: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // The Prepaid paragraph is rendered only once acceptQuotePreInfo has loaded and
     // reports paymentTerms 'Prepaid'. Its negative counterpart is not usable as a
     // settlement anchor, because `paymentTerms !== 'Prepaid'` is already true while the
@@ -259,6 +264,7 @@ export const PaymentDetailsPostpaid: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // This story's handler returns paymentTerms 'Invoice', whose paragraph also renders
     // pre-settlement, so the quotation id in the PO inline help is the anchor instead:
     // it appears only when acceptQuotePreInfo has arrived.
@@ -319,6 +325,7 @@ export const DeliveryAndReturnStep: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
     // so this text is the settled-state contract for the four setters in the effect.
     await expect(
@@ -362,6 +369,7 @@ export const QuotationSummaryStep: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // QuoteDetails renders the quotation id only when quotationData has arrived, so this
     // is the settled-state contract for the QuotationSummary and ViewPdfQuote subtree.
     await expect(await canvas.findByText('Q-2024-000456')).toBeVisible();
@@ -431,6 +439,7 @@ export const SummaryAndAcceptStep: Story = {
     const heading = await canvas.findByText(
       /Before you accept and submit our offer/i
     );
+
     await expect(heading).toBeVisible();
     // The heading is static chrome and appears before the fetches resolve. The embedded
     // QuotationSummary's quotation id is the actual settled-state contract, and is what

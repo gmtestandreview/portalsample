@@ -506,7 +506,7 @@ describe('vite config', () => {
     expect(response.removeHeader).toHaveBeenCalledWith(
       'Cross-Origin-Opener-Policy'
     );
-    expect(next).toHaveBeenCalled();
+    expect(next).toHaveBeenCalledWith();
 
     setHeader.mockClear();
     response.removeHeader.mockClear();

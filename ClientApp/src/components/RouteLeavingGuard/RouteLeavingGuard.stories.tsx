@@ -132,6 +132,7 @@ export const InterceptedNavigation: Story = {
       name: /unsaved changes/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByRole('button', { name: /^cancel$/i })
     ).toBeVisible();
@@ -161,6 +162,7 @@ export const CustomCopy: Story = {
       name: /are you sure you want to log out\?/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByText(/Any changes made will not be saved/)
     ).toBeVisible();
@@ -185,6 +187,7 @@ export const ProceedAfterConfirm: Story = {
       name: /discard changes/i,
     });
     await userEvent.click(leaveButton);
+
     // After navigation the /other route replaces /form content in canvas
     await expect(
       canvas.findByText('You left the page.')

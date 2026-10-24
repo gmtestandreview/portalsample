@@ -43,6 +43,7 @@ export const TextButton: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await canvas.getByRole('button', { name: 'Actions' }).click();
+
     await expect(
       canvas.getByRole('menuitem', { name: 'View details' })
     ).toBeVisible();
@@ -60,6 +61,7 @@ export const IconButton: Story = {
     await canvas
       .getByRole('button', { name: 'Actions for request RFQ-2024-001234' })
       .click();
+
     await expect(
       canvas.getByRole('menuitem', { name: 'Delete draft' })
     ).toBeVisible();

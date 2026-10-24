@@ -50,14 +50,14 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -82,7 +82,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -90,7 +90,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: () => mocks.accountContext(),
@@ -98,7 +98,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
@@ -106,7 +106,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm',
+  import('../../../../ClientApp/src/components/forms/WizardForm'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -116,7 +116,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -126,7 +126,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/organisationAndContact',
+  import('../../../../ClientApp/src/routes/ta/organisationAndContact'),
   () =>
     ({
       default: () => <div>Organisation and contact step</div>,
@@ -134,7 +134,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/applicationAndInstrument',
+  import('../../../../ClientApp/src/routes/ta/applicationAndInstrument'),
   () =>
     ({
       default: () => <div>Application and instrument step</div>,
@@ -142,7 +142,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/summaryAndSubmit',
+  import('../../../../ClientApp/src/routes/ta/summaryAndSubmit'),
   () =>
     ({
       default: () => <div>Summary and submit step</div>,
@@ -150,7 +150,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/supportingDocuments',
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
   () =>
     ({
       default: (props: typeof documentsStep.props) => {
@@ -497,7 +497,7 @@ describe('application for type approval', () => {
       await waitFor(() =>
         expect(
           clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
     });
 
@@ -537,7 +537,7 @@ describe('application for type approval', () => {
         () =>
           expect(
             clients.progress.methods.deleteProgressStatistics
-          ).toHaveBeenCalled(),
+          ).toHaveBeenCalledWith(),
         { timeout: 10000 }
       );
 
@@ -559,7 +559,7 @@ describe('application for type approval', () => {
       });
 
       await waitFor(() =>
-        expect(clients.progress.methods.getProgress).toHaveBeenCalled()
+        expect(clients.progress.methods.getProgress).toHaveBeenCalledWith()
       );
 
       // Unmount aborts the controller, so the in-flight poll's rejection must break the loop
@@ -639,7 +639,7 @@ describe('application for type approval', () => {
       });
 
       expect(clients.progress.methods.cancelFile).not.toHaveBeenCalled();
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalled();
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith();
     });
   });
 });

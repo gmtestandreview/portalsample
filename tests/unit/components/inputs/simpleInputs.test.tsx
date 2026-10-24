@@ -659,10 +659,10 @@ describe('simple Formik input components', () => {
     await user.type(input, '  Jordan  ');
     await user.tab();
 
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledWith();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onKeyDown).toHaveBeenCalled();
-    expect(onChange).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalledWith();
+    expect(onChange).toHaveBeenCalledWith();
     expect(onBlur).toHaveBeenCalledTimes(1);
 
     await waitFor(() =>

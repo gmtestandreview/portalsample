@@ -29,7 +29,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -42,7 +42,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: mocks.trackGAEvent,
@@ -50,7 +50,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -59,7 +59,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
-vi.mock('@/storage/notification', async (importOriginal) => {
+vi.mock(import('@/storage/notification'), async (importOriginal) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
@@ -67,7 +67,7 @@ vi.mock('@/storage/notification', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule46>;
 });
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {

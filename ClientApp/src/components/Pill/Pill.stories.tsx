@@ -37,11 +37,13 @@ export const DashboardStatuses: Story = {
     const quoteAvailableBadge = await canvas.findByText(
       'Quote offer is available'
     );
+
     await expect(quoteAvailableBadge).toBeVisible();
 
     const quoteAcceptedBadge = await canvas.findByText(
       'Quote offer is accepted'
     );
+
     await expect(quoteAcceptedBadge).toBeVisible();
   },
 };

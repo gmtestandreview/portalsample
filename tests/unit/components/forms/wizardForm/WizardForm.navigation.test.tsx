@@ -17,7 +17,7 @@ import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -25,7 +25,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -35,7 +35,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -45,7 +45,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/components/SteppedNavigation',
+  import('../../../../../ClientApp/src/components/SteppedNavigation'),
   () =>
     ({
       default: () => <div data-testid='stepped-navigation' />,

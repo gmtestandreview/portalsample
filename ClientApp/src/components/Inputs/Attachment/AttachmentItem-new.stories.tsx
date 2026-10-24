@@ -50,6 +50,7 @@ export const Editable: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     await expect(canvas.getByLabelText('Category')).toBeInTheDocument();
     await expect(canvas.getByRole('button', { name: /delete/i })).toBeVisible();
@@ -65,6 +66,7 @@ export const ReadOnlySummary: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     // No delete affordance in the read-only summary presentation.
     await expect(canvas.queryByRole('button', { name: /delete/i })).toBeNull();

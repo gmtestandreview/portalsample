@@ -65,9 +65,12 @@ export const FirstPage: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 1 of 12/i);
+
     await expect(pageText).toBeVisible();
+
     // First link hidden at page 1
     const firstLink = canvasElement.querySelector('.firstpage');
+
     await expect(firstLink).toHaveClass('d-none');
   },
 };
@@ -84,9 +87,12 @@ export const LastPage: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 12 of 12/i);
+
     await expect(pageText).toBeVisible();
+
     // Last link hidden at last page
     const lastLink = canvasElement.querySelector('.lastpage');
+
     await expect(lastLink).toHaveClass('d-none');
   },
 };
@@ -103,10 +109,13 @@ export const CustomStyleVariant: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText('Page 3 of 8');
+
     await expect(pageText).toBeVisible();
+
     const user = userEvent.setup();
     const page4Btn = canvas.getByRole('button', { name: /page 4/i });
     await user.click(page4Btn);
+
     await expect(canvas.getByText(/page 4 of 8/i)).toBeVisible();
   },
 };

@@ -244,7 +244,7 @@ describe(RhfAttachmentItem, () => {
       await settle(second, 'resolve');
       await settle(first, 'reject');
 
-      await waitFor(() => expect(onCategoryError).toHaveBeenCalled());
+      await waitFor(() => expect(onCategoryError).toHaveBeenCalledWith());
 
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         'Other'
@@ -344,7 +344,7 @@ describe(RhfAttachmentItem, () => {
       'Certificate'
     );
 
-    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalled());
+    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalledWith());
 
     expect(onCategoryError).not.toHaveBeenCalled();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
@@ -468,7 +468,7 @@ describe(RhfAttachmentItem, () => {
 
     unmount();
 
-    expect(revoke).toHaveBeenCalled();
+    expect(revoke).toHaveBeenCalledWith();
 
     create.mockRestore();
     revoke.mockRestore();

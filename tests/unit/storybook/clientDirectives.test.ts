@@ -49,7 +49,7 @@ describe('storybook client directives', () => {
     expect(chunk.exports).toEqual(['answer']);
     expect(chunk.code).toContain('42');
     expect(chunk.map?.sourcesContent).toContain(source);
-    expect(chunk.map?.mappings).toBeTruthy();
+    expect(chunk.map?.mappings).toBe(true);
   });
 
   it('handles TypeScript and JSX before Rolldown internal transforms', async () => {

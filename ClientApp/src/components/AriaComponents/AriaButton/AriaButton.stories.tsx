@@ -20,6 +20,7 @@ export const Primary: Story = {
   play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Save changes' });
     await userEvent.click(button);
+
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
 };
@@ -32,8 +33,11 @@ export const KeyboardActivation: Story = {
   play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Continue' });
     await userEvent.tab();
+
     await expect(button).toHaveFocus();
+
     await userEvent.keyboard('{Enter}');
+
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
 };
@@ -46,8 +50,11 @@ export const Disabled: Story = {
   },
   play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Unavailable' });
+
     await expect(button).toBeDisabled();
+
     await userEvent.click(button);
+
     await expect(args.onPress).not.toHaveBeenCalled();
   },
 };
@@ -61,9 +68,12 @@ export const Pending: Story = {
   play: async ({ canvas, userEvent }) => {
     const button = canvas.getByRole('button');
     const progress = canvas.getByRole('progressbar', { name: 'Saving...' });
+
     await expect(progress).toBeInTheDocument();
     await expect(button).not.toBeDisabled();
+
     await userEvent.tab();
+
     await expect(button).toHaveFocus();
     await expect(button).not.toHaveTextContent('Save changes');
   },

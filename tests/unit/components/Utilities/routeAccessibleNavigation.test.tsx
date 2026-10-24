@@ -35,7 +35,7 @@ describe(RouteAccessibleNavigation, () => {
 
     unmount();
 
-    expect(clearTimeoutSpy).toHaveBeenCalled();
+    expect(clearTimeoutSpy).toHaveBeenCalledWith();
   });
 
   it('announces the root route immediately with the current document title', () => {

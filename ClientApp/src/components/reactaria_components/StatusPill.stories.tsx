@@ -16,6 +16,7 @@ export const Neutral: Story = {
   },
   play: async ({ canvas }) => {
     const pill = canvas.getByText('In progress');
+
     await expect(pill.tagName).toBe('SPAN');
     await expect(pill).toHaveAttribute('data-tone', 'neutral');
     await expect(pill).not.toHaveAttribute('role');

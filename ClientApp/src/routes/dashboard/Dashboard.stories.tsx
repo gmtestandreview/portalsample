@@ -106,6 +106,7 @@ export const Populated: Story = {
     const tabList = await canvas.findByRole('tablist', {
       name: 'Select your dashboard view',
     });
+
     await expect(tabList).toBeVisible();
     await expect(
       await canvas.findByRole('heading', { name: 'Fluke 87V' })
@@ -140,6 +141,7 @@ export const EmptyState: Story = {
     const noRequestsTexts = await canvas.findAllByText(
       /you currently have no requests/i
     );
+
     await expect(noRequestsTexts[0]).toBeVisible();
   },
 };
@@ -177,11 +179,14 @@ export const RequestsTabWithNotification: Story = {
         canvas.getByRole('heading', { name: /Keysight U1242C/ })
       ).toBeVisible()
     );
+
     await expect(notifications[0]).toBeVisible();
+
     // Dismiss button exists (NotificationMessage renders a close × button when dismissible)
     const dismissButtons = canvas.queryAllByRole('button', {
       name: /close|dismiss/i,
     });
+
     await expect(dismissButtons[0]).toBeInTheDocument();
   },
 };
@@ -193,26 +198,35 @@ export const TabNavigation: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
+
     await expect(
       await canvas.findByRole('heading', { name: 'Fluke 87V' })
     ).toBeVisible();
+
     const tabList = await canvas.findByRole('tablist', {
       name: 'Select your dashboard view',
     });
+
     await expect(tabList).toBeVisible();
+
     // Three tabs are present
     const tabs = within(tabList).getAllByRole('tab');
+
     await expect(tabs.length).toBeGreaterThanOrEqual(2);
+
     // Click the second tab and assert it becomes selected
     const secondTab = tabs[1];
     if (!secondTab) throw new Error('Expected a second dashboard tab');
     await user.click(secondTab);
+
     await expect(secondTab).toHaveAttribute('aria-selected', 'true');
+
     // react-bootstrap's Tabs fade the panels with a <Transition>; wait for it to
     // finish (one active panel, fully shown) so its state updates settle inside
     // the play function rather than leaking out as act() warnings.
     await waitFor(async () => {
       const activePanels = canvasElement.querySelectorAll('.tab-pane.active');
+
       await expect(activePanels).toHaveLength(1);
       await expect(activePanels[0]).toHaveClass('show');
     });

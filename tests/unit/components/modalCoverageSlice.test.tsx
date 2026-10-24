@@ -22,7 +22,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -34,7 +34,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock('react-router', async () => {
+vi.mock(import('react-router'), async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
@@ -43,7 +43,7 @@ vi.mock('react-router', async () => {
 });
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
+  import('../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       ApplicationType: {
@@ -60,7 +60,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://mock/.default'] },
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: vi.fn(),
@@ -76,7 +76,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/types',
+  import('../../../ClientApp/src/storage/types'),
   () =>
     ({
       NotificationSeverity: {
@@ -86,7 +86,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -96,7 +96,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),

@@ -156,7 +156,7 @@ describe('rhfForm api', () => {
         expect.stringContaining(expectedReactError)
       );
       expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
-      expect(suppressExpectedError).toHaveBeenCalled();
+      expect(suppressExpectedError).toHaveBeenCalledWith();
       expect(
         suppressExpectedError.mock.calls.every(
           ([event]) =>

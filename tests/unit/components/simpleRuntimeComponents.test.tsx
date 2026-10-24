@@ -23,7 +23,7 @@ import { useAccountState } from '@/authentication/hooks';
 import { NotificationSeverity } from '@/storage/types';
 
 vi.mock(
-  '@/components/get-started/get-started',
+  import('@/components/get-started/get-started'),
   () =>
     ({
       default: () => <main>Get started content</main>,
@@ -31,7 +31,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountState: vi.fn(),

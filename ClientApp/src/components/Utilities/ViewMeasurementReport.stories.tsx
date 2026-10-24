@@ -41,6 +41,7 @@ export const Default: Story = {
     const button = await canvas.findByRole('button', {
       name: 'View measurement report',
     });
+
     await expect(button).toBeVisible();
     await expect(
       canvas.getByText(/Requires Acrobat PDF reader - PDF file size 2\.00Kb/)
@@ -49,6 +50,7 @@ export const Default: Story = {
     await userEvent.click(button);
 
     await waitFor(() => expect(args.setIsLoading).toHaveBeenCalledWith(false));
+
     await expect(args.setFileError).toHaveBeenLastCalledWith(false);
   },
 };

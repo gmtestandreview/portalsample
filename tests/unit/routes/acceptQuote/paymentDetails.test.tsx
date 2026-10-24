@@ -25,14 +25,14 @@ const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => msalContext,
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -40,14 +40,14 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
-      this.setAuthToken = vi.fn();
+      vi.spyOn(this, 'setAuthToken').mockImplementation();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -56,7 +56,7 @@ vi.mock(
 
 // Stub form-input children — they require Formik context which is outside this component's scope
 vi.mock(
-  '@/components/Inputs/TextInput',
+  import('@/components/Inputs/TextInput'),
   () =>
     ({
       default: ({
@@ -73,7 +73,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule29>
 );
 vi.mock(
-  '@/components/Inputs/RadioButtonGroup',
+  import('@/components/Inputs/RadioButtonGroup'),
   () =>
     ({
       default: ({ name }: { name: string }) => (
@@ -82,21 +82,21 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule52>
 );
 vi.mock(
-  '@/components/forms/HidableField',
+  import('@/components/forms/HidableField'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     }) satisfies __ExactMockModule<__TestMockModule70>
 );
 vi.mock(
-  '@/components/forms/CommonForms/ContactDetails',
+  import('@/components/forms/CommonForms/ContactDetails'),
   () =>
     ({
       default: () => <div data-testid='contact-details' />,
     }) satisfies __ExactMockModule<__TestMockModule71>
 );
 vi.mock(
-  '@/components/BlockUISpinner',
+  import('@/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (

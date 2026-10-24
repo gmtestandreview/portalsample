@@ -67,6 +67,7 @@ export const WithSuggestions: Story = {
     const input = canvas.getByRole('combobox', { name: /suburb/i });
     await user.type(input, 'syd');
     const combobox = canvas.getByRole('combobox');
+
     await expect(combobox).toBeVisible();
     // Typing kicks off the async getOptions; asserting only that the combobox is still
     // visible passes before the results arrive, so React Aria opened its popover and
@@ -79,10 +80,12 @@ export const WithSuggestions: Story = {
         name: 'Sydney Olympic Park NSW (2 of 3)',
       })
     ).toBeVisible();
+
     // Escape closes the suggestion list. Asserting it also leaves the combobox settled
     // before Storybook unmounts the story: left open, React Aria committed a
     // ComboBoxInner update during the next story in the file.
     await user.keyboard('{Escape}');
+
     await expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   },
 };
@@ -119,6 +122,7 @@ export const EmptyState: Story = {
     const input = canvas.getByRole('combobox', { name: /suburb/i });
     await user.type(input, 'xyz');
     const noResult = await canvas.findByText(/no matches found/i);
+
     await expect(noResult).toBeVisible();
   },
 };
@@ -162,6 +166,7 @@ export const Loading: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const loadingText = canvas.getByText(/loading options/i);
+
     await expect(loadingText).toBeVisible();
   },
 };

@@ -15,7 +15,7 @@ const trackGAEventMock = vi.hoisted(() => vi.fn());
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -26,12 +26,12 @@ vi.mock(
 );
 
 vi.mock(
-  '@/routes/common/helperFunctions',
+  import('@/routes/common/helperFunctions'),
   () => helperMocks satisfies __ExactMockModule<__TestMockModule9>
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: trackGAEventMock,
@@ -39,7 +39,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -96,7 +96,7 @@ describe(ViewPdfQuoteTerms, () => {
     await user.click(getTermsAnchor(container));
 
     await waitFor(() => {
-      expect(acquireTokenSilentMock).toHaveBeenCalled();
+      expect(acquireTokenSilentMock).toHaveBeenCalledWith();
       expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
         'test-access-token',
         mockQuotationData,

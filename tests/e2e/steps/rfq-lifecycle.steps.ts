@@ -1,3 +1,4 @@
+import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { FormStepStatus } from '../../../ClientApp/src/api/web-api-client';
 import { DashboardItemStatus } from '../../../ClientApp/src/routes/common/enums';

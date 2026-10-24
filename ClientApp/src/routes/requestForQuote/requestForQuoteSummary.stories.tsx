@@ -45,9 +45,12 @@ export const Editable: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
     await expect(canvas.getByText('Instrument and Request')).toBeVisible();
+
     await expectInstrumentSectionReady(canvas);
+
     // Review guidance is shown while still editable.
     await expect(
       canvas.getByText(/before you submit your request/i)
@@ -64,6 +67,7 @@ export const Submitted: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expectInstrumentSectionReady(canvas);
+
     // Submitted view replaces guidance/edit with a back-to-dashboard link.
     await expect(canvas.getByTestId('back-button')).toBeVisible();
     await expect(

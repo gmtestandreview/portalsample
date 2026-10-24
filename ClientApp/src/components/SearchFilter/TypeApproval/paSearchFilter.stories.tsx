@@ -44,6 +44,7 @@ export const Default: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('button', { name: 'Filters applied' })
     ).toBeVisible();

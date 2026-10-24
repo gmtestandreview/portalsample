@@ -18,7 +18,7 @@ const authElementMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       MsalAuthenticationTemplate: ({
@@ -60,7 +60,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-browser',
+  import('@azure/msal-browser'),
   () =>
     ({
       InteractionType: {
@@ -70,7 +70,7 @@ vi.mock(
 );
 
 vi.mock(
-  'react-router',
+  import('react-router'),
   () =>
     ({
       isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
@@ -82,7 +82,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/preConditions/PreConditions',
+  import('../../../ClientApp/src/routes/preConditions/PreConditions'),
   () =>
     ({
       default: ({
@@ -103,7 +103,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/ErrorBoundary',
+  import('../../../ClientApp/src/components/ErrorBoundary'),
   () =>
     ({
       default: ({
@@ -124,7 +124,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => (
@@ -134,7 +134,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppInsightsService',
+  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
   () =>
     ({
       ai: {
@@ -144,7 +144,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       authRequest: {

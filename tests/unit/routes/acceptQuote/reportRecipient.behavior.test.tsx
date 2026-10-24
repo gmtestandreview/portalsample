@@ -28,7 +28,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -41,7 +41,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
@@ -51,7 +51,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -63,7 +63,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 });
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: mocks.error },
@@ -74,7 +74,7 @@ vi.mock(
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
 vi.mock(
-  '@/components/Inputs/AddressLookup',
+  import('@/components/Inputs/AddressLookup'),
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -83,7 +83,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule31>
 );
 vi.mock(
-  '@/components/Inputs/RhfAddressLookup',
+  import('@/components/Inputs/RhfAddressLookup'),
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -228,7 +228,7 @@ describe('reportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
     const submitted = defined(onSubmit.mock.calls[0], 'submit call')[0];
 
     expect(submitted).toEqual({
@@ -295,7 +295,7 @@ describe('reportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
 
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toEqual({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
@@ -313,7 +313,7 @@ describe('reportRecipient behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
 
     expect(screen.queryByText(/400/)).not.toBeInTheDocument();
   });
@@ -355,7 +355,7 @@ describe('reportRecipient behavior', () => {
     mocks.getReportRecipient.mockRejectedValue(new Error('boom'));
     renderStep({});
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalled());
+    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
 
     expect(
       screen.getByLabelText('Organisation name for report')

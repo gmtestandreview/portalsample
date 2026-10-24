@@ -91,6 +91,7 @@ export const Step1ContactDetails: Story = {
     // visually-hidden "Step 1 of 2", which duplicated the same information for screen
     // reader users now that the stepper is no longer aria-hidden.
     const heading = canvas.getByRole('heading', { level: 1 });
+
     await expect(heading).toHaveTextContent('Contact details');
     await expect(heading).not.toHaveTextContent(/Step \d+ of \d+/);
     await expect(
@@ -164,15 +165,20 @@ export const Step2WithPreviousCompleted: Story = {
     userEvent,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', { level: 1, name: 'Organisation details' })
     ).toBeVisible();
+
     const state = canvas.getByRole('combobox', {
       name: 'State or territory',
     });
     await userEvent.selectOptions(state, 'ACT');
+
     await expect(state).toHaveValue('ACT');
+
     await userEvent.click(canvas.getByRole('button', { name: 'Submit' }));
+
     await expect(await canvas.findByText('Wizard completed')).toBeVisible();
   },
 };

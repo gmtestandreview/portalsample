@@ -24,9 +24,12 @@ export const Default: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
+
     await expect(banner).toBeVisible();
+
     // Given name is inside the h1 "Welcome Taylor" — use heading role + regex
     const heading = canvas.getByRole('heading', { name: /welcome/i });
+
     await expect(heading).toBeVisible();
     await expect(heading.textContent).toMatch(/Taylor/);
   },
@@ -46,6 +49,7 @@ export const NoGivenName: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
+
     await expect(banner).toBeVisible();
     // "Taylor" must NOT appear — the heading is just "Welcome"
     await expect(canvas.queryByText('Taylor')).not.toBeInTheDocument();
@@ -69,6 +73,7 @@ export const Loading: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
+
     await expect(banner).toBeVisible();
     // No name renders when details is null
     await expect(canvas.queryByText('Taylor')).not.toBeInTheDocument();

@@ -37,6 +37,7 @@ export const Closed: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('button', { name: /filters/i })
     ).toBeVisible();
@@ -50,6 +51,7 @@ export const Opened: Story = {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await user.click(canvas.getByRole('button', { name: /filters/i }));
+
     // The radio groups render once the menu is open.
     await expect(await canvas.findByText('Show results')).toBeVisible();
     await expect(canvas.getByText('Quote offer is available')).toBeVisible();
@@ -68,6 +70,7 @@ export const WithAppliedFilters: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // Applied-filter count badge surfaces a non-zero value.
     await expect(canvas.getByText('1')).toBeVisible();
   },

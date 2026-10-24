@@ -9,7 +9,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-aria-components/Breadcrumbs',
+  import('react-aria-components/Breadcrumbs'),
   () =>
     ({
       Breadcrumbs: ({
@@ -30,7 +30,7 @@ vi.mock(
 );
 
 vi.mock(
-  'react-aria-components/Link',
+  import('react-aria-components/Link'),
   () =>
     ({
       Link: ({

@@ -38,7 +38,7 @@ if (!globalThis.matchMedia) {
 }
 
 if (!HTMLElement.prototype.scrollIntoView) {
-  HTMLElement.prototype.scrollIntoView = vi.fn();
+  vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation();
 }
 
 // Node 24 and jsdom 30 both expose URL.createObjectURL, but Vitest's Node

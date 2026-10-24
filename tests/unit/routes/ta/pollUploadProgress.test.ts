@@ -10,7 +10,7 @@ import {
 
 const appLoggerError = vi.hoisted(() => vi.fn());
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: appLoggerError },
@@ -58,7 +58,7 @@ describe(pollUploadProgress, () => {
       -1, 40,
     ]);
     expect(onProgress).toHaveBeenCalledTimes(2);
-    expect(onFinished).toHaveBeenCalledOnce();
+    expect(onFinished).toHaveBeenCalledExactlyOnceWith();
     expect(deleteProgressStatistics).toHaveBeenCalledWith('u1');
   });
 
@@ -78,7 +78,7 @@ describe(pollUploadProgress, () => {
       onFinished,
     });
 
-    expect(onFinished).toHaveBeenCalledOnce();
+    expect(onFinished).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('logs a failed statistics cleanup without rejecting', async () => {
@@ -161,6 +161,6 @@ describe(pollUploadProgress, () => {
       onFinished: vi.fn(),
     });
 
-    expect(getProgress).toHaveBeenCalledOnce();
+    expect(getProgress).toHaveBeenCalledExactlyOnceWith();
   });
 });

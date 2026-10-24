@@ -24,7 +24,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useIsAuthenticated: mocks.useIsAuthenticated,
@@ -33,7 +33,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
+  import('../../../ClientApp/src/storage/targetOrganisation'),
   () =>
     ({
       clearTargetOrganisation: mocks.clearTargetOrganisation,
@@ -41,7 +41,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
+  import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       default: mocks.useAccountContext,
@@ -192,9 +192,11 @@ describe('static route pages', () => {
 
     expect(screen.getByText('Logging out...')).toBeInTheDocument();
 
-    await waitFor(() => expect(mocks.handleRedirectPromise).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith()
+    );
 
-    expect(clearTargetOrganisation).toHaveBeenCalled();
+    expect(clearTargetOrganisation).toHaveBeenCalledWith();
     expect(mocks.logoutRedirect).toHaveBeenCalledWith({
       account: { homeAccountId: 'account-1' },
     });
@@ -213,10 +215,12 @@ describe('static route pages', () => {
 
     render(<Signout />);
 
-    await waitFor(() => expect(mocks.handleRedirectPromise).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith()
+    );
 
     expect(mocks.logoutRedirect).not.toHaveBeenCalled();
-    expect(clearTargetOrganisation).toHaveBeenCalled();
+    expect(clearTargetOrganisation).toHaveBeenCalledWith();
   });
 
   it('does not restart sign-out after the effect has been cleaned up', async () => {

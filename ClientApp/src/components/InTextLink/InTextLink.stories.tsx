@@ -20,6 +20,7 @@ export const External: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', { name: /read external guidance/i });
+
     await expect(link).toHaveAttribute('rel', 'nofollow noreferrer noopener');
     await expect(link).toHaveAttribute('target', '_blank');
   },
@@ -37,6 +38,7 @@ export const SameTab: Story = {
     const link = canvas.getByRole('link', {
       name: /view terms and conditions/i,
     });
+
     await expect(link).toHaveAttribute('target', '_self');
   },
 };
@@ -50,6 +52,7 @@ export const InlineText: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', { name: /open support content/i });
+
     await expect(link).toBeVisible();
   },
 };

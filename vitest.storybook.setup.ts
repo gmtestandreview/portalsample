@@ -41,7 +41,7 @@ Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
   value: vi.fn(),
 });
 
-globalThis.scrollTo = vi.fn();
+vi.spyOn(globalThis, 'scrollTo').mockImplementation();
 
 const originalGetComputedStyle = globalThis.getComputedStyle.bind(globalThis);
 globalThis.getComputedStyle = (element: Element) =>

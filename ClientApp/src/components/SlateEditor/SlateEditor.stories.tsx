@@ -53,6 +53,7 @@ export const Default: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // The Slate Editable surface is exposed as a textbox. Slate renders a contenteditable
     // div, which takes no accessible name from its placeholder the way a native input
     // would, so the name is asserted by role rather than just the element's presence.
@@ -62,10 +63,12 @@ export const Default: Story = {
     await expect(canvas.getByRole('button', { name: /send/i })).toBeVisible();
     // Formatting controls are present.
     await expect(canvas.getByRole('button', { name: /bold/i })).toBeVisible();
+
     // Typing is what drives Slate's Editable through act; the three assertions above are
     // static chrome, so without an interaction the editor kept updating after the story
     // had ended and the warning surfaced against whichever story ran next.
     await userEvent.type(canvas.getByRole('textbox'), ' Noted.');
+
     await expect(
       canvas.getByText('Thanks for the update on the application. Noted.')
     ).toBeVisible();
@@ -83,7 +86,9 @@ export const Empty: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText(/0\s*\/\s*500/)).toBeVisible();
+
     await canvas.findByText('Type your message…');
     const textbox = canvas.getByRole('textbox');
     // Cover an already-focused empty editor. type()'s default synthetic click
@@ -96,6 +101,7 @@ export const Empty: Story = {
       keys: '[MouseLeft]',
     });
     await userEvent.keyboard('Hi');
+
     // Slate commits typed text through a deferred render, so a one-shot getByText
     // can run first under CI load; findByText retries until it lands.
     await expect(canvas.findByText('Hi')).resolves.toBeVisible();

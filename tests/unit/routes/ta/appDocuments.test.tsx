@@ -48,14 +48,14 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -81,7 +81,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -89,7 +89,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
@@ -97,7 +97,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/rhfSupportingDocuments',
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
   () =>
     ({
       default: (props: typeof documentsStep.props) => {
@@ -454,7 +454,7 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(
           clients.progress.methods.deleteProgressStatistics
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
     });
 
@@ -494,7 +494,7 @@ describe('application documents', () => {
         () =>
           expect(
             clients.progress.methods.deleteProgressStatistics
-          ).toHaveBeenCalled(),
+          ).toHaveBeenCalledWith(),
         { timeout: 10000 }
       );
 
@@ -515,7 +515,7 @@ describe('application documents', () => {
         await documentsStep.props.onUploadAttachment('token', []);
       });
       await waitFor(() =>
-        expect(clients.progress.methods.getProgress).toHaveBeenCalled()
+        expect(clients.progress.methods.getProgress).toHaveBeenCalledWith()
       );
 
       unmount();
@@ -590,7 +590,7 @@ describe('application documents', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.commitAppDocuments
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
       const [applicationId, values] = defined(
         clients.patternApproval.methods.commitAppDocuments.mock.calls[0]

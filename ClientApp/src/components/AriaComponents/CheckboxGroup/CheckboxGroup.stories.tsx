@@ -90,6 +90,7 @@ export const Horizontal: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     // Orientation is published as a data attribute for the stylesheet to lay out against.
     const group = canvas.getByRole('group', { name: 'NMI services' });
+
     await expect(group).toHaveAttribute('data-orientation', 'horizontal');
   },
 };

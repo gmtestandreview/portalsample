@@ -20,8 +20,11 @@ export const Example: Story = {
   render: (args) => <ToggleButton {...args}>Pin</ToggleButton>,
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: 'Pin' });
+
     await expect(button).toBeVisible();
+
     await button.click();
+
     await expect(button).toHaveAttribute('aria-pressed', 'true');
   },
 };

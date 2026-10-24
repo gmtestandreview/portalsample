@@ -61,6 +61,7 @@ export const DraftApplication: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', {
         name: /non-automatic weighing instrument/i,
@@ -80,6 +81,7 @@ export const SubmittedApplication: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', { name: /fuel dispenser flow meter/i })
     ).toBeVisible();

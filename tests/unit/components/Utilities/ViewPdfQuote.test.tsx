@@ -27,7 +27,7 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => msalContext,
@@ -35,12 +35,12 @@ vi.mock(
 );
 
 vi.mock(
-  '@/routes/common/helperFunctions',
+  import('@/routes/common/helperFunctions'),
   () => helperMocks satisfies __ExactMockModule<__TestMockModule9>
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
@@ -48,7 +48,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },

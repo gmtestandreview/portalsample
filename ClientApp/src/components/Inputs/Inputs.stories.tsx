@@ -91,33 +91,46 @@ export const CommonFieldSet: Story = {
   ),
   play: async ({ canvas, userEvent }) => {
     const organisationName = canvas.getByLabelText('Organisation name');
+
     await expect(organisationName).toHaveValue('Storybook Organisation');
+
     await userEvent.clear(organisationName);
     await userEvent.type(organisationName, 'Updated Organisation');
+
     await expect(organisationName).toHaveValue('Updated Organisation');
 
     const category = canvas.getByLabelText('Measurement category');
+
     await expect(category).toHaveValue('electrical');
+
     await userEvent.selectOptions(category, 'mass');
+
     await expect(category).toHaveValue('mass');
 
     const differentContact = canvas.getByRole('radio', {
       name: 'Use a different contact',
     });
     await userEvent.click(differentContact);
+
     await expect(differentContact).toBeChecked();
 
     const certificate = canvas.getByRole('checkbox', {
       name: 'Include measurement certificate',
     });
+
     await expect(certificate).toBeChecked();
+
     await userEvent.click(certificate);
+
     await expect(certificate).not.toBeChecked();
 
     const quantity = canvas.getByLabelText('Number of items');
+
     await expect(quantity).toHaveValue('3');
+
     await userEvent.clear(quantity);
     await userEvent.type(quantity, '5');
+
     await expect(quantity).toHaveValue('5');
 
     const requirements = canvas.getByLabelText(
@@ -125,6 +138,7 @@ export const CommonFieldSet: Story = {
     );
     await userEvent.clear(requirements);
     await userEvent.type(requirements, 'Calibrate at five operating points.');
+
     await expect(requirements).toHaveValue(
       'Calibrate at five operating points.'
     );

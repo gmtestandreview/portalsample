@@ -19,6 +19,7 @@ export const TitleOnly: Story = {
   },
   play: async ({ canvas }) => {
     const header = canvas.getByRole('banner');
+
     await expect(header).toBeInTheDocument();
     await expect(
       canvas.getByRole('heading', { name: 'Measurement services', level: 1 })

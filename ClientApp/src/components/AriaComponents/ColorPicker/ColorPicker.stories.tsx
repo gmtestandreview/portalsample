@@ -26,6 +26,7 @@ export const Example: Story = {
     });
 
     await userEvent.click(trigger);
+
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   },
 };

@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -31,7 +31,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock('react-router', async (importOriginal) => {
+vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
 
   return {
@@ -50,7 +50,7 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
@@ -63,7 +63,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       AcceptQuoteClient: class {
@@ -78,7 +78,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -86,7 +86,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/storage/notification',
+  import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
       getDashboardNotification: vi.fn(() => undefined),
@@ -97,7 +97,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Accordion',
+  import('../../../../ClientApp/src/components/Accordion'),
   () =>
     ({
       CustomAccordion: ({ children }: { children: React.ReactNode }) => (
@@ -110,7 +110,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Buttons/EditButton',
+  import('../../../../ClientApp/src/components/Buttons/EditButton'),
   () =>
     ({
       default: () => <button type='button'>Edit</button>,
@@ -118,7 +118,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/HeaderIntroText',
+  import('../../../../ClientApp/src/components/HeaderIntroText'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -128,7 +128,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
     ({
       default: () => {},
@@ -136,7 +136,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/reportRecipient',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
   () =>
     ({
       default: () => <div>Report recipient</div>,
@@ -144,7 +144,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
   () =>
     ({
       default: () => <div>Delivery and return</div>,
@@ -152,7 +152,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/paymentDetails',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
   () =>
     ({
       default: () => <div>Payment details</div>,
@@ -160,7 +160,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/InTextLink',
+  import('../../../../ClientApp/src/components/InTextLink'),
   () =>
     ({
       default: ({
@@ -178,7 +178,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/quotationSummary',
+  import('../../../../ClientApp/src/routes/acceptQuote/quotationSummary'),
   () =>
     ({
       default: () => <div>Quotation summary</div>,
@@ -186,7 +186,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/BlockUISpinner',
+  import('../../../../ClientApp/src/components/BlockUISpinner'),
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -196,7 +196,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Alert/NotificationMessage',
+  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
   () =>
     ({
       default: () => null,
@@ -204,7 +204,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Icons/ExternalLinkIcon',
+  import('../../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
   () =>
     ({
       default: () => <span aria-hidden='true'>icon</span>,
@@ -212,7 +212,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
       getFileUrlFromBase64: vi.fn(),

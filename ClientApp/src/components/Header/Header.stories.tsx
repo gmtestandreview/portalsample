@@ -25,16 +25,21 @@ export const Authenticated: Story = {
     const banner =
       canvasElement.querySelector('header') ??
       canvasElement.querySelector('[role="banner"]');
+
     await expect(banner).toBeTruthy();
+
     // NMI logo link is present and has accessible text
     const logoLink = canvas
       .getAllByRole('link')
       .find((l) => l.getAttribute('aria-label') || l.textContent?.trim());
+
     await expect(logoLink).toBeTruthy();
+
     // Navigation is present
     const nav =
       canvasElement.querySelector('nav') ??
       canvasElement.querySelector('[role="navigation"]');
+
     await expect(nav).toBeTruthy();
   },
 };

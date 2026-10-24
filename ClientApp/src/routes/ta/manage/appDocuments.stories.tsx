@@ -30,6 +30,7 @@ export const DocumentsTab: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', { name: 'Documents' })
     ).toBeInTheDocument();

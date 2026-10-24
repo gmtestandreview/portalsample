@@ -75,7 +75,7 @@ describe('utility runtime components and hooks', () => {
       behavior: 'smooth',
       block: undefined,
     });
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('renders the back-to-top landmark as a semantic nav element', () => {

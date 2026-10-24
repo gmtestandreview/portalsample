@@ -31,6 +31,7 @@ export const PublicLanding: Story = {
     const canvas = within(canvasElement);
     // GetStarted renders a heading; assert the landing surface mounts.
     const heading = await canvas.findByRole('heading', { level: 1 });
+
     await expect(heading).toBeVisible();
     await expect(heading).toHaveTextContent(
       'National Measurement Institute (NMI) Services portal'

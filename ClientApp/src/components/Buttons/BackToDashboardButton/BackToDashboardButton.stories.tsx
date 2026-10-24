@@ -35,6 +35,7 @@ export const Default: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: /back to dashboard/i });
+
     await expect(link).toBeInTheDocument();
     await expect(link).toHaveAttribute('href', '/dashboard');
   },

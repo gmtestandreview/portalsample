@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -21,7 +21,7 @@ vi.mock(
 );
 
 vi.mock(
-  'react-router',
+  import('react-router'),
   () =>
     ({
       useNavigate: () => mocks.navigate,
@@ -29,7 +29,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/components/modals/ModalContext',
+  import('@/components/modals/ModalContext'),
   () =>
     ({
       useModalState: () => null,
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/api/web-api-client',
+  import('@/api/web-api-client'),
   () =>
     ({
       ApplicationType: { QuoteRequest: 'QuoteRequest' },
@@ -54,7 +54,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/authentication/authConfig',
+  import('@/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -62,7 +62,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: vi.fn() },
@@ -70,14 +70,14 @@ vi.mock(
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
+  import('@/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
     }) satisfies __ExactMockModule<__TestMockModule22>
 );
 
-vi.mock('react-bootstrap', () => {
+vi.mock(import('react-bootstrap'), () => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );

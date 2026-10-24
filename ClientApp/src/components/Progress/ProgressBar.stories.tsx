@@ -31,6 +31,7 @@ export const InProgress: Story = {
     // percentage sit inside the role, so a screen reader announces "progress bar" and
     // nothing else without them.
     const bar = canvas.getByRole('progressbar', { name: 'Uploading' });
+
     await expect(bar).toBeVisible();
     await expect(bar).toHaveAttribute('aria-valuenow', '42');
     await expect(canvas.getByText('Uploading')).toBeVisible();
@@ -47,6 +48,7 @@ export const JustStarted: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText(/0%/)).toBeVisible();
   },
 };
@@ -60,6 +62,7 @@ export const Complete: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText(/100%/)).toBeVisible();
   },
 };

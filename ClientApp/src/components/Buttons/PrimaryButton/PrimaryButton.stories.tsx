@@ -60,6 +60,7 @@ export const CssCheck: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const button = canvas.getByRole('button', { name: /submit/i });
+
     // In jsdom, external CSS files don't affect computed styles.
     // Instead, verify the button has the expected class and content.
     // In Storybook browser, the CSS loads and applies the primary button styles.

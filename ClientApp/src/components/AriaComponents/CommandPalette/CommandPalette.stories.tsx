@@ -58,7 +58,9 @@ export const Example: ObjectStory = {
     await expect(searchInput).toHaveFocus();
     await expect(searchInput).not.toHaveAttribute('aria-activedescendant');
     await expect(menu).toHaveAttribute('tabindex', '0');
+
     await userEvent.tab();
+
     await expect(menuItem).toHaveFocus();
   },
 };

@@ -124,6 +124,7 @@ function MyToastRegion() {
     );
 
     const title = await page.findByText(args.title);
+
     await expect(title).toBeVisible();
 
     if (args.description) {

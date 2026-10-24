@@ -35,6 +35,7 @@ export const ServerError: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
+
     await expect(alert).toBeInTheDocument();
     await expect(canvas.getByText(/server error/i)).toBeVisible();
   },
@@ -62,6 +63,7 @@ export const ValidationErrors: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
+
     await expect(alert).toBeInTheDocument();
     await expect(canvas.getByText(/first name is required/i)).toBeVisible();
     await expect(
@@ -87,6 +89,7 @@ export const WAFViolation: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
+
     await expect(alert).toBeInTheDocument();
     await expect(canvas.getByText(/an error has occurred/i)).toBeVisible();
     await expect(canvas.getByText(/invalid characters/i)).toBeVisible();
@@ -109,6 +112,7 @@ export const ConflictError: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
+
     await expect(alert).toBeInTheDocument();
     await expect(
       canvas.getByText(/another person has already saved this page/i)

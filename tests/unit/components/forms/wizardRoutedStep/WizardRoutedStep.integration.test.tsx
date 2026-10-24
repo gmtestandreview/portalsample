@@ -20,7 +20,7 @@ import { defined } from '../../../helpers/defined';
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -30,7 +30,7 @@ vi.mock(
 // WizardStep wraps ErrorBoundary (needs AppInsights) + GoogleAnalytics.
 // Both are irrelevant to these tests; stub them out.
 vi.mock(
-  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -601,8 +601,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
       expect(screen.getByText('Cancelled Page')).toBeInTheDocument()
     );
 
-    expect(onDiscard).toHaveBeenCalled();
-    expect(onCancel).toHaveBeenCalled();
+    expect(onDiscard).toHaveBeenCalledWith();
+    expect(onCancel).toHaveBeenCalledWith();
   });
 
   it('uses the discard location and hides the save-and-next button', async () => {

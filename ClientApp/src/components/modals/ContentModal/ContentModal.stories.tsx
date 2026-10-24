@@ -52,11 +52,15 @@ export const OpenWithContent: Story = {
       name: /example modal title/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
       within(dialog).getByText('Modal body content for Storybook preview.')
     ).toBeVisible();
+
     await userEvent.click(screen.getByTestId('close-button'));
+
     await expect(args.onCancelModal).toHaveBeenCalled();
+
     await waitFor(() =>
       expect(
         screen.queryByRole('dialog', { name: /example modal title/i })

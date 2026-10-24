@@ -31,6 +31,7 @@ export const Shell: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     // The banner title renders the :id route param. It was empty in every story,
     // because the preview decorator used to mount everything under `path: '*'`.
     await expect(
@@ -40,10 +41,12 @@ export const Shell: Story = {
       canvas.getByText('Testing and calibration service')
     ).toBeVisible();
     await expect(canvas.getByTestId('go-to-dashboard-button')).toBeVisible();
+
     const reportRegion = canvasElement.querySelector('[aria-live="polite"]');
     await waitFor(() =>
       expect(reportRegion).toHaveAttribute('aria-busy', 'false')
     );
+
     await expect(canvas.getByTestId('instReports-table')).toBeVisible();
     await expect(canvas.getByText('RPT-1001')).toBeVisible();
   },

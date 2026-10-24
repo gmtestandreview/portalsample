@@ -47,6 +47,7 @@ export const CurrentStep: Story = {
     // tabbed into. Role queries ignore aria-hidden subtrees, so this assertion is exactly
     // the contract - it can only pass once the list is actually exposed.
     const progress = canvas.getByRole('list', { name: 'Form progress' });
+
     await expect(progress).toBeVisible();
     // The completion state each step announces is part of that contract.
     await expect(

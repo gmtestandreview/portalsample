@@ -36,41 +36,44 @@ const mocks = vi.hoisted(() => ({
   setBranchModalNotification: vi.fn(),
 }));
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal();
-  if (typeof actual !== 'object' || actual === null) {
-    throw new TypeError('Expected module exports object');
+vi.mock(
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const actual = await importOriginal();
+    if (typeof actual !== 'object' || actual === null) {
+      throw new TypeError('Expected module exports object');
+    }
+    return {
+      ...actual,
+      AccountsClient: vi.fn(function AccountsClientMock() {
+        return {
+          setAuthToken: mocks.accountSetAuthToken,
+          getNewAccountDetails: mocks.getNewAccountDetails,
+          completeAccountDetails: mocks.completeAccountDetails,
+          getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
+          getBranchDetails: mocks.getBranchDetails,
+          completeBranchAdd: mocks.completeBranchAdd,
+        };
+      }),
+      ContactClient: vi.fn(function ContactClientMock() {
+        return {
+          setAuthToken: mocks.contactSetAuthToken,
+          getUserContact: mocks.getUserContact,
+          saveContactDetails: mocks.saveContactDetails,
+        };
+      }),
+      UsersClient: vi.fn(function UsersClientMock() {
+        return {
+          setAuthToken: mocks.userSetAuthToken,
+          signIn: mocks.signIn,
+        };
+      }),
+    } satisfies __ExactMockModule<__TestMockModule4>;
   }
-  return {
-    ...actual,
-    AccountsClient: vi.fn(function AccountsClientMock() {
-      return {
-        setAuthToken: mocks.accountSetAuthToken,
-        getNewAccountDetails: mocks.getNewAccountDetails,
-        completeAccountDetails: mocks.completeAccountDetails,
-        getAccountDetailsByOrgId: mocks.getAccountDetailsByOrgId,
-        getBranchDetails: mocks.getBranchDetails,
-        completeBranchAdd: mocks.completeBranchAdd,
-      };
-    }),
-    ContactClient: vi.fn(function ContactClientMock() {
-      return {
-        setAuthToken: mocks.contactSetAuthToken,
-        getUserContact: mocks.getUserContact,
-        saveContactDetails: mocks.saveContactDetails,
-      };
-    }),
-    UsersClient: vi.fn(function UsersClientMock() {
-      return {
-        setAuthToken: mocks.userSetAuthToken,
-        signIn: mocks.signIn,
-      };
-    }),
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+);
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
+  import('../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -78,7 +81,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -174,7 +177,7 @@ describe('account and contact wizard prop factories', () => {
       'Trading',
       'Branch'
     );
-    expect(accountContext.setCompleted).toHaveBeenCalled();
+    expect(accountContext.setCompleted).toHaveBeenCalledWith();
   });
 
   it('loads and completes update-account details with success and error notifications', async () => {
@@ -330,7 +333,7 @@ describe('account and contact wizard prop factories', () => {
         message: 'Your branch/location details have been successfully saved.',
       })
     );
-    expect(onShowBranchSelector).toHaveBeenCalled();
+    expect(onShowBranchSelector).toHaveBeenCalledWith();
 
     mocks.completeBranchAdd.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,

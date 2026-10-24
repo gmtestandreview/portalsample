@@ -38,7 +38,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -51,7 +51,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  import('../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
       trackGAEvent: vi.fn(),
@@ -59,7 +59,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/notification',
+  import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
       clearDashboardNotification: vi.fn(),
@@ -67,7 +67,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: {
@@ -78,21 +78,21 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
+  import('../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       DashboardClient: vi.fn(function (this: {
         setAuthToken: ReturnType<typeof vi.fn>;
         getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
       }) {
-        this.setAuthToken = vi.fn();
+        vi.spyOn(this, 'setAuthToken').mockImplementation();
         this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
       }),
     }) satisfies __ExactMockModule<__TestMockModule4>
 );
 
 vi.mock(
-  '../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
       getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
@@ -189,7 +189,7 @@ describe('utility component coverage slice', () => {
       behavior: 'smooth',
       block: 'center',
     });
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('expands a collapsed accordion before scrolling to a hash target', () => {
@@ -216,7 +216,7 @@ describe('utility component coverage slice', () => {
       'class',
       'accordion-collapse collapse show'
     );
-    expect(buttonClick).toHaveBeenCalled();
+    expect(buttonClick).toHaveBeenCalledWith();
     expect(target.scrollIntoView).not.toHaveBeenCalled();
 
     act(() => vi.advanceTimersByTime(300));
@@ -237,7 +237,7 @@ describe('utility component coverage slice', () => {
     act(() => vi.advanceTimersByTime(600));
 
     expect(globalThis.scrollTo).toHaveBeenCalledWith(0, 0);
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('focuses page top when the route has no page title', () => {
@@ -249,7 +249,7 @@ describe('utility component coverage slice', () => {
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));
     act(() => vi.advanceTimersByTime(100));
 
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('prints, copies and can hide mailing label actions', async () => {
@@ -282,7 +282,7 @@ describe('utility component coverage slice', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /print/i }));
 
-    expect(print).toHaveBeenCalled();
+    expect(print).toHaveBeenCalledWith();
 
     fireEvent.click(screen.getByRole('button', { name: /copy/i }));
     await waitFor(() =>
@@ -349,7 +349,7 @@ describe('utility component coverage slice', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: /download pdf/i }));
 
-    expect(getPdf).toHaveBeenCalledOnce();
+    expect(getPdf).toHaveBeenCalledExactlyOnceWith();
     expect(trackGAEvent).toHaveBeenCalledWith('report', 'download');
     expect(screen.getByText(/PDF file size 1.00Mb/i)).toBeInTheDocument();
   });
@@ -488,7 +488,7 @@ describe('utility component coverage slice', () => {
       expect(openInNewTab).toHaveBeenCalledWith('blob:report-data')
     );
 
-    expect(DashboardClient).toHaveBeenCalled();
+    expect(DashboardClient).toHaveBeenCalledWith();
     expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
       'crm-quote-1',
       false
@@ -522,7 +522,7 @@ describe('utility component coverage slice', () => {
     await screen.findByRole('button', { name: /view report/i });
     fireEvent.click(screen.getByRole('button', { name: /view report/i }));
 
-    await waitFor(() => expect(handleReportFileError).toHaveBeenCalled());
+    await waitFor(() => expect(handleReportFileError).toHaveBeenCalledWith());
 
     expect(setFileError).toHaveBeenLastCalledWith(true);
     expect(setIsLoading).toHaveBeenCalledWith(false);
@@ -543,7 +543,7 @@ describe('utility component coverage slice', () => {
 
     await screen.findByRole('button', { name: /view report/i });
 
-    expect(handleReportFileError).toHaveBeenCalled();
+    expect(handleReportFileError).toHaveBeenCalledWith();
     expect(setFileError).toHaveBeenCalledWith(true);
   });
 

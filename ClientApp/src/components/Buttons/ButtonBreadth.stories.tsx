@@ -60,9 +60,11 @@ export const GroupedActions: Story = {
       'href',
       '/dashboard'
     );
+
     const externalReference = canvas.getByRole('link', {
       name: 'External reference',
     });
+
     await expect(externalReference).toHaveAttribute(
       'href',
       'https://measurement.gov.au'
@@ -95,6 +97,7 @@ export const EditSection: Story = {
     });
     editButton.focus();
     await userEvent.keyboard('{Enter}');
+
     await expect(
       await canvas.findByText('Editing request 123 organisation and contact')
     ).toBeVisible();

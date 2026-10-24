@@ -59,8 +59,11 @@ export const SaveAndExit: Story = {
     const canvas = within(canvasElement);
     // The form actions toolbar should render
     const toolbar = canvas.getByRole('toolbar', { name: /form actions/i });
+
     await expect(toolbar).toBeInTheDocument();
+
     canvas.getByRole('button', { name: 'Save and exit' }).click();
+
     await expect(
       await canvas.findByLabelText('Form submission state')
     ).toHaveTextContent('saveAndExit=true');
@@ -83,6 +86,7 @@ export const GoToDashboard: Story = {
     const dashboardLink = canvas.getByTestId(
       'form-go-to-dashboard-portal-button'
     );
+
     await expect(dashboardLink).toBeInTheDocument();
     await expect(dashboardLink).toHaveTextContent(/go to dashboard/i);
   },
@@ -112,9 +116,12 @@ export const WithDiscard: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const discardButton = canvas.getByTestId('discard-changes-button');
+
     await expect(discardButton).toBeInTheDocument();
     await expect(discardButton).toHaveTextContent(/discard changes/i);
+
     discardButton.click();
+
     await expect(
       await canvas.findByLabelText('Discard destination')
     ).toHaveTextContent('/');

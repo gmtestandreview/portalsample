@@ -51,6 +51,7 @@ export const MessagesTab: Story = {
     await expect(
       canvas.getByRole('combobox', { name: 'Select your view' })
     ).toBeEnabled();
+
     const getEditor = () =>
       canvas.getByRole('textbox', { name: 'Message NMI' });
     // click()/type() aim at the element centre, which is Slate's noneditable
@@ -67,6 +68,7 @@ export const MessagesTab: Story = {
           keys: '[MouseLeft]',
         });
         const anchor = globalThis.getSelection()?.anchorNode ?? null;
+
         expect(anchor !== null && editor.contains(anchor)).toBe(true);
       },
       { timeout: 5000 }
@@ -75,6 +77,7 @@ export const MessagesTab: Story = {
     // Slate commits typed text through a deferred React render, so the
     // placeholder can still be in the DOM when keyboard() resolves under load.
     await waitFor(() => expect(getEditor()).toHaveTextContent('Hi'));
+
     await expect(await canvas.findByText(/^9\s*\//)).toBeVisible();
   },
 };

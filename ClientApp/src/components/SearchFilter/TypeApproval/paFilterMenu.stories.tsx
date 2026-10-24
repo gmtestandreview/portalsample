@@ -45,6 +45,7 @@ export const Closed: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('button', { name: /filters/i })
     ).toBeVisible();
@@ -58,6 +59,7 @@ export const Opened: Story = {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await user.click(canvas.getByRole('button', { name: /filters/i }));
+
     await expect(
       await canvas.findByText('In progress - with NMI')
     ).toBeVisible();

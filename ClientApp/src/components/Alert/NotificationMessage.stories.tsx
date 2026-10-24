@@ -37,6 +37,7 @@ export const Success: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const status = canvas.getByRole('status');
+
     await expect(
       canvas.getByText('Your request was submitted successfully.')
     ).toBeVisible();
@@ -107,6 +108,7 @@ export const DismissibleError: Story = {
     canvas,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const closeButton = canvas.getByRole('button', { name: 'Close alert' });
+
     await expect(closeButton).toBeVisible();
   },
 };

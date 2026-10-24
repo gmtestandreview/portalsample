@@ -95,6 +95,7 @@ export const InstrumentAndRequestStep: Story = {
     const heading = await canvas.findByRole('heading', {
       name: 'Instrument/artefact details',
     });
+
     await expect(heading).toBeVisible();
     // Both lookups reached the DOM: the category list, and the artefact types filtered
     // to the story's initial 'electrical' category.
@@ -104,6 +105,7 @@ export const InstrumentAndRequestStep: Story = {
     await expect(
       canvas.getByRole('option', { name: 'Digital thermometer' })
     ).toBeInTheDocument();
+
     const availabilityDate = canvas.getByLabelText(
       'Preferred Instrument/artefact availability date (optional)'
     );
@@ -213,6 +215,7 @@ export const InstrumentAndRequestValidation: Story = {
     const heading = await canvas.findByRole('heading', {
       name: 'Instrument/artefact details',
     });
+
     await expect(heading).toBeVisible();
     // The seeded validation state survives the lookup settling rather than being
     // cleared by the re-render it causes.

@@ -57,7 +57,7 @@ const routeHandler = (routePattern: string) => {
   const end = nextRoute === -1 ? mockApi.length : nextRoute;
   const handler = start === -1 ? undefined : mockApi.slice(start, end);
 
-  expect(handler).toBeTruthy();
+  expect(handler).toBe(true);
 
   return handler ?? '';
 };
@@ -84,7 +84,7 @@ describe('storybook Playwright step quality', () => {
       /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/
     );
 
-    expect(completionSteps).toBeTruthy();
+    expect(completionSteps).toBe(true);
     expect(completionSteps).toContain('.click()');
     expect(completionSteps).toContain('.fill(');
     expect(completionSteps).not.toContain('toBeChecked()');
@@ -100,8 +100,8 @@ describe('storybook Playwright step quality', () => {
       /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/
     );
 
-    expect(readinessHelper).toBeTruthy();
-    expect(numericStepAssertion).toBeTruthy();
+    expect(readinessHelper).toBe(true);
+    expect(numericStepAssertion).toBe(true);
     expect(readinessHelper).toContain('toHaveURL');
     expect(readinessHelper).toContain("getByTestId('form')");
     expect(numericStepAssertion).toContain('waitForRfqStep(page, step)');
@@ -117,7 +117,7 @@ describe('storybook Playwright step quality', () => {
       /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/
     );
 
-    expect(actionStep).toBeTruthy();
+    expect(actionStep).toBe(true);
     expect(actionStep).toContain("page.goto('/dashboard')");
     expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/);
     expect(actionStep).toMatch(

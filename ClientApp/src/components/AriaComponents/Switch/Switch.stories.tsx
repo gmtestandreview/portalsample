@@ -55,6 +55,7 @@ export const Toggles: Story = (args: Readonly<Parameters<Story>[0]>) => (
 
 Toggles.play = async ({ canvas }) => {
   const control = canvas.getByRole('switch', { name: 'Wi-Fi' });
+
   await expect(control).not.toBeChecked();
 
   await userEvent.click(control);

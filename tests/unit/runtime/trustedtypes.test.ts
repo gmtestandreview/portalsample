@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'dompurify',
+  import('dompurify'),
   () =>
     ({
       default: {

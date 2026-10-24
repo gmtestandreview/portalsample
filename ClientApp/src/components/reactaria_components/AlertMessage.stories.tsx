@@ -17,6 +17,7 @@ export const Default: Story = {
   },
   play: async ({ canvas }) => {
     const message = canvas.getByRole('status');
+
     await expect(message).toHaveAttribute('aria-live', 'polite');
     await expect(message).toHaveAttribute('data-tone', 'info');
     await expect(
@@ -36,6 +37,7 @@ export const WarningTone: Story = {
   },
   play: async ({ canvas }) => {
     const message = canvas.getByRole('status');
+
     await expect(message).toHaveAttribute('data-tone', 'warning');
     await expect(message).toHaveAttribute('aria-live', 'polite');
   },
@@ -50,6 +52,7 @@ export const LongMessage: Story = {
   },
   play: async ({ canvas }) => {
     const message = canvas.getByRole('status');
+
     await expect(message).toHaveAttribute('data-tone', 'success');
     await expect(
       canvas.getByRole('heading', {

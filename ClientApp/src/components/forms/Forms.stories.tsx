@@ -141,6 +141,7 @@ export const TextInputDisabled: Story = {
   ),
   play: async ({ canvas }) => {
     const email = canvas.getByLabelText('Email address');
+
     await expect(email).toBeDisabled();
     await expect(email).toHaveValue('user@example.com');
   },
@@ -154,6 +155,7 @@ export const TextInputReadOnly: Story = {
   ),
   play: async ({ canvas }) => {
     const reference = canvas.getByLabelText('Reference ID');
+
     await expect(reference).toHaveAttribute('readonly');
     await expect(reference).toHaveValue('RFQ-2024-001234');
   },
@@ -246,13 +248,16 @@ export const CheckboxDefault: Story = {
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole('checkbox');
+
     await expect(
       canvas.getByLabelText(
         'I agree to the terms and conditions of the NMI Services portal.'
       )
     ).toBeVisible();
     await expect(checkbox).not.toBeChecked();
+
     await userEvent.click(checkbox);
+
     await expect(checkbox).toBeChecked();
   },
 };

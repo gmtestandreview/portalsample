@@ -41,6 +41,7 @@ export const EditStep: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', {
         name: 'Upload one or more supporting documents',

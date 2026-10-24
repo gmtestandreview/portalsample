@@ -33,14 +33,14 @@ const captured = vi.hoisted(() => ({
   selectTab: undefined as unknown as (key: string | null) => void,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -55,7 +55,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/authConfig',
+  import('../../../../ClientApp/src/authentication/authConfig'),
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -63,7 +63,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
@@ -71,7 +71,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/manage/appDetailsProps',
+  import('../../../../ClientApp/src/routes/ta/manage/appDetailsProps'),
   () =>
     ({
       default: () => ({
@@ -82,7 +82,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Accordion',
+  import('../../../../ClientApp/src/components/Accordion'),
   () =>
     ({
       CustomAccordion: ({ children }: { children: ReactNode }) => (
@@ -107,7 +107,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Breadcrumb',
+  import('../../../../ClientApp/src/components/Breadcrumb'),
   () =>
     ({
       default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
@@ -119,7 +119,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Pill/StatusPill',
+  import('../../../../ClientApp/src/components/Pill/StatusPill'),
   () =>
     ({
       default: ({ status }: { status: string }) => (
@@ -129,7 +129,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Buttons/BackToDashboardButton',
+  import('../../../../ClientApp/src/components/Buttons/BackToDashboardButton'),
   () =>
     ({
       default: () => <a href='/dashboard'>Back to dashboard</a>,
@@ -137,7 +137,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/summary/OrganisationSummary',
+  import('../../../../ClientApp/src/routes/ta/summary/OrganisationSummary'),
   () =>
     ({
       default: () => <div data-testid='organisation-and-contact' />,
@@ -145,7 +145,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/summary/ApplicationSummary',
+  import('../../../../ClientApp/src/routes/ta/summary/ApplicationSummary'),
   () =>
     ({
       default: () => <div data-testid='application-and-instrument' />,
@@ -153,7 +153,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/rhfSupportingDocuments',
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
   () =>
     ({
       default: (props: typeof captured.docsProps) => {
@@ -166,7 +166,7 @@ vi.mock(
 
 // Everything real except a hook onto Tab.Container's onSelect, so the guard that rejects an unknown
 // tab key can be exercised. React-Bootstrap only ever hands it the keys its own Nav.Links carry.
-vi.mock('react-bootstrap', async (importOriginal) => {
+vi.mock(import('react-bootstrap'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactBootstrap>();
   const RealContainer = actual.Tab.Container;
 
@@ -184,7 +184,7 @@ vi.mock('react-bootstrap', async (importOriginal) => {
 });
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/manage/appDocuments',
+  import('../../../../ClientApp/src/routes/ta/manage/appDocuments'),
   () =>
     ({
       default: () => <div data-testid='application-documents' />,
@@ -192,7 +192,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/manage/appMessages',
+  import('../../../../ClientApp/src/routes/ta/manage/appMessages'),
   () =>
     ({
       default: () => <div data-testid='application-messages' />,
@@ -375,7 +375,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.getAppMessageCount
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
 
       expect(
@@ -394,7 +394,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.getAppMessageCount
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
 
       expect(screen.queryByText('unread')).not.toBeInTheDocument();
@@ -452,7 +452,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.getAppMessageCount
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
       const callsAtUnmount =
         clients.patternApproval.methods.getAppMessageCount.mock.calls.length;
@@ -750,7 +750,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.getAppMessageCount
-        ).toHaveBeenCalled()
+        ).toHaveBeenCalledWith()
       );
 
       unmount();

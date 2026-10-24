@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => {
 // ─── module mocks ─────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react'),
   () =>
     ({
       useMsal: () => ({
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
       useAccountState: () => ({
@@ -54,7 +54,7 @@ vi.mock(
 // component or its children. Title must be a real-shaped object so that
 // ContactDetailsInput's getTitles() can iterate over it without crashing.
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client'),
   () =>
     ({
       AcceptQuoteClient: class {
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -250,7 +250,7 @@ describe(DeliveryAndReturn, () => {
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalled()
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith()
       );
       await act(async () => {});
 
@@ -303,7 +303,7 @@ describe(DeliveryAndReturn, () => {
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.
       await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalled()
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith()
       );
       // Drain queued state updates (setIsLoading(false) from catch block,
       // plus any Formik re-renders) so they don't fire outside act().

@@ -45,6 +45,7 @@ export const Editable: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Organisation details')).toBeVisible();
     await expect(canvas.getByText('Terms and conditions')).toBeVisible();
     await expect(
@@ -61,6 +62,7 @@ export const Submitted: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('back-button')).toBeVisible();
     await expect(
       canvas.queryByText(/before you submit your request/i)
