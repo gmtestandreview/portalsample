@@ -1,4 +1,3 @@
-import { keys } from 'lodash';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useWatch } from 'react-hook-form';
 import { Title } from '../../../../api/web-api-client';
@@ -14,10 +13,12 @@ import type { ContactDetailsProps } from '../ContactDetails';
 const PHONE_FORMAT = 'checkPhoneFormat';
 const MOBILE_FORMAT = '#### ### ###';
 
-const TITLE_OPTIONS: SelectInputOption<string>[] = keys(Title).map((key) => ({
-  displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
-  value: key,
-}));
+const TITLE_OPTIONS: SelectInputOption<string>[] = Object.keys(Title).map(
+  (key) => ({
+    displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
+    value: key,
+  })
+);
 
 type FieldProps = Readonly<Required<Omit<ContactDetailsProps, 'isSummary'>>>;
 

@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import RequestForQuoteSummary from './requestForQuoteSummary';
 
 const expectInstrumentSectionReady = async (
-  canvas: ReturnType<typeof within>
+  canvas: ReturnType<typeof within>,
 ) => {
   await expect(await canvas.findByText('Request details')).toBeInTheDocument();
 };
@@ -16,7 +16,7 @@ const expectInstrumentSectionReady = async (
  * once submitted it swaps those for a "Back to dashboard" link. It reads its values and hiding rules from the surrounding Formik context,
  * so the story supplies a matching one.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/RequestForQuote/RequestForQuoteSummary',
   component: RequestForQuoteSummary,
   decorators: [withPortalProviders],
@@ -35,39 +35,41 @@ const meta = {
   args: {
     isSubmitted: false,
   },
-} satisfies Meta<typeof RequestForQuoteSummary>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Editable: Story = {
+export const Editable = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
     await expect(canvas.getByText('Instrument and Request')).toBeVisible();
+
     await expectInstrumentSectionReady(canvas);
+
     // Review guidance is shown while still editable.
     await expect(
-      canvas.getByText(/before you submit your request/i)
+      canvas.getByText(/before you submit your request/i),
     ).toBeVisible();
   },
-};
+});
 
-export const Submitted: Story = {
+export const Submitted = meta.story({
   args: {
     isSubmitted: true,
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     await expectInstrumentSectionReady(canvas);
+
     // Submitted view replaces guidance/edit with a back-to-dashboard link.
     await expect(canvas.getByTestId('back-button')).toBeVisible();
     await expect(
-      canvas.queryByText(/before you submit your request/i)
+      canvas.queryByText(/before you submit your request/i),
     ).toBeNull();
   },
-};
+});

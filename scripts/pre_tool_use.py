@@ -1007,7 +1007,8 @@ def _block(tool_name: str, tool_input: dict[str, object], rule: str, message: st
 def main() -> None:
     try:
         raw_data: object = json.load(sys.stdin)
-    except json.JSONDecodeError, UnicodeDecodeError, OSError:
+    except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+        print("[pre_tool_use] failed to decode input", file=sys.stderr)
         return
     data = _as_json_object(raw_data)
     if data is None:

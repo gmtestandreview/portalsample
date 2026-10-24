@@ -19,7 +19,7 @@ import {
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('./mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 /**
@@ -111,6 +111,7 @@ describe('shared MSAL harness', () => {
         'interaction_required'
       )
     );
+
     expect(screen.getByTestId('token')).toHaveTextContent('');
   });
 
@@ -120,8 +121,12 @@ describe('shared MSAL harness', () => {
     render(<TokenProbe />);
 
     await waitFor(() =>
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalled()
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
+        scopes: ['scope'],
+        account: testAccount,
+      })
     );
+
     expect(screen.getByTestId('token')).toHaveTextContent('');
 
     token.settle('late-token');
@@ -137,7 +142,10 @@ describe('shared MSAL harness', () => {
     render(<TokenProbe />);
 
     await waitFor(() =>
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalled()
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith({
+        scopes: ['scope'],
+        account: testAccount,
+      })
     );
 
     token.fail(new Error('token expired'));
@@ -170,6 +178,7 @@ describe('shared MSAL harness', () => {
         DEFAULT_ACCESS_TOKEN
       )
     );
+
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
       interactionStatus.Login
     );
@@ -185,6 +194,7 @@ describe('shared MSAL harness', () => {
         DEFAULT_ACCESS_TOKEN
       )
     );
+
     expect(screen.getByTestId('accounts')).toHaveTextContent('1');
     expect(screen.getByTestId('in-progress')).toHaveTextContent(
       interactionStatus.None

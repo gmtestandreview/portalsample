@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, userEvent, within } from 'storybook/test';
 import type { ComponentType } from 'react';
 import InstrumentItem from './instrumentItem';
@@ -69,42 +69,43 @@ const ListDecorator = (Story: ComponentType) => (
   </ul>
 );
 
-const meta = {
+const meta = preview.meta({
   title: 'Dashboard/InstrumentItem',
   component: InstrumentItem,
   decorators: [withPortalProviders, ListDecorator],
   parameters: {
     layout: 'padded',
   },
-} satisfies Meta<typeof InstrumentItem>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const ReportsTab: Story = {
+export const ReportsTab = meta.story({
   args: {
     request: instrumentFixture,
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // Default tab is 'reports' — report table is rendered
     const reportsTable = await canvas.findByTestId('instReports-table');
+
     await expect(reportsTable).toBeVisible();
+
     // Report name appears in multiple cells — scope within the table
     const reportName = within(reportsTable).getAllByText('RPT-2023-12345')[0];
+
     await expect(reportName).toBeVisible();
   },
-};
+});
 
-export const DetailsTab: Story = {
+export const DetailsTab = meta.story({
   args: {
     request: instrumentFixture,
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     // Click the Details tab — react-bootstrap Tab.Container may not expose
@@ -114,6 +115,7 @@ export const DetailsTab: Story = {
     // Details tab shows requestForQuote data — manufacturer appears in heading
     // and manufacturer row; take the first match (card heading)
     const manufacturers = await canvas.findAllByText(/mettler toledo/i);
+
     await expect(manufacturers[0]).toBeVisible();
   },
-};
+});

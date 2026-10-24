@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { PagedListOfInstrumentArtefactDto } from '../../api/web-api-client';
 import { ReportStatus } from '../common/enums';
@@ -37,7 +37,7 @@ const pagedListArtefactData: PagedListOfInstrumentArtefactDto = {
   ],
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/MeasurementReport/ReportList',
   component: ReportList,
   decorators: [withPortalProviders],
@@ -51,30 +51,29 @@ const meta = {
     pagedListArtefactData,
     setCurrentPage: fn(),
   },
-} satisfies Meta<typeof ReportList>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Populated: Story = {
+export const Populated = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('instReports-table')).toBeVisible();
     await expect(canvas.getByText('RPT-1001')).toBeVisible();
     // Issued report exposes a View report link…
     await expect(
-      canvas.getByRole('link', { name: 'View report' })
+      canvas.getByRole('link', { name: 'View report' }),
     ).toBeVisible();
     // …and every row offers recalibration.
     await expect(
-      canvas.getAllByRole('link', { name: /request recalibration/i })
+      canvas.getAllByRole('link', { name: /request recalibration/i }),
     ).toHaveLength(2);
   },
-};
+});
 
-export const WithdrawnHidesView: Story = {
+export const WithdrawnHidesView = meta.story({
   args: {
     pagedListArtefactData: {
       ...pagedListArtefactData,
@@ -83,11 +82,12 @@ export const WithdrawnHidesView: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('RPT-1002')).toBeVisible();
     await expect(
-      canvas.queryByRole('link', { name: 'View report' })
+      canvas.queryByRole('link', { name: 'View report' }),
     ).toBeNull();
   },
-};
+});

@@ -80,7 +80,7 @@ const renderItem = (
     </FormHarness>
   );
 
-describe('RhfAttachmentItem', () => {
+describe(RhfAttachmentItem, () => {
   it('renders the file link, file size, category options, and validation message', async () => {
     const user = userEvent.setup();
     renderItem();
@@ -88,6 +88,7 @@ describe('RhfAttachmentItem', () => {
     await user.tab();
 
     const fileLink = screen.getByRole('link', { name: 'manual.pdf' });
+
     expect(fileLink).toHaveAttribute('download', 'manual.pdf');
     expect(fileLink.getAttribute('href')).toMatch(/^blob:/);
     expect(screen.getByText('2 kb')).toBeInTheDocument();
@@ -115,6 +116,7 @@ describe('RhfAttachmentItem', () => {
     await user.tab();
 
     expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate');
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Certificate"'
@@ -148,12 +150,15 @@ describe('RhfAttachmentItem', () => {
         'Could not save the category for manual.pdf.'
       )
     );
+
     expect(onCategoryError).toHaveBeenCalledTimes(1);
+
     await waitFor(() =>
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         'Manuals'
       )
     );
+
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"attachmentCategory":"Manuals"'
     );
@@ -176,6 +181,7 @@ describe('RhfAttachmentItem', () => {
     );
     await new Promise((resolve) => setTimeout(resolve, 0));
     process.off('unhandledRejection', unhandled);
+
     expect(unhandled).not.toHaveBeenCalled();
   });
 
@@ -191,7 +197,11 @@ describe('RhfAttachmentItem', () => {
       );
     const settle = async (save: Deferred, outcome: 'resolve' | 'reject') => {
       await act(async () => {
-        save[outcome]();
+        if (outcome === 'resolve') {
+          save.resolve();
+        } else {
+          save.reject();
+        }
         await save.promise.catch(() => {});
       });
     };
@@ -234,7 +244,12 @@ describe('RhfAttachmentItem', () => {
       await settle(second, 'resolve');
       await settle(first, 'reject');
 
-      await waitFor(() => expect(onCategoryError).toHaveBeenCalled());
+      await waitFor(() =>
+        expect(onCategoryError).toHaveBeenCalledWith(
+          'Could not save the category for manual.pdf.'
+        )
+      );
+
       expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
         'Other'
       );
@@ -333,7 +348,10 @@ describe('RhfAttachmentItem', () => {
       'Certificate'
     );
 
-    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(onCategoryUpdate).toHaveBeenCalledWith('doc-1', 'Certificate')
+    );
+
     expect(onCategoryError).not.toHaveBeenCalled();
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
       'Certificate'
@@ -357,6 +375,7 @@ describe('RhfAttachmentItem', () => {
 
     expect(onCategoryUpdate).not.toHaveBeenCalled();
     expect(screen.queryByText('2 kb')).not.toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentCategory":"Manuals"'
@@ -390,6 +409,7 @@ describe('RhfAttachmentItem', () => {
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
+
     expect(
       screen.getByRole('heading', { name: 'Confirm deletion' })
     ).toBeInTheDocument();
@@ -397,6 +417,7 @@ describe('RhfAttachmentItem', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(onRemoveItem).not.toHaveBeenCalled();
+
     await waitFor(() =>
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' })
@@ -413,6 +434,7 @@ describe('RhfAttachmentItem', () => {
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onRemoveItem).toHaveBeenCalledWith(attachment);
+
     await waitFor(() =>
       expect(
         screen.queryByRole('heading', { name: 'Confirm deletion' })
@@ -448,11 +470,12 @@ describe('RhfAttachmentItem', () => {
       </FormHarness>
     );
 
-    expect(create.mock.calls.length).toBe(created);
+    expect(create).toHaveBeenCalledTimes(created);
 
     unmount();
 
-    expect(revoke).toHaveBeenCalled();
+    expect(revoke).toHaveBeenCalledWith('blob:unit-test');
+
     create.mockRestore();
     revoke.mockRestore();
   });

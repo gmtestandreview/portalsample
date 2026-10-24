@@ -4,29 +4,33 @@ import { describe, expect, it, vi } from 'vitest';
 import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import PaSearchFilter from '@/components/SearchFilter/TypeApproval/paSearchFilter';
 
-vi.mock('@/components/SearchFilter/TypeApproval/paFilterMenu', () => ({
-  default: ({
-    initialFilters,
-    setCurrentPage,
-    setInitialFilters,
-  }: {
-    initialFilters: PatternApprovalDashboardDto;
-    setCurrentPage: (page: number) => void;
-    setInitialFilters: (filters: PatternApprovalDashboardDto) => void;
-  }) => (
-    <button
-      type='button'
-      onClick={() => {
-        setCurrentPage(1);
-        setInitialFilters(initialFilters);
-      }}
-    >
-      Filter applications
-    </button>
-  ),
-}));
+vi.mock(
+  '@/components/SearchFilter/TypeApproval/paFilterMenu',
+  () =>
+    ({
+      default: ({
+        initialFilters,
+        setCurrentPage,
+        setInitialFilters,
+      }: {
+        initialFilters: PatternApprovalDashboardDto;
+        setCurrentPage: (page: number) => void;
+        setInitialFilters: (filters: PatternApprovalDashboardDto) => void;
+      }) => (
+        <button
+          type='button'
+          onClick={() => {
+            setCurrentPage(1);
+            setInitialFilters(initialFilters);
+          }}
+        >
+          Filter applications
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule53>
+);
 
-describe('PaSearchFilter', () => {
+describe(PaSearchFilter, () => {
   it('renders the filter menu with default Bootstrap layout classes', () => {
     const initialFilters = { currentPage: 3 } as PatternApprovalDashboardDto;
 
@@ -75,6 +79,7 @@ describe('PaSearchFilter', () => {
     );
 
     const menu = screen.getByRole('button', { name: 'Filter applications' });
+
     expect(menu.closest('.container')).toHaveClass('outer-filter');
     expect(menu.closest('.row')).toHaveClass('inner-filter');
 

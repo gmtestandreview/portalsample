@@ -45,7 +45,7 @@ export function Slider<T extends number | number[]>({
             </div>
             {state.values
               .map((_, index) => ({
-                id: thumbLabels?.[index] ?? `thumb-${index}`,
+                id: thumbLabels?.at(index) ?? `thumb-${index}`,
                 index,
               }))
               .map((thumb) => (
@@ -53,7 +53,7 @@ export function Slider<T extends number | number[]>({
                   key={thumb.id}
                   index={thumb.index}
                   {...omitUndefined({
-                    'aria-label': thumbLabels?.[thumb.index],
+                    'aria-label': thumbLabels?.at(thumb.index),
                   })}
                   className='react-aria-SliderThumb indicator'
                 />

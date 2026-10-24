@@ -5,13 +5,17 @@ const mocks = vi.hoisted(() => ({
   sanitize: vi.fn((value: string) => `sanitized:${value}`),
 }));
 
-vi.mock('dompurify', () => ({
-  default: {
-    sanitize: mocks.sanitize,
-  },
-}));
+vi.mock(
+  'dompurify',
+  () =>
+    ({
+      default: {
+        sanitize: mocks.sanitize,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule159>
+);
 
-describe('TrustedTypes', () => {
+describe('trustedTypes', () => {
   afterEach(() => {
     delete (globalThis as { trustedTypes?: unknown }).trustedTypes;
     vi.restoreAllMocks();
@@ -34,6 +38,7 @@ describe('TrustedTypes', () => {
     });
 
     const [, policy] = defined(createPolicy.mock.calls[0], 'createPolicy call');
+
     expect(policy.createScriptURL('https://example.test/script.js')).toBe(
       'sanitized:https://example.test/script.js'
     );

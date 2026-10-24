@@ -1,0 +1,29 @@
+Codemap generation report — 2026-10-21
+
+## Status: FIRST GENERATION (no prior codemaps existed)
+
+## Files created
+docs/CODEMAPS/architecture.md   — System overview, service boundaries, branch changes
+docs/CODEMAPS/frontend.md       — Route tree, component hierarchy, form strategy
+docs/CODEMAPS/backend.md        — API client layer, auth→token flow, env config
+docs/CODEMAPS/data.md           — sessionStorage state, validation schemas, auth types
+docs/CODEMAPS/dependencies.md   — Runtime services, npm deps, dev/build tooling
+
+## Key architecture facts captured
+- 1537 indexed files, 945 TypeScript source files
+- 30+ routes defined in App.tsx (React Router v7 createBrowserRouter)
+- Two form libraries coexist: Formik (legacy) + React Hook Form (Waves 1–5 done)
+- sessionStorage is the only client-side persistence — no IndexedDB, no localStorage
+- Single auto-generated API client (NSwag, 386 symbols)
+- Vite 8 migration on current branch (uncommitted)
+- Storybook coverage remediation is the branch's primary purpose
+
+## Architecture changes since last scan
+N/A — first generation
+
+## Staleness warnings
+None (freshly generated)
+
+## New dependencies detected on branch
+- vite / @vitejs/plugin-react (replaces webpack 5 + babel-loader)
+- viteConfig.test.ts (11-test suite for build config validation)

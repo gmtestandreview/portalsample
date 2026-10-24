@@ -17,23 +17,32 @@ type RootPackage = {
 };
 
 const lock = JSON.parse(
-  readFileSync('package-lock.json', 'utf8')
+  readFileSync('package-lock.json', 'utf8'),
 ) as PackageLock;
 const rootPackage = JSON.parse(
-  readFileSync('package.json', 'utf8')
+  readFileSync('package.json', 'utf8'),
 ) as RootPackage;
+
+const recordValue = <Value>(
+  record: Record<string, Value> | undefined,
+  key: string,
+): Value | undefined =>
+  (
+    Object.entries(record ?? {}).find(([entryKey]) => entryKey === key) as
+      [string, Value] | undefined
+  )?.[1];
 
 const installedVersions = (packageName: string): string[] =>
   Object.entries(lock.packages)
     .filter(
       ([packagePath, metadata]) =>
         packagePath.split('node_modules/').at(-1) === packageName &&
-        metadata.version !== undefined
+        metadata.version !== undefined,
     )
     .map(([, metadata]) => metadata.version!);
 
 const exactDevDependency = (packageName: string): string => {
-  const declaredVersion = rootPackage.devDependencies?.[packageName];
+  const declaredVersion = recordValue(rootPackage.devDependencies, packageName);
 
   if (
     declaredVersion === undefined ||
@@ -41,7 +50,7 @@ const exactDevDependency = (packageName: string): string => {
     prerelease(declaredVersion) !== null
   ) {
     throw new Error(
-      `${packageName} must be an exact stable devDependency version`
+      `${packageName} must be an exact stable devDependency version`,
     );
   }
 
@@ -51,18 +60,18 @@ const exactDevDependency = (packageName: string): string => {
 const expectStableAtLeast = (
   packageName: string,
   version: string,
-  minimumVersion: string
+  minimumVersion: string,
 ): void => {
   expect(valid(version), `${packageName}@${version} must be valid semver`).toBe(
-    version
+    version,
   );
   expect(
     prerelease(version),
-    `${packageName}@${version} must not be a prerelease`
+    `${packageName}@${version} must not be a prerelease`,
   ).toBeNull();
   expect(
     gte(version, minimumVersion),
-    `${packageName}@${version} must be at least ${minimumVersion}`
+    `${packageName}@${version} must be at least ${minimumVersion}`,
   ).toBe(true);
 };
 
@@ -82,10 +91,11 @@ describe('direct security dependency floors', () => {
       const versions = installedVersions(packageName);
 
       expect(versions).not.toHaveLength(0);
+
       for (const version of versions) {
         expectStableAtLeast(packageName, version, minimumVersion);
       }
-    }
+    },
   );
 
   it('keeps the exact-peer Vitest packages on one version', () => {
@@ -100,7 +110,7 @@ describe('direct security dependency floors', () => {
     for (const packageName of vitestPackages) {
       expect(exactDevDependency(packageName)).toBe(expectedVersion);
       expect(new Set(installedVersions(packageName))).toEqual(
-        new Set([expectedVersion])
+        new Set([expectedVersion]),
       );
     }
   });
@@ -123,15 +133,16 @@ describe('transitive security dependency floors', () => {
   ]);
 
   it.each([...minimumVersions])(
-    '%s resolves only patched versions',
+    '%s resolves only patched versions when installed',
     (packageName, minimumVersion) => {
       const versions = installedVersions(packageName);
 
-      expect(versions).not.toHaveLength(0);
+      // A dependency contraction may remove a transitive package entirely;
+      // absence is safe, while any remaining copy must still meet its floor.
       for (const version of versions) {
         expectStableAtLeast(packageName, version, minimumVersion);
       }
-    }
+    },
   );
 
   it('brace-expansion resolves only patched versions per major', () => {
@@ -143,16 +154,17 @@ describe('transitive security dependency floors', () => {
     const versions = installedVersions('brace-expansion');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       const floor = floors.get(major(version));
 
       expect(
         floor,
-        `unexpected brace-expansion major in ${version}`
+        `unexpected brace-expansion major in ${version}`,
       ).toBeDefined();
       expect(
         gte(version, floor as string),
-        `brace-expansion@${version} must be at least ${floor}`
+        `brace-expansion@${version} must be at least ${floor}`,
       ).toBe(true);
     }
   });
@@ -165,14 +177,15 @@ describe('transitive security dependency floors', () => {
     const versions = installedVersions('glob');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       expect(
         gte(version, '10.0.0'),
-        `glob@${version} is a deprecated pre-10 release`
+        `glob@${version} is a deprecated pre-10 release`,
       ).toBe(true);
       expect(
         version.startsWith('10.'),
-        `glob@${version} is the deprecated glob 10 release`
+        `glob@${version} is the deprecated glob 10 release`,
       ).toBe(false);
     }
 
@@ -184,8 +197,8 @@ describe('transitive security dependency floors', () => {
 
     for (const owner of globOverrideOwners) {
       expect(
-        rootPackage.overrides?.[owner],
-        `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`
+        recordValue(rootPackage.overrides, owner),
+        `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`,
       ).toEqual({
         glob: '13.0.6',
       });
@@ -197,8 +210,8 @@ describe('lint cohort', () => {
   const cohort = new Map([
     ['eslint', '10.13.0'],
     ['@eslint/js', '10.0.1'],
-    ['typescript-eslint', '8.71.2'],
-    ['@eslint-react/eslint-plugin', '5.28.2'],
+    ['typescript-eslint', '8.72.0'],
+    ['@eslint-react/eslint-plugin', '5.28.5'],
     ['eslint-plugin-react-hooks', '7.1.1'],
     ['@stylistic/eslint-plugin', '5.10.0'],
     ['globals', '17.13.0'],
@@ -209,17 +222,18 @@ describe('lint cohort', () => {
     (packageName, expectedVersion) => {
       expect(exactDevDependency(packageName)).toBe(expectedVersion);
       expect(installedVersions(packageName)).toContain(expectedVersion);
-    }
+    },
   );
 
   it('resolves ESLint only on the maintained 10 line', () => {
     const versions = installedVersions('eslint');
 
     expect(versions).not.toHaveLength(0);
+
     for (const version of versions) {
       expect(
         gte(version, '10.0.0'),
-        `eslint@${version} is an unsupported pre-10 release`
+        `eslint@${version} is an unsupported pre-10 release`,
       ).toBe(true);
     }
   });
@@ -290,15 +304,15 @@ describe('install-script approvals', () => {
 
   it('reviews every dependency that runs an install script', () => {
     expect(Object.keys(allowScripts ?? {}).sort()).toEqual(
-      [...APPROVED_INSTALL_SCRIPTS].sort()
+      [...APPROVED_INSTALL_SCRIPTS].sort(),
     );
   });
 
   it('records each review as an explicit allow', () => {
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
-        allowScripts?.[packageName],
-        `${packageName} must be an explicit boolean allow, not a version string`
+        recordValue(allowScripts, packageName),
+        `${packageName} must be an explicit boolean allow, not a version string`,
       ).toBe(true);
     }
   });
@@ -307,7 +321,7 @@ describe('install-script approvals', () => {
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
         installedVersions(packageName),
-        `${packageName} must resolve to a single version, so one name-only approval covers one reviewed build`
+        `${packageName} must resolve to a single version, so one name-only approval covers one reviewed build`,
       ).toHaveLength(1);
     }
   });
@@ -315,16 +329,14 @@ describe('install-script approvals', () => {
 
 describe('coverage remapping cohort', () => {
   // ast-v8-to-istanbul performs the V8-to-Istanbul remap that emitted the
-  // `terms-config.json?import` parse failure. It moved 1.0.4 -> 1.0.5 as an
-  // incidental lockfile re-resolution in 23f0a2f, confounding that commit's
-  // remap fix with a dependency change. Pin it so the next incidental move is
-  // visible rather than silent.
+  // `terms-config.json?import` parse failure. Keep the reviewed lockfile
+  // version visible so the next incidental move is not silent.
   it('resolves the V8-to-Istanbul remapper at exactly one reviewed version', () => {
-    expect(installedVersions('ast-v8-to-istanbul')).toEqual(['1.0.5']);
+    expect(installedVersions('ast-v8-to-istanbul')).toEqual(['1.0.7']);
   });
 
   it('keeps the coverage provider aligned with the Vitest cohort', () => {
-    expect(installedVersions('@vitest/coverage-v8')).toEqual(['4.1.11']);
+    expect(installedVersions('@vitest/coverage-v8')).toEqual(['4.1.12']);
   });
 
   it('holds the Storybook test cohort on Vitest 4 pending dedicated Vitest 5 validation', () => {
@@ -333,7 +345,7 @@ describe('coverage remapping cohort', () => {
     expect(vitestVersion).toMatch(/^4\./);
     expect(exactDevDependency('@vitest/browser')).toBe(vitestVersion);
     expect(exactDevDependency('@vitest/browser-playwright')).toBe(
-      vitestVersion
+      vitestVersion,
     );
     expect(exactDevDependency('@vitest/coverage-v8')).toBe(vitestVersion);
   });

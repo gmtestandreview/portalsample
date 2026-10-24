@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import AutoSuggest from './index';
 import AutoSuggestContainer from './AutoSuggestContainer';
 import type { AutoSuggestOption } from './types';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 
-const noopAsync = async () => {};
+const noopAsync = () => Promise.resolve();
 const noop = () => {};
 
 const mockOptions: AutoSuggestOption<string>[] = [
@@ -22,20 +22,22 @@ const mockOptions: AutoSuggestOption<string>[] = [
   },
 ];
 
-const meta = {
+const getMockOptions = () => Promise.resolve(mockOptions);
+const getEmptyOptions = () => Promise.resolve<AutoSuggestOption<string>[]>([]);
+
+const meta = preview.meta({
   title: 'Components/Inputs/AutoSuggest',
   component: AutoSuggest,
+  subcomponents: { AutoSuggestContainer },
   decorators: [withPortalProviders],
-} satisfies Meta<typeof AutoSuggest>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const WithSuggestions: Story = {
+export const WithSuggestions = meta.story({
   args: {
     name: 'suburb',
     label: 'Suburb',
-    getOptions: async (_term: string) => mockOptions,
+    getOptions: getMockOptions,
     onSelectedOption: noopAsync,
     placeholder: 'Type to search...',
   },
@@ -50,19 +52,20 @@ export const WithSuggestions: Story = {
     <AutoSuggest
       name='suburb'
       label='Suburb'
-      getOptions={async (_term: string) => mockOptions}
+      getOptions={getMockOptions}
       onSelectedOption={noopAsync}
       placeholder='Type to search...'
     />
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
     await user.type(input, 'syd');
     const combobox = canvas.getByRole('combobox');
+
     await expect(combobox).toBeVisible();
     // Typing kicks off the async getOptions; asserting only that the combobox is still
     // visible passes before the results arrive, so React Aria opened its popover and
@@ -73,21 +76,23 @@ export const WithSuggestions: Story = {
     await expect(
       await screen.findByRole('option', {
         name: 'Sydney Olympic Park NSW (2 of 3)',
-      })
+      }),
     ).toBeVisible();
+
     // Escape closes the suggestion list. Asserting it also leaves the combobox settled
     // before Storybook unmounts the story: left open, React Aria committed a
     // ComboBoxInner update during the next story in the file.
     await user.keyboard('{Escape}');
+
     await expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   },
-};
+});
 
-export const EmptyState: Story = {
+export const EmptyState = meta.story({
   args: {
     name: 'suburb',
     label: 'Suburb',
-    getOptions: async (_term: string) => [],
+    getOptions: getEmptyOptions,
     onSelectedOption: noopAsync,
     placeholder: 'Type to search...',
   },
@@ -102,30 +107,38 @@ export const EmptyState: Story = {
     <AutoSuggest
       name='suburb'
       label='Suburb'
-      getOptions={async (_term: string) => []}
+      getOptions={getEmptyOptions}
       onSelectedOption={noopAsync}
       placeholder='Type to search...'
     />
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
     await user.type(input, 'xyz');
     const noResult = await canvas.findByText(/no matches found/i);
+
     await expect(noResult).toBeVisible();
   },
-};
+});
 
-export const Loading: Story = {
+export const Loading = meta.story({
+  name: 'Loading (AutoSuggestContainer)',
   args: {
     name: 'suburb',
     label: 'Suburb (loading state)',
-    getOptions: async (_term: string) => [],
+    getOptions: getEmptyOptions,
     onSelectedOption: noopAsync,
     placeholder: 'Loading...',
+  },
+  argTypes: {
+    id: { table: { disable: true } },
+    getOptions: { table: { disable: true } },
+    selectedOption: { table: { disable: true } },
+    inlineHelp: { table: { disable: true } },
   },
   parameters: {
     portal: {
@@ -148,9 +161,10 @@ export const Loading: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const loadingText = canvas.getByText(/loading options/i);
+
     await expect(loadingText).toBeVisible();
   },
-};
+});

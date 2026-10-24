@@ -4,29 +4,33 @@ import { Formik } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
-vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({
-    name,
-    label,
-    onChange,
-    onKeyDown,
-    inlineHelpTitle: _inlineHelpTitle,
-    inlineHelp: _inlineHelp,
-    containerClassName: _containerClassName,
-    ...rest
-  }: any) => (
-    <div>
-      <label htmlFor={name}>{label}</label>
-      <input
-        id={name}
-        name={name}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        {...rest}
-      />
-    </div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/TextInput',
+  () =>
+    ({
+      default: ({
+        name,
+        label,
+        onChange,
+        onKeyDown,
+        inlineHelpTitle: _inlineHelpTitle,
+        inlineHelp: _inlineHelp,
+        containerClassName: _containerClassName,
+        ...rest
+      }: any) => (
+        <div>
+          <label htmlFor={name}>{label}</label>
+          <input
+            id={name}
+            name={name}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            {...rest}
+          />
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>
+);
 
 const renderLookup = (
   props: Partial<React.ComponentProps<typeof OrganisationNameLookup>> = {}
@@ -40,7 +44,7 @@ const renderLookup = (
     </Formik>
   );
 
-describe('OrganisationNameLookup', () => {
+describe(OrganisationNameLookup, () => {
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
     vi.useFakeTimers();
     renderLookup();
@@ -52,6 +56,7 @@ describe('OrganisationNameLookup', () => {
     });
 
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
     vi.useRealTimers();
   });
 
@@ -94,6 +99,51 @@ describe('OrganisationNameLookup', () => {
     });
 
     expect(onRender).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it('falls back to typed input if the active suggestion is unexpectedly absent', async () => {
+    vi.useFakeTimers();
+    const originalAt = Array.prototype.at;
+    const atSpy = vi.spyOn(Array.prototype, 'at').mockImplementation(function (
+      this: unknown[],
+      index: number
+    ) {
+      if (this.length === 2 && this[0] === 'Alpha Labs' && index === 0) {
+        return undefined;
+      }
+      return originalAt.call(this, index);
+    });
+
+    render(
+      <Formik
+        initialValues={{
+          orgName: '',
+          orgNameOptions: [{ name: 'Alpha Labs' }, { name: 'Beta Labs' }],
+          parentField: '',
+        }}
+        onSubmit={vi.fn()}
+      >
+        <OrganisationNameLookup
+          name='orgName'
+          label='Organisation'
+          optionsFieldName='name'
+        />
+      </Formik>
+    );
+
+    const input = screen.getByRole('combobox');
+    fireEvent.change(input, { target: { value: 'Labs' } });
+    await act(async () => {
+      vi.advanceTimersByTime(350);
+    });
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'Enter' });
+
+    expect(input).toHaveValue('Labs');
+
+    atSpy.mockRestore();
     vi.useRealTimers();
   });
 });

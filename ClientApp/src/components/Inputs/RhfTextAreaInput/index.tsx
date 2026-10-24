@@ -1,14 +1,11 @@
 import Form from 'react-bootstrap/Form';
-import { trim } from 'lodash';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { useRhfFieldA11y } from '../useRhfFieldA11y';
 import type { RhfTextAreaInputProps } from './types';
+import { removeSupplementaryPlaneCharacters } from '../../../utils/removeSupplementaryPlaneCharacters';
 
 const DEFAULT_ROWS = 3;
-// Supplementary-plane characters (emoji etc.) are rejected by the API.
-const SUPPLEMENTARY_PLANE_CHARACTERS = /[\u{10000}-\u{10FFFF}]/gu;
-
 /**
  * React Hook Form counterpart of `TextAreaInput`. It reads the form through
  * `useController`, so it must render inside a `FormProvider`. Typed text has
@@ -55,7 +52,7 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
   }
 
   const handleBlur = () => {
-    const trimmed = trim(field.value);
+    const trimmed = (field.value ?? '').trim();
     if (trimmed !== field.value) {
       field.onChange(trimmed);
     }
@@ -98,7 +95,7 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
         onBlur={handleBlur}
         onChange={(event) => {
           field.onChange(
-            event.target.value.replace(SUPPLEMENTARY_PLANE_CHARACTERS, '')
+            removeSupplementaryPlaneCharacters(event.target.value)
           );
         }}
       />

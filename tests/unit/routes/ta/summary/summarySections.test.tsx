@@ -26,14 +26,14 @@ const renderApplication = (
   hidden: Hidden = noRules
 ) => render(<ApplicationSummary values={values} hidden={hidden} />).container;
 
-describe('ContactSummary', () => {
+describe(ContactSummary, () => {
   it('prints a dash for every field of a missing contact', () => {
     const { container } = render(
       <ContactSummary name='contact' contact={undefined} />
     );
 
     expect(container.textContent).toContain('First name');
-    expect(container.querySelectorAll('.visually-hidden').length).toBe(6);
+    expect(container.querySelectorAll('.visually-hidden')).toHaveLength(6);
   });
 
   it('prints the title row with a dash when the title is the empty string', () => {
@@ -60,6 +60,7 @@ describe('ContactSummary', () => {
         contact={{ title: Title.AssociateProfessor }}
       />
     );
+
     expect(screen.getByText('Associate Professor')).toBeInTheDocument();
 
     rerender(
@@ -68,6 +69,7 @@ describe('ContactSummary', () => {
         contact={{ title: Title.Other, titleOther: 'Lord' }}
       />
     );
+
     expect(screen.getByText('Lord')).toBeInTheDocument();
   });
 
@@ -75,6 +77,7 @@ describe('ContactSummary', () => {
     const { rerender } = render(
       <ContactSummary name='contact' contact={{ title: Title.Other }} />
     );
+
     expect(screen.getByText('Title, if "Other"')).toBeInTheDocument();
 
     rerender(
@@ -83,11 +86,12 @@ describe('ContactSummary', () => {
         contact={{ title: 'Emperor' as unknown as Title }}
       />
     );
+
     expect(screen.queryByText('Emperor')).not.toBeInTheDocument();
   });
 });
 
-describe('OrganisationSummary', () => {
+describe(OrganisationSummary, () => {
   it('renders nothing for answers that were never given', () => {
     const container = renderOrganisation({});
 
@@ -137,7 +141,7 @@ describe('OrganisationSummary', () => {
   });
 });
 
-describe('ApplicationSummary', () => {
+describe(ApplicationSummary, () => {
   it('reports no type and no sub-options for an empty application', () => {
     renderApplication({});
 

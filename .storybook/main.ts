@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import { defineMain } from '@storybook/react-vite/node';
 import remarkGfm from 'remark-gfm';
 import { clientDirectives } from './clientDirectives.ts';
 import { onLog } from './rollupOnLog.ts';
@@ -10,7 +10,31 @@ const sassDeprecationsToSilence = [
   'if-function',
 ];
 
-const config = {
+const applicationVendorGroups = [
+  {
+    name: 'react-runtime',
+    test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
+  },
+  {
+    name: 'auth',
+    test: /[\\/]node_modules[\\/]@azure[\\/]/,
+  },
+  {
+    name: 'forms',
+    test: /[\\/]node_modules[\\/](formik|yup)[\\/]/,
+  },
+  {
+    name: 'ui',
+    test: /[\\/]node_modules[\\/]react-bootstrap[\\/]/,
+  },
+  {
+    name: 'utilities',
+    // Lodash remains a transitive runtime dependency of Formik and Slate.
+    test: /[\\/]node_modules[\\/](lodash|date-fns)[\\/]/,
+  },
+];
+
+export default defineMain({
   framework: '@storybook/react-vite',
 
   stories: [
@@ -87,9 +111,10 @@ const config = {
         },
       },
       build: {
-        // Keep the existing size budget while splitting the preview runtime
-        // away from the renderer, router, and story registry below.
-        chunkSizeWarningLimit: 1024,
+        // Storybook's generated iframe includes the preview runtime and is
+        // currently just over 1 MB minified. Keep warnings enabled for chunks
+        // materially larger than that known baseline.
+        chunkSizeWarningLimit: 1152,
         // `onLog` drops vendor `INVALID_ANNOTATION` / `PLUGIN_TIMINGS`
         // noise and forwards everything else untouched. Extracted to
         // ./rollupOnLog so the pass-through guarantee is unit-tested.
@@ -105,6 +130,7 @@ const config = {
             strictExecutionOrder: true,
             codeSplitting: {
               groups: [
+                ...applicationVendorGroups,
                 {
                   name: 'storybook-runtime',
                   test: /[\\/]node_modules[\\/]storybook[\\/]dist[\\/]preview[\\/]runtime\.js$/,
@@ -116,6 +142,4 @@ const config = {
       },
     });
   },
-} satisfies StorybookConfig;
-
-export default config;
+});

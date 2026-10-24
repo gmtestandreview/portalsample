@@ -9,9 +9,13 @@ import {
 } from '../../../../ClientApp/src/routes/ta/pollUploadProgress';
 
 const appLoggerError = vi.hoisted(() => vi.fn());
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: appLoggerError },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: appLoggerError },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const makeClient = () => {
   const getProgress = vi.fn();
@@ -23,7 +27,7 @@ const makeClient = () => {
   return { client, getProgress, deleteProgressStatistics };
 };
 
-describe('pollUploadProgress', () => {
+describe(pollUploadProgress, () => {
   beforeEach(() => {
     vi.useFakeTimers();
     appLoggerError.mockReset();
@@ -54,7 +58,7 @@ describe('pollUploadProgress', () => {
       -1, 40,
     ]);
     expect(onProgress).toHaveBeenCalledTimes(2);
-    expect(onFinished).toHaveBeenCalledOnce();
+    expect(onFinished).toHaveBeenCalledExactlyOnceWith();
     expect(deleteProgressStatistics).toHaveBeenCalledWith('u1');
   });
 
@@ -74,7 +78,7 @@ describe('pollUploadProgress', () => {
       onFinished,
     });
 
-    expect(onFinished).toHaveBeenCalledOnce();
+    expect(onFinished).toHaveBeenCalledExactlyOnceWith();
   });
 
   it('logs a failed statistics cleanup without rejecting', async () => {
@@ -114,7 +118,9 @@ describe('pollUploadProgress', () => {
     });
 
     await vi.advanceTimersByTimeAsync(PROGRESS_RETRY_DELAY_MS - 1);
+
     expect(getProgress).toHaveBeenCalledTimes(2);
+
     await vi.advanceTimersByTimeAsync(1);
     await done;
 
@@ -155,6 +161,10 @@ describe('pollUploadProgress', () => {
       onFinished: vi.fn(),
     });
 
-    expect(getProgress).toHaveBeenCalledOnce();
+    expect(getProgress).toHaveBeenCalledExactlyOnceWith(
+      'u1',
+      -1,
+      expect.any(AbortSignal)
+    );
   });
 });

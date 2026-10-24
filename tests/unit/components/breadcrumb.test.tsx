@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import CustomBreadcrumb from '../../../ClientApp/src/components/Breadcrumb';
 import { renderWithProviders } from '../helpers/renderWithProviders';
 
-describe('CustomBreadcrumb', () => {
+describe(CustomBreadcrumb, () => {
   it('marks the final breadcrumb item as the current page', () => {
     renderWithProviders(
       <CustomBreadcrumb

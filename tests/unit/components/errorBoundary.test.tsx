@@ -13,7 +13,7 @@ const renderErrorDisplay = (status: HttpStatusCode | number) =>
     </MemoryRouter>
   );
 
-describe('ErrorDisplay', () => {
+describe(ErrorDisplay, () => {
   afterEach(() => {
     document.body.className = '';
     document.title = '';
@@ -85,7 +85,7 @@ describe('ErrorDisplay', () => {
   });
 });
 
-describe('ErrorBoundary', () => {
+describe(ErrorBoundary, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -247,5 +247,53 @@ describe('ErrorBoundary', () => {
         name: /Oops - An unexpected error has occurred/i,
       })
     ).toBeInTheDocument();
+  });
+
+  it('wraps a non-Error throw into an Error before tracking it', () => {
+    const thrown = 'plain string failure';
+    const ThrowingChild = () => {
+      throw thrown;
+    };
+    const trackException = vi.fn();
+    const appInsights = {
+      getAppInsights: () => ({ trackException }),
+    };
+
+    // react-error-boundary v6 surfaces the raw thrown value (here a string),
+    // so the boundary must normalise it to an Error before reporting. React
+    // logs its own error for the uncaught throw; suppress it for this
+    // deliberate failure so the test only asserts the normalisation.
+    const preventError = (event: ErrorEvent) => {
+      event.preventDefault();
+    };
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    globalThis.addEventListener('error', preventError);
+
+    try {
+      render(
+        <MemoryRouter>
+          <ErrorBoundary
+            appInsights={
+              appInsights as unknown as React.ComponentProps<
+                typeof ErrorBoundary
+              >['appInsights']
+            }
+          >
+            <ThrowingChild />
+          </ErrorBoundary>
+        </MemoryRouter>
+      );
+    } finally {
+      globalThis.removeEventListener('error', preventError);
+    }
+
+    const [trackedException] = trackException.mock.calls[0] as [
+      { error: Error; exception: Error; severityLevel: SeverityLevel },
+    ];
+
+    expect(trackedException.error).toBeInstanceOf(Error);
+    expect(trackedException.exception).toBe(trackedException.error);
+    expect(trackedException.error.message).toBe('plain string failure');
+    expect(trackedException.severityLevel).toBe(SeverityLevel.Error);
   });
 });

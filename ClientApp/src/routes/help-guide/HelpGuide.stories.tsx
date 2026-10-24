@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import HelpGuide from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/HelpGuide',
   component: HelpGuide,
   decorators: [withPortalProviders],
@@ -12,18 +12,15 @@ const meta = {
       initialEntries: ['/help-guide'],
     },
   },
-} satisfies Meta<typeof HelpGuide>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export const AuthenticatedJourney = meta.story();
 
-export const AuthenticatedJourney: Story = {};
-
-export const PublicJourney: Story = {
+export const PublicJourney = meta.story({
   parameters: {
     portal: {
       authenticated: false,
       initialEntries: ['/help-guide'],
     },
   },
-};
+});

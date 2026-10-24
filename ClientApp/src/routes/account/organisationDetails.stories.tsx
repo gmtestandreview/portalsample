@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import OrganisationDetails from './organisationDetails';
@@ -9,7 +9,7 @@ import OrganisationDetails from './organisationDetails';
  * street/postal address fields. Every field is Formik-bound, so the story provides an
  * initial-values context matching the field names.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Account/OrganisationDetails',
   component: OrganisationDetails,
   decorators: [withPortalProviders],
@@ -31,22 +31,21 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof OrganisationDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(
-      canvas.getByRole('heading', { name: 'Organisation details' })
+      canvas.getByRole('heading', { name: 'Organisation details' }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole('heading', { name: 'Business street address' })
+      canvas.getByRole('heading', { name: 'Business street address' }),
     ).toBeVisible();
     await expect(canvas.getByLabelText(/entity name/i)).toBeInTheDocument();
   },
-};
+});

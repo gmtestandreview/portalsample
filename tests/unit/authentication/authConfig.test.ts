@@ -1,17 +1,21 @@
 import { LogLevel } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/env', () => ({
-  env: {
-    REACT_APP_B2C_CLIENTID: 'test-client-id',
-    REACT_APP_B2C_AUTHORITY: 'https://example.test/authority',
-    REACT_APP_B2C_KNOWN_AUTHORITIES: 'example.test',
-    REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
-    REACT_APP_B2C_READ_SCOPE: 'read',
-    REACT_APP_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
-    REACT_APP_B2C_REDIRECT_URL: 'https://example.test/redirect',
-  },
-}));
+vi.mock(
+  '@/env',
+  () =>
+    ({
+      env: {
+        VITE_B2C_CLIENTID: 'test-client-id',
+        VITE_B2C_AUTHORITY: 'https://example.test/authority',
+        VITE_B2C_KNOWN_AUTHORITIES: 'example.test',
+        VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
+        VITE_B2C_READ_SCOPE: 'read',
+        VITE_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
+        VITE_B2C_REDIRECT_URL: 'https://example.test/redirect',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule10>
+);
 
 describe('auth configuration', () => {
   it('builds MSAL auth config from runtime env values', async () => {
@@ -65,6 +69,7 @@ describe('auth configuration', () => {
     );
 
     expect(consoleError).not.toHaveBeenCalled();
+
     consoleError.mockRestore();
   });
 
@@ -81,6 +86,7 @@ describe('auth configuration', () => {
     );
 
     expect(consoleError).toHaveBeenCalledWith('visible error');
+
     consoleError.mockRestore();
   });
 
@@ -97,22 +103,27 @@ describe('auth configuration', () => {
     );
 
     expect(consoleError).not.toHaveBeenCalled();
+
     consoleError.mockRestore();
   });
 
   it('falls back to empty strings when optional runtime auth env values are missing', async () => {
     vi.resetModules();
-    vi.doMock('@/env', () => ({
-      env: {
-        REACT_APP_B2C_CLIENTID: undefined,
-        REACT_APP_B2C_AUTHORITY: 'https://example.test/authority',
-        REACT_APP_B2C_KNOWN_AUTHORITIES: undefined,
-        REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
-        REACT_APP_B2C_READ_SCOPE: undefined,
-        REACT_APP_B2C_USER_IMPERSONATION_SCOPE: undefined,
-        REACT_APP_B2C_REDIRECT_URL: undefined,
-      },
-    }));
+    vi.doMock(
+      '@/env',
+      () =>
+        ({
+          env: {
+            VITE_B2C_CLIENTID: undefined,
+            VITE_B2C_AUTHORITY: 'https://example.test/authority',
+            VITE_B2C_KNOWN_AUTHORITIES: undefined,
+            VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
+            VITE_B2C_READ_SCOPE: undefined,
+            VITE_B2C_USER_IMPERSONATION_SCOPE: undefined,
+            VITE_B2C_REDIRECT_URL: undefined,
+          },
+        }) satisfies __ExactMockModule<__TestMockModule10>
+    );
 
     const { authRequest, configuration, redirectUri, scopes, tokenRequest } =
       await import('@/authentication/authConfig');

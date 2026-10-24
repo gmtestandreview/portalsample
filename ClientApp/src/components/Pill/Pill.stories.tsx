@@ -1,21 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import StatusPill from './StatusPill';
 import QuoteStatusPill from './QuoteStatusPill';
 import { DashboardItemStatus, QuoteStatus } from '../../routes/common/enums';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Pill',
   component: StatusPill,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof StatusPill>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const DashboardStatuses: Story = {
+export const DashboardStatuses = meta.story({
   args: {
     status: DashboardItemStatus.QuoteAvailable,
   },
@@ -30,23 +28,25 @@ export const DashboardStatuses: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     // Wait for useEffect to flush and badges to become visible
     const quoteAvailableBadge = await canvas.findByText(
-      DashboardItemStatus.QuoteAvailable
+      'Quote offer is available',
     );
+
     await expect(quoteAvailableBadge).toBeVisible();
 
     const quoteAcceptedBadge = await canvas.findByText(
-      DashboardItemStatus.QuoteAccepted
+      'Quote offer is accepted',
     );
+
     await expect(quoteAcceptedBadge).toBeVisible();
   },
-};
+});
 
-export const QuoteStatuses: Story = {
+export const QuoteStatuses = meta.story({
   args: {
     status: DashboardItemStatus.QuoteAvailable,
   },
@@ -58,4 +58,4 @@ export const QuoteStatuses: Story = {
       <QuoteStatusPill status={QuoteStatus.QuoteDeclined} />
     </div>
   ),
-};
+});

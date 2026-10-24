@@ -12,11 +12,27 @@ import process from 'node:process';
 
 const DEFAULT_OUT = 'analysis/sonar-issues-backlog.md';
 const PAGE_SIZE = 500;
+const DEFAULT_REQUEST_TIMEOUT_MS = 30_000;
+const DEFAULT_MAX_REQUEST_ATTEMPTS = 3;
+const DEFAULT_RETRY_DELAY_MS = 250;
 const MARKDOWN_PIPE_ESCAPE = String.raw`\|`;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index === -1 ? null : process.argv[index + 1];
+}
+
+function positiveIntegerEnv(name, fallback) {
+  const value = Number.parseInt(process.env[name] ?? '', 10);
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
+function isRetryableStatus(status) {
+  return status === 429 || status >= 500;
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function rankIssue(issue) {
@@ -67,6 +83,80 @@ function normalizeIssue(issue) {
   };
 }
 
+function validateIssuePayload(payload, source) {
+  if (
+    !payload ||
+    typeof payload !== 'object' ||
+    !Array.isArray(payload.issues)
+  ) {
+    throw new Error(`${source} must contain an issues array.`);
+  }
+
+  payload.issues.forEach((issue, index) => {
+    if (
+      !issue ||
+      typeof issue !== 'object' ||
+      Array.isArray(issue) ||
+      typeof issue.key !== 'string' ||
+      issue.key.length === 0
+    ) {
+      throw new Error(
+        `${source} contains invalid issue at index ${index}: expected an object with a non-empty key.`
+      );
+    }
+
+    for (const field of [
+      'component',
+      'effort',
+      'impactSeverity',
+      'impactSoftwareQuality',
+      'issueStatus',
+      'message',
+      'rule',
+      'severity',
+      'status',
+      'type',
+      'updateDate',
+    ]) {
+      if (field in issue && typeof issue[field] !== 'string') {
+        throw new Error(
+          `${source} contains invalid issue at index ${index}: ${field} must be a string.`
+        );
+      }
+    }
+
+    for (const field of ['impactSeverities', 'impactSoftwareQualities']) {
+      if (
+        field in issue &&
+        (!Array.isArray(issue[field]) ||
+          issue[field].some((value) => typeof value !== 'string'))
+      ) {
+        throw new Error(
+          `${source} contains invalid issue at index ${index}: ${field} must be an array of strings.`
+        );
+      }
+    }
+
+    if ('line' in issue && (!Number.isInteger(issue.line) || issue.line < 1)) {
+      throw new Error(
+        `${source} contains invalid issue at index ${index}: line must be a positive integer.`
+      );
+    }
+  });
+
+  return payload.issues;
+}
+
+function validateUniqueIssueKeys(issues, source) {
+  const issueKeys = new Set();
+  for (const issue of issues) {
+    if (issueKeys.has(issue.key)) {
+      throw new Error(`${source} contains duplicate issue key ${issue.key}.`);
+    }
+    issueKeys.add(issue.key);
+  }
+}
+
 function priorityWeight(priority) {
   return (
     {
@@ -115,15 +205,89 @@ function formatMarkdown(issues) {
 }
 
 function readFixtureIssues(fixtureDirectory) {
-  return readdirSync(fixtureDirectory)
+  const issues = readdirSync(fixtureDirectory)
     .filter((file) => file.endsWith('.json'))
     .sort()
     .flatMap((file) => {
-      const payload = JSON.parse(
-        readFileSync(path.join(fixtureDirectory, file), 'utf8')
-      );
-      return payload.issues ?? [];
+      const fixturePath = path.join(fixtureDirectory, file);
+      let payload;
+      try {
+        payload = JSON.parse(readFileSync(fixturePath, 'utf8'));
+      } catch (error) {
+        throw new Error(
+          `${fixturePath} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+          { cause: error }
+        );
+      }
+      return validateIssuePayload(payload, fixturePath);
     });
+  validateUniqueIssueKeys(issues, fixtureDirectory);
+  return issues;
+}
+
+async function fetchSonarPage(url, token) {
+  const timeoutMs = positiveIntegerEnv(
+    'SONAR_REQUEST_TIMEOUT_MS',
+    DEFAULT_REQUEST_TIMEOUT_MS
+  );
+  const maxAttempts = positiveIntegerEnv(
+    'SONAR_MAX_REQUEST_ATTEMPTS',
+    DEFAULT_MAX_REQUEST_ATTEMPTS
+  );
+  const retryDelayMs = positiveIntegerEnv(
+    'SONAR_RETRY_DELAY_MS',
+    DEFAULT_RETRY_DELAY_MS
+  );
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    let response;
+    let responseBody;
+
+    try {
+      response = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: controller.signal,
+      });
+      responseBody = await response.text();
+    } catch (error) {
+      lastError =
+        error instanceof Error && error.name === 'AbortError'
+          ? new Error(`Sonar API request timed out after ${timeoutMs}ms.`)
+          : error instanceof Error
+            ? error
+            : new Error(String(error));
+      clearTimeout(timeout);
+      if (attempt === maxAttempts) throw lastError;
+      await wait(retryDelayMs * 2 ** (attempt - 1));
+      continue;
+    }
+
+    clearTimeout(timeout);
+    if (!response.ok) {
+      lastError = new Error(
+        `Sonar API request failed ${response.status}: ${responseBody}`
+      );
+      if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
+        throw lastError;
+      }
+      await wait(retryDelayMs * 2 ** (attempt - 1));
+      continue;
+    }
+
+    try {
+      return JSON.parse(responseBody);
+    } catch (error) {
+      throw new Error(
+        `Sonar API returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
+      );
+    }
+  }
+
+  throw lastError ?? new Error('Sonar API request failed without an error.');
 }
 
 async function fetchLiveIssues() {
@@ -147,19 +311,34 @@ async function fetchLiveIssues() {
     url.searchParams.set('p', String(page));
     url.searchParams.set('ps', String(PAGE_SIZE));
 
-    const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!response.ok) {
+    const payload = await fetchSonarPage(url, token);
+    const pageIssues = validateIssuePayload(payload, `Sonar API page ${page}`);
+    const nextTotal = payload.paging?.total ?? payload.total;
+
+    if (!Number.isInteger(nextTotal) || nextTotal < 0) {
       throw new Error(
-        `Sonar API request failed ${response.status}: ${await response.text()}`
+        `Sonar API page ${page} must include a non-negative integer total.`
       );
     }
 
-    const payload = await response.json();
-    issues.push(...(payload.issues ?? []));
-    total = payload.paging?.total ?? payload.total ?? issues.length;
+    if (pageIssues.length === 0 && issues.length < nextTotal) {
+      throw new Error(
+        `Sonar API pagination made no progress on page ${page}: expected ${nextTotal} issue(s), received ${issues.length}.`
+      );
+    }
+
+    issues.push(...pageIssues);
+    total = nextTotal;
     page += 1;
+
+    try {
+      validateUniqueIssueKeys(issues, `Sonar API page ${page - 1}`);
+    } catch (error) {
+      throw new Error(
+        `Sonar API pagination made no progress on page ${page - 1}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
+      );
+    }
   }
 
   return issues;

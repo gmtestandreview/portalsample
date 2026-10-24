@@ -11,8 +11,8 @@ function makeError(
   return { status, title: title ?? '', headers: headers ?? {} };
 }
 
-describe('resolveErrorState', () => {
-  describe('Load errors — HttpStatus dispatch', () => {
+describe(resolveErrorState, () => {
+  describe('load errors — HttpStatus dispatch', () => {
     it('returns notFound for 404', () => {
       expect(
         resolveErrorState(makeError(404), undefined, ErrorType.Load)
@@ -47,13 +47,16 @@ describe('resolveErrorState', () => {
         undefined,
         ErrorType.Load
       );
+
       expect(result.kind).toBe('serverError');
     });
 
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
       expect(
         resolveErrorState(makeError(500), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'loading' });
+      ).toEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns loading for a network error with no status property', () => {
@@ -67,16 +70,18 @@ describe('resolveErrorState', () => {
         'The operation was aborted.',
         'AbortError'
       );
+
       expect(resolveErrorState(abort, undefined, ErrorType.Load)).toEqual({
         kind: 'none',
       });
     });
   });
 
-  describe('Update errors — HttpStatus dispatch', () => {
+  describe('update errors — HttpStatus dispatch', () => {
     it('returns concurrency for 409', () => {
       const err = makeError(409);
       const result = resolveErrorState(err, undefined, ErrorType.Update);
+
       expect(result.kind).toBe('concurrency');
     });
 
@@ -85,6 +90,7 @@ describe('resolveErrorState', () => {
         server: `${AZURE_WAF_SERVER_PREFIX}/2.5`,
       });
       const result = resolveErrorState(err, undefined, ErrorType.Update);
+
       expect(result.kind).toBe('wafViolation');
     });
 
@@ -93,6 +99,7 @@ describe('resolveErrorState', () => {
         server: `${AZURE_WAF_SERVER_PREFIX}/2.5`,
       });
       const result = resolveErrorState(err, undefined, ErrorType.Load);
+
       expect(result.kind).toBe('serverError');
     });
 
@@ -102,14 +109,16 @@ describe('resolveErrorState', () => {
         undefined,
         ErrorType.Update
       );
+
       expect(result.kind).toBe('serverError');
     });
   });
 
-  describe('Custom redirect callback — fixes stale-read bug', () => {
+  describe('custom redirect callback — fixes stale-read bug', () => {
     it('returns redirect when callback provides a location', () => {
       const cb = (code: number) =>
         code === 404 ? '/custom-not-found' : undefined;
+
       expect(resolveErrorState(makeError(404), cb, ErrorType.Load)).toEqual({
         kind: 'redirect',
         location: '/custom-not-found',
@@ -118,6 +127,7 @@ describe('resolveErrorState', () => {
 
     it('falls through to default dispatch when callback returns undefined', () => {
       const cb = () => undefined;
+
       expect(resolveErrorState(makeError(404), cb, ErrorType.Load).kind).toBe(
         'notFound'
       );
@@ -126,6 +136,7 @@ describe('resolveErrorState', () => {
     it('redirect takes precedence over all other error kinds — stale-read fix proof', () => {
       const cb = () => '/gone-somewhere';
       const result = resolveErrorState(makeError(404), cb, ErrorType.Load);
+
       expect(result).toEqual({ kind: 'redirect', location: '/gone-somewhere' });
     });
   });

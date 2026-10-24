@@ -1,3 +1,4 @@
+import { describe, afterEach, it, expect } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
@@ -67,7 +68,7 @@ const baseSuburbProps: AutoSuggestContainerProps<string> = {
   onSelectedOption: vi.fn(),
 };
 
-describe('Combobox accessibility', () => {
+describe('combobox accessibility', () => {
   installUnexpectedConsoleGuard();
 
   // Vitest runs `afterEach` hooks in reverse registration order, so the guard
@@ -104,6 +105,7 @@ describe('Combobox accessibility', () => {
 
     const user = userEvent.setup();
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
+
     expect(combobox.tagName).toBe('INPUT');
     expect(reactAriaLabelText(combobox)).toBe('Suburb');
     expect(combobox).toHaveAttribute('aria-expanded', 'false');
@@ -114,6 +116,7 @@ describe('Combobox accessibility', () => {
     await waitFor(() => {
       expect(combobox).toHaveAttribute('aria-expanded', 'true');
     });
+
     expect(combobox).toHaveAttribute('aria-controls', 'suburb-options');
     // React Aria names the popup with its own `listboxLabel` string followed
     // by the ComboBox's `Label`. Reintroducing an `aria-label` on the
@@ -155,6 +158,7 @@ describe('Combobox accessibility', () => {
     const combobox = screen.getByRole('combobox', {
       name: 'Organisation name',
     });
+
     expect(combobox.tagName).toBe('INPUT');
 
     await user.type(combobox, 'ac');
@@ -168,6 +172,7 @@ describe('Combobox accessibility', () => {
         'organisationName-option-0'
       );
     });
+
     expect(
       screen.getByRole('option', { name: /ACME Calibration/ })
     ).toHaveAttribute('aria-selected', 'true');
@@ -200,6 +205,7 @@ describe('Combobox accessibility', () => {
       expect(screen.getByText(visibleMarker)).toBeInTheDocument();
 
       const combobox = screen.getByRole('combobox', { name: 'Suburb' });
+
       expect(reactAriaLabelText(combobox)).toBe('Suburb');
     }
   );
@@ -219,11 +225,13 @@ describe('Combobox accessibility', () => {
 
     const user = userEvent.setup();
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
+
     expect(reactAriaLabelText(combobox)).toBe('Suburb');
 
     await user.type(combobox, 'Syd');
 
     await screen.findByRole('listbox', { name: 'Suggestions Suburb' });
+
     expect(combobox).toHaveValue('Syd');
     expect(reactAriaLabelText(combobox)).toBe('Suburb');
 
@@ -232,6 +240,7 @@ describe('Combobox accessibility', () => {
     await waitFor(() => {
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     });
+
     expect(combobox).toHaveValue('');
     expect(reactAriaLabelText(combobox)).toBe('Suburb');
   });
@@ -251,6 +260,7 @@ describe('Combobox accessibility', () => {
     );
 
     const combobox = screen.getByRole('combobox', { name: 'Suburb' });
+
     expect(reactAriaLabelText(combobox)).toBe('Suburb');
     expect(combobox).toHaveAttribute('aria-invalid', 'true');
     expect(combobox).toHaveAccessibleDescription(/Start typing a suburb/);

@@ -1,3 +1,4 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { GridList, GridListItem } from './GridList';
 import { Text } from 'react-aria-components/Text';
@@ -5,21 +6,20 @@ import {
   GridListSection,
   GridListHeader,
 } from 'react-aria-components/GridList';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/GridList',
   component: GridList,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof GridList>;
+});
 
-export default meta;
-type Story = StoryFn<typeof GridList>;
+type GridListStoryArgs = Partial<Parameters<typeof GridList>[0]>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+export const renderExample = (args: GridListStoryArgs) => (
   <GridList
     {...args}
     style={{ width: 800, maxWidth: 'calc(100vw - 80px)' }}
@@ -128,12 +128,19 @@ export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   </GridList>
 );
 
-Example.args = {
-  selectionMode: 'multiple',
-  layout: 'grid',
-};
+export const Example = meta.story({
+  render: renderExample,
+  args: {
+    selectionMode: 'multiple',
+    layout: 'grid',
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('grid', { name: 'Photos' })).toBeVisible();
+    await expect(canvas.getByText('Desert Sunset')).toBeVisible();
+  },
+});
 
-export const Sections: Story = (args: Readonly<Parameters<Story>[0]>) => (
+export const renderSections = (args: GridListStoryArgs) => (
   <GridList
     {...args}
     style={{ width: 800, maxWidth: 'calc(100vw - 80px)' }}
@@ -208,7 +215,11 @@ export const Sections: Story = (args: Readonly<Parameters<Story>[0]>) => (
   </GridList>
 );
 
-Sections.args = {
-  selectionMode: 'multiple',
-  layout: 'grid',
-};
+export const Sections = meta.story({
+  render: renderSections,
+
+  args: {
+    selectionMode: 'multiple',
+    layout: 'grid',
+  },
+});

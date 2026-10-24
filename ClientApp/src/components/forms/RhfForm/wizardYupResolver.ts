@@ -1,6 +1,6 @@
-import { get, set } from 'lodash';
 import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import type { ValidationError } from 'yup';
+import { getIn, setIn } from '../formPath';
 import { isHidden } from '../utils';
 import type { Hideable, ValidationSchema } from '../types';
 
@@ -21,22 +21,22 @@ const toFieldErrors = <TFieldValues extends FieldValues>(
   values: TFieldValues,
   hidden: Hideable
 ): FieldErrors<TFieldValues> => {
-  const fieldErrors = {};
+  let fieldErrors = {};
   const isVisible = (path: string) => !isHidden(path, hidden, values);
   const inner = error.inner ?? [];
 
   if (inner.length > 0) {
     inner.forEach((innerError) => {
       const { path } = innerError;
-      if (path && isVisible(path) && get(fieldErrors, path) === undefined) {
-        set(fieldErrors, path, {
+      if (path && isVisible(path) && getIn(fieldErrors, path) === undefined) {
+        fieldErrors = setIn(fieldErrors, path, {
           type: 'validation',
           message: innerError.message,
         });
       }
     });
   } else if (error.path && isVisible(error.path)) {
-    set(fieldErrors, error.path, {
+    fieldErrors = setIn(fieldErrors, error.path, {
       type: 'validation',
       message: error.message,
     });

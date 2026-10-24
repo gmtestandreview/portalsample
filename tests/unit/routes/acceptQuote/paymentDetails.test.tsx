@@ -24,55 +24,86 @@ const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => msalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
-    AcceptQuoteClient: vi.fn(function (this: Record<string, unknown>) {
-      this['setAuthToken'] = vi.fn();
+    AcceptQuoteClient: vi.fn(function (this: {
+      setAuthToken: (token: string) => void;
+      getPaymentDetails: typeof mockGetPaymentDetails;
+    }) {
+      this.setAuthToken = vi.fn();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // Stub form-input children — they require Formik context which is outside this component's scope
-vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({
-    inlineHelp,
-    name,
-  }: {
-    inlineHelp?: React.ReactNode;
-    name: string;
-  }) => (
-    <div data-testid={`text-input`} data-name={name}>
-      {inlineHelp}
-    </div>
-  ),
-}));
-vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid={`radio-group`} data-name={name} />
-  ),
-}));
-vi.mock('@/components/forms/HidableField', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-vi.mock('@/components/forms/CommonForms/ContactDetails', () => ({
-  default: () => <div data-testid='contact-details' />,
-}));
-vi.mock('@/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/TextInput',
+  () =>
+    ({
+      default: ({
+        inlineHelp,
+        name,
+      }: {
+        inlineHelp?: React.ReactNode;
+        name: string;
+      }) => (
+        <div data-testid={`text-input`} data-name={name}>
+          {inlineHelp}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule29>
+);
+vi.mock(
+  '@/components/Inputs/RadioButtonGroup',
+  () =>
+    ({
+      default: ({ name }: { name: string }) => (
+        <div data-testid={`radio-group`} data-name={name} />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule52>
+);
+vi.mock(
+  '@/components/forms/HidableField',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    }) satisfies __ExactMockModule<__TestMockModule70>
+);
+vi.mock(
+  '@/components/forms/CommonForms/ContactDetails',
+  () =>
+    ({
+      default: () => <div data-testid='contact-details' />,
+    }) satisfies __ExactMockModule<__TestMockModule71>
+);
+vi.mock(
+  '@/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -115,7 +146,7 @@ const renderPaymentDetails = (
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('PaymentDetails', () => {
+describe(PaymentDetails, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     acquireTokenSilentMock.mockResolvedValue({ accessToken: 'test-token' });
@@ -127,12 +158,14 @@ describe('PaymentDetails', () => {
     it('renders the info Alert in non-summary mode', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails();
+
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });
 
     it('does not render the info Alert in summary mode', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails({ ...defaultProps, isSummary: true });
+
       expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
     });
   });
@@ -147,6 +180,7 @@ describe('PaymentDetails', () => {
           screen.getByText(/30 days of NMI invoice date/)
         ).toBeInTheDocument();
       });
+
       expect(screen.queryByText(/Prepayment required/)).not.toBeInTheDocument();
     });
 
@@ -157,6 +191,7 @@ describe('PaymentDetails', () => {
       await waitFor(() => {
         expect(screen.getByText(/Prepayment required/)).toBeInTheDocument();
       });
+
       expect(
         screen.queryByText(/30 days of NMI invoice date/)
       ).not.toBeInTheDocument();
@@ -207,7 +242,9 @@ describe('PaymentDetails', () => {
         'data-name',
         'paymentDetails.purchaseOrderNo'
       );
-      expect(await screen.findByText(/Q-SUMMARY-001/)).toBeInTheDocument();
+      await expect(
+        screen.findByText(/Q-SUMMARY-001/)
+      ).resolves.toBeInTheDocument();
       expect(screen.getByTestId('radio-group')).toHaveAttribute(
         'data-name',
         'paymentDetails.invoiceSentTo'
@@ -221,13 +258,13 @@ describe('PaymentDetails', () => {
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
-      expect(
-        await screen.findByText('Your NMI Quotation ID RFQ-2026-042')
-      ).toBeInTheDocument();
+      await expect(
+        screen.findByText('Your NMI Quotation ID RFQ-2026-042')
+      ).resolves.toBeInTheDocument();
     });
   });
 
-  describe('API error handling', () => {
+  describe('aPI error handling', () => {
     it('logs an error and remains rendered when the API call fails', async () => {
       const AppLogger = (await import('@/instrumentation/AppLogger')).default;
       acquireTokenSilentMock.mockRejectedValue(new Error('Token failed'));
@@ -241,6 +278,7 @@ describe('PaymentDetails', () => {
           { Id: 'TEST-001' }
         );
       });
+
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });
   });

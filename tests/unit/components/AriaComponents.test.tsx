@@ -86,7 +86,11 @@ import {
 } from '@/components/AriaComponents/Tree/Tree';
 
 if (!Element.prototype.getAnimations) {
-  Element.prototype.getAnimations = vi.fn(() => []);
+  Object.defineProperty(Element.prototype, 'getAnimations', {
+    configurable: true,
+    value: vi.fn(() => []),
+    writable: true,
+  });
 }
 
 class TestIntersectionObserver implements IntersectionObserver {
@@ -108,7 +112,7 @@ class TestIntersectionObserver implements IntersectionObserver {
 
 globalThis.IntersectionObserver ??= TestIntersectionObserver;
 
-describe('React Aria evaluation wrappers', () => {
+describe('react Aria evaluation wrappers', () => {
   it('renders content, links, separators, and icons through their public wrappers', () => {
     const { container } = render(
       <>
@@ -139,6 +143,7 @@ describe('React Aria evaluation wrappers', () => {
     );
 
     const decorativeIcon = screen.getByTestId('decorative-icon');
+
     expect(decorativeIcon).toHaveClass(
       'nmi-react-aria-icon',
       'icon-tick',
@@ -150,6 +155,7 @@ describe('React Aria evaluation wrappers', () => {
     const labelledIcon = container.querySelector(
       '[data-nmi-icon="chevron-down"]'
     );
+
     expect(labelledIcon).toHaveAttribute('aria-label', 'Expand services');
     expect(labelledIcon).not.toHaveAttribute('aria-hidden');
   });
@@ -292,7 +298,9 @@ describe('React Aria evaluation wrappers', () => {
       expect(
         screen.getByRole('meter', { name: 'Storage used' })
       ).toHaveTextContent(`${value}%`);
+
       const fill = container.querySelector('.fill') as HTMLElement;
+
       expect(fill.style.width).toBe(`${value}%`);
       expect(fill.style.getPropertyValue('--fill-color')).toBe(fillColor);
     }
@@ -318,6 +326,7 @@ describe('React Aria evaluation wrappers', () => {
     ).toBe('30%');
 
     rerender(<ProgressBar label='Upload progress' isIndeterminate />);
+
     expect(
       (container.querySelector('.fill') as HTMLElement).style.getPropertyValue(
         '--percent'
@@ -346,6 +355,7 @@ describe('React Aria evaluation wrappers', () => {
     );
 
     rerender(<ProgressCircle aria-label='Loading' isIndeterminate />);
+
     expect(screen.getByRole('progressbar', { name: 'Loading' })).toHaveStyle({
       width: '16px',
       height: '16px',
@@ -656,6 +666,7 @@ describe('React Aria evaluation wrappers', () => {
         {[]}
       </TagGroup>
     );
+
     expect(screen.getByText('No services selected')).toBeInTheDocument();
   });
 
@@ -724,7 +735,8 @@ describe('React Aria evaluation wrappers', () => {
     );
 
     await user.hover(screen.getByRole('button', { name: 'Help' }));
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+
+    await expect(screen.findByRole('tooltip')).resolves.toHaveTextContent(
       'Tooltip content'
     );
   });

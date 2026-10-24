@@ -1,20 +1,18 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, userEvent } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { CheckboxGroup } from './CheckboxGroup';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/CheckboxGroup',
   component: CheckboxGroup,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof CheckboxGroup>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 const services = (
   <>
@@ -23,8 +21,8 @@ const services = (
   </>
 );
 
-export const WithLabelAndDescription: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const WithLabelAndDescription = meta.story({
+  render: (args) => (
     <CheckboxGroup {...args}>{services}</CheckboxGroup>
   ),
   args: {
@@ -33,27 +31,27 @@ export const WithLabelAndDescription: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(canvas.getByText('NMI services')).toBeVisible();
     await expect(
-      canvas.getByText('Choose every service that applies to your business.')
+      canvas.getByText('Choose every service that applies to your business.'),
     ).toBeVisible();
 
     await userEvent.click(
-      canvas.getByRole('checkbox', { name: 'Pattern approval' })
+      canvas.getByRole('checkbox', { name: 'Pattern approval' }),
     );
 
     await expect(
-      canvas.getByRole('checkbox', { name: 'Pattern approval' })
+      canvas.getByRole('checkbox', { name: 'Pattern approval' }),
     ).toBeChecked();
     await expect(
-      canvas.getByRole('checkbox', { name: 'Testing and calibration' })
+      canvas.getByRole('checkbox', { name: 'Testing and calibration' }),
     ).not.toBeChecked();
   },
-};
+});
 
-export const Bare: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Bare = meta.story({
+  render: (args) => (
     <CheckboxGroup {...args}>{services}</CheckboxGroup>
   ),
   args: {
@@ -65,20 +63,20 @@ export const Bare: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(
-      canvas.getByRole('checkbox', { name: 'Testing and calibration' })
+      canvas.getByRole('checkbox', { name: 'Testing and calibration' }),
     ).toBeInTheDocument();
     // Named for assistive tech, but with no on-screen label text.
     await expect(
-      canvas.getByRole('group', { name: 'NMI services' })
+      canvas.getByRole('group', { name: 'NMI services' }),
     ).toBeInTheDocument();
     await expect(canvas.queryByText('NMI services')).not.toBeInTheDocument();
   },
-};
+});
 
-export const Horizontal: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Horizontal = meta.story({
+  render: (args) => (
     <CheckboxGroup {...args}>{services}</CheckboxGroup>
   ),
   args: {
@@ -87,15 +85,16 @@ export const Horizontal: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     // Orientation is published as a data attribute for the stylesheet to lay out against.
     const group = canvas.getByRole('group', { name: 'NMI services' });
+
     await expect(group).toHaveAttribute('data-orientation', 'horizontal');
   },
-};
+});
 
-export const Invalid: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Invalid = meta.story({
+  render: (args) => (
     <CheckboxGroup {...args}>{services}</CheckboxGroup>
   ),
   args: {
@@ -105,9 +104,9 @@ export const Invalid: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(
-      canvas.getByText('Select at least one service before continuing.')
+      canvas.getByText('Select at least one service before continuing.'),
     ).toBeVisible();
   },
-};
+});

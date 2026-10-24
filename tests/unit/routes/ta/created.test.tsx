@@ -17,35 +17,51 @@ const mocks = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  default: () => mocks.account,
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: () => mocks.account,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: mocks.useHtmlTitle,
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  () =>
+    ({
+      default: mocks.useHtmlTitle,
+    }) satisfies __ExactMockModule<__TestMockModule89>
+);
 
-vi.mock('../../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: mocks.useBodyClass,
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Utilities/useBodyClass',
+  () =>
+    ({
+      default: mocks.useBodyClass,
+    }) satisfies __ExactMockModule<__TestMockModule59>
+);
 
-vi.mock('../../../../ClientApp/src/components/forms/FormBanner', () => ({
-  default: ({
-    title,
-    refTitle,
-    subTitle,
-  }: {
-    title: string;
-    refTitle: string;
-    subTitle: string;
-  }) => (
-    <div data-testid='form-banner'>
-      <span>{title}</span>
-      <span>{refTitle}</span>
-      <span>{subTitle}</span>
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/forms/FormBanner',
+  () =>
+    ({
+      default: ({
+        title,
+        refTitle,
+        subTitle,
+      }: {
+        title: string;
+        refTitle: string;
+        subTitle: string;
+      }) => (
+        <div data-testid='form-banner'>
+          <span>{title}</span>
+          <span>{refTitle}</span>
+          <span>{subTitle}</span>
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule90>
+);
 
 const renderCreatedRoute = () =>
   render(
@@ -69,7 +85,7 @@ const expectDashboardTabStorage = () => {
   );
 };
 
-describe('RequestForPatternApprovalCreated', () => {
+describe(RequestForPatternApprovalCreated, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     globalThis.sessionStorage.clear();
@@ -107,6 +123,7 @@ describe('RequestForPatternApprovalCreated', () => {
     fireEvent.click(screen.getByTestId('go-to-dashboard-button'));
 
     expectDashboardTabStorage();
+
     expect(screen.getByText('Pattern approval dashboard')).toBeInTheDocument();
   });
 
@@ -116,6 +133,7 @@ describe('RequestForPatternApprovalCreated', () => {
     fireEvent.click(screen.getByRole('link', { name: 'dashboard' }));
 
     expectDashboardTabStorage();
+
     expect(screen.getByText('Pattern approval dashboard')).toBeInTheDocument();
   });
 });

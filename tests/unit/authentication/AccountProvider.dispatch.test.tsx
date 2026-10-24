@@ -30,50 +30,78 @@ const providerMocks = vi.hoisted(() => ({
   signIn: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    inProgress: providerMocks.inProgress,
-    accounts: providerMocks.accounts,
-    instance: {
-      acquireTokenSilent: providerMocks.acquireTokenSilent,
-      getActiveAccount: providerMocks.getActiveAccount,
-      handleRedirectPromise: providerMocks.handleRedirectPromise,
-      logoutRedirect: providerMocks.logoutRedirect,
-    },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        inProgress: providerMocks.inProgress,
+        accounts: providerMocks.accounts,
+        instance: {
+          acquireTokenSilent: providerMocks.acquireTokenSilent,
+          getActiveAccount: providerMocks.getActiveAccount,
+          handleRedirectPromise: providerMocks.handleRedirectPromise,
+          logoutRedirect: providerMocks.logoutRedirect,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@azure/msal-browser', () => ({
-  InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
-}));
+vi.mock(
+  '@azure/msal-browser',
+  () =>
+    ({
+      InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
+    }) satisfies __ExactMockModule<__TestMockModule3>
+);
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
-  UsersClient: class {
-    setAuthToken = vi.fn();
-    setUserProfile = providerMocks.setUserProfileApi;
-    signIn = providerMocks.signIn;
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      UsersClient: class {
+        setAuthToken = vi.fn();
+        setUserProfile = providerMocks.setUserProfileApi;
+        signIn = providerMocks.signIn;
+      },
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: providerMocks.appLoggerError,
-    verbose: vi.fn(),
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: providerMocks.appLoggerError,
+        verbose: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
-  default: providerMocks.setStoredTargetOrganisation,
-  getTargetOrganisation: providerMocks.getStoredTargetOrganisation,
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/targetOrganisation',
+  () =>
+    ({
+      default: providerMocks.setStoredTargetOrganisation,
+      getTargetOrganisation: providerMocks.getStoredTargetOrganisation,
+    }) satisfies __ExactMockModule<__TestMockModule6>
+);
 
-vi.mock('../../../ClientApp/src/terms-config.json', () => ({
-  default: { TermsVersion: '1' },
-}));
+vi.mock(
+  '../../../ClientApp/src/terms-config.json',
+  () =>
+    ({
+      default: { TermsVersion: '1' },
+    }) satisfies __ExactMockModule<__TestMockModule7>
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['read'] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['read'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
 const AccountConsumer = () => {
   const accountState = useAccountState();
@@ -180,7 +208,7 @@ const AccountConsumer = () => {
   );
 };
 
-describe('AccountProvider dispatch callbacks', () => {
+describe('accountProvider dispatch callbacks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     providerMocks.accounts = [
@@ -248,6 +276,7 @@ describe('AccountProvider dispatch callbacks', () => {
     await user.click(screen.getByRole('button', { name: 'set profile' }));
 
     const details = screen.getByTestId('details').textContent ?? '';
+
     expect(details).toContain('"userAcceptedTermsOfUse":true');
     expect(details).toContain('"accountCreationCompleted":true');
     expect(details).toContain('"accountContactCompleted":true');
@@ -268,6 +297,7 @@ describe('AccountProvider dispatch callbacks', () => {
       targetOrganisationAbn: '99999999999',
       targetOrganisationName: 'Target Org',
     });
+
     await waitFor(() =>
       expect(providerMocks.setUserProfileApi).toHaveBeenCalledWith(
         undefined,
@@ -313,6 +343,7 @@ describe('AccountProvider dispatch callbacks', () => {
         expect.any(Error)
       )
     );
+
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
 
@@ -339,8 +370,11 @@ describe('AccountProvider dispatch callbacks', () => {
     );
 
     await waitFor(() =>
-      expect(providerMocks.logoutRedirect).toHaveBeenCalled()
+      expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
+        account: { homeAccountId: 'active-id' },
+      })
     );
+
     expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
       account: { homeAccountId: 'active-id' },
     });
@@ -358,7 +392,9 @@ describe('AccountProvider dispatch callbacks', () => {
     );
 
     await waitFor(() =>
-      expect(providerMocks.logoutRedirect).toHaveBeenCalled()
+      expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
+        account: { homeAccountId: 'active-id' },
+      })
     );
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledTimes(1);
@@ -384,6 +420,7 @@ describe('AccountProvider dispatch callbacks', () => {
     );
 
     expect(screen.getByTestId('details')).toHaveTextContent('null');
+
     await user.click(screen.getByRole('button', { name: 'agree' }));
     await user.click(screen.getByRole('button', { name: 'complete account' }));
     await user.click(screen.getByRole('button', { name: 'complete contact' }));
@@ -442,6 +479,7 @@ describe('AccountProvider dispatch callbacks', () => {
     );
 
     const details = screen.getByTestId('details').textContent ?? '';
+
     expect(details).toContain('"organisation":""');
     expect(details).toContain('"trading":""');
     expect(details).toContain('"branch":""');
@@ -499,6 +537,7 @@ describe('AccountProvider dispatch callbacks', () => {
     );
 
     const details = screen.getByTestId('details').textContent ?? '';
+
     expect(details).toContain('"organisation":"Fallback Org"');
     expect(details).toContain('"trading":""');
     expect(details).toContain('"branch":""');
@@ -527,6 +566,7 @@ describe('AccountProvider dispatch callbacks', () => {
         expect.any(Error)
       )
     );
+
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
 });

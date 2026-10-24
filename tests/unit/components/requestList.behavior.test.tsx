@@ -1,3 +1,4 @@
+import { describe, beforeEach, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
@@ -10,9 +11,13 @@ import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import { defined } from '../helpers/defined';
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 const modalDispatch = {
   setShowBranchSelector: vi.fn(),
@@ -95,7 +100,7 @@ const instrumentRequest: DashboardItemDto = {
   },
 };
 
-describe('RequestList behavior', () => {
+describe('requestList behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -141,7 +146,10 @@ describe('RequestList behavior', () => {
     ).toHaveAttribute('href', '/request-for-quote-copy/RFQ-2023-009012');
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    await user.click(await screen.findByRole('link', { name: 'View report' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'View report' })
+    );
+
     expect(trackGAEvent).toHaveBeenCalledWith('Viewreport');
   });
 
@@ -154,10 +162,10 @@ describe('RequestList behavior', () => {
     await user.click(screen.getByRole('tab', { name: 'Report' }));
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    const viewRequest = await screen.findByRole('link', {
+    const viewRequest = await screen.findByRole('menuitem', {
       name: 'View request',
     });
-    const recalibration = screen.getAllByRole('link', {
+    const recalibration = screen.getAllByRole('menuitem', {
       name: 'Request recalibration',
     })[0];
     await user.click(viewRequest);
@@ -194,16 +202,21 @@ describe('RequestList behavior', () => {
     ).toHaveTextContent('/quotation/RFQ-2023-009012');
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
+
+    await expect(
+      screen.findByRole('menuitem', { name: 'View/accept quotation' })
+    ).resolves.toHaveAttribute('href', '/quotation/RFQ-2023-009012');
     expect(
-      await screen.findByRole('link', { name: 'View/accept quotation' })
-    ).toHaveAttribute('href', '/quotation/RFQ-2023-009012');
-    expect(screen.getByRole('link', { name: 'View request' })).toHaveAttribute(
+      screen.getByRole('menuitem', { name: 'View request' })
+    ).toHaveAttribute(
       'href',
       '/request-for-quote/RFQ-2023-009012/view-summary'
     );
+
     await user.click(
-      screen.getByRole('link', { name: 'View/accept quotation' })
+      screen.getByRole('menuitem', { name: 'View/accept quotation' })
     );
+
     expect(trackGAEvent).toHaveBeenCalledWith('View/acceptquotation');
   });
 
@@ -238,10 +251,12 @@ describe('RequestList behavior', () => {
     expect(
       screen.getByRole('status', { name: 'Current route' })
     ).toHaveTextContent('/quotation/Q-2023-007777');
+
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      await screen.findByRole('link', { name: 'View quotation' })
+      await screen.findByRole('menuitem', { name: 'View quotation' })
     );
+
     expect(trackGAEvent).toHaveBeenCalledWith('Viewquotation');
   });
 
@@ -264,14 +279,15 @@ describe('RequestList behavior', () => {
     ).toHaveAttribute('href', '/request-for-quote-copy/RFQ-2023-009012');
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    await user.click(await screen.findByRole('link', { name: 'View request' }));
     await user.click(
-      defined(
-        screen.getAllByRole('link', { name: 'Request recalibration' })[0],
-        'recalibration link'
-      )
+      await screen.findByRole('menuitem', { name: 'View request' })
     );
-    await user.click(screen.getByRole('link', { name: 'View quotation' }));
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+    await user.click(
+      screen.getByRole('menuitem', { name: 'Request recalibration' })
+    );
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+    await user.click(screen.getByRole('menuitem', { name: 'View quotation' }));
 
     expect(trackGAEvent).toHaveBeenCalledWith('Viewrequest');
     expect(trackGAEvent).toHaveBeenCalledWith('Requestrecalibration');
@@ -305,10 +321,12 @@ describe('RequestList behavior', () => {
 
     expect(screen.getByText('Handle with care')).toBeInTheDocument();
     expect(screen.getByText('0400 000 000')).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    expect(
-      await screen.findByRole('link', { name: 'View request' })
-    ).toHaveAttribute(
+
+    await expect(
+      screen.findByRole('menuitem', { name: 'View request' })
+    ).resolves.toHaveAttribute(
       'href',
       '/request-for-quote/RFQ-2023-009012/view-summary'
     );
@@ -328,18 +346,22 @@ describe('RequestList behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    const editRequest = await screen.findByRole('link', {
+    const editRequest = await screen.findByRole('menuitem', {
       name: 'Edit request',
     });
+
     expect(editRequest).toHaveAttribute(
       'href',
       '/request-for-quote/RFQ-2023-009012/instrument-and-request'
     );
+
     await user.click(editRequest);
+
     expect(trackGAEvent).toHaveBeenCalledWith('Editrequest');
+
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      await screen.findByRole('button', { name: 'Delete request' })
+      await screen.findByRole('menuitem', { name: 'Delete request' })
     );
 
     expect(modalDispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(
@@ -372,10 +394,12 @@ describe('RequestList behavior', () => {
     expect(
       screen.getByRole('heading', { name: /draft request for quote/i })
     ).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    expect(
-      await screen.findByRole('link', { name: 'Edit request' })
-    ).toHaveAttribute(
+
+    await expect(
+      screen.findByRole('menuitem', { name: 'Edit request' })
+    ).resolves.toHaveAttribute(
       'href',
       '/request-for-quote/RFQ-2023-009012/instrument-and-request'
     );
@@ -399,6 +423,7 @@ describe('RequestList behavior', () => {
     expect(
       screen.getByRole('heading', { name: 'Mettler Toledo' })
     ).toBeInTheDocument();
+
     unmount();
 
     renderInDashboardList(
@@ -473,9 +498,9 @@ describe('RequestList behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     const latestReport = (
-      await screen.findAllByRole('link', { name: 'View latest report' })
+      await screen.findAllByRole('menuitem', { name: 'View latest report' })
     )[0];
-    const recalibration = screen.getAllByRole('link', {
+    const recalibration = screen.getAllByRole('menuitem', {
       name: 'Request recalibration',
     })[0];
     await user.click(defined(latestReport, 'latest report link'));
@@ -531,18 +556,25 @@ describe('RequestList behavior', () => {
     expect(
       screen.getByRole('heading', { name: 'Draft Request For Quote' })
     ).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Actions' }));
-    await user.click(await screen.findByRole('link', { name: 'Edit request' }));
-    expect(trackGAEvent).toHaveBeenCalledWith('Edit request');
+
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      await screen.findByRole('button', { name: 'Delete request' })
+      await screen.findByRole('menuitem', { name: 'Edit request' })
     );
+
+    expect(trackGAEvent).toHaveBeenCalledWith('Edit request');
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Delete request' })
+    );
+
     expect(modalDispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(
       true,
       'RFQ-2023-009012'
     );
     expect(trackGAEvent).toHaveBeenCalledWith('Delete request');
+
     unmount();
 
     renderInDashboardList(
@@ -557,11 +589,14 @@ describe('RequestList behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    const quotation = await screen.findByRole('link', {
+    const quotation = await screen.findByRole('menuitem', {
       name: 'View/accept quotation',
     });
+
     expect(quotation).toHaveAttribute('href', '/quotation/RFQ-2023-009012');
+
     await user.click(quotation);
+
     expect(trackGAEvent).toHaveBeenCalledWith('View/accept quotation');
   });
 
@@ -583,6 +618,7 @@ describe('RequestList behavior', () => {
     expect(
       screen.getByRole('heading', { name: 'Mettler Toledo' })
     ).toBeInTheDocument();
+
     unmount();
 
     renderInDashboardList(
@@ -621,13 +657,15 @@ describe('RequestList behavior', () => {
     expect(
       screen.getByRole('link', { name: 'View latest report' })
     ).toHaveAttribute('href', '/report/Q-2023-007777');
+
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
       defined(
-        screen.getAllByRole('link', { name: 'Request recalibration' })[0],
+        screen.getAllByRole('menuitem', { name: 'Request recalibration' })[0],
         'recalibration link'
       )
     );
+
     expect(trackGAEvent).toHaveBeenCalledWith('Request recalibration');
   });
 
@@ -659,12 +697,15 @@ describe('RequestList behavior', () => {
     );
 
     expect(screen.getAllByText('N/A')[0]).toBeInTheDocument();
+
     await user.click(screen.getByRole('tab', { name: 'Details' }));
+
     expect(screen.getByText('Instrument description')).toBeInTheDocument();
     expect(screen.getByText('RFQ-2022-000001')).toBeInTheDocument();
     expect(screen.getByText('0400 000 000')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
+
     expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
   });
 });

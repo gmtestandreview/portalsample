@@ -17,88 +17,129 @@ let mockAccountDispatchAvailable = true;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: () => mockIsAuthenticated,
-  useMsal: vi.fn(() => ({
-    inProgress: 'none',
-    accounts: [],
-    instance: {},
-  })),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useIsAuthenticated: () => mockIsAuthenticated,
+      useMsal: vi.fn(() => ({
+        inProgress: 'none',
+        accounts: [],
+        instance: {},
+      })),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: () => ({ details: mockAccountStateDetails }),
-  useAccountDispatch: () =>
-    mockAccountDispatchAvailable
-      ? {
-          setAgree: vi.fn(),
-          setCompleted: vi.fn(),
-          setContactCompleted: vi.fn(),
-          setDefaultOrganisationId: vi.fn(),
-          setTargetOrganisation: vi.fn(),
-          setOrganisationAndBranch: vi.fn(),
-          setUserProfile: vi.fn(),
-        }
-      : undefined,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({ details: mockAccountStateDetails }),
+      useAccountDispatch: () =>
+        mockAccountDispatchAvailable
+          ? {
+              setAgree: vi.fn(),
+              setCompleted: vi.fn(),
+              setContactCompleted: vi.fn(),
+              setDefaultOrganisationId: vi.fn(),
+              setTargetOrganisation: vi.fn(),
+              setOrganisationAndBranch: vi.fn(),
+              setUserProfile: vi.fn(),
+            }
+          : undefined,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../ClientApp/src/components/Layout', () => ({
-  default: ({ children }: any) => <div data-testid='layout'>{children}</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Layout',
+  () =>
+    ({
+      default: ({ children }: any) => (
+        <div data-testid='layout'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule110>
+);
 
-vi.mock('../../../ClientApp/src/components/modals/TermsAndCondition', () => ({
-  default: () => <div data-testid='terms-modal'>Terms Modal</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/modals/TermsAndCondition',
+  () =>
+    ({
+      default: () => <div data-testid='terms-modal'>Terms Modal</div>,
+    }) satisfies __ExactMockModule<__TestMockModule111>
+);
 
-vi.mock('../../../ClientApp/src/components/modals/BranchSelectorModal', () => ({
-  default: () => (
-    <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/modals/BranchSelectorModal',
+  () =>
+    ({
+      default: () => (
+        <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule112>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
-  () => ({
-    BranchSelectionModalMode: {
-      SelectAndEditOrg: 'SelectAndEditOrg',
-      RFQSelectOrg: 'RFQSelectOrg',
-    },
-  })
+  () =>
+    ({
+      BranchSelectionModalMode: {
+        SelectAndEditOrg: 'SelectAndEditOrg',
+        RFQSelectOrg: 'RFQSelectOrg',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule109>
 );
 
-vi.mock('../../../ClientApp/src/components/modals/RFQDeleteModal', () => ({
-  default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/modals/RFQDeleteModal',
+  () =>
+    ({
+      default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
+    }) satisfies __ExactMockModule<__TestMockModule113>
+);
 
-vi.mock('../../../ClientApp/src/components/modals/ModalContext', () => ({
-  ModalStateCtx: React.createContext(null),
-  ModalDispatchCtx: React.createContext(null),
-  useModalState: vi.fn(),
-  useModalDispatch: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/modals/ModalContext',
+  () =>
+    ({
+      ModalStateCtx: React.createContext(null),
+      ModalDispatchCtx: React.createContext(null),
+      useModalState: vi.fn(),
+      useModalDispatch: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule27>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/routeChangeScrollTop',
-  () => ({
-    default: () => null,
-  })
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule44>
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/backToTopButton', () => ({
-  default: () => null,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/backToTopButton',
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule43>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
-  () => ({
-    default: () => null,
-  })
+  () =>
+    ({
+      default: () => null,
+    }) satisfies __ExactMockModule<__TestMockModule114>
 );
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  clearDashboardNotification: vi.fn(),
-  getBranchModalNotification: vi.fn(() => undefined),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      clearDashboardNotification: vi.fn(),
+      getBranchModalNotification: vi.fn(() => undefined),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────
 
@@ -261,7 +302,7 @@ function renderAtPathWithPlainRoot(initialPath: string) {
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
-describe('PreConditions state machine', () => {
+describe('preConditions state machine', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getBranchModalNotification).mockReturnValue(undefined);
@@ -277,6 +318,7 @@ describe('PreConditions state machine', () => {
     mockAccountStateDetails = null;
     // No account state → no precondition fires → children render
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
@@ -291,6 +333,7 @@ describe('PreConditions state machine', () => {
     };
     // Start at /some-path → Navigate to /create-account → on /create-account path is suppressed
     renderAt('/some-path');
+
     // After redirect, current path is /create-account
     expect(screen.getByTestId('current-path').textContent).toBe(
       '/create-account'
@@ -307,6 +350,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/create-account');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
       '/create-account'
@@ -326,6 +370,7 @@ describe('PreConditions state machine', () => {
     // redirectToDashboard: accountCreationCompleted=false → condition false (both must be true).
     // No redirects → children render.
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
@@ -351,6 +396,7 @@ describe('PreConditions state machine', () => {
     // No organisation -> create-account redirect must not fire.
     // accountContactCompleted=true from BASE -> no contact redirect either.
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe('/some-path');
   });
@@ -365,6 +411,7 @@ describe('PreConditions state machine', () => {
     };
     // create-account is suppressed (no org), so this falls through to create-contact.
     renderAt('/some-path');
+
     expect(screen.getByTestId('current-path').textContent).toBe(
       '/create-contact'
     );
@@ -380,6 +427,7 @@ describe('PreConditions state machine', () => {
     };
     // Mirror of 4b: with an organisation present, create-account wins on precedence.
     renderAt('/some-path');
+
     expect(screen.getByTestId('current-path').textContent).toBe(
       '/create-account'
     );
@@ -395,6 +443,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: false,
     };
     renderAt('/some-path');
+
     // Navigate fires → lands on /create-contact (suppressed there)
     expect(screen.getByTestId('current-path').textContent).toBe(
       '/create-contact'
@@ -410,6 +459,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: false,
     };
     renderAt('/create-contact');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
       '/create-contact'
@@ -424,6 +474,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: false,
     };
     renderAt('/create-account');
+
     // redirectToCreateContact has guard: !path.includes('create-account') → suppressed
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe(
@@ -441,6 +492,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAtPathWithPlainRoot('/wizard');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.queryByTestId('root-page')).not.toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe('/wizard');
@@ -454,6 +506,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAtPathWithPlainRoot('/create-account');
+
     expect(screen.queryByTestId('child-content')).not.toBeInTheDocument();
     expect(screen.getByTestId('current-path').textContent).toBe('/');
   });
@@ -477,6 +530,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/dashboard');
+
     expect(screen.getByTestId('terms-modal')).toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
@@ -491,6 +545,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/dashboard');
+
     expect(screen.queryByTestId('terms-modal')).not.toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
@@ -517,6 +572,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAt('/dashboard');
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
   });
 
@@ -530,6 +586,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAt('/success-creating-account');
+
     expect(
       screen.queryByTestId('branch-selector-modal')
     ).not.toBeInTheDocument();
@@ -556,6 +613,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: undefined,
     };
     renderAt('/dashboard');
+
     expect(
       screen.queryByTestId('prompt-branchselector-modal')
     ).not.toBeInTheDocument();
@@ -571,6 +629,7 @@ describe('PreConditions state machine', () => {
       accountContactCompleted: true,
     };
     renderAt('/dashboard');
+
     expect(
       screen.queryByTestId('branch-selector-modal')
     ).not.toBeInTheDocument();
@@ -599,6 +658,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/create-account', true);
+
     expect(screen.getByTestId('layout')).toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
@@ -610,6 +670,7 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: 1,
     };
     renderAt('/create-account', false);
+
     expect(screen.queryByTestId('layout')).not.toBeInTheDocument();
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
@@ -621,7 +682,9 @@ describe('PreConditions state machine', () => {
       userAcceptedTermsOfUse: false,
     };
     const { unmount } = renderAt('/dashboard', false);
+
     expect(screen.getByTestId('terms-modal')).toBeInTheDocument();
+
     unmount();
 
     mockAccountStateDetails = {
@@ -629,12 +692,14 @@ describe('PreConditions state machine', () => {
       defaultOrganisationId: null as unknown as number,
     };
     renderAt('/dashboard', false);
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
   });
 
   it('renders without a merged account when account dispatch is unavailable', () => {
     mockAccountDispatchAvailable = false;
     renderAt('/some-path');
+
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
   });
 
@@ -651,12 +716,15 @@ describe('PreConditions state machine', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Show branch' }));
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Show delete' }));
+
     expect(screen.getByTestId('rfq-delete-modal')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Show RFQ branch' }));
+
     expect(screen.getByTestId('branch-selector-modal')).toBeInTheDocument();
   });
 });

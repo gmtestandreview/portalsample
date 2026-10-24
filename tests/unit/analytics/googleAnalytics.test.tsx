@@ -9,11 +9,15 @@ const reactGaMock = vi.hoisted(() => ({
   send: vi.fn(),
 }));
 
-vi.mock('react-ga4', () => ({
-  default: reactGaMock,
-}));
+vi.mock(
+  'react-ga4',
+  () =>
+    ({
+      default: reactGaMock,
+    }) satisfies __ExactMockModule<__TestMockModule1>
+);
 
-describe('GoogleAnalytics', () => {
+describe('googleAnalytics', () => {
   afterEach(() => {
     vi.clearAllMocks();
     reactGaMock.isInitialized = false;
@@ -53,8 +57,8 @@ describe('GoogleAnalytics', () => {
   });
 
   it('does not initialize ReactGA when no tracking ID is configured', async () => {
-    const originalTrackingId = env.REACT_APP_GA_TRACKINGID;
-    env.REACT_APP_GA_TRACKINGID = '';
+    const originalTrackingId = env.VITE_GA_TRACKINGID;
+    env.VITE_GA_TRACKINGID = '';
     const { default: GoogleAnalytics } =
       await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
@@ -63,7 +67,7 @@ describe('GoogleAnalytics', () => {
 
       expect(reactGaMock.initialize).not.toHaveBeenCalled();
     } finally {
-      env.REACT_APP_GA_TRACKINGID = originalTrackingId;
+      env.VITE_GA_TRACKINGID = originalTrackingId;
     }
   });
 
@@ -163,7 +167,11 @@ describe('GoogleAnalytics', () => {
     expect(consoleSpy).toHaveBeenCalledWith({
       originalData: { name: 'Alice' },
     });
-    expect(reactGaMock.send).toHaveBeenCalled();
+    expect(reactGaMock.send).toHaveBeenCalledWith({
+      hitType: 'event',
+      category: 'form_viewed_sanitized',
+      data: { name: '[REDACTED]' },
+    });
 
     Object.defineProperty(globalThis, 'location', {
       configurable: true,
@@ -186,7 +194,11 @@ describe('GoogleAnalytics', () => {
     trackGAPii();
 
     expect(consoleSpy).not.toHaveBeenCalled();
-    expect(reactGaMock.send).toHaveBeenCalled();
+    expect(reactGaMock.send).toHaveBeenCalledWith({
+      hitType: 'event',
+      category: 'form_viewed_sanitized',
+      data: { name: '[REDACTED]' },
+    });
 
     Object.defineProperty(globalThis, 'location', {
       configurable: true,

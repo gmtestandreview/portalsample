@@ -1,4 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
+import { expect } from 'storybook/test';
 import Actions from './index';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
@@ -21,7 +22,7 @@ const actions = [
   { action: 'delete', text: 'Delete draft' },
 ];
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Actions',
   component: Actions,
   decorators: [withPortalProviders],
@@ -32,16 +33,35 @@ const meta = {
     id: 'request-actions',
     dropDownActions: actions,
   },
-} satisfies Meta<typeof Actions>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const TextButton: Story = {};
+export const TextButton = meta.story({
+  play: async ({
+    canvas,
+  }) => {
+    await canvas.getByRole('button', { name: 'Actions' }).click();
 
-export const IconButton: Story = {
+    await expect(
+      canvas.getByRole('menuitem', { name: 'View details' }),
+    ).toBeVisible();
+  },
+});
+
+export const IconButton = meta.story({
   args: {
     as: 'icon',
     buttonAriaTitle: 'for request RFQ-2024-001234',
   },
-};
+  play: async ({
+    canvas,
+  }) => {
+    await canvas
+      .getByRole('button', { name: 'Actions for request RFQ-2024-001234' })
+      .click();
+
+    await expect(
+      canvas.getByRole('menuitem', { name: 'Delete draft' }),
+    ).toBeVisible();
+  },
+});

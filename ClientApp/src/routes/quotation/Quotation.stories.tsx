@@ -1,22 +1,20 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import QuoteDetails from './quoteDetails';
 import NMIContactDetails from './nMIContactDetails';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import { requestForQuoteDetailsFixture } from '../../storybook/storybookFixtures';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/Quotation',
   component: QuoteDetails,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'padded',
   },
-} satisfies Meta<typeof QuoteDetails>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const QuoteSummary: Story = {
+export const QuoteSummary = meta.story({
   args: {
     quotationData: requestForQuoteDetailsFixture,
     isSummary: false,
@@ -36,9 +34,9 @@ export const QuoteSummary: Story = {
       <NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
     </>
   ),
-};
+});
 
-export const ExpiredNoDelivery: Story = {
+export const ExpiredNoDelivery = meta.story({
   args: {
     quotationData: {
       ...requestForQuoteDetailsFixture,
@@ -50,10 +48,10 @@ export const ExpiredNoDelivery: Story = {
     lastName: 'Nguyen',
     fileError: false,
   },
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+  render: (args) => (
     <>
       <QuoteDetails {...args} />
       <NMIContactDetails quotationData={args.quotationData} />
     </>
   ),
-};
+});

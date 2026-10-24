@@ -1,71 +1,72 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Migration/Components" />
+<Meta title='Migration/Components' />
 
 # Components
 
-**Component taxonomy and Storybook coverage surface under `ClientApp/src/components`.**
+**Component taxonomy and Storybook coverage surface under
+`ClientApp/src/components`.**
 
 ## Component Families
 
-| Family | Purpose |
-| --- | --- |
-| `Accordion` | Expand/collapse content blocks |
-| `Actions` | Shared action renderers |
-| `Alert` | Notification and dismissible alert surfaces |
-| `App` | Reusable application composition examples |
-| `AriaComponents` | React Aria component evaluation stories |
-| `BlockUISpinner` | Full-screen and local busy overlays |
-| `BodyText` | Typography helper |
-| `Breadcrumb` | Route breadcrumb navigation |
-| `Buttons` | Primary, secondary, link, edit, grouped actions |
-| `Calendar` | Accessible calendar evaluation |
-| `ColorArea` | Two-dimensional colour selection evaluation |
-| `ColorField` | Editable colour value evaluation |
-| `ColorPicker` | Composed colour picker evaluation |
-| `ColorSlider` | Single-channel colour adjustment evaluation |
-| `ColorSwatch` | Colour swatch and picker evaluation |
-| `ColorThumb` | Colour selection thumb evaluation |
-| `ColorWheel` | Hue wheel evaluation |
-| `ComboBox` | Accessible combobox evaluation |
-| `CommandPalette` | Searchable command palette evaluation |
-| `Dialog` | Accessible dialog evaluation |
-| `Disclosure` | Expand/collapse disclosure evaluation |
-| `DisclosureGroup` | Grouped disclosure evaluation |
-| `DropZone` | Accessible drag-and-drop target evaluation |
-| `ErrorBoundary` | Render isolation and telemetry reporting |
-| `Footer` | Public policy and footer content |
-| `forms` | Formik wrappers, wizard engine, summaries, prompts, banners |
-| `get-started` | Auth-aware entry CTA content |
-| `GridLists` | Accessible interactive grid-list evaluation |
-| `Header` | Brand, nav, environment badge, auth-aware links |
-| `HeaderIntroText` | Section introduction content |
-| `Icons` | Shared icon components |
-| `Inputs` | Text, textarea, select, radio, checkbox, number, date, lookup inputs |
-| `InTextLink` | Text-link primitive |
-| `Layout` | Global public shell wrapper |
-| `modals` | Branch, confirmation, content, delete, and terms modals |
-| `nmiicon` | NMI icon component surface |
-| `Pagination` | Paging controls and visible-range logic |
-| `PaginationHeader` | Range summary display |
-| `Pill` | Status and quote pill treatments |
-| `Progress` | Upload progress bars and file-transfer status |
-| `reactaria_components` | Shared React Aria evaluation support components |
-| `RequestList` | Dashboard request/instrument list items |
-| `RouteLeavingGuard` | Navigation blocking guard |
-| `SearchFilter` | Dashboard filtering and search controls |
-| `SlateEditor` | Rich-text editing surface |
-| `SteppedNavigation` | Step-status navigation |
-| `SummaryDisplay` | Read-only field/value review surface |
-| `tiles` | Dashboard pathway cards |
-| `Utilities` | Hash links, skip links, PDF actions, hooks, contact helpers |
-| `Welcome` | Authenticated welcome banner |
+| Family                 | Purpose                                                              |
+| ---------------------- | -------------------------------------------------------------------- |
+| `Accordion`            | Expand/collapse content blocks                                       |
+| `Actions`              | Shared action renderers                                              |
+| `Alert`                | Notification and dismissible alert surfaces                          |
+| `App`                  | Reusable application composition examples                            |
+| `AriaComponents`       | React Aria component evaluation stories                              |
+| `BlockUISpinner`       | Full-screen and local busy overlays                                  |
+| `BodyText`             | Typography helper                                                    |
+| `Breadcrumb`           | Route breadcrumb navigation                                          |
+| `Buttons`              | Primary, secondary, link, edit, grouped actions                      |
+| `Calendar`             | Accessible calendar evaluation                                       |
+| `ColorArea`            | Two-dimensional colour selection evaluation                          |
+| `ColorField`           | Editable colour value evaluation                                     |
+| `ColorPicker`          | Composed colour picker evaluation                                    |
+| `ColorSlider`          | Single-channel colour adjustment evaluation                          |
+| `ColorSwatch`          | Colour swatch and picker evaluation                                  |
+| `ColorThumb`           | Colour selection thumb evaluation                                    |
+| `ColorWheel`           | Hue wheel evaluation                                                 |
+| `ComboBox`             | Accessible combobox evaluation                                       |
+| `CommandPalette`       | Searchable command palette evaluation                                |
+| `Dialog`               | Accessible dialog evaluation                                         |
+| `Disclosure`           | Expand/collapse disclosure evaluation                                |
+| `DisclosureGroup`      | Grouped disclosure evaluation                                        |
+| `DropZone`             | Accessible drag-and-drop target evaluation                           |
+| `ErrorBoundary`        | Render isolation and telemetry reporting                             |
+| `Footer`               | Public policy and footer content                                     |
+| `forms`                | Formik wrappers, wizard engine, summaries, prompts, banners          |
+| `get-started`          | Auth-aware entry CTA content                                         |
+| `GridLists`            | Accessible interactive grid-list evaluation                          |
+| `Header`               | Brand, nav, environment badge, auth-aware links                      |
+| `HeaderIntroText`      | Section introduction content                                         |
+| `Icons`                | Shared icon components                                               |
+| `Inputs`               | Text, textarea, select, radio, checkbox, number, date, lookup inputs |
+| `InTextLink`           | Text-link primitive                                                  |
+| `Layout`               | Global public shell wrapper                                          |
+| `modals`               | Branch, confirmation, content, delete, and terms modals              |
+| `nmiicon`              | NMI icon component surface                                           |
+| `Pagination`           | Paging controls and visible-range logic                              |
+| `PaginationHeader`     | Range summary display                                                |
+| `Pill`                 | Status and quote pill treatments                                     |
+| `Progress`             | Upload progress bars and file-transfer status                        |
+| `reactaria_components` | Shared React Aria evaluation support components                      |
+| `RequestList`          | Dashboard request/instrument list items                              |
+| `RouteLeavingGuard`    | Navigation blocking guard                                            |
+| `SearchFilter`         | Dashboard filtering and search controls                              |
+| `SlateEditor`          | Rich-text editing surface                                            |
+| `SteppedNavigation`    | Step-status navigation                                               |
+| `SummaryDisplay`       | Read-only field/value review surface                                 |
+| `tiles`                | Dashboard pathway cards                                              |
+| `Utilities`            | Hash links, skip links, PDF actions, hooks, contact helpers          |
+| `Welcome`              | Authenticated welcome banner                                         |
 
 ## Existing Interactive Story Coverage
 
-All top-level component families are represented in the migration inventory.
-The generated Storybook index and CI gates provide the authoritative current
-story total. Notable interactive coverage includes:
+All top-level component families are represented in the migration inventory. The
+generated Storybook index and CI gates provide the authoritative current story
+total. Notable interactive coverage includes:
 
 - `Accordion`
 - `Alert`
@@ -91,10 +92,457 @@ story total. Notable interactive coverage includes:
 
 - `forms`, `Inputs`, `modals`, `Header`, `Footer`, and `Layout` are the highest
   value component families because they define most route-level composition.
-- `Utilities` and `RouteLeavingGuard` should remain documented even when they are
-  not visually rich, because they affect behaviour during migration.
+- `Utilities` and `RouteLeavingGuard` should remain documented even when they
+  are not visually rich, because they affect behaviour during migration.
 - `RequestList`, `SearchFilter`, `Pagination`, and `Pill` encode dashboard state
   semantics that should not be re-invented during a design-system rewrite.
 - Type Approval migration also depends on `Inputs/Attachment`,
   `Inputs/CertificateNumberLookup`, `Inputs/CheckboxGroup`, `Progress`,
   `RequestList/paRequestItem`, `SearchFilter/TypeApproval`, and `SlateEditor`.
+
+## Generated coverage inventory
+
+{/* storybook-coverage:generated:start */}
+| Source/export | Classification | Owner | Required states | Story IDs |
+| --- | --- | --- | ---: | --- |
+| `ClientApp/src/components/Accordion/index.tsx#CustomAccordion` | direct | CustomAccordion | 1 | components-accordion--single-section |
+| `ClientApp/src/components/Accordion/index.tsx#CustomAccordionBody` | direct | CustomAccordionBody | 1 | components-accordion--single-section |
+| `ClientApp/src/components/Accordion/types.ts#CustomAccordionBodyProps` | nonvisual | CustomAccordionBodyProps | 0 | none |
+| `ClientApp/src/components/Accordion/types.ts#CustomAccordionProps` | nonvisual | CustomAccordionProps | 0 | none |
+| `ClientApp/src/components/Actions/index.tsx#DropdownActionItem` | nonvisual | DropdownActionItem | 0 | none |
+| `ClientApp/src/components/Actions/index.tsx#default` | direct | Actions | 2 | components-actions--text-button, components-actions--icon-button |
+| `ClientApp/src/components/Alert/NotificationMessage.tsx#default` | direct | NotificationMessage | 1 | components-alert-notificationmessage--success |
+| `ClientApp/src/components/Alert/index.tsx#AlertError` | direct | AlertError | 1 | components-alert--error-dismissible |
+| `ClientApp/src/components/Alert/index.tsx#AlertInfo` | direct | AlertInfo | 1 | components-alert--info |
+| `ClientApp/src/components/Alert/index.tsx#AlertSuccess` | direct | AlertSuccess | 1 | components-alert--success |
+| `ClientApp/src/components/Alert/index.tsx#AlertWarning` | direct | AlertWarning | 1 | components-alert--warning |
+| `ClientApp/src/components/Alert/types.ts#AlertProps` | nonvisual | AlertProps | 0 | none |
+| `ClientApp/src/components/Alert/types.ts#BaseAlertProps` | nonvisual | BaseAlertProps | 0 | none |
+| `ClientApp/src/components/Alert/types.ts#NotificationMessageProps` | nonvisual | NotificationMessageProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/AriaButton/Button.tsx#Button` | direct | Button | 1 | components-ariacomponents-ariabutton--primary |
+| `ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.tsx#Breadcrumb` | direct | Breadcrumb | 1 | evaluation-react-aria-breadcrumbs--example |
+| `ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.tsx#Breadcrumbs` | direct | Breadcrumbs | 1 | evaluation-react-aria-breadcrumbs--example |
+| `ClientApp/src/components/AriaComponents/Button/Button.tsx#Button` | direct | Button | 1 | evaluation-react-aria-button--primary |
+| `ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx#Calendar` | direct | Calendar | 1 | evaluation-react-aria-calendar--default |
+| `ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx#CalendarCell` | direct | CalendarCell | 1 | evaluation-react-aria-calendar--default |
+| `ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx#CalendarGrid` | direct | CalendarGrid | 1 | evaluation-react-aria-calendar--default |
+| `ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx#CalendarProps` | nonvisual | CalendarProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Checkbox/Checkbox.tsx#Checkbox` | direct | Checkbox | 2 | evaluation-react-aria-checkbox--example, evaluation-react-aria-checkbox--indeterminate |
+| `ClientApp/src/components/AriaComponents/CheckboxGroup/CheckboxGroup.tsx#CheckboxGroup` | direct | CheckboxGroup | 1 | evaluation-react-aria-checkboxgroup--with-label-and-description |
+| `ClientApp/src/components/AriaComponents/CheckboxGroup/CheckboxGroup.tsx#CheckboxGroupProps` | nonvisual | CheckboxGroupProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ColorArea/ColorArea.tsx#ColorArea` | direct | ColorArea | 1 | evaluation-react-aria-colorarea--example |
+| `ClientApp/src/components/AriaComponents/ColorField/ColorField.tsx#ColorField` | direct | ColorField | 2 | evaluation-react-aria-colorfield--example, evaluation-react-aria-colorfield--with-description |
+| `ClientApp/src/components/AriaComponents/ColorField/ColorField.tsx#ColorFieldProps` | nonvisual | ColorFieldProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ColorPicker/ColorPicker.tsx#ColorPicker` | direct | ColorPicker | 1 | evaluation-react-aria-colorpicker--example |
+| `ClientApp/src/components/AriaComponents/ColorPicker/ColorPicker.tsx#ColorPickerProps` | nonvisual | ColorPickerProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ColorSlider/ColorSlider.tsx#ColorSlider` | direct | ColorSlider | 1 | evaluation-react-aria-colorslider--example |
+| `ClientApp/src/components/AriaComponents/ColorSlider/ColorSlider.tsx#ColorSliderProps` | nonvisual | ColorSliderProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ColorSwatch/ColorSwatch.tsx#ColorSwatch` | direct | ColorSwatch | 1 | evaluation-react-aria-colorswatch--example |
+| `ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.tsx#ColorSwatchPicker` | direct | ColorSwatchPicker | 1 | evaluation-react-aria-colorswatchpicker--example |
+| `ClientApp/src/components/AriaComponents/ColorSwatchPicker/ColorSwatchPicker.tsx#ColorSwatchPickerItem` | direct | ColorSwatchPickerItem | 1 | evaluation-react-aria-colorswatchpicker--example |
+| `ClientApp/src/components/AriaComponents/ColorThumb/ColorThumb.tsx#ColorThumb` | forwarding | ColorThumb | 1 | evaluation-react-aria-colorwheel--example |
+| `ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.tsx#ColorWheel` | direct | ColorWheel | 1 | evaluation-react-aria-colorwheel--example |
+| `ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.tsx#ColorWheelProps` | nonvisual | ColorWheelProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx#ComboBox` | direct | ComboBox | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx#ComboBoxItem` | direct | ComboBoxItem | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx#ComboBoxListBox` | direct | ComboBoxListBox | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ComboBox/ComboBox.tsx#ComboBoxProps` | nonvisual | ComboBoxProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/CommandPalette/CommandPalette.tsx#CommandPalette` | direct | CommandPalette | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/CommandPalette/CommandPalette.tsx#CommandPaletteProps` | nonvisual | CommandPaletteProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Content/Content.tsx#Heading` | consumer | Heading | 1 | evaluation-react-aria-calendar--default |
+| `ClientApp/src/components/AriaComponents/Content/Content.tsx#Text` | consumer | Text | 1 | evaluation-react-aria-calendar--default |
+| `ClientApp/src/components/AriaComponents/DateField/DateField.tsx#DateField` | direct | DateField | 1 | evaluation-react-aria-datefield--example |
+| `ClientApp/src/components/AriaComponents/DateField/DateField.tsx#DateFieldProps` | nonvisual | DateFieldProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/DateField/DateField.tsx#DateInput` | direct | DateInput | 1 | evaluation-react-aria-datefield--example |
+| `ClientApp/src/components/AriaComponents/DateField/DateField.tsx#DateSegment` | direct | DateSegment | 1 | evaluation-react-aria-datefield--example |
+| `ClientApp/src/components/AriaComponents/DatePicker/DatePicker.tsx#DatePicker` | direct | DatePicker | 1 | evaluation-react-aria-datepicker--example |
+| `ClientApp/src/components/AriaComponents/DatePicker/DatePicker.tsx#DatePickerProps` | nonvisual | DatePickerProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/DateRangePicker/DateRangePicker.tsx#DateRangePicker` | direct | DateRangePicker | 1 | evaluation-react-aria-daterangepicker--example |
+| `ClientApp/src/components/AriaComponents/DateRangePicker/DateRangePicker.tsx#DateRangePickerProps` | nonvisual | DateRangePickerProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Dialog/Dialog.tsx#Dialog` | consumer | Dialog | 1 | components-ariacomponents-sheet--context-driven-open-and-dismiss |
+| `ClientApp/src/components/AriaComponents/Dialog/Dialog.tsx#DialogTrigger` | consumer | DialogTrigger | 1 | components-ariacomponents-sheet--context-driven-open-and-dismiss |
+| `ClientApp/src/components/AriaComponents/Disclosure/Disclosure.tsx#Disclosure` | direct | Disclosure | 1 | evaluation-react-aria-disclosure--example |
+| `ClientApp/src/components/AriaComponents/Disclosure/Disclosure.tsx#DisclosureHeader` | direct | DisclosureHeader | 1 | evaluation-react-aria-disclosure--example |
+| `ClientApp/src/components/AriaComponents/Disclosure/Disclosure.tsx#DisclosurePanel` | direct | DisclosurePanel | 1 | evaluation-react-aria-disclosure--example |
+| `ClientApp/src/components/AriaComponents/DisclosureGroup/DisclosureGroup.tsx#DisclosureGroup` | direct | DisclosureGroup | 1 | evaluation-react-aria-disclosuregroup--example |
+| `ClientApp/src/components/AriaComponents/DropZone/DropZone.tsx#DropZone` | direct | DropZone | 1 | evaluation-react-aria-dropzone--disabled |
+| `ClientApp/src/components/AriaComponents/Form/Form.tsx#Description` | consumer | Description | 1 | evaluation-react-aria-checkbox--example |
+| `ClientApp/src/components/AriaComponents/Form/Form.tsx#FieldButton` | consumer | FieldButton | 1 | evaluation-react-aria-checkbox--example |
+| `ClientApp/src/components/AriaComponents/Form/Form.tsx#FieldError` | consumer | FieldError | 1 | evaluation-react-aria-checkbox--example |
+| `ClientApp/src/components/AriaComponents/Form/Form.tsx#Form` | consumer | Form | 1 | evaluation-react-aria-checkbox--example |
+| `ClientApp/src/components/AriaComponents/Form/Form.tsx#Label` | consumer | Label | 1 | evaluation-react-aria-checkbox--example |
+| `ClientApp/src/components/AriaComponents/GridLists/GridList.tsx#GridList` | direct | GridList | 1 | evaluation-react-aria-gridlist--example |
+| `ClientApp/src/components/AriaComponents/GridLists/GridList.tsx#GridListItem` | direct | GridListItem | 1 | evaluation-react-aria-gridlist--example |
+| `ClientApp/src/components/AriaComponents/GridLists/GridList.tsx#GridListLoadMoreItem` | direct | GridListLoadMoreItem | 1 | evaluation-react-aria-gridlist--example |
+| `ClientApp/src/components/AriaComponents/InputGroup/InputGroup.tsx#InputGroup` | direct | InputGroup | 1 | evaluation-react-aria-inputgroup--disabled |
+| `ClientApp/src/components/AriaComponents/Link/Link.tsx#Link` | direct | Link | 1 | components-ariacomponents-link--disabled |
+| `ClientApp/src/components/AriaComponents/ListBox/ListBox.tsx#DropdownItem` | consumer | DropdownItem | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ListBox/ListBox.tsx#DropdownListBox` | consumer | DropdownListBox | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ListBox/ListBox.tsx#ListBox` | consumer | ListBox | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ListBox/ListBox.tsx#ListBoxItem` | consumer | ListBoxItem | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ListBox/ListBox.tsx#ListBoxLoadMoreItem` | consumer | ListBoxLoadMoreItem | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/ListBox/ListBox.tsx#ListBoxSection` | consumer | ListBoxSection | 1 | evaluation-react-aria-combobox--example |
+| `ClientApp/src/components/AriaComponents/Menu/Menu.tsx#Menu` | direct | Menu | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/Menu/Menu.tsx#MenuItem` | direct | MenuItem | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/Menu/Menu.tsx#MenuSection` | direct | MenuSection | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/Menu/Menu.tsx#MenuTrigger` | direct | MenuTrigger | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/Menu/Menu.tsx#SubmenuTrigger` | direct | SubmenuTrigger | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/Meter/Meter.tsx#Meter` | direct | Meter | 1 | evaluation-react-aria-meter--example |
+| `ClientApp/src/components/AriaComponents/Meter/Meter.tsx#MeterProps` | nonvisual | MeterProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#Check` | direct | Check | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#ChevronDown` | direct | ChevronDown | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#ChevronLeft` | direct | ChevronLeft | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#ChevronRight` | direct | ChevronRight | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#ChevronUp` | direct | ChevronUp | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#Dot` | direct | Dot | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#GripVertical` | direct | GripVertical | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#HelpCircle` | direct | HelpCircle | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#Minus` | direct | Minus | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#Plus` | direct | Plus | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#Save` | direct | Save | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#Search` | direct | Search | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/NmiIcon.tsx#X` | direct | X | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/Popover/Popover.tsx#Popover` | consumer | Popover | 1 | evaluation-react-aria-colorpicker--example |
+| `ClientApp/src/components/AriaComponents/Popover/Popover.tsx#PopoverProps` | nonvisual | PopoverProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ProgressBar/ProgressBar.tsx#ProgressBar` | direct | ProgressBar | 1 | evaluation-react-aria-progressbar--example |
+| `ClientApp/src/components/AriaComponents/ProgressBar/ProgressBar.tsx#ProgressBarProps` | nonvisual | ProgressBarProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ProgressCircle/ProgressCircle.tsx#ProgressCircle` | consumer | ProgressCircle | 1 | components-ariacomponents-ariabutton--disabled |
+| `ClientApp/src/components/AriaComponents/ProgressCircle/ProgressCircle.tsx#ProgressCircleProps` | nonvisual | ProgressCircleProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/RadioGroup/RadioGroup.tsx#Radio` | direct | Radio | 1 | evaluation-react-aria-radiogroup--example |
+| `ClientApp/src/components/AriaComponents/RadioGroup/RadioGroup.tsx#RadioGroup` | direct | RadioGroup | 1 | evaluation-react-aria-radiogroup--example |
+| `ClientApp/src/components/AriaComponents/RadioGroup/RadioGroup.tsx#RadioGroupProps` | nonvisual | RadioGroupProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/RadioGroup/RadioGroup.tsx#RadioProps` | nonvisual | RadioProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.tsx#CalendarCell` | direct | CalendarCell | 1 | evaluation-react-aria-rangecalendar--example |
+| `ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.tsx#RangeCalendar` | direct | RangeCalendar | 1 | evaluation-react-aria-rangecalendar--example |
+| `ClientApp/src/components/AriaComponents/RangeCalander/RangeCalendar.tsx#RangeCalendarProps` | nonvisual | RangeCalendarProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/SearchField/SearchField.tsx#SearchField` | direct | SearchField | 1 | evaluation-react-aria-searchfield--example |
+| `ClientApp/src/components/AriaComponents/SearchField/SearchField.tsx#SearchFieldProps` | nonvisual | SearchFieldProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.tsx#SegmentedControl` | direct | SegmentedControl | 1 | components-ariacomponents-segmentedcontrol--disabled-item |
+| `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.tsx#SegmentedControlItem` | direct | SegmentedControlItem | 1 | components-ariacomponents-segmentedcontrol--disabled-item |
+| `ClientApp/src/components/AriaComponents/Select/Select.tsx#Select` | direct | Select | 1 | evaluation-react-aria-select--example |
+| `ClientApp/src/components/AriaComponents/Select/Select.tsx#SelectItem` | direct | SelectItem | 1 | evaluation-react-aria-select--example |
+| `ClientApp/src/components/AriaComponents/Select/Select.tsx#SelectListBox` | direct | SelectListBox | 1 | evaluation-react-aria-select--example |
+| `ClientApp/src/components/AriaComponents/Select/Select.tsx#SelectProps` | nonvisual | SelectProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Seperator/Separator.tsx#Separator` | direct | Separator | 1 | evaluation-react-aria-toolbar--example |
+| `ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx#Sheet` | direct | Sheet | 1 | components-ariacomponents-sheet--context-driven-open-and-dismiss |
+| `ClientApp/src/components/AriaComponents/Slider/Slider.tsx#Slider` | direct | Slider | 1 | evaluation-react-aria-slider--example |
+| `ClientApp/src/components/AriaComponents/Slider/Slider.tsx#SliderProps` | nonvisual | SliderProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Switch/Switch.tsx#Switch` | direct | Switch | 1 | evaluation-react-aria-switch--example |
+| `ClientApp/src/components/AriaComponents/Switch/Switch.tsx#SwitchProps` | nonvisual | SwitchProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#Cell` | direct | Cell | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#Column` | direct | Column | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#Row` | direct | Row | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#Table` | direct | Table | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#TableBody` | direct | TableBody | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#TableFooter` | direct | TableFooter | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#TableHeader` | direct | TableHeader | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Table/Table.tsx#TableLoadMoreItem` | direct | TableLoadMoreItem | 1 | evaluation-react-aria-table--example |
+| `ClientApp/src/components/AriaComponents/Tabs/Tabs.tsx#Tab` | direct | Tab | 1 | evaluation-react-aria-tabs--example |
+| `ClientApp/src/components/AriaComponents/Tabs/Tabs.tsx#TabList` | direct | TabList | 1 | evaluation-react-aria-tabs--example |
+| `ClientApp/src/components/AriaComponents/Tabs/Tabs.tsx#TabPanel` | direct | TabPanel | 1 | evaluation-react-aria-tabs--example |
+| `ClientApp/src/components/AriaComponents/Tabs/Tabs.tsx#TabPanels` | direct | TabPanels | 1 | evaluation-react-aria-tabs--example |
+| `ClientApp/src/components/AriaComponents/Tabs/Tabs.tsx#Tabs` | direct | Tabs | 1 | evaluation-react-aria-tabs--example |
+| `ClientApp/src/components/AriaComponents/TagGroups/TagGroup.tsx#Tag` | direct | Tag | 1 | evaluation-react-aria-taggroup--example |
+| `ClientApp/src/components/AriaComponents/TagGroups/TagGroup.tsx#TagGroup` | direct | TagGroup | 1 | evaluation-react-aria-taggroup--example |
+| `ClientApp/src/components/AriaComponents/TagGroups/TagGroup.tsx#TagGroupProps` | nonvisual | TagGroupProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/TextField/TextField.tsx#TextArea` | direct | TextArea | 1 | evaluation-react-aria-textfield--example |
+| `ClientApp/src/components/AriaComponents/TextField/TextField.tsx#TextField` | direct | TextField | 1 | evaluation-react-aria-textfield--example |
+| `ClientApp/src/components/AriaComponents/TextField/TextField.tsx#TextFieldProps` | nonvisual | TextFieldProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/TimeField/TimeField.tsx#TimeField` | direct | TimeField | 1 | evaluation-react-aria-timefield--example |
+| `ClientApp/src/components/AriaComponents/TimeField/TimeField.tsx#TimeFieldProps` | nonvisual | TimeFieldProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Toast/Toast.tsx#MyToast` | direct | MyToast | 1 | evaluation-react-aria-toast--example |
+| `ClientApp/src/components/AriaComponents/Toast/Toast.tsx#MyToastRegion` | direct | MyToastRegion | 1 | evaluation-react-aria-toast--example |
+| `ClientApp/src/components/AriaComponents/Toast/ToastQueue.ts#MyToastContent` | nonvisual | MyToastContent | 0 | none |
+| `ClientApp/src/components/AriaComponents/Toast/ToastQueue.ts#queue` | direct | queue | 1 | evaluation-react-aria-toast--example |
+| `ClientApp/src/components/AriaComponents/ToggleButton/ToggleButton.tsx#ToggleButton` | direct | ToggleButton | 1 | evaluation-react-aria-togglebutton--example |
+| `ClientApp/src/components/AriaComponents/ToggleButtonGroup/ToggleButtonGroup.tsx#ToggleButtonGroup` | direct | ToggleButtonGroup | 1 | evaluation-react-aria-togglebuttongroup--example |
+| `ClientApp/src/components/AriaComponents/ToolTip/Tooltip.tsx#Tooltip` | direct | Tooltip | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/ToolTip/Tooltip.tsx#TooltipProps` | nonvisual | TooltipProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/ToolTip/Tooltip.tsx#TooltipTrigger` | direct | TooltipTrigger | 1 | evaluation-react-aria-tooltip--example |
+| `ClientApp/src/components/AriaComponents/Toolbar/Toolbar.tsx#Toolbar` | direct | Toolbar | 1 | evaluation-react-aria-toolbar--example |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#Tree` | direct | Tree | 1 | evaluation-react-aria-tree--example |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#TreeHeader` | direct | TreeHeader | 1 | evaluation-react-aria-tree--example |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#TreeItem` | direct | TreeItem | 1 | evaluation-react-aria-tree--example |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#TreeItemContent` | direct | TreeItemContent | 1 | evaluation-react-aria-tree--example |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#TreeItemProps` | nonvisual | TreeItemProps | 0 | none |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#TreeLoadMoreItem` | direct | TreeLoadMoreItem | 1 | evaluation-react-aria-tree--example |
+| `ClientApp/src/components/AriaComponents/Tree/Tree.tsx#TreeSection` | direct | TreeSection | 1 | evaluation-react-aria-tree--example |
+| `ClientApp/src/components/AriaComponents/modal/Modal.tsx#Modal` | consumer | Modal | 1 | evaluation-react-aria-commandpalette--example |
+| `ClientApp/src/components/AriaComponents/numberfield/NumberField.tsx#NumberField` | direct | NumberField | 1 | evaluation-react-aria-numberfield--example |
+| `ClientApp/src/components/AriaComponents/numberfield/NumberField.tsx#NumberFieldProps` | nonvisual | NumberFieldProps | 0 | none |
+| `ClientApp/src/components/BlockUISpinner/index.tsx#default` | consumer | default | 1 | components-inputs-attachment-attachmentnew--documents-without-ids |
+| `ClientApp/src/components/BodyText/index.tsx#BodyTextProps` | nonvisual | BodyTextProps | 0 | none |
+| `ClientApp/src/components/BodyText/index.tsx#default` | consumer | default | 1 | routes-dashboard-dashboardtypeapproval--shell |
+| `ClientApp/src/components/Breadcrumb/index.tsx#CustomBreadcrumbItem` | nonvisual | CustomBreadcrumbItem | 0 | none |
+| `ClientApp/src/components/Breadcrumb/index.tsx#CustomBreadcrumbProps` | nonvisual | CustomBreadcrumbProps | 0 | none |
+| `ClientApp/src/components/Breadcrumb/index.tsx#default` | direct | Breadcrumb | 1 | components-breadcrumb--three-levels |
+| `ClientApp/src/components/Buttons/BackToDashboardButton/index.tsx#BackToDashboardButtonProps` | nonvisual | BackToDashboardButtonProps | 0 | none |
+| `ClientApp/src/components/Buttons/BackToDashboardButton/index.tsx#default` | direct | default | 1 | components-buttons-backtodashboardbutton--default |
+| `ClientApp/src/components/Buttons/ButtonGroup/index.tsx#ButtonGroupProps` | nonvisual | ButtonGroupProps | 0 | none |
+| `ClientApp/src/components/Buttons/ButtonGroup/index.tsx#default` | direct | Breadth | 1 | components-buttons-breadth--edit-section |
+| `ClientApp/src/components/Buttons/EditButton/index.tsx#EditButtonProps` | nonvisual | EditButtonProps | 0 | none |
+| `ClientApp/src/components/Buttons/EditButton/index.tsx#default` | direct | Breadth | 1 | components-buttons-breadth--edit-section |
+| `ClientApp/src/components/Buttons/LinkButton/index.tsx#default` | direct | Breadth | 1 | components-buttons-breadth--edit-section |
+| `ClientApp/src/components/Buttons/PrimaryButton/index.tsx#PrimaryButtonProps` | nonvisual | PrimaryButtonProps | 0 | none |
+| `ClientApp/src/components/Buttons/PrimaryButton/index.tsx#default` | direct | PrimaryButton | 1 | components-buttons-primarybutton--css-check |
+| `ClientApp/src/components/Buttons/SecondaryButton/index.tsx#default` | consumer | default | 1 | components-inputs-datepicker-customdatepicker--collapsed |
+| `ClientApp/src/components/Buttons/buttonClassName.ts#getButtonClassName` | nonvisual | getButtonClassName | 0 | none |
+| `ClientApp/src/components/ErrorBoundary/ErrorDisplay.tsx#default` | consumer | default | 1 | components-errorboundary--no-error |
+| `ClientApp/src/components/ErrorBoundary/index.tsx#ErrorBoundaryProps` | nonvisual | ErrorBoundaryProps | 0 | none |
+| `ClientApp/src/components/ErrorBoundary/index.tsx#default` | direct | default | 1 | components-errorboundary--no-error |
+| `ClientApp/src/components/Footer/accessibility.tsx#default` | consumer | default | 1 | components-footer--accessibility-modal-open |
+| `ClientApp/src/components/Footer/index.tsx#default` | direct | Footer | 1 | components-footer--accessibility-modal-open |
+| `ClientApp/src/components/Footer/privacy.tsx#default` | consumer | default | 1 | components-footer--accessibility-modal-open |
+| `ClientApp/src/components/Footer/termsOfUse.tsx#default` | consumer | default | 1 | components-footer--accessibility-modal-open |
+| `ClientApp/src/components/Header/AuthenticatedNavbarItems.tsx#default` | consumer | default | 1 | components-header--authenticated |
+| `ClientApp/src/components/Header/NavbarBrand.tsx#default` | consumer | default | 1 | components-header--authenticated |
+| `ClientApp/src/components/Header/NavbarEnvironment.tsx#default` | consumer | default | 1 | components-header--authenticated |
+| `ClientApp/src/components/Header/NavbarMessage.tsx#default` | consumer | default | 1 | components-forms-formbanner--go-to-dashboard |
+| `ClientApp/src/components/Header/UnauthenticatedNavbarItems.tsx#default` | consumer | default | 1 | components-header--authenticated |
+| `ClientApp/src/components/Header/index.tsx#default` | direct | Header | 1 | components-header--authenticated |
+| `ClientApp/src/components/HeaderIntroText/index.tsx#HeaderIntroTextProps` | nonvisual | HeaderIntroTextProps | 0 | none |
+| `ClientApp/src/components/HeaderIntroText/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Home.tsx#default` | direct | default | 1 | components-home--public-landing |
+| `ClientApp/src/components/Icons/ExternalLinkIcon.tsx#default` | consumer | default | 1 | components-intextlink--external |
+| `ClientApp/src/components/InTextLink/index.tsx#InTextLinkProps` | nonvisual | InTextLinkProps | 0 | none |
+| `ClientApp/src/components/InTextLink/index.tsx#default` | direct | InTextLink | 1 | components-intextlink--external |
+| `ClientApp/src/components/Inputs/AddressLookup/ManualAddressInput.tsx#default` | direct | AddressLookup | 1 | components-inputs-addresslookup--default |
+| `ClientApp/src/components/Inputs/AddressLookup/constants.ts#default` | nonvisual | default | 0 | none |
+| `ClientApp/src/components/Inputs/AddressLookup/index.tsx#default` | direct | AddressLookup | 1 | components-inputs-addresslookup--default |
+| `ClientApp/src/components/Inputs/AddressLookup/types.ts#AddressLookupProps` | nonvisual | AddressLookupProps | 0 | none |
+| `ClientApp/src/components/Inputs/AddressLookup/types.ts#ManualAddressInputProps` | nonvisual | ManualAddressInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.tsx#default` | direct | AttachmentItemNew | 1 | components-inputs-attachment-attachmentitemnew--editable |
+| `ClientApp/src/components/Inputs/Attachment/index-new.tsx#default` | direct | AttachmentNew | 1 | components-inputs-attachment-attachmentnew--documents-without-ids |
+| `ClientApp/src/components/Inputs/Attachment/types.ts#AttachmentProps` | nonvisual | AttachmentProps | 0 | none |
+| `ClientApp/src/components/Inputs/Attachment/types.ts#UploadProgress` | nonvisual | UploadProgress | 0 | none |
+| `ClientApp/src/components/Inputs/AuthorisedAgent/index.tsx#default` | consumer | default | 1 | routes-typeapproval-organisationandcontact--edit-step |
+| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx#default` | direct | AutoSuggest | 1 | components-inputs-autosuggest--empty-state |
+| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestOption.tsx#default` | direct | AutoSuggestOption | 1 | components-inputs-autosuggest-autosuggestoption--default |
+| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestOptions.tsx#default` | nonvisual | default | 0 | none |
+| `ClientApp/src/components/Inputs/AutoSuggest/index.tsx#default` | direct | AutoSuggest | 1 | components-inputs-autosuggest--empty-state |
+| `ClientApp/src/components/Inputs/AutoSuggest/types.ts#AutoSuggestContainerProps` | nonvisual | AutoSuggestContainerProps | 0 | none |
+| `ClientApp/src/components/Inputs/AutoSuggest/types.ts#AutoSuggestOption` | nonvisual | AutoSuggestOption | 0 | none |
+| `ClientApp/src/components/Inputs/AutoSuggest/types.ts#AutoSuggestOptionProps` | nonvisual | AutoSuggestOptionProps | 0 | none |
+| `ClientApp/src/components/Inputs/AutoSuggest/types.ts#AutoSuggestOptionsProps` | nonvisual | AutoSuggestOptionsProps | 0 | none |
+| `ClientApp/src/components/Inputs/AutoSuggest/types.ts#AutoSuggestProps` | nonvisual | AutoSuggestProps | 0 | none |
+| `ClientApp/src/components/Inputs/CertificateNumberLookup/index.tsx#CertificateNumberLookupProps` | nonvisual | CertificateNumberLookupProps | 0 | none |
+| `ClientApp/src/components/Inputs/CertificateNumberLookup/index.tsx#default` | consumer | default | 1 | routes-typeapproval-applicationandinstrument--edit-step |
+| `ClientApp/src/components/Inputs/Checkbox/index.tsx#default` | direct | Inputs | 1 | components-inputs--common-field-set |
+| `ClientApp/src/components/Inputs/Checkbox/types.ts#CheckboxProps` | nonvisual | CheckboxProps | 0 | none |
+| `ClientApp/src/components/Inputs/CheckboxGroup/index.tsx#default` | consumer | default | 1 | routes-typeapproval-applicationandinstrument--edit-step |
+| `ClientApp/src/components/Inputs/CheckboxGroup/types.ts#CheckboxGroupProps` | nonvisual | CheckboxGroupProps | 0 | none |
+| `ClientApp/src/components/Inputs/CheckboxGroup/types.ts#CheckboxOption` | nonvisual | CheckboxOption | 0 | none |
+| `ClientApp/src/components/Inputs/DatePicker/CustomDateInput.tsx#default` | direct | CustomDateInput | 1 | components-inputs-datepicker-customdateinput--default |
+| `ClientApp/src/components/Inputs/DatePicker/CustomDatePicker.tsx#default` | direct | CustomDatePicker | 1 | components-inputs-datepicker-customdatepicker--collapsed |
+| `ClientApp/src/components/Inputs/DatePicker/index.tsx#default` | direct | Inputs | 1 | forms-inputs--text-input-disabled |
+| `ClientApp/src/components/Inputs/DatePicker/types.ts#CustomDatePickerProps` | nonvisual | CustomDatePickerProps | 0 | none |
+| `ClientApp/src/components/Inputs/DatePicker/types.ts#CustomInputControlRef` | nonvisual | CustomInputControlRef | 0 | none |
+| `ClientApp/src/components/Inputs/DatePicker/types.ts#CustomInputForwardRefProps` | nonvisual | CustomInputForwardRefProps | 0 | none |
+| `ClientApp/src/components/Inputs/DatePicker/types.ts#DatePickerProps` | nonvisual | DatePickerProps | 0 | none |
+| `ClientApp/src/components/Inputs/NumberInput/index.tsx#default` | direct | Inputs | 1 | components-inputs--common-field-set |
+| `ClientApp/src/components/Inputs/NumberInput/phoneFormat.ts#getPhoneNumberFormat` | nonvisual | getPhoneNumberFormat | 0 | none |
+| `ClientApp/src/components/Inputs/NumberInput/types.ts#FormatInputValueFunction` | nonvisual | FormatInputValueFunction | 0 | none |
+| `ClientApp/src/components/Inputs/NumberInput/types.ts#INumericFormatProps` | nonvisual | INumericFormatProps | 0 | none |
+| `ClientApp/src/components/Inputs/NumberInput/types.ts#NumberInputProps` | nonvisual | NumberInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/NumberInput/types.ts#NumericFormatFixed` | nonvisual | NumericFormatFixed | 0 | none |
+| `ClientApp/src/components/Inputs/NumberInput/types.ts#PatternFormatFixed` | nonvisual | PatternFormatFixed | 0 | none |
+| `ClientApp/src/components/Inputs/OrganisationNameLookup/index.tsx#OrganisationNameLookupProps` | nonvisual | OrganisationNameLookupProps | 0 | none |
+| `ClientApp/src/components/Inputs/OrganisationNameLookup/index.tsx#default` | consumer | default | 1 | routes-account-createaccountstep--organisation-details |
+| `ClientApp/src/components/Inputs/OrganisationNameLookup/suggestionUtils.ts#getFilteredSuggestions` | nonvisual | getFilteredSuggestions | 0 | none |
+| `ClientApp/src/components/Inputs/RadioButton/index.tsx#default` | consumer | default | 1 | forms-inputs--checkbox-default |
+| `ClientApp/src/components/Inputs/RadioButton/types.ts#RadioButtonProps` | nonvisual | RadioButtonProps | 0 | none |
+| `ClientApp/src/components/Inputs/RadioButtonGroup/index.tsx#default` | direct | Inputs | 1 | components-inputs--common-field-set |
+| `ClientApp/src/components/Inputs/RadioButtonGroup/types.ts#RadioButtonGroupProps` | nonvisual | RadioButtonGroupProps | 0 | none |
+| `ClientApp/src/components/Inputs/RhfAddressLookup/RhfManualAddressInput.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Inputs/RhfAddressLookup/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Inputs/RhfAttachment/RhfAttachmentItem.tsx#default` | consumer | default | 1 | components-inputs-attachment-rhfattachment--empty-uploader |
+| `ClientApp/src/components/Inputs/RhfAttachment/index.tsx#default` | direct | default | 1 | components-inputs-attachment-rhfattachment--empty-uploader |
+| `ClientApp/src/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Inputs/RhfAutoSuggest/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Inputs/RhfCheckbox/index.tsx#default` | direct | default | 1 | components-inputs-rhfcheckbox--default |
+| `ClientApp/src/components/Inputs/RhfCheckbox/types.ts#RhfCheckboxProps` | nonvisual | RhfCheckboxProps | 0 | none |
+| `ClientApp/src/components/Inputs/RhfNumberInput/index.tsx#default` | direct | default | 1 | components-inputs-rhfnumberinput--phone |
+| `ClientApp/src/components/Inputs/RhfNumberInput/types.ts#RhfNumberInputProps` | nonvisual | RhfNumberInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/RhfRadioButtonGroup/index.tsx#default` | direct | default | 1 | components-inputs-rhfradiobuttongroup--default |
+| `ClientApp/src/components/Inputs/RhfRadioButtonGroup/types.ts#RhfRadioButtonGroupProps` | nonvisual | RhfRadioButtonGroupProps | 0 | none |
+| `ClientApp/src/components/Inputs/RhfRadioButtonGroup/types.ts#RhfRadioOption` | nonvisual | RhfRadioOption | 0 | none |
+| `ClientApp/src/components/Inputs/RhfSelectInput/index.tsx#default` | direct | default | 1 | components-inputs-rhfselectinput--default |
+| `ClientApp/src/components/Inputs/RhfSelectInput/types.ts#RhfSelectInputProps` | nonvisual | RhfSelectInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/RhfTextAreaInput/index.tsx#default` | direct | default | 1 | components-inputs-rhftextareainput--default |
+| `ClientApp/src/components/Inputs/RhfTextAreaInput/types.ts#RhfTextAreaInputProps` | nonvisual | RhfTextAreaInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/RhfTextInput/index.tsx#default` | direct | default | 1 | components-inputs-rhftextinput--default |
+| `ClientApp/src/components/Inputs/RhfTextInput/types.ts#RhfTextInputProps` | nonvisual | RhfTextInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/SelectInput/index.tsx#default` | direct | Inputs | 1 | components-inputs--common-field-set |
+| `ClientApp/src/components/Inputs/SelectInput/types.ts#SelectInputOption` | nonvisual | SelectInputOption | 0 | none |
+| `ClientApp/src/components/Inputs/SelectInput/types.ts#SelectInputProps` | nonvisual | SelectInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/TextAreaInput/index.tsx#default` | direct | Inputs | 1 | components-inputs--common-field-set |
+| `ClientApp/src/components/Inputs/TextAreaInput/types.ts#TextAreaInputProps` | nonvisual | TextAreaInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/TextInput/index.tsx#TextInputProps` | nonvisual | TextInputProps | 0 | none |
+| `ClientApp/src/components/Inputs/TextInput/index.tsx#default` | direct | Inputs | 1 | components-inputs--common-field-set |
+| `ClientApp/src/components/Inputs/TextReadOnly/index.tsx#FormatInputValueFunction` | nonvisual | FormatInputValueFunction | 0 | none |
+| `ClientApp/src/components/Inputs/TextReadOnly/index.tsx#TextReadOnlyProps` | nonvisual | TextReadOnlyProps | 0 | none |
+| `ClientApp/src/components/Inputs/TextReadOnly/index.tsx#default` | consumer | default | 1 | forms-inputs--checkbox-default |
+| `ClientApp/src/components/Inputs/useRhfFieldA11y.ts#RhfRules` | nonvisual | RhfRules | 0 | none |
+| `ClientApp/src/components/Inputs/useRhfFieldA11y.ts#useRhfFieldA11y` | nonvisual | useRhfFieldA11y | 0 | none |
+| `ClientApp/src/components/Layout/index.tsx#default` | direct | Layout | 1 | components-layout--portal-shell |
+| `ClientApp/src/components/Pagination/index.tsx#default` | direct | Pagination | 1 | components-pagination--first-page |
+| `ClientApp/src/components/Pagination/types.ts#CustomPaginationProps` | nonvisual | CustomPaginationProps | 0 | none |
+| `ClientApp/src/components/Pagination/useVisiblePageRange.tsx#default` | consumer | default | 1 | components-pagination--custom-style-variant |
+| `ClientApp/src/components/PaginationHeader/index.tsx#default` | direct | PaginationHeader | 1 | components-paginationheader--last-page |
+| `ClientApp/src/components/Pill/QuoteStatusPill.tsx#StatusPillProps` | nonvisual | StatusPillProps | 0 | none |
+| `ClientApp/src/components/Pill/QuoteStatusPill.tsx#default` | direct | default | 1 | components-pill--dashboard-statuses |
+| `ClientApp/src/components/Pill/StatusPill.tsx#StatusPillProps` | nonvisual | StatusPillProps | 0 | none |
+| `ClientApp/src/components/Pill/StatusPill.tsx#default` | direct | default | 1 | components-pill--dashboard-statuses |
+| `ClientApp/src/components/Progress/ProgressBar.tsx#default` | direct | ProgressBar | 1 | components-progress-progressbar--in-progress |
+| `ClientApp/src/components/Progress/ProgressFileList.tsx#default` | direct | ProgressFileList | 1 | components-progress-progressfilelist--cancel-invokes-callback |
+| `ClientApp/src/components/RequestList/instrumentItem.tsx#default` | direct | InstrumentItem | 1 | dashboard-instrumentitem--details-tab |
+| `ClientApp/src/components/RequestList/noRequests.tsx#default` | consumer | default | 1 | routes-dashboard-dashboardtypeapproval--shell |
+| `ClientApp/src/components/RequestList/paRequestItem.tsx#default` | direct | PaRequestItem | 1 | components-requestlist-parequestitem--draft-application |
+| `ClientApp/src/components/RequestList/requestItem.tsx#default` | consumer | default | 1 | routes-dashboard--empty-state |
+| `ClientApp/src/components/RouteLeavingGuard/index.tsx#default` | direct | RouteLeavingGuard | 1 | components-routeleavingguard--proceed-after-confirm |
+| `ClientApp/src/components/RouteLeavingGuard/types.ts#RouteLeavingGuardProps` | nonvisual | RouteLeavingGuardProps | 0 | none |
+| `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.tsx#default` | direct | PaFilterMenu | 1 | components-searchfilter-typeapproval-pafiltermenu--opened |
+| `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts#PaFilterMenuProps` | nonvisual | PaFilterMenuProps | 0 | none |
+| `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx#default` | direct | default | 1 | components-searchfilter-typeapproval-pasearchfilter--default |
+| `ClientApp/src/components/SearchFilter/filterMenu.tsx#default` | direct | FilterMenu | 1 | components-searchfilter-filtermenu--opened |
+| `ClientApp/src/components/SearchFilter/index.tsx#default` | direct | SearchFilter | 1 | components-searchfilter--dashboard-filters |
+| `ClientApp/src/components/SearchFilter/searchBox.tsx#default` | direct | SearchBox | 1 | components-searchfilter-searchbox--empty |
+| `ClientApp/src/components/SearchFilter/searchBoxProps.ts#SearchBoxProps` | nonvisual | SearchBoxProps | 0 | none |
+| `ClientApp/src/components/SearchFilter/types.ts#DashboardTab` | nonvisual | DashboardTab | 0 | none |
+| `ClientApp/src/components/SearchFilter/types.ts#Filters` | nonvisual | Filters | 0 | none |
+| `ClientApp/src/components/SearchFilter/types.ts#InitialFilters` | nonvisual | InitialFilters | 0 | none |
+| `ClientApp/src/components/SearchFilter/types.ts#PaSearchFilterProps` | nonvisual | PaSearchFilterProps | 0 | none |
+| `ClientApp/src/components/SearchFilter/types.ts#SearchFilterProps` | nonvisual | SearchFilterProps | 0 | none |
+| `ClientApp/src/components/SearchFilter/types.ts#UserProfile` | nonvisual | UserProfile | 0 | none |
+| `ClientApp/src/components/SlateEditor/SlateEditor.tsx#CustomElement` | nonvisual | CustomElement | 0 | none |
+| `ClientApp/src/components/SlateEditor/SlateEditor.tsx#default` | direct | SlateEditor | 1 | components-slateeditor--default |
+| `ClientApp/src/components/SlateEditor/SlateEditor.tsx#serializeToHtml` | direct | serializeToHtml | 1 | components-slateeditor--default |
+| `ClientApp/src/components/SteppedNavigation/index.tsx#default` | direct | SteppedNavigation | 1 | components-steppednavigation--current-step |
+| `ClientApp/src/components/SteppedNavigation/types.ts#SteppedNavigationProps` | nonvisual | SteppedNavigationProps | 0 | none |
+| `ClientApp/src/components/SteppedNavigation/types.ts#SteppedNavigationStep` | nonvisual | SteppedNavigationStep | 0 | none |
+| `ClientApp/src/components/SummaryDisplay/index.tsx#default` | direct | SummaryDisplay | 1 | components-summarydisplay--custom-body |
+| `ClientApp/src/components/SummaryDisplay/types.ts#SummaryDisplayProps` | nonvisual | SummaryDisplayProps | 0 | none |
+| `ClientApp/src/components/SummaryDisplay/types.ts#SummaryFormatInputValueFunction` | nonvisual | SummaryFormatInputValueFunction | 0 | none |
+| `ClientApp/src/components/Utilities/ContactLink.tsx#default` | consumer | default | 1 | components-errorboundary--no-error |
+| `ClientApp/src/components/Utilities/ViewMeasurementReport.tsx#ViewMeasurementReportProps` | nonvisual | ViewMeasurementReportProps | 0 | none |
+| `ClientApp/src/components/Utilities/ViewMeasurementReport.tsx#default` | direct | default | 1 | components-utilities-viewmeasurementreport--default |
+| `ClientApp/src/components/Utilities/ViewPdfButton.tsx#ViewPdfButtonProps` | nonvisual | ViewPdfButtonProps | 0 | none |
+| `ClientApp/src/components/Utilities/ViewPdfButton.tsx#default` | consumer | default | 1 | components-utilities-viewmeasurementreport--default |
+| `ClientApp/src/components/Utilities/ViewPdfQuote.tsx#ViewPdfQuoteProps` | nonvisual | ViewPdfQuoteProps | 0 | none |
+| `ClientApp/src/components/Utilities/ViewPdfQuote.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Utilities/ViewPdfQuoteTerms.tsx#ViewPdfQuoteTermsProps` | nonvisual | ViewPdfQuoteTermsProps | 0 | none |
+| `ClientApp/src/components/Utilities/ViewPdfQuoteTerms.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Utilities/backToTopButton.tsx#default` | consumer | default | 1 | components-layout--portal-shell |
+| `ClientApp/src/components/Utilities/contactDetails.tsx#ContactDetailsProps` | nonvisual | ContactDetailsProps | 0 | none |
+| `ClientApp/src/components/Utilities/contactDetails.tsx#default` | consumer | default | 1 | dashboard-instrumentitem--details-tab |
+| `ClientApp/src/components/Utilities/deliveryInstructions.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Utilities/findElementInTreeById.ts#default` | nonvisual | default | 0 | none |
+| `ClientApp/src/components/Utilities/hashLink.tsx#default` | consumer | default | 1 | components-forms-errorsummary--conflict-error |
+| `ClientApp/src/components/Utilities/mailingLabel.tsx#MailingLabelProps` | nonvisual | MailingLabelProps | 0 | none |
+| `ClientApp/src/components/Utilities/mailingLabel.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Utilities/routeAccessibleNavigation.tsx#default` | direct | RouteAccessibleNavigation | 1 | components-utilities-routeaccessiblenavigation--live-region |
+| `ClientApp/src/components/Utilities/routeChangeScrollTop.tsx#default` | consumer | default | 1 | components-layout--portal-shell |
+| `ClientApp/src/components/Utilities/skipLinks.tsx#default` | consumer | default | 1 | components-forms-formbanner--go-to-dashboard |
+| `ClientApp/src/components/Utilities/useBodyClass.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/Utilities/useDebounce.ts#default` | nonvisual | default | 0 | none |
+| `ClientApp/src/components/Utilities/useHtmlTitle.tsx#default` | consumer | default | 1 | routes-dashboard-dashboardtypeapproval--shell |
+| `ClientApp/src/components/Welcome/index.tsx#default` | direct | Welcome | 1 | components-welcome--default |
+| `ClientApp/src/components/forms/CommonForms/ContactDetails/index.tsx#ContactDetailsProps` | nonvisual | ContactDetailsProps | 0 | none |
+| `ClientApp/src/components/forms/CommonForms/ContactDetails/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/forms/CommonForms/RhfContactDetails/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/forms/Details/index.tsx#default` | consumer | default | 1 | forms-inputs--checkbox-default |
+| `ClientApp/src/components/forms/Details/types.ts#DetailsProps` | nonvisual | DetailsProps | 0 | none |
+| `ClientApp/src/components/forms/ErrorSummary/index.tsx#default` | direct | default | 1 | components-forms-errorsummary--conflict-error |
+| `ClientApp/src/components/forms/ErrorSummary/rhfErrors.ts#flattenRhfErrors` | nonvisual | flattenRhfErrors | 0 | none |
+| `ClientApp/src/components/forms/ErrorSummary/types.ts#ErrorSummaryProps` | nonvisual | ErrorSummaryProps | 0 | none |
+| `ClientApp/src/components/forms/ErrorSummary/types.ts#FormikErrorsSummaryProps` | nonvisual | FormikErrorsSummaryProps | 0 | none |
+| `ClientApp/src/components/forms/FormBanner/index.tsx#default` | direct | default | 1 | components-forms-formbanner--go-to-dashboard |
+| `ClientApp/src/components/forms/FormBanner/types.ts#FormBannerProps` | nonvisual | FormBannerProps | 0 | none |
+| `ClientApp/src/components/forms/FormBannerSlot/index.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/FormikForm/formikHelpers.ts#default` | nonvisual | default | 0 | none |
+| `ClientApp/src/components/forms/FormikForm/index.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/FormikForm/types.ts#FormikFormProps` | nonvisual | FormikFormProps | 0 | none |
+| `ClientApp/src/components/forms/HidableField/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/forms/HidableField/types.ts#HidableFieldProps` | nonvisual | HidableFieldProps | 0 | none |
+| `ClientApp/src/components/forms/IntentButton/index.tsx#IntentButtonChildren` | nonvisual | IntentButtonChildren | 0 | none |
+| `ClientApp/src/components/forms/IntentButton/index.tsx#default` | consumer | default | 1 | components-forms-formbanner--go-to-dashboard |
+| `ClientApp/src/components/forms/RhfForm/index.tsx#RhfFormApi` | nonvisual | RhfFormApi | 0 | none |
+| `ClientApp/src/components/forms/RhfForm/index.tsx#RhfFormProps` | nonvisual | RhfFormProps | 0 | none |
+| `ClientApp/src/components/forms/RhfForm/index.tsx#default` | consumer | default | 1 | components-forms-errorsummary--conflict-error |
+| `ClientApp/src/components/forms/RhfForm/index.tsx#useIsRhfShell` | nonvisual | useIsRhfShell | 0 | none |
+| `ClientApp/src/components/forms/RhfForm/index.tsx#useRhfFormApi` | nonvisual | useRhfFormApi | 0 | none |
+| `ClientApp/src/components/forms/RhfForm/wizardYupResolver.ts#SubmitMode` | nonvisual | SubmitMode | 0 | none |
+| `ClientApp/src/components/forms/RhfForm/wizardYupResolver.ts#createWizardYupResolver` | nonvisual | createWizardYupResolver | 0 | none |
+| `ClientApp/src/components/forms/RhfHidableField/hiddenRulesContext.tsx#RhfHiddenRulesProvider` | consumer | RhfHiddenRulesProvider | 1 | components-forms-errorsummary--conflict-error |
+| `ClientApp/src/components/forms/RhfHidableField/hiddenRulesContext.tsx#useHiddenRules` | nonvisual | useHiddenRules | 0 | none |
+| `ClientApp/src/components/forms/RhfHidableField/index.tsx#default` | consumer | default | 1 | routes-acceptquote--delivery-and-return-step |
+| `ClientApp/src/components/forms/SaveAndExitButton/index.tsx#default` | consumer | default | 1 | components-forms-formbanner--go-to-dashboard |
+| `ClientApp/src/components/forms/SubmitFormButton/index.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/UnsavedFormPrompt/RhfUnsavedFormPrompt.tsx#default` | direct | default | 1 | routes-exportcoverage--unsaved-form-prompt |
+| `ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt.tsx#UnsavedChangesPromptProps` | nonvisual | UnsavedChangesPromptProps | 0 | none |
+| `ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/WizardForm/NextStepButton.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/WizardForm/PreviousStepButton.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx#default` | consumer | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/WizardForm/WizardStep.tsx#default` | direct | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/WizardForm/errorState.ts#resolveErrorState` | nonvisual | resolveErrorState | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/index.tsx#default` | direct | default | 1 | forms-wizardform--step-1-contact-details |
+| `ClientApp/src/components/forms/WizardForm/types.ts#ErrorType` | nonvisual | ErrorType | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#NextStepButtonProps` | nonvisual | NextStepButtonProps | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#PreviousStepButtonProps` | nonvisual | PreviousStepButtonProps | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#SubmitFormResult` | nonvisual | SubmitFormResult | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#WizardFormProps` | nonvisual | WizardFormProps | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#WizardFormStepValues` | nonvisual | WizardFormStepValues | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#WizardRoutedStepProps` | nonvisual | WizardRoutedStepProps | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#WizardStepError` | nonvisual | WizardStepError | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/types.ts#WizardStepProps` | nonvisual | WizardStepProps | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/useWizardStepController.ts#WizardStepController` | nonvisual | WizardStepController | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/useWizardStepController.ts#WizardStepView` | nonvisual | WizardStepView | 0 | none |
+| `ClientApp/src/components/forms/WizardForm/useWizardStepController.ts#useWizardStepController` | nonvisual | useWizardStepController | 0 | none |
+| `ClientApp/src/components/forms/formPath.ts#getIn` | nonvisual | getIn | 0 | none |
+| `ClientApp/src/components/forms/formPath.ts#isObject` | nonvisual | isObject | 0 | none |
+| `ClientApp/src/components/forms/formPath.ts#setIn` | nonvisual | setIn | 0 | none |
+| `ClientApp/src/components/forms/saveAwareYupResolver.ts#createSaveAwareYupResolver` | nonvisual | createSaveAwareYupResolver | 0 | none |
+| `ClientApp/src/components/forms/types.ts#DiscardProps` | nonvisual | DiscardProps | 0 | none |
+| `ClientApp/src/components/forms/types.ts#FormErrors` | nonvisual | FormErrors | 0 | none |
+| `ClientApp/src/components/forms/types.ts#FormValues` | nonvisual | FormValues | 0 | none |
+| `ClientApp/src/components/forms/types.ts#HideRule` | nonvisual | HideRule | 0 | none |
+| `ClientApp/src/components/forms/types.ts#Hideable` | nonvisual | Hideable | 0 | none |
+| `ClientApp/src/components/forms/types.ts#ModalProps` | nonvisual | ModalProps | 0 | none |
+| `ClientApp/src/components/forms/types.ts#Validation` | nonvisual | Validation | 0 | none |
+| `ClientApp/src/components/forms/types.ts#ValidationSchema` | nonvisual | ValidationSchema | 0 | none |
+| `ClientApp/src/components/forms/useFormikRhfBridge.ts#BridgedValues` | nonvisual | BridgedValues | 0 | none |
+| `ClientApp/src/components/forms/useFormikRhfBridge.ts#useFormikRhfBridge` | nonvisual | useFormikRhfBridge | 0 | none |
+| `ClientApp/src/components/forms/utils.ts#isFieldPathHidden` | nonvisual | isFieldPathHidden | 0 | none |
+| `ClientApp/src/components/forms/utils.ts#isHidden` | nonvisual | isHidden | 0 | none |
+| `ClientApp/src/components/forms/utils.ts#normalizeSubmitValues` | nonvisual | normalizeSubmitValues | 0 | none |
+| `ClientApp/src/components/forms/utils.ts#removeHidden` | nonvisual | removeHidden | 0 | none |
+| `ClientApp/src/components/forms/utils.ts#validateForm` | nonvisual | validateForm | 0 | none |
+| `ClientApp/src/components/get-started/get-started.tsx#default` | consumer | default | 1 | components-home--public-landing |
+| `ClientApp/src/components/modals/BranchSelectorModal/enums.ts#BranchSelectionModalMode` | nonvisual | BranchSelectionModalMode | 0 | none |
+| `ClientApp/src/components/modals/BranchSelectorModal/index.tsx#default` | direct | Modals | 1 | modals--confirmation-closed |
+| `ClientApp/src/components/modals/ConfirmationModal/index.tsx#ConfirmationModalProps` | nonvisual | ConfirmationModalProps | 0 | none |
+| `ClientApp/src/components/modals/ConfirmationModal/index.tsx#default` | direct | Modals | 1 | modals--confirmation-closed |
+| `ClientApp/src/components/modals/ContentModal/index.tsx#ContentModalProps` | nonvisual | ContentModalProps | 0 | none |
+| `ClientApp/src/components/modals/ContentModal/index.tsx#default` | direct | ContentModal | 1 | components-modals-contentmodal--open-with-content |
+| `ClientApp/src/components/modals/ModalContext.tsx#ModalDispatch` | nonvisual | ModalDispatch | 0 | none |
+| `ClientApp/src/components/modals/ModalContext.tsx#ModalDispatchCtx` | consumer | ModalDispatchCtx | 1 | components-actions--icon-button |
+| `ClientApp/src/components/modals/ModalContext.tsx#ModalState` | nonvisual | ModalState | 0 | none |
+| `ClientApp/src/components/modals/ModalContext.tsx#ModalStateCtx` | consumer | ModalStateCtx | 1 | components-actions--icon-button |
+| `ClientApp/src/components/modals/ModalContext.tsx#useModalDispatch` | consumer | useModalDispatch | 1 | components-actions--icon-button |
+| `ClientApp/src/components/modals/ModalContext.tsx#useModalState` | consumer | useModalState | 1 | components-actions--icon-button |
+| `ClientApp/src/components/modals/RFQDeleteModal/index.tsx#default` | direct | Modals | 1 | modals--confirmation-closed |
+| `ClientApp/src/components/modals/TermsAndCondition/index.tsx#default` | consumer | default | 1 | routes-preconditions--renders-protected-content |
+| `ClientApp/src/components/reactaria_components/AlertMessage.tsx#AlertMessage` | direct | AlertMessage | 1 | components-react-aria-alertmessage--default |
+| `ClientApp/src/components/reactaria_components/PageHeader.tsx#PageHeader` | direct | PageHeader | 1 | components-react-aria-pageheader--long-content |
+| `ClientApp/src/components/reactaria_components/StatusPill.tsx#StatusPill` | direct | StatusPill | 1 | components-react-aria-statuspill--long-label |
+| `ClientApp/src/components/tiles/StandardPathway/DigitalIdentityFooter.tsx#default` | consumer | default | 1 | routes-dashboard-dashboardtypeapproval--shell |
+| `ClientApp/src/components/tiles/StandardPathway/StandardFooter.tsx#default` | consumer | default | 1 | routes-dashboard-dashboardtypeapproval--shell |
+| `ClientApp/src/components/tiles/StandardPathway/index.tsx#default` | consumer | default | 1 | routes-dashboard-dashboardtypeapproval--shell |
+| `ClientApp/src/components/tiles/StandardPathway/types.ts#StandardBasePathwayProps` | nonvisual | StandardBasePathwayProps | 0 | none |
+| `ClientApp/src/components/tiles/StandardPathway/types.ts#StandardExternalPathwayProps` | nonvisual | StandardExternalPathwayProps | 0 | none |
+| `ClientApp/src/components/tiles/StandardPathway/types.ts#StandardInternalPathwayProps` | nonvisual | StandardInternalPathwayProps | 0 | none |
+| `ClientApp/src/components/tiles/StandardPathway/types.ts#StandardPathwayFooterProps` | nonvisual | StandardPathwayFooterProps | 0 | none |
+| `ClientApp/src/components/tiles/StandardPathway/types.ts#StandardPathwayProps` | nonvisual | StandardPathwayProps | 0 | none |
+{/* storybook-coverage:generated:end */}

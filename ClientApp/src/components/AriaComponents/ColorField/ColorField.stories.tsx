@@ -1,9 +1,9 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorField } from './ColorField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorField',
   component: ColorField,
@@ -13,42 +13,40 @@ const meta = {
   args: {
     placeholder: 'Enter a color',
   },
-} satisfies Meta<typeof ColorField>;
+});
 
-export default meta;
-type Story = StoryFn<typeof ColorField>;
+export const Example = meta.story({
+  render: (args) => <ColorField {...args} />,
+  args: {
+    label: 'Color',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('textbox', { name: 'Color' }),
+    ).toBeInTheDocument();
+  },
+});
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorField {...args} />
-);
+export const WithDescription = meta.story({
+  render: (args) => <ColorField {...args} />,
+  args: {
+    label: 'Color',
+    description: 'Accepts hex, rgb or hsl notation.',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByText('Accepts hex, rgb or hsl notation.'),
+    ).toBeVisible();
+  },
+});
 
-Example.args = {
-  label: 'Color',
-};
-
-export const WithDescription: Story = (
-  args: Readonly<Parameters<Story>[0]>
-) => <ColorField {...args} />;
-
-WithDescription.args = {
-  label: 'Color',
-  description: 'Accepts hex, rgb or hsl notation.',
-};
-
-WithDescription.play = async ({ canvas }) => {
-  await expect(
-    canvas.getByText('Accepts hex, rgb or hsl notation.')
-  ).toBeVisible();
-};
-
-export const Unlabelled: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorField {...args} aria-label='Color' />
-);
-
-Unlabelled.play = async ({ canvas }) => {
-  // Without a label prop no Label element is rendered; the field is named by aria-label instead.
-  await expect(
-    canvas.getByRole('textbox', { name: 'Color' })
-  ).toBeInTheDocument();
-  await expect(canvas.queryByText('Color')).not.toBeInTheDocument();
-};
+export const Unlabelled = meta.story({
+  render: (args) => <ColorField {...args} aria-label='Color' />,
+  play: async ({ canvas }) => {
+    // Without a label prop no Label element is rendered; the field is named by aria-label instead.
+    await expect(
+      canvas.getByRole('textbox', { name: 'Color' }),
+    ).toBeInTheDocument();
+    await expect(canvas.queryByText('Color')).not.toBeInTheDocument();
+  },
+});

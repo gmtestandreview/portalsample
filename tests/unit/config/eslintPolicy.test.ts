@@ -27,7 +27,9 @@ let pluginRuleNames: string[] = [];
 type Severity = 0 | 1 | 2 | 'absent';
 
 const severityOf = (ruleId: string): Severity => {
-  const entry = appRules[ruleId];
+  const entry = Object.entries(appRules)
+    .find(([name]) => name === ruleId)
+    ?.at(1);
 
   if (entry === undefined) return 'absent';
 
@@ -59,6 +61,18 @@ describe('the resolved config actually applies to application files', () => {
 
   it('loads the plugin whose rule surface these assertions describe', () => {
     expect(pluginRuleNames.length).toBeGreaterThan(100);
+  });
+
+  it('loads jsx-a11y-x and enables its recommended rules', () => {
+    expect(appPluginNames).toContain('jsx-a11y-x');
+    expect(severityOf('jsx-a11y-x/alt-text')).toBe(2);
+  });
+
+  it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
+    const eslint = new ESLint();
+    const config = await eslint.calculateConfigForFile('vite.config.mts');
+
+    expect(Object.keys(config.rules ?? {}).length).toBeGreaterThan(100);
   });
 });
 
@@ -93,7 +107,7 @@ describe('eslint-plugin-react-hooks owns the hook rules alone', () => {
   });
 });
 
-describe('ESLint 10 core promotions are enforced, not inherited silently', () => {
+describe('eSLint 10 core promotions are enforced, not inherited silently', () => {
   // All three entered js.configs.recommended in ESLint 10 and were absent from
   // the ESLint 8 policy. D1 enabled them at error and repaired their 13 findings.
   it.each([
@@ -198,7 +212,7 @@ describe('unsupported compatibility deltas stay honest', () => {
       // A tripwire, not a preference: if an upgrade adds a real replacement,
       // this fails and the delta above should be adopted instead of documented.
       const matches = pluginRuleNames.filter((name) =>
-        new RegExp(fragment.replace('-', '.?'), 'i').test(name)
+        name.toLowerCase().includes(fragment.toLowerCase())
       );
 
       expect(matches).toEqual([]);

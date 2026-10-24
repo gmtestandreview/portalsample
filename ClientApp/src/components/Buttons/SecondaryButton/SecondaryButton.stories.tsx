@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import SecondaryButton from './index';
 
 /**
@@ -12,23 +12,20 @@ import SecondaryButton from './index';
  *
  */
 
-const meta = {
+const meta = preview.meta({
   component: SecondaryButton,
   tags: ['ai-generated', 'needs-work'],
-} satisfies Meta<typeof SecondaryButton>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     children: 'Cancel',
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     children: 'Cancel',
     disabled: true,
   },
-};
+});

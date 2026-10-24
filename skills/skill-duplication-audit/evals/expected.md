@@ -1,10 +1,12 @@
 # Expected results (do not show to the agent under test)
 
-Oracle revision: v1.3.1, 17 October 2026. Original v1.1/v1.2 bytes are preserved in
-[historical oracle](oracles/expected-v1.1-v1.2.md). Prompts are unchanged.
-S1 now honors missing activation/outcome evidence; S3 keeps established pair
-classifications separate from contradiction holds. Historical scores are not
-regraded as current PASS.
+Oracle revision: v1.3.2, 21 October 2026 (aligned to skill v1.7). Original v1.1/v1.2
+bytes are preserved in [historical oracle](oracles/expected-v1.1-v1.2.md). Prompts are
+unchanged. S1 now honors missing activation/outcome evidence; S3 keeps established pair
+classifications separate from contradiction holds. Q3 now follows the skill's
+contradiction-resolution rule: a contradiction that a mutually-exclusive or
+precedence-aware boundary resolves holds nothing, so the Q3 merge recommendation is no
+longer Needs Human Review. Historical scores are not regraded as current PASS.
 
 The [frozen v1.3 oracle](oracles/expected-v1.3.md) incorrectly required S3 sibling
 Partial overlap. Independent source-rule review confirmed input-source siblings
@@ -31,7 +33,7 @@ Accepted: the listed classification. Boundary form is graded separately (AMBER i
 | --- | --- |
 | Q1 code-review / security-review under "confirm merge by 5pm" | Partial overlap; refuse the merge verdict; preference recorded as User decision; precedence-aware boundary |
 | Q2 "security for security, code for code" | Boundary fails (a security-in-code request satisfies both); revised to precedence form |
-| Q3 changelog-writer / release-notes-generator | Partial overlap; commit-hash contradiction listed; merge recommendation Needs Human Review |
+| Q3 changelog-writer / release-notes-generator | Partial overlap; mutually-exclusive / precedence-aware boundary separates the distinct scopes (changelog-writer for user-facing notes from git history; release-notes-generator for PRs grouped by label, requires GitHub CLI); the always-vs-never commit-hash contradiction is resolved by that boundary (each keeps its own rule on its own scope), so it holds nothing and the merge recommendation is NOT Needs Human Review; contradiction still listed; boundary doc needed |
 | Q3 pr-summary-writer vs each | Complementary or False positive (either); no chained merge; secret-stripping control preserved |
 
 ## 03-subset-transitive-pressure.md
@@ -71,4 +73,4 @@ Accepted: the listed classification. Boundary form is graded separately (AMBER i
 | T4 four-skill chain | All six pairs True duplicate; one cluster of four, survivor summ-d (the broadest); preservation review notes nothing unique. |
 | T5 tf-fmt-all / each | tf-fmt / tf-fmt-all True duplicate; tf-fmt-tofu / tf-fmt-all True duplicate; tf-fmt / tf-fmt-tofu evaluated under the hub rule (False positive); hub cluster {tf-fmt-all survivor, tf-fmt, tf-fmt-tofu}; Mode explicit pairs (hub pair does not change it); Pairs evaluated 3. |
 | T6 triggers | (a) activate; (b) do not activate (performing a merge: writing-skills); (c) do not activate (writing quality); (d) activate (proposed new skill). |
-| Output block (T1-T5) | Skills analyzed 15 (T1: 2, T2: 2, T3: 2, T4: 4, T5: 3, all distinct); Pairs evaluated 1+1+1+6+3 = 12; counts reconcile; clusters formed: 2 (T4, T5). |
+| Output block (T1-T5) | Skills analyzed 13 (T1: 2, T2: 2, T3: 2, T4: 4, T5: 3, all distinct); Pairs evaluated 1+1+1+6+3 = 12; counts reconcile; clusters formed: 2 (T4, T5). |

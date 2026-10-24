@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Field, Form, Formik, useFormikContext } from 'formik';
@@ -12,27 +13,31 @@ import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
 import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 
-vi.mock('@/components/RouteLeavingGuard', () => ({
-  default: ({
-    when,
-    title,
-    body,
-    confirmBtn,
-  }: {
-    when?: boolean;
-    title?: string;
-    body?: string;
-    confirmBtn?: string;
-  }) => (
-    <div
-      data-testid='route-leaving-guard'
-      data-when={String(Boolean(when))}
-      data-title={title ?? ''}
-      data-body={body ?? ''}
-      data-confirm={confirmBtn ?? ''}
-    />
-  ),
-}));
+vi.mock(
+  '@/components/RouteLeavingGuard',
+  () =>
+    ({
+      default: ({
+        when,
+        title,
+        body,
+        confirmBtn,
+      }: {
+        when?: boolean;
+        title?: string;
+        body?: string;
+        confirmBtn?: string;
+      }) => (
+        <div
+          data-testid='route-leaving-guard'
+          data-when={String(Boolean(when))}
+          data-title={title ?? ''}
+          data-body={body ?? ''}
+          data-confirm={confirmBtn ?? ''}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule20>
+);
 
 interface FormikHarnessProps<TValues extends FormikValues> {
   readonly initialValues: TValues;
@@ -85,6 +90,7 @@ describe('form helper components', () => {
     );
 
     const disclosure = screen.getByText('Why we ask').closest('details');
+
     expect(disclosure).toHaveAttribute('id', 'details-help');
     expect(disclosure).not.toHaveAttribute('open');
 
@@ -157,7 +163,9 @@ describe('form helper components', () => {
     expect(
       screen.getByRole('button', { name: /Discard changes/i })
     ).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: /Discard changes/i }));
+
     expect(screen.getByTestId('location')).toHaveTextContent('/dashboard');
   });
 
@@ -215,6 +223,7 @@ describe('form helper components', () => {
     await user.type(screen.getByLabelText('Name'), 'Alex');
 
     const guard = screen.getByTestId('route-leaving-guard');
+
     expect(guard).toHaveAttribute('data-when', 'true');
     expect(guard).toHaveAttribute(
       'data-title',
@@ -346,6 +355,10 @@ describe('form utility helpers', () => {
     expect(removeHidden({ tags: ['visible'] }, values, {})).toEqual({
       tags: ['visible'],
     });
+
+    // A nullish field value falls back to an empty object rather than throwing
+    // when Object.entries is called.
+    expect(removeHidden(undefined, values, {})).toEqual({});
   });
 
   it('validates forms and filters Yup errors for hidden fields', async () => {

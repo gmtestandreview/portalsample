@@ -37,7 +37,7 @@ const failingResolver: Resolver<Values> = async () => ({
   errors: { notes: { type: 'validation', message: 'Enter notes' } },
 });
 
-describe('RhfTextAreaInput', () => {
+describe(RhfTextAreaInput, () => {
   it('renders a labelled textarea with defaults', () => {
     render(
       <Harness defaultValue='Hello'>
@@ -45,6 +45,7 @@ describe('RhfTextAreaInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox', { name: 'Notes' });
+
     expect(input).toHaveValue('Hello');
     expect(input).toHaveAttribute('rows', '3');
     expect(input).toHaveAttribute('id', 'notes');
@@ -57,6 +58,7 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='Notes' />
       </Harness>
     );
+
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
@@ -76,6 +78,7 @@ describe('RhfTextAreaInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox');
+
     expect(input).toHaveAttribute('id', 'n');
     expect(input).toHaveAttribute('rows', '5');
     expect(input).toHaveClass('extra');
@@ -91,6 +94,7 @@ describe('RhfTextAreaInput', () => {
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), 'a{Enter}b');
+
     expect(screen.getByTestId('value')).toHaveTextContent('"a\\nb"');
   });
 
@@ -103,6 +107,7 @@ describe('RhfTextAreaInput', () => {
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'hi \u{1F600} there' },
     });
+
     expect(screen.getByRole('textbox')).toHaveValue('hi  there');
   });
 
@@ -114,6 +119,7 @@ describe('RhfTextAreaInput', () => {
     );
     await userEvent.type(screen.getByRole('textbox'), '  Acme  ');
     await userEvent.tab();
+
     expect(screen.getByTestId('value')).toHaveTextContent('"Acme"');
   });
 
@@ -125,6 +131,7 @@ describe('RhfTextAreaInput', () => {
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
+
     expect(screen.getByTestId('value')).toHaveTextContent('"Acme"');
   });
 
@@ -136,6 +143,7 @@ describe('RhfTextAreaInput', () => {
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
+
     expect(screen.getByTestId('value')).toHaveTextContent('""');
   });
 
@@ -146,11 +154,16 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={3} />
       </Harness>
     );
+
     expect(screen.getByText('0 of 3 characters used')).toBeInTheDocument();
+
     await userEvent.type(screen.getByRole('textbox'), 'abcd');
     const counter = screen.getByText('4 of 3 characters used');
+
     expect(counter.parentElement).toHaveClass('counterLabelExceedsMax');
+
     await form.submit();
+
     expect(screen.getByText(', 4 of 3 characters used')).toHaveClass(
       'visually-hidden'
     );
@@ -163,6 +176,7 @@ describe('RhfTextAreaInput', () => {
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), 'ab');
+
     expect(
       screen.getByText('2 of 10 characters used').parentElement
     ).toHaveClass('counterLabelWithinMax');
@@ -174,6 +188,7 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={0} />
       </Harness>
     );
+
     expect(screen.queryByText(/characters used/)).not.toBeInTheDocument();
   });
 
@@ -183,6 +198,7 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={5} />
       </Harness>
     );
+
     expect(screen.getByText('0 of 5 characters used')).toBeInTheDocument();
   });
 
@@ -192,6 +208,7 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
       </Harness>
     );
+
     expect(screen.getByText('Be brief')).toHaveAttribute('id', 'help-notes');
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
@@ -207,9 +224,12 @@ describe('RhfTextAreaInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox');
+
     expect(screen.queryByText('Enter notes')).not.toBeInTheDocument();
     expect(input).not.toHaveAttribute('aria-invalid');
+
     await form.submit();
+
     expect(screen.getByText('Enter notes')).toHaveAttribute(
       'id',
       'notes-validation-msg'
@@ -233,6 +253,7 @@ describe('RhfTextAreaInput', () => {
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
     await form.trigger();
+
     expect(screen.getByText('Enter notes')).toBeInTheDocument();
   });
 
@@ -248,6 +269,7 @@ describe('RhfTextAreaInput', () => {
       </Harness>
     );
     await form.submit();
+
     expect(screen.queryByText('Enter notes')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox')).not.toHaveClass('is-invalid');
   });
@@ -258,6 +280,7 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='Notes' isSummary />
       </Harness>
     );
+
     expect(screen.getByText('Line')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
@@ -268,6 +291,7 @@ describe('RhfTextAreaInput', () => {
         <RhfTextAreaInput name='notes' label='' />
       </Harness>
     );
+
     expect(container.querySelector('label')).toBeNull();
   });
 });

@@ -1,4 +1,5 @@
 import './styles/index.scss';
+import type { ComponentType, ReactElement } from 'react';
 import {
   Route,
   createBrowserRouter,
@@ -6,41 +7,28 @@ import {
 } from 'react-router';
 import AuthenticatedElement from './authentication/AuthenticatedElement';
 import Home from './components/Home';
-import Dashboard from './routes/dashboard';
-import SignIn from './routes/sign-in';
-import SignOut from './routes/sign-out';
-import ServicesWeOffer from './routes/services-we-offer';
-import RequestForQuote from './routes/requestForQuote';
-import CreateAccount from './routes/account/create';
-import UpdateAccount from './routes/account/update';
 import Layout from './components/Layout';
-import CreateRequestForQuote from './routes/requestForQuote/create';
-import AccountCreated from './routes/account/created';
-import AddBranch from './routes/account/addBranch';
-import RequestForQuoteCreated from './routes/requestForQuote/created';
-import ViewRequestForQuoteSummary from './routes/requestForQuote/viewRequestForQuoteSummary';
-import Quotation from './routes/quotation';
-import AcceptQuote from './routes/acceptQuote';
-import CreateAcceptQuote from './routes/acceptQuote/create';
-import SubmittedSuccess from './routes/acceptQuote/submittedSuccess';
-import MeasurementReport from './routes/measurementReport';
-import InstrMeasurementReport from './routes/measurementReport/indexList';
-import SignOutHelper from './routes/sign-out-helper';
-import UpdateContact from './routes/contact/update';
 import ErrorDisplay from './components/ErrorBoundary/ErrorDisplay';
 import { HttpStatusCode } from './types';
 import PreConditions from './routes/preConditions/PreConditions';
-import CopyRequestForQuote from './routes/requestForQuote/copy';
-import HelpGuide from './routes/help-guide';
-import HelpHowToSetupAccess from './routes/help-guide/how-to-setup-access';
-import FAQs from './routes/help-guide/faqs';
-import CreateContact from './routes/contact/create';
-import CreateRequestForTypeApproval from './routes/ta/create';
-import PreApplication from './routes/ta/preApplication';
-import ApplicationForTypeApproval from './routes/ta';
-import RequestForPatternApprovalCreated from './routes/ta/created';
-import TAApplicationManage from './routes/ta/manage';
-import DashboardTA from './routes/dashboard/dashboard-ta';
+
+type RouteModule<Props extends object = Record<string, never>> = {
+  default: ComponentType<Props>;
+};
+
+const lazyRoute = <Props extends object>(
+  load: () => Promise<RouteModule<Props>>,
+  render: (Component: ComponentType<Props>) => ReactElement
+) =>
+  async function loadRoute() {
+    const { default: Component } = await load();
+
+    return {
+      Component: function LazyRouteComponent() {
+        return render(Component);
+      },
+    };
+  };
 
 const App = createBrowserRouter(
   createRoutesFromElements(
@@ -55,244 +43,342 @@ const App = createBrowserRouter(
       />
       <Route
         path='/dashboard'
-        element={
-          <AuthenticatedElement>
-            <Dashboard />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/dashboard'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/dashboard-ta'
-        element={
-          <AuthenticatedElement>
-            <DashboardTA />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/dashboard/dashboard-ta'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/create-account/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <CreateAccount />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/account/create'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/update-organisation/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <UpdateAccount />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/account/update'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/create-contact'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <CreateContact />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/contact/create'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/update-contact/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <UpdateContact />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/contact/update'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/success-creating-account'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <AccountCreated />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/account/created'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/add-branch/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <AddBranch />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/account/addBranch'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/request-for-quote-create'
-        element={
-          <AuthenticatedElement>
-            <CreateRequestForQuote />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/requestForQuote/create'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/ta/type-approval-create-pre'
-        element={
-          <AuthenticatedElement>
-            <PreApplication />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/ta/preApplication'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/ta/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <ApplicationForTypeApproval />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/ta'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/ta/type-approval-create'
-        element={
-          <AuthenticatedElement>
-            <CreateRequestForTypeApproval />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/ta/create'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/ta/type-approval-success/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <RequestForPatternApprovalCreated />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/ta/created'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/ta/:id/manage'
-        element={
-          <AuthenticatedElement>
-            <TAApplicationManage />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/ta/manage'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/request-for-quote-copy/:id/*'
-        element={
-          <AuthenticatedElement>
-            <CopyRequestForQuote />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/requestForQuote/copy'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/request-for-quote/:id/view-summary/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <ViewRequestForQuoteSummary name='' />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/requestForQuote/viewRequestForQuoteSummary'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component name='' />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/request-for-quote/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <RequestForQuote />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/requestForQuote'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/request-for-quote-success/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <RequestForQuoteCreated />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/requestForQuote/created'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/submitted-success/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <SubmittedSuccess />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/acceptQuote/submittedSuccess'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/accept-quote-create/:id/*'
-        element={
-          <AuthenticatedElement>
-            <CreateAcceptQuote />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/acceptQuote/create'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/accept-quote/:id/*'
-        element={
-          <AuthenticatedElement displayHeaderAndFooter={false}>
-            <AcceptQuote />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/acceptQuote'),
+          (Component) => (
+            <AuthenticatedElement displayHeaderAndFooter={false}>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/quotation/:id/*'
-        element={
-          <AuthenticatedElement>
-            <Quotation />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/quotation'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/instrument-reports/:id/*'
-        element={
-          <AuthenticatedElement>
-            <InstrMeasurementReport />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/measurementReport/indexList'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/report/:id/*'
-        element={
-          <AuthenticatedElement>
-            <MeasurementReport />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/measurementReport'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/services-we-offer'
-        element={
-          <AuthenticatedElement>
-            <ServicesWeOffer />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/services-we-offer'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
       <Route
         path='/sign-in'
-        element={
-          <AuthenticatedElement>
-            <SignIn />
-          </AuthenticatedElement>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/sign-in'),
+          (Component) => (
+            <AuthenticatedElement>
+              <Component />
+            </AuthenticatedElement>
+          )
+        )}
       />
-      <Route path='/sign-out' element={<SignOut />} />
+      <Route
+        path='/sign-out'
+        lazy={lazyRoute(
+          () => import('./routes/sign-out'),
+          (Component) => (
+            <Component />
+          )
+        )}
+      />
       <Route
         path='/sign-out-helper'
-        element={
-          <Layout>
-            <SignOutHelper />
-          </Layout>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/sign-out-helper'),
+          (Component) => (
+            <Layout>
+              <Component />
+            </Layout>
+          )
+        )}
       />
       <Route
         path='/help-guide'
-        element={
-          <Layout>
-            <HelpGuide />
-          </Layout>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/help-guide'),
+          (Component) => (
+            <Layout>
+              <Component />
+            </Layout>
+          )
+        )}
       />
       <Route
         path='/help-guide/how-to-setup-access'
-        element={
-          <Layout>
-            <HelpHowToSetupAccess />
-          </Layout>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/help-guide/how-to-setup-access'),
+          (Component) => (
+            <Layout>
+              <Component />
+            </Layout>
+          )
+        )}
       />
       <Route
         path='/help-guide/faqs'
-        element={
-          <Layout>
-            <FAQs />
-          </Layout>
-        }
+        lazy={lazyRoute(
+          () => import('./routes/help-guide/faqs'),
+          (Component) => (
+            <Layout>
+              <Component />
+            </Layout>
+          )
+        )}
       />
       <Route
         path='/server-error'

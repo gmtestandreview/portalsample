@@ -48,6 +48,7 @@ Then(
         name: /Instrument and request/i,
       })
       .click();
+
     await expect(page.getByText(value, { exact: true })).toBeVisible();
   }
 );
@@ -61,6 +62,7 @@ Given(
   async ({ page, scenarioState }, id: string) => {
     prepareDraft(scenarioState, id);
     await page.goto(`/request-for-quote/${id}/instrument-and-request`);
+
     await expect(
       page.getByRole('heading', {
         name: /Instrument and request/i,
@@ -78,18 +80,23 @@ When('the user opens the draft RFQ', async ({ page, scenarioState }) => {
       exact: true,
     })
     .locator(`#RefId-${scenarioState.activeReferenceId}`);
+
   await expect(draft).toBeVisible();
+
   const actions = draft.getByRole('button', {
     name: 'Actions',
     exact: true,
   });
   await actions.dispatchEvent('click');
-  const editRequest = draft.getByRole('link', {
+  const editRequest = draft.getByRole('menuitem', {
     name: 'Edit request',
     exact: true,
   });
+
   await expect(editRequest).toBeVisible();
+
   await editRequest.click();
+
   await expect(
     page.getByRole('heading', {
       name: /Instrument and request/i,

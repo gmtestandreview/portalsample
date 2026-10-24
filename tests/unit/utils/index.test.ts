@@ -3,27 +3,27 @@ import * as utils from '../../../ClientApp/src/utils';
 
 describe('utils exports', () => {
   it('exports each runtime utility function', () => {
-    expect(typeof utils.sleep).toBe('function');
-    expect(typeof utils.removeAllWhitespaces).toBe('function');
-    expect(typeof utils.containsWhitespace).toBe('function');
-    expect(typeof utils.removeEmptyKeys).toBe('function');
-    expect(typeof utils.tail).toBe('function');
-    expect(typeof utils.head).toBe('function');
-    expect(typeof utils.propertyOf).toBe('function');
-    expect(typeof utils.prefixedPropertyOf).toBe('function');
-    expect(typeof utils.nullOrUndefinedToEmpty).toBe('function');
-    expect(typeof utils.parseDate).toBe('function');
-    expect(typeof utils.parseDateUTC).toBe('function');
-    expect(typeof utils.isDateValid).toBe('function');
-    expect(typeof utils.formatDateToUTC).toBe('function');
-    expect(typeof utils.formatDateStringToUTC).toBe('function');
-    expect(typeof utils.formatBytes).toBe('function');
-    expect(typeof utils.formatDate).toBe('function');
-    expect(typeof utils.formatDateToString).toBe('function');
-    expect(typeof utils.formatReportingPeriod).toBe('function');
-    expect(typeof utils.splitPascalCase).toBe('function');
-    expect(typeof utils.base64toBlob).toBe('function');
-    expect(typeof utils.formatCurrencyAmount).toBe('function');
+    expect(utils.sleep).toBeTypeOf('function');
+    expect(utils.removeAllWhitespaces).toBeTypeOf('function');
+    expect(utils.containsWhitespace).toBeTypeOf('function');
+    expect(utils.removeEmptyKeys).toBeTypeOf('function');
+    expect(utils.tail).toBeTypeOf('function');
+    expect(utils.head).toBeTypeOf('function');
+    expect(utils.propertyOf).toBeTypeOf('function');
+    expect(utils.prefixedPropertyOf).toBeTypeOf('function');
+    expect(utils.nullOrUndefinedToEmpty).toBeTypeOf('function');
+    expect(utils.parseDate).toBeTypeOf('function');
+    expect(utils.parseDateUTC).toBeTypeOf('function');
+    expect(utils.isDateValid).toBeTypeOf('function');
+    expect(utils.formatDateToUTC).toBeTypeOf('function');
+    expect(utils.formatDateStringToUTC).toBeTypeOf('function');
+    expect(utils.formatBytes).toBeTypeOf('function');
+    expect(utils.formatDate).toBeTypeOf('function');
+    expect(utils.formatDateToString).toBeTypeOf('function');
+    expect(utils.formatReportingPeriod).toBeTypeOf('function');
+    expect(utils.splitPascalCase).toBeTypeOf('function');
+    expect(utils.base64toBlob).toBeTypeOf('function');
+    expect(utils.formatCurrencyAmount).toBeTypeOf('function');
   });
 });
 
@@ -267,6 +267,7 @@ describe('date helpers', () => {
     // Asserting that the string and Date paths agree on the same instant pins the behaviour that
     // actually matters (the offset is honoured, not discarded) in every zone.
     const sameInstant = new Date(Date.UTC(2024, 4, 10, 5, 30));
+
     expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00')).toBe(
       utils.formatDateTimeToString(sameInstant)
     );
@@ -351,6 +352,7 @@ describe('async helpers', () => {
 
     const promise = utils.sleep(25).then(resolved);
     await vi.advanceTimersByTimeAsync(24);
+
     expect(resolved).not.toHaveBeenCalled();
 
     await vi.advanceTimersByTimeAsync(1);

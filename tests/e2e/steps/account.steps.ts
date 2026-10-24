@@ -34,8 +34,11 @@ Given('the terms of use dialog is displayed', async ({ page }) => {
 
 Given('the user has accepted the terms of use', async ({ page }) => {
   const termsDialog = page.getByRole('dialog');
+
   await expect(termsDialog).toBeVisible();
+
   await termsDialog.getByTestId('agree-continue-button').click();
+
   await expect(termsDialog).toHaveCount(0);
 });
 

@@ -48,7 +48,7 @@ const attachmentControl = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -65,54 +65,74 @@ vi.mock(
 
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  default: () => mocks.accountContext(),
-  useAccountDispatch: () => ({
-    setTargetOrganisation: mocks.setTargetOrganisation,
-  }),
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: () => mocks.accountContext(),
+      useAccountDispatch: () => ({
+        setTargetOrganisation: mocks.setTargetOrganisation,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: mocks.setDashboardNotification,
-}));
+vi.mock(
+  '../../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: mocks.setDashboardNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/instrumentInfoPanel', () => ({
-  default: ({
-    selectedInstrumentCategoryId,
-    selectedInstrumentTypeId,
-  }: {
-    selectedInstrumentCategoryId: string;
-    selectedInstrumentTypeId: string;
-  }) => (
-    <div
-      data-testid='instrument-info-panel'
-      data-category={selectedInstrumentCategoryId}
-      data-type={selectedInstrumentTypeId}
-    />
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
+  () =>
+    ({
+      default: ({
+        selectedInstrumentCategoryId,
+        selectedInstrumentTypeId,
+      }: {
+        selectedInstrumentCategoryId: string;
+        selectedInstrumentTypeId: string;
+      }) => (
+        <div
+          data-testid='instrument-info-panel'
+          data-category={selectedInstrumentCategoryId}
+          data-type={selectedInstrumentTypeId}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule136>
+);
 
-vi.mock('../../../../ClientApp/src/components/Inputs/RhfAttachment', () => ({
-  default: (props: typeof attachmentControl.props) => {
-    attachmentControl.props = props;
+vi.mock(
+  '../../../../ClientApp/src/components/Inputs/RhfAttachment',
+  () =>
+    ({
+      default: (props: typeof attachmentControl.props) => {
+        attachmentControl.props = props;
 
-    return (
-      <div
-        data-testid='attachment'
-        data-disable-upload={String(props.disableUpload ?? false)}
-        data-is-summary={String(props.isSummary ?? false)}
-      />
-    );
-  },
-}));
+        return (
+          <div
+            data-testid='attachment'
+            data-disable-upload={String(props.disableUpload ?? false)}
+            data-is-summary={String(props.isSummary ?? false)}
+          />
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule145>
+);
 
 const defaultValues = {
   form: {
@@ -196,7 +216,7 @@ const alertItems = () =>
     (li) => li.textContent
   );
 
-describe('RHF supporting documents', () => {
+describe('rHF supporting documents', () => {
   beforeEach(async () => {
     await import('../../../../ClientApp/src/api/web-api-client');
 
@@ -393,7 +413,8 @@ describe('RHF supporting documents', () => {
           block: 'start',
         })
       );
-      expect(focus).toHaveBeenCalled();
+
+      expect(focus).toHaveBeenCalledWith();
 
       vi.restoreAllMocks();
     });
@@ -423,7 +444,14 @@ describe('RHF supporting documents', () => {
         uploaded = await attachmentControl.props.onUploadFiles(files);
       });
 
-      expect(msalMocks.acquireTokenSilent).toHaveBeenCalled();
+      expect(msalMocks.acquireTokenSilent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          account: expect.objectContaining({
+            homeAccountId: 'test-home-account-id',
+          }),
+          scopes: ['api://ta/.default'],
+        })
+      );
       expect(onUploadAttachment).toHaveBeenCalledTimes(1);
       expect(onUploadAttachment).toHaveBeenCalledWith(DEFAULT_ACCESS_TOKEN, [
         { data: files[0], fileName: 'first.pdf' },
@@ -502,8 +530,14 @@ describe('RHF supporting documents', () => {
       });
 
       await waitFor(() =>
-        expect(mocks.setDashboardNotification).toHaveBeenCalled()
+        expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: expect.stringContaining('Client Org'),
+            severity: 'Error',
+          })
+        )
       );
+
       expect(
         defined(
           mocks.setDashboardNotification.mock.calls[0],

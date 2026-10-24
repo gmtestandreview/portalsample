@@ -127,7 +127,7 @@ const renderAttachment = (
     />
   );
 
-describe('AttachmentNew', () => {
+describe(AttachmentNew, () => {
   it('renders upload controls with help text, disabled state, and file constraints', () => {
     renderAttachment([], {
       className: 'drop-target',
@@ -167,7 +167,8 @@ describe('AttachmentNew', () => {
 
     await user.click(screen.getByTestId('attachments'));
 
-    expect(inputClick).toHaveBeenCalled();
+    expect(inputClick).toHaveBeenCalledWith();
+
     inputClick.mockRestore();
   });
 
@@ -183,7 +184,7 @@ describe('AttachmentNew', () => {
       .getByLabelText('Upload supporting documents')
       .dispatchEvent(clickEvent);
 
-    expect(preventDefault).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalledWith();
   });
 
   it('ignores null-valued and null-file input changes', () => {
@@ -340,6 +341,7 @@ describe('AttachmentNew', () => {
         '"attachmentName":"diagram.jpg"'
       )
     );
+
     expect(screen.getByTestId('values')).not.toHaveTextContent(
       '"attachmentName":"manual.pdf"'
     );
@@ -366,9 +368,11 @@ describe('AttachmentNew', () => {
         expect.objectContaining({ name: 'small.pdf' }),
       ])
     );
+
     expect(
       screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.')
     ).toBeInTheDocument();
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"attachmentName":"small.pdf"'
@@ -403,6 +407,7 @@ describe('AttachmentNew', () => {
         '"attachments":[{"id":"doc-1"'
       )
     );
+
     expect(
       screen.getByRole('progressbar', { name: 'Uploading' })
     ).toBeInTheDocument();
@@ -457,7 +462,9 @@ describe('AttachmentNew', () => {
       file('manual.pdf', 10)
     );
 
-    expect(await screen.findByText('Virus scan failed')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Virus scan failed')
+    ).resolves.toBeInTheDocument();
     expect(
       screen.getByText('Document could not be stored')
     ).toBeInTheDocument();
@@ -528,6 +535,7 @@ describe('AttachmentNew', () => {
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent('"attachments":[]')
     );
@@ -569,7 +577,9 @@ describe('AttachmentNew', () => {
     await user.click(screen.getByRole('button', { name: 'Delete' }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
-    expect(await screen.findByText('Delete failed')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Delete failed')
+    ).resolves.toBeInTheDocument();
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"attachmentName":"manual.pdf"'
     );
@@ -586,6 +596,7 @@ describe('AttachmentNew', () => {
     const attachmentRegion = screen
       .getByText('manual.pdf')
       .closest('.attachment');
+
     expect(attachmentRegion).not.toBeNull();
     expect(
       within(attachmentRegion as HTMLElement).queryByRole('button', {

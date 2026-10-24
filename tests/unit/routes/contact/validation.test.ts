@@ -13,7 +13,7 @@ const validContact = {
   email: 'alex@example.com',
 };
 
-describe('contactSubmitValidation', () => {
+describe('contact submit validation', () => {
   it('accepts a valid contact object', async () => {
     await expect(
       contactSubmitValidation.validate({ contact: validContact })

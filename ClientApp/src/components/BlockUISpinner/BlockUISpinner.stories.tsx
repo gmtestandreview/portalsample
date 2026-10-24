@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import BlockUISpinner from './index';
 
 /**
@@ -15,7 +15,7 @@ import BlockUISpinner from './index';
  *
  */
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/BlockUISpinner',
   component: BlockUISpinner,
   parameters: {
@@ -24,21 +24,19 @@ const meta = {
   args: {
     children: <p>Loading data...</p>,
   },
-} satisfies Meta<typeof BlockUISpinner>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const FullPage: Story = {};
+export const FullPage = meta.story();
 
-export const Inline: Story = {
+export const Inline = meta.story({
   args: {
     partial: true,
     children: <p>Refreshing results...</p>,
   },
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+  render: (args) => (
     <div className='p-5' style={{ minHeight: 240, maxWidth: 640 }}>
       <BlockUISpinner {...args} />
     </div>
   ),
-};
+});

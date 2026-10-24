@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import CustomPaginationHeader from './index';
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/PaginationHeader',
   component: CustomPaginationHeader,
   parameters: {
@@ -13,22 +13,20 @@ const meta = {
     pageSize: 10,
     currentPage: 3,
   },
-} satisfies Meta<typeof CustomPaginationHeader>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const MidPage: Story = {
+export const MidPage = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(canvasElement).toHaveTextContent(
-      'Displaying 21 - 30 of 56 Results'
+      'Displaying 21 - 30 of 56 Results',
     );
   },
-};
+});
 
-export const LastPage: Story = {
+export const LastPage = meta.story({
   args: {
     totalCount: 56,
     pageSize: 10,
@@ -36,9 +34,9 @@ export const LastPage: Story = {
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(canvasElement).toHaveTextContent(
-      'Displaying 51 - 56 of 56 Results'
+      'Displaying 51 - 56 of 56 Results',
     );
   },
-};
+});

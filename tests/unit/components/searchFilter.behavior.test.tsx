@@ -1,3 +1,4 @@
+import { describe, beforeEach, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchFilter from '@/components/SearchFilter';
@@ -14,13 +15,21 @@ const accountDispatchMock = vi.hoisted(() => ({
   setUserProfile: vi.fn(),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountDispatch: () => accountDispatchMock,
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountDispatch: () => accountDispatchMock,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 const defaultFilters: UserProfile = {
   filterYearType: 'allYears',
@@ -32,7 +41,7 @@ const defaultFilters: UserProfile = {
   filterSearchText: '',
 };
 
-describe('SearchFilter behavior', () => {
+describe('searchFilter behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -51,16 +60,20 @@ describe('SearchFilter behavior', () => {
     const input = screen.getByRole('textbox', {
       name: 'Type keyword and press Enter key to search.',
     });
+
     expect(input).toHaveValue('balance');
 
     await user.clear(input);
+
     expect(onSearchSubmit).toHaveBeenLastCalledWith(undefined);
     expect(input).toHaveFocus();
 
     await user.type(input, 'thermometer{Enter}');
+
     expect(onSearchSubmit).toHaveBeenLastCalledWith('thermometer');
 
     await user.click(screen.getByRole('button', { name: 'Clear keyword' }));
+
     expect(onSearchSubmit).toHaveBeenLastCalledWith(undefined);
   });
 
@@ -70,6 +83,7 @@ describe('SearchFilter behavior', () => {
     );
 
     const searchIcon = container.querySelector('#search-icon i');
+
     expect(searchIcon).not.toBeNull();
     expect(searchIcon).toHaveAttribute('aria-hidden', 'true');
     expect(searchIcon).not.toHaveAttribute('role');
@@ -103,6 +117,7 @@ describe('SearchFilter behavior', () => {
       filterActiveTab: DashboardTab.Requests,
       filterSearchText: '',
     };
+
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expectedProfile);
     expect(accountDispatchMock.setUserProfile).toHaveBeenCalledWith({
@@ -145,6 +160,7 @@ describe('SearchFilter behavior', () => {
       filterActiveTab: DashboardTab.Requests,
       filterSearchText: 'balance',
     };
+
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expectedProfile);
     expect(accountDispatchMock.setUserProfile).toHaveBeenCalledWith({
@@ -191,9 +207,12 @@ describe('SearchFilter behavior', () => {
     );
 
     const toggle = screen.getByRole('button', { name: /filters/i });
+
     expect(toggle).toHaveAttribute('title', '3 filters have been applied');
+
     await user.click(toggle);
     await user.click(screen.getByTestId('close-filter-button'));
+
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 
@@ -212,9 +231,12 @@ describe('SearchFilter behavior', () => {
     );
 
     const toggle = screen.getByRole('button', { name: /filters/i });
+
     expect(toggle).toHaveAttribute('title', '1 filters have been applied');
+
     await user.click(toggle);
     await user.click(toggle);
+
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 
@@ -261,7 +283,7 @@ describe('SearchFilter behavior', () => {
     expect(screen.getByLabelText('Current year - 2025')).toBeEnabled();
   });
 
-  it('SearchFilter submits search text by resetting page and updating filters through the state updater', async () => {
+  it('searchFilter submits search text by resetting page and updating filters through the state updater', async () => {
     const user = userEvent.setup();
     const setCurrentPage = vi.fn();
     const setInitialFilters = vi.fn();

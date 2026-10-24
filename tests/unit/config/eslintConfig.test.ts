@@ -23,7 +23,7 @@ import { describe, expect, it } from 'vitest';
 const CHILD_TIMEOUT_MS = 120_000;
 const TEST_TIMEOUT_MS = 135_000;
 
-describe('ESLint editor integration', () => {
+describe('eSLint editor integration', () => {
   it(
     'lints the Storybook config when ESLint runs from the file directory',
     () => {

@@ -1,25 +1,28 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ToggleButtonGroup } from './ToggleButtonGroup';
 import { ToggleButton } from '../ToggleButton/ToggleButton';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ToggleButtonGroup',
   component: ToggleButtonGroup,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ToggleButtonGroup>;
+});
 
-export default meta;
-
-type Story = StoryFn<typeof ToggleButtonGroup>;
-
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ToggleButtonGroup {...args}>
-    <ToggleButton id='left'>Left</ToggleButton>
-    <ToggleButton id='center'>Center</ToggleButton>
-    <ToggleButton id='right'>Right</ToggleButton>
-  </ToggleButtonGroup>
-);
+export const Example = meta.story({
+  render: (args) => (
+    <ToggleButtonGroup {...args}>
+      <ToggleButton id='left'>Left</ToggleButton>
+      <ToggleButton id='center'>Center</ToggleButton>
+      <ToggleButton id='right'>Right</ToggleButton>
+    </ToggleButtonGroup>
+  ),
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('radio', { name: 'Left' })).toBeVisible();
+    await expect(canvas.getByRole('radio', { name: 'Right' })).toBeVisible();
+  },
+});

@@ -190,7 +190,7 @@ is load-bearing and each has bitten this codebase before.
 1. **Never edit generated or vendored files.**
    `ClientApp/src/api/web-api-client.ts`, `ClientApp/src/main.*.js`,
    `ClientApp/css/main.*.css`, `ClientApp/src/external/**`,
-   `ClientApp/src/parent/**`, `ClientApp/webpack/**`,
+   `ClientApp/src/parent/**`,
    `ClientApp/source-map-http-downloads/**`. Mirrored in `sonar.exclusions` and
    the Vitest coverage `exclude` list so all three tools agree.
 2. **Never use `process.env` in application code.** Runtime config is injected
@@ -304,7 +304,7 @@ reach Resolved only when closure evidence is recorded.
 | Primary language    | TypeScript, `strict: true`                                             | `tsconfig.json`; `ClientApp/src/**/*.{ts,tsx}`                     |
 | Rendering target    | Browser SPA, no SSR                                                    | `ClientApp/src/index.tsx` — `createRoot`                           |
 | Package manager     | npm 11.17.0                                                            | `packageManager` field + `package-lock.json`                       |
-| Module/build system | **Dual:** Webpack 5 (production) + Vite 8 (Storybook and test tooling) | `webpack.config.js`; `@storybook/react-vite`                       |
+| Module/build system | **Vite 8:** production, Storybook, and test tooling | `vite.config.mts`; `@storybook/react-vite`                       |
 | React version       | 18.3.1                                                                 | `node_modules/react/package.json`                                  |
 | Node.js             | >= 24.0.0 required; 24.20.0 pinned locally                             | `engines`, `devEngines.runtime` (`onFail: error`), `.node-version` |
 | CSP                 | Trusted Types policy + DOMPurify                                       | `ClientApp/src/trustedtypes.ts`                                    |
@@ -315,6 +315,10 @@ reach Resolved only when closure evidence is recorded.
 
 Versions are **as installed**. "Used by" is the count of files under
 `ClientApp/src` importing the package, excluding vendored trees.
+
+Lodash has no direct application dependency or first-party import. It remains
+installed transitively through Formik, `slate-dom`, and `slate-react`; the
+Lodash type package remains transitive through `slate-react`.
 
 | Dependency                                | Installed  | Used by | Role                                                                                                           |
 | ----------------------------------------- | ---------- | ------: | -------------------------------------------------------------------------------------------------------------- |
@@ -328,7 +332,6 @@ Versions are **as installed**. "Used by" is the count of files under
 | `@azure/msal-react`                       | 5.7.2      |       — | React bindings (`MsalProvider`, hooks)                                                                         |
 | `bootstrap`                               | 5.3.8      |       — | CSS framework (custom NMI theme)                                                                               |
 | `react-bootstrap`                         | 2.10.10    |       — | Bootstrap React bindings                                                                                       |
-| `lodash`                                  | 4.18.1     |      12 | Object/array utilities                                                                                         |
 | `date-fns`                                | 3.6.0      |       6 | Date parsing and formatting                                                                                    |
 | `react-number-format`                     | 5.4.5      |       4 | ABN / number pattern display                                                                                   |
 | `dompurify`                               | **3.4.14** |       3 | HTML sanitisation behind the Trusted Types policy                                                              |
@@ -368,8 +371,7 @@ false:**
 | TypeScript         | **5.9.3**                                                                             | Type checking (`tsc --noEmit`), `strict: true`                                                                                                                                                          |
 | ESLint             | **10.9.0**                                                                            | Flat config `eslint.config.mjs`; with `typescript-eslint` 8.67.0, `@eslint-react/eslint-plugin` 5.18.6, `eslint-plugin-react-hooks` 7.1.1, `@stylistic/eslint-plugin` 5.10.0, `eslint-plugin-storybook` |
 | remark             | 12.0.1 (CLI)                                                                          | MDX/Markdown linting — `npm run lint:mdx --frail`                                                                                                                                                       |
-| Webpack            | **5.108.4**                                                                           | Production bundling + dev server                                                                                                                                                                        |
-| Vite               | **8.1.3**                                                                             | Storybook and Vitest Browser Mode pipeline                                                                                                                                                              |
+| Vite               | **8.3.5**                                                                             | Production, Storybook, and Vitest Browser Mode pipeline                                                                                                                                                 |
 | Sass               | **1.101.0**                                                                           | SCSS compilation                                                                                                                                                                                        |
 | Vitest             | **4.1.11**                                                                            | All three test surfaces; `@vitest/browser`, `@vitest/browser-playwright`, `@vitest/coverage-v8` all at matched 4.1.11                                                                                   |
 | jsdom              | 29.1.1                                                                                | Unit-test DOM environment                                                                                                                                                                               |
@@ -390,11 +392,11 @@ false:**
 `react-docgen-typescript` with `shouldExtractLiteralValuesFromEnum`;
 `remark-gfm` for MDX.
 
-### Dual-build rationale and verification scope
+### Unified Vite build and verification scope
 
-Two pipelines are intentionally live: **Webpack 5** for production bundles,
-**Vite-backed Storybook/Vitest** for fast local feedback. This is a transitional
-choice while the portal remains on its legacy production packaging path.
+Vite is the canonical production, development, Storybook, and Vitest Browser
+pipeline. This keeps local component feedback and production bundling on the
+same module-resolution, Sass, asset, and code-splitting implementation.
 
 When validating UI changes, treat these divergence points as mandatory checks:
 
@@ -404,9 +406,10 @@ When validating UI changes, treat these divergence points as mandatory checks:
 - static asset base-path differences
 - code-splitting and lazy-chunk loading behaviour
 
-A change that is green in Storybook is **not** thereby green in the production
-bundle. See `docs/architecture/storybook-vs-webpack-runtime.md` for the full
-divergence matrix.
+A change that affects bundling, assets, or runtime configuration still requires
+the production build and runtime verifiers. See
+`docs/architecture/storybook-vs-webpack-runtime.md` for the shared-runtime
+verification checklist.
 
 ---
 
@@ -421,7 +424,7 @@ one red leg never hides another.
 | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `static-quality-node24`                                                | type-check + lint + lint:mdx                                                                                                                                                                                         |
 | `vitest` x 3 (`unit`, `storybook`, `quality`)                          | Each test environment is its own required status. The `storybook` leg provisions Chromium.                                                                                                                           |
-| `build-node24`                                                         | Production Webpack build + `storybook:verify:docs`                                                                                                                                                                   |
+| `build-node24`                                                         | Production Vite build + `storybook:verify:docs`                                                                                                                                                                     |
 | `date-timezone` x 3 (`UTC`, `Australia/Sydney`, `America/Los_Angeles`) | The date suite is timezone-sensitive by construction; each zone is a separate leg so a failure stays attributable                                                                                                    |
 | `e2e-node24`                                                           | Both BDD suites; each Playwright project starts its own server (app on `:3000`, Storybook on `:6006`) and mocks API + MSAL, so no backend is needed                                                                  |
 | `lower-bound-node24`                                                   | Installs on the **exact declared floor** (Node 24.0.0, `--strict-peer-deps`) and runs the dependency-security policy tests. Proves the floor itself works, not merely "some Node 24".                                |
@@ -460,8 +463,8 @@ Publishes Storybook to Chromatic with `fetch-depth: 0` (baseline selection) and
 npm install                     # install deps (runs patch-package on postinstall)
 
 # Build & serve
-npm run build                   # Webpack production build
-npm run start                   # Webpack dev server
+npm run build                   # Vite production build
+npm run start                   # Vite dev server
 npm run storybook               # Storybook dev server on :6006 (required for MCP)
 npm run build-storybook         # static Storybook build
 npm run storybook:verify:docs   # docs build + verification script
@@ -562,5 +565,5 @@ There is no auth bypass path. Do not reintroduce one.
 | Sonar scope, exclusions, coverage path  | `sonar-project.properties`                                                                                                        |
 | Backlog, change record                  | `docs/change-record/OPEN-ITEMS-BACKLOG.md`, `docs/change-record/MASTER-CHANGE-RECORD.md`                                          |
 | WCAG target and score caps              | `docs/accessibility/wcag-2.2-aa-98-plan.md`                                                                                       |
-| Build/runtime divergence matrix         | `docs/architecture/storybook-vs-webpack-runtime.md`                                                                               |
+| Shared build/runtime verification       | `docs/architecture/storybook-vs-webpack-runtime.md`                                                                               |
 | Related documents                       | `docs/ARCHITECTURE.md`, `docs/STRUCTURE.md`, `docs/TESTING.md`, `docs/CONVENTIONS.md`, `docs/INTEGRATIONS.md`, `docs/CONCERNS.md` |

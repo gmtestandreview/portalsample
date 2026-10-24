@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { Form, Formik, type FormikProps } from 'formik';
 import { MemoryRouter } from 'react-router';
-import { afterEach, vi } from 'vitest';
+import { afterEach, vi, describe, beforeEach, it, expect } from 'vitest';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { HttpStatusCode } from '@/types';
 
@@ -13,7 +13,7 @@ const TestRouter = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
 );
 
-describe('ErrorSummary', () => {
+describe(ErrorSummary, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -35,6 +35,7 @@ describe('ErrorSummary', () => {
     );
 
     const link = screen.getByRole('link', { name: 'Contact: (#1): Required' });
+
     expect(link).toHaveAttribute('href', '#contact.0.firstName');
   });
 
@@ -113,6 +114,50 @@ describe('ErrorSummary', () => {
     expect(screen.getAllByRole('link')).toHaveLength(1);
   });
 
+  it('formats camel-case and separator-based validation keys as sentences', () => {
+    render(
+      <TestRouter>
+        <ErrorSummary
+          serverErrors={
+            {
+              errors: {
+                ContactName: ['Required'],
+                'Phone-number': ['Invalid'],
+              },
+            } as any
+          }
+        />
+      </TestRouter>
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'Contact name: Required' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Phone number: Invalid' })
+    ).toBeInTheDocument();
+  });
+
+  it('renders a key whose segment reduces to an empty label after stripping separators', () => {
+    render(
+      <TestRouter>
+        <ErrorSummary
+          serverErrors={
+            {
+              errors: {
+                // The single "_" segment collapses to '' once separators are
+                // stripped, so formatKeyPart returns the empty string unchanged.
+                _: ['Required'],
+              },
+            } as any
+          }
+        />
+      </TestRouter>
+    );
+
+    expect(screen.getByRole('link', { name: /Required/ })).toBeInTheDocument();
+  });
+
   it('falls through when validation problem details has no errors collection', () => {
     render(
       <TestRouter>
@@ -141,6 +186,7 @@ describe('ErrorSummary', () => {
     const summaryEl = document.querySelector(
       '#form-error-summary'
     ) as HTMLElement;
+
     expect(summaryEl).not.toBeNull();
 
     act(() => {

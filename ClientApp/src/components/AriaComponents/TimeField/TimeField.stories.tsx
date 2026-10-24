@@ -1,24 +1,24 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { TimeField } from './TimeField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/TimeField',
   component: TimeField,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof TimeField>;
+});
 
-export default meta;
-
-type Story = StoryFn<typeof TimeField>;
-
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <TimeField {...args} />
-);
-
-Example.args = {
-  label: 'Event time',
-};
+export const Example = meta.story({
+  args: {
+    label: 'Event time',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('group', { name: 'Event time' }),
+    ).toBeVisible();
+  },
+});

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import ContentModal from '@/components/modals/ContentModal';
 
@@ -38,7 +39,7 @@ const renderTwoOpenModals = () =>
     </>
   );
 
-describe('ContentModal accessibility', () => {
+describe('contentModal accessibility', () => {
   it('names the dialog from the visible modal title', () => {
     render(
       <ContentModal

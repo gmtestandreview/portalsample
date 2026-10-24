@@ -6,6 +6,7 @@ Given(
   'the user opens organisation {int} for editing',
   async ({ page }, id: number) => {
     await page.goto(`/update-organisation/${id}`);
+
     await expect(
       page.getByRole('heading', {
         name: 'Organisation',
@@ -17,6 +18,7 @@ Given(
 
 Given('the user opens their contact details for editing', async ({ page }) => {
   await page.goto('/update-contact');
+
   await expect(
     page.getByRole('heading', {
       name: 'My contact details',
@@ -27,6 +29,7 @@ Given('the user opens their contact details for editing', async ({ page }) => {
 
 Given('the user opens the add branch form', async ({ page }) => {
   await page.goto('/add-branch');
+
   await expect(
     page
       .getByText('Add branch or location', {

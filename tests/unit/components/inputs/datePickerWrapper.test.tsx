@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -5,49 +6,59 @@ import DatePicker from '@/components/Inputs/DatePicker';
 import type { CustomDatePickerProps } from '@/components/Inputs/DatePicker/types';
 import { parseDateOnlyInput } from '@/utils/dateOnly';
 
-vi.mock('@/components/Inputs/DatePicker/CustomDatePicker', () => ({
-  default: ({
-    currentDate,
-    dateOnBlur,
-    dateOnChange,
-    errorMessage,
-    hasError,
-    label,
-    name,
-    placeholder,
-  }: CustomDatePickerProps) => (
-    <div>
-      <label htmlFor={name}>{label}</label>
-      <input
-        id={name}
-        aria-invalid={hasError ? 'true' : undefined}
-        aria-describedby={hasError ? `${name}-error` : undefined}
-        placeholder={placeholder}
-        defaultValue={currentDate ? currentDate.toISOString() : ''}
-        onBlur={dateOnBlur}
-      />
-      {hasError ? <div id={`${name}-error`}>{errorMessage}</div> : null}
-      <button type='button' onClick={() => dateOnChange(new Date(2026, 5, 12))}>
-        Pick date object
-      </button>
-      <button
-        type='button'
-        onClick={() => dateOnChange('2026-07-13T00:00:00+10:00')}
-      >
-        Pick valid string
-      </button>
-      <button type='button' onClick={() => dateOnChange('not a date')}>
-        Pick invalid string
-      </button>
-      <button type='button' onClick={() => dateOnChange(new Date(Number.NaN))}>
-        Pick invalid date object
-      </button>
-      <button type='button' onClick={() => dateOnChange(null)}>
-        Clear date
-      </button>
-    </div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/DatePicker/CustomDatePicker',
+  () =>
+    ({
+      default: ({
+        currentDate,
+        dateOnBlur,
+        dateOnChange,
+        errorMessage,
+        hasError,
+        label,
+        name,
+        placeholder,
+      }: CustomDatePickerProps) => (
+        <div>
+          <label htmlFor={name}>{label}</label>
+          <input
+            id={name}
+            aria-invalid={hasError ? 'true' : undefined}
+            aria-describedby={hasError ? `${name}-error` : undefined}
+            placeholder={placeholder}
+            defaultValue={currentDate ? currentDate.toISOString() : ''}
+            onBlur={dateOnBlur}
+          />
+          {hasError ? <div id={`${name}-error`}>{errorMessage}</div> : null}
+          <button
+            type='button'
+            onClick={() => dateOnChange(new Date(2026, 5, 12))}
+          >
+            Pick date object
+          </button>
+          <button
+            type='button'
+            onClick={() => dateOnChange('2026-07-13T00:00:00+10:00')}
+          >
+            Pick valid string
+          </button>
+          <button type='button' onClick={() => dateOnChange('not a date')}>
+            Pick invalid string
+          </button>
+          <button
+            type='button'
+            onClick={() => dateOnChange(new Date(Number.NaN))}
+          >
+            Pick invalid date object
+          </button>
+          <button type='button' onClick={() => dateOnChange(null)}>
+            Clear date
+          </button>
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule35>
+);
 
 interface HarnessProps {
   readonly children: React.ReactNode;
@@ -88,7 +99,7 @@ function ValuesProbe() {
   );
 }
 
-describe('DatePicker wrapper', () => {
+describe('datePicker wrapper', () => {
   it('parses initial Formik values, forwards validation state, and normalizes date changes', async () => {
     const user = userEvent.setup();
 
@@ -103,6 +114,7 @@ describe('DatePicker wrapper', () => {
     );
 
     const input = screen.getByLabelText('Due date');
+
     expect(parseDateOnlyInput((input as HTMLInputElement).value)).toBe(
       '2026-06-11'
     );

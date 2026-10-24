@@ -25,10 +25,6 @@ if (coverage?.provider !== 'v8') {
   throw new Error('vitest.unit.config.ts must declare V8 unit coverage');
 }
 
-/** Escapes a literal path so it can be embedded in a RegExp without its dots matching anything. */
-const escapeForRegExp = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
 /**
  * React Aria evaluation components carved out because they are a spike, not shipped code.
  *
@@ -113,16 +109,17 @@ const allowedExclusionCategories = [
   /\*\.spec\.\{ts,tsx\}$/,
   /\*\.stories\.\{ts,tsx\}$/,
   /\*\.docs\.mdx$/,
-  // Only the exact paths verified above; no pattern that could admit an unmeasured file.
-  new RegExp(`^(${verifiedInStorybook.map(escapeForRegExp).join('|')})$`),
-  new RegExp(`^(${evaluationSpikeNotCovered.map(escapeForRegExp).join('|')})$`),
 ];
+const allowedExactExclusions = new Set([
+  ...verifiedInStorybook,
+  ...evaluationSpikeNotCovered,
+]);
 
 describe('unit coverage denominator', () => {
-  it('measures handwritten runtime source and the webpack config', () => {
+  it('measures handwritten runtime source and the vite config', () => {
     expect(coverage.include).toEqual([
       'ClientApp/src/**/*.{ts,tsx}',
-      'webpack.config.js',
+      'vite.config.mts',
     ]);
   });
 
@@ -138,7 +135,8 @@ describe('unit coverage denominator', () => {
   it('excludes only reviewed generated, vendor, story, declaration and type-only files', () => {
     for (const pattern of coverage.exclude ?? []) {
       expect(
-        allowedExclusionCategories.some((category) => category.test(pattern)),
+        allowedExclusionCategories.some((category) => category.test(pattern)) ||
+          allowedExactExclusions.has(pattern),
         `coverage exclude "${pattern}" is outside the reviewed policy — narrowing the denominator is not an acceptable way to reach 100%`
       ).toBe(true);
     }

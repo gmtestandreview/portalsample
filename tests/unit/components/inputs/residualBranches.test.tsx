@@ -1,3 +1,4 @@
+import { describe, afterEach, it, expect } from 'vitest';
 import {
   act,
   cleanup,
@@ -228,6 +229,21 @@ describe('residual input branches', () => {
     expect(screen.getByLabelText('Date')).toHaveValue('2026-06-13');
   });
 
+  it('normalizes a nullish TextInput value to an empty string on blur', async () => {
+    render(
+      <Harness initialValues={{ nickname: null }}>
+        <TextInput name='nickname' label='Nickname' />
+      </Harness>
+    );
+
+    const input = screen.getByRole('textbox', { name: 'Nickname' });
+    await act(async () => {
+      fireEvent.blur(input);
+    });
+
+    expect(input).toHaveValue('');
+  });
+
   it('keeps AutoSuggest keyboard movement inert while closed and uses fallback ids', async () => {
     const user = userEvent.setup();
     const onCancel = vi.fn();
@@ -277,6 +293,7 @@ describe('residual input branches', () => {
     const input = screen.getByRole('combobox', { name: 'Suburb' });
     await user.click(input);
     await user.keyboard('{ArrowUp}');
+
     expect(input).toHaveAttribute(
       'aria-activedescendant',
       'suburb-options-option-one'
@@ -329,12 +346,15 @@ describe('residual input branches', () => {
       fireEvent.change(input, { target: { value: 'Na' } });
       await vi.advanceTimersByTimeAsync(300);
     });
+
     expect(
       screen.getByRole('listbox', { name: 'Suggested options' })
     ).toBeInTheDocument();
+
     act(() => {
       fireEvent.keyDown(input, { key: 'Escape' });
     });
+
     expect(
       screen.queryByRole('listbox', { name: 'Suggested options' })
     ).not.toBeInTheDocument();
@@ -357,15 +377,19 @@ describe('residual input branches', () => {
     );
 
     const input = screen.getByRole('combobox', { name: 'Organisation name' });
+
     expect(input).toHaveAttribute(
       'aria-describedby',
       'organisationName-validation-msg'
     );
+
     act(() => {
       fireEvent.change(input, { target: { value: 'Na' } });
       vi.advanceTimersByTime(300);
     });
+
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
     unmount();
 
     render(
@@ -388,10 +412,13 @@ describe('residual input branches', () => {
       fireEvent.change(populatedInput, { target: { value: 'Na' } });
       await vi.advanceTimersByTimeAsync(300);
     });
+
     expect(screen.getByRole('listbox')).toBeInTheDocument();
+
     act(() => {
       fireEvent.keyDown(populatedInput, { key: 'PageDown' });
     });
+
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
 });

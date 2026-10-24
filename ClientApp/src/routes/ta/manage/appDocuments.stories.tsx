@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import ApplicationDocuments from './appDocuments';
@@ -9,7 +9,7 @@ import ApplicationDocuments from './appDocuments';
  * applicant add/commit additional certificates. The story renders the tab shell; the
  * document list is loaded from an API not served in Storybook.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/Manage/ApplicationDocuments',
   component: ApplicationDocuments,
   decorators: [withPortalProviders],
@@ -20,18 +20,17 @@ const meta = {
       initialEntries: ['/ta/PA-1/manage?tab=documents'],
     },
   },
-} satisfies Meta<typeof ApplicationDocuments>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const DocumentsTab: Story = {
+export const DocumentsTab = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(
-      canvas.getByRole('heading', { name: 'Documents' })
+      canvas.getByRole('heading', { name: 'Documents' }),
     ).toBeInTheDocument();
   },
-};
+});

@@ -1,4 +1,6 @@
-describe('AppInsightsService', () => {
+import { describe, afterEach, it, expect } from 'vitest';
+
+describe('appInsightsService', () => {
   afterEach(() => {
     vi.resetModules();
     vi.restoreAllMocks();
@@ -15,18 +17,30 @@ describe('AppInsightsService', () => {
       this.plugin = 'react';
     });
 
-    vi.doMock('@microsoft/applicationinsights-web', () => ({
-      ApplicationInsights: applicationInsightsCtor,
-    }));
-    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
-      ReactPlugin: reactPluginCtor,
-    }));
-    vi.doMock('@/env', () => ({
-      env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING:
-          'InstrumentationConnectionString=test-value',
-      },
-    }));
+    vi.doMock(
+      '@microsoft/applicationinsights-web',
+      () =>
+        ({
+          ApplicationInsights: applicationInsightsCtor,
+        }) satisfies __ExactMockModule<__TestMockModule57>
+    );
+    vi.doMock(
+      '@microsoft/applicationinsights-react-js',
+      () =>
+        ({
+          ReactPlugin: reactPluginCtor,
+        }) satisfies __ExactMockModule<__TestMockModule58>
+    );
+    vi.doMock(
+      '@/env',
+      () =>
+        ({
+          env: {
+            VITE_APPINSIGHTS_CONN_STRING:
+              'InstrumentationConnectionString=test-value',
+          },
+        }) satisfies __ExactMockModule<__TestMockModule10>
+    );
 
     const module = await import('@/instrumentation/AppInsightsService');
 
@@ -56,17 +70,30 @@ describe('AppInsightsService', () => {
       this.loadAppInsights = loadAppInsights;
     });
 
-    vi.doMock('@microsoft/applicationinsights-web', () => ({
-      ApplicationInsights: applicationInsightsCtor,
-    }));
-    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
-      ReactPlugin: vi.fn(function ReactPlugin() {}),
-    }));
-    vi.doMock('@/env', () => ({
-      env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: undefined,
-      },
-    }));
+    vi.doMock(
+      '@microsoft/applicationinsights-web',
+      () =>
+        ({
+          ApplicationInsights: applicationInsightsCtor,
+        }) satisfies __ExactMockModule<__TestMockModule57>
+    );
+    vi.doMock(
+      '@microsoft/applicationinsights-react-js',
+      () =>
+        ({
+          ReactPlugin: vi.fn(function ReactPlugin() {}),
+        }) satisfies __ExactMockModule<__TestMockModule58>
+    );
+    vi.doMock(
+      '@/env',
+      () =>
+        ({
+          env: {
+            VITE_APPINSIGHTS_CONN_STRING: undefined,
+            VITE_ENVIRONMENT: 'development',
+          },
+        }) satisfies __ExactMockModule<__TestMockModule10>
+    );
 
     const module = await import('@/instrumentation/AppInsightsService');
 
@@ -79,18 +106,30 @@ describe('AppInsightsService', () => {
   it('warns about disabled telemetry only in runtime development environment', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    vi.doMock('@microsoft/applicationinsights-web', () => ({
-      ApplicationInsights: vi.fn(),
-    }));
-    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
-      ReactPlugin: vi.fn(function ReactPlugin() {}),
-    }));
-    vi.doMock('@/env', () => ({
-      env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: undefined,
-        REACT_APP_ENVIRONMENT: 'development',
-      },
-    }));
+    vi.doMock(
+      '@microsoft/applicationinsights-web',
+      () =>
+        ({
+          ApplicationInsights: vi.fn(),
+        }) satisfies __ExactMockModule<__TestMockModule57>
+    );
+    vi.doMock(
+      '@microsoft/applicationinsights-react-js',
+      () =>
+        ({
+          ReactPlugin: vi.fn(function ReactPlugin() {}),
+        }) satisfies __ExactMockModule<__TestMockModule58>
+    );
+    vi.doMock(
+      '@/env',
+      () =>
+        ({
+          env: {
+            VITE_APPINSIGHTS_CONN_STRING: undefined,
+            VITE_ENVIRONMENT: 'development',
+          },
+        }) satisfies __ExactMockModule<__TestMockModule10>
+    );
 
     await import('@/instrumentation/AppInsightsService');
 
@@ -102,21 +141,33 @@ describe('AppInsightsService', () => {
   it('stays silent when telemetry is deliberately disabled with the dummy sentinel', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    vi.doMock('@microsoft/applicationinsights-web', () => ({
-      ApplicationInsights: vi.fn(),
-    }));
-    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
-      ReactPlugin: vi.fn(function ReactPlugin() {}),
-    }));
+    vi.doMock(
+      '@microsoft/applicationinsights-web',
+      () =>
+        ({
+          ApplicationInsights: vi.fn(),
+        }) satisfies __ExactMockModule<__TestMockModule57>
+    );
+    vi.doMock(
+      '@microsoft/applicationinsights-react-js',
+      () =>
+        ({
+          ReactPlugin: vi.fn(function ReactPlugin() {}),
+        }) satisfies __ExactMockModule<__TestMockModule58>
+    );
     // 'dummy-key' is how Storybook and local dev opt out on purpose. A
     // warning per module instantiation is noise there - 48 lines across the
     // Storybook suite - and it drowns out warnings that mean something.
-    vi.doMock('@/env', () => ({
-      env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
-        REACT_APP_ENVIRONMENT: 'development',
-      },
-    }));
+    vi.doMock(
+      '@/env',
+      () =>
+        ({
+          env: {
+            VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
+            VITE_ENVIRONMENT: 'development',
+          },
+        }) satisfies __ExactMockModule<__TestMockModule10>
+    );
 
     const module = await import('@/instrumentation/AppInsightsService');
 
@@ -128,18 +179,30 @@ describe('AppInsightsService', () => {
   it('does not warn about disabled telemetry outside the runtime development environment', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    vi.doMock('@microsoft/applicationinsights-web', () => ({
-      ApplicationInsights: vi.fn(),
-    }));
-    vi.doMock('@microsoft/applicationinsights-react-js', () => ({
-      ReactPlugin: vi.fn(function ReactPlugin() {}),
-    }));
-    vi.doMock('@/env', () => ({
-      env: {
-        REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
-        REACT_APP_ENVIRONMENT: 'production',
-      },
-    }));
+    vi.doMock(
+      '@microsoft/applicationinsights-web',
+      () =>
+        ({
+          ApplicationInsights: vi.fn(),
+        }) satisfies __ExactMockModule<__TestMockModule57>
+    );
+    vi.doMock(
+      '@microsoft/applicationinsights-react-js',
+      () =>
+        ({
+          ReactPlugin: vi.fn(function ReactPlugin() {}),
+        }) satisfies __ExactMockModule<__TestMockModule58>
+    );
+    vi.doMock(
+      '@/env',
+      () =>
+        ({
+          env: {
+            VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
+            VITE_ENVIRONMENT: 'production',
+          },
+        }) satisfies __ExactMockModule<__TestMockModule10>
+    );
 
     const module = await import('@/instrumentation/AppInsightsService');
 

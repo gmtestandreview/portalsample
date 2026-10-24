@@ -1,8 +1,8 @@
-'use strict';
+import fill from 'fill-range';
+import utils from './utils.js';
+import constants from './constants.js';
 
-const fill = require('fill-range');
-const utils = require('./utils');
-const { MAX_DEPTH } = require('./constants');
+const { MAX_DEPTH } = constants;
 
 const compile = (ast, options = {}) => {
   const maxDepth = Number.isFinite(options.maxDepth) ? Math.min(MAX_DEPTH, options.maxDepth) : MAX_DEPTH;
@@ -63,4 +63,4 @@ const compile = (ast, options = {}) => {
   return walk(ast, {}, ast.type === 'root' ? 0 : 1);
 };
 
-module.exports = compile;
+export default compile;

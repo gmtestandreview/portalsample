@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -24,7 +24,10 @@ vi.mock(
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
-    return { ...original, downloadFileFromUrl: mocks.downloadFileFromUrl };
+    return {
+      ...original,
+      downloadFileFromUrl: mocks.downloadFileFromUrl,
+    } satisfies __ExactMockModule<__TestMockModule9>;
   }
 );
 

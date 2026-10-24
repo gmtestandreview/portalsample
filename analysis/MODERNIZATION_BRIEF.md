@@ -116,7 +116,7 @@ C4Container
 | `authentication/authConfig.ts` (`loadFrameTimeout: 0`)            | Set to `6000` ms                                        | Security fix (SEC-009)          |
 | `routes/acceptQuote/summaryAndAccept.tsx` (NMI ABN/address)       | Read from `config_svc`                                  | Configuration externalisation   |
 | `routes/common/helperFunctions.ts` (PDF page numbers)             | Read from `config_svc`                                  | Configuration externalisation   |
-| `webpack.config.js` (production build)                            | `vite.config.ts`                                        | Build consolidation (Phase 3)   |
+| `webpack.config.js` (production build)                            | `vite.config.mts`                                       | Build consolidation (Phase 3)   |
 | _(none)_                                                          | `hooks/useAuthenticatedClient.ts`                       | New shared auth hook            |
 | _(none)_                                                          | `tests/unit/validationSchemas/**`                       | New unit test files             |
 | _(none)_                                                          | `tests/unit/businessRules/**`                           | New business rule tests         |
@@ -292,7 +292,7 @@ works for tests and Storybook.
 
 **Key work items:**
 
-- Write `vite.config.ts` for production (SCSS/Bootstrap shim, env var injection,
+- Write `vite.config.mts` for production (SCSS/Bootstrap shim, env var injection,
   chunk splitting)
 - Migrate `index.html` from HtmlWebpackPlugin template to Vite's native HTML
   transform

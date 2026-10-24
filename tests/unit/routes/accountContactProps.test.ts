@@ -66,17 +66,25 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
         signIn: mocks.signIn,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: mocks.setDashboardNotification,
-  setBranchModalNotification: mocks.setBranchModalNotification,
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: mocks.setDashboardNotification,
+      setBranchModalNotification: mocks.setBranchModalNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
 const emptyAccounts = [] as AccountInfo[];
@@ -166,7 +174,7 @@ describe('account and contact wizard prop factories', () => {
       'Trading',
       'Branch'
     );
-    expect(accountContext.setCompleted).toHaveBeenCalled();
+    expect(accountContext.setCompleted).toHaveBeenCalledWith();
   });
 
   it('loads and completes update-account details with success and error notifications', async () => {
@@ -218,6 +226,7 @@ describe('account and contact wizard prop factories', () => {
     ).toBeUndefined();
 
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Updated org',
       '',
@@ -233,6 +242,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.PreconditionFailed,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
@@ -243,6 +253,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your organisation.',
@@ -295,7 +306,9 @@ describe('account and contact wizard prop factories', () => {
     ).toBeUndefined();
 
     const saveResult = props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(saveResult).toBeInstanceOf(Promise);
+
     await saveResult;
 
     expect(mocks.completeBranchAdd).toHaveBeenCalledWith(
@@ -317,12 +330,13 @@ describe('account and contact wizard prop factories', () => {
         message: 'Your branch/location details have been successfully saved.',
       })
     );
-    expect(onShowBranchSelector).toHaveBeenCalled();
+    expect(onShowBranchSelector).toHaveBeenCalledWith();
 
     mocks.completeBranchAdd.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
@@ -333,6 +347,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await props.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your branch/location details.',
@@ -364,6 +379,16 @@ describe('account and contact wizard prop factories', () => {
     await expect(updateProps.loadStepValues?.(abortSignal)).resolves.toEqual({
       stepValues: { contact: { title: 'Other' } },
     });
+    expect(mocks.getUserContact).toHaveBeenNthCalledWith(
+      1,
+      undefined,
+      abortSignal
+    );
+    expect(mocks.getUserContact).toHaveBeenNthCalledWith(
+      2,
+      undefined,
+      abortSignal
+    );
     expect(createProps.hidingFields?.contact?.titleOther?.(values)).toBe(true);
     expect(
       updateProps.hidingFields?.contact?.titleOther?.({
@@ -409,6 +434,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.PreconditionFailed,
     });
     await createProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message:
@@ -420,6 +446,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await updateProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
@@ -430,6 +457,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.InternalServerError,
     });
     await createProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
@@ -440,6 +468,7 @@ describe('account and contact wizard prop factories', () => {
       status: HttpStatusCode.PreconditionFailed,
     });
     await updateProps.onSaveAndNext?.(values, true, abortSignal);
+
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message:
@@ -653,16 +682,19 @@ describe('account and contact wizard prop factories', () => {
     );
 
     mocks.completeAccountDetails.mockRejectedValueOnce(null);
+
     await expect(
       updateProps.onSaveAndNext?.({ id: 1, name: 'Organisation' }, true)
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
+
     await expect(
       createContact.onSaveAndNext?.({ contact: {} }, true)
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
+
     await expect(
       updateContact.onSaveAndNext?.({ contact: {} }, true)
     ).resolves.toBeUndefined();

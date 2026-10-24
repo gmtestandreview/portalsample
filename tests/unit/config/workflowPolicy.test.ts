@@ -66,9 +66,17 @@ const stepBlocks = (contents: string): string[] => {
 
   if (stepIndent === undefined) return [];
 
-  const starts = lines.flatMap((line, index) =>
-    new RegExp(`^\\s{${stepIndent}}-\\s+`).test(line) ? [index] : []
-  );
+  const starts = lines.flatMap((line, index) => {
+    const step = line.slice(stepIndent);
+    const characterAfterDash = step[1];
+
+    return line.slice(0, stepIndent).trim() === '' &&
+      step.startsWith('-') &&
+      characterAfterDash !== undefined &&
+      characterAfterDash.trim() === ''
+      ? [index]
+      : [];
+  });
 
   return starts.map((start, index) =>
     lines.slice(start, starts[index + 1]).join('\n')
@@ -84,6 +92,44 @@ const withoutComments = (contents: string): string =>
     .filter((line) => !/^\s*#/.test(line))
     .join('\n');
 
+const isWordCharacter = (character: string | undefined): boolean =>
+  character !== undefined && /[A-Za-z0-9_]/.test(character);
+
+const hasNpxScannerInvocation = (line: string): boolean => {
+  const npx = 'npx';
+  const scannerReference = '@sonar/scan';
+  let searchStart = 0;
+
+  while (searchStart < line.length) {
+    const npxIndex = line.indexOf(npx, searchStart);
+
+    if (npxIndex === -1) return false;
+
+    if (
+      !isWordCharacter(line[npxIndex - 1]) &&
+      !isWordCharacter(line[npxIndex + npx.length])
+    ) {
+      let scannerSearchStart = npxIndex + npx.length;
+
+      while (scannerSearchStart < line.length) {
+        const scannerIndex = line.indexOf(scannerReference, scannerSearchStart);
+
+        if (scannerIndex === -1) break;
+
+        if (!isWordCharacter(line[scannerIndex + scannerReference.length])) {
+          return true;
+        }
+
+        scannerSearchStart = scannerIndex + scannerReference.length;
+      }
+    }
+
+    searchStart = npxIndex + npx.length;
+  }
+
+  return false;
+};
+
 /** Immutable pins, each verified against the upstream tag object (Task D3). */
 const CHECKOUT_PIN =
   'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1';
@@ -95,8 +141,7 @@ const DOWNLOAD_ARTIFACT_PIN =
   'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333';
 const CHROMATIC_ACTION_PIN =
   'chromaui/action@38afd264ef2241136f12d039093c2724748bec08';
-const CODEQL_ACTION_PIN =
-  'github/codeql-action/(?:init|analyze)@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
+const CODEQL_ACTION_SHA = '2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
 
 const testCommands = [
   { name: 'unit', command: 'npm run test:ci:unit' },
@@ -124,7 +169,7 @@ const evidenceJobs = [
   'lower-bound-node24',
 ];
 
-describe('PR workflow runs each test environment as its own partition', () => {
+describe('pR workflow runs each test environment as its own partition', () => {
   it('declares the partition matrix without fail-fast', () => {
     expect(occurrences('fail-fast: false')).toBeGreaterThanOrEqual(1);
   });
@@ -290,11 +335,12 @@ describe('workflows pin every action to an immutable commit', () => {
   );
 
   it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
-    expect([
-      ...codeqlWorkflow.matchAll(
-        new RegExp(`uses: ${CODEQL_ACTION_PIN} # v4`, 'g')
-      ),
-    ]).toHaveLength(2);
+    expect(codeqlWorkflow).toContain(
+      `uses: github/codeql-action/init@${CODEQL_ACTION_SHA} # v4`
+    );
+    expect(codeqlWorkflow).toContain(
+      `uses: github/codeql-action/analyze@${CODEQL_ACTION_SHA} # v4`
+    );
     expect(occurrences('github/codeql-action/', codeqlWorkflow)).toBe(2);
   });
 
@@ -409,6 +455,11 @@ describe('the e2e job runs the full Playwright contract', () => {
     expect(block).toContain('playwright install --with-deps chromium');
   });
 
+  it('reports a failed diagnostic deny-ACL application distinctly', () => {
+    expect(block).toContain('ACL_DENY_APPLY_FAILED:');
+    expect(block).toContain('if ($denyExitCode -ne 0)');
+  });
+
   it('uploads the HTML report, traces, and screenshots', () => {
     expect(block).toContain('reports/playwright');
     expect(block).toContain('reports/test-results');
@@ -501,10 +552,15 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   });
 
   it('does not execute the scanner through runtime npm resolution', () => {
-    const scannerRunSteps = stepBlocks(block).filter(
-      (step) =>
-        /^\s*run:/m.test(step) &&
-        /\bnpx\b[^\n]*@sonar\/scan(?:@[^\s]+)?\b/.test(withoutComments(step))
+    const scannerRunSteps = stepBlocks(block).filter((step) =>
+      (() => {
+        const lines = withoutComments(step).split('\n');
+
+        return (
+          lines.some((line) => line.trimStart().startsWith('run:')) &&
+          lines.some(hasNpxScannerInvocation)
+        );
+      })()
     );
 
     expect(scannerRunSteps).toEqual([]);
@@ -542,6 +598,7 @@ describe('no partition may mask a failure', () => {
       expect(contents).toContain('run: corepack enable');
       expect(contents).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
     }
+
     // One corepack activation per PR job that installs dependencies.
     expect(occurrences('run: corepack enable')).toBe(4);
   });
@@ -576,7 +633,7 @@ describe('no partition may mask a failure', () => {
   });
 });
 
-describe('Storybook documentation is a CI quality gate', () => {
+describe('storybook documentation is a CI quality gate', () => {
   it.each([
     ['pull request', workflow],
     ['release', releaseWorkflow],
@@ -592,7 +649,7 @@ describe('Storybook documentation is a CI quality gate', () => {
   });
 });
 
-describe("CI uses the repository's enforced Node runtime", () => {
+describe("cI uses the repository's enforced Node runtime", () => {
   it('keeps engines and devEngines on the same Node 24 floor', () => {
     expect(packageJson.engines.node).toBe('>=24.21.0');
     expect(packageJson.devEngines.runtime.version).toBe('>=24.21.0');
@@ -624,7 +681,7 @@ describe("CI uses the repository's enforced Node runtime", () => {
   );
 });
 
-describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () => {
+describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () => {
   const workflows = [
     ['pull request', workflow],
     ['release', releaseWorkflow],
@@ -657,13 +714,14 @@ describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
   });
 });
 
-describe('Dependabot owns the lint cohort as one reviewable group', () => {
+describe('dependabot owns the lint cohort as one reviewable group', () => {
   it('keeps the weekly GitHub Actions ecosystem entry', () => {
     expect(dependabot).toContain('package-ecosystem: github-actions');
   });
 
   it('groups the whole ESLint family into a single pull request', () => {
     expect(dependabot).toContain('eslint-family:');
+
     for (const pattern of [
       "'eslint'",
       "'@eslint/js'",
@@ -682,7 +740,7 @@ describe('Dependabot owns the lint cohort as one reviewable group', () => {
   });
 });
 
-describe('Chromatic publishing reports asynchronously through GitHub', () => {
+describe('chromatic publishing reports asynchronously through GitHub', () => {
   it('publishes every pushed branch with complete Git history', () => {
     expect(chromaticWorkflow).toContain('push:');
     expect(chromaticWorkflow).toContain('fetch-depth: 0');

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, fn, userEvent, waitFor } from 'storybook/test';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import { withPortalProviders } from '../../storybook/storybookHarness';
@@ -14,7 +14,7 @@ const quotationData = {
   crmQuoteRequestId: 'QR-100245',
 } as RequestForQuoteDetails;
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Utilities/ViewMeasurementReport',
   component: ViewMeasurementReport,
   decorators: [withPortalProviders],
@@ -27,26 +27,28 @@ const meta = {
     setFileError: fn(),
     setIsLoading: fn(),
   },
-} satisfies Meta<typeof ViewMeasurementReport>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
     args,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
-      name: /view measurement report/i,
+      name: 'View measurement report',
     });
+
     await expect(button).toBeVisible();
-    await expect(canvas.getByText(/PDF file size 2\.00Kb/i)).toBeVisible();
+    await expect(
+      canvas.getByText(/Requires Acrobat PDF reader - PDF file size 2\.00Kb/),
+    ).toBeVisible();
 
     await userEvent.click(button);
 
     await waitFor(() => expect(args.setIsLoading).toHaveBeenCalledWith(false));
+
     await expect(args.setFileError).toHaveBeenLastCalledWith(false);
   },
-};
+});

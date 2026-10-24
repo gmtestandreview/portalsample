@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -67,6 +68,7 @@ describe('simple Formik input components', () => {
     const checkbox = screen.getByRole('checkbox', {
       name: /I accept the terms/i,
     });
+
     expect(checkbox).toHaveAccessibleDescription(
       'Confirm you have read the terms'
     );
@@ -97,6 +99,7 @@ describe('simple Formik input components', () => {
     const checkbox = screen.getByRole('checkbox', {
       name: 'Accept declaration',
     });
+
     expect(checkbox).toHaveAccessibleDescription('You must accept');
     expect(screen.getByText('You must accept')).toHaveClass(
       'form-validation-message'
@@ -165,6 +168,7 @@ describe('simple Formik input components', () => {
     );
 
     const radio = screen.getByRole('radio', { name: /No\s*Do not proceed/i });
+
     expect(radio).not.toBeChecked();
     expect(radio).toHaveAttribute('aria-controls', 'pref-no-sub-field');
     expect(screen.getByText('Reason details')).toBeInTheDocument();
@@ -207,6 +211,7 @@ describe('simple Formik input components', () => {
     const group = screen.getByRole('group', {
       name: 'Preferred contact method',
     });
+
     expect(group).toHaveAccessibleDescription('Choose a contact method');
     expect(group).not.toHaveAttribute('role');
     expect(screen.getByText('Why we ask')).toBeInTheDocument();
@@ -323,6 +328,7 @@ describe('simple Formik input components', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'State' });
+
     expect(select).toHaveAccessibleDescription(
       'Choose where the instrument is located'
     );
@@ -334,6 +340,7 @@ describe('simple Formik input components', () => {
     await user.selectOptions(select, 'act');
 
     expect(onChange).toHaveBeenCalledTimes(1);
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent('"state":"act"')
     );
@@ -368,8 +375,11 @@ describe('simple Formik input components', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'Service' });
+
     expect(select).toBeDisabled();
+
     await user.click(screen.getByText('Service help'));
+
     expect(screen.getByText('Pick the service type')).toBeInTheDocument();
     expect(
       within(select).getByRole('option', { name: 'Please select' })
@@ -413,6 +423,7 @@ describe('simple Formik input components', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'State' });
+
     expect(select).toHaveAccessibleDescription('Select a state');
     expect(screen.getByText('Select a state')).toHaveClass('invalid-feedback');
 
@@ -458,6 +469,7 @@ describe('simple Formik input components', () => {
     );
 
     await user.click(screen.getByText('State help'));
+
     expect(screen.getByText('Choose a state')).toBeInTheDocument();
     expect(
       screen.getByRole('combobox', { name: 'State' })
@@ -508,6 +520,7 @@ describe('simple Formik input components', () => {
     );
 
     const select = screen.getByRole('combobox', { name: 'State' });
+
     expect(select).toHaveAttribute(
       'aria-describedby',
       'service-state-validation-msg'
@@ -538,6 +551,7 @@ describe('simple Formik input components', () => {
     );
 
     const textarea = screen.getByRole('textbox', { name: 'Notes' });
+
     expect(textarea).toHaveAccessibleDescription('Use plain text');
     expect(screen.getByText('3 of 5 characters used')).toHaveClass('small');
 
@@ -548,6 +562,7 @@ describe('simple Formik input components', () => {
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent('"notes":"abcdef"')
     );
+
     expect(screen.getByTestId('touched')).toHaveTextContent('"notes":true');
     expect(screen.getByText('6 of 5 characters used')).toBeInTheDocument();
 
@@ -574,6 +589,7 @@ describe('simple Formik input components', () => {
     );
 
     const textarea = screen.getByRole('textbox', { name: 'Notes' });
+
     expect(textarea).toHaveAccessibleDescription(/Too long/i);
     expect(screen.getByText('Too long')).toHaveClass('form-validation-message');
     expect(screen.getAllByText(/6 of 5 characters used/)).toHaveLength(2);
@@ -598,11 +614,13 @@ describe('simple Formik input components', () => {
     );
 
     const textarea = screen.getByRole('textbox', { name: 'Notes' });
+
     expect(textarea).toBeDisabled();
     expect(textarea).toHaveAttribute('rows', '6');
     expect(screen.queryByText(/characters used/)).not.toBeInTheDocument();
 
     await user.tab();
+
     expect(screen.getByTestId('touched')).toHaveTextContent('{}');
   });
 
@@ -632,6 +650,7 @@ describe('simple Formik input components', () => {
     );
 
     const input = screen.getByRole('textbox', { name: 'First name' });
+
     expect(screen.getByText('Name help')).toBeInTheDocument();
 
     await user.click(input);
@@ -645,6 +664,7 @@ describe('simple Formik input components', () => {
     expect(onKeyDown).toHaveBeenCalled();
     expect(onChange).toHaveBeenCalled();
     expect(onBlur).toHaveBeenCalledTimes(1);
+
     await waitFor(() =>
       expect(screen.getByTestId('values')).toHaveTextContent(
         '"firstName":"Jordan"'
@@ -680,6 +700,7 @@ describe('simple Formik input components', () => {
     );
 
     const input = screen.getByRole('textbox', { name: 'First name' });
+
     expect(input).toBeDisabled();
     expect(input).toHaveAttribute('readonly');
     expect(input).toHaveAccessibleDescription('First name is required');
@@ -705,6 +726,7 @@ describe('simple Formik input components', () => {
     );
 
     const input = screen.getByRole('combobox', { name: 'Due date' });
+
     expect(input).toHaveAttribute('aria-controls', 'due-date-options');
     expect(input).toHaveAttribute('placeholder', 'dd/mm/yyyy');
 
@@ -737,6 +759,7 @@ describe('simple Formik input components', () => {
     );
 
     const supplied = screen.getByRole('textbox', { name: 'Reference' });
+
     expect(supplied).toHaveValue('SUPPLIED-REF');
     expect(supplied).toHaveAttribute('readonly');
     expect(screen.getByText('Generated by NMI')).toBeInTheDocument();

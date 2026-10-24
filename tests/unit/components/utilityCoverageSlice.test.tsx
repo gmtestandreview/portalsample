@@ -37,49 +37,73 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'account-1' }],
-    instance: {
-      acquireTokenSilent: mocks.acquireTokenSilent,
-    },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'account-1' }],
+        instance: {
+          acquireTokenSilent: mocks.acquireTokenSilent,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  clearDashboardNotification: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      clearDashboardNotification: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    verbose: vi.fn(),
-    error: vi.fn(),
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        verbose: vi.fn(),
+        error: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
-  DashboardClient: vi.fn(function (this: {
-    setAuthToken: ReturnType<typeof vi.fn>;
-    getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
-  }) {
-    this.setAuthToken = vi.fn();
-    this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
-  }),
-}));
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      DashboardClient: vi.fn(function (this: {
+        setAuthToken: ReturnType<typeof vi.fn>;
+        getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
+      }) {
+        this.setAuthToken = vi.fn();
+        this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
-  getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
-  getFileUrlFromBase64: vi.fn((fileData: string) => `blob:${fileData}`),
-  getQuotationFileDetails: vi.fn(),
-  getQuoteOfferPageNumber: vi.fn(() => '5'),
-  handleReportFileError: vi.fn(),
-  openInNewTab: vi.fn(),
-  openPdfPageInNewTab: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/helperFunctions',
+  () =>
+    ({
+      getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
+      getFileUrlFromBase64: vi.fn((fileData: string) => `blob:${fileData}`),
+      getQuotationFileDetails: vi.fn(),
+      getQuoteOfferPageNumber: vi.fn(() => '5'),
+      handleReportFileError: vi.fn(),
+      openInNewTab: vi.fn(),
+      openPdfPageInNewTab: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule9>
+);
 
 const quotationData = {
   crmQuoteRequestId: 'crm-quote-1',
@@ -165,7 +189,7 @@ describe('utility component coverage slice', () => {
       behavior: 'smooth',
       block: 'center',
     });
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('expands a collapsed accordion before scrolling to a hash target', () => {
@@ -192,10 +216,11 @@ describe('utility component coverage slice', () => {
       'class',
       'accordion-collapse collapse show'
     );
-    expect(buttonClick).toHaveBeenCalled();
+    expect(buttonClick).toHaveBeenCalledWith();
     expect(target.scrollIntoView).not.toHaveBeenCalled();
 
     act(() => vi.advanceTimersByTime(300));
+
     expect(target.scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: undefined,
@@ -212,7 +237,7 @@ describe('utility component coverage slice', () => {
     act(() => vi.advanceTimersByTime(600));
 
     expect(globalThis.scrollTo).toHaveBeenCalledWith(0, 0);
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('focuses page top when the route has no page title', () => {
@@ -224,7 +249,7 @@ describe('utility component coverage slice', () => {
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));
     act(() => vi.advanceTimersByTime(100));
 
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('prints, copies and can hide mailing label actions', async () => {
@@ -256,7 +281,8 @@ describe('utility component coverage slice', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: /print/i }));
-    expect(print).toHaveBeenCalled();
+
+    expect(print).toHaveBeenCalledWith();
 
     fireEvent.click(screen.getByRole('button', { name: /copy/i }));
     await waitFor(() =>
@@ -264,11 +290,13 @@ describe('utility component coverage slice', () => {
         screen.getByRole('button', { name: /copied/i })
       ).toBeInTheDocument()
     );
+
     expect(writeText).toHaveBeenCalledWith(
       expect.stringContaining('Quotation ID: Q-123')
     );
 
     rerender(<MailingLabel showPrintOrCopy={false} />);
+
     expect(
       screen.queryByRole('button', { name: /print/i })
     ).not.toBeInTheDocument();
@@ -300,6 +328,7 @@ describe('utility component coverage slice', () => {
     await waitFor(() =>
       expect(writeText).toHaveBeenCalledWith('Quotation ID: Q-123')
     );
+
     expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /copied/i })
@@ -320,7 +349,7 @@ describe('utility component coverage slice', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: /download pdf/i }));
 
-    expect(getPdf).toHaveBeenCalledOnce();
+    expect(getPdf).toHaveBeenCalledExactlyOnceWith();
     expect(trackGAEvent).toHaveBeenCalledWith('report', 'download');
     expect(screen.getByText(/PDF file size 1.00Mb/i)).toBeInTheDocument();
   });
@@ -373,6 +402,7 @@ describe('utility component coverage slice', () => {
     await waitFor(() =>
       expect(openInNewTab).toHaveBeenCalledWith('blob:quote-data')
     );
+
     expect(getFileSize).toHaveBeenCalledWith(4096);
     expect(getFileUrlFromBase64).toHaveBeenCalledWith('quote-data');
     expect(setIsLoading).toHaveBeenNthCalledWith(1, true);
@@ -395,6 +425,7 @@ describe('utility component coverage slice', () => {
     );
 
     await screen.findByRole('button', { name: /view quote/i });
+
     expect(setFileError).toHaveBeenCalledWith(true);
   });
 
@@ -421,6 +452,7 @@ describe('utility component coverage slice', () => {
     fireEvent.click(screen.getByRole('button', { name: /view quote/i }));
 
     await waitFor(() => expect(setFileError).toHaveBeenLastCalledWith(true));
+
     expect(setIsLoading).toHaveBeenLastCalledWith(false);
   });
 
@@ -455,7 +487,8 @@ describe('utility component coverage slice', () => {
     await waitFor(() =>
       expect(openInNewTab).toHaveBeenCalledWith('blob:report-data')
     );
-    expect(DashboardClient).toHaveBeenCalled();
+
+    expect(DashboardClient).toHaveBeenCalledWith();
     expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
       'crm-quote-1',
       false
@@ -489,7 +522,8 @@ describe('utility component coverage slice', () => {
     await screen.findByRole('button', { name: /view report/i });
     fireEvent.click(screen.getByRole('button', { name: /view report/i }));
 
-    await waitFor(() => expect(handleReportFileError).toHaveBeenCalled());
+    await waitFor(() => expect(handleReportFileError).toHaveBeenCalledWith());
+
     expect(setFileError).toHaveBeenLastCalledWith(true);
     expect(setIsLoading).toHaveBeenCalledWith(false);
   });
@@ -508,7 +542,8 @@ describe('utility component coverage slice', () => {
     );
 
     await screen.findByRole('button', { name: /view report/i });
-    expect(handleReportFileError).toHaveBeenCalled();
+
+    expect(handleReportFileError).toHaveBeenCalledWith();
     expect(setFileError).toHaveBeenCalledWith(true);
   });
 
@@ -534,6 +569,7 @@ describe('utility component coverage slice', () => {
         true
       )
     );
+
     expect(openInNewTab).not.toHaveBeenCalled();
     expect(getFileSize).not.toHaveBeenCalled();
 
@@ -545,6 +581,7 @@ describe('utility component coverage slice', () => {
         setIsLoading={setIsLoading}
       />
     );
+
     expect(
       screen.getByRole('button', { name: /view report/i })
     ).toBeInTheDocument();
@@ -593,6 +630,7 @@ describe('utility component coverage slice', () => {
         true
       )
     );
+
     expect(openInNewTab).not.toHaveBeenCalled();
     expect(getFileSize).not.toHaveBeenCalled();
   });
@@ -623,6 +661,7 @@ describe('utility component coverage slice', () => {
     await waitFor(() =>
       expect(openPdfPageInNewTab).toHaveBeenCalledWith('blob:terms-data', '3')
     );
+
     expect(trackGAEvent).toHaveBeenCalledWith('Terms', 'download');
     expect(setIsLoading).toHaveBeenNthCalledWith(1, true);
     expect(setIsLoading).toHaveBeenLastCalledWith(false);
@@ -648,6 +687,7 @@ describe('utility component coverage slice', () => {
     fireEvent.click(screen.getByText('Terms'));
 
     await waitFor(() => expect(setFileError).toHaveBeenCalledWith(true));
+
     expect(setIsLoading).toHaveBeenLastCalledWith(false);
   });
 
@@ -666,7 +706,14 @@ describe('utility component coverage slice', () => {
 
     fireEvent.click(screen.getByText('Terms'));
 
-    await waitFor(() => expect(getQuotationFileDetails).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(getQuotationFileDetails).toHaveBeenCalledWith(
+        'token-1',
+        quotationData,
+        true
+      )
+    );
+
     expect(openPdfPageInNewTab).not.toHaveBeenCalled();
   });
 });

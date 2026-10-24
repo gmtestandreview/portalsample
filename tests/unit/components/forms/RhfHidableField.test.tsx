@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
@@ -52,7 +53,7 @@ const SetTypeButton = ({ type }: Readonly<{ type: string }>) => {
   );
 };
 
-describe('RhfHidableField', () => {
+describe(RhfHidableField, () => {
   it('renders children when the rule evaluates to false', () => {
     render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
@@ -88,12 +89,15 @@ describe('RhfHidableField', () => {
         </RhfHidableField>
       </Harness>
     );
+
     expect(screen.getByText('ABN field')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'set individual' }));
+
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'set business' }));
+
     expect(screen.getByText('ABN field')).toBeInTheDocument();
   });
 
@@ -105,6 +109,7 @@ describe('RhfHidableField', () => {
         </RhfHidableField>
       </Harness>
     );
+
     expect(screen.getByText('ABN field')).toBeInTheDocument();
 
     rerender(
@@ -114,6 +119,7 @@ describe('RhfHidableField', () => {
         </RhfHidableField>
       </Harness>
     );
+
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
   });
 
@@ -166,7 +172,7 @@ describe('RhfHidableField', () => {
   });
 });
 
-describe('useHiddenRules', () => {
+describe(useHiddenRules, () => {
   it('returns an empty rule set without a provider', () => {
     const Probe = () => (
       <output data-testid='rules'>{JSON.stringify(useHiddenRules())}</output>

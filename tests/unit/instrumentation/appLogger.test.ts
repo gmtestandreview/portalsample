@@ -4,14 +4,18 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 const importLoggerWithInsights = async (insights: unknown) => {
   vi.resetModules();
   const getAppInsights = vi.fn(() => insights);
-  vi.doMock('@/instrumentation/AppInsightsService', () => ({
-    getAppInsights,
-  }));
+  vi.doMock(
+    '@/instrumentation/AppInsightsService',
+    () =>
+      ({
+        getAppInsights,
+      }) satisfies __ExactMockModule<__TestMockModule15>
+  );
   const { default: AppLogger } = await import('@/instrumentation/AppLogger');
   return { AppLogger, getAppInsights };
 };
 
-describe('AppLogger', () => {
+describe('appLogger', () => {
   afterEach(() => {
     vi.resetModules();
     vi.restoreAllMocks();

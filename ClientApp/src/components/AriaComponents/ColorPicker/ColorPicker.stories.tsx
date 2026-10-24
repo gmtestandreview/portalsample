@@ -1,24 +1,29 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorPicker } from './ColorPicker';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorPicker',
   component: ColorPicker,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorPicker>;
+});
 
-export default meta;
-type Story = StoryFn<typeof ColorPicker>;
+export const Example = meta.story({
+  args: {
+    label: 'Fill color',
+    defaultValue: '#f00',
+  },
+  play: async ({ canvas, userEvent }) => {
+    const trigger = canvas.getByRole('button', {
+      name: 'vibrant red Fill color',
+    });
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorPicker {...args} />
-);
+    await userEvent.click(trigger);
 
-Example.args = {
-  label: 'Fill color',
-  defaultValue: '#f00',
-};
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  },
+});

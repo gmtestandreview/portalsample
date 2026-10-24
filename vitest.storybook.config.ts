@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { playwright } from '@vitest/browser-playwright';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { defineConfig } from 'vitest/config';
-import { storybookCoverageConfig } from './vitest.storybook.coverage';
-import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime';
+import { storybookCoverageConfig } from './vitest.storybook.coverage.ts';
+import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime.ts';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 // Fixed port below the Windows dynamic range (49152+); the excluded TCP ranges
@@ -29,6 +29,12 @@ export default defineConfig({
     storybookTest({ configDir: path.join(dirname, '.storybook') }),
     storybookVitestRuntimePlugin,
   ],
+  // Prebundle the preview addon before Browser Mode starts. Discovering this
+  // dependency during a run makes Vite reload the test module, which can cause
+  // Vitest to evaluate a story outside an active suite.
+  optimizeDeps: {
+    include: ['msw-storybook-addon/preview'],
+  },
   test: {
     name: 'storybook',
     // Single run unless `--watch` is passed (see `test:storybook:watch`).

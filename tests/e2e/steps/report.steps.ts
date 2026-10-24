@@ -71,6 +71,7 @@ When(
   'the user opens report {string}',
   async ({ page }, referenceId: string) => {
     await page.goto(`/report/${referenceId}`);
+
     await expect(
       page.getByRole('heading', {
         name: 'Report',

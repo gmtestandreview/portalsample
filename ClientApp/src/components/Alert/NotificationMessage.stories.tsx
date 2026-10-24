@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, fn } from 'storybook/test';
 import NotificationMessage from './NotificationMessage';
 import { NotificationSeverity } from '../../storage/types';
@@ -18,15 +18,13 @@ import { NotificationSeverity } from '../../storage/types';
  * @prop {StoryObj} DismissibleError - Story demonstrating a dismissible error notification message with a close button.
  */
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Alert/NotificationMessage',
   component: NotificationMessage,
-} satisfies Meta<typeof NotificationMessage>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Success: Story = {
+export const Success = meta.story({
   args: {
     severity: NotificationSeverity.Success,
     message: 'Your request was submitted successfully.',
@@ -35,31 +33,49 @@ export const Success: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const status = canvas.getByRole('status');
+
+    await expect(
+      canvas.getByText('Your request was submitted successfully.'),
+    ).toBeVisible();
     await expect(status).toHaveAttribute('aria-live', 'polite');
   },
-};
+});
 
-export const Information: Story = {
+export const Information = meta.story({
   args: {
     severity: NotificationSeverity.Information,
     message: 'Your profile will be updated within 24 hours.',
     ariaLive: 'polite',
     role: 'status',
   },
-};
+  play: async ({
+    canvas,
+  }) => {
+    await expect(
+      canvas.getByText('Your profile will be updated within 24 hours.'),
+    ).toBeVisible();
+  },
+});
 
-export const Warning: Story = {
+export const Warning = meta.story({
   args: {
     severity: NotificationSeverity.Warning,
     message: 'Please review this warning before continuing.',
     ariaLive: 'polite',
     role: 'alert',
   },
-};
+  play: async ({
+    canvas,
+  }) => {
+    await expect(
+      canvas.getByText('Please review this warning before continuing.'),
+    ).toBeVisible();
+  },
+});
 
-export const ErrorMessage: Story = {
+export const ErrorMessage = meta.story({
   name: 'Error',
   args: {
     severity: NotificationSeverity.Error,
@@ -67,9 +83,16 @@ export const ErrorMessage: Story = {
     ariaLive: 'assertive',
     role: 'alert',
   },
-};
+  play: async ({
+    canvas,
+  }) => {
+    await expect(
+      canvas.getByText('Something went wrong. Please try again.'),
+    ).toBeVisible();
+  },
+});
 
-export const DismissibleError: Story = {
+export const DismissibleError = meta.story({
   args: {
     severity: NotificationSeverity.Error,
     message:
@@ -81,8 +104,9 @@ export const DismissibleError: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    const closeButton = canvas.getByRole('button', { name: /close/i });
+  }) => {
+    const closeButton = canvas.getByRole('button', { name: 'Close alert' });
+
     await expect(closeButton).toBeVisible();
   },
-};
+});

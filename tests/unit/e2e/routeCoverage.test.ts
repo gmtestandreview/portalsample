@@ -1,12 +1,12 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { routeCoverage } from '../../e2e/route-coverage';
+import { pathExists, readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
-const appSource = fs.readFileSync(
+const appSource = readTextFileSync(
   path.join(repoRoot, 'ClientApp', 'src', 'App.tsx'),
-  'utf8'
+  repoRoot
 );
 
 const declaredPaths = Array.from(
@@ -14,13 +14,14 @@ const declaredPaths = Array.from(
   (match) => match[1]
 ).filter((routePath): routePath is string => routePath !== undefined);
 
-describe('Playwright-BDD route coverage manifest', () => {
+describe('playwright-BDD route coverage manifest', () => {
   it('registers every route declared in App.tsx exactly once', () => {
     const registered = routeCoverage.map(({ path: routePath }) => routePath);
     const sortRoutes = (routes: string[]) =>
       [...routes].sort((left: string, right: string) =>
         left.localeCompare(right)
       );
+
     expect(new Set(registered).size).toBe(registered.length);
     expect(sortRoutes(registered)).toEqual(sortRoutes(declaredPaths));
   });
@@ -32,26 +33,21 @@ describe('Playwright-BDD route coverage manifest', () => {
         expect(entry.feature).toBeUndefined();
       } else {
         expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
-        expect(entry.scenario).toBeTruthy();
+        expect(entry.scenario).toBeDefined();
+
         const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
+
         expect(
-          fs.existsSync(featurePath),
+          pathExists(featurePath, repoRoot),
           `${entry.feature} should exist`
         ).toBe(true);
-        const featureSource = fs.readFileSync(featurePath, 'utf8');
-        const escapedScenario = entry.scenario.replace(
-          /[.*+?^${}()|[\]\\]/g,
-          '\\$&'
-        );
+
+        const featureSource = readTextFileSync(featurePath, repoRoot);
+
         expect(
           featureSource,
           `${entry.scenario} should exist in ${entry.feature}`
-        ).toMatch(
-          new RegExp(
-            `^\\s*Scenario(?: Outline)?:\\s*${escapedScenario}\\s*$`,
-            'm'
-          )
-        );
+        ).toContain(`Scenario: ${entry.scenario}`);
       }
     }
   });

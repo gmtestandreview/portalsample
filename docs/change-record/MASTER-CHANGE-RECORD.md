@@ -1548,7 +1548,7 @@ files, versus 163 files / 1,734 tests today. Re-measure before planning that ite
 | 11 — OpenAPI spec | Generate + commit `docs/api/openapi.json` via `dotnet run --openapi-output`. Backend to confirm changed endpoints. |
 | 12 — CI configuration | GitHub Actions: pnpm typecheck → lint → test → test:storybook → test:e2e (bddgen pre-step) → dotnet test. |
 | 13 — Storybook | Vite (`@storybook/react-vite`). Migrate `.storybook/` as-is. No webpack config change needed. |
-| 14 — Top-level await | Retain. Vite `build.target: 'es2022'` supports natively. Verify `vite.config.ts` target setting before migration. |
+| 14 — Top-level await | Retain. Vite `build.target: 'es2022'` supports natively. Verify `vite.config.mts` target setting before migration. |
 | 15 — API versioning | URL-path versioning on changed endpoints only (`/api/v2/`). Stable contracts unchanged. Backend to confirm changed endpoints. |
 
 **Structural recommendations (Items 16–22 — awaiting domain sign-offs):**

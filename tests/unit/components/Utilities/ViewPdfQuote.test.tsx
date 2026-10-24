@@ -26,19 +26,34 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => msalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/routes/common/helperFunctions', () => helperMocks);
+vi.mock(
+  '@/routes/common/helperFunctions',
+  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -56,7 +71,7 @@ const defaultProps = {
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('ViewPdfQuote', () => {
+describe(ViewPdfQuote, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Restore after clearAllMocks resets implementations (Vitest 4 behaviour)
@@ -120,6 +135,7 @@ describe('ViewPdfQuote', () => {
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
+
     expect(helperMocks.getFileSize).not.toHaveBeenCalled();
   });
 
@@ -212,6 +228,7 @@ describe('ViewPdfQuote', () => {
     await waitFor(() =>
       screen.getByRole('button', { name: /Download Quote/i })
     );
+
     expect(firstSetter).not.toHaveBeenCalledWith(true);
 
     // Re-render: quotationData changes (triggers effect re-run) and setter swaps
@@ -228,6 +245,7 @@ describe('ViewPdfQuote', () => {
     await waitFor(() => {
       expect(secondSetter).toHaveBeenCalledWith(true);
     });
+
     // firstSetter must not have been called with true at any point
     expect(firstSetter).not.toHaveBeenCalledWith(true);
   });

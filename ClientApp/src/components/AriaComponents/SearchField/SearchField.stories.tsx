@@ -1,25 +1,29 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { SearchField } from './SearchField';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import type { StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/SearchField',
   component: SearchField,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof SearchField>;
-
-export default meta;
+});
 
 type Story = StoryFn<typeof SearchField>;
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <SearchField {...args} />
-);
-
-Example.args = {
-  label: 'Search',
-  placeholder: 'Search documents',
-};
+export const Example = meta.story({
+  render: (args: Readonly<Parameters<Story>[0]>) => <SearchField {...args} />,
+  args: {
+    label: 'Search',
+    placeholder: 'Search documents',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('searchbox', { name: 'Search' }),
+    ).toHaveAttribute('placeholder', 'Search documents');
+  },
+});

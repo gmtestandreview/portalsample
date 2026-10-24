@@ -1,10 +1,10 @@
 import { useField } from 'formik';
 import type { ChangeEvent } from 'react';
 import Form from 'react-bootstrap/Form';
-import { trim } from 'lodash';
 import type { TextAreaInputProps } from './types';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { removeSupplementaryPlaneCharacters } from '../../../utils/removeSupplementaryPlaneCharacters';
 
 const TextAreaInput = ({
   label,
@@ -36,15 +36,12 @@ const TextAreaInput = ({
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Strip supplementary-plane characters (emoji etc.) which the API rejects.
-    const sanitised = event.target.value.replace(
-      /[\u{10000}-\u{10FFFF}]/gu,
-      ''
-    );
+    const sanitised = removeSupplementaryPlaneCharacters(event.target.value);
     void _fieldHelper.setValue(sanitised);
   };
 
   const handleOnBlur = () => {
-    const newValue = trim(_meta.value as string);
+    const newValue = (_meta.value as string | null | undefined)?.trim() ?? '';
     void _fieldHelper.setTouched(true);
     void _fieldHelper.setValue(newValue);
   };

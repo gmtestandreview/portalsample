@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, waitFor } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import PreConditions from './PreConditions';
@@ -16,7 +16,7 @@ const onboardedAccount = {
   defaultOrganisationId: 'org-1',
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/PreConditions',
   component: PreConditions,
   decorators: [withPortalProviders],
@@ -34,25 +34,25 @@ const meta = {
       <div data-testid='protected-content'>Protected dashboard content</div>
     ),
   },
-} satisfies Meta<typeof PreConditions>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const RendersProtectedContent: Story = {
+export const RendersProtectedContent = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('protected-content')).toBeVisible();
     await expect(canvas.getByText('Protected dashboard content')).toBeVisible();
+
     // Both assertions above pass on the first render. The route announcement does not:
     // useRouteAccessibility starts it empty and fills it from a 100ms setTimeout, which
     // is what left PreConditions and Layout updating after the story had ended.
     await waitFor(() =>
       expect(canvas.getByRole('status')).toHaveTextContent(
-        /^Navigated to .* page\.$/
-      )
+        /^Navigated to .* page\.$/,
+      ),
     );
   },
-};
+});

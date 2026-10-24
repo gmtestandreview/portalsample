@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { Container, Row, Col } from 'react-bootstrap';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -31,16 +31,16 @@ const stateOptions = [
   { value: 'NT', displayText: 'Northern Territory' },
 ];
 
-const meta = {
+const WizardCompleteDestination = () => <p>Wizard completed</p>;
+
+const meta = preview.meta({
   title: 'Forms/WizardForm',
   parameters: { layout: 'fullscreen' },
   decorators: [withPortalProviders],
-} satisfies Meta;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Step1ContactDetails: Story = {
+export const Step1ContactDetails = meta.story({
   parameters: { portal: { initialEntries: ['/step-1'] } },
   render: () => (
     <WizardForm
@@ -83,22 +83,30 @@ export const Step1ContactDetails: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // Progress is announced once, by the stepper. The h1 used to repeat it as a
     // visually-hidden "Step 1 of 2", which duplicated the same information for screen
     // reader users now that the stepper is no longer aria-hidden.
     const heading = canvas.getByRole('heading', { level: 1 });
+
     await expect(heading).toHaveTextContent('Contact details');
     await expect(heading).not.toHaveTextContent(/Step \d+ of \d+/);
     await expect(
-      canvas.getByRole('list', { name: 'Form progress' })
+      canvas.getByRole('list', { name: 'Form progress' }),
     ).toBeVisible();
   },
-};
+});
 
-export const Step2WithPreviousCompleted: Story = {
-  parameters: { portal: { initialEntries: ['/step-2'] } },
+export const Step2WithPreviousCompleted = meta.story({
+  parameters: {
+    portal: {
+      initialEntries: ['/step-2'],
+      destinationRoutes: [
+        { path: '/dashboard', element: <WizardCompleteDestination /> },
+      ],
+    },
+  },
   render: () => (
     <WizardForm
       locationOnCompletion='/dashboard'
@@ -137,6 +145,7 @@ export const Step2WithPreviousCompleted: Story = {
         loadStepValues={async () => ({
           stepValues: { state: '', notes: '' },
         })}
+        onSaveAndNext={async () => undefined}
         bannerTitle='Instrument details'
       >
         <SelectInput<string>
@@ -149,9 +158,30 @@ export const Step2WithPreviousCompleted: Story = {
       </WizardStep>
     </WizardForm>
   ),
-};
+  play: async ({
+    canvasElement,
+    userEvent,
+  }) => {
+    const canvas = within(canvasElement);
 
-export const ThreeStepSummaryPage: Story = {
+    await expect(
+      canvas.getByRole('heading', { level: 1, name: 'Organisation details' }),
+    ).toBeVisible();
+
+    const state = canvas.getByRole('combobox', {
+      name: 'State or territory',
+    });
+    await userEvent.selectOptions(state, 'ACT');
+
+    await expect(state).toHaveValue('ACT');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Submit' }));
+
+    await expect(await canvas.findByText('Wizard completed')).toBeVisible();
+  },
+});
+
+export const ThreeStepSummaryPage = meta.story({
   parameters: { portal: { initialEntries: ['/step-3'] } },
   render: () => (
     <WizardForm
@@ -205,4 +235,4 @@ export const ThreeStepSummaryPage: Story = {
       </WizardStep>
     </WizardForm>
   ),
-};
+});

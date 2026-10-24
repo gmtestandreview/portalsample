@@ -9,15 +9,19 @@ const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
 const useBlockerMock = vi.fn();
 
-vi.mock('react-router', () => ({
-  useBlocker: (callback: unknown) => useBlockerMock(callback),
-}));
+vi.mock(
+  'react-router',
+  () =>
+    ({
+      useBlocker: (callback: unknown) => useBlockerMock(callback),
+    }) satisfies __ExactMockModule<__TestMockModule11>
+);
 
 const renderGuard = (
   props: React.ComponentProps<typeof RouteLeavingGuard> = {}
 ) => render(<RouteLeavingGuard {...props} />);
 
-describe('RouteLeavingGuard', () => {
+describe(RouteLeavingGuard, () => {
   beforeEach(() => {
     resetBlocker.mockReset();
     proceedBlocker.mockReset();
@@ -141,11 +145,14 @@ describe('RouteLeavingGuard', () => {
 
     const { unmount } = renderGuard({ when: true });
     await user.click(screen.getByRole('button', { name: /discard changes/i }));
+
     expect(proceedBlocker).toHaveBeenCalledTimes(1);
+
     unmount();
 
     renderGuard({ when: true, onProceed });
     await user.click(screen.getByRole('button', { name: /cancel/i }));
+
     expect(onProceed).not.toHaveBeenCalled();
   });
 });

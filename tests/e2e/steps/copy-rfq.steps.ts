@@ -16,10 +16,11 @@ Given(
     scenarioState.activeReferenceId = referenceId;
     await page.goto(`/request-for-quote-copy/${referenceId}`);
     await waitForAppReady(page);
+
     await expect(page).toHaveURL(
-      new RegExp(
-        `/request-for-quote/${referenceId}-COPY/organisation-and-contact$`
-      )
+      (url) =>
+        url.pathname ===
+        `/request-for-quote/${referenceId}-COPY/organisation-and-contact`
     );
   }
 );
@@ -32,7 +33,9 @@ When(
     const request = page
       .getByRole('tabpanel', { name: 'Requests' })
       .locator(`#RefId-${referenceId}`);
+
     await expect(request).toBeVisible();
+
     await request.getByRole('link', { name: /Request recalibration/i }).click();
     await waitForAppReady(page);
   }

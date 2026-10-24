@@ -33,3 +33,19 @@ Feature: Storybook documentation architecture
     Then Documentation Getting Started is available
     And Documentation Component Documentation Guide is available
     And Documentation Style Guide is available
+
+  Scenario: Documentation ownership identifies the rendered AutoSuggest owner
+    Given Storybook is running
+    When I open the AutoSuggest documentation
+    Then the AutoSuggestContainer owner is visible
+    And the Loading story is listed with its rendered owner
+
+  Scenario: Documentation ownership exposes peer AcceptQuote step APIs
+    Given Storybook is running
+    When I open the AcceptQuote documentation
+    Then the AcceptQuote owner and four peer APIs are visible
+
+  Scenario: Documentation ownership preserves Guard story presentation
+    Given Storybook is running
+    When I open the RouteLeavingGuard documentation
+    Then the RouteLeavingGuard type and default cells are visible

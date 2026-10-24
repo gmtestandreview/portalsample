@@ -28,7 +28,7 @@ const clients = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -54,17 +54,25 @@ vi.mock(
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
       ProgressClient: clients.progress,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
   id: 'doc-1',
@@ -148,11 +156,12 @@ describe('application documents with the real RHF form', () => {
     await waitFor(() =>
       expect(
         clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalled()
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object))
     );
     const [applicationId, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
     );
+
     expect(applicationId).toBe('APP-1');
     expect(values.form.documents[0].documentBytes).toBeUndefined();
     expect(values.form.documents[0].attachmentName).toBe('spec.pdf');
@@ -165,11 +174,11 @@ describe('application documents with the real RHF form', () => {
 
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
-    expect(
-      await screen.findByText(ValidationMessages.RequiredTag, {
+    await expect(
+      screen.findByText(ValidationMessages.RequiredTag, {
         selector: 'li',
       })
-    ).toBeInTheDocument();
+    ).resolves.toBeInTheDocument();
     expect(
       clients.patternApproval.methods.commitAppDocuments
     ).not.toHaveBeenCalled();
@@ -183,21 +192,24 @@ describe('application documents with the real RHF form', () => {
       screen.getByRole('combobox', { name: 'Category' }),
       'Certificate'
     );
+
     expect(clients.patternApproval.methods.updateCategory).toHaveBeenCalledWith(
       'APP-1',
       'doc-1',
       'Certificate'
     );
+
     await user.click(screen.getByRole('button', { name: 'Commit' }));
 
     await waitFor(() =>
       expect(
         clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalled()
+      ).toHaveBeenCalledWith('APP-1', expect.any(Object))
     );
     const [, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
     );
+
     expect(values.form.documents[0].attachmentCategory).toBe('Certificate');
   });
 
@@ -205,6 +217,7 @@ describe('application documents with the real RHF form', () => {
     await renderLoaded([document1({ attachmentCategory: 'Certificate' })]);
 
     const row = screen.getByText('spec.pdf').closest('.attachment');
+
     expect(row).not.toBeNull();
     expect(
       within(row as HTMLElement).getByRole('combobox', { name: 'Category' })

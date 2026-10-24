@@ -19,22 +19,35 @@ import type { FormikValues } from 'formik';
 // not a statement of what it should do. The same suite is meant to run against
 // the RHF shell (see the design addendum, parity contract).
 
-vi.mock('../../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The real WizardStep wraps an error boundary and analytics that are not under
 // test; render its children directly.
 vi.mock(
   '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
-vi.mock('../../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock(
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 const accountState = {
   isLoading: false,
@@ -120,7 +133,7 @@ const renderStep = (
 
 const NEXT = 'save-and-next-button';
 
-describe('Formik wizard shell characterisation', () => {
+describe('formik wizard shell characterisation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -137,12 +150,15 @@ describe('Formik wizard shell characterisation', () => {
     const summary = await screen.findByTestId('form-error-summary');
     // Decision D-2: the summary takes focus (Formik left it on the button).
     await waitFor(() => expect(document.activeElement).toBe(summary));
+
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
   });
 
   it('focuses the summary again on each further failed submit', async () => {
     const user = userEvent.setup();
-    HTMLElement.prototype.scrollIntoView = vi.fn();
+    vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
+      () => {}
+    );
     renderStep({ onSaveAndNext: vi.fn() });
     await screen.findByLabelText('Name');
 
@@ -154,6 +170,7 @@ describe('Formik wizard shell characterisation', () => {
     await waitFor(() =>
       expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(2)
     );
+
     expect(document.activeElement).toBe(
       screen.getByTestId('form-error-summary')
     );
@@ -180,6 +197,7 @@ describe('Formik wizard shell characterisation', () => {
         'from server'
       )
     );
+
     // Decision D-1: the banner stays up so the user knows why their edits
     // were replaced (Formik cleared it immediately).
     expect(screen.getByTestId('form-error-summary').textContent).toContain(
@@ -200,8 +218,9 @@ describe('Formik wizard shell characterisation', () => {
     await user.click(await screen.findByTestId('save-and-exit-button'));
 
     await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+
     expect(onSaveAndExit.mock.calls[0]?.[0]).toEqual({});
-    expect(await screen.findByText('Done Page')).toBeTruthy();
+    await expect(screen.findByText('Done Page')).resolves.toBeInTheDocument();
   });
 
   it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
@@ -217,7 +236,9 @@ describe('Formik wizard shell characterisation', () => {
     await user.clear(input);
     await user.tab();
 
-    expect(await screen.findByText('Name is required')).toBeTruthy();
+    await expect(
+      screen.findByText('Name is required')
+    ).resolves.toBeInTheDocument();
   });
 
   it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {
@@ -241,6 +262,7 @@ describe('Formik wizard shell characterisation', () => {
     await user.clear(input);
     await user.tab();
     await new Promise((resolve) => setTimeout(resolve, 200));
+
     expect(screen.queryByText('Name is required')).toBeNull();
   });
 });

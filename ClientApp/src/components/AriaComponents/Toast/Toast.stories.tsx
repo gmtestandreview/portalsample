@@ -1,10 +1,10 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { MyToastRegion } from './Toast';
 import { queue } from './ToastQueue';
 import { Button } from '../Button/Button';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { expect, waitFor, within } from 'storybook/test';
-import type { Meta, StoryObj } from '@storybook/react-vite';
 
 interface ToastStoryArgs {
   title: string;
@@ -13,7 +13,11 @@ interface ToastStoryArgs {
   buttonLabel: string;
 }
 
-const meta = {
+const meta = preview.meta<
+  ToastStoryArgs,
+  typeof withReactAriaEvaluation,
+  ToastStoryArgs
+>({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Toast',
   parameters: {
@@ -41,15 +45,20 @@ const meta = {
   args: {
     title: 'Files uploaded',
     description: '3 files uploaded successfully.',
+    timeout: 0,
     buttonLabel: 'Show toast',
   },
-} satisfies Meta<ToastStoryArgs>;
+});
 
-export default meta;
-type Story = StoryObj<ToastStoryArgs>;
 
-export const Example: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Example = meta.story({
+  args: {
+    title: 'Files uploaded',
+    description: '3 files uploaded successfully.',
+    timeout: 0,
+    buttonLabel: 'Show toast',
+  },
+  render: (args) => (
     <>
       <MyToastRegion />
       <Button
@@ -59,7 +68,7 @@ export const Example: Story = {
               title: args.title,
               ...omitUndefined({ description: args.description }),
             },
-            args.timeout ? { timeout: args.timeout } : undefined
+            args.timeout ? { timeout: args.timeout } : undefined,
           )
         }
       >
@@ -116,14 +125,15 @@ function MyToastRegion() {
     canvas,
     canvasElement,
     userEvent,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const page = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(
-      canvas.getByRole('button', { name: args.buttonLabel })
+      canvas.getByRole('button', { name: args.buttonLabel }),
     );
 
     const title = await page.findByText(args.title);
+
     await expect(title).toBeVisible();
 
     if (args.description) {
@@ -136,4 +146,4 @@ function MyToastRegion() {
       await expect(page.queryByText(args.title)).not.toBeInTheDocument();
     });
   },
-};
+});

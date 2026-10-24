@@ -1,17 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { CustomAccordion, CustomAccordionBody } from './index';
 
-const meta = {
+const meta = preview.meta({
   component: CustomAccordion,
   tags: ['ai-generated', 'needs-work', '!autodocs'],
-} satisfies Meta<typeof CustomAccordion>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const SingleSection: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const SingleSection = meta.story({
+  render: (args) => (
     <CustomAccordion {...args}>
       <CustomAccordionBody
         id='quote-step'
@@ -25,15 +22,13 @@ export const SingleSection: Story = {
   args: {
     id: 'wizard-accordion-single',
   },
-  play: async ({
-    canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
-    await expect(canvas.getByText(/quote request details/i)).toBeVisible();
+  play: async ({ canvas }) => {
+    await expect(canvas.getByText('Quote request details')).toBeVisible();
   },
-};
+});
 
-export const WithSubHeading: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const WithSubHeading = meta.story({
+  render: (args) => (
     <CustomAccordion {...args}>
       <CustomAccordionBody
         id='contact-step'
@@ -49,4 +44,4 @@ export const WithSubHeading: Story = {
   args: {
     id: 'wizard-accordion-subheading',
   },
-};
+});

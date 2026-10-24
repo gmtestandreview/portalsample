@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { expect, userEvent, screen, waitFor, within } from 'storybook/test';
 import { Routes, Route, Link } from 'react-router';
 import { Formik, Form } from 'formik';
@@ -45,9 +45,57 @@ const GuardHarness = ({
   </Routes>
 );
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/RouteLeavingGuard',
   component: RouteLeavingGuard,
+  argTypes: {
+    when: {
+      description: 'Whether navigation should be intercepted.',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    title: {
+      description: 'Heading shown in the confirmation modal.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: { summary: "'Unsaved changes'" },
+      },
+    },
+    body: {
+      description: 'Message shown in the confirmation modal.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: {
+          summary:
+            "'You have made changes to this form. You can discard your changes, or cancel to stay on the page.'",
+        },
+      },
+    },
+    cancelBtn: {
+      description: 'Label or content for the cancel action.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: { summary: "'Cancel'" },
+      },
+    },
+    confirmBtn: {
+      description: 'Label or content for the discard action.',
+      table: {
+        type: { summary: 'ReactNode' },
+        defaultValue: { summary: "'Discard changes'" },
+      },
+    },
+    onProceed: {
+      description: 'Runs immediately before confirmed navigation proceeds.',
+      control: false,
+      table: {
+        type: { summary: '() => void' },
+        defaultValue: { summary: 'undefined' },
+      },
+    },
+  },
   parameters: {
     portal: { initialEntries: ['/form'] },
     docs: {
@@ -61,22 +109,20 @@ const meta = {
       },
     },
   },
-} satisfies Meta<typeof RouteLeavingGuard>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Idle: Story = {
+export const Idle = meta.story({
   name: 'Idle — guard inactive',
   render: () => <GuardHarness when={false} />,
-};
+});
 
-export const InterceptedNavigation: Story = {
+export const InterceptedNavigation = meta.story({
   name: 'Active — confirmation modal on navigation',
   render: () => <GuardHarness when={true} />,
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     // Link is in the canvas (inside Routes); modal renders via Bootstrap portal into document.body
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
@@ -84,16 +130,17 @@ export const InterceptedNavigation: Story = {
       name: /unsaved changes/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
-      within(dialog).getByRole('button', { name: /^cancel$/i })
+      within(dialog).getByRole('button', { name: /^cancel$/i }),
     ).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /discard changes/i })
+      within(dialog).getByRole('button', { name: /discard changes/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const CustomCopy: Story = {
+export const CustomCopy = meta.story({
   name: 'Custom title, body, and button labels',
   render: () => (
     <GuardHarness
@@ -106,28 +153,29 @@ export const CustomCopy: Story = {
   ),
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {
       name: /are you sure you want to log out\?/i,
     });
     await waitFor(() => expect(dialog).toBeVisible());
+
     await expect(
-      within(dialog).getByText(/Any changes made will not be saved/)
+      within(dialog).getByText(/Any changes made will not be saved/),
     ).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /yes, logout/i })
+      within(dialog).getByRole('button', { name: /yes, logout/i }),
     ).toBeVisible();
   },
-};
+});
 
-export const ProceedAfterConfirm: Story = {
+export const ProceedAfterConfirm = meta.story({
   name: 'Confirm navigation — modal clears and user proceeds',
   render: () => <GuardHarness when={true} />,
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {
@@ -137,9 +185,10 @@ export const ProceedAfterConfirm: Story = {
       name: /discard changes/i,
     });
     await userEvent.click(leaveButton);
+
     // After navigation the /other route replaces /form content in canvas
     await expect(
-      canvas.findByText('You left the page.')
+      canvas.findByText('You left the page.'),
     ).resolves.toBeVisible();
   },
-};
+});

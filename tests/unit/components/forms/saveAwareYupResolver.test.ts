@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { ReturnMethodValues } from '@/api/web-api-client';
 import { createSaveAwareYupResolver } from '@/components/forms/saveAwareYupResolver';
 import type { ValidationSchema } from '@/components/forms/types';
@@ -7,7 +8,7 @@ import {
 } from '@/routes/acceptQuote/validation';
 import * as Yup from 'yup';
 
-describe('createSaveAwareYupResolver', () => {
+describe(createSaveAwareYupResolver, () => {
   const resolver = createSaveAwareYupResolver(
     deliveryAndReturnSaveValidation,
     deliveryAndReturnSubmitValidation

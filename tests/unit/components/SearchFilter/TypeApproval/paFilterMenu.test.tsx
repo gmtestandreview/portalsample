@@ -11,48 +11,60 @@ const mocks = vi.hoisted(() => ({
   trackGAEvent: vi.fn(),
 }));
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountDispatch: () => ({
-    setUserProfile: mocks.setUserProfile,
-  }),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountDispatch: () => ({
+        setUserProfile: mocks.setUserProfile,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: mocks.trackGAEvent,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: mocks.trackGAEvent,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
-  default: ({
-    legend,
-    name,
-    options,
-    onChange,
-    disabled,
-  }: {
-    legend: string;
-    name: string;
-    options: { id?: string; label: string; value: string }[];
-    onChange: React.ChangeEventHandler<HTMLInputElement>;
-    disabled?: boolean;
-  }) => (
-    <fieldset>
-      <legend>{legend}</legend>
-      {options.map((option) => (
-        <label key={option.value} htmlFor={option.id}>
-          <input
-            id={option.id}
-            type='radio'
-            name={name}
-            value={option.value}
-            disabled={disabled}
-            onChange={onChange}
-          />
-          {option.label}
-        </label>
-      ))}
-    </fieldset>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/RadioButtonGroup',
+  () =>
+    ({
+      default: ({
+        legend,
+        name,
+        options,
+        onChange,
+        disabled,
+      }: {
+        legend: string;
+        name: string;
+        options: { id?: string; label: string; value: string }[];
+        onChange: React.ChangeEventHandler<HTMLInputElement>;
+        disabled?: boolean;
+      }) => (
+        <fieldset>
+          <legend>{legend}</legend>
+          {options.map((option) => (
+            <label key={option.value} htmlFor={option.id}>
+              <input
+                id={option.id}
+                type='radio'
+                name={name}
+                value={option.value}
+                disabled={disabled}
+                onChange={onChange}
+              />
+              {option.label}
+            </label>
+          ))}
+        </fieldset>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule52>
+);
 
 const renderMenu = (
   initialFilters: PatternApprovalDashboardDto | undefined,
@@ -77,7 +89,7 @@ const openMenu = async () => {
   return user;
 };
 
-describe('PaFilterMenu', () => {
+describe(PaFilterMenu, () => {
   beforeEach(() => {
     mocks.setUserProfile.mockReset();
     mocks.trackGAEvent.mockReset();
@@ -87,6 +99,7 @@ describe('PaFilterMenu', () => {
     renderMenu(undefined);
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
     expect(toggle).toHaveAttribute('title', 'No filters applied');
     expect(within(toggle).getByRole('status')).toHaveTextContent('');
 
@@ -108,6 +121,7 @@ describe('PaFilterMenu', () => {
     });
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
     expect(toggle).toHaveAttribute('title', '3 filters have been applied');
     expect(within(toggle).getByRole('status')).toHaveTextContent('3');
   });
@@ -139,6 +153,7 @@ describe('PaFilterMenu', () => {
       filterActiveTab: DashboardTab.Requests,
       filterSearchText: 'pattern',
     };
+
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expectedFilters);
     expect(mocks.setUserProfile).toHaveBeenCalledWith({
@@ -160,6 +175,7 @@ describe('PaFilterMenu', () => {
     });
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
     expect(toggle).toHaveAttribute('title', '0 filters have been applied');
     expect(within(toggle).getByRole('status')).toHaveTextContent('0');
   });
@@ -212,6 +228,7 @@ describe('PaFilterMenu', () => {
       filterActiveTab: DashboardTab.Instruments,
       filterSearchText: 'certificate',
     };
+
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expectedFilters);
     expect(mocks.setUserProfile).toHaveBeenCalledWith({

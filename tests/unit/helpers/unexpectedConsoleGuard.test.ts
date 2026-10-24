@@ -97,7 +97,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('installUnexpectedConsoleGuard', () => {
+describe(installUnexpectedConsoleGuard, () => {
   it('registers exactly one beforeEach and one afterEach so failures attach to the emitting test', () => {
     const hooks = captureHooks();
 
@@ -161,7 +161,7 @@ describe('installUnexpectedConsoleGuard', () => {
     ['warn', ARIA_LABEL_WARNING],
     [
       'error',
-      '[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID',
+      '[env] Missing required environment variable: VITE_GA_TRACKINGID',
     ],
   ] as const)(
     'treats the known %s signature as unexpected when unconsumed',
@@ -229,7 +229,7 @@ describe('console argument formatting', () => {
   });
 });
 
-describe('expectConsoleMessage', () => {
+describe(expectConsoleMessage, () => {
   it('consumes a matching message so teardown passes', async () => {
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /not wrapped in act/, 1, () => {

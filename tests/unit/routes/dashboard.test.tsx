@@ -96,200 +96,317 @@ let mockAccountDetails: AccountDetails | null = null;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
-  DashboardClient: vi.fn().mockImplementation(function (this: any) {
-    this.setAuthToken = mockSetAuthToken;
-    this.getDashboardDraftsByPortalID = mockGetDrafts;
-    this.getDashboardQuotesByPortalID = mockGetQuotes;
-    this.getDashboardArtefactsByPortalID = mockGetArtefacts;
-  }),
-  StatusEnumDto: {},
-}));
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      DashboardClient: vi.fn().mockImplementation(function (this: any) {
+        this.setAuthToken = mockSetAuthToken;
+        this.getDashboardDraftsByPortalID = mockGetDrafts;
+        this.getDashboardQuotesByPortalID = mockGetQuotes;
+        this.getDashboardArtefactsByPortalID = mockGetArtefacts;
+      }),
+      StatusEnumDto: {},
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => mockMsalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => mockMsalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@azure/msal-browser', () => ({
-  InteractionStatus: { None: 'none' },
-}));
+vi.mock(
+  '@azure/msal-browser',
+  () =>
+    ({
+      InteractionStatus: { None: 'none' },
+    }) satisfies __ExactMockModule<__TestMockModule3>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: () => ({ details: mockAccountDetails }),
-  useAccountDispatch: () => mockAccountDispatchState.value,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({ details: mockAccountDetails }),
+      useAccountDispatch: () => mockAccountDispatchState.value,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['openid'] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['openid'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../ClientApp/src/components/modals/ModalContext', () => ({
-  useModalState: () => mockModalState,
-  useModalDispatch: () => ({
-    setShowBranchSelector: mockSetShowBranchSelector,
-  }),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/modals/ModalContext',
+  () =>
+    ({
+      useModalState: () => mockModalState,
+      useModalDispatch: () => ({
+        setShowBranchSelector: mockSetShowBranchSelector,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule27>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/constants', () => ({
-  defaultFilter: {
-    filterYearType: 'allYears',
-    filterStatusType: 'allStatuses',
-    filterCurrentPage: 1,
-    filterActiveTab: 'drafts',
-    filterSearchText: '',
-    filterSortOrder: 'descending',
-    filtersChanged: false,
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/constants',
+  () =>
+    ({
+      defaultFilter: {
+        filterYearType: 'allYears',
+        filterStatusType: 'allStatuses',
+        filterCurrentPage: 1,
+        filterActiveTab: 'drafts',
+        filterSearchText: '',
+        filterSortOrder: 'descending',
+        filtersChanged: false,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule103>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/helperFunctions', () => ({
-  mapToUserProfile: mockMapToUserProfile,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/helperFunctions',
+  () =>
+    ({
+      mapToUserProfile: mockMapToUserProfile,
+    }) satisfies __ExactMockModule<__TestMockModule9>
+);
 
-vi.mock('../../../ClientApp/src/components/Welcome', () => ({
-  default: () => <div data-testid='welcome' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Welcome',
+  () =>
+    ({
+      default: () => <div data-testid='welcome' />,
+    }) satisfies __ExactMockModule<__TestMockModule93>
+);
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: any) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: any) => (
+        <div data-testid='block-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
-vi.mock('../../../ClientApp/src/components/Alert/NotificationMessage', () => ({
-  default: () => <div data-testid='notification-message' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Alert/NotificationMessage',
+  () =>
+    ({
+      default: () => <div data-testid='notification-message' />,
+    }) satisfies __ExactMockModule<__TestMockModule48>
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useDebounce', () => ({
-  default: (value: any) => value,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useDebounce',
+  () =>
+    ({
+      default: (value: any) => value,
+    }) satisfies __ExactMockModule<__TestMockModule104>
+);
 
-vi.mock('../../../ClientApp/src/components/tiles/StandardPathway', () => ({
-  default: () => <div data-testid='standard-pathway' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/tiles/StandardPathway',
+  () =>
+    ({
+      default: () => <div data-testid='standard-pathway' />,
+    }) satisfies __ExactMockModule<__TestMockModule94>
+);
 
-vi.mock('../../../ClientApp/src/components/SearchFilter', () => ({
-  default: () => <div data-testid='search-filter' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/SearchFilter',
+  () =>
+    ({
+      default: () => <div data-testid='search-filter' />,
+    }) satisfies __ExactMockModule<__TestMockModule105>
+);
 
-vi.mock('../../../ClientApp/src/components/RequestList/requestItem', () => ({
-  default: () => <li data-testid='request-item' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/RequestList/requestItem',
+  () =>
+    ({
+      default: () => <li data-testid='request-item' />,
+    }) satisfies __ExactMockModule<__TestMockModule106>
+);
 
-vi.mock('../../../ClientApp/src/components/RequestList/instrumentItem', () => ({
-  default: () => <li data-testid='instrument-item' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/RequestList/instrumentItem',
+  () =>
+    ({
+      default: () => <li data-testid='instrument-item' />,
+    }) satisfies __ExactMockModule<__TestMockModule107>
+);
 
-vi.mock('../../../ClientApp/src/components/RequestList/noRequests', () => ({
-  default: () => <div data-testid='no-requests' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/RequestList/noRequests',
+  () =>
+    ({
+      default: () => <div data-testid='no-requests' />,
+    }) satisfies __ExactMockModule<__TestMockModule95>
+);
 
 // CustomPagination mock — exposes data-current, data-total, and an onPageChange-wired Next button
-vi.mock('../../../ClientApp/src/components/Pagination', () => ({
-  default: ({ onPageChange, currentPage, totalPages }: any) => (
-    <button
-      data-testid='pagination'
-      data-current={currentPage}
-      data-total={totalPages}
-      onClick={() => onPageChange?.((currentPage ?? 1) + 1)}
-    >
-      Next
-    </button>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Pagination',
+  () =>
+    ({
+      default: ({ onPageChange, currentPage, totalPages }: any) => (
+        <button
+          data-testid='pagination'
+          data-current={currentPage}
+          data-total={totalPages}
+          onClick={() => onPageChange?.((currentPage ?? 1) + 1)}
+        >
+          Next
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule98>
+);
 
-vi.mock('../../../ClientApp/src/components/PaginationHeader', () => ({
-  default: () => <div data-testid='pagination-header' />,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/PaginationHeader',
+  () =>
+    ({
+      default: () => <div data-testid='pagination-header' />,
+    }) satisfies __ExactMockModule<__TestMockModule99>
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    info: vi.fn(),
-    verbose: vi.fn(),
-    warning: vi.fn(),
-    error: vi.fn(),
-    critical: vi.fn(),
-    trace: vi.fn(),
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        info: vi.fn(),
+        verbose: vi.fn(),
+        warning: vi.fn(),
+        error: vi.fn(),
+        critical: vi.fn(),
+        trace: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/errorRoutes', () => ({
-  default: (_status: number) => '/server-error',
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/errorRoutes',
+  () =>
+    ({
+      default: (_status: number) => '/server-error',
+    }) satisfies __ExactMockModule<__TestMockModule100>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/dashboardNotifications', () => ({
-  DashBoardNotifications: {
-    getForbiddenNotification: vi.fn(() => ({
-      message: 'forbidden',
-      severity: 'error',
-    })),
-    getThirdPartyAccessNotification: vi.fn(() => ({
-      message: 'no-third-party',
-      severity: 'error',
-    })),
-    getReportFormsGeneratedNotification: vi.fn(() => ({
-      message: 'report-forms',
-      severity: 'info',
-    })),
-    getDashboardErrorNotification: vi.fn(() => ({
-      message: 'error',
-      severity: 'error',
-    })),
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/dashboardNotifications',
+  () =>
+    ({
+      DashBoardNotifications: {
+        getForbiddenNotification: vi.fn(() => ({
+          message: 'forbidden',
+          severity: 'error',
+        })),
+        getThirdPartyAccessNotification: vi.fn(() => ({
+          message: 'no-third-party',
+          severity: 'error',
+        })),
+        getReportFormsGeneratedNotification: vi.fn(() => ({
+          message: 'report-forms',
+          severity: 'info',
+        })),
+        getDashboardErrorNotification: vi.fn(() => ({
+          message: 'error',
+          severity: 'error',
+        })),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule101>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  getDashboardNotification: mockGetDashboardNotification,
-  clearDashboardNotification: mockClearDashboardNotification,
-  setDashboardNotification: mockSetDashboardNotification,
-  getDashboardInfoNotification: mockGetDashboardInfoNotification,
-  setDashboardInfoNotification: vi.fn(),
-  clearDashboardInfoNotification: mockClearDashboardInfoNotification,
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      getDashboardNotification: mockGetDashboardNotification,
+      clearDashboardNotification: mockClearDashboardNotification,
+      setDashboardNotification: mockSetDashboardNotification,
+      getDashboardInfoNotification: mockGetDashboardInfoNotification,
+      setDashboardInfoNotification: vi.fn(),
+      clearDashboardInfoNotification: mockClearDashboardInfoNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../ClientApp/src/storage/sessionStorageCache', () => ({
-  default: () => ({
-    getItem: mockSessionGetItem,
-    setItem: mockSessionSetItem,
-    removeItem: mockSessionRemoveItem,
-    clear: vi.fn(),
-  }),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/sessionStorageCache',
+  () =>
+    ({
+      default: () => ({
+        getItem: mockSessionGetItem,
+        setItem: mockSessionSetItem,
+        removeItem: mockSessionRemoveItem,
+        clear: vi.fn(),
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule72>
+);
 
-vi.mock('../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: mockTrackGAEvent,
-}));
+vi.mock(
+  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: mockTrackGAEvent,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('../../../ClientApp/src/routes/common/enums', () => ({
-  DashboardItemStatus: {
-    QuoteAvailable: 'Quote offer is available',
-    QuoteAccepted: 'Quote offer is accepted',
-  },
-  QuoteStatus: {},
-  Environment: {},
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/common/enums',
+  () =>
+    ({
+      DashboardItemStatus: {
+        QuoteAvailable: 'Quote offer is available',
+        QuoteAccepted: 'Quote offer is accepted',
+      },
+      QuoteStatus: {},
+      Environment: {},
+    }) satisfies __ExactMockModule<__TestMockModule108>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
-  () => ({
-    BranchSelectionModalMode: {
-      SelectAndEditOrg: 'SelectAndEditOrg',
-      RFQSelectOrg: 'RFQSelectOrg',
-    },
-  })
+  () =>
+    ({
+      BranchSelectionModalMode: {
+        SelectAndEditOrg: 'SelectAndEditOrg',
+        RFQSelectOrg: 'RFQSelectOrg',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule109>
 );
 
-vi.mock('react-number-format', () => ({
-  PatternFormat: ({ value }: any) => <span>{value}</span>,
-}));
+vi.mock(
+  'react-number-format',
+  () =>
+    ({
+      PatternFormat: ({ value }: any) => <span>{value}</span>,
+    }) satisfies __ExactMockModule<__TestMockModule102>
+);
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────
 
@@ -354,7 +471,7 @@ function renderDashboard(Dashboard: React.ComponentType) {
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
-describe('Dashboard', () => {
+describe('dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Restore default resolved value after clearAllMocks resets implementations
@@ -427,6 +544,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
 
@@ -442,8 +560,10 @@ describe('Dashboard', () => {
 
     // Verify ordering: setAuthToken must precede getDashboardDraftsByPortalID
     expect(mockGetDrafts).toHaveBeenCalled();
+
     const setTokenOrder = mockSetAuthToken.mock.invocationCallOrder[0];
     const getDraftsOrder = mockGetDrafts.mock.invocationCallOrder[0];
+
     expect(setTokenOrder).toBeLessThan(defined(getDraftsOrder));
   });
 
@@ -475,6 +595,7 @@ describe('Dashboard', () => {
     // All 3 tab panes are rendered simultaneously; each shows NoRequests when empty
     await waitFor(() => {
       const noRequestEls = screen.getAllByTestId('no-requests');
+
       expect(noRequestEls.length).toBeGreaterThan(0);
     });
   });
@@ -492,6 +613,7 @@ describe('Dashboard', () => {
     await waitFor(() =>
       expect(screen.getByTestId('welcome')).toBeInTheDocument()
     );
+
     expect(mockGetDrafts).not.toHaveBeenCalled();
     expect(mockGetQuotes).not.toHaveBeenCalled();
     expect(mockGetArtefacts).not.toHaveBeenCalled();
@@ -530,6 +652,7 @@ describe('Dashboard', () => {
       // The Dashboard renders one CustomPagination per tab pane; all share
       // the same totalPages state, so every pagination element should show 3.
       const paginationEls = screen.getAllByTestId('pagination');
+
       expect(paginationEls.length).toBeGreaterThan(0);
       expect(paginationEls[0]).toHaveAttribute('data-total', '3');
     });
@@ -567,6 +690,7 @@ describe('Dashboard', () => {
       fireEvent.click(await screen.findByRole('tab', { name: accessibleName }));
 
       await waitFor(() => expect(apiMock).toHaveBeenCalled());
+
       expect(mockTrackGAEvent).toHaveBeenCalledWith(tabValue);
       expect(mockSetUserProfile).toHaveBeenCalledWith({
         testingCalibrationDashboard: expect.objectContaining({
@@ -587,6 +711,7 @@ describe('Dashboard', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledTimes(2));
+
     expect(mockTrackGAEvent).toHaveBeenCalledWith('drafts');
     expect(mockSetUserProfile).toHaveBeenCalledWith({
       testingCalibrationDashboard: expect.objectContaining({
@@ -620,6 +745,7 @@ describe('Dashboard', () => {
         'view-quote-id'
       )
     );
+
     expect(acceptedItem.status).toBe('Quote offer is accepted');
     expect(acceptedItem.quote).toEqual({ artefactName: 'Mass standard' });
     expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
@@ -640,6 +766,7 @@ describe('Dashboard', () => {
     await waitFor(() =>
       expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id')
     );
+
     expect(mockSessionSetItem).not.toHaveBeenCalled();
   });
 
@@ -668,6 +795,7 @@ describe('Dashboard', () => {
         severity: 'error',
       })
     );
+
     expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', 'Acme');
   });
 
@@ -678,13 +806,14 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
     expect(screen.queryByTestId('error-page')).not.toBeInTheDocument();
   });
 
   it('opens branch management and records new request and instrument pagination actions', async () => {
     const scrollIntoView = vi.fn();
-    document.getElementById = vi.fn(
+    vi.spyOn(document, 'getElementById').mockImplementation(
       () => ({ scrollIntoView }) as unknown as HTMLElement
     );
     const Dashboard = await importDashboard();
@@ -693,6 +822,7 @@ describe('Dashboard', () => {
     fireEvent.click(
       await screen.findByTestId('open-manage-branch-division-button')
     );
+
     expect(mockSetShowBranchSelector).toHaveBeenCalledWith(true);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Instrument/artefacts' }));
@@ -700,9 +830,13 @@ describe('Dashboard', () => {
     fireEvent.click(defined(screen.getAllByTestId('pagination')[2]));
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('Instrument/pagechange');
-    expect(scrollIntoView).toHaveBeenCalled();
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
 
     fireEvent.click(screen.getByTestId('new-request-button'));
+
     expect(mockTrackGAEvent).toHaveBeenCalledWith('New request');
   });
 
@@ -771,6 +905,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+
     expect(screen.getAllByTestId('notification-message')).toHaveLength(2);
     expect(screen.getByText(/Trading name/)).toBeInTheDocument();
     expect(screen.getByText(/Sydney/)).toBeInTheDocument();
@@ -809,6 +944,7 @@ describe('Dashboard', () => {
     await waitFor(() =>
       expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id')
     );
+
     expect(acceptedItem.status).toBe('Draft');
     expect(mockSessionSetItem).not.toHaveBeenCalled();
   });
@@ -843,6 +979,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
     expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
     expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
@@ -864,6 +1001,7 @@ describe('Dashboard', () => {
     await waitFor(() =>
       expect(screen.getByTestId('welcome')).toBeInTheDocument()
     );
+
     expect(mockGetDrafts).not.toHaveBeenCalled();
   });
 
@@ -883,6 +1021,7 @@ describe('Dashboard', () => {
         'true'
       )
     );
+
     expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
       'data-current',
       '1'
@@ -899,6 +1038,7 @@ describe('Dashboard', () => {
     await waitFor(() =>
       expect(screen.getByTestId('welcome')).toBeInTheDocument()
     );
+
     expect(mockGetDrafts).not.toHaveBeenCalled();
   });
 
@@ -918,6 +1058,7 @@ describe('Dashboard', () => {
         severity: 'error',
       })
     );
+
     expect(mockSetTargetOrganisation).not.toHaveBeenCalled();
   });
 
@@ -985,6 +1126,7 @@ describe('Dashboard', () => {
     await waitFor(() =>
       expect(screen.getByTestId('welcome')).toBeInTheDocument()
     );
+
     expect(mockGetDrafts).not.toHaveBeenCalled();
 
     // Account context hydrates the profile asynchronously; the effect now
@@ -1012,6 +1154,7 @@ describe('Dashboard', () => {
     );
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
 
@@ -1043,6 +1186,7 @@ describe('Dashboard', () => {
         '1'
       )
     );
+
     expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
   });
 
@@ -1057,6 +1201,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalled());
+
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
       'true'
@@ -1078,6 +1223,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBeUndefined();
     expect(mockGetDrafts.mock.calls.at(-1)?.[5]).toBe(1);
   });
@@ -1093,6 +1239,7 @@ describe('Dashboard', () => {
         'aria-live'
       )
     );
+
     expect(document.querySelectorAll('[inert]')).toHaveLength(3);
   });
 });

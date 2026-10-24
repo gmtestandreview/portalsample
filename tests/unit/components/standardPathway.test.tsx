@@ -1,9 +1,10 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { MemoryRouter } from 'react-router';
 import StandardPathway from '../../../ClientApp/src/components/tiles/StandardPathway';
 
-describe('StandardPathway external links', () => {
+describe('standardPathway external links', () => {
   it('uses explicit noopener noreferrer on new-tab external links', () => {
     render(
       <StandardPathway
@@ -17,6 +18,7 @@ describe('StandardPathway external links', () => {
     );
 
     const link = screen.getByRole('link');
+
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
     expect(link).toHaveAttribute('rel', expect.stringContaining('noreferrer'));
@@ -37,6 +39,7 @@ describe('StandardPathway external links', () => {
     const link = screen.getByRole('link', {
       name: /read the guide open guide/i,
     });
+
     expect(link).toHaveAttribute('href', 'https://example.test/guide');
     expect(link).not.toHaveAttribute('rel');
     expect(screen.queryByText(/opens in a new tab/i)).not.toBeInTheDocument();
@@ -75,6 +78,7 @@ describe('StandardPathway external links', () => {
     );
 
     const footerIcon = container.querySelector('.standard-pathway-footer i');
+
     expect(footerIcon).not.toBeNull();
     expect(footerIcon).toHaveAttribute('aria-hidden', 'true');
     expect(footerIcon).not.toHaveAttribute('role');
@@ -95,6 +99,7 @@ describe('StandardPathway external links', () => {
     const link = screen.getByRole('link', {
       name: /start a request start now/i,
     });
+
     expect(link).toHaveAttribute('href', '/request');
     expect(link).toHaveAttribute('data-pii', 'login');
   });

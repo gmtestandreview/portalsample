@@ -1,3 +1,5 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
 import type { Vitest } from 'vitest/node';
 import type { Plugin } from 'vite';
 
@@ -16,6 +18,68 @@ type StorybookVitestPlugin = Plugin & {
 
 export const jsonCoverageExclusion = 'ClientApp/src/**/*.json';
 
+const isInside = (root: string, candidate: string): boolean => {
+  const relative = path.relative(root, candidate);
+  return (
+    relative === '' ||
+    (!relative.startsWith('..') && !path.isAbsolute(relative))
+  );
+};
+
+const writeClosureChildDiagnostic = (vitest: StorybookVitest): void => {
+  const receiptDirectory = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
+  const freezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
+  if (receiptDirectory === undefined || freezeId === undefined) return;
+
+  const cwd = process.cwd();
+  const resolvedReceiptDirectory = path.resolve(receiptDirectory);
+  const ownedReceiptRoot = path.resolve(cwd, 'reports', 'storybook-coverage');
+  if (!isInside(ownedReceiptRoot, resolvedReceiptDirectory)) {
+    throw new Error(
+      'STORYBOOK_CLOSURE_RECEIPTS must be inside the owned reports/storybook-coverage directory'
+    );
+  }
+  const selectedInputRoots = [
+    path.resolve(cwd, 'ClientApp/src'),
+    path.resolve(cwd, 'ClientApp/public'),
+    path.resolve(cwd, '.storybook'),
+    path.resolve(cwd, 'scripts'),
+    path.resolve(cwd, 'tests'),
+  ];
+  if (
+    selectedInputRoots.some((root) => isInside(root, resolvedReceiptDirectory))
+  ) {
+    throw new Error(
+      'STORYBOOK_CLOSURE_RECEIPTS must be outside selected source inputs'
+    );
+  }
+
+  // The directory is validated against the owned reports root and source roots
+  // above before the child diagnostic is created.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  mkdirSync(resolvedReceiptDirectory, { recursive: true });
+  const diagnostic = {
+    type: 'storybook-vitest-child',
+    pid: process.pid,
+    ppid: process.ppid,
+    cwd,
+    freezeId,
+    project: {
+      coverageExclusionPresent: vitest.config.coverage.exclude.includes(
+        jsonCoverageExclusion
+      ),
+    },
+  };
+  const fileName = `child-${process.pid}-${Date.now()}-${process.hrtime.bigint()}.json`;
+  // The filename is generated locally and joined to the validated receipt root.
+  // eslint-disable-next-line security/detect-non-literal-fs-filename
+  writeFileSync(
+    path.join(resolvedReceiptDirectory, fileName),
+    `${JSON.stringify(diagnostic, null, 2)}\n`,
+    { encoding: 'utf8', flag: 'wx' }
+  );
+};
+
 /**
  * Compatibility policy for Test-panel runs owned by @storybook/addon-vitest.
  *
@@ -31,5 +95,6 @@ export const storybookVitestRuntimePlugin: StorybookVitestPlugin = {
       vitest.config.coverage.exclude.push(jsonCoverageExclusion);
     }
     vitest.init = vitest.standalone.bind(vitest);
+    writeClosureChildDiagnostic(vitest);
   },
 };

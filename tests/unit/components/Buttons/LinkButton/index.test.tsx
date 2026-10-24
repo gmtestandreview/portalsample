@@ -8,43 +8,47 @@ const ariaLinkMockState = vi.hoisted(() => ({
   includeHref: false,
 }));
 
-vi.mock('react-aria-components/Link', () => ({
-  Link: ({
-    children,
-    className,
-    href,
-    render: renderLink,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    href?: string;
-    render?: (props: {
-      children: React.ReactNode;
-      className?: string;
-      href?: string;
-    }) => React.ReactNode;
-  }) =>
-    renderLink ? (
-      renderLink(
-        ariaLinkMockState.includeHref
-          ? {
-              children,
-              ...(className === undefined ? {} : { className }),
-              ...(href === undefined ? {} : { href }),
-            }
-          : {
-              children,
-              ...(className === undefined ? {} : { className }),
-            }
-      )
-    ) : (
-      <a className={className} href={href}>
-        {children}
-      </a>
-    ),
-}));
+vi.mock(
+  'react-aria-components/Link',
+  () =>
+    ({
+      Link: ({
+        children,
+        className,
+        href,
+        render: renderLink,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+        href?: string;
+        render?: (props: {
+          children: React.ReactNode;
+          className?: string;
+          href?: string;
+        }) => React.ReactNode;
+      }) =>
+        renderLink ? (
+          renderLink(
+            ariaLinkMockState.includeHref
+              ? {
+                  children,
+                  ...(className === undefined ? {} : { className }),
+                  ...(href === undefined ? {} : { href }),
+                }
+              : {
+                  children,
+                  ...(className === undefined ? {} : { className }),
+                }
+          )
+        ) : (
+          <a className={className} href={href}>
+            {children}
+          </a>
+        ),
+    }) satisfies __ExactMockModule<__TestMockModule18>
+);
 
-describe('LinkButton React Aria render fallback', () => {
+describe('linkButton React Aria render fallback', () => {
   afterEach(() => {
     ariaLinkMockState.includeHref = false;
   });

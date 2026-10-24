@@ -27,21 +27,29 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: mocks.instance,
-    accounts: mocks.accounts,
-    inProgress: 'none',
-  }),
-  useAccount: () => ({ homeAccountId: 'mock-id' }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: mocks.instance,
+        accounts: mocks.accounts,
+        inProgress: 'none',
+      }),
+      useAccount: () => ({ homeAccountId: 'mock-id' }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: () => ({
-    isLoading: false,
-    details: { homeAccountId: 'mock-id' },
-  }),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({
+        isLoading: false,
+        details: { homeAccountId: 'mock-id' },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -51,26 +59,38 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken = vi.fn();
       getReportRecipient = mocks.getReportRecipient;
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: mocks.error },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: mocks.error },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
-vi.mock('@/components/Inputs/AddressLookup', () => ({
-  default: ({ label }: { label: string }) => (
-    <div data-testid='address-lookup'>{label}</div>
-  ),
-}));
-vi.mock('@/components/Inputs/RhfAddressLookup', () => ({
-  default: ({ label }: { label: string }) => (
-    <div data-testid='address-lookup'>{label}</div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/AddressLookup',
+  () =>
+    ({
+      default: ({ label }: { label: string }) => (
+        <div data-testid='address-lookup'>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule31>
+);
+vi.mock(
+  '@/components/Inputs/RhfAddressLookup',
+  () =>
+    ({
+      default: ({ label }: { label: string }) => (
+        <div data-testid='address-lookup'>{label}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule69>
+);
 
 const hidingFields = {
   businessStreetAddress: (x: ReportRecipientStep) =>
@@ -132,7 +152,7 @@ function renderStep(options: StepHarnessProps) {
   return render(<StepHarness {...options} />);
 }
 
-describe('ReportRecipient behavior', () => {
+describe('reportRecipient behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -148,7 +168,9 @@ describe('ReportRecipient behavior', () => {
   it('describes the street and postal address options from the loaded organisation', async () => {
     renderStep({});
 
-    expect(await screen.findByText(/1 Street Road/)).toBeInTheDocument();
+    await expect(
+      screen.findByText(/1 Street Road/)
+    ).resolves.toBeInTheDocument();
     expect(screen.getByText(/PO Box 9/)).toBeInTheDocument();
     expect(mocks.getReportRecipient).toHaveBeenCalledWith('RFQ-1');
   });
@@ -166,6 +188,7 @@ describe('ReportRecipient behavior', () => {
     await waitFor(() =>
       expect(screen.getAllByText(/1 Street Road/)).toHaveLength(2)
     );
+
     expect(screen.queryByText(/PO Box 9/)).not.toBeInTheDocument();
   });
 
@@ -177,11 +200,13 @@ describe('ReportRecipient behavior', () => {
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: /Other/ }));
+
     expect(screen.getByTestId('address-lookup')).toBeInTheDocument();
 
     await user.click(
       screen.getByRole('radio', { name: /Business street address/ })
     );
+
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 
@@ -203,8 +228,9 @@ describe('ReportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     const submitted = defined(onSubmit.mock.calls[0], 'submit call')[0];
+
     expect(submitted).toEqual({
       reportAddressType: ReportAddressTypeValues.BusinessAddress,
       organisationName: 'Acme Metrology',
@@ -222,7 +248,7 @@ describe('ReportRecipient behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(/400/)).toBeInTheDocument();
+    await expect(screen.findByText(/400/)).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -235,7 +261,7 @@ describe('ReportRecipient behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(/400/)).toBeInTheDocument();
+    await expect(screen.findByText(/400/)).resolves.toBeInTheDocument();
     expect(screen.getByLabelText('Organisation name for report')).toBeInvalid();
     expect(
       screen.getByLabelText('Organisation name for report')
@@ -254,6 +280,7 @@ describe('ReportRecipient behavior', () => {
     await user.click(
       screen.getByRole('radio', { name: /Business postal address/ })
     );
+
     expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
   });
 
@@ -268,7 +295,8 @@ describe('ReportRecipient behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toEqual({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
     });
@@ -285,7 +313,8 @@ describe('ReportRecipient behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(/400/)).not.toBeInTheDocument();
   });
 
@@ -309,7 +338,8 @@ describe('ReportRecipient behavior', () => {
     });
     await screen.findByText(/1 Street Road/);
     await user.click(screen.getByRole('button', { name: 'Continue' }));
-    expect(await screen.findByText(/400/)).toBeInTheDocument();
+
+    await expect(screen.findByText(/400/)).resolves.toBeInTheDocument();
 
     rerender(<StepHarness values={{ organisationName: 'y'.repeat(402) }} />);
     await waitFor(() =>
@@ -317,7 +347,8 @@ describe('ReportRecipient behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
-    expect(await screen.findByText(/400/)).toBeInTheDocument();
+
+    await expect(screen.findByText(/400/)).resolves.toBeInTheDocument();
   });
 
   it('keeps rendering the form and logs when the recipient fails to load', async () => {
@@ -325,6 +356,7 @@ describe('ReportRecipient behavior', () => {
     renderStep({});
 
     await waitFor(() => expect(mocks.error).toHaveBeenCalled());
+
     expect(
       screen.getByLabelText('Organisation name for report')
     ).toBeInTheDocument();
@@ -337,7 +369,7 @@ describe('ReportRecipient behavior', () => {
     });
     renderStep({ isSummary: true });
 
-    expect(await screen.findByText(/PO Box 9/)).toBeInTheDocument();
+    await expect(screen.findByText(/PO Box 9/)).resolves.toBeInTheDocument();
   });
 
   it('shows the entered address in summary mode for the Other address type', async () => {
@@ -347,7 +379,9 @@ describe('ReportRecipient behavior', () => {
     });
     renderStep({ isSummary: true });
 
-    expect(await screen.findByTestId('address-lookup')).toBeInTheDocument();
+    await expect(
+      screen.findByTestId('address-lookup')
+    ).resolves.toBeInTheDocument();
   });
 
   it('shows the formatted business address read-only in summary mode', async () => {
@@ -357,7 +391,9 @@ describe('ReportRecipient behavior', () => {
     });
     renderStep({ isSummary: true });
 
-    expect(await screen.findByText(/1 Street Road/)).toBeInTheDocument();
+    await expect(
+      screen.findByText(/1 Street Road/)
+    ).resolves.toBeInTheDocument();
     expect(screen.queryByRole('radio')).not.toBeInTheDocument();
   });
 });

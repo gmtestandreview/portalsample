@@ -36,7 +36,7 @@ const contactOptions = [
   { value: 'sms', label: 'SMS' },
 ];
 
-describe('CheckboxGroup', () => {
+describe(CheckboxGroup, () => {
   it('renders vertical options with plain inline help and validation feedback', () => {
     render(
       <FormikHarness
@@ -57,6 +57,7 @@ describe('CheckboxGroup', () => {
     );
 
     const fieldset = screen.getByTestId('fs-contactMethod');
+
     expect(fieldset).toHaveAccessibleName('Contact method');
     expect(fieldset).toHaveAttribute(
       'aria-describedby',
@@ -101,9 +102,12 @@ describe('CheckboxGroup', () => {
     );
 
     const fieldset = screen.getByTestId('fs-contactMethod');
+
     expect(fieldset).toHaveAttribute('aria-describedby', 'help-contactMethod');
     expect(screen.getByText('Choosing a contact method')).toBeInTheDocument();
+
     const row = fieldset.querySelector('.row');
+
     expect(row).not.toBeNull();
     expect(within(row as HTMLElement).getAllByRole('checkbox')).toHaveLength(2);
 

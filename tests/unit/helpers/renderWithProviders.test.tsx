@@ -15,7 +15,7 @@ const LocationProbe = () => {
   );
 };
 
-describe('renderWithProviders', () => {
+describe(renderWithProviders, () => {
   it('renders components inside a memory router', () => {
     renderWithProviders(<LocationProbe />, { route: '/start' });
 

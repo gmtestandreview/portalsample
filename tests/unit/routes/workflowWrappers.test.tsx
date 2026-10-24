@@ -23,20 +23,32 @@ const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: mocks.msalAccounts,
-    instance: mocks.msalInstance,
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: mocks.msalAccounts,
+        instance: mocks.msalInstance,
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: mocks.useAccountState,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -74,168 +86,233 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
         getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
-  default: ({
-    children,
-    locationOnCompletion,
-    lastStepNextButtonTitle,
-  }: {
-    children: React.ReactNode;
-    locationOnCompletion: string;
-    lastStepNextButtonTitle: string;
-  }) => (
-    <section
-      data-testid='wizard-form'
-      data-complete-location={locationOnCompletion}
-      data-last-button={lastStepNextButtonTitle}
-    >
-      {children}
-    </section>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/forms/WizardForm',
+  () =>
+    ({
+      default: ({
+        children,
+        locationOnCompletion,
+        lastStepNextButtonTitle,
+      }: {
+        children: React.ReactNode;
+        locationOnCompletion: string;
+        lastStepNextButtonTitle: string;
+      }) => (
+        <section
+          data-testid='wizard-form'
+          data-complete-location={locationOnCompletion}
+          data-last-button={lastStepNextButtonTitle}
+        >
+          {children}
+        </section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule60>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({
-      children,
-      bannerTitle,
-      bannerRefTitle,
-    }: {
-      children: React.ReactNode;
-      bannerTitle?: string;
-      bannerRefTitle?: string;
-    }) => (
-      <article
-        data-testid='wizard-step'
-        data-banner-title={bannerTitle}
-        data-ref-title={bannerRefTitle}
-      >
-        {children}
-      </article>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        children,
+        bannerTitle,
+        bannerRefTitle,
+      }: {
+        children: React.ReactNode;
+        bannerTitle?: string;
+        bannerRefTitle?: string;
+      }) => (
+        <article
+          data-testid='wizard-step'
+          data-banner-title={bannerTitle}
+          data-ref-title={bannerRefTitle}
+        >
+          {children}
+        </article>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
-vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
-  default: ({
-    title,
-    refTitle,
-    subTitle,
-  }: {
-    title: string;
-    refTitle?: string;
-    subTitle?: string;
-  }) => (
-    <div
-      data-testid='form-banner'
-      data-ref-title={refTitle}
-      data-sub-title={subTitle}
-    >
-      {title}
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/forms/FormBanner',
+  () =>
+    ({
+      default: ({
+        title,
+        refTitle,
+        subTitle,
+      }: {
+        title: string;
+        refTitle?: string;
+        subTitle?: string;
+      }) => (
+        <div
+          data-testid='form-banner'
+          data-ref-title={refTitle}
+          data-sub-title={subTitle}
+        >
+          {title}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule90>
+);
 
-vi.mock('../../../ClientApp/src/components/BlockUISpinner', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='block-spinner'>{children}</div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/BlockUISpinner',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid='block-spinner'>{children}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule14>
+);
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <p data-testid='header-intro'>{children}</p>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/HeaderIntroText',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <p data-testid='header-intro'>{children}</p>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule76>
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-    verbose: mocks.appLoggerVerbose,
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+        verbose: mocks.appLoggerVerbose,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
 vi.mock(
   '../../../ClientApp/src/routes/requestForQuote/organisationAndContact',
-  () => ({
-    default: () => <div>Organisation and contact step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Organisation and contact step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule149>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest',
-  () => ({
-    default: () => <div>Instrument and request step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Instrument and request step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule150>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary',
-  () => ({
-    default: () => <div>Request summary step</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Request summary step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule151>
 );
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/reportRecipient', () => ({
-  default: () => <div>Report recipient step</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/acceptQuote/reportRecipient',
+  () =>
+    ({
+      default: () => <div>Report recipient step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule61>
+);
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn', () => ({
-  default: () => <div>Delivery and return step</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
+  () =>
+    ({
+      default: () => <div>Delivery and return step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule62>
+);
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/paymentDetails', () => ({
-  default: () => <div>Payment details step</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/acceptQuote/paymentDetails',
+  () =>
+    ({
+      default: () => <div>Payment details step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule63>
+);
 
-vi.mock('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept', () => ({
-  default: () => <div>Summary and accept step</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
+  () =>
+    ({
+      default: () => <div>Summary and accept step</div>,
+    }) satisfies __ExactMockModule<__TestMockModule64>
+);
 
-vi.mock('../../../ClientApp/src/routes/quotation/quoteDetails', () => ({
-  default: ({
-    quotationData,
-    fileError,
-  }: {
-    quotationData?: { quotationIdNum?: string };
-    fileError?: boolean;
-  }) => (
-    <div data-testid='quotation-details' data-file-error={fileError}>
-      {quotationData?.quotationIdNum}
-    </div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/quotation/quoteDetails',
+  () =>
+    ({
+      default: ({
+        quotationData,
+        fileError,
+      }: {
+        quotationData?: { quotationIdNum?: string };
+        fileError?: boolean;
+      }) => (
+        <div data-testid='quotation-details' data-file-error={fileError}>
+          {quotationData?.quotationIdNum}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule152>
+);
 
-vi.mock('../../../ClientApp/src/routes/quotation/nMIContactDetails', () => ({
-  default: () => <div>NMI contact details</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/quotation/nMIContactDetails',
+  () =>
+    ({
+      default: () => <div>NMI contact details</div>,
+    }) satisfies __ExactMockModule<__TestMockModule153>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
-  () => ({
-    default: () => <div>Quote terms</div>,
-  })
+  () =>
+    ({
+      default: () => <div>Quote terms</div>,
+    }) satisfies __ExactMockModule<__TestMockModule116>
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/ViewPdfQuote', () => ({
-  default: () => <div>Detailed quote PDF</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuote',
+  () =>
+    ({
+      default: () => <div>Detailed quote PDF</div>,
+    }) satisfies __ExactMockModule<__TestMockModule117>
+);
 
 const accountDetails = {
   organisation: 'National Measurement Institute',
@@ -365,6 +442,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
     );
+
     expect(screen.getAllByTestId('wizard-step')).toHaveLength(3);
   });
 
@@ -380,6 +458,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('not-found')).toBeInTheDocument();
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     unmount();
 
     mocks.requestForQuoteGetStepStatuses.mockRejectedValueOnce(
@@ -394,6 +473,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('not-found')).toBeInTheDocument()
     );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load application steps',
       expect.any(Error),
@@ -530,6 +610,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     unmount();
 
     const AcceptQuote = (
@@ -543,6 +624,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
     expect(mocks.acceptQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     mocks.msalAccounts.push({ homeAccountId: 'account-1' });
   });
 
@@ -564,9 +646,11 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument()
     );
+
     expect(mocks.createApplication).toHaveBeenCalledWith({
       applicationType: 'QuoteRequest',
     });
+
     unmount();
 
     renderWithNavigationDestinations(
@@ -580,6 +664,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('rfq-created-destination')).toBeInTheDocument()
     );
+
     expect(mocks.copyApplication).toHaveBeenCalledWith('RFQ-1', {
       applicationType: 'QuoteRequest',
     });
@@ -603,6 +688,7 @@ describe('workflow route wrappers', () => {
         expect.any(Error)
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
 
@@ -624,6 +710,7 @@ describe('workflow route wrappers', () => {
         expect.any(Error)
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
 
@@ -669,6 +756,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('wizard-form')).toBeInTheDocument()
     );
+
     expect(mocks.requestForQuoteGetStepStatuses).toHaveBeenCalledWith(
       'RFQ-123'
     );
@@ -700,6 +788,7 @@ describe('workflow route wrappers', () => {
         { Id: 'RFQ-FAIL' }
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
   });
 
@@ -719,6 +808,7 @@ describe('workflow route wrappers', () => {
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
     expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+
     mocks.msalAccounts.push({ homeAccountId: 'account-1' });
   });
 
@@ -767,6 +857,7 @@ describe('workflow route wrappers', () => {
     await waitFor(() =>
       expect(screen.getByTestId('not-found')).toBeInTheDocument()
     );
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load quote request details',
       expect.any(Error),
@@ -792,6 +883,7 @@ describe('workflow route wrappers', () => {
         screen.getByTestId('accept-created-destination')
       ).toBeInTheDocument()
     );
+
     expect(mocks.getQuoteRequestDetailsByRefId).toHaveBeenCalledWith(
       'QuoteRequest',
       'RFQ-123'
@@ -823,6 +915,7 @@ describe('workflow route wrappers', () => {
         { Id: 'RFQ-FAIL' }
       )
     );
+
     expect(screen.getByTestId('block-spinner')).toBeInTheDocument();
   });
 
@@ -841,9 +934,11 @@ describe('workflow route wrappers', () => {
       'data-ref-title',
       'Quotation ID: AQ-3'
     );
+
     await waitFor(() =>
       expect(screen.getByText('Prepayment required')).toBeInTheDocument()
     );
+
     expect(mocks.getPaymentDetails).toHaveBeenCalledWith('AQ-3');
   });
 
@@ -868,6 +963,7 @@ describe('workflow route wrappers', () => {
         )
       ).toBeInTheDocument()
     );
+
     expect(screen.queryByText('Prepayment required')).not.toBeInTheDocument();
   });
 
@@ -906,9 +1002,11 @@ describe('workflow route wrappers', () => {
     );
 
     expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
+
     await waitFor(() =>
       expect(screen.getByTestId('quotation-details')).toHaveTextContent('Q-500')
     );
+
     expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-500');
     expect(screen.getByText('Quote terms')).toBeInTheDocument();
     expect(screen.getByText('Detailed quote PDF')).toBeInTheDocument();
@@ -934,6 +1032,7 @@ describe('workflow route wrappers', () => {
         'true'
       )
     );
+
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to get Quotedetails: CRM-FAIL',

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -5,59 +6,63 @@ import CustomDatePicker from '@/components/Inputs/DatePicker/CustomDatePicker';
 
 const mockDate = new Date('2026-05-18T00:00:00.000Z');
 
-vi.mock('@/components/Inputs/DatePicker/CustomDateInput', () => ({
-  default: ({
-    calendarOnKeyDown,
-    forwardedControlRef,
-    forwardedFeedbackRef,
-    forwardedInlineHelpRef,
-    handleEnsureCalendarClosed,
-    handleOpenCalendar,
-    handleCloseCalendar,
-    hasError,
-    label,
-    onBlur,
-    onKeyDown,
-  }: {
-    calendarOnKeyDown: (event: React.KeyboardEvent) => void;
-    forwardedControlRef: React.Ref<HTMLInputElement>;
-    forwardedFeedbackRef: React.Ref<HTMLDivElement>;
-    forwardedInlineHelpRef: React.Ref<HTMLDivElement>;
-    handleEnsureCalendarClosed: () => void;
-    handleOpenCalendar: () => void;
-    handleCloseCalendar: () => void;
-    hasError?: boolean;
-    label?: string;
-    onBlur?: (event: React.FocusEvent) => void;
-    onKeyDown?: (event: React.KeyboardEvent) => void;
-  }) => (
-    <div>
-      <input
-        aria-label='Date input'
-        className={hasError ? 'is-invalid' : ''}
-        ref={forwardedControlRef}
-        onBlur={onBlur}
-        onKeyDown={onKeyDown}
-        required
-      />
-      <div ref={forwardedInlineHelpRef} data-testid='inline-help-ref' />
-      <div ref={forwardedFeedbackRef} data-testid='feedback-ref' />
-      <button type='button' onClick={handleOpenCalendar}>
-        Open calendar
-      </button>
-      <button type='button' onClick={handleCloseCalendar}>
-        Close trigger
-      </button>
-      <button type='button' onClick={handleEnsureCalendarClosed}>
-        Ensure closed
-      </button>
-      <button type='button' onKeyDown={calendarOnKeyDown}>
-        Calendar key target
-      </button>
-      {label ? <span>{label}</span> : null}
-    </div>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/DatePicker/CustomDateInput',
+  () =>
+    ({
+      default: ({
+        calendarOnKeyDown,
+        forwardedControlRef,
+        forwardedFeedbackRef,
+        forwardedInlineHelpRef,
+        handleEnsureCalendarClosed,
+        handleOpenCalendar,
+        handleCloseCalendar,
+        hasError,
+        label,
+        onBlur,
+        onKeyDown,
+      }: {
+        calendarOnKeyDown: (event: React.KeyboardEvent) => void;
+        forwardedControlRef: React.Ref<HTMLInputElement>;
+        forwardedFeedbackRef: React.Ref<HTMLDivElement>;
+        forwardedInlineHelpRef: React.Ref<HTMLDivElement>;
+        handleEnsureCalendarClosed: () => void;
+        handleOpenCalendar: () => void;
+        handleCloseCalendar: () => void;
+        hasError?: boolean;
+        label?: string;
+        onBlur?: (event: React.FocusEvent) => void;
+        onKeyDown?: (event: React.KeyboardEvent) => void;
+      }) => (
+        <div>
+          <input
+            aria-label='Date input'
+            className={hasError ? 'is-invalid' : ''}
+            ref={forwardedControlRef}
+            onBlur={onBlur}
+            onKeyDown={onKeyDown}
+            required
+          />
+          <div ref={forwardedInlineHelpRef} data-testid='inline-help-ref' />
+          <div ref={forwardedFeedbackRef} data-testid='feedback-ref' />
+          <button type='button' onClick={handleOpenCalendar}>
+            Open calendar
+          </button>
+          <button type='button' onClick={handleCloseCalendar}>
+            Close trigger
+          </button>
+          <button type='button' onClick={handleEnsureCalendarClosed}>
+            Ensure closed
+          </button>
+          <button type='button' onKeyDown={calendarOnKeyDown}>
+            Calendar key target
+          </button>
+          {label ? <span>{label}</span> : null}
+        </div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule33>
+);
 
 vi.mock('react-datepicker', () => {
   const MockDatePicker = React.forwardRef((props: any, ref: any) => {
@@ -173,10 +178,10 @@ vi.mock('react-datepicker', () => {
 
   return {
     default: MockDatePicker,
-  };
+  } satisfies __ExactMockModule<__TestMockModule34>;
 });
 
-describe('CustomDatePicker', () => {
+describe(CustomDatePicker, () => {
   it('opens, selects a date, and closes the calendar', async () => {
     const dateOnChange = vi.fn();
     const dateOnBlur = vi.fn();
@@ -194,6 +199,7 @@ describe('CustomDatePicker', () => {
     await userEvent.click(
       screen.getByRole('button', { name: 'Open calendar' })
     );
+
     expect(
       screen.getByRole('button', { name: 'Pick date' })
     ).toBeInTheDocument();
@@ -261,20 +267,24 @@ describe('CustomDatePicker', () => {
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
     await user.click(screen.getByRole('button', { name: 'Blur picker' }));
+
     expect(dateOnBlur).toHaveBeenCalledWith({ type: 'blur' });
 
     await user.click(screen.getByRole('button', { name: 'Other key' }));
+
     expect(
       screen.getByRole('button', { name: 'Pick date' })
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Escape' }));
+
     expect(
       screen.queryByRole('button', { name: 'Pick date' })
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
     await user.click(screen.getByRole('button', { name: 'Click outside' }));
+
     expect(
       screen.queryByRole('button', { name: 'Pick date' })
     ).not.toBeInTheDocument();
@@ -282,6 +292,7 @@ describe('CustomDatePicker', () => {
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
     screen.getByRole('button', { name: 'Calendar key target' }).focus();
     await user.keyboard('{Escape}');
+
     expect(
       screen.queryByRole('button', { name: 'Pick date' })
     ).not.toBeInTheDocument();
@@ -301,14 +312,17 @@ describe('CustomDatePicker', () => {
     await user.click(
       screen.getByRole('button', { name: 'Input Enter trigger' })
     );
+
     expect(
       screen.getByRole('button', { name: 'Pick date' })
     ).toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Close calendar' }));
 
     await user.click(
       screen.getByRole('button', { name: 'Input Space trigger' })
     );
+
     expect(
       screen.getByRole('button', { name: 'Pick date' })
     ).toBeInTheDocument();
@@ -326,6 +340,7 @@ describe('CustomDatePicker', () => {
     await user.click(
       screen.getByRole('button', { name: 'Input Enter trigger' })
     );
+
     expect(
       screen.queryByRole('button', { name: 'Pick date' })
     ).not.toBeInTheDocument();
@@ -343,6 +358,7 @@ describe('CustomDatePicker', () => {
     await user.click(
       screen.getByRole('button', { name: 'Input Enter trigger' })
     );
+
     expect(
       screen.getByRole('button', { name: 'Pick date' })
     ).toBeInTheDocument();
@@ -365,6 +381,7 @@ describe('CustomDatePicker', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
     expect(screen.getByTestId('selected-date')).toHaveTextContent(
       currentDate.toISOString()
     );
@@ -377,6 +394,7 @@ describe('CustomDatePicker', () => {
 
     await user.click(screen.getByRole('button', { name: 'Pick date' }));
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+
     expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
     expect(screen.getByTestId('top-offset')).toHaveTextContent('-45');
 
@@ -389,6 +407,7 @@ describe('CustomDatePicker', () => {
         name='offsetDate'
       />
     );
+
     expect(screen.getByTestId('selected-date')).toHaveTextContent(
       nextDate.toISOString()
     );

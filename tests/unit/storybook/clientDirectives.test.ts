@@ -38,7 +38,7 @@ async function bundleClientModule(source: string, extension = 'js') {
   }
 }
 
-describe('Storybook client directives', () => {
+describe('storybook client directives', () => {
   it('hoists client boundaries to the chunk header without losing exports or maps', async () => {
     const source =
       '/* license */\r\n"use strict";\r\n"use client"\r\nexport const answer = 42;';
@@ -49,7 +49,7 @@ describe('Storybook client directives', () => {
     expect(chunk.exports).toEqual(['answer']);
     expect(chunk.code).toContain('42');
     expect(chunk.map?.sourcesContent).toContain(source);
-    expect(chunk.map?.mappings).toBeTruthy();
+    expect(chunk.map?.mappings).toBeTypeOf('string');
   });
 
   it('handles TypeScript and JSX before Rolldown internal transforms', async () => {

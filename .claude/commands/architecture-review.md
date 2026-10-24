@@ -6,7 +6,7 @@ Assess a proposed design, RFC, or PR-level structural decision before it is buil
 
 **Usage:**
 
-```
+```text
 /architecture-review docs/rfc/notification-service.md
 /architecture-review "Move session state from cookie to Redis"
 ```

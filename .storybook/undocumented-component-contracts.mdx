@@ -1,0 +1,211 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title='Documentation/T4a Component Contracts' />
+
+# T4a component contract packet
+
+> **Status: APPROVED FOR T4 STORY IMPLEMENTATION**
+>
+> This is the approved contract packet for Gate 3/T4a. It records the exact
+> supported local wrapper APIs, composition, inherited-prop scope, and
+> accessibility semantics for the seven story lanes.
+
+## Evidence boundary
+
+The repository Storybook MCP `docs-list` now discovers this packet as
+`documentation-t4a-component-contracts--documentation` and separately discovers
+the legacy `StatusPill` entry (`components-pill`). It still does not discover
+local component entries for the seven T4 owners below. The React Aria MCP
+documents upstream primitives; those pages are references for the underlying
+primitive contract only. They do not establish the public API of an NMI wrapper.
+
+No local prop is listed below solely because it appears in a source type. A
+story author must not infer a wrapper API from that type or from a similarly
+named component.
+
+## Contract fields required for approval
+
+Every owner section must be completed and approved before its story lane can
+start:
+
+| Field                          | Required evidence                                                                         |
+| ------------------------------ | ----------------------------------------------------------------------------------------- |
+| Exact import/export identity   | Repository path and exported symbol, confirmed by the owner                               |
+| Approved API table             | Prop name, type, default, supported values, and whether it is forwarded                   |
+| Supported composition          | Children, peer components, provider, trigger, or slot rules                               |
+| Inherited-prop scope           | Explicit allowlist; no assumption that wrapper props are fully forwarded                  |
+| Interaction and a11y semantics | Keyboard, focus, disabled/pending, naming, live-region, and dismissal rules as applicable |
+| Approval provenance            | Maintainer, date, and reference or review receipt                                         |
+
+The seven contracts below were approved by the user in the 2026-10-18
+conversation. The source references and API details in that approval message are
+the approval evidence for this packet. This packet is not a substitute for
+runtime story-test receipts.
+
+## AriaButton
+
+- **Owner:**
+  `ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/AriaComponents/AriaButton/Button.tsx`, export
+  `Button`
+- **Upstream reference:** React Aria `Button` API and `Pending` sections
+- **Approved API table:** `RACButtonProps` plus
+  `variant?: 'primary' | 'secondary' | 'quiet'`; local default
+  `variant='primary'`.
+- **Supported composition:** all props are spread to React Aria Button, then
+  local `className` is fixed, `children` is replaced by the composed render-prop
+  content, and `data-variant` is added. Children may be render-prop content.
+- **Inherited-prop scope:** React Aria button props are supported through the
+  spread, subject to the local `className` and `children` overrides and the
+  local `data-variant` attribute.
+- **Interaction and a11y semantics:** `onPress` supports mouse, touch, and
+  keyboard activation. `isDisabled` prevents activation. `isPending` remains
+  focusable, suppresses the label, and renders a `Saving...` progress indicator.
+- **Story lane contract:** own implementation; keyboard activation; correct
+  callback; disabled non-activation; pending progress semantics.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference `ClientApp/src/components/AriaComponents/AriaButton/Button.tsx:10`.
+
+## Link
+
+- **Owner:** `ClientApp/src/components/AriaComponents/Link/Link.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/AriaComponents/Link/Link.tsx`, export `Link`
+- **Upstream reference:** React Aria `Link` API and `Events` sections
+- **Approved API table:** full React Aria `LinkProps`; no local defaults.
+- **Supported composition:** props and children are fully spread/rendered
+  unchanged.
+- **Inherited-prop scope:** full `LinkProps`, subject to React Aria semantics.
+- **Interaction and a11y semantics:** with `href`, the component renders link
+  navigation. Without `href`, React Aria renders a link-role span. `onPress` is
+  the normalized interaction callback and `isDisabled` is supported upstream.
+- **Story lane contract:** accessible name; keyboard activation; destination
+  semantics; disabled behavior without external navigation.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference `ClientApp/src/components/AriaComponents/Link/Link.tsx:5`.
+
+## SegmentedControl
+
+- **Owner:**
+  `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.tsx`,
+  exports `SegmentedControl` and `SegmentedControlItem`
+- **Upstream reference:** React Aria `ToggleButtonGroup` API, `ToggleButton`
+  API, and `Selection` sections
+- **Approved API table:** group uses `ToggleButtonGroupProps` with upstream
+  `selectionMode='single'` default; item uses `ToggleButtonProps` with no local
+  defaults.
+- **Supported composition:** group props are forwarded with local `className`
+  and `data-variant` overrides. Item props are forwarded with a local
+  `className` override and children replaced by `SelectionIndicator` plus a
+  `<span>`.
+- **Inherited-prop scope:** group supports `ToggleButtonGroupProps` and item
+  supports `ToggleButtonProps`, subject to those local class/children overrides.
+- **Interaction and a11y semantics:** toggle selection, selected keys, disabled
+  items, and keyboard interaction come from React Aria. Controlled selection
+  requires stable item `id` values.
+- **Story lane contract:** initial and changed selection; keyboard movement;
+  disabled item; callback payload; both exported APIs documented.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference
+  `ClientApp/src/components/AriaComponents/SegmentControl/SegmentedControl.tsx:12`.
+
+## Sheet
+
+- **Owner:** `ClientApp/src/components/AriaComponents/Sheet/Sheet.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx`, export `Sheet`
+- **Upstream reference:** React Aria `Modal` and `Sheet` composition references
+- **Approved API table:** typed as `ModalOverlayProps`; no local defaults;
+  effective class is always `sheet-overlay`.
+- **Supported composition:** children are composed inside the local `Modal` and
+  local `Dialog`.
+- **Inherited-prop scope:** `ModalOverlayProps` are not forwarded. `isOpen`,
+  `defaultOpen`, `onOpenChange`, dismissal props, class names, and other
+  inherited props are dropped.
+- **Interaction and a11y semantics:** modal/dialog focus and dismissal behavior
+  are available only through the surrounding trigger/context composition. This
+  is a visual sheet built from modal primitives, not the current React Aria
+  `Sheet` primitive.
+- **Story lane contract:** approved children/trigger composition; accessible
+  dialog name; open/close; focus return; no assumed overlay-prop forwarding.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference `ClientApp/src/components/AriaComponents/Sheet/Sheet.tsx:11`.
+
+## AlertMessage
+
+- **Owner:**
+  `ClientApp/src/components/reactaria_components/AlertMessage.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/reactaria_components/AlertMessage.tsx`, export
+  `AlertMessage`
+- **Upstream reference:** No matching React Aria primitive page; this is an NMI
+  wrapper contract
+- **Approved API table:** `title: string`; `children: ReactNode`;
+  `tone?: 'info' | 'success' | 'warning'`, default `tone='info'`.
+- **Supported composition:** no inherited props or forwarding; children are
+  placed inside the React Aria `Text` wrapper.
+- **Inherited-prop scope:** none beyond the listed local props.
+- **Interaction and a11y semantics:** renders
+  `section[role=status][aria-live=polite]` with an h2-level title. Tone changes
+  `data-tone` only and does not change announcement priority.
+- **Story lane contract:** title/body; approved tones; live/status semantics.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference `ClientApp/src/components/reactaria_components/AlertMessage.tsx:4`.
+
+## PageHeader
+
+- **Owner:**
+  `ClientApp/src/components/reactaria_components/PageHeader.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/reactaria_components/PageHeader.tsx`, export
+  `PageHeader`
+- **Upstream reference:** No matching React Aria primitive page; this is an NMI
+  wrapper contract
+- **Approved API table:** `title: string`; optional `eyebrow`, `description`,
+  and `actions: ReactNode`; all optional values default to `undefined`.
+- **Supported composition:** no `children`, inherited props, or forwarding;
+  actions render as supplied inside a div.
+- **Inherited-prop scope:** none beyond the listed local props.
+- **Interaction and a11y semantics:** structural `header` with an `h1`. The
+  wrapper adds no explicit landmark name or action semantics.
+- **Story lane contract:** title alone; approved optional description/actions;
+  long-content wrapping.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference `ClientApp/src/components/reactaria_components/PageHeader.tsx:3`.
+
+## React Aria StatusPill
+
+- **Owner:**
+  `ClientApp/src/components/reactaria_components/StatusPill.stories.tsx`
+- **Implementation identity:**
+  `ClientApp/src/components/reactaria_components/StatusPill.tsx`, export
+  `StatusPill`
+- **Upstream reference:** No matching React Aria primitive page; this is an NMI
+  wrapper contract
+- **Approved API table:** `children: ReactNode`;
+  `tone?: 'success' | 'warning' | 'neutral'`, default `tone='neutral'`.
+- **Supported composition:** no inherited props or forwarding.
+- **Inherited-prop scope:** none beyond the listed local props.
+- **Interaction and a11y semantics:** static `span`; noninteractive and not a
+  live region. Tone is represented by `data-tone`.
+- **Story lane contract:** readable label; approved tones; long-content
+  semantics.
+- **Approval provenance:** User-approved in the 2026-10-18 conversation; source
+  reference `ClientApp/src/components/reactaria_components/StatusPill.tsx:3`.
+
+The React Aria `StatusPill` owner above is **not the same component** as the
+legacy `ClientApp/src/components/Pill/StatusPill.tsx`, whose discovered story
+IDs are `components-pill--dashboard-statuses` and
+`components-pill--quote-statuses`. The legacy story IDs must remain unchanged
+and must not be used as evidence for the React Aria owner.
+
+## Approval and execution boundary
+
+The seven contract sections are approved for T4 story implementation. The packet
+itself remains documentation evidence; it does not provide runtime story-test
+receipts. Each story must use only the approved API above, preserve the legacy
+IDs, and be validated through Storybook MCP discovery and native `test-run` with
+per-story accessibility checks.

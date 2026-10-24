@@ -82,10 +82,11 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 35
     env:
-      VITE_APP_ENVIRONMENT: local
+      VITE_ENVIRONMENT: local
       VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
       VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
       VITE_API_BASE_URL: http://localhost:5085
+      STORYBOOK_CLOSURE_OWNED_CHECKOUT: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -294,13 +295,20 @@ jobs:
 
   e2e-node24:
     name: e2e-node24
-    runs-on: ubuntu-26.04
+    # The Storybook closure gate (test:e2e:storybook:closure) enforces input
+    # immutability with a Windows icacls ACL freeze and reads the Windows
+    # USERNAME/USERDOMAIN identity. That contract is Windows-only by design
+    # (never downgraded on other platforms), so this job must run on Windows.
+    runs-on: windows-2025
     timeout-minutes: 45
     env:
-      VITE_APP_ENVIRONMENT: local
+      VITE_ENVIRONMENT: local
       VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
       VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
       VITE_API_BASE_URL: http://localhost:5085
+      # test:e2e runs scripts/storybook-closure.mjs, which asserts the owned
+      # integration checkout matches this path (github.workspace == cwd).
+      STORYBOOK_CLOSURE_OWNED_CHECKOUT: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -325,17 +333,75 @@ jobs:
       - name: Install Playwright Chromium
         run: ./node_modules/.bin/playwright install --with-deps chromium
 
+      # TEMPORARY DIAGNOSTIC (remove once the closure ACL-freeze root cause on
+      # hosted Windows runners is found). The closure's icacls /deny freeze is
+      # enforced under a non-elevated token locally but not on this runner, so
+      # test:e2e:storybook:closure fails its denial probes. Capture the step's
+      # token identity, integrity level, privileges, the identity the closure
+      # would deny, and a live deny-probe under the workspace - this tells an
+      # identity mismatch apart from a privilege/elevation bypass. Best-effort:
+      # never fails the job (runs before the closure step either way).
+      - name: Diagnose ACL freeze enforcement
+        shell: pwsh
+        run: |
+          Write-Output '--- token identity (whoami /user) ---'
+          whoami /user
+          Write-Output '--- integrity level + admin group ---'
+          whoami /groups | Select-String -Pattern 'S-1-5-32-544|High Mandatory|Medium Mandatory|System Mandatory'
+          Write-Output '--- backup/restore/takeownership privileges ---'
+          whoami /priv | Select-String -Pattern 'SeRestore|SeBackup|SeTakeOwnership'
+          $id = "$env:USERDOMAIN\$env:USERNAME"
+          Write-Output "--- identity the closure would deny: $id ---"
+          $dir = Join-Path $env:GITHUB_WORKSPACE ('acl-probe-' + [guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $dir | Out-Null
+          $f = Join-Path $dir 'probe.txt'
+          'original' | Set-Content -Path $f
+          icacls $f /deny "${id}:(WD,AD,WA,DE)" /c
+          $denyExitCode = $LASTEXITCODE
+          if ($denyExitCode -ne 0) {
+            Write-Output "ACL_DENY_APPLY_FAILED: icacls exited with code $denyExitCode; skipping enforcement probe"
+          } else {
+            try {
+              'overwrite' | Set-Content -Path $f -ErrorAction Stop
+              Write-Output 'PROBE_OVERWRITE: SUCCEEDED (deny NOT enforced - matches the CI failure)'
+            } catch {
+              Write-Output 'PROBE_OVERWRITE: DENIED (deny enforced)'
+            }
+          }
+          Write-Output '--- effective ACL on probe file ---'
+          icacls $f
+          icacls $f /remove:d "$id" /c
+          Remove-Item $f -Force
+          Remove-Item $dir -Force
+          exit 0
+
+      - name: Prepare E2E diagnostics
+        run: mkdir -p ci-artifacts/e2e
+
       - name: Run app and Storybook BDD suites
-        run: npm run test:e2e
+        id: e2e
+        run: |
+          set -o pipefail
+          npm run test:e2e 2>&1 | tee ci-artifacts/e2e/test-e2e.log
+
+      - name: Upload E2E diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-diagnostics-${{ github.run_attempt }}
+          path: ci-artifacts/e2e/**
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Upload Playwright report, traces, and screenshots
-        if: always()
+        if: always() && steps.e2e.outcome == 'success'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-node24-${{ github.run_attempt }}
           path: |
             reports/playwright/**
             reports/test-results/**
+            reports/storybook-coverage/**
           if-no-files-found: error
           retention-days: 14
 
@@ -350,7 +416,7 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 20
     env:
-      VITE_APP_ENVIRONMENT: local
+      VITE_ENVIRONMENT: local
       VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
       VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
       VITE_API_BASE_URL: http://localhost:5085

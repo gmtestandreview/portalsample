@@ -1,5 +1,4 @@
 import { useField } from 'formik';
-import { omit } from 'lodash';
 import type { FieldHookConfig } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -80,8 +79,12 @@ const AddressLookup = (
   useEffect(() => {
     const { value, setValue: setVal } = fieldSyncRef.current;
     if (manual !== value?.isManuallyEntered) {
+      const {
+        isManuallyEntered: _isManuallyEntered,
+        ...addressWithoutManualFlag
+      } = value ?? {};
       void setVal({
-        ...omit(value, 'isManuallyEntered'),
+        ...addressWithoutManualFlag,
         ...omitUndefined({ isManuallyEntered: manual }),
       });
     }

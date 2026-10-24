@@ -3,9 +3,13 @@ import { readFileSync } from 'node:fs';
 import type { ViteUserConfig } from 'vitest/config';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@storybook/addon-vitest/vitest-plugin', () => ({
-  storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
-}));
+vi.mock(
+  import('@storybook/addon-vitest/vitest-plugin'),
+  () =>
+    ({
+      storybookTest: vi.fn(async () => []),
+    }) satisfies __ExactMockModule<__TestMockModule56>,
+);
 
 import rootConfig from '../../../vitest.config';
 import storybookConfig from '../../../vitest.storybook.config';
@@ -42,7 +46,10 @@ const storybook = testOptions(storybookConfig, 'vitest.storybook.config.ts');
 const unit = testOptions(unitConfig, 'vitest.unit.config.ts');
 const packageScripts = (): Record<string, string> =>
   (JSON.parse(readFileSync('package.json', 'utf8')) as PackageScripts).scripts;
-
+const vitestConfigContents: Record<string, string> = {
+  'vitest.config.ts': readFileSync('vitest.config.ts', 'utf8'),
+  'vitest.unit.config.ts': readFileSync('vitest.unit.config.ts', 'utf8'),
+};
 /** Paths that belong to Playwright, never to a Vitest leaf. */
 const foreignTestPaths = [
   '.github/migration-verifier/tests/runtime/checklist.runtime.spec.ts',
@@ -70,10 +77,10 @@ describe('root Vitest config is composition only', () => {
   });
 });
 
-describe('Vitest config loading stays explicit and shim-free', () => {
+describe('vitest config loading stays explicit and shim-free', () => {
   it('pins every package script that invokes Vitest to the runner config loader', () => {
     const vitestScripts = Object.entries(packageScripts()).filter(
-      ([, command]) => command.includes('./node_modules/vitest/vitest.mjs')
+      ([, command]) => command.includes('./node_modules/vitest/vitest.mjs'),
     );
 
     expect(vitestScripts.length).toBeGreaterThan(0);
@@ -81,7 +88,7 @@ describe('Vitest config loading stays explicit and shim-free', () => {
     for (const [name, command] of vitestScripts) {
       expect(
         command,
-        `${name} must not rely on Vite's default config loader`
+        `${name} must not rely on Vite's default config loader`,
       ).toContain('--configLoader runner');
     }
   });
@@ -89,12 +96,16 @@ describe('Vitest config loading stays explicit and shim-free', () => {
   it.each(['vitest.config.ts', 'vitest.unit.config.ts'])(
     "does not rely on the bundled config loader's __dirname shim in %s",
     (configFile) => {
-      expect(readFileSync(configFile, 'utf8')).not.toContain('__dirname');
-    }
+      const configContents = Object.entries(vitestConfigContents)
+        .find(([name]) => name === configFile)
+        ?.at(1);
+
+      expect(configContents).not.toContain('__dirname');
+    },
   );
 });
 
-describe('Storybook leaf is a directly runnable Browser Mode project', () => {
+describe('storybook leaf is a directly runnable Browser Mode project', () => {
   it('is a leaf rather than another nested project container', () => {
     expect(storybook.projects).toBeUndefined();
   });
@@ -114,6 +125,22 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
     expect(storybook.setupFiles).toEqual(['./vitest.storybook.setup.ts']);
   });
 
+  it('does not explicitly prebundle modular Lodash entry points', () => {
+    const include = storybookConfig.optimizeDeps?.include ?? [];
+
+    expect(
+      include.some(
+        (entry) => typeof entry === 'string' && entry.startsWith('lodash/'),
+      ),
+    ).toBe(false);
+  });
+
+  it('prebundles the Storybook MSW preview addon before Browser Mode starts', () => {
+    const include = storybookConfig.optimizeDeps?.include ?? [];
+
+    expect(include).toContain('msw-storybook-addon/preview');
+  });
+
   it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {
     expect(storybook.api).toBeUndefined();
     expect(storybook.browser?.api).toMatchObject({
@@ -129,7 +156,7 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
     // file the root - i.e. the `test:storybook` script - and is inert when the
     // project is loaded through the aggregate `vitest.config.ts`.
     expect(storybook.coverage?.reportsDirectory).toBe(
-      './reports/coverage/storybook'
+      './reports/coverage/storybook',
     );
     expect(storybook.coverage?.include).toEqual([
       'ClientApp/src/**/*.{ts,tsx}',
@@ -143,7 +170,7 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
     expect(root.coverage).toBeUndefined();
 
     const { scripts } = JSON.parse(
-      readFileSync('package.json', 'utf8')
+      readFileSync('package.json', 'utf8'),
     ) as PackageScripts;
 
     const reviewedCoverageConfigs = new Set([
@@ -159,7 +186,7 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
         const config = /--config(?:=|\s+)([^\s]+)/.exec(command)?.[1];
 
         return config === undefined || !reviewedCoverageConfigs.has(config);
-      }
+      },
     );
 
     expect(aggregateRunsWithCoverage).toEqual([]);
@@ -188,12 +215,12 @@ describe('unit leaf owns jsdom, unit discovery and unit coverage', () => {
   });
 });
 
-describe('Playwright files stay out of both Vitest leaves', () => {
+describe('playwright files stay out of both Vitest leaves', () => {
   it.each(foreignTestPaths)('does not discover %s', (foreignPath) => {
     for (const pattern of unit.include ?? []) {
       expect(
         foreignPath.startsWith(pattern.split('*', 1)[0] ?? pattern),
-        `unit include "${pattern}" must not reach ${foreignPath}`
+        `unit include "${pattern}" must not reach ${foreignPath}`,
       ).toBe(false);
     }
   });

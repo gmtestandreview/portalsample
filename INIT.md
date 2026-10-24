@@ -92,11 +92,15 @@ explicitly so the lockfile is resolved by the declared npm, not the runner's bun
 **Key libraries** (installed versions): `react-aria-components` 1.19.0 (**67 files** — the largest UI
 dependency), `formik` 2.4.9 (63 files), `yup` 1.7.1 with 19 custom string validators, `@azure/msal-browser`
 3.30.0 / `@azure/msal-react` 2.2.0, `bootstrap` 5.3.8, `react-bootstrap` 2.10.10, `dompurify` 3.4.14,
-`date-fns` 3.6.0, `lodash` 4.18.1, `slate` 0.124.1, App Insights 3.4.2, `react-ga4` 2.1.0.
+`date-fns` 3.6.0, `slate` 0.124.1, App Insights 3.4.2, `react-ga4` 2.1.0.
 
-**Build:** dual pipeline — Webpack 5 for production bundles, Vite 8 for Storybook and Vitest Browser
-Mode. This is a deliberate transitional choice; a change green in Storybook is **not** thereby green
-in the production bundle.
+Lodash is not a direct application dependency or first-party import. It remains
+installed transitively through Formik, `slate-dom`, and `slate-react`; its type
+package is also retained transitively by `slate-react`.
+
+**Build:** Vite 8 is the canonical development and production pipeline, with Vite-backed Storybook
+and Vitest Browser Mode. Production build verification remains required for changes that affect
+bundling, assets, or runtime configuration.
 
 ---
 
@@ -259,7 +263,7 @@ each has bitten this codebase before.
 
 - **Never edit generated or vendored files:** `ClientApp/src/api/web-api-client.ts`,
   `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/src/external/**`,
-  `ClientApp/src/parent/**`, `ClientApp/webpack/**`, `ClientApp/source-map-http-downloads/**`.
+  `ClientApp/src/parent/**`, `ClientApp/source-map-http-downloads/**`.
   Mirrored in `sonar.exclusions` and the Vitest coverage `exclude` list so all three tools agree.
 - **Never use `process.env` in application code.** Runtime config is injected into `window.*` by a
   server-side template before the bundle loads. Read it only via the `env` object in

@@ -9,7 +9,7 @@ portal.measurement.gov.au/           ← workspace root
 ├── .gitignore
 ├── package.json                      ← npm scripts, dependencies, Node engine
 ├── package-lock.json                 ← npm lockfile
-├── webpack.config.js                 ← Webpack 5 config for build/dev server
+├── vite.config.mts                   ← Vite config for build/dev server
 ├── tsconfig.json                     ← TypeScript config
 ├── vitest.config.ts                  ← Vitest workspace root (composes unit + storybook projects)
 ├── vitest.unit.config.ts             ← unit project: jsdom, 100% thresholds, coverage reporters
@@ -17,7 +17,7 @@ portal.measurement.gov.au/           ← workspace root
 ├── playwright.storybook.config.ts    ← storybook-bdd project
 ├── vitest.setup.ts                   ← Shared test setup (`jest-dom`, globals, mocks)
 ├── playwright.config.ts              ← Playwright E2E + BDD config
-├── index.html                        ← HTML template (webpack HtmlWebpackPlugin)
+├── index.html                        ← Vite HTML entrypoint
 │
 ├── tests/                            ← All test source
 │   ├── unit/                         ← Vitest unit suites and helpers
@@ -196,14 +196,12 @@ portal.measurement.gov.au/           ← workspace root
     │   │   └── index.ts               ← Pure utilities: date, string, bytes, currency
     │   │
     │   ├── parent/node_modules/       ← VENDOR: do not edit (formik, dompurify sources)
-    │   ├── external/                  ← VENDOR: do not edit (ts-async, ts-utils)
     │   └── main.*.js                  ← GENERATED: do not edit
     │
     ├── css/
     │   └── main.*.css                 ← GENERATED: do not edit
     │
     ├── source-map-http-downloads/     ← VENDOR mirrors: do not edit
-    └── webpack/                       ← GENERATED: webpack runtime bootstrap
 ```
 
 ### Test and tooling folders
@@ -245,8 +243,8 @@ portal.measurement.gov.au/           ← workspace root
 | Status | Paths |
 | -------- | ------- |
 | **Edit freely** | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, `ClientApp/src/styles/**/*.scss` |
-| **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`, `quality/vitest.regression.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `playwright.storybook.config.ts`, `webpack.config.js`, `package.json`, `sonar-project.properties`, `.github/workflows/**` |
-| **Never edit** | `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/webpack/**`, `ClientApp/src/parent/node_modules/**`, `reports/**`, `node_modules/**` |
+| **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`, `quality/vitest.regression.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `playwright.storybook.config.ts`, `vite.config.mts`, `package.json`, `sonar-project.properties`, `.github/workflows/**` |
+| **Never edit** | `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/src/parent/node_modules/**`, `reports/**`, `node_modules/**` |
 
 ## 5) Evidence
 

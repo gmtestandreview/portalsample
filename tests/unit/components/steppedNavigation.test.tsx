@@ -1,7 +1,8 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import SteppedNavigation from '@/components/SteppedNavigation';
 
-describe('SteppedNavigation', () => {
+describe(SteppedNavigation, () => {
   const steps = [
     { title: 'Organisation', path: '/organisation', completed: true },
     { title: 'Contact', path: '/contact', completed: false },

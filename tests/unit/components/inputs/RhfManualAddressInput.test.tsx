@@ -26,7 +26,7 @@ const renderManualAddress = (
 const formValue = () =>
   JSON.parse(screen.getByTestId('value').textContent) as Record<string, string>;
 
-describe('RhfManualAddressInput', () => {
+describe(RhfManualAddressInput, () => {
   it('renders every address field with its label', () => {
     renderManualAddress();
 
@@ -35,6 +35,7 @@ describe('RhfManualAddressInput', () => {
         expect(screen.getByRole('textbox', { name: label })).toBeEnabled();
       }
     );
+
     expect(screen.getByRole('textbox', { name: 'Postcode' })).toBeEnabled();
     expect(screen.getByRole('combobox', { name: 'State' })).toBeEnabled();
   });

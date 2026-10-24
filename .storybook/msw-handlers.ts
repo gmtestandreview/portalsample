@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw/http';
 import {
+  ApplicationType,
   CRMLookupTypes,
+  FormStepStatus,
   type LookupResponse,
 } from '../ClientApp/src/api/web-api-client';
 import {
@@ -8,6 +10,7 @@ import {
   lookupResponses,
   paCategoryResponses,
   paInstrumentTypeResponses,
+  requestForQuoteDetailsFixture,
   serviceResponses,
 } from '../ClientApp/src/storybook/storybookFixtures';
 
@@ -50,6 +53,83 @@ const pdfResponse = (request: Request, filename: string) => {
     : HttpResponse.json({ fileSizeBytes: 2048 });
 };
 
+const accountStepValues = {
+  id: 1,
+  abn: '00000000000',
+  name: 'Storybook Organisation',
+  businessOrTradingName: 'Storybook Organisation Pty Ltd',
+  branchOrLocationName: 'Main Branch',
+  businessWebsiteAddress: 'https://example.gov.au',
+  isDefaultOrganisation: true,
+  streetAddress: {
+    line1: '1 Example Street',
+    suburb: 'Sydney',
+    state: 'NSW',
+    postcode: '2000',
+    isManuallyEntered: true,
+  },
+  postalAddressSameAsStreetAddress: true,
+  contact: {},
+  status: FormStepStatus.NotStarted,
+};
+
+const contactForm = {
+  contact: {
+    title: 'Mr',
+    firstName: 'Taylor',
+    lastName: 'Nguyen',
+    phone: '0200000000',
+    mobile: '0400000000',
+    email: 'taylor.nguyen@example.com',
+  },
+  formStepStatus: FormStepStatus.NotStarted,
+};
+
+const applicationReferenceIds: Partial<Record<ApplicationType, string>> = {
+  [ApplicationType.QuoteAccept]: 'AQ-NEW-0001',
+  [ApplicationType.PatternApproval]: 'TA-NEW-0001',
+  [ApplicationType.QuoteRequest]: 'RFQ-NEW-0001',
+};
+
+const applicationResponse = (applicationType: string | undefined) => {
+  const referenceId =
+    applicationType !== undefined &&
+    Object.hasOwn(applicationReferenceIds, applicationType)
+      ? applicationReferenceIds[applicationType as ApplicationType]
+      : undefined;
+
+  if (referenceId === undefined) {
+    return HttpResponse.json(
+      {
+        error: `No Storybook fixture for applicationType=${applicationType ?? '(missing)'}`,
+      },
+      { status: 501 }
+    );
+  }
+
+  return HttpResponse.json({ referenceId, applicationType });
+};
+
+const quoteDetailsResponse = (request: Request) => {
+  const applicationType = new URL(request.url).searchParams.get(
+    'ApplicationType'
+  );
+
+  if (
+    applicationType !== ApplicationType.QuoteRequest &&
+    applicationType !== ApplicationType.QuoteAccept
+  ) {
+    return HttpResponse.json(
+      {
+        error: `No Storybook fixture for ApplicationType=${applicationType ?? '(missing)'}`,
+      },
+      { status: 501 }
+    );
+  }
+
+  return HttpResponse.json(requestForQuoteDetailsFixture);
+};
+
 /**
  * One entry per CRMLookupTypes value that application code passes to
  * getLookup(). tests/unit/storybook/mswHandlers.test.ts enumerates those call
@@ -90,6 +170,23 @@ export const mswHandlers = [
   http.get('/api/dashboard/get-quote-report-pdf', ({ request }) =>
     pdfResponse(request, 'measurement-report.pdf')
   ),
+  http.get('/api/quote/get-quote-request-details-byrefid', ({ request }) =>
+    quoteDetailsResponse(request)
+  ),
+  http.get('/api/forms/accounts/branch', () =>
+    HttpResponse.json({
+      id: 1,
+      stepValues: { ...accountStepValues, branchOrLocationName: '' },
+    })
+  ),
+  http.get('/api/forms/accounts/create-account/new', () =>
+    HttpResponse.json({ id: 1, stepValues: accountStepValues })
+  ),
+  http.get('/api/contact/usercontact', () => HttpResponse.json(contactForm)),
+  http.post('/api/application', async ({ request }) => {
+    const command = (await request.json()) as { applicationType?: string };
+    return applicationResponse(command.applicationType);
+  }),
   http.get('/api/lookup/services', () => HttpResponse.json(serviceResponses)),
   // A single handler scoped to one endpoint the application owns. Returning
   // undefined here would fall through to MSW's unhandled-request path - the
@@ -102,7 +199,8 @@ export const mswHandlers = [
     const fixture =
       lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
         ? undefined
-        : lookupResponsesByType[lookupType];
+        : (Reflect.get(lookupResponsesByType, lookupType) as
+            LookupResponse[] | undefined);
 
     if (fixture === undefined) {
       return HttpResponse.json(

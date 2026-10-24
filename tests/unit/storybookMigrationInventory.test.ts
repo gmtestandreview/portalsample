@@ -1,15 +1,18 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+  readDirectorySync,
+  readTextFileSync,
+} from '../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..');
 
 const read = (...segments: string[]) =>
-  fs.readFileSync(path.join(repoRoot, ...segments), 'utf8');
+  readTextFileSync(path.join(repoRoot, ...segments), repoRoot);
 const readSource = (...segments: string[]) =>
   read('ClientApp', 'src', ...segments);
 
-describe('Storybook migration inventory', () => {
+describe('storybook migration inventory', () => {
   const overviewDoc = readSource('storybook', 'MigrationReadiness.docs.mdx');
   const coverageDoc = readSource('storybook', 'CoverageMatrix.docs.mdx');
   const routeDoc = readSource('routes', 'RouteInventory.docs.mdx');
@@ -57,11 +60,13 @@ describe('Storybook migration inventory', () => {
     if (rawPaths.includes('*')) uniquePaths.push('*');
 
     expect(uniquePaths.length).toBeGreaterThan(20);
+
     uniquePaths.forEach((routePath) => {
       // The doc may record a parent + wildcard-child route as 'path/*'.
       const inDoc =
         routeDoc.includes(`['\`${routePath}\`',`) ||
         routeDoc.includes(`['\`${routePath}/*\`',`);
+
       expect(
         inDoc,
         `"${routePath}" not documented in RouteInventory.docs.mdx`
@@ -70,27 +75,36 @@ describe('Storybook migration inventory', () => {
   });
 
   it('documents every top-level component family directory', () => {
-    const componentDirectories = fs
-      .readdirSync(path.join(repoRoot, 'ClientApp', 'src', 'components'), {
-        withFileTypes: true,
-      })
+    const componentDirectories = readDirectorySync(
+      path.join(repoRoot, 'ClientApp', 'src', 'components'),
+      repoRoot
+    )
       .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
       .map((entry) => entry.name);
+    const componentTableRows = componentDoc
+      .split(/\r?\n/)
+      .map((line) => line.split('|').map((cell) => cell.trim()));
 
     componentDirectories.forEach((directory) => {
-      expect(componentDoc).toContain(`| \`${directory}\` |`);
+      expect(
+        componentTableRows.some((cells) => cells.includes(`\`${directory}\``)),
+        `"${directory}" not documented in ComponentInventory.docs.mdx`
+      ).toBe(true);
     });
   });
 
   it('documents every authentication source file', () => {
-    const authFiles = fs
-      .readdirSync(path.join(repoRoot, 'ClientApp', 'src', 'authentication'))
-      .filter(
-        (fileName) => fileName.endsWith('.ts') || fileName.endsWith('.tsx')
-      );
+    const authFiles = readDirectorySync(
+      path.join(repoRoot, 'ClientApp', 'src', 'authentication'),
+      repoRoot
+    ).filter(
+      (entry) =>
+        entry.isFile() &&
+        (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx'))
+    );
 
-    authFiles.forEach((fileName) => {
-      expect(authDoc).toContain(`\`${fileName}\``);
+    authFiles.forEach((entry) => {
+      expect(authDoc).toContain(`\`${entry.name}\``);
     });
   });
 

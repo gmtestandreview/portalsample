@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import PreApplication from './preApplication';
@@ -9,7 +9,7 @@ import PreApplication from './preApplication';
  * provides the entry point into the application wizard. It is mostly static content
  * behind the breadcrumb and page banner.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/PreApplication',
   component: PreApplication,
   decorators: [withPortalProviders],
@@ -20,21 +20,23 @@ const meta = {
       initialEntries: ['/ta/type-approval-create-pre'],
     },
   },
-} satisfies Meta<typeof PreApplication>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(
-      canvas.getByRole('heading', { level: 1, name: /pattern\/type approval/i })
+      canvas.getByRole('heading', {
+        level: 1,
+        name: 'Pattern/type approval',
+      }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole('heading', { name: /what you may need/i })
+      canvas.getByRole('heading', { name: /what you may need/i }),
     ).toBeVisible();
   },
-};
+});

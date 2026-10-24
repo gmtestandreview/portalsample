@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import Home from './Home';
 import { withPortalProviders } from '../storybook/storybookHarness';
@@ -8,7 +8,7 @@ import { withPortalProviders } from '../storybook/storybookHarness';
  * auth-aware `GetStarted` call-to-action, so its coverage mirrors the unauthenticated
  * public-landing experience.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Home',
   component: Home,
   decorators: [withPortalProviders],
@@ -19,18 +19,20 @@ const meta = {
       initialEntries: ['/'],
     },
   },
-} satisfies Meta<typeof Home>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const PublicLanding: Story = {
+export const PublicLanding = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // GetStarted renders a heading; assert the landing surface mounts.
     const heading = await canvas.findByRole('heading', { level: 1 });
+
     await expect(heading).toBeVisible();
+    await expect(heading).toHaveTextContent(
+      'National Measurement Institute (NMI) Services portal',
+    );
   },
-};
+});

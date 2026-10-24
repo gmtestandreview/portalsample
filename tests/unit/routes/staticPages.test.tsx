@@ -23,19 +23,31 @@ const mocks = vi.hoisted(() => ({
   useAccountDispatch: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useIsAuthenticated: mocks.useIsAuthenticated,
-  useMsal: mocks.useMsal,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useIsAuthenticated: mocks.useIsAuthenticated,
+      useMsal: mocks.useMsal,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
-  clearTargetOrganisation: mocks.clearTargetOrganisation,
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/targetOrganisation',
+  () =>
+    ({
+      clearTargetOrganisation: mocks.clearTargetOrganisation,
+    }) satisfies __ExactMockModule<__TestMockModule6>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  default: mocks.useAccountContext,
-  useAccountDispatch: mocks.useAccountDispatch,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      default: mocks.useAccountContext,
+      useAccountDispatch: mocks.useAccountDispatch,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 const renderRoute = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);
@@ -121,6 +133,7 @@ describe('static route pages', () => {
     expect(
       screen.getByRole('link', { name: /Back to help guide/i })
     ).toHaveAttribute('href', '/help-guide');
+
     unmount();
 
     renderRoute(<HelpHowToSetupAccess />);
@@ -153,15 +166,18 @@ describe('static route pages', () => {
     ).toBeInTheDocument();
     expect(document.title).toBe('Services we offer | NMI Services portal');
     expect(document.body).toHaveClass('services-we-offer');
+
     unmount();
 
     render(<SignIn />);
+
     expect(
       screen.getByRole('heading', { name: 'Logging in...' })
     ).toBeInTheDocument();
 
     unmount();
     renderRoute(<SignoutHelper />);
+
     expect(
       screen.getByRole('heading', { name: /close your browser window/i })
     ).toBeInTheDocument();
@@ -175,8 +191,12 @@ describe('static route pages', () => {
     render(<Signout />);
 
     expect(screen.getByText('Logging out...')).toBeInTheDocument();
-    await waitFor(() => expect(mocks.handleRedirectPromise).toHaveBeenCalled());
-    expect(clearTargetOrganisation).toHaveBeenCalled();
+
+    await waitFor(() =>
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith()
+    );
+
+    expect(clearTargetOrganisation).toHaveBeenCalledWith();
     expect(mocks.logoutRedirect).toHaveBeenCalledWith({
       account: { homeAccountId: 'account-1' },
     });
@@ -195,9 +215,12 @@ describe('static route pages', () => {
 
     render(<Signout />);
 
-    await waitFor(() => expect(mocks.handleRedirectPromise).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mocks.handleRedirectPromise).toHaveBeenCalledWith()
+    );
+
     expect(mocks.logoutRedirect).not.toHaveBeenCalled();
-    expect(clearTargetOrganisation).toHaveBeenCalled();
+    expect(clearTargetOrganisation).toHaveBeenCalledWith();
   });
 
   it('does not restart sign-out after the effect has been cleaned up', async () => {
@@ -219,6 +242,7 @@ describe('static route pages', () => {
     await waitFor(() =>
       expect(mocks.handleRedirectPromise).toHaveBeenCalledTimes(1)
     );
+
     expect(clearTargetOrganisation).toHaveBeenCalledTimes(1);
   });
 });

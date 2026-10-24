@@ -1,12 +1,9 @@
 import { useMsal } from '@azure/msal-react';
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Card, Row, Col, Form } from 'react-bootstrap';
 import parse from 'html-react-parser';
-import SlateEditor, {
-  type CustomElement,
-  serializeToHtml,
-} from '../../../components/SlateEditor/SlateEditor';
+import type { CustomElement } from '../../../components/SlateEditor/SlateEditor';
 
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 
@@ -24,6 +21,10 @@ import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import CustomPaginationHeader from '../../../components/PaginationHeader';
 import { sanitiseHtml } from '../../common/helperFunctions';
+
+const SlateEditor = lazy(
+  () => import('../../../components/SlateEditor/SlateEditor')
+);
 
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 
@@ -105,6 +106,8 @@ const ApplicationMessages = () => {
   };
 
   const handleEditorSubmit = async (submittedValue: CustomElement[]) => {
+    const { serializeToHtml } =
+      await import('../../../components/SlateEditor/SlateEditor');
     const htmlContent = serializeToHtml(submittedValue);
     const sanitizedHtmlContent = sanitiseHtml(htmlContent);
 
@@ -133,15 +136,23 @@ const ApplicationMessages = () => {
   };
 
   const renderEditor = () => (
-    <SlateEditor
-      key={editorResetKey}
-      value={value}
-      onSubmit={() => {
-        void handleEditorSubmit(value);
-      }}
-      setValue={setValue}
-      placeholder='Message NMI'
-    />
+    <Suspense
+      fallback={
+        <BlockUISpinner partial>
+          <p>Loading editor...</p>
+        </BlockUISpinner>
+      }
+    >
+      <SlateEditor
+        key={editorResetKey}
+        value={value}
+        onSubmit={() => {
+          void handleEditorSubmit(value);
+        }}
+        setValue={setValue}
+        placeholder='Message NMI'
+      />
+    </Suspense>
   );
 
   const messageCount =

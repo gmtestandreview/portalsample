@@ -26,62 +26,83 @@ const serverErrorContent: ErrorContent = {
   title: 'Server error | NMI Services portal',
 };
 
-const errorContentByStatus: Partial<Record<number, ErrorContent>> = {
-  [HttpStatusCode.Forbidden]: {
-    body: addressBody,
-    heading: 'Oops - Forbidden',
-    intro: "The page you're looking for is not accessible.",
-    statusLabel: String(HttpStatusCode.Forbidden),
-    title: 'Forbidden | NMI Services portal',
-  },
-  [HttpStatusCode.NotFound]: {
-    body: addressBody,
-    heading: 'Oops - Page not found',
-    intro: "The page you're looking for no longer exists or has moved.",
-    statusLabel: String(HttpStatusCode.NotFound),
-    title: 'Page not found | NMI Services portal',
-  },
-  [HttpStatusCode.Conflict]: {
-    body: addressBody,
-    heading: 'Oops - Conflict',
-    intro:
-      'The record you are editing cannot be updated because the existing record is newer.',
-    statusLabel: String(HttpStatusCode.Conflict),
-    title: 'Conflict | NMI Services portal',
-  },
-  [HttpStatusCode.Gone]: {
-    body: addressBody,
-    heading: 'Oops - Not Available',
-    intro: "The page you're looking for is no longer available.",
-    statusLabel: String(HttpStatusCode.Gone),
-    title: 'Not Available | NMI Services portal',
-  },
-  [HttpStatusCode.PreconditionFailed]: {
-    body: retryBody,
-    heading: 'Oops - A precondition failed error has occurred',
-    intro: "The page you're trying to access has encountered an error.",
-    statusLabel: String(HttpStatusCode.PreconditionFailed),
-    title: 'Precondition Failed | NMI Services portal',
-  },
-  [HttpStatusCode.UnprocessableEntity]: {
-    body: retryBody,
-    heading: 'Oops - Unprocessable.',
-    intro: "The page you're trying to access has encountered an error.",
-    statusLabel: String(HttpStatusCode.UnprocessableEntity),
-    title: 'Unprocessable | NMI Services portal',
-  },
-  [HttpStatusCode.InternalServerError]: serverErrorContent,
-  [HttpStatusCode.ServiceUnavailable]: {
-    body: retryBody,
-    heading: 'Oops - Service unavailable.',
-    intro: "The page you're trying to access has encountered an error.",
-    statusLabel: String(HttpStatusCode.ServiceUnavailable),
-    title: 'Service Unavailable | NMI Services portal',
-  },
-};
+const errorContentByStatus = new Map<number, ErrorContent>([
+  [
+    HttpStatusCode.Forbidden,
+    {
+      body: addressBody,
+      heading: 'Oops - Forbidden',
+      intro: "The page you're looking for is not accessible.",
+      statusLabel: String(HttpStatusCode.Forbidden),
+      title: 'Forbidden | NMI Services portal',
+    },
+  ],
+  [
+    HttpStatusCode.NotFound,
+    {
+      body: addressBody,
+      heading: 'Oops - Page not found',
+      intro: "The page you're looking for no longer exists or has moved.",
+      statusLabel: String(HttpStatusCode.NotFound),
+      title: 'Page not found | NMI Services portal',
+    },
+  ],
+  [
+    HttpStatusCode.Conflict,
+    {
+      body: addressBody,
+      heading: 'Oops - Conflict',
+      intro:
+        'The record you are editing cannot be updated because the existing record is newer.',
+      statusLabel: String(HttpStatusCode.Conflict),
+      title: 'Conflict | NMI Services portal',
+    },
+  ],
+  [
+    HttpStatusCode.Gone,
+    {
+      body: addressBody,
+      heading: 'Oops - Not Available',
+      intro: "The page you're looking for is no longer available.",
+      statusLabel: String(HttpStatusCode.Gone),
+      title: 'Not Available | NMI Services portal',
+    },
+  ],
+  [
+    HttpStatusCode.PreconditionFailed,
+    {
+      body: retryBody,
+      heading: 'Oops - A precondition failed error has occurred',
+      intro: "The page you're trying to access has encountered an error.",
+      statusLabel: String(HttpStatusCode.PreconditionFailed),
+      title: 'Precondition Failed | NMI Services portal',
+    },
+  ],
+  [
+    HttpStatusCode.UnprocessableEntity,
+    {
+      body: retryBody,
+      heading: 'Oops - Unprocessable.',
+      intro: "The page you're trying to access has encountered an error.",
+      statusLabel: String(HttpStatusCode.UnprocessableEntity),
+      title: 'Unprocessable | NMI Services portal',
+    },
+  ],
+  [HttpStatusCode.InternalServerError, serverErrorContent],
+  [
+    HttpStatusCode.ServiceUnavailable,
+    {
+      body: retryBody,
+      heading: 'Oops - Service unavailable.',
+      intro: "The page you're trying to access has encountered an error.",
+      statusLabel: String(HttpStatusCode.ServiceUnavailable),
+      title: 'Service Unavailable | NMI Services portal',
+    },
+  ],
+]);
 
 const ErrorDisplay = ({ status }: Readonly<{ status: number }>) => {
-  const content = errorContentByStatus[status] ?? serverErrorContent;
+  const content = errorContentByStatus.get(status) ?? serverErrorContent;
 
   useHtmlTitle(content.title);
   useBodyClass('http-error');

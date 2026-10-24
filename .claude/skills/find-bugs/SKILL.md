@@ -7,6 +7,11 @@ description: Find bugs, security vulnerabilities, and code quality issues in loc
 
 Review changes on this branch for bugs, security vulnerabilities, and code quality issues.
 
+> Boundary: use **find-bugs** for a dedicated, exhaustive security/bug audit of
+> branch changes (attack-surface mapping, per-file security checklist,
+> pre-conclusion audit). For general multi-dimensional code review, use the
+> **code-reviewer** skill.
+
 ## Phase 1: Complete Input Gathering
 
 1. Get the FULL diff: `git diff master...HEAD`

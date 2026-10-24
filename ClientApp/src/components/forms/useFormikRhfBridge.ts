@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFormikContext } from 'formik';
 import { useForm } from 'react-hook-form';
@@ -10,6 +9,7 @@ import type {
   UseFormReturn,
 } from 'react-hook-form';
 import { createSaveAwareYupResolver } from './saveAwareYupResolver';
+import { getIn } from './formPath';
 import type { ValidationSchema } from './types';
 
 /** Values of a bridged step: the form fields plus the wizard's save flag. */
@@ -46,7 +46,7 @@ const useMirrorToFormik = <TValues extends BridgedValues>(
   useEffect(() => {
     const subscription = watch((formValues, { name }) => {
       if (name && isBridgedName(name)) {
-        const value: unknown = get(formValues, name);
+        const value: unknown = getIn(formValues, name);
         void setFieldValue(name, value, false);
       }
     });

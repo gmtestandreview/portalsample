@@ -42,7 +42,9 @@ When(
     const request = page
       .getByRole('tabpanel', { name: 'Requests' })
       .locator(`#RefId-${referenceId}`);
+
     await expect(request).toBeVisible();
+
     await request.scrollIntoViewIfNeeded();
   }
 );
@@ -80,7 +82,9 @@ When('the user confirms {string}', async ({ page }, name: string) => {
 Then(
   'the quotation page for {string} is displayed',
   async ({ page }, referenceId: string) => {
-    await expect(page).toHaveURL(new RegExp(`/quotation/${referenceId}$`));
+    await expect(page).toHaveURL(
+      (url) => url.pathname === `/quotation/${referenceId}`
+    );
     await expect(
       page.getByRole('heading', { name: 'Quotation', exact: true })
     ).toBeVisible();
@@ -103,6 +107,7 @@ Then(
 Then('{string} is available', async ({ page }, name: string) => {
   const link = page.getByRole('link', { name, exact: true });
   const button = page.getByRole('button', { name, exact: true });
+
   await expect(link.or(button)).toBeVisible();
 });
 
@@ -115,6 +120,7 @@ Then(
   'a confirmation dialog titled {string} is displayed',
   async ({ page }, title: string) => {
     const dialog = page.getByRole('dialog');
+
     await expect(dialog).toBeVisible();
     await expect(
       dialog.getByRole('heading', { name: title, exact: true })
@@ -139,13 +145,13 @@ Then(
 Then(
   'the quote acceptance step {string} is displayed',
   async ({ page }, title: string) => {
-    await expect(
-      page
-        .getByRole('heading', {
-          name: new RegExp(title.replace('/', String.raw`\/`), 'i'),
-        })
-        .first()
-    ).toBeVisible();
+    await expect
+      .poll(async () =>
+        (await page.getByRole('heading').allInnerTexts()).some((heading) =>
+          heading.toLowerCase().includes(title.toLowerCase())
+        )
+      )
+      .toBe(true);
   }
 );
 
@@ -203,6 +209,7 @@ When('the user accepts the quote terms', async ({ page }) => {
       exact: true,
     })
     .click();
+
   await expect(acceptance).toBeChecked();
 });
 

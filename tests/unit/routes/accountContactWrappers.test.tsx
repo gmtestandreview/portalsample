@@ -15,112 +15,154 @@ const mocks = vi.hoisted(() => ({
   updateContactProps: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'account-1' }],
-    instance: { acquireTokenSilent: vi.fn() },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'account-1' }],
+        instance: { acquireTokenSilent: vi.fn() },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-  useAccountDispatch: mocks.useAccountDispatch,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: mocks.useAccountState,
+      useAccountDispatch: mocks.useAccountDispatch,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../ClientApp/src/components/modals/ModalContext', () => ({
-  useModalDispatch: mocks.useModalDispatch,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/modals/ModalContext',
+  () =>
+    ({
+      useModalDispatch: mocks.useModalDispatch,
+    }) satisfies __ExactMockModule<__TestMockModule27>
+);
 
-vi.mock('../../../ClientApp/src/components/forms/WizardForm', () => ({
-  default: ({
-    children,
-    locationOnCompletion,
-    lastStepNextButtonTitle,
-  }: {
-    children: React.ReactNode;
-    locationOnCompletion: string;
-    lastStepNextButtonTitle: string;
-  }) => (
-    <section
-      data-testid='wizard-form'
-      data-complete-location={locationOnCompletion}
-      data-last-button={lastStepNextButtonTitle}
-    >
-      {children}
-    </section>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/forms/WizardForm',
+  () =>
+    ({
+      default: ({
+        children,
+        locationOnCompletion,
+        lastStepNextButtonTitle,
+      }: {
+        children: React.ReactNode;
+        locationOnCompletion: string;
+        lastStepNextButtonTitle: string;
+      }) => (
+        <section
+          data-testid='wizard-form'
+          data-complete-location={locationOnCompletion}
+          data-last-button={lastStepNextButtonTitle}
+        >
+          {children}
+        </section>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule60>
+);
 
 vi.mock(
   '../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({
-      children,
-      title,
-    }: {
-      children: React.ReactNode;
-      title?: string;
-    }) => (
-      <article data-testid='wizard-step' data-title={title}>
-        {children}
-      </article>
-    ),
-  })
+  () =>
+    ({
+      default: ({
+        children,
+        title,
+      }: {
+        children: React.ReactNode;
+        title?: string;
+      }) => (
+        <article data-testid='wizard-step' data-title={title}>
+          {children}
+        </article>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
-vi.mock('../../../ClientApp/src/routes/account/accountDetails', () => ({
-  default: () => <div>Account details fields</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/account/accountDetails',
+  () =>
+    ({
+      default: () => <div>Account details fields</div>,
+    }) satisfies __ExactMockModule<__TestMockModule81>
+);
 
-vi.mock('../../../ClientApp/src/routes/account/organisationDetails', () => ({
-  default: () => <div>Organisation details fields</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/account/organisationDetails',
+  () =>
+    ({
+      default: () => <div>Organisation details fields</div>,
+    }) satisfies __ExactMockModule<__TestMockModule82>
+);
 
-vi.mock('../../../ClientApp/src/routes/contact/contactDetails', () => ({
-  default: () => <div>Contact details fields</div>,
-}));
+vi.mock(
+  '../../../ClientApp/src/routes/contact/contactDetails',
+  () =>
+    ({
+      default: () => <div>Contact details fields</div>,
+    }) satisfies __ExactMockModule<__TestMockModule83>
+);
 
 vi.mock(
   '../../../ClientApp/src/routes/account/create/createAccountProps',
-  () => ({
-    default: mocks.createAccountProps,
-  })
+  () =>
+    ({
+      default: mocks.createAccountProps,
+    }) satisfies __ExactMockModule<__TestMockModule84>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/account/update/updateAccountProps',
-  () => ({
-    default: mocks.updateAccountProps,
-  })
+  () =>
+    ({
+      default: mocks.updateAccountProps,
+    }) satisfies __ExactMockModule<__TestMockModule85>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/account/addBranch/addBranchProps',
-  () => ({
-    default: mocks.addBranchProps,
-  })
+  () =>
+    ({
+      default: mocks.addBranchProps,
+    }) satisfies __ExactMockModule<__TestMockModule86>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/contact/create/createContactProps',
-  () => ({
-    default: mocks.createContactProps,
-  })
+  () =>
+    ({
+      default: mocks.createContactProps,
+    }) satisfies __ExactMockModule<__TestMockModule87>
 );
 
 vi.mock(
   '../../../ClientApp/src/routes/contact/update/updateContactProps',
-  () => ({
-    default: mocks.updateContactProps,
-  })
+  () =>
+    ({
+      default: mocks.updateContactProps,
+    }) satisfies __ExactMockModule<__TestMockModule88>
 );
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
+);
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>
+);
 
 const renderAt = (path: string, element: React.ReactNode, routePath: string) =>
   render(
@@ -173,15 +215,19 @@ describe('account and contact route wrappers', () => {
       expect.any(Array),
       expect.objectContaining({ details: { defaultOrganisationId: 1 } })
     );
+
     unmount();
 
     renderAt('/account-add-branch', <AddBranch />, '/account-add-branch');
+
     expect(screen.getByText('Organisation details fields')).toBeInTheDocument();
+
     const onShowBranchSelector = defined(
       mocks.addBranchProps.mock.calls[0],
       'addBranchProps call'
     )[4] as () => void;
     onShowBranchSelector();
+
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(true);
   });
 
@@ -208,9 +254,11 @@ describe('account and contact route wrappers', () => {
       expect.any(Object),
       42
     );
+
     unmount();
 
     renderAt('/contact-create/7', <CreateContact />, '/contact-create/:id');
+
     expect(mocks.createContactProps).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Object),
@@ -218,9 +266,11 @@ describe('account and contact route wrappers', () => {
       expect.any(Object),
       7
     );
+
     unmount();
 
     renderAt('/contact-update/8', <UpdateContact />, '/contact-update/:id');
+
     expect(mocks.updateContactProps).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Object),
@@ -245,10 +295,12 @@ describe('account and contact route wrappers', () => {
 
     expect(screen.getByTestId('not-found')).toBeInTheDocument();
     expect(mocks.updateAccountProps).not.toHaveBeenCalled();
+
     unmount();
 
     mocks.useAccountDispatch.mockReturnValue(undefined);
     renderAt('/account-create', <CreateAccount />, '/account-create');
+
     expect(mocks.createAccountProps).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Object),
@@ -278,12 +330,14 @@ describe('account and contact route wrappers', () => {
       expect.any(Array),
       null
     );
+
     unmount();
 
     renderAt('/account-add-branch', <AddBranch />, '/account-add-branch');
     const onShowBranchSelector = mocks.addBranchProps.mock.calls.at(
       -1
     )?.[4] as () => void;
+
     expect(() => onShowBranchSelector()).not.toThrow();
     expect(mocks.setShowBranchSelector).not.toHaveBeenCalled();
   });
@@ -312,9 +366,11 @@ describe('account and contact route wrappers', () => {
       null,
       1
     );
+
     unmount();
 
     renderAt('/contact-create/2', <CreateContact />, '/contact-create/:id');
+
     expect(mocks.createContactProps).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Object),
@@ -322,9 +378,11 @@ describe('account and contact route wrappers', () => {
       null,
       2
     );
+
     unmount();
 
     renderAt('/contact-update/3', <UpdateContact />, '/contact-update/:id');
+
     expect(mocks.updateContactProps).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Object),
@@ -354,9 +412,11 @@ describe('account and contact route wrappers', () => {
       expect.any(Object),
       0
     );
+
     unmount();
 
     renderAt('/contact-update', <UpdateContact />, '/contact-update');
+
     expect(mocks.updateContactProps).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Object),

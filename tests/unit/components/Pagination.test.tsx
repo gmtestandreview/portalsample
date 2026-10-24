@@ -16,7 +16,7 @@ const setViewportWidth = (width: number) => {
   });
 };
 
-describe('CustomPagination', () => {
+describe(CustomPagination, () => {
   beforeEach(() => {
     setViewportWidth(1200);
   });

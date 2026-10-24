@@ -49,19 +49,27 @@ vi.mock(
           submit: mocks.submit,
         };
       }),
-    };
+    } satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['scope'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['scope'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: mocks.appLoggerError,
-  },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: mocks.appLoggerError,
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
 const emptyAccounts = [] as AccountInfo[];
@@ -147,6 +155,7 @@ describe('request for quote wizard prop factories', () => {
       false,
       abortSignal
     );
+
     expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith(
       'APP-1',
       {
@@ -289,6 +298,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
+
     expect(mocks.submit).toHaveBeenCalledWith(
       'APP-3',
       {
@@ -300,6 +310,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
+
     await expect(
       props.onSaveAndNext?.(summary, true, abortSignal)
     ).resolves.toBeUndefined();
@@ -310,6 +321,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     mocks.getSummary.mockRejectedValueOnce(new Error('load failed'));
+
     await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
       'There was an error retrieving your details.'
     );
@@ -357,6 +369,7 @@ describe('request for quote wizard prop factories', () => {
     );
 
     await props.onSaveAndNext?.(summary, false, abortSignal);
+
     expect(mocks.submit).toHaveBeenCalledWith(
       'APP-4',
       {

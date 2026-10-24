@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { omitUndefined } from '../../../ClientApp/src/utils/omitUndefined';
 
-describe('omitUndefined', () => {
+describe(omitUndefined, () => {
   it('removes undefined values while preserving other values', () => {
     const input = {
       empty: '',

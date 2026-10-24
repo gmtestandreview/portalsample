@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import BodyText from './index';
 
 /**
@@ -12,24 +12,21 @@ import BodyText from './index';
  *
  */
 
-const meta = {
+const meta = preview.meta({
   component: BodyText,
   tags: ['ai-generated', 'needs-work'],
-} satisfies Meta<typeof BodyText>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     children:
       'This service helps organisations manage calibration and measurement requests.',
   },
-};
+});
 
-export const Emphasis: Story = {
+export const Emphasis = meta.story({
   args: {
     children: 'Read this guidance before continuing to the next step.',
     className: 'fw-bold',
   },
-};
+});

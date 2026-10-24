@@ -6,26 +6,48 @@ const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
 }));
 
-vi.mock('../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: mocks.useAccountState,
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: mocks.useAccountState,
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
-vi.mock('../../../ClientApp/src/components/forms/FormBanner', () => ({
-  default: ({ title }: { title: string }) => (
-    <div data-testid='form-banner'>{title}</div>
-  ),
-}));
+vi.mock(
+  '../../../ClientApp/src/components/forms/FormBanner',
+  () =>
+    ({
+      default: ({ title }: { title: string }) => (
+        <div data-testid='form-banner'>{title}</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule90>
+);
 
-vi.mock('../../../ClientApp/src/components/HeaderIntroText', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <p>{children}</p>,
-}));
+vi.mock(
+  '../../../ClientApp/src/components/HeaderIntroText',
+  () =>
+    ({
+      default: ({ children }: { children: React.ReactNode }) => (
+        <p>{children}</p>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule76>
+);
 
-vi.mock('../../../ClientApp/src/components/Utilities/useBodyClass', () => ({
-  default: () => {},
-}));
-vi.mock('../../../ClientApp/src/components/Utilities/useHtmlTitle', () => ({
-  default: () => {},
-}));
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule59>
+);
+vi.mock(
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
+  () =>
+    ({
+      default: () => {},
+    }) satisfies __ExactMockModule<__TestMockModule89>
+);
 
 describe('account created route', () => {
   beforeEach(() => {

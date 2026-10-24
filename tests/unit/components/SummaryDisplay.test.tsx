@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import SummaryDisplay from '@/components/SummaryDisplay';
 
-describe('SummaryDisplay', () => {
+describe(SummaryDisplay, () => {
   it('renders the label, span value, descriptor, and custom classes by default', () => {
     const { container } = render(
       <SummaryDisplay

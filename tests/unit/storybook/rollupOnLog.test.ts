@@ -41,8 +41,7 @@ describe('storybook rollup onLog filter', () => {
 
     onLog('warn', log, handler);
 
-    expect(handler).toHaveBeenCalledOnce();
-    expect(handler).toHaveBeenCalledWith('warn', log);
+    expect(handler).toHaveBeenCalledExactlyOnceWith('warn', log);
   });
 
   it('forwards an INVALID_ANNOTATION with no message (nullish path)', () => {
@@ -51,8 +50,7 @@ describe('storybook rollup onLog filter', () => {
 
     onLog('warn', log, handler);
 
-    expect(handler).toHaveBeenCalledOnce();
-    expect(handler).toHaveBeenCalledWith('warn', log);
+    expect(handler).toHaveBeenCalledExactlyOnceWith('warn', log);
   });
 
   it.each([
@@ -66,8 +64,7 @@ describe('storybook rollup onLog filter', () => {
 
     onLog('warn', log, handler);
 
-    expect(handler).toHaveBeenCalledOnce();
-    expect(handler).toHaveBeenCalledWith('warn', log);
+    expect(handler).toHaveBeenCalledExactlyOnceWith('warn', log);
   });
 
   it('passes the level through unchanged', () => {
@@ -76,7 +73,6 @@ describe('storybook rollup onLog filter', () => {
 
     onLog('error', log, handler);
 
-    expect(handler).toHaveBeenCalledOnce();
-    expect(handler).toHaveBeenCalledWith('error', log);
+    expect(handler).toHaveBeenCalledExactlyOnceWith('error', log);
   });
 });

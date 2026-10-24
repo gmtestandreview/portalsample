@@ -19,14 +19,18 @@ const mocks = vi.hoisted(() => ({
   account: { homeAccountId: 'mock-id' },
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-    accounts: [mocks.account],
-    inProgress: 'none',
-  }),
-  useAccount: () => mocks.account,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+        accounts: [mocks.account],
+        inProgress: 'none',
+      }),
+      useAccount: () => mocks.account,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -36,12 +40,16 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       setAuthToken = vi.fn();
       search = mocks.search;
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const hidingFields = {
   businessStreetAddress: (x: ReportRecipientStep) =>
@@ -86,7 +94,7 @@ function Harness({
   );
 }
 
-describe('ReportRecipientFormikBridge', () => {
+describe(ReportRecipientFormikBridge, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
@@ -110,7 +118,8 @@ describe('ReportRecipientFormikBridge', () => {
     await user.selectOptions(screen.getByLabelText('State'), 'NSW');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       reportAddressType: ReportAddressTypeValues.Other,
       businessStreetAddress: {
@@ -146,13 +155,15 @@ describe('ReportRecipientFormikBridge', () => {
     const organisationName = screen.getByLabelText(
       'Organisation name for report'
     );
+
     expect(organisationName).toHaveValue('Loaded report organisation');
 
     await user.clear(organisationName);
     await user.type(organisationName, 'Edited report organisation');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       organisationName: 'Edited report organisation',
     });
@@ -186,7 +197,8 @@ describe('ReportRecipientFormikBridge', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toMatchObject({
       businessStreetAddress: {
         isManuallyEntered: false,
@@ -208,13 +220,14 @@ describe('ReportRecipientFormikBridge', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
+
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/Address line 1 is required/i)
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/Address line 1 is required/i)
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -248,6 +261,7 @@ describe('ReportRecipientFormikBridge', () => {
     await screen.findByText(/is required/i);
 
     const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+
     expect(probe.dirty).toBe(false);
     expect(probe.address).toBeUndefined();
   });
@@ -260,17 +274,20 @@ describe('ReportRecipientFormikBridge', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByRole('combobox')).toHaveAccessibleDescription(
-      /is required/i
-    );
+    await expect(
+      screen.findByRole('combobox')
+    ).resolves.toHaveAccessibleDescription(/is required/i);
   });
 
   it('shows the address without hide rules when the form has no status', () => {
     const { unmount } = render(<Harness />);
+
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+
     unmount();
 
     render(<Harness withHiddenRules={false} />);
+
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 });

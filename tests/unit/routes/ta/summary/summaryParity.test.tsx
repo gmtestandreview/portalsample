@@ -19,12 +19,16 @@ import { resetMsalMock } from '../../../helpers/mockMsal';
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
-vi.mock('../../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const hidden = appDetailsProps('APP-1', [], {} as never).hidingFields ?? {};
 

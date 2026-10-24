@@ -3,7 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Editor, Transforms } from 'slate';
 import type * as SlateModule from 'slate';
 import SlateEditor from '@/components/SlateEditor/SlateEditor';
-import { serializeToHtml } from '@/components/SlateEditor/SlateEditor';
+import {
+  isBreakTag,
+  isEmptyParagraphContent,
+  serializeToHtml,
+} from '@/components/SlateEditor/SlateEditor';
 import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
 
 /**
@@ -29,7 +33,7 @@ vi.mock('slate', async (importOriginal) => {
       captured.editors.push(editor);
       return editor;
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule55>;
 });
 
 /** The editor belonging to the most recently rendered SlateEditor. */
@@ -73,7 +77,7 @@ const paragraph = (text: string): CustomElement[] => [
   },
 ];
 
-describe('SlateEditor helpers', () => {
+describe('slateEditor helpers', () => {
   it('serializes paragraph text with inline mark formatting', () => {
     const html = serializeToHtml([
       {
@@ -102,9 +106,30 @@ describe('SlateEditor helpers', () => {
 
     expect(html).toBe('Heading text');
   });
+
+  it.each([
+    ['<br>', true],
+    ['<br/>', true],
+    ['<br />', true],
+    ['<br class="unexpected">', false],
+    ['plain text', false],
+    ['<br', false],
+  ])('classifies break tag %s as %s', (value, expected) => {
+    expect(isBreakTag(value)).toBe(expected);
+  });
+
+  it.each([
+    ['', true],
+    ['&nbsp;&#xfeff; \n<br><br />', true],
+    ['<br class="unexpected">', false],
+    ['<br', false],
+    ['visible text', false],
+  ])('classifies paragraph content %j as empty=%s', (content, expected) => {
+    expect(isEmptyParagraphContent(content)).toBe(expected);
+  });
 });
 
-describe('SlateEditor', () => {
+describe(SlateEditor, () => {
   it('renders toolbar controls, placeholder label, and the configured character limit', () => {
     render(
       <SlateEditor
@@ -259,7 +284,7 @@ describe('SlateEditor', () => {
   });
 });
 
-describe('SlateEditor document changes', () => {
+describe('slateEditor document changes', () => {
   beforeEach(() => {
     captured.editors.length = 0;
   });
@@ -282,6 +307,7 @@ describe('SlateEditor document changes', () => {
     });
 
     const [lastValue] = setValue.mock.calls.at(-1) ?? [];
+
     expect(serializeToHtml(lastValue)).toBe('<p>Hello there</p>');
     // Counted over the serialized HTML, not the visible text: the limit exists to bound what
     // gets sent, and the markup travels with it.
@@ -385,11 +411,13 @@ describe('SlateEditor document changes', () => {
     await applyEdit(() => {
       fireEvent.mouseDown(bold);
     });
+
     expect(Editor.marks(editor)).toMatchObject({ bold: true });
 
     await applyEdit(() => {
       fireEvent.mouseDown(bold);
     });
+
     expect(Editor.marks(editor)?.bold).toBeUndefined();
   });
 });

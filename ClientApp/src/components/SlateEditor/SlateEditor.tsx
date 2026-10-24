@@ -19,12 +19,10 @@ export const serializeToHtml = (value: CustomElement[]): string =>
         })
         .join('');
 
-      switch (element.type) {
-        case 'paragraph':
-          return `<p>${children}</p>`;
-        default:
-          return children; // Add more cases for other block types if needed
+      if (element.type === 'paragraph') {
+        return `<p>${children}</p>`;
       }
+      return children;
     })
     .join('');
 export type CustomElement = {
@@ -61,7 +59,7 @@ declare module 'slate' {
 
 const isMarkActive = (editor: Editor, format: keyof CustomText) => {
   const marks = Editor.marks(editor) as Partial<CustomText> | null;
-  return marks ? marks[format] === true : false;
+  return marks ? Reflect.get(marks, format) === true : false;
 };
 
 const toggleMark = (editor: Editor, format: keyof CustomText) => {
@@ -71,6 +69,45 @@ const toggleMark = (editor: Editor, format: keyof CustomText) => {
   } else {
     Editor.addMark(editor, format, true);
   }
+};
+
+export const isBreakTag = (value: string) => {
+  const normalized = value.toLowerCase();
+  if (!normalized.startsWith('<br') || !normalized.endsWith('>')) {
+    return false;
+  }
+
+  const tagContent = normalized.slice(3, -1).trim();
+  return tagContent === '' || tagContent === '/';
+};
+
+export const isEmptyParagraphContent = (content: string) => {
+  let cursor = 0;
+  while (cursor < content.length) {
+    const remainder = content.slice(cursor);
+    if (remainder.startsWith('&nbsp;')) {
+      cursor += '&nbsp;'.length;
+      continue;
+    }
+    if (remainder.toLowerCase().startsWith('&#xfeff;')) {
+      cursor += '&#xfeff;'.length;
+      continue;
+    }
+    if (/\s/.test(content.charAt(cursor))) {
+      cursor += 1;
+      continue;
+    }
+    if (remainder.toLowerCase().startsWith('<br')) {
+      const tagEnd = remainder.indexOf('>');
+      if (tagEnd === -1 || !isBreakTag(remainder.slice(0, tagEnd + 1))) {
+        return false;
+      }
+      cursor += tagEnd + 1;
+      continue;
+    }
+    return false;
+  }
+  return true;
 };
 
 const renderHtmlBody = (html: string) => {
@@ -103,6 +140,15 @@ const ToolbarButton = ({
   </button>
 );
 
+function getCharCount(v: CustomElement[]): number {
+  // Check emptiness at the model level — avoids HTML serialisation purely for the empty check.
+  const hasContent = v.some((el) =>
+    el.children.some((child) => child.text.trim() !== '')
+  );
+  if (!hasContent) return 0;
+  return serializeToHtml(v).length;
+}
+
 const SlateEditor: React.FC<SlateEditorProps> = ({
   value,
   setValue,
@@ -114,19 +160,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
   const [errors, setErrors] = React.useState<string[]>([]);
   const max = maxCharacters ?? 1000;
   const [liveCharCount, setLiveCharCount] = React.useState<number>(0);
-
-  function getCharCount(v: CustomElement[]): number {
-    const serializedHtml = serializeToHtml(v);
-
-    // Treat editor scaffolding as empty
-    const htmlWithoutEmptyBlocks = serializedHtml
-      .replace(/<p>(?:(?:&nbsp;|&#xfeff;|<br\s*\/?>)|\s)*<\/p>/gi, '')
-      .trim();
-
-    if (!htmlWithoutEmptyBlocks) return 0;
-
-    return serializedHtml.length;
-  }
 
   const handleChange = (newValue: Descendant[]) => {
     const nextCount = getCharCount(newValue as CustomElement[]);
@@ -254,11 +287,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                 className='d-flex align-items-center justify-content-center p-2'
               >
                 <span className='d-flex align-items-center justify-content-center w-100 h-100'>
-                  <i
-                    className='icon icon-send'
-                    aria-hidden='true'
-                    role='presentation'
-                  />
+                  <i className='icon icon-send' aria-hidden='true' />
                 </span>
                 <span className='visually-hidden'>Send</span>
               </PrimaryButton>

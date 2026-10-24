@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import type { ReactNode } from 'react';
 import { Formik, Form } from 'formik';
 import { expect, userEvent, within } from 'storybook/test';
@@ -37,15 +37,13 @@ const FormikWrapper = ({
   </Formik>
 );
 
-const meta = {
+const meta = preview.meta({
   title: 'Forms/Inputs',
   parameters: { layout: 'padded' },
-} satisfies Meta;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const AllInputsShowcase: Story = {
+export const AllInputsShowcase = meta.story({
   render: () => (
     <FormikWrapper
       initialValues={{
@@ -92,9 +90,9 @@ export const AllInputsShowcase: Story = {
       <Checkbox name='agree' label='I agree to the terms and conditions' />
     </FormikWrapper>
   ),
-};
+});
 
-export const TextInputDefault: Story = {
+export const TextInputDefault = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ name: '' }}>
       <TextInput
@@ -104,9 +102,9 @@ export const TextInputDefault: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const TextInputWithHelp: Story = {
+export const TextInputWithHelp = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ abn: '' }}>
       <TextInput
@@ -117,9 +115,9 @@ export const TextInputWithHelp: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const TextInputWithExpandableHelp: Story = {
+export const TextInputWithExpandableHelp = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ serialNumber: '' }}>
       <TextInput
@@ -131,25 +129,37 @@ export const TextInputWithExpandableHelp: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const TextInputDisabled: Story = {
+export const TextInputDisabled = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ email: 'user@example.com' }}>
       <TextInput name='email' label='Email address' disabled type='email' />
     </FormikWrapper>
   ),
-};
+  play: async ({ canvas }) => {
+    const email = canvas.getByLabelText('Email address');
 
-export const TextInputReadOnly: Story = {
+    await expect(email).toBeDisabled();
+    await expect(email).toHaveValue('user@example.com');
+  },
+});
+
+export const TextInputReadOnly = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ referenceId: 'RFQ-2024-001234' }}>
       <TextInput name='referenceId' label='Reference ID' readonly />
     </FormikWrapper>
   ),
-};
+  play: async ({ canvas }) => {
+    const reference = canvas.getByLabelText('Reference ID');
 
-export const SelectInputDefault: Story = {
+    await expect(reference).toHaveAttribute('readonly');
+    await expect(reference).toHaveValue('RFQ-2024-001234');
+  },
+});
+
+export const SelectInputDefault = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ state: '' }}>
       <SelectInput<string>
@@ -161,9 +171,9 @@ export const SelectInputDefault: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const SelectInputHorizontal: Story = {
+export const SelectInputHorizontal = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ state: 'VIC' }}>
       <SelectInput<string>
@@ -174,9 +184,9 @@ export const SelectInputHorizontal: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const RadioButtonGroupVertical: Story = {
+export const RadioButtonGroupVertical = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ hasInstrument: '' }}>
       <RadioButtonGroup<string>
@@ -186,9 +196,9 @@ export const RadioButtonGroupVertical: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const RadioButtonGroupHorizontal: Story = {
+export const RadioButtonGroupHorizontal = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ hasInstrument: 'Yes' }}>
       <RadioButtonGroup<string>
@@ -199,9 +209,9 @@ export const RadioButtonGroupHorizontal: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const DatePickerDefault: Story = {
+export const DatePickerDefault = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ dateRequired: '' }}>
       <DatePicker
@@ -212,17 +222,17 @@ export const DatePickerDefault: Story = {
       />
     </FormikWrapper>
   ),
-};
+});
 
-export const TextAreaDefault: Story = {
+export const TextAreaDefault = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ description: '' }}>
       <TextAreaInput name='description' label='Description' />
     </FormikWrapper>
   ),
-};
+});
 
-export const CheckboxDefault: Story = {
+export const CheckboxDefault = meta.story({
   render: () => (
     <FormikWrapper initialValues={{ agree: false }}>
       <Checkbox
@@ -233,11 +243,19 @@ export const CheckboxDefault: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole('checkbox');
+
+    await expect(
+      canvas.getByLabelText(
+        'I agree to the terms and conditions of the NMI Services portal.',
+      ),
+    ).toBeVisible();
     await expect(checkbox).not.toBeChecked();
+
     await userEvent.click(checkbox);
+
     await expect(checkbox).toBeChecked();
   },
-};
+});

@@ -7,20 +7,26 @@ const containerState = vi.hoisted(() => ({
   props: undefined as any,
 }));
 
-vi.mock('@/components/Inputs/AutoSuggest/AutoSuggestContainer', () => ({
-  default: (props: any) => {
-    containerState.props = props;
-    return (
-      <div>
-        <span data-testid='search-term'>{props.searchTerm}</span>
-        <span data-testid='loading'>{String(props.loading)}</span>
-        <span data-testid='error'>{String(props.error)}</span>
-        <span data-testid='no-result'>{String(props.noResult)}</span>
-        <span data-testid='option-count'>{String(props.options.length)}</span>
-      </div>
-    );
-  },
-}));
+vi.mock(
+  '@/components/Inputs/AutoSuggest/AutoSuggestContainer',
+  () =>
+    ({
+      default: (props: any) => {
+        containerState.props = props;
+        return (
+          <div>
+            <span data-testid='search-term'>{props.searchTerm}</span>
+            <span data-testid='loading'>{String(props.loading)}</span>
+            <span data-testid='error'>{String(props.error)}</span>
+            <span data-testid='no-result'>{String(props.noResult)}</span>
+            <span data-testid='option-count'>
+              {String(props.options.length)}
+            </span>
+          </div>
+        );
+      },
+    }) satisfies __ExactMockModule<__TestMockModule32>
+);
 
 const renderAutoSuggest = (
   getOptions = vi
@@ -42,7 +48,7 @@ const renderAutoSuggest = (
   return { getOptions, onSelectedOption };
 };
 
-describe('AutoSuggest parent state', () => {
+describe('autoSuggest parent state', () => {
   it('clears a selected option when the search term is emptied', async () => {
     const onSelectedOption = vi.fn().mockResolvedValue(undefined);
     renderAutoSuggest(undefined, onSelectedOption, 'Sydney');
@@ -51,7 +57,8 @@ describe('AutoSuggest parent state', () => {
       await containerState.props.onSearchTermChange('');
     });
 
-    expect(onSelectedOption).toHaveBeenCalledWith();
+    expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
+    expect(onSelectedOption.mock.calls[0]).toEqual([]);
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
     expect(screen.getByTestId('option-count')).toHaveTextContent('0');
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
@@ -72,6 +79,7 @@ describe('AutoSuggest parent state', () => {
     await act(async () => {
       await containerState.props.onSearchTermChange('syd');
     });
+
     expect(screen.getByTestId('option-count')).toHaveTextContent('1');
 
     await act(async () => {
@@ -101,11 +109,13 @@ describe('AutoSuggest parent state', () => {
     await act(async () => {
       searchPromise = containerState.props.onSearchTermChange('Sydney');
     });
+
     expect(screen.getByTestId('loading')).toHaveTextContent('true');
 
     await act(async () => {
       containerState.props.onCancel();
     });
+
     expect(screen.getByTestId('search-term')).toHaveTextContent('Original');
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
 

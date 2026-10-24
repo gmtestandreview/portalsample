@@ -64,7 +64,7 @@ const step = (
 ): ApplicationAndInstrumentStep =>
   ({ patternApprovalType }) as ApplicationAndInstrumentStep;
 
-describe('DisplayRules.isOIMLHiddenP', () => {
+describe('displayRules.isOIMLHiddenP', () => {
   it('hides the OIML option when the sub-option is not ticked', () => {
     const result = DisplayRules.isOIMLHiddenP(dto({ newSubOptions: [] }));
 
@@ -123,7 +123,7 @@ describe('DisplayRules.isOIMLHiddenP', () => {
   });
 });
 
-describe('DisplayRules.isOIMLHidden', () => {
+describe('displayRules.isOIMLHidden', () => {
   it('hides the option when the sub-option list excludes the OIML certificate', () => {
     const result = DisplayRules.isOIMLHidden({
       newSubOptions: [
@@ -182,7 +182,7 @@ describe.each([
     rule: DisplayRules.isNewCertificateHidden,
     shows: PatternApprovalRequiredValues.NewCertificate,
   },
-])('DisplayRules.$name', ({ rule, shows }) => {
+])('displayRules.$name', ({ rule, shows }) => {
   it('shows the section for its own pattern approval type', () => {
     expect(rule(step(shows))).toBe(false);
   });
@@ -196,7 +196,7 @@ describe.each([
   });
 });
 
-describe('DisplayRules.isApplNewInstrumentHiddenP', () => {
+describe('displayRules.isApplNewInstrumentHiddenP', () => {
   it('hides the instrument section for a non new-certificate application', () => {
     const result = DisplayRules.isApplNewInstrumentHiddenP(
       step(PatternApprovalRequiredValues.Variation)
@@ -236,7 +236,7 @@ describe('DisplayRules.isApplNewInstrumentHiddenP', () => {
   });
 });
 
-describe('DisplayRules.defaultIsHidden', () => {
+describe('displayRules.defaultIsHidden', () => {
   it('defaults sections to hidden', () => {
     expect(DisplayRules.defaultIsHidden).toBe(true);
   });

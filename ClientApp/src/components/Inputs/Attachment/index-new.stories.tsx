@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { AttachmentDto } from '../../../api/web-api-client';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -20,7 +20,7 @@ const uploadResult: AttachmentDto[] = [
   },
 ];
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/Attachment/AttachmentNew',
   component: AttachmentNew,
   decorators: [withPortalProviders],
@@ -47,27 +47,26 @@ const meta = {
     onUploadFiles: fn(async () => uploadResult),
     onDeleteFile: fn(async () => {}),
   },
-} satisfies Meta<typeof AttachmentNew>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const EmptyUploader: Story = {
+export const EmptyUploader = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
     // The browse control and the file input are both present.
     await expect(canvas.getByTestId('documents')).toBeVisible();
     await expect(
-      canvas.getByTestId('drag-upload-documents')
+      canvas.getByTestId('drag-upload-documents'),
     ).toBeInTheDocument();
     await expect(canvas.getByText(/maximum size for each file/i)).toBeVisible();
   },
-};
+});
 
-export const DocumentsWithoutIds: Story = {
+export const DocumentsWithoutIds = meta.story({
   args: { isSummary: true },
   parameters: {
     portal: {
@@ -91,8 +90,8 @@ export const DocumentsWithoutIds: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(canvas.getByText('manual.pdf')).toBeVisible();
     await expect(canvas.getByText('certificate.pdf')).toBeVisible();
   },
-};
+});

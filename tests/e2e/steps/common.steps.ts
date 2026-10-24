@@ -37,6 +37,7 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
   if (title) {
     const heading =
       step === 3 && title === 'Summary' ? 'Summary and submit' : title;
+
     await expect(
       page.getByRole('heading', {
         name: heading,
@@ -217,9 +218,11 @@ Then(
 Then(
   'a confirmation dialog should appear with {string}',
   async ({ page }, title: string) => {
-    await expect(page.getByRole('dialog')).toContainText(
-      new RegExp(title, 'i')
-    );
+    await expect
+      .poll(async () =>
+        (await page.getByRole('dialog').innerText()).toLowerCase()
+      )
+      .toContain(title.toLowerCase());
   }
 );
 

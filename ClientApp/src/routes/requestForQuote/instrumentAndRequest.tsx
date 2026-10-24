@@ -1,6 +1,5 @@
 import { useFormikContext } from 'formik';
 import Row from 'react-bootstrap/Row';
-import { forEach } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useMsal } from '@azure/msal-react';
@@ -46,11 +45,11 @@ const measurementReportInlineHelp = (
 const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   const options: SelectInputOption<string>[] = [];
   if (parentId !== undefined && parentId !== '') {
-    forEach(values, (l) => {
+    for (const l of values) {
       if (l.parentId === parentId) {
         options.push({ displayText: l.label ?? '', value: l.id ?? '' });
       }
-    });
+    }
   }
   const [sorted, noInstrumentId] = sortList(
     options,
@@ -61,7 +60,10 @@ const getArtefactTypeOptions = (values: LookupResponse[], parentId: string) => {
   return { options: sorted, noInstrumentId };
 };
 
-const useInstrumentAndRequestLookups = () => {
+// Exported for unit testing: the measurement-category options builder falls
+// back to an empty list before the lookups resolve, a path unreachable through
+// the rendered component because `isLoading` gates the only call site.
+export const useInstrumentAndRequestLookups = () => {
   const { accounts, instance } = useMsal();
   const context = useFormikContext<InstrumentAndRequestStep>();
   const isLoadingMeasurementCategories = useRef(false);
@@ -134,9 +136,9 @@ const useInstrumentAndRequestLookups = () => {
 
   const getMeasurementCategories = () => {
     const options: SelectInputOption<string>[] = [];
-    forEach(measurementCategories, (l) => {
+    for (const l of measurementCategories ?? []) {
       options.push({ displayText: l.label!, value: l.id! });
-    });
+    }
     return options;
   };
 

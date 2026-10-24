@@ -14,22 +14,37 @@ const helperMocks = vi.hoisted(() => ({
 const trackGAEventMock = vi.hoisted(() => vi.fn());
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'test-account' }],
-    instance: { acquireTokenSilent: acquireTokenSilentMock },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'test-account' }],
+        instance: { acquireTokenSilent: acquireTokenSilentMock },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/routes/common/helperFunctions', () => helperMocks);
+vi.mock(
+  '@/routes/common/helperFunctions',
+  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: trackGAEventMock,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: trackGAEventMock,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn() },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 const mockQuotationData = {
   crmQuoteRequestId: 'Q-001',
@@ -49,7 +64,7 @@ const defaultProps = {
 const getTermsAnchor = (container: HTMLElement) =>
   container.querySelector('a.nmi-in-text-link') as HTMLElement;
 
-describe('ViewPdfQuoteTerms', () => {
+describe(ViewPdfQuoteTerms, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     acquireTokenSilentMock.mockResolvedValue({
@@ -81,7 +96,10 @@ describe('ViewPdfQuoteTerms', () => {
     await user.click(getTermsAnchor(container));
 
     await waitFor(() => {
-      expect(acquireTokenSilentMock).toHaveBeenCalled();
+      expect(acquireTokenSilentMock).toHaveBeenCalledWith({
+        account: { homeAccountId: 'test-account' },
+        scopes: ['openid', 'openid'],
+      });
       expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
         'test-access-token',
         mockQuotationData,

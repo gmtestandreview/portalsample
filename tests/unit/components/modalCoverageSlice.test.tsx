@@ -21,59 +21,87 @@ const mocks = vi.hoisted(() => ({
   navigate: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    accounts: [{ homeAccountId: 'account-1' }],
-    instance: {
-      acquireTokenSilent: mocks.acquireTokenSilent,
-    },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        accounts: [{ homeAccountId: 'account-1' }],
+        instance: {
+          acquireTokenSilent: mocks.acquireTokenSilent,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: () => mocks.navigate,
-  };
+  } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
-vi.mock('../../../ClientApp/src/api/web-api-client', () => ({
-  ApplicationType: {
-    QuoteRequest: 'QuoteRequest',
-  },
-  ApplicationClient: vi.fn(function (this: {
-    setAuthToken: ReturnType<typeof vi.fn>;
-    deleteApplication: ReturnType<typeof vi.fn>;
-  }) {
-    this.setAuthToken = mocks.setAuthToken;
-    this.deleteApplication = mocks.deleteApplication;
-  }),
-}));
+vi.mock(
+  '../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      ApplicationType: {
+        QuoteRequest: 'QuoteRequest',
+      },
+      ApplicationClient: vi.fn(function (this: {
+        setAuthToken: ReturnType<typeof vi.fn>;
+        deleteApplication: ReturnType<typeof vi.fn>;
+      }) {
+        this.setAuthToken = mocks.setAuthToken;
+        this.deleteApplication = mocks.deleteApplication;
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://mock/.default'] },
-}));
+vi.mock(
+  '../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://mock/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../ClientApp/src/storage/notification', () => ({
-  setDashboardNotification: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/notification',
+  () =>
+    ({
+      setDashboardNotification: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('../../../ClientApp/src/storage/types', () => ({
-  NotificationSeverity: {
-    Success: 'success',
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/storage/types',
+  () =>
+    ({
+      NotificationSeverity: {
+        Success: 'success',
+      },
+    }) satisfies __ExactMockModule<__TestMockModule47>
+);
 
-vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: {
-    error: vi.fn(),
-  },
-}));
+vi.mock(
+  '../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
-vi.mock('../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  trackGAEvent: vi.fn(),
-}));
+vi.mock(
+  '../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      trackGAEvent: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 const ModalConsumer = () => {
   const state = useModalState();
@@ -147,7 +175,9 @@ describe('modal coverage slice', () => {
     );
 
     expect(screen.getByText('RFQ-1')).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('button', { name: 'Close from context' }));
+
     expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
   });
 
@@ -179,10 +209,12 @@ describe('modal coverage slice', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Yes' }));
+
     expect(calls).toEqual(['close', 'yes']);
 
     calls.length = 0;
     fireEvent.click(screen.getByRole('button', { name: /no/i }));
+
     expect(calls).toEqual(['close', 'no']);
   });
 
@@ -216,6 +248,7 @@ describe('modal coverage slice', () => {
         applicationType: 'QuoteRequest',
       })
     );
+
     expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
     expect(setDashboardNotification).toHaveBeenCalledWith({
       message: 'The draft request has been successfully deleted',
@@ -238,6 +271,7 @@ describe('modal coverage slice', () => {
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
     await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+
     expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
     expect(setDashboardNotification).not.toHaveBeenCalled();
   });
@@ -256,6 +290,7 @@ describe('modal coverage slice', () => {
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
 
     await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+
     expect(mocks.deleteApplication).not.toHaveBeenCalled();
     expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
   });

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { PatternApprovalDashboardDto } from '../../../api/web-api-client';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -19,7 +19,7 @@ const initialFilters: PatternApprovalDashboardDto = {
   filterSearchText: '',
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/SearchFilter/TypeApproval/PaSearchFilter',
   component: PaSearchFilter,
   decorators: [withPortalProviders],
@@ -34,18 +34,17 @@ const meta = {
     setInitialFilters: fn(),
     setCurrentPage: fn(),
   },
-} satisfies Meta<typeof PaSearchFilter>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(
-      canvas.getByRole('button', { name: /filters/i })
+      canvas.getByRole('button', { name: 'Filters applied' }),
     ).toBeVisible();
   },
-};
+});

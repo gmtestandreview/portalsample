@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { AlertSuccess } from '../../../ClientApp/src/components/Alert';
 
-describe('Alert variants', () => {
+describe('alert variants', () => {
   it('falls back to polite aria-live when the prop is explicitly overridden to undefined', () => {
     const { getByRole } = render(
       // Spread after the hardcoded ariaLive='polite' inside AlertSuccess, so

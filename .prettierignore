@@ -14,9 +14,6 @@ playwright-report
 # Captured, generated, and vendor source:
 ClientApp/media
 ClientApp/src/api/web-api-client.ts
-ClientApp/src/external
-ClientApp/source-map-http-downloads
-ClientApp/webpack
 
 # Package-manager outputs:
 package-lock.json

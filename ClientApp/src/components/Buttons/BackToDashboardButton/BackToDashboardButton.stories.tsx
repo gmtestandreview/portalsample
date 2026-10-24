@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect, within } from 'storybook/test';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import BackToDashboardButton from '.';
@@ -16,44 +16,43 @@ import BackToDashboardButton from '.';
  * @prop {StoryObj} CustomClass - Story demonstrating a custom CSS class applied directly to the button link element.
  */
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/Buttons/BackToDashboardButton',
   component: BackToDashboardButton,
   decorators: [withPortalProviders],
-} satisfies Meta<typeof BackToDashboardButton>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 /**
  * Default — renders the button with no additional props.
  * Requires router context (Link) provided by withPortalProviders.
  */
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: /back to dashboard/i });
+
     await expect(link).toBeInTheDocument();
     await expect(link).toHaveAttribute('href', '/dashboard');
   },
-};
+});
 
 /**
  * CustomContainer — applies extra margin to the wrapping div via containerClassName.
  */
-export const CustomContainer: Story = {
+export const CustomContainer = meta.story({
   args: {
     containerClassName: 'mt-4',
   },
-};
+});
 
 /**
  * CustomClass — applies additional CSS classes directly to the link element.
  */
-export const CustomClass: Story = {
+export const CustomClass = meta.story({
   args: {
     className: 'fw-bold',
   },
-};
+});

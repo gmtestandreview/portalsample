@@ -75,7 +75,7 @@ describe('utility runtime components and hooks', () => {
       behavior: 'smooth',
       block: undefined,
     });
-    expect(focus).toHaveBeenCalled();
+    expect(focus).toHaveBeenCalledWith();
   });
 
   it('renders the back-to-top landmark as a semantic nav element', () => {
@@ -99,6 +99,7 @@ describe('utility runtime components and hooks', () => {
     expect(screen.getByText('Use dock 3 on arrival.')).toBeInTheDocument();
 
     rerender(<DeliveryInstructions />);
+
     expect(
       screen.queryByRole('heading', {
         name: 'NMI site specific receiving instructions',
@@ -110,7 +111,9 @@ describe('utility runtime components and hooks', () => {
     const { unmount } = render(<BodyClassHarness className='print-mode' />);
 
     expect(document.body).toHaveClass('print-mode');
+
     unmount();
+
     expect(document.body).not.toHaveClass('print-mode');
   });
 
@@ -120,7 +123,9 @@ describe('utility runtime components and hooks', () => {
     );
 
     expect(document.body).toHaveClass('wizard', 'compact');
+
     unmount();
+
     expect(document.body).not.toHaveClass('wizard');
     expect(document.body).not.toHaveClass('compact');
   });
@@ -133,7 +138,9 @@ describe('utility runtime components and hooks', () => {
     const { unmount } = render(<BodyClassHarness className={foreignClasses} />);
 
     expect(document.body).toHaveClass('wizard', 'compact');
+
     unmount();
+
     expect(document.body).not.toHaveClass('wizard');
     expect(document.body).not.toHaveClass('compact');
   });
@@ -143,12 +150,15 @@ describe('utility runtime components and hooks', () => {
     const { rerender } = render(<DebounceHarness value='first' delay={250} />);
 
     expect(screen.getByText('first')).toBeInTheDocument();
+
     rerender(<DebounceHarness value='second' delay={250} />);
     act(() => vi.advanceTimersByTime(249));
+
     expect(screen.getByText('first')).toBeInTheDocument();
 
     rerender(<DebounceHarness value='third' delay={250} />);
     act(() => vi.advanceTimersByTime(250));
+
     expect(screen.getByText('third')).toBeInTheDocument();
     expect(screen.queryByText('second')).not.toBeInTheDocument();
   });

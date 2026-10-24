@@ -22,8 +22,29 @@ const suggestionCollator = new Intl.Collator(undefined, {
 const compareSuggestions = (left: string, right: string) =>
   suggestionCollator.compare(left, right);
 
-const matches = (value: unknown, term: string, matchType: MatchType) =>
-  typeof value === 'string' && value.toLowerCase()[matchType](term);
+const getOptionValue = (
+  item: SuggestionOption,
+  fieldName: string | undefined
+) => {
+  if (fieldName === undefined || !Object.hasOwn(item, fieldName)) {
+    return undefined;
+  }
+  return Reflect.get(item, fieldName);
+};
+
+const matches = (value: unknown, term: string, matchType: MatchType) => {
+  if (typeof value !== 'string') return false;
+  const normalizedValue = value.toLowerCase();
+
+  switch (matchType) {
+    case 'startsWith':
+      return normalizedValue.startsWith(term);
+    case 'endsWith':
+      return normalizedValue.endsWith(term);
+    default:
+      return normalizedValue.includes(term);
+  }
+};
 
 export const getFilteredSuggestions = ({
   inputValue,
@@ -42,7 +63,11 @@ export const getFilteredSuggestions = ({
 
   const filteredOptions = options
     .filter((item) =>
-      matches(item[optionsFieldName], normalizedInput, matchType)
+      matches(
+        getOptionValue(item, optionsFieldName),
+        normalizedInput,
+        matchType
+      )
     )
     .filter((item) => {
       if (parentValue === undefined) {
@@ -50,13 +75,13 @@ export const getFilteredSuggestions = ({
       }
 
       return matches(
-        item[parentOptionsName ?? ''],
+        getOptionValue(item, parentOptionsName),
         parentValue.toLowerCase(),
         matchType
       );
     })
     .slice(0, maxResults)
-    .map((item) => item[optionsFieldName])
+    .map((item) => getOptionValue(item, optionsFieldName))
     .filter((item): item is string => typeof item === 'string')
     .sort(compareSuggestions);
 

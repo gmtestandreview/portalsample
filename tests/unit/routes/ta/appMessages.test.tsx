@@ -38,7 +38,7 @@ const editor = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -56,76 +56,102 @@ vi.mock(
     // FilterMessages must stay the real enum - the view select compares against its members.
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock(
   '../../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
-    return { ...original, sanitiseHtml: mocks.sanitiseHtml };
+    return {
+      ...original,
+      sanitiseHtml: mocks.sanitiseHtml,
+    } satisfies __ExactMockModule<__TestMockModule9>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/components/SlateEditor/SlateEditor', () => ({
-  default: (props: typeof editor.props) => {
-    editor.props = props;
-    editor.renderCount += 1;
+vi.mock(
+  '../../../../ClientApp/src/components/SlateEditor/SlateEditor',
+  () =>
+    ({
+      default: (props: typeof editor.props) => {
+        editor.props = props;
+        editor.renderCount += 1;
 
-    return (
-      <div data-testid='slate-editor' data-placeholder={props.placeholder} />
-    );
-  },
-  serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
-}));
+        return (
+          <div
+            data-testid='slate-editor'
+            data-placeholder={props.placeholder}
+          />
+        );
+      },
+      serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
+    }) satisfies __ExactMockModule<__TestMockModule142>
+);
 
-vi.mock('../../../../ClientApp/src/components/Pagination', () => ({
-  default: ({
-    currentPage,
-    totalPages,
-    onPageChange,
-  }: {
-    currentPage: number;
-    totalPages: number;
-    onPageChange: (page: number) => void;
-  }) => (
-    <button
-      type='button'
-      data-testid='pagination'
-      data-current={currentPage}
-      data-total={totalPages}
-      onClick={() => onPageChange(2)}
-    >
-      next page
-    </button>
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Pagination',
+  () =>
+    ({
+      default: ({
+        currentPage,
+        totalPages,
+        onPageChange,
+      }: {
+        currentPage: number;
+        totalPages: number;
+        onPageChange: (page: number) => void;
+      }) => (
+        <button
+          type='button'
+          data-testid='pagination'
+          data-current={currentPage}
+          data-total={totalPages}
+          onClick={() => onPageChange(2)}
+        >
+          next page
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule98>
+);
 
-vi.mock('../../../../ClientApp/src/components/PaginationHeader', () => ({
-  default: ({
-    currentPage,
-    totalCount,
-  }: {
-    currentPage: number;
-    totalCount: number;
-  }) => (
-    <span
-      data-testid='pagination-header'
-      data-current={currentPage}
-      data-total-count={totalCount}
-    />
-  ),
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/PaginationHeader',
+  () =>
+    ({
+      default: ({
+        currentPage,
+        totalCount,
+      }: {
+        currentPage: number;
+        totalCount: number;
+      }) => (
+        <span
+          data-testid='pagination-header'
+          data-current={currentPage}
+          data-total-count={totalCount}
+        />
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule99>
+);
 
 const messageItem = (overrides: Record<string, unknown> = {}) => ({
   id: 'msg-1',
@@ -240,6 +266,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('No messages to display')).toBeInTheDocument()
       );
+
       // The count header is for a populated list only.
       expect(screen.queryByTestId('pagination-header')).not.toBeInTheDocument();
     });
@@ -261,6 +288,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Assessment update')).toBeInTheDocument()
       );
+
       expect(screen.getByTestId('pagination')).toHaveAttribute(
         'data-current',
         '1'
@@ -285,6 +313,7 @@ describe('application messages', { timeout: 15_000 }, () => {
           { Id: 'APP-1' }
         )
       );
+
       expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
     });
 
@@ -343,6 +372,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Safe body')).toBeInTheDocument()
       );
+
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(
         '<p>Safe body</p><script>evil()</script>'
       );
@@ -360,6 +390,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Empty body')).toBeInTheDocument()
       );
+
       expect(mocks.sanitiseHtml).not.toHaveBeenCalled();
     });
 
@@ -376,6 +407,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('The NMI team')).toBeInTheDocument()
       );
+
       expect(screen.getAllByText('Regards,')).toHaveLength(1);
     });
 
@@ -394,23 +426,22 @@ describe('application messages', { timeout: 15_000 }, () => {
       await renderRoute();
 
       await waitFor(() => expect(screen.getByText('NMI')).toBeInTheDocument());
+
       expect(screen.getByText('GM')).toBeInTheDocument();
     });
 
     it('marks read and unread messages differently', async () => {
-      clients.patternApproval.methods.getAppMessages.mockImplementation(() =>
-        Promise.resolve(
-          messagesResponse(
-            [
-              messageItem({ id: 'seen', messageRead: true }),
-              messageItem({
-                id: 'unseen',
-                subject: 'Action required',
-                messageRead: false,
-              }),
-            ],
-            { currentPage: 1 }
-          )
+      clients.patternApproval.methods.getAppMessages.mockResolvedValue(
+        messagesResponse(
+          [
+            messageItem({ id: 'seen', messageRead: true }),
+            messageItem({
+              id: 'unseen',
+              subject: 'Action required',
+              messageRead: false,
+            }),
+          ],
+          { currentPage: 1 }
         )
       );
 
@@ -419,6 +450,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByText('Action required')).toBeInTheDocument()
       );
+
       expect(container.querySelectorAll('.read')).toHaveLength(1);
       expect(container.querySelectorAll('.unread')).toHaveLength(1);
     });
@@ -463,14 +495,18 @@ describe('application messages', { timeout: 15_000 }, () => {
       });
 
       await waitFor(() =>
-        expect(clients.patternApproval.methods.addAppMessage).toHaveBeenCalled()
+        expect(
+          clients.patternApproval.methods.addAppMessage
+        ).toHaveBeenCalledWith('APP-1', expect.any(String))
       );
       const [applicationId, html] = defined(
         clients.patternApproval.methods.addAppMessage.mock.calls[0],
         'addAppMessage call'
       );
+
       expect(applicationId).toBe('APP-1');
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(html);
+
       // A changed key remounts Slate, which is how the composer is cleared.
       await waitFor(() =>
         expect(editor.renderCount).toBeGreaterThan(rendersBefore)
@@ -638,6 +674,7 @@ describe('application messages', { timeout: 15_000 }, () => {
           'APP-1'
         )
       );
+
       expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',
         block: 'start',

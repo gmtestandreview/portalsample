@@ -53,31 +53,46 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
         setDefaultOrganisation: mocks.setDefaultOrganisation,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/storage/notification', () => ({
-  getBranchModalNotification: () => mocks.getBranchModalNotification(),
-  clearBranchModalNotification: () => mocks.clearBranchModalNotification(),
-}));
+vi.mock(
+  '@/storage/notification',
+  () =>
+    ({
+      getBranchModalNotification: () => mocks.getBranchModalNotification(),
+      clearBranchModalNotification: () => mocks.clearBranchModalNotification(),
+    }) satisfies __ExactMockModule<__TestMockModule46>
+);
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: {
-    error: (...args: any[]) => mocks.appLoggerError(...args),
-    verbose: vi.fn(),
-  },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: {
+        error: (...args: any[]) => mocks.appLoggerError(...args),
+        verbose: vi.fn(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
-  return { ...actual, useNavigate: () => mocks.navigate };
+  return {
+    ...actual,
+    useNavigate: () => mocks.navigate,
+  } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
-vi.mock('@/components/Alert/NotificationMessage', () => ({
-  default: ({ id }: { id: string }) => (
-    <div data-testid={id}>notification message</div>
-  ),
-}));
+vi.mock(
+  '@/components/Alert/NotificationMessage',
+  () =>
+    ({
+      default: ({ id }: { id: string }) => (
+        <div data-testid={id}>notification message</div>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule48>
+);
 
 // ─── test data ────────────────────────────────────────────────────────────────
 
@@ -231,7 +246,7 @@ const renderModal = (opts: RenderOptions = {}) => {
 
 // ─── tests ────────────────────────────────────────────────────────────────────
 
-describe('BranchSelectorModal', () => {
+describe(BranchSelectorModal, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getOrganisationsByABN.mockResolvedValue(mockBranches);
@@ -293,6 +308,7 @@ describe('BranchSelectorModal', () => {
         screen.getByText(/Error trying to save default branch\/location/i)
       ).toBeInTheDocument();
     });
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to load branches',
       expect.any(Error)
@@ -415,7 +431,7 @@ describe('BranchSelectorModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
+    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
   });
 
   // ── sorting ─────────────────────────────────────────────────────────────
@@ -461,10 +477,15 @@ describe('BranchSelectorModal', () => {
         expect.objectContaining({ defaultOrganisationId: 1 })
       );
     });
+
     expect(mocks.navigate).toHaveBeenCalledWith('/');
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
-    expect(mocks.setOrganisationAndBranch).toHaveBeenCalled();
+    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
+    expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
+      'ACME Corporation',
+      'ACME Corporation',
+      'Sydney Office'
+    );
   });
 
   // ── save — RFQSelectOrg ─────────────────────────────────────────────────
@@ -491,7 +512,8 @@ describe('BranchSelectorModal', () => {
         expect.objectContaining({ defaultOrganisationId: 1, rfqId: 'RFQ-123' })
       );
     });
-    expect(reloadMock).toHaveBeenCalled();
+
+    expect(reloadMock).toHaveBeenCalledWith();
     expect(mocks.navigate).not.toHaveBeenCalled();
 
     Object.defineProperty(globalThis, 'location', {
@@ -516,6 +538,7 @@ describe('BranchSelectorModal', () => {
         screen.getByText(/Error trying to save default branch\/location/i)
       ).toBeInTheDocument();
     });
+
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to select organisation',
       expect.any(Error)
@@ -532,8 +555,11 @@ describe('BranchSelectorModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({
+        defaultOrganisationId: 1,
+      });
     });
+
     // Helper returned early — no dispatch calls made
     expect(mocks.setDefaultOrganisationId).not.toHaveBeenCalled();
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
@@ -546,9 +572,13 @@ describe('BranchSelectorModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({});
     });
-    expect(mocks.setDefaultOrganisationId).toHaveBeenCalled();
+
+    expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith(
+      undefined,
+      undefined
+    );
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
   });
 
@@ -560,9 +590,13 @@ describe('BranchSelectorModal', () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setCompleted).toHaveBeenCalled();
+      expect(mocks.setCompleted).toHaveBeenCalledWith();
     });
-    expect(mocks.setTargetOrganisation).toHaveBeenCalled();
+
+    expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(
+      'ACME Corporation',
+      '00000000001'
+    );
   });
 
   it('does nothing when MSAL interaction is in progress (line 187 false branch)', async () => {
@@ -617,6 +651,7 @@ describe('BranchSelectorModal', () => {
     await waitFor(() => {
       expect(mocks.navigate).toHaveBeenCalledWith('/');
     });
+
     expect(mocks.setDefaultOrganisation).not.toHaveBeenCalled();
   });
 });

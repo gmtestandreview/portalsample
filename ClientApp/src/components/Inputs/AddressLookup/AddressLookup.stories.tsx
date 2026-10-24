@@ -1,5 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import preview from '../../../../../.storybook/preview';
+import { useFormikContext } from 'formik';
+import { expect, screen, userEvent, within } from 'storybook/test';
 import { http, HttpResponse } from 'msw/http';
 import AddressLookup from './index';
 import ManualAddressInput from './ManualAddressInput';
@@ -7,31 +8,45 @@ import { withPortalProviders } from '../../../storybook/storybookHarness';
 
 const addressSearchHandler = http.get('/api/address/*', () =>
   HttpResponse.json({
-    addresses: [
+    matches: [
       {
-        id: 'addr-001',
-        fullAddress: '1 Main Street, Canberra ACT 2600',
-        streetAddress: {
-          addressLine1: '1 Main Street',
-          suburb: 'Canberra',
-          state: 'ACT',
-          postcode: '2600',
-        },
+        unqiueId: 'addr-001',
+        displayText: '1 Main Street, Canberra ACT 2600',
+        addressLine1: '1 Main Street',
+        suburb: 'Canberra',
+        state: 'ACT',
+        postCode: '2600',
       },
     ],
-  })
+  }),
 );
 
-const meta = {
+const AddressValueProbe = () => {
+  const { values } = useFormikContext<{
+    streetAddress: {
+      line1: string;
+      suburb: string;
+      state: string;
+      postcode: string;
+    };
+  }>();
+  const { line1, suburb, state, postcode } = values.streetAddress;
+
+  return (
+    <output aria-label='Selected address'>
+      {[line1, suburb, state, postcode].filter(Boolean).join(', ')}
+    </output>
+  );
+};
+
+const meta = preview.meta({
   title: 'Components/Inputs/AddressLookup',
   component: AddressLookup,
   decorators: [withPortalProviders],
-} satisfies Meta<typeof AddressLookup>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     name: 'streetAddress',
     label: 'Street address',
@@ -42,6 +57,7 @@ export const Default: Story = {
     msw.use(addressSearchHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       formik: {
         initialValues: {
@@ -57,23 +73,42 @@ export const Default: Story = {
     },
   },
   render: () => (
-    <AddressLookup
-      name='streetAddress'
-      label='Street address'
-      maxResults={5}
-      placeholder='Start typing an address...'
-    />
+    <>
+      <AddressLookup
+        name='streetAddress'
+        label='Street address'
+        maxResults={5}
+        placeholder='Start typing an address...'
+      />
+      <AddressValueProbe />
+    </>
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+    const user = userEvent.setup();
     const combobox = canvas.getByRole('combobox');
-    await expect(combobox).toBeVisible();
-  },
-};
 
-export const ManualEntry: Story = {
+    await expect(combobox).toBeVisible();
+
+    await user.type(combobox, 'Main');
+    const addressOption = await screen.findByRole('option', {
+      name: '1 Main Street, Canberra ACT 2600 (1 of 2)',
+    });
+
+    await expect(addressOption).toBeVisible();
+
+    await user.click(addressOption);
+
+    await expect(combobox).toHaveValue('1 Main Street, Canberra ACT 2600');
+    await expect(canvas.getByLabelText('Selected address')).toHaveTextContent(
+      '1 Main Street, Canberra, ACT, 2600',
+    );
+  },
+});
+
+export const ManualEntry = meta.story({
   args: {
     name: 'streetAddress',
     label: 'Street address',
@@ -101,11 +136,14 @@ export const ManualEntry: Story = {
   ),
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const line1 = canvas.getByLabelText(/address line 1/i);
+
     await expect(line1).toBeVisible();
+
     const suburb = canvas.getByLabelText(/suburb/i);
+
     await expect(suburb).toBeVisible();
   },
-};
+});

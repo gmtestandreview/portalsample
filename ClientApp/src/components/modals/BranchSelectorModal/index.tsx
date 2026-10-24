@@ -372,8 +372,8 @@ const BranchSelectorModal = () => {
     }
 
     const sorted = branches?.sort((a, b) => {
-      const aValue = toSortableText(a[key]);
-      const bValue = toSortableText(b[key]);
+      const aValue = toSortableText(Reflect.get(a, key));
+      const bValue = toSortableText(Reflect.get(b, key));
 
       const comparison = aValue.localeCompare(bValue);
       return direction === 'asc' ? comparison : -comparison;

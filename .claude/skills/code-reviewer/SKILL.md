@@ -10,8 +10,10 @@ description:
 
 # Code Review
 
-Use the narrowest applicable mode. Do not mix review-only behavior with code
-editing unless the user explicitly requests both.
+Treat review as knowledge sharing, not gatekeeping: pair every finding with
+actionable, rationale-backed feedback. Use the narrowest applicable mode. Do not
+mix review-only behavior with code editing unless the user explicitly requests
+both.
 
 ## Route the request
 
@@ -38,7 +40,10 @@ explicitly includes posting and that action is authorized.
 
 1. Establish the review scope, requirements, changed files, relevant repository
    instructions, test/CI evidence, and primary risks.
-2. Scale depth to the change. For large diffs, use `scripts/pr-analyzer.py` when
+2. Scale depth to the change: under ~20 changed files, read each in full;
+   ~20–100, read the diff first then deep-read high-risk files (auth, payment,
+   config, migration, shared utilities); over ~100, ask to narrow the scope to a
+   module or risk area. For large diffs, use `scripts/pr-analyzer.py` when
    available and useful. If the change is too large for reliable review, narrow
    or split the scope rather than pretending exhaustive coverage.
 3. Review architecture/design, correctness and edge cases, security,
@@ -64,6 +69,18 @@ explicitly includes posting and that action is authorized.
   improvement.
 - Praise and educational notes are allowed when useful.
 
+## Escalate to senior review
+
+Flag for a senior engineer when a change involves:
+
+- database schema modifications;
+- API contract changes;
+- new framework or library adoption;
+- performance-critical code paths;
+- security-sensitive functionality.
+
+Reference: [Sentry Code Review Guidelines](https://develop.sentry.dev/engineering-practices/code-review/).
+
 ## Progressive reference loading
 
 Load the minimum relevant files.
@@ -74,6 +91,9 @@ Load the minimum relevant files.
 - TypeScript/JavaScript: `references/typescript.md`
 - Python: `references/python.md`
 - C#/.NET: `references/csharp.md`
+- Rust: `references/rust.md`
+- Go: `references/go.md`
+- SQL: `references/sql.md`
 - CSS/Less/Sass: `references/css-less-sass.md`
 
 ### Cross-cutting
@@ -132,6 +152,17 @@ When GitHub PR interaction applies:
 Treat named-model/subagent behavior as environment-specific. If the required
 orchestration is unavailable, say so rather than inventing equivalent runs.
 
+## Related review skills (boundaries)
+
+Two neighboring skills overlap with this one. Route by the specialized
+condition; otherwise stay in this skill:
+
+- **find-bugs** — use for a dedicated, exhaustive security/bug audit of branch
+  changes (attack-surface mapping, per-file security checklist, pre-conclusion
+  audit). Use this skill for general multi-dimensional review.
+- **codex-review** — use only when you specifically want a Codex-CLI-driven
+  review that also generates a CHANGELOG. Use this skill otherwise.
+
 ## Output
 
 For normal reviews, provide:
@@ -141,6 +172,9 @@ For normal reviews, provide:
 - risk and concrete remediation for each substantive finding;
 - test/validation evidence status;
 - merge recommendation when the evidence supports one.
+
+Close with a one-line summary: files examined, finding counts by severity, the
+top-priority finding, and the merge recommendation.
 
 Use `assets/pr-review-template.md` when a full structured report is useful. Use
 the shorter checklist for lightweight reviews.

@@ -10,7 +10,7 @@ const GoogleAnalytics = ({
   sendPageView: _sendPageView,
 }: Readonly<GoogleAnalyticsProps>) => {
   useEffect(() => {
-    const trackId = env.REACT_APP_GA_TRACKINGID;
+    const trackId = env.VITE_GA_TRACKINGID;
     if (trackId && ReactGA.isInitialized === false) {
       ReactGA.initialize([
         {
@@ -36,15 +36,18 @@ const trackGAPii = () => {
   const piiFields = document.querySelectorAll<HTMLElement>('[data-pii]');
   if (piiFields.length === 0) return;
 
-  const originalData: Record<string, string> = {};
-  const redactedData: Record<string, string> = {};
+  const originalEntries: [string, string][] = [];
+  const redactedEntries: [string, string][] = [];
 
   piiFields.forEach((field) => {
     const key = field.dataset['pii'] as string; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
     /* v8 ignore next */
-    originalData[key] = field.textContent ?? '';
-    redactedData[key] = '[REDACTED]';
+    originalEntries.push([key, field.textContent ?? '']);
+    redactedEntries.push([key, '[REDACTED]']);
   });
+
+  const originalData = Object.fromEntries(originalEntries);
+  const redactedData = Object.fromEntries(redactedEntries);
 
   if (globalThis.location.hostname === 'localhost') {
     // eslint-disable-next-line no-console

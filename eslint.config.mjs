@@ -5,12 +5,15 @@ import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import reactHooks from 'eslint-plugin-react-hooks';
+import pluginSecurity from 'eslint-plugin-security';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
+import vitest from '@vitest/eslint-plugin';
 
 const packageJsonPath = fileURLToPath(
-  new URL('./package.json', import.meta.url)
+  new URL('./package.json', import.meta.url),
 );
 
 /**
@@ -28,27 +31,19 @@ export default defineConfig(
       'node_modules/**',
       'dist/**',
       'storybook-static/**',
-      'coverage/**',
       'reports/**',
-      'test-results/**',
-      'playwright-report/**',
       'ClientApp/src/api/web-api-client.ts',
-      'ClientApp/src/external/**',
-      'ClientApp/src/parent/node_modules/**',
-      'ClientApp/src/parent/packages/**',
-      'ClientApp/source-map-http-downloads/**',
-      'ClientApp/webpack/**',
     ],
   },
   {
     name: 'nmi/javascript-recommended',
-    files: ['**/*.{js,ts,tsx}'],
+    files: ['**/*.{js,ts,tsx,mts}'],
     extends: [js.configs.recommended],
   },
 
   {
     name: 'nmi/typescript-parser',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     extends: [tseslint.configs.recommended],
     languageOptions: {
       parser: tseslint.parser,
@@ -64,7 +59,7 @@ export default defineConfig(
   },
   {
     name: 'nmi/react',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     ...eslintReact.configs['recommended-typescript'],
   },
 
@@ -90,6 +85,8 @@ export default defineConfig(
     },
   },
 
+  pluginSecurity.configs.recommended,
+
   ...storybook.configs['flat/recommended'],
 
   {
@@ -105,7 +102,7 @@ export default defineConfig(
 
   {
     name: 'nmi/base',
-    files: ['**/*.{ts,tsx,js,jsx,cjs,mjs}'],
+    files: ['**/*.{ts,tsx,js,jsx,cjs,mjs,mts}'],
     plugins: { '@stylistic': stylistic, '@typescript-eslint': tseslint.plugin },
     languageOptions: {
       ecmaVersion: 'latest',
@@ -128,7 +125,7 @@ export default defineConfig(
 
   {
     name: 'nmi/typescript-rules',
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts}'],
     rules: {
       '@typescript-eslint/consistent-type-imports': [
         'error',
@@ -161,24 +158,16 @@ export default defineConfig(
     },
   },
   {
-    name: 'nmi/commonjs-and-scripts',
-    files: ['**/*.cjs', '**/*.js', 'webpack.config.js'],
+    name: 'nmi/node-scripts',
+    files: [
+      '.claude/skills/playwright-skill/**/*.{js,mjs}',
+      'scripts/**/*.{js,mjs}',
+      'skills/**/scripts/**/*.{js,mjs}',
+      '*.config.{js,mjs}',
+      'remark.config.mjs',
+    ],
     languageOptions: {
-      sourceType: 'script',
       globals: { ...globals.node },
-    },
-    rules: {
-      '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
-    },
-  },
-  {
-    // This standalone script uses native ESM syntax while the rest of the
-    // repository's .js surface remains CommonJS-compatible by default.
-    name: 'nmi/esm-script',
-    files: ['skills/writing-skills/scripts/render-graphs.js'],
-    languageOptions: {
-      sourceType: 'module',
     },
   },
 
@@ -248,7 +237,7 @@ export default defineConfig(
 
   {
     name: 'nmi/node-config-files',
-    files: ['*.config.{ts,js}', 'vitest*.ts', 'playwright.config.ts'],
+    files: ['*.config.{ts,js,mts}', 'vitest*.ts', 'playwright.config.ts'],
     languageOptions: {
       globals: { ...globals.node },
     },
@@ -277,5 +266,43 @@ export default defineConfig(
     },
   },
 
-  eslintPluginPrettierRecommended
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    ...jsxA11yX.configs.recommended,
+    languageOptions: {
+      ...jsxA11yX.configs.recommended.languageOptions,
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
+    },
+  },
+  {
+    files: [
+      'tests/**',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
+    ...vitest.configs.all,
+  },
+  {
+    // Setup files intentionally register global hooks and browser shims at
+    // module scope so they are installed before each test file is imported.
+    name: 'nmi/vitest-setup-files',
+    files: ['vitest.setup.ts', 'vitest.storybook.setup.ts'],
+    rules: {
+      'vitest/require-hook': 'off',
+    },
+  },
+  {
+    // Storybook setup restores its global error listener after the project ends.
+    name: 'nmi/storybook-vitest-setup-hooks',
+    files: ['vitest.storybook.setup.ts'],
+    rules: {
+      'vitest/no-hooks': 'off',
+      'vitest/require-top-level-describe': 'off',
+    },
+  },
+  eslintPluginPrettierRecommended,
 );

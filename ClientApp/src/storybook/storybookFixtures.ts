@@ -178,6 +178,7 @@ export const serviceResponses: ServiceDto[] = [
 
 export const requestForQuoteDetailsFixture = {
   quoteRequestIdNum: 'RFQ-2024-000892',
+  crmQuoteRequestId: 'crm-RFQ-2024-000892',
   quotationIdNum: 'Q-2024-000456',
   quoteRequestStatus: QuoteStatus.QuoteAvailable,
   quotationOfferDate: new Date('2024-02-20'),

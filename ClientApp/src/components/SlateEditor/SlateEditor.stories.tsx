@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { within, expect, fn, userEvent } from 'storybook/test';
 import SlateEditor, { type CustomElement } from './SlateEditor';
@@ -17,7 +17,7 @@ const initialValue: CustomElement[] = [
   },
 ];
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/SlateEditor',
   component: SlateEditor,
   parameters: {
@@ -43,47 +43,50 @@ const meta = {
       />
     );
   },
-} satisfies Meta<typeof SlateEditor>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     // The Slate Editable surface is exposed as a textbox. Slate renders a contenteditable
     // div, which takes no accessible name from its placeholder the way a native input
     // would, so the name is asserted by role rather than just the element's presence.
     await expect(
-      canvas.getByRole('textbox', { name: 'Type your message…' })
+      canvas.getByRole('textbox', { name: 'Type your message…' }),
     ).toBeVisible();
     await expect(canvas.getByRole('button', { name: /send/i })).toBeVisible();
     // Formatting controls are present.
     await expect(canvas.getByRole('button', { name: /bold/i })).toBeVisible();
+
     // Typing is what drives Slate's Editable through act; the three assertions above are
     // static chrome, so without an interaction the editor kept updating after the story
     // had ended and the warning surfaced against whichever story ran next.
     await userEvent.type(canvas.getByRole('textbox'), ' Noted.');
+
     await expect(
-      canvas.getByText('Thanks for the update on the application. Noted.')
+      canvas.getByText('Thanks for the update on the application. Noted.'),
     ).toBeVisible();
     // The counter measures serialised HTML length, not visible characters: the 48
     // characters above plus the <p></p> wrapper.
     await expect(canvas.getByText(/55\s*\/\s*500/)).toBeVisible();
   },
-};
+});
 
-export const Empty: Story = {
+export const Empty = meta.story({
   args: {
     value: [{ type: 'paragraph', children: [{ text: '' }] }],
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText(/0\s*\/\s*500/)).toBeVisible();
+
     await canvas.findByText('Type your message…');
     const textbox = canvas.getByRole('textbox');
     // Cover an already-focused empty editor. type()'s default synthetic click
@@ -96,9 +99,10 @@ export const Empty: Story = {
       keys: '[MouseLeft]',
     });
     await userEvent.keyboard('Hi');
+
     // Slate commits typed text through a deferred render, so a one-shot getByText
     // can run first under CI load; findByText retries until it lands.
     await expect(canvas.findByText('Hi')).resolves.toBeVisible();
     await expect(canvas.findByText(/9\s*\/\s*500/)).resolves.toBeVisible();
   },
-};
+});

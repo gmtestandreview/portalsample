@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import RequestForQuoteCreated from './created';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/RequestForQuote/RequestCreated',
   component: RequestForQuoteCreated,
   decorators: [withPortalProviders],
@@ -12,9 +12,6 @@ const meta = {
       initialEntries: ['/request-for-quote-success/RFQ-2024-001234'],
     },
   },
-} satisfies Meta<typeof RequestForQuoteCreated>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Submitted: Story = {};
+export const Submitted = meta.story();

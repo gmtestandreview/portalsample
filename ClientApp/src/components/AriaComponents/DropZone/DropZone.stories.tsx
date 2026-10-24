@@ -1,37 +1,35 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { DropZone, Text } from './DropZone';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/DropZone',
   component: DropZone,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof DropZone>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Example: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Example = meta.story({
+  render: (args) => (
     <DropZone {...args}>
       <Text slot='label'>Drop supporting documents here</Text>
     </DropZone>
   ),
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     await expect(
-      canvas.getByText('Drop supporting documents here')
+      canvas.getByText('Drop supporting documents here'),
     ).toBeVisible();
   },
-};
+});
 
-export const Disabled: Story = {
-  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+export const Disabled = meta.story({
+  render: (args) => (
     <DropZone {...args}>
       <Text slot='label'>Uploads are closed for this application</Text>
     </DropZone>
@@ -41,10 +39,10 @@ export const Disabled: Story = {
   },
   play: async ({
     canvas,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     // A closed application still explains why, rather than showing an inert target.
     await expect(
-      canvas.getByText('Uploads are closed for this application')
+      canvas.getByText('Uploads are closed for this application'),
     ).toBeVisible();
   },
-};
+});

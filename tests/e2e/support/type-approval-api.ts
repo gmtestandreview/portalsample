@@ -24,11 +24,14 @@ const parseJsonBody = (route: Route): Record<string, any> => {
 };
 
 const multipartValue = (body: string, name: string): string | undefined => {
-  const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-  return new RegExp(
-    String.raw`name="${escapedName}"[^\r\n]*\r?\n(?:[^\r\n]+\r?\n)*\r?\n([^\r\n]*)`,
-    'i'
-  ).exec(body)?.[1];
+  const lines = body.split(/\r?\n/);
+  const headerLine = lines.findIndex((line) => line.includes(`name="${name}"`));
+  if (headerLine === -1) return undefined;
+
+  const blankLine = lines.findIndex(
+    (line, index) => index > headerLine && line === ''
+  );
+  return blankLine === -1 ? undefined : lines[blankLine + 1];
 };
 
 const multipartFileName = (body: string): string | undefined =>

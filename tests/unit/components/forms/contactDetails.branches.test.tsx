@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 import ContactDetails from '@/components/forms/CommonForms/ContactDetails';
@@ -12,7 +13,7 @@ const customLabels = {
   emailAddressLabel: 'Work email',
 };
 
-describe('ContactDetails branch coverage', () => {
+describe('contactDetails branch coverage', () => {
   it('renders all supplied labels in edit mode', () => {
     render(
       <Formik

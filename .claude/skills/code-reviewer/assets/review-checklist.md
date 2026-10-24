@@ -65,6 +65,16 @@ Quick reference checklist for code reviews.
 - [ ] README updated if needed
 - [ ] Breaking changes noted
 - [ ] Complex logic explained
+- [ ] Comments explain why, not what
+- [ ] Migration guide provided for breaking changes
+
+## Git (2 min)
+
+- [ ] Commit messages are clear
+- [ ] No merge conflicts
+- [ ] Branch up to date with main
+- [ ] No unnecessary committed files (build output, secrets)
+- [ ] .gitignore covers generated artifacts
 
 ---
 
@@ -121,3 +131,15 @@ Watch for these patterns:
 - Copy-pasted code blocks
 - Missing null checks
 - Hardcoded URLs/credentials
+
+---
+
+## Edge-Case Prompts
+
+When reviewing logic, ask "What if…?":
+
+- the input is null or undefined?
+- the array or string is empty?
+- the user is not authenticated or not authorized?
+- the network request or external call fails?
+- values hit boundary or overflow limits?

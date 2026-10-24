@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import { afterEach, describe, expect, it } from 'vitest';
 
-describe('DOMPurify security regressions', () => {
+describe('dOMPurify security regressions', () => {
   afterEach(() => {
     DOMPurify.removeAllHooks();
   });

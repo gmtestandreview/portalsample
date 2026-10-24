@@ -32,7 +32,7 @@ const ServicesProbe = () => {
   );
 };
 
-describe('useUserServices', () => {
+describe(useUserServices, () => {
   it('returns an empty service list when no account context is available', () => {
     render(<ServicesProbe />);
 

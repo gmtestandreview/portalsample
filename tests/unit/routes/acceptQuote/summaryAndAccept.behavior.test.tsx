@@ -29,21 +29,29 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    instance: mocks.instance,
-    accounts: mocks.accounts,
-    inProgress: 'none',
-  }),
-  useAccount: () => ({ homeAccountId: 'mock-id' }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        instance: mocks.instance,
+        accounts: mocks.accounts,
+        inProgress: 'none',
+      }),
+      useAccount: () => ({ homeAccountId: 'mock-id' }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/authentication/hooks', () => ({
-  useAccountState: () => ({
-    isLoading: false,
-    details: { givenName: 'Taylor', familyName: 'Nguyen' },
-  }),
-}));
+vi.mock(
+  '@/authentication/hooks',
+  () =>
+    ({
+      useAccountState: () => ({
+        isLoading: false,
+        details: { givenName: 'Taylor', familyName: 'Nguyen' },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -56,27 +64,47 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
     DashboardClient: class {
       setAuthToken = vi.fn();
     },
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
-vi.mock('@/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: mocks.error },
-}));
+vi.mock(
+  '@/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: mocks.error },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The read-only summaries of the other steps are separate components with
 // their own suites; stand in markers so this suite pins only this step.
-vi.mock('@/routes/acceptQuote/reportRecipient', () => ({
-  default: () => <div>Report recipient summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/deliveryAndReturn', () => ({
-  default: () => <div>Delivery and return summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/paymentDetails', () => ({
-  default: () => <div>Payment details summary</div>,
-}));
-vi.mock('@/routes/acceptQuote/quotationSummary', () => ({
-  default: () => <div>Quotation summary marker</div>,
-}));
+vi.mock(
+  '@/routes/acceptQuote/reportRecipient',
+  () =>
+    ({
+      default: () => <div>Report recipient summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule61>
+);
+vi.mock(
+  '@/routes/acceptQuote/deliveryAndReturn',
+  () =>
+    ({
+      default: () => <div>Delivery and return summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule62>
+);
+vi.mock(
+  '@/routes/acceptQuote/paymentDetails',
+  () =>
+    ({
+      default: () => <div>Payment details summary</div>,
+    }) satisfies __ExactMockModule<__TestMockModule63>
+);
+vi.mock(
+  '@/routes/acceptQuote/quotationSummary',
+  () =>
+    ({
+      default: () => <div>Quotation summary marker</div>,
+    }) satisfies __ExactMockModule<__TestMockModule73>
+);
 
 type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 
@@ -148,7 +176,7 @@ const ACCEPT_MESSAGE =
 const DISPUTE_LABEL = /Please provide details of the associated dispute/;
 const waitForLoad = () => screen.findByText('Acme Pty Ltd');
 
-describe('SummaryAndAccept behavior', () => {
+describe('summaryAndAccept behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
@@ -182,9 +210,11 @@ describe('SummaryAndAccept behavior', () => {
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: 'No' }));
+
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('radio', { name: 'Yes' }));
+
     expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
   });
 
@@ -202,7 +232,8 @@ describe('SummaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submittedValues(onSubmit)).toEqual({
       associatedDisputes: 'Yes',
       associatedDispute: 'Pricing disagreement',
@@ -225,7 +256,8 @@ describe('SummaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submittedValues(onSubmit)).toEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
@@ -253,6 +285,7 @@ describe('SummaryAndAccept behavior', () => {
         ?.replace(/^#/, '');
     const disputeId = targetIdOf(/Associated dispute/);
     const acceptanceId = targetIdOf(/Acceptance of quote/);
+
     expect(disputeId).toBe('associatedDispute');
     expect(acceptanceId).toBe('acceptanceOfQuote');
     expect(document.getElementById(defined(disputeId, 'dispute id'))).toBe(
@@ -271,13 +304,15 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.type(screen.getByLabelText(DISPUTE_LABEL), 'Typed then dropped');
     await user.click(screen.getByRole('radio', { name: 'No' }));
+
     // Precondition: the textarea hides on No, so the typed text is now stale.
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
@@ -298,9 +333,12 @@ describe('SummaryAndAccept behavior', () => {
     await waitForLoad();
 
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
+
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(ACCEPT_MESSAGE)).toBeInTheDocument();
+    await expect(
+      screen.findByText(ACCEPT_MESSAGE)
+    ).resolves.toBeInTheDocument();
     expect(
       screen.getByLabelText(DISPUTE_LABEL).closest('.form-field-container')
     ).toHaveTextContent('Associated dispute is a required field');
@@ -317,7 +355,9 @@ describe('SummaryAndAccept behavior', () => {
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(await screen.findByText(ACCEPT_MESSAGE)).toBeInTheDocument();
+    await expect(
+      screen.findByText(ACCEPT_MESSAGE)
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -329,7 +369,8 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
 
@@ -348,9 +389,9 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' })
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
@@ -362,7 +403,8 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByText(ACCEPT_MESSAGE)).not.toBeInTheDocument();
   });
 
@@ -380,15 +422,16 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    expect(
-      await screen.findByText(/300/, { selector: '.invalid-feedback' })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByText(/300/, { selector: '.invalid-feedback' })
+    ).resolves.toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
     const { rerender } = renderStep({ values: {} });
     await waitForLoad();
+
     expect(screen.getByLabelText(ACCEPT_LABEL)).not.toBeChecked();
 
     rerender(<StepHarness values={{ acceptanceOfQuote: true }} />);
@@ -403,6 +446,7 @@ describe('SummaryAndAccept behavior', () => {
     renderStep();
 
     await waitFor(() => expect(mocks.error).toHaveBeenCalled());
+
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInTheDocument();
   });
 });

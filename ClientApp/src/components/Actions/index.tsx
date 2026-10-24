@@ -1,4 +1,6 @@
 import { Dropdown } from 'react-bootstrap';
+import { forwardRef } from 'react';
+import type { ButtonHTMLAttributes, ComponentPropsWithoutRef } from 'react';
 import { Link } from 'react-router';
 
 /**
@@ -53,6 +55,26 @@ interface ActionsProps {
   buttonAriaTitle?: string;
 }
 
+type ActionMenuLinkProps = ComponentPropsWithoutRef<typeof Link> & {
+  'aria-selected'?: boolean;
+};
+
+const ActionMenuLink = forwardRef<HTMLAnchorElement, ActionMenuLinkProps>(
+  ({ 'aria-selected': _ariaSelected, ...props }, ref) => (
+    <Link ref={ref} {...props} />
+  )
+);
+
+type ActionMenuButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  'aria-selected'?: boolean;
+};
+
+const ActionMenuButton = forwardRef<HTMLButtonElement, ActionMenuButtonProps>(
+  ({ 'aria-selected': _ariaSelected, ...props }, ref) => (
+    <button ref={ref} {...props} />
+  )
+);
+
 const Actions = (props: Readonly<ActionsProps>) => {
   const {
     id,
@@ -79,10 +101,11 @@ const Actions = (props: Readonly<ActionsProps>) => {
       return (
         <Dropdown.Item
           key={`actions-dd-${id}-${index}`}
-          as={Link}
+          as={ActionMenuLink}
           eventKey={index}
           to={itemAction.route}
           onClick={itemAction.onClick || onItemClick}
+          role='menuitem'
         >
           {itemAction.text}
         </Dropdown.Item>
@@ -92,9 +115,10 @@ const Actions = (props: Readonly<ActionsProps>) => {
     return (
       <Dropdown.Item
         key={`actions-dd-${id}-${index}`}
-        as='button'
+        as={ActionMenuButton}
         eventKey={index}
         onClick={itemAction.onClick || onItemClick}
+        role='menuitem'
       >
         {itemAction.text}
       </Dropdown.Item>
@@ -125,7 +149,7 @@ const Actions = (props: Readonly<ActionsProps>) => {
           </>
         )}
       </Dropdown.Toggle>
-      <Dropdown.Menu variant='dark'>
+      <Dropdown.Menu variant='dark' role='menu'>
         {dropDownActions.map((action, index) =>
           createDropdownItem(action, index)
         )}

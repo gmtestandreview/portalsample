@@ -12,7 +12,7 @@ import sys
 from collections.abc import Mapping
 from typing import cast
 
-FILE_TOOLS = {"edit", "write", "multiedit"}
+FILE_TOOLS = {"apply_patch", "edit", "write", "multiedit"}
 SUCCESS_RESULTS = {"ok", "success", "succeeded"}
 REMINDER = (
     "[A Team] File modified. Use code-reviewer agent before committing. "

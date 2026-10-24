@@ -15,7 +15,7 @@ Behavioral evidence for `SKILL.md`. Cases are synthetic or reference real skill 
 Before dispatch, freeze candidate, references, case files, oracle and rubric
 hashes and save a usable checkpoint. Apply the controller's
 [bounded optimisation contract](../../writing-skills/references/bounded-optimisation.md).
-The current oracle is `expected.md` revision v1.3.1; prior revisions are archived under
+The current oracle is `expected.md` revision v1.3.2; prior revisions are archived under
 `oracles/`. Oracle corrections invalidate affected old comparisons; retain
 historical raw outputs and do not silently upgrade their scores.
 

@@ -1,6 +1,5 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
-import { startCase, capitalize } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useFormState } from 'react-hook-form';
@@ -57,14 +56,22 @@ const renderErrorListItem = (
 };
 
 const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
+  const formatKeyPart = (keyPart: string) => {
+    const formatted = keyPart
+      .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+      .replace(/([a-z\d])([A-Z])/g, '$1 $2')
+      .replace(/[_-]+/g, ' ')
+      .trim();
+    return formatted
+      ? `${formatted.charAt(0).toUpperCase()}${formatted.slice(1).toLowerCase()}`
+      : formatted;
+  };
   const keyParts = key.split(separator);
   let sentenceBuilder = '';
   keyParts.forEach((keyPart, i) => {
     if (Number.isNaN(+keyPart)) {
       if ((depth && i < depth) || !depth) {
-        sentenceBuilder = sentenceBuilder.concat(
-          `${capitalize(startCase(keyPart))}: `
-        );
+        sentenceBuilder = sentenceBuilder.concat(`${formatKeyPart(keyPart)}: `);
       }
     } else {
       sentenceBuilder = sentenceBuilder.concat(`(#${+keyPart + 1}): `);
@@ -93,10 +100,10 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
         The following issue(s) must be corrected before you can continue:
       </Alert.Heading>
       <ul>
-        {Object.keys(errors).map((key) =>
+        {Object.entries(errors).map(([key, value]) =>
           renderErrorListItem(
             key,
-            `${keyToSentenceCase(key, 1)}${errors[key]}`,
+            `${keyToSentenceCase(key, 1)}${value}`,
             disableLinkedError
           )
         )}
@@ -149,11 +156,11 @@ const formatServerErrorKeys = (
   validationErrors: Record<string, string[]>,
   prefixToRemove?: string
 ): FlatErrorData =>
-  Object.entries(validationErrors).reduce<FlatErrorData>(
-    (result, [key, messages]) => {
+  Object.fromEntries(
+    Object.entries(validationErrors).flatMap(([key, messages]) => {
       const message = messages[0];
       if (message === undefined) {
-        return result;
+        return [];
       }
 
       let keyBuilder = key;
@@ -166,10 +173,8 @@ const formatServerErrorKeys = (
         .split('.')
         .map((part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}`) // lowercase first letter of each subkey
         .join('.');
-      result[keyBuilder] = message;
-      return result;
-    },
-    {}
+      return [[keyBuilder, message]];
+    })
   );
 
 interface SummaryFocusState {

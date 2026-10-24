@@ -2,15 +2,15 @@ import { BrowserUtils, LogLevel } from '@azure/msal-browser';
 import type { Configuration, RedirectRequest } from '@azure/msal-browser';
 import { env } from '../env';
 
-export const redirectUri = env.REACT_APP_B2C_REDIRECT_URL || '';
+export const redirectUri = env.VITE_B2C_REDIRECT_URL || '';
 
 export const configuration: Configuration = {
   auth: {
-    clientId: env.REACT_APP_B2C_CLIENTID || '',
-    authority: env.REACT_APP_B2C_AUTHORITY,
-    knownAuthorities: [env.REACT_APP_B2C_KNOWN_AUTHORITIES || ''],
+    clientId: env.VITE_B2C_CLIENTID || '',
+    authority: env.VITE_B2C_AUTHORITY,
+    knownAuthorities: [env.VITE_B2C_KNOWN_AUTHORITIES || ''],
     redirectUri,
-    postLogoutRedirectUri: env.REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL,
+    postLogoutRedirectUri: env.VITE_B2C_POST_LOGOUT_REDIRECT_URL,
     onRedirectNavigate: () => !BrowserUtils.isInIframe(),
   },
   system: {
@@ -36,8 +36,8 @@ export const configuration: Configuration = {
 };
 
 export const scopes: string[] = [
-  env.REACT_APP_B2C_READ_SCOPE || '',
-  env.REACT_APP_B2C_USER_IMPERSONATION_SCOPE || '',
+  env.VITE_B2C_READ_SCOPE || '',
+  env.VITE_B2C_USER_IMPERSONATION_SCOPE || '',
 ];
 
 export const authRequest: RedirectRequest = {

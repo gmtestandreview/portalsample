@@ -16,7 +16,7 @@ const renderList = (
     />
   );
 
-describe('ProgressFileList', () => {
+describe(ProgressFileList, () => {
   it('renders byte, kilobyte, and megabyte upload progress rows', () => {
     renderList([
       {
@@ -85,6 +85,7 @@ describe('ProgressFileList', () => {
     ]);
 
     const item = screen.getByText('queued.pdf').closest('li');
+
     expect(item).not.toBeNull();
     expect(within(item!).queryByRole('progressbar')).not.toBeInTheDocument();
     expect(within(item!).queryByRole('button')).not.toBeInTheDocument();

@@ -1,9 +1,25 @@
 import type { Decorator, StoryContext } from '@storybook/react-vite';
 import { Logger, InteractionStatus } from '@azure/msal-browser';
 import { MsalContext, type IMsalContext } from '@azure/msal-react';
-import { useEffect, useRef, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  type ComponentType,
+  type ReactNode,
+} from 'react';
 import { Formik, Form as FormikForm } from 'formik';
 import { FormProvider, useForm } from 'react-hook-form';
+import {
+  createMemoryRouter,
+  Outlet,
+  RouterProvider,
+  useLocation,
+  useMatches,
+} from 'react-router';
 import type {
   AccountDetails,
   AccountDispatchContext,
@@ -142,12 +158,24 @@ export interface PortalRhfConfig {
   defaultValues: Record<string, unknown>;
 }
 
+export interface PortalDestinationRoute {
+  path: string;
+  element: ReactNode;
+}
+
+export interface PortalLocationObservation {
+  pathname: string;
+  params: Record<string, string | undefined>;
+}
+
 export interface PortalStoryParameters {
   authenticated?: boolean;
   initialEntries?: string[];
   /** Route pattern the story is mounted under. Defaults to the `*` catch-all; set it
    *  when the rendered route reads params through `useParams`. */
   routePath?: string;
+  destinationRoutes?: PortalDestinationRoute[];
+  observeLocation?: (location: PortalLocationObservation) => void;
   accountDetails?: Partial<AccountDetails>;
   accountState?: Partial<AccountStateContext>;
   accountDispatch?: Partial<AccountDispatchContext>;
@@ -162,6 +190,84 @@ export interface PortalStoryParameters {
 
 const getPortalParameters = (context: StoryContext): PortalStoryParameters =>
   (context.parameters['portal'] ?? {}) as PortalStoryParameters;
+
+interface PortalRouterRuntime {
+  Story: ComponentType;
+  observeLocation: ((location: PortalLocationObservation) => void) | undefined;
+}
+
+const PortalRouterRuntimeContext = createContext<PortalRouterRuntime | null>(
+  null
+);
+
+const StoryRoute = () => {
+  const runtime = useContext(PortalRouterRuntimeContext);
+  if (!runtime) {
+    throw new Error('StoryRoute must be rendered inside PortalStoryRouter.');
+  }
+
+  const Story = runtime.Story;
+  return <Story />;
+};
+
+const LocationObserver = () => {
+  const runtime = useContext(PortalRouterRuntimeContext);
+  const location = useLocation();
+  const matches = useMatches();
+  const matchedParams = matches.at(-1)?.params ?? {};
+  const paramsKey = JSON.stringify(matchedParams);
+  const observeLocation = runtime?.observeLocation;
+
+  useEffect(() => {
+    observeLocation?.({
+      pathname: location.pathname,
+      params: JSON.parse(paramsKey) as Record<string, string | undefined>,
+    });
+  }, [location.pathname, observeLocation, paramsKey]);
+
+  return <Outlet />;
+};
+
+export interface PortalStoryRouterProps {
+  Story: ComponentType;
+  initialEntries?: string[];
+  routePath?: string;
+  destinationRoutes?: PortalDestinationRoute[] | undefined;
+  observeLocation?: ((location: PortalLocationObservation) => void) | undefined;
+}
+
+export const PortalStoryRouter = ({
+  Story,
+  initialEntries = ['/'],
+  routePath = '*',
+  destinationRoutes = [],
+  observeLocation,
+}: PortalStoryRouterProps) => {
+  const [router] = useState(() =>
+    createMemoryRouter(
+      [
+        {
+          element: <LocationObserver />,
+          children: [
+            { path: routePath, element: <StoryRoute /> },
+            ...destinationRoutes,
+          ],
+        },
+      ],
+      { initialEntries }
+    )
+  );
+  const runtime = useMemo(
+    () => ({ Story, observeLocation }),
+    [Story, observeLocation]
+  );
+
+  return (
+    <PortalRouterRuntimeContext.Provider value={runtime}>
+      <RouterProvider router={router} />
+    </PortalRouterRuntimeContext.Provider>
+  );
+};
 
 const createMsalContext = (
   authenticated: boolean,

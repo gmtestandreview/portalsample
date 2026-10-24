@@ -1,21 +1,42 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { delimiter, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 
 export const localPatches = [
-  'patches/html-react-parser+6.1.4.patch',
+  'patches/html-react-parser+6.1.9.patch',
+  'patches/storybook-addon-mcp+10.6.3.patch',
 ];
 
+const trustedGitPath = (
+  process.platform === 'win32'
+    ? [
+        String.raw`C:\Program Files\Git\cmd`,
+        String.raw`C:\Program Files\Git\bin`,
+      ]
+    : ['/usr/local/bin', '/usr/bin', '/bin']
+).join(delimiter);
+const inheritedGitPath = process.env.PATH ?? process.env.Path ?? '';
+const gitEnvironment = {
+  ...process.env,
+  PATH: [trustedGitPath, inheritedGitPath].filter(Boolean).join(delimiter),
+};
+delete gitEnvironment.Path;
+
 function runGit(root, args) {
-  return spawnSync('git', ['--no-pager', ...args], {
-    cwd: root,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-    windowsHide: true,
-  });
+  // Trusted Git directories take precedence, while retaining user-configured locations.
+  return spawnSync(
+    'git', // NOSONAR
+    ['--no-pager', ...args],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      env: gitEnvironment,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      windowsHide: true,
+    }
+  );
 }
 
 function wasSkipped(result) {
@@ -31,9 +52,8 @@ function assertGitSucceeded(result, action, patchPath) {
       .join('\n')
       .trim();
 
-    throw new Error(
-      `Unable to ${action} ${patchPath}${details ? `:\n${details}` : ''}`
-    );
+    const errorDetails = details ? `:\n${details}` : '';
+    throw new Error(`Unable to ${action} ${patchPath}${errorDetails}`);
   }
 }
 
@@ -44,10 +64,6 @@ export function applyLocalPatches(
 
   for (const relativePatchPath of localPatches) {
     const patchPath = join(patchRoot, relativePatchPath);
-
-    if (!existsSync(patchPath)) {
-      throw new Error(`Local patch does not exist: ${patchPath}`);
-    }
 
     const check = runGit(patchRoot, [
       'apply',
@@ -99,10 +115,9 @@ export function applyLocalPatches(
       .filter(Boolean)
       .join('\n')
       .trim();
+    const errorDetails = details ? `\n${details}` : '';
     throw new Error(
-      `Local patch is neither applicable nor already applied: ${relativePatchPath}${
-        details ? `\n${details}` : ''
-      }`
+      `Local patch is neither applicable nor already applied: ${relativePatchPath}${errorDetails}`
     );
   }
 }

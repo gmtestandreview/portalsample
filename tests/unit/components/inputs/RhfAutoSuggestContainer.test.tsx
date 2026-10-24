@@ -53,25 +53,35 @@ vi.mock('react-aria-components/ComboBox', async () => {
   const Popover = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'popover' }, children);
 
-  return { ComboBox, ComboBoxStateContext, Input, Label, Popover };
+  return {
+    ComboBox,
+    ComboBoxStateContext,
+    Input,
+    Label,
+    Popover,
+  } satisfies __ExactMockModule<__TestMockModule37>;
 });
 
 vi.mock('react-aria-components/Group', async () => {
   const React = await import('react');
   const Group = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'group' }, children);
-  return { Group };
+  return { Group } satisfies __ExactMockModule<__TestMockModule38>;
 });
 
-vi.mock('@/components/Inputs/AutoSuggest/AutoSuggestOptions', () => ({
-  default: ({ options }: { options: AutoSuggestOption<string>[] }) => (
-    <ul data-testid='options'>
-      {options.map((option) => (
-        <li key={option.id}>{option.displayText}</li>
-      ))}
-    </ul>
-  ),
-}));
+vi.mock(
+  '@/components/Inputs/AutoSuggest/AutoSuggestOptions',
+  () =>
+    ({
+      default: ({ options }: { options: AutoSuggestOption<string>[] }) => (
+        <ul data-testid='options'>
+          {options.map((option) => (
+            <li key={option.id}>{option.displayText}</li>
+          ))}
+        </ul>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule39>
+);
 
 interface Values {
   suburb: string;
@@ -115,7 +125,7 @@ const failingResolver = async () => ({
   },
 });
 
-describe('RhfAutoSuggestContainer', () => {
+describe(RhfAutoSuggestContainer, () => {
   it('renders options, help, loading state and handles input actions', async () => {
     comboState.open.mockClear();
     comboState.close.mockClear();
@@ -148,6 +158,7 @@ describe('RhfAutoSuggestContainer', () => {
     await act(async () => {
       comboState.onInputChange?.('syd');
     });
+
     expect(onSearchTermChange).toHaveBeenCalledWith('syd');
 
     await act(async () => {
@@ -155,13 +166,15 @@ describe('RhfAutoSuggestContainer', () => {
       fireEvent.keyDown(input, { key: 'ArrowDown' });
       fireEvent.keyDown(input, { key: 'Escape' });
     });
-    expect(onCancel).toHaveBeenCalled();
+
+    expect(onCancel).toHaveBeenCalledWith();
     expect(screen.getByText(/2 suggestions displayed/)).toBeInTheDocument();
 
     await act(async () => {
       comboState.onChange?.(null);
       comboState.onChange?.('sydney');
     });
+
     expect(onSelectedOption).toHaveBeenCalledWith(options[0]);
 
     rerender(
@@ -176,7 +189,8 @@ describe('RhfAutoSuggestContainer', () => {
         />
       </FieldHarness>
     );
-    expect(comboState.close).toHaveBeenCalled();
+
+    expect(comboState.close).toHaveBeenCalledWith();
     expect(screen.getByTestId('combo-box')).toBeInTheDocument();
   });
 
@@ -192,13 +206,16 @@ describe('RhfAutoSuggestContainer', () => {
     expect(screen.getByText('Lookup failed')).toBeInTheDocument();
 
     const { unmount } = renderContainer({ noResult: true, error: true });
+
     expect(screen.getByText('No matches found')).toBeInTheDocument();
     expect(
       screen.getByText('Results could not be fetched')
     ).toBeInTheDocument();
+
     unmount();
 
     renderContainer({ loading: true });
+
     expect(screen.getByText('Loading options')).toBeInTheDocument();
   });
 
@@ -214,6 +231,7 @@ describe('RhfAutoSuggestContainer', () => {
     });
 
     const input = screen.getByRole('textbox', { name: 'Suburb' });
+
     expect(screen.getByText('Enter a suburb')).toHaveAttribute(
       'id',
       'suburb-validation-msg'

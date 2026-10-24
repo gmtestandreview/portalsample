@@ -1,3 +1,4 @@
+import { describe, beforeEach, it, expect } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import InstrumentInfoPanel from '@/routes/ta/instrumentInfoPanel';
@@ -18,9 +19,13 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => mocks.msalContext,
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => mocks.msalContext,
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
@@ -33,14 +38,14 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
         setAuthToken: mocks.setAuthToken,
       };
     }),
-  };
+  } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 const categoryId = '11111111-1111-4111-8111-111111111111';
 const typeId = '22222222-2222-4222-8222-222222222222';
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 
-describe('InstrumentInfoPanel', () => {
+describe(InstrumentInfoPanel, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'lookup-token' });
@@ -108,7 +113,10 @@ describe('InstrumentInfoPanel', () => {
       />
     );
 
-    expect(await screen.findByText('Loading data...')).toBeInTheDocument();
+    await expect(
+      screen.findByText('Loading data...')
+    ).resolves.toBeInTheDocument();
+
     await act(async () => {
       resolveInfoPanelContent!([
         {
@@ -123,6 +131,7 @@ describe('InstrumentInfoPanel', () => {
     const requirementsLink = await screen.findByRole('link', {
       name: /pattern approval evidence checklist/i,
     });
+
     expect(requirementsLink).toHaveAttribute(
       'href',
       'https://example.test/pattern-approval-requirements'
@@ -139,6 +148,7 @@ describe('InstrumentInfoPanel', () => {
     await waitFor(() =>
       expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token')
     );
+
     expect(mocks.getInfoPanelContent).toHaveBeenCalledWith(typeId, categoryId);
   });
 

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import SearchBox from './searchBox';
 
@@ -8,7 +8,7 @@ import SearchBox from './searchBox';
  * clears it when emptied). It is purely presentational — submission is delegated to
  * the `onSearchSubmit` callback.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/SearchFilter/SearchBox',
   component: SearchBox,
   parameters: {
@@ -18,47 +18,50 @@ const meta = {
     onSearchSubmit: fn(),
     placeholder: 'Search manufacturer, model, serial',
   },
-} satisfies Meta<typeof SearchBox>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Empty: Story = {
+export const Empty = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByRole('textbox')).toBeVisible();
     // No clear button until there is a value.
     await expect(canvas.queryByTestId('clear-search-button')).toBeNull();
   },
-};
+});
 
-export const TypeAndSubmit: Story = {
+export const TypeAndSubmit = meta.story({
   play: async ({
     canvasElement,
     args,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('textbox');
     await user.type(input, 'Keysight');
+
     // Clear button appears once a value is present.
     await expect(canvas.getByTestId('clear-search-button')).toBeVisible();
+
     await user.keyboard('{Enter}');
+
     await expect(args.onSearchSubmit).toHaveBeenCalledWith('Keysight');
   },
-};
+});
 
-export const Prefilled: Story = {
+export const Prefilled = meta.story({
   args: {
     initialSearchValue: 'Fluke',
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByRole('textbox')).toHaveValue('Fluke');
     await expect(canvas.getByTestId('clear-search-button')).toBeVisible();
   },
-};
+});

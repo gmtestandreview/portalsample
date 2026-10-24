@@ -21,25 +21,42 @@ import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput'
 // before the React Hook Form shell exists. Pins what happens today; it does not
 // say what should happen. See the design addendum, parity contract.
 
-vi.mock('../../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The real WizardStep wraps an error boundary and analytics; render children.
 vi.mock(
   '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
-vi.mock('../../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock(
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('../../../../../ClientApp/src/components/SteppedNavigation', () => ({
-  default: () => <div data-testid='stepped-navigation' />,
-}));
+vi.mock(
+  '../../../../../ClientApp/src/components/SteppedNavigation',
+  () =>
+    ({
+      default: () => <div data-testid='stepped-navigation' />,
+    }) satisfies __ExactMockModule<__TestMockModule25>
+);
 
 const accountState = {
   isLoading: false,
@@ -171,7 +188,7 @@ const navigateAndSettle = (router: { navigate: (to: string) => unknown }) =>
 const NEXT = 'save-and-next-button';
 const MODAL = 'prompt-save-modal';
 
-describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', () => {
+describe('formik wizard characterisation: steps, Enter key and unsaved prompt', () => {
   let saves: Saves;
 
   beforeEach(() => {
@@ -190,6 +207,7 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await user.click(screen.getByTestId(NEXT));
 
     const second = await screen.findByLabelText('Name two');
+
     expect((second as HTMLInputElement).value).toBe('');
     expect(screen.queryByTestId('form-error-summary')).toBeNull();
     expect(saves.step1).toHaveBeenCalledTimes(1);
@@ -208,7 +226,7 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
     await user.click(screen.getByTestId('back-button'));
 
-    expect(await screen.findByTestId(MODAL)).toBeTruthy();
+    await expect(screen.findByTestId(MODAL)).resolves.toBeInTheDocument();
     expect(screen.queryByLabelText('Name one')).toBeNull();
   });
 
@@ -218,11 +236,17 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
     await user.click(await screen.findByLabelText('Name one'));
     await user.keyboard('{Enter}');
-    expect(await screen.findByTestId('form-error-summary')).toBeTruthy();
+
+    await expect(
+      screen.findByTestId('form-error-summary')
+    ).resolves.toBeInTheDocument();
     expect(saves.step1).not.toHaveBeenCalled();
 
     await user.type(screen.getByLabelText('Name one'), 'abc{Enter}');
-    expect(await screen.findByLabelText('Name two')).toBeTruthy();
+
+    await expect(
+      screen.findByLabelText('Name two')
+    ).resolves.toBeInTheDocument();
     expect(saves.step1).toHaveBeenCalledTimes(1);
   });
 
@@ -232,7 +256,9 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
     await act(() => router.navigate('/elsewhere'));
 
-    expect(await screen.findByText('Elsewhere Page')).toBeTruthy();
+    await expect(
+      screen.findByText('Elsewhere Page')
+    ).resolves.toBeInTheDocument();
     expect(screen.queryByTestId(MODAL)).toBeNull();
   });
 
@@ -246,11 +272,13 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await settleValidation();
 
     await navigateAndSettle(router);
-    expect(screen.getByTestId(MODAL)).toBeTruthy();
+
+    expect(screen.getByTestId(MODAL)).toBeInTheDocument();
 
     await user.click(screen.getByTestId('prompt-cancel-button'));
     await waitFor(() => expect(screen.queryByTestId(MODAL)).toBeNull());
-    expect(screen.getByLabelText('Name one')).toBeTruthy();
+
+    expect(screen.getByLabelText('Name one')).toBeInTheDocument();
   });
 
   it('blocks a dirty form and leaves when Discard is chosen', async () => {
@@ -265,6 +293,8 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await navigateAndSettle(router);
     await user.click(screen.getByTestId('prompt-leave-button'));
 
-    expect(await screen.findByText('Elsewhere Page')).toBeTruthy();
+    await expect(
+      screen.findByText('Elsewhere Page')
+    ).resolves.toBeInTheDocument();
   });
 });

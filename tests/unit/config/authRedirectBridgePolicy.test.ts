@@ -1,10 +1,12 @@
 import { createServer } from 'node:http';
 import { execFile } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { afterEach, describe, expect, it } from 'vitest';
+
+import { writeTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const verifier = path.resolve(
   process.cwd(),
@@ -35,7 +37,7 @@ const runVerifier = async (...argumentsList: string[]) => {
 const createDist = (html: string) => {
   const directory = mkdtempSync(path.join(tmpdir(), 'msal-bridge-'));
   temporaryDirectories.push(directory);
-  writeFileSync(path.join(directory, 'redirect.html'), html);
+  writeTextFileSync(path.join(directory, 'redirect.html'), html, directory);
   return directory;
 };
 
@@ -45,7 +47,7 @@ afterEach(() => {
   }
 });
 
-describe('MSAL redirect bridge policy', () => {
+describe('mSAL redirect bridge policy', () => {
   it('accepts a title-only page with one relative bridge script', async () => {
     const result = await runVerifier('--dist', createDist(validBridge));
 
@@ -115,6 +117,7 @@ describe('MSAL redirect bridge policy', () => {
         '--url',
         `http://127.0.0.1:${address.port}/redirect.html`
       );
+
       expect(result.status).toBe(1);
       expect(result.output).toContain('bridge response must disable caching');
     } finally {

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import SupportingDocuments from './supportingDocuments';
@@ -9,7 +9,7 @@ import SupportingDocuments from './supportingDocuments';
  * behaviour and validation messaging. It is bound to the Formik documents array named
  * by `name`; the story provides that context plus stub upload callbacks.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/SupportingDocuments',
   component: SupportingDocuments,
   decorators: [withPortalProviders],
@@ -31,20 +31,19 @@ const meta = {
     attachment: { onUploadFiles: fn(async () => []) },
     onUploadAttachment: fn(async () => []),
   },
-} satisfies Meta<typeof SupportingDocuments>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const EditStep: Story = {
+export const EditStep = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(
       canvas.getByRole('heading', {
-        name: /upload one or more supporting documents/i,
-      })
+        name: 'Upload one or more supporting documents',
+      }),
     ).toBeVisible();
   },
-};
+});

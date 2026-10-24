@@ -9,7 +9,7 @@ const defaultError = {
   severity: NotificationSeverity.Error,
 };
 
-describe('DashBoardNotifications', () => {
+describe(DashBoardNotifications, () => {
   it.each([
     ['forbidden', DashBoardNotifications.getForbiddenNotification],
     ['conflict', DashBoardNotifications.getConflictNotification],

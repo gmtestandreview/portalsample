@@ -1,3 +1,4 @@
+import { describe, beforeEach, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
@@ -7,17 +8,21 @@ import RequestItem from '@/components/RequestList/requestItem';
 import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
 
-vi.mock('@/components/Actions', () => ({
-  default: ({
-    onItemClick,
-  }: {
-    onItemClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  }) => (
-    <button type='button' onClick={onItemClick}>
-      Invoke fallback action
-    </button>
-  ),
-}));
+vi.mock(
+  '@/components/Actions',
+  () =>
+    ({
+      default: ({
+        onItemClick,
+      }: {
+        onItemClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+      }) => (
+        <button type='button' onClick={onItemClick}>
+          Invoke fallback action
+        </button>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule50>
+);
 
 const modalDispatch = {
   setShowBranchSelector: vi.fn(),
@@ -45,7 +50,7 @@ const renderItem = (item: React.ReactNode) =>
     </MemoryRouter>
   );
 
-describe('RequestList fallback action wiring', () => {
+describe('requestList fallback action wiring', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 
 import * as Yup from 'yup';
-import { NotEmpty } from '../common';
+import { NotEmpty } from '../stringPredicates';
 
 const buildErrMsg = (
   label: string | undefined,
@@ -103,6 +103,30 @@ const YUP_MAXLENGTH_METHOD = 'maxLength';
 const YUP_REQUIREDWITHTRIM_METHOD = 'isRequired';
 
 let yupStringExtensionsRegistered = false;
+
+const ASCII_LETTER_REGEX = /^[a-z]$/i;
+
+const hasConsecutiveLetters = (value: string, repeatCount: number): boolean => {
+  let previousLetter = '';
+  let currentRunLength = 0;
+
+  for (const character of value) {
+    if (!ASCII_LETTER_REGEX.test(character)) {
+      previousLetter = '';
+      currentRunLength = 0;
+      continue;
+    }
+
+    const normalizedCharacter = character.toLowerCase();
+    currentRunLength =
+      normalizedCharacter === previousLetter ? currentRunLength + 1 : 1;
+    previousLetter = normalizedCharacter;
+
+    if (currentRunLength > repeatCount) return true;
+  }
+
+  return false;
+};
 
 const STANDARD_LANDLINE_PHONE_REGEX = /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}$/;
 const LONG_SERVICE_PHONE_REGEX = /^1[38]00 ?\d{3} ?\d{3}$/;
@@ -487,8 +511,9 @@ export const registerYupStringExtensions = () => {
    * class, so it is a hard separator - there is exactly one way to split the
    * input and the match is linear.
    */
-  const EMAIL_LOCAL_PART =
-    /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+)*$/;
+  const EMAIL_LOCAL_PART_CHARACTERS = new Set(
+    "-!#$%&'*+/0123456789=?ABCDEFGHIJKLMNOPQRSTUVWXYZ^_abcdefghijklmnopqrstuvwxyz`{|}~"
+  );
 
   /** A single DNS label, already split on `.`. One character class, so linear. */
   const DNS_LABEL = /^[a-zA-Z0-9-]+$/;
@@ -515,7 +540,16 @@ export const registerYupStringExtensions = () => {
       return false;
     }
 
-    if (!EMAIL_LOCAL_PART.test(value.slice(0, at))) {
+    const localParts = value.slice(0, at).split('.');
+    if (
+      localParts.some(
+        (part) =>
+          part.length === 0 ||
+          Array.from(part).some(
+            (character) => !EMAIL_LOCAL_PART_CHARACTERS.has(character)
+          )
+      )
+    ) {
       return false;
     }
 
@@ -729,8 +763,7 @@ export const registerYupStringExtensions = () => {
               numCharsTest = 2;
             }
             numCharsTest -= 1;
-            const consecutiveCharsRegex = String.raw`([a-z])\1{${numCharsTest},}`;
-            return value.match(new RegExp(consecutiveCharsRegex, 'i')) === null;
+            return !hasConsecutiveLetters(value, numCharsTest);
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -776,7 +809,7 @@ export const registerYupStringExtensions = () => {
                 ? /^[-–—0-9A-Za-z ‘.&#,]*$/
                 : /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/;
 
-            return value.match(new RegExp(regExStr)) !== null;
+            return value.match(regExStr) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -822,7 +855,7 @@ export const registerYupStringExtensions = () => {
                 ? /^[-–—A-Za-z ‘]*$/
                 : /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/;
 
-            return value.match(new RegExp(regExStr)) !== null;
+            return value.match(regExStr) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;

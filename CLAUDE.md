@@ -92,7 +92,7 @@ to avoid fixing a heading.
 | CSS          | Bootstrap 5 (custom NMI theme) + SCSS partials               |
 | API client   | Auto-generated `web-api-client.ts` (NSwag/OpenAPI)           |
 | Analytics    | Azure Application Insights + Google Analytics                |
-| Bundler      | Webpack 5 (config lives in `webpack.config.js`)              |
+| Bundler      | Vite 8 (`vite.config.mts`)                                  |
 | CSP          | Trusted Types policy via `trustedtypes.ts` + DOMPurify       |
 
 ## Storybook
@@ -155,7 +155,6 @@ unavailable:**
 - `ClientApp/css/main.*.css`
 - `ClientApp/source-map-http-downloads/**`
 - `ClientApp/src/external/**`
-- `ClientApp/webpack/**`
 
 If a file you are asked to edit falls outside the safe targets, pause and
 confirm with the user before proceeding.
@@ -191,8 +190,8 @@ that is their explicit runtime contract:
 
 ```ts
 import { env } from '../env';
-env.REACT_APP_B2C_CLIENTID; // correct
-process.env.REACT_APP_B2C_CLIENTID; // wrong — undefined at runtime
+env.VITE_B2C_CLIENTID; // correct
+process.env.VITE_B2C_CLIENTID; // wrong — undefined at runtime
 ```
 
 ### Global object usage
@@ -271,7 +270,7 @@ font-size: math.div($h1-font-size, 1.375);
 Bootstrap 5 internal function available only via the global `@import` cascade.
 Full `@use`-based module migration for our partials is deferred until Bootstrap
 6 (which supports `@use` natively). Until then,
-`silenceDeprecations: ['import']` in both `webpack.config.js` and
+`silenceDeprecations: ['import']` in both `vite.config.mts` and
 `.storybook/main.ts` suppresses the remaining `@import` deprecations from our
 own partials, and `quietDeps: true` suppresses Bootstrap's internal
 deprecations.

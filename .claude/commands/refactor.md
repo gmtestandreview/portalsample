@@ -6,7 +6,7 @@ Find and safely remove dead code, unused dependencies, and duplicates.
 
 **Usage:**
 
-```
+```text
 /refactor                    Full analysis and cleanup
 /refactor --deps-only        Unused npm/pip/cargo dependencies only
 /refactor --exports-only     Unused TypeScript exports only

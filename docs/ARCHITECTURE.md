@@ -83,7 +83,7 @@ AuthenticatedElement (per protected route) — nested, not sibling:
 | **HOC / Render guard** | `AuthenticatedElement` wrapping every protected route in `App.tsx` | Centralises MSAL redirect, PreConditions gate, and ErrorBoundary into one composable boundary. |
 | **Error boundary** | `ErrorBoundary` (functional component using `react-error-boundary`) wrapping every `AuthenticatedElement` | Route-level isolation: an unhandled exception in one route does not crash sibling routes. Uses `<ReactErrorBoundary FallbackComponent={ErrorFallback} onError={...}>` — no longer a class component. |
 | **Session storage facade** | `SessionStorageCache()` in `storage/sessionStorageCache.ts` | Typed, JSON-serializing wrapper over `window.sessionStorage` — prevents raw `localStorage`/`sessionStorage` calls scattered through the codebase. |
-| **Runtime env injection** | `env.ts` reading `window.*` globals | Allows the same webpack bundle to run across dev/staging/prod without rebuilding; environment config is injected server-side into the HTML template. |
+| **Runtime env injection** | `env.ts` reading `window.*` globals | Allows the same Vite bundle to run across dev/staging/prod without rebuilding; environment config is injected server-side into the HTML template. |
 
 ### Runtime contracts reference
 
@@ -97,7 +97,7 @@ This includes:
 - Yup custom validator side-effect import requirements
 - Current `acquireTokenSilent` route pattern (`tokenRequest` + `accounts[0]`)
 - PreConditions redirect state machine flow
-- Dual webpack/Vite rationale and divergence checkpoints
+- Unified Vite build and runtime verification checkpoints
 
 ## 5) Key Component Relationships
 
@@ -170,7 +170,7 @@ Route tree hanging off `RouterProvider`:
 2. ~~**`React.Children.toArray` in `WizardForm/index.tsx:27`**~~ — **RESOLVED (Phase 4.2)**: Replaced with `React.Children.forEach` + array accumulator. Legacy API usage removed.
 3. ~~**`AccountContext` re-renders**~~ — **RESOLVED (Phase 5.1)**: Context split into `AccountStateCtx` / `AccountDispatchCtx`. All 7 dispatch callbacks converted to functional updater form (`setAccountDetails(prev => ...)`) with `[]` dep arrays — `dispatchValue` is permanently stable after mount. Components subscribing only to dispatch never re-render due to state changes.
 4. ~~**Dashboard `useEffect` dependency array**~~ — **RESOLVED (Phase 4.4)**: `AbortController` cleanup added for in-flight request cancellation; `useDebounce` (300ms) added on search text input.
-5. **Top-level `await` in `index.tsx:16`** — `await PublicClientApplication.createPublicClientApplication(...)` requires bundler + browser support for top-level await. Enabled here by `experiments.topLevelAwait: true` in `webpack.config.js`; a Vite/Rollup target needs an equivalently modern build target. Still open.
+5. ~~**Top-level `await` in `index.tsx:16`**~~ — **RESOLVED:** the canonical Vite build supports the existing top-level await with the configured modern browser target.
 6. ~~**`any` casts in `env.ts`**~~ — **RESOLVED (Phase 4.3)**: All 11 config vars now use `declare global { var VAR_NAME: string | undefined; }` + `globalThis.VAR_NAME ?? ''`. A `requiredVars.forEach` startup guard calls `console.error` for any missing vars.
 7. ~~**No error boundary at provider level**~~ — **RESOLVED (Phase G)**: the outer `ErrorBoundary` now wraps `MsalProvider` and `AccountProvider` in `index.tsx`.
 8. **Distributed token acquisition** — route and prop modules still construct generated clients and call `acquireTokenSilent()` independently: **81 call sites across 52 files**, with **92** `setAuthToken` sites. Preserve the current token/account selection contract (`{ ...tokenRequest, account: accounts[0] }`) during migration; centralisation remains deferred per `docs/adr/2026-05-30-acquire-token-silent-interceptor.md`. **Note that ADR undercounts the sites as "35+".**

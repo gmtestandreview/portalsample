@@ -4,9 +4,12 @@ const bridgeMocks = vi.hoisted(() => ({
   broadcastResponseToMainFrame: vi.fn(),
 }));
 
-vi.mock('@azure/msal-browser/redirect-bridge', () => bridgeMocks);
+vi.mock(
+  '@azure/msal-browser/redirect-bridge',
+  () => bridgeMocks satisfies __ExactMockModule<__TestMockModule16>
+);
 
-describe('MSAL redirect bridge entry', () => {
+describe('mSAL redirect bridge entry', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
@@ -34,6 +37,7 @@ describe('MSAL redirect bridge entry', () => {
     );
 
     expect(consoleError.mock.calls.flat().join(' ')).not.toContain('token=');
+
     consoleError.mockRestore();
   });
 });

@@ -10,43 +10,63 @@ const mockMsal = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn().mockResolvedValue({ accessToken: 'mock-token' }),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useMsal: () => ({
-    inProgress: mockMsal.inProgress,
-    accounts: mockMsal.accounts,
-    instance: {
-      acquireTokenSilent: mockMsal.acquireTokenSilent,
-    },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useMsal: () => ({
+        inProgress: mockMsal.inProgress,
+        accounts: mockMsal.accounts,
+        instance: {
+          acquireTokenSilent: mockMsal.acquireTokenSilent,
+        },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
 const mockSetAgree = vi.fn();
 const mockDispatch = { setAgree: mockSetAgree };
 
-vi.mock('../../../../ClientApp/src/authentication/hooks', () => ({
-  useAccountState: vi.fn(),
-  useAccountDispatch: vi.fn(),
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/hooks',
+  () =>
+    ({
+      useAccountState: vi.fn(),
+      useAccountDispatch: vi.fn(),
+    }) satisfies __ExactMockModule<__TestMockModule26>
+);
 
 // UsersClient must be a constructor (class/function), not an arrow function,
 // because the component uses `new UsersClient()`.
 const mockAcceptTermsAndCondition = vi.fn().mockResolvedValue(undefined);
 const mockSetAuthToken = vi.fn();
 
-vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
-  UsersClient: vi.fn(function (this: any) {
-    this.setAuthToken = mockSetAuthToken;
-    this.acceptTermsAndCondition = mockAcceptTermsAndCondition;
-  }),
-}));
+vi.mock(
+  '../../../../ClientApp/src/api/web-api-client',
+  () =>
+    ({
+      UsersClient: vi.fn(function (this: any) {
+        this.setAuthToken = mockSetAuthToken;
+        this.acceptTermsAndCondition = mockAcceptTermsAndCondition;
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://mock/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://mock/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/terms-config.json', () => ({
-  default: { TermsVersion: '2' },
-}));
+vi.mock(
+  '../../../../ClientApp/src/terms-config.json',
+  () =>
+    ({
+      default: { TermsVersion: '2' },
+    }) satisfies __ExactMockModule<__TestMockModule7>
+);
 
 import {
   useAccountState,
@@ -55,7 +75,7 @@ import {
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
-describe('TermsAndConditionModal', () => {
+describe(TermsAndConditionModal, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockMsal.inProgress = 'none';
@@ -116,7 +136,7 @@ describe('TermsAndConditionModal', () => {
     );
 
     await waitFor(() => {
-      expect(mockSetAgree).toHaveBeenCalledOnce();
+      expect(mockSetAgree).toHaveBeenCalledExactlyOnceWith();
     });
   });
 
@@ -230,6 +250,7 @@ describe('TermsAndConditionModal', () => {
         termsVersion: 2,
       });
     });
+
     expect(mockSetAgree).not.toHaveBeenCalled();
   });
 

@@ -6,15 +6,16 @@ The roadmap for migrating `portal.measurement.gov.au` to a rebuilt React
 application does not yet specify how the Storybook harness relates to the
 production build in the target repository.
 
-The current snapshot has two distinct build pipelines:
+The current snapshot uses one canonical Vite build family for the application
+and Storybook:
 
 | Concern | Current config | File |
 | --- | --- | --- |
-| Production bundle | webpack 5 | `ClientApp/webpack/webpack.config.js` |
+| Production bundle | Vite 8 | `vite.config.mts` |
 | Storybook (dev/test) | Vite adapter | `.storybook/main.ts` (framework: `@storybook/react-vite`) |
 
-See `docs/architecture/storybook-vs-webpack-runtime.md` for the divergence
-implications.
+See `docs/architecture/storybook-vs-webpack-runtime.md` for the shared-runtime
+verification contract.
 
 ## Placement options for the rebuild
 
@@ -22,44 +23,37 @@ implications.
 
 `.storybook/` and story files live alongside source in `ClientApp/src/`.
 
-**Pros:** Stories are adjacent to components; single `npm install`.
-**Cons:** Storybook devDependencies bloat the production repo; Vite/webpack
-split must be managed.
+**Pros:** Stories are adjacent to components; single `npm install`; the
+application and Storybook share the Vite build family.
+**Cons:** Storybook devDependencies remain in the production repo.
 
 ### Option B: Storybook in a dedicated workspace package
 
 A monorepo structure (e.g. `packages/ui/`, `packages/storybook/`) separates
 the Storybook harness from the production app package.
 
-**Pros:** Clean build boundary; Storybook can use Vite while production uses
-webpack or Vite independently.
+**Pros:** Clean build boundary; Storybook can use Vite independently.
 **Cons:** More complex monorepo tooling (npm workspaces / Turborepo).
 
-### Option C: Storybook migrated to webpack adapter
+### Option C: Storybook migrated to a separate bundler
 
-Switch `.storybook/main.ts` to `@storybook/react-webpack5` to align with
-the production bundler.
+Switch `.storybook/main.ts` to a different adapter.
 
-**Pros:** Eliminates Vite/webpack divergence.
-**Cons:** Slower Storybook dev experience; webpack Storybook is less maintained
-than the Vite adapter.
+**Pros:** Allows an independently selected Storybook toolchain.
+**Cons:** Reintroduces build divergence and is not required by this project.
 
 ## Recommendation
 
-**Option A (co-located) with Vite production** is the recommended path for the
-rebuild. Migrate the production bundler from webpack to Vite (aligning with the
-Storybook adapter already in use). This eliminates the divergence entirely and
-is consistent with the React 18 / TypeScript ecosystem direction.
-
-If webpack must be retained (e.g. for .NET integration), use **Option B**
-(monorepo) to isolate the Storybook Vite environment from the webpack build.
+**Option A (co-located) with Vite production** is the implemented direction.
+The production, development, Storybook, and Vitest paths now use Vite, so no
+separate bundler boundary or webpack capture is required.
 
 ## Migration checklist items
 
 Before choosing a placement strategy:
 
-- [ ] Confirm whether the ASP.NET Core host requires webpack (SPA middleware
-      integration may depend on the webpack dev server).
+- [x] Confirm this snapshot has no webpack config or webpack dev-server
+      entrypoint; verify host integration separately before deployment.
 - [ ] Confirm whether the CI pipeline can run Storybook BDD separately from
       the production build.
 - [ ] Decide on a monorepo tool (npm workspaces / Turborepo / Nx) if Option B
@@ -72,6 +66,6 @@ Before choosing a placement strategy:
 | File | Role |
 | --- | --- |
 | `.storybook/main.ts` | Current: `@storybook/react-vite` adapter |
-| `ClientApp/webpack/webpack.config.js` | Current: production webpack 5 config — do not edit |
-| `docs/architecture/storybook-vs-webpack-runtime.md` | Divergence analysis |
+| `vite.config.mts` | Production and development Vite configuration |
+| `docs/architecture/storybook-vs-webpack-runtime.md` | Shared build/runtime verification |
 | `docs/STORYBOOK-MIGRATION-READINESS.md` | Storybook readiness gate status |

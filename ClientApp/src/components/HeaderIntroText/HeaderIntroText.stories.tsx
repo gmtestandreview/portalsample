@@ -1,23 +1,20 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import HeaderIntroText from './index';
 
-const meta = {
+const meta = preview.meta({
   component: HeaderIntroText,
   tags: ['ai-generated', 'needs-work'],
-} satisfies Meta<typeof HeaderIntroText>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     children: 'Use this portal to submit and manage your service requests.',
   },
-};
+});
 
-export const WithClass: Story = {
+export const WithClass = meta.story({
   args: {
     children: 'This guide explains account setup and access management.',
     className: 'mb-0',
   },
-};
+});

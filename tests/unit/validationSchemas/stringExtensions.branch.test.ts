@@ -7,7 +7,7 @@ import { registerYupStringExtensions } from '../../../ClientApp/src/validationSc
 const valid = (schema: Yup.StringSchema, value: unknown) =>
   schema.isValidSync(value);
 
-describe('Yup string extension branch coverage', () => {
+describe('yup string extension branch coverage', () => {
   it.each([
     ['fixedDigits', Yup.string().fixedDigits(2), null],
     ['numbersOnly', Yup.string().numbersOnly(), null],
@@ -297,12 +297,19 @@ describe('Yup string extension branch coverage', () => {
   });
 
   it('executes the yupExtensions barrel module explicitly', () => {
-    expect(typeof Yup.string().maxLength).toBe('function');
+    expect(Yup.string().maxLength).toBeTypeOf('function');
   });
 
   it('allows repeat registration without adding duplicate methods', () => {
     registerYupStringExtensions();
 
-    expect(typeof Yup.string().maxLength).toBe('function');
+    expect(Yup.string().maxLength).toBeTypeOf('function');
+  });
+
+  it('resets consecutive-letter tracking at non-letter characters', () => {
+    const schema = Yup.string().noConsecutiveChars(2);
+
+    expect(valid(schema, 'ab1a')).toBe(true);
+    expect(valid(schema, 'ab1aa')).toBe(false);
   });
 });

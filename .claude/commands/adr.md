@@ -6,7 +6,7 @@ Record or revisit a consequential, hard-to-reverse technical decision as an Arch
 
 **Usage:**
 
-```
+```text
 /adr Choose the session datastore for the portal
 /adr Revisit ADR-0007 now that B2C token lifetimes changed
 ```

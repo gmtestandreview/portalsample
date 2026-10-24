@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import SearchFilter from './index';
@@ -18,7 +18,7 @@ const initialFilters: UserProfile = {
 
 const SearchFilterStory = () => {
   const [filters, setFilters] = useState<UserProfile | undefined>(
-    initialFilters
+    initialFilters,
   );
   const [page, setPage] = useState(1);
 
@@ -62,19 +62,17 @@ const SearchFilterWithSearchTermStory = () => {
   );
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Components/SearchFilter',
   component: SearchFilter,
   decorators: [withPortalProviders],
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof SearchFilter>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const DashboardFilters: Story = {
+export const DashboardFilters = meta.story({
   args: {
     initialFilters,
     setInitialFilters: () => undefined,
@@ -84,24 +82,27 @@ export const DashboardFilters: Story = {
   // SB-020: search input is accessible and submits correctly
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     // Search box renders with a text input
     const searchInput = canvas.getByRole('textbox');
+
     await expect(searchInput).toBeVisible();
+
     // Typing and submitting updates the displayed filter state
     await user.clear(searchInput);
     await user.type(searchInput, 'Keysight');
     await user.keyboard('{Enter}');
     // The debug output below the component shows the current search text
     const searchLabel = await canvas.findByText(/Keysight/i);
+
     await expect(searchLabel).toBeVisible();
   },
-};
+});
 
 // SB-020: pre-populated search term renders correctly
-export const WithSearchTerm: Story = {
+export const WithSearchTerm = meta.story({
   args: {
     initialFilters: {
       ...initialFilters,
@@ -113,12 +114,13 @@ export const WithSearchTerm: Story = {
   render: () => <SearchFilterWithSearchTermStory />,
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     // Pre-populated value appears in the search box
     const searchInput = canvas.getByRole('textbox');
+
     await expect(searchInput).toHaveValue('Fluke');
     // Status line reflects it
     await expect(canvas.getByText(/Fluke/i)).toBeVisible();
   },
-};
+});

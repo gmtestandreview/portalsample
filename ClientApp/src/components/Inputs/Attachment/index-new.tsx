@@ -1,6 +1,5 @@
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
-import { map } from 'lodash';
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
@@ -147,8 +146,12 @@ const AttachmentNew = (
         try {
           await uploadSelectedFiles(files);
         } catch (error_) {
+          const problemDetails = error_ as ProblemDetails;
           addErrors(
-            map((error_ as ProblemDetails)['errors'], (error) => error)
+            Object.values(
+              (problemDetails['errors'] as
+                Record<string, string[]> | undefined) ?? {}
+            ).flat()
           );
         }
       }

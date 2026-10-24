@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = {
+export default {
   MAX_DEPTH: 100,
   MAX_LENGTH: 10000,
 

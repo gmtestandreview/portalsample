@@ -26,6 +26,36 @@ export interface CertificateNumberLookupProps {
   isSummary?: boolean | undefined;
 }
 
+const getLookupFieldValue = (
+  item: unknown,
+  fieldName: string | undefined
+): string | undefined => {
+  if (fieldName === undefined || item === null || typeof item !== 'object') {
+    return undefined;
+  }
+
+  const value = Reflect.get(item, fieldName);
+  return typeof value === 'string' ? value : undefined;
+};
+
+const matchesLookupValue = (
+  value: string | undefined,
+  input: string,
+  matchType: CertificateNumberLookupProps['matchType']
+) => {
+  if (value === undefined) return false;
+
+  const normalizedValue = value.toLowerCase();
+  switch (matchType) {
+    case 'startsWith':
+      return normalizedValue.startsWith(input);
+    case 'endsWith':
+      return normalizedValue.endsWith(input);
+    default:
+      return normalizedValue.includes(input);
+  }
+};
+
 const CertificateNumberLookup = (
   props: Readonly<CertificateNumberLookupProps>
 ) => {
@@ -72,8 +102,7 @@ const CertificateNumberLookup = (
         setFilteredSuggestions((prev) => (prev.length === 0 ? prev : []));
         return;
       }
-      const options = (_certNumOptions.value ||
-        ([] as LookupResponse[])) as any[];
+      const options = (_certNumOptions.value || []) as LookupResponse[];
 
       if (inputValue.length >= 2) {
         if (parentName !== undefined && _parentField.value !== undefined) {
@@ -81,18 +110,26 @@ const CertificateNumberLookup = (
             ...new Set(
               options
                 .filter((item) =>
-                  item[parentOptionsName!]
-                    .toLowerCase()
-                    [matchType](_parentField.value.toLowerCase())
+                  matchesLookupValue(
+                    getLookupFieldValue(item, parentOptionsName),
+                    _parentField.value.toLowerCase(),
+                    matchType
+                  )
                 )
                 .filter((item) =>
-                  item[optionsFieldName!]
-                    .toLowerCase()
-                    [matchType](inputValue.toLowerCase())
+                  matchesLookupValue(
+                    getLookupFieldValue(item, optionsFieldName),
+                    inputValue.toLowerCase(),
+                    matchType
+                  )
                 )
                 .slice(0, maxResults)
                 .map((item) => item)
-                .sort((x) => x[optionsFieldName!])
+                .sort((left, right) =>
+                  getLookupFieldValue(left, optionsFieldName)!.localeCompare(
+                    getLookupFieldValue(right, optionsFieldName)!
+                  )
+                )
             ),
           ];
           setFilteredSuggestions(filteredParentOptions);
@@ -102,13 +139,19 @@ const CertificateNumberLookup = (
             ...new Set(
               options
                 .filter((item) =>
-                  item[optionsFieldName!]
-                    .toLowerCase()
-                    [matchType](inputValue.toLowerCase())
+                  matchesLookupValue(
+                    getLookupFieldValue(item, optionsFieldName),
+                    inputValue.toLowerCase(),
+                    matchType
+                  )
                 )
                 .slice(0, maxResults)
                 .map((item) => item)
-                .sort((x) => x[optionsFieldName!])
+                .sort((left, right) =>
+                  getLookupFieldValue(left, optionsFieldName)!.localeCompare(
+                    getLookupFieldValue(right, optionsFieldName)!
+                  )
+                )
             ),
           ];
           setFilteredSuggestions(filteredOptions);
@@ -133,8 +176,10 @@ const CertificateNumberLookup = (
 
   // Auto-scroll to active item
   useEffect(() => {
-    if (activeIndex >= 0 && itemRefs.current[activeIndex]) {
-      itemRefs.current[activeIndex]?.scrollIntoView({
+    const activeItem =
+      activeIndex >= 0 ? itemRefs.current.at(activeIndex) : undefined;
+    if (activeItem) {
+      activeItem.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
@@ -184,7 +229,8 @@ const CertificateNumberLookup = (
       );
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      const activeSuggestion = filteredSuggestions[activeIndex];
+      const activeSuggestion =
+        activeIndex >= 0 ? filteredSuggestions.at(activeIndex) : undefined;
       if (activeIndex >= 0 && activeSuggestion) {
         handleSelect(activeSuggestion.lookupName!, activeSuggestion.id!);
       } else {
@@ -301,7 +347,7 @@ const CertificateNumberLookup = (
                     }}
                     // onMouseEnter={() => setActiveIndex(index)}
                     ref={(el: any) => {
-                      itemRefs.current[index] = el;
+                      itemRefs.current.splice(index, 1, el);
                     }}
                   >
                     <span aria-hidden='true'>{item.lookupName}</span>

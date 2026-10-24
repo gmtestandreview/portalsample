@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfTextInput from '.';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -8,7 +8,7 @@ import { withPortalProviders } from '../../../storybook/storybookHarness';
  * `FormProvider`; the portal harness supplies one through the `portal.rhf`
  * story parameter.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/RhfTextInput',
   component: RhfTextInput,
   decorators: [withPortalProviders],
@@ -22,15 +22,13 @@ const meta = {
     label: 'Organisation name for report',
     name: 'organisationName',
   },
-} satisfies Meta<typeof RhfTextInput>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Organisation name for report');
@@ -42,45 +40,45 @@ export const Default: Story = {
 
     await expect(input).toHaveValue('Beta Labs');
   },
-};
+});
 
-export const WithInlineHelp: Story = {
+export const WithInlineHelp = meta.story({
   args: { inlineHelp: 'The name printed on the measurement report.' },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByText('The name printed on the measurement report.')
+      canvas.getByText('The name printed on the measurement report.'),
     ).toHaveAttribute('id', 'help-organisationName');
     await expect(
-      canvas.getByLabelText('Organisation name for report')
+      canvas.getByLabelText('Organisation name for report'),
     ).toHaveAttribute('aria-describedby', 'help-organisationName');
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: { disabled: true },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByLabelText('Organisation name for report')
+      canvas.getByLabelText('Organisation name for report'),
     ).toBeDisabled();
   },
-};
+});
 
-export const Summary: Story = {
+export const Summary = meta.story({
   args: { isSummary: true },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(canvas.getByText('Acme Pty Ltd')).toBeInTheDocument();
     await expect(canvas.queryByRole('textbox')).not.toBeInTheDocument();
   },
-};
+});

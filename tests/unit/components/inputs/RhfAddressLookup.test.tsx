@@ -20,19 +20,27 @@ const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn(),
 }));
 
-vi.mock('@azure/msal-react', () => ({
-  useAccount: () => mocks.account,
-  useMsal: () => ({
-    accounts: mocks.accounts,
-    inProgress: mocks.inProgress,
-    instance: { acquireTokenSilent: mocks.acquireTokenSilent },
-  }),
-}));
+vi.mock(
+  '@azure/msal-react',
+  () =>
+    ({
+      useAccount: () => mocks.account,
+      useMsal: () => ({
+        accounts: mocks.accounts,
+        inProgress: mocks.inProgress,
+        instance: { acquireTokenSilent: mocks.acquireTokenSilent },
+      }),
+    }) satisfies __ExactMockModule<__TestMockModule2>
+);
 
-vi.mock('@/api/web-api-client', async (importOriginal) => ({
-  ...(await importOriginal<typeof WebApiClientModule>()),
-  AddressClient,
-}));
+vi.mock(
+  '@/api/web-api-client',
+  async (importOriginal) =>
+    ({
+      ...(await importOriginal<typeof WebApiClientModule>()),
+      AddressClient,
+    }) satisfies __ExactMockModule<__TestMockModule4>
+);
 
 const match = {
   displayText: '1 National Circuit, Barton ACT 2600',
@@ -89,7 +97,7 @@ const resetMocks = (matches: unknown = [match]) => {
   mocks.addressSearch.mockResolvedValue({ matches });
 };
 
-describe('RhfAddressLookup selection', () => {
+describe('rhfAddressLookup selection', () => {
   it('writes the chosen address and keeps the identifying fields', async () => {
     resetMocks();
     renderLookup(
@@ -117,6 +125,7 @@ describe('RhfAddressLookup selection', () => {
         searchText: match.displayText,
       })
     );
+
     expect(mocks.setAuthToken).toHaveBeenCalledWith('unit-token');
     expect(mocks.addressSearch).toHaveBeenCalledWith(
       'barton',
@@ -161,6 +170,7 @@ describe('RhfAddressLookup selection', () => {
     );
 
     await waitFor(() => expect(formValue()['line1']).toBe(''));
+
     expect(formValue()).toMatchObject({
       id: 2,
       isManuallyEntered: false,
@@ -169,7 +179,7 @@ describe('RhfAddressLookup selection', () => {
   });
 });
 
-describe('RhfAddressLookup results', () => {
+describe('rhfAddressLookup results', () => {
   it.each([
     ['no signed-in account', () => (mocks.account = null)],
     ['an empty account list', () => (mocks.accounts = [])],
@@ -181,9 +191,9 @@ describe('RhfAddressLookup results', () => {
 
     await search('query');
 
-    expect(
-      await screen.findByRole('option', { name: /No matches found/ })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('option', { name: /No matches found/ })
+    ).resolves.toBeInTheDocument();
     expect(mocks.addressSearch).not.toHaveBeenCalled();
   });
 
@@ -194,9 +204,9 @@ describe('RhfAddressLookup results', () => {
 
     await search('query');
 
-    expect(
-      await screen.findByRole('option', { name: /No matches found/ })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('option', { name: /No matches found/ })
+    ).resolves.toBeInTheDocument();
   });
 
   it('shows no unavailable message for a non-503 failure', async () => {
@@ -206,9 +216,9 @@ describe('RhfAddressLookup results', () => {
 
     await search('query');
 
-    expect(
-      await screen.findByRole('option', { name: /No matches found/ })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('option', { name: /No matches found/ })
+    ).resolves.toBeInTheDocument();
   });
 
   it('does not log the typed address when a search fails', async () => {
@@ -220,7 +230,12 @@ describe('RhfAddressLookup results', () => {
 
     await search('12 Secret Street');
 
-    await waitFor(() => expect(logError).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(logError).toHaveBeenCalledWith(
+        'Failed to execute address search',
+        failure
+      )
+    );
     logError.mock.calls.forEach(([message]) =>
       expect(String(message)).not.toContain('Secret')
     );
@@ -234,9 +249,9 @@ describe('RhfAddressLookup results', () => {
 
     await search('query');
 
-    expect(
-      await screen.findByRole('option', { name: /currently unavailable/ })
-    ).toBeInTheDocument();
+    await expect(
+      screen.findByRole('option', { name: /currently unavailable/ })
+    ).resolves.toBeInTheDocument();
   });
 
   it('aborts the in-flight request when a new search starts', async () => {
@@ -256,7 +271,7 @@ describe('RhfAddressLookup results', () => {
   });
 });
 
-describe('RhfAddressLookup manual entry', () => {
+describe('rhfAddressLookup manual entry', () => {
   it('switches to manual entry and back, clearing the touched search text', async () => {
     resetMocks();
     renderLookup(
@@ -316,7 +331,7 @@ describe('RhfAddressLookup manual entry', () => {
   });
 });
 
-describe('RhfAddressLookup summary', () => {
+describe('rhfAddressLookup summary', () => {
   it('renders the formatted address', () => {
     resetMocks();
     renderLookup(

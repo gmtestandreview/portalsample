@@ -1,26 +1,33 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorSwatchPicker, ColorSwatchPickerItem } from './ColorSwatchPicker';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorSwatchPicker',
   component: ColorSwatchPicker,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorSwatchPicker>;
+});
 
-export default meta;
-type Story = StoryFn<typeof ColorSwatchPicker>;
+export const Example = meta.story({
+  render: (args) => (
+    <ColorSwatchPicker {...args}>
+      <ColorSwatchPickerItem color='#A00' />
+      <ColorSwatchPickerItem color='#f80' />
+      <ColorSwatchPickerItem color='#080' />
+      <ColorSwatchPickerItem color='#08f' />
+      <ColorSwatchPickerItem color='#088' />
+      <ColorSwatchPickerItem color='#008' />
+    </ColorSwatchPicker>
+  ),
+  play: async ({ canvas }) => {
+    const picker = canvas.getByRole('listbox', { name: 'Color swatches' });
+    const swatches = canvas.getAllByRole('option');
 
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorSwatchPicker {...args}>
-    <ColorSwatchPickerItem color='#A00' />
-    <ColorSwatchPickerItem color='#f80' />
-    <ColorSwatchPickerItem color='#080' />
-    <ColorSwatchPickerItem color='#08f' />
-    <ColorSwatchPickerItem color='#088' />
-    <ColorSwatchPickerItem color='#008' />
-  </ColorSwatchPicker>
-);
+    await expect(picker).toBeInTheDocument();
+    await expect(swatches.length).toBeGreaterThan(0);
+  },
+});

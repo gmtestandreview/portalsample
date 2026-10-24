@@ -19,22 +19,35 @@ import { defined } from '../../../helpers/defined';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
-}));
+vi.mock(
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // WizardStep wraps ErrorBoundary (needs AppInsights) + GoogleAnalytics.
 // Both are irrelevant to these tests; stub them out.
 vi.mock(
   '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () => ({
-    default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule24>
 );
 
-vi.mock('../../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
-  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock(
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
+  () =>
+    ({
+      default: ({ children }: { children?: React.ReactNode }) => (
+        <>{children}</>
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
 
@@ -152,7 +165,7 @@ function makeRouter(
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe('WizardRoutedStep — error navigation', () => {
+describe('wizardRoutedStep — error navigation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -249,6 +262,7 @@ describe('WizardRoutedStep — error navigation', () => {
     await waitFor(() =>
       expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
     );
+
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith(
       '12345678901',
       'Test Org'
@@ -272,6 +286,7 @@ describe('WizardRoutedStep — error navigation', () => {
     await waitFor(() =>
       expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
     );
+
     expect(mockDispatch.setTargetOrganisation).not.toHaveBeenCalled();
   });
 
@@ -299,6 +314,7 @@ describe('WizardRoutedStep — error navigation', () => {
     await waitFor(() =>
       expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
     );
+
     expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith('', '');
   });
 
@@ -355,7 +371,7 @@ describe('WizardRoutedStep — error navigation', () => {
   });
 });
 
-describe('WizardRoutedStep — prop mutation fix', () => {
+describe('wizardRoutedStep — prop mutation fix', () => {
   it('does not mutate the original FormStepStatusDto on successful step save', async () => {
     const originalDto: FormStepStatusDto = {
       status: FormStepStatus.NotStarted,
@@ -418,6 +434,7 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     await waitFor(() =>
       expect(screen.getByText('Alternate Second Step')).toBeInTheDocument()
     );
+
     expect(onSaveAndNext).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
@@ -448,6 +465,7 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     await waitFor(() =>
       expect(screen.getByText('After Exit Page')).toBeInTheDocument()
     );
+
     expect(onSaveAndExit).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
@@ -491,12 +509,16 @@ describe('WizardRoutedStep — prop mutation fix', () => {
       expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument()
     );
     await user.click(screen.getByTestId('save-and-next-button'));
-    expect(await screen.findByText('Server error')).toBeInTheDocument();
+
+    await expect(
+      screen.findByText('Server error')
+    ).resolves.toBeInTheDocument();
 
     await user.click(screen.getByTestId('save-and-next-button'));
-    expect(
-      await screen.findByText(/form contains invalid characters/i)
-    ).toBeInTheDocument();
+
+    await expect(
+      screen.findByText(/form contains invalid characters/i)
+    ).resolves.toBeInTheDocument();
   });
 
   it('keeps the form visible when save-and-exit fails', async () => {
@@ -514,7 +536,10 @@ describe('WizardRoutedStep — prop mutation fix', () => {
       expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument()
     );
     await user.click(screen.getByTestId('save-and-exit-button'));
-    expect(await screen.findByText('Server error')).toBeInTheDocument();
+
+    await expect(
+      screen.findByText('Server error')
+    ).resolves.toBeInTheDocument();
     expect(screen.getByTestId('form')).toBeInTheDocument();
   });
 
@@ -575,8 +600,9 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     await waitFor(() =>
       expect(screen.getByText('Cancelled Page')).toBeInTheDocument()
     );
-    expect(onDiscard).toHaveBeenCalled();
-    expect(onCancel).toHaveBeenCalled();
+
+    expect(onDiscard).toHaveBeenCalledWith();
+    expect(onCancel).toHaveBeenCalledWith();
   });
 
   it('uses the discard location and hides the save-and-next button', async () => {
@@ -597,9 +623,11 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     await waitFor(() =>
       expect(screen.getByTestId('cancel-button')).toBeInTheDocument()
     );
+
     expect(
       screen.queryByTestId('save-and-next-button')
     ).not.toBeInTheDocument();
+
     await user.click(screen.getByTestId('cancel-button'));
 
     await waitFor(() =>

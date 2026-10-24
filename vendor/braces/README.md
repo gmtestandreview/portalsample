@@ -35,7 +35,7 @@ Brace patterns make globs more powerful by adding the ability to match specific 
 The main export is a function that takes one or more brace `patterns` and `options`.
 
 ```js
-const braces = require('braces');
+import braces from 'braces';
 // braces(patterns[, options]);
 
 console.log(braces(['{01..05}', '{a..e}']));
@@ -290,7 +290,7 @@ The `quantifiers` option tells braces to detect when [regex quantifiers](https:/
 **Examples**
 
 ```js
-const braces = require('braces');
+import braces from 'braces';
 console.log(braces('a/b{1,3}/{x,y,z}'));
 //=> [ 'a/b(1|3)/(x|y|z)' ]
 console.log(braces('a/b{1,3}/{x,y,z}', { quantifiers: true }));

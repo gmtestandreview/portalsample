@@ -109,8 +109,23 @@ describe('common validation helpers', () => {
     await expect(
       optionalWebsite.validate('https://measurement.gov.au')
     ).resolves.toBe('https://measurement.gov.au');
+    await expect(
+      optionalWebsite.validate('https://example-domain.com')
+    ).resolves.toBe('https://example-domain.com');
+    await expect(
+      optionalWebsite.validate('http://example.com/path?query=value')
+    ).resolves.toBe('http://example.com/path?query=value');
+    await expect(optionalWebsite.validate('www.example.com')).resolves.toBe(
+      'www.example.com'
+    );
     await expect(optionalWebsite.validate('')).resolves.toBe('');
     await expect(optionalWebsite.validate('not a website')).rejects.toThrow(
+      'Invalid website'
+    );
+    await expect(optionalWebsite.validate('.example.com')).rejects.toThrow(
+      'Invalid website'
+    );
+    await expect(optionalWebsite.validate('example.com.')).rejects.toThrow(
       'Invalid website'
     );
     await expect(nonEmptyWebsite.validate('')).rejects.toThrow(
@@ -147,6 +162,6 @@ describe('common validation helpers', () => {
   });
 
   it('exposes registered string extensions through the side-effect index', () => {
-    expect(typeof yup.string().maxLength).toBe('function');
+    expect(yup.string().maxLength).toBeTypeOf('function');
   });
 });

@@ -65,4 +65,4 @@ Accepted: the listed classification. Boundary form is graded separately (AMBER i
 | T4 four-skill chain | All six pairs True duplicate; one cluster of four, survivor summ-d (the broadest); preservation review notes nothing unique. |
 | T5 tf-fmt-all / each | tf-fmt / tf-fmt-all True duplicate; tf-fmt-tofu / tf-fmt-all True duplicate; tf-fmt / tf-fmt-tofu evaluated under the hub rule (False positive); hub cluster {tf-fmt-all survivor, tf-fmt, tf-fmt-tofu}; Mode explicit pairs (hub pair does not change it); Pairs evaluated 3. |
 | T6 triggers | (a) activate; (b) do not activate (performing a merge: writing-skills); (c) do not activate (writing quality); (d) activate (proposed new skill). |
-| Output block (T1-T5) | Skills analyzed 15 (T1: 2, T2: 2, T3: 2, T4: 4, T5: 3, all distinct); Pairs evaluated 1+1+1+6+3 = 12; counts reconcile; clusters formed: 2 (T4, T5). |
+| Output block (T1-T5) | Skills analyzed 13 (T1: 2, T2: 2, T3: 2, T4: 4, T5: 3, all distinct); Pairs evaluated 1+1+1+6+3 = 12; counts reconcile; clusters formed: 2 (T4, T5). |

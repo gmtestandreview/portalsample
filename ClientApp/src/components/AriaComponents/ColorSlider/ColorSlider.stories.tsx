@@ -1,25 +1,27 @@
+import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { ColorSlider } from './ColorSlider';
-import type { Meta, StoryFn } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
-const meta = {
+const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/ColorSlider',
   component: ColorSlider,
   parameters: {
     layout: 'centered',
   },
-} satisfies Meta<typeof ColorSlider>;
+});
 
-export default meta;
-type Story = StoryFn<typeof ColorSlider>;
-
-export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
-  <ColorSlider {...args} style={{ width: 200 }} />
-);
-
-Example.args = {
-  label: 'Red Opacity',
-  defaultValue: '#f00',
-  channel: 'alpha',
-};
+export const Example = meta.story({
+  render: (args) => <ColorSlider {...args} style={{ width: 200 }} />,
+  args: {
+    label: 'Red Opacity',
+    defaultValue: '#f00',
+    channel: 'alpha',
+  },
+  play: async ({ canvas }) => {
+    await expect(
+      canvas.getByRole('slider', { name: 'Red Opacity' }),
+    ).toBeInTheDocument();
+  },
+});

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
@@ -16,42 +17,54 @@ const wrapperMocks = vi.hoisted(() => ({
   )),
 }));
 
-vi.mock('@/components/ErrorBoundary', () => ({
-  default: wrapperMocks.errorBoundary,
-}));
+vi.mock(
+  '@/components/ErrorBoundary',
+  () =>
+    ({
+      default: wrapperMocks.errorBoundary,
+    }) satisfies __ExactMockModule<__TestMockModule13>
+);
 
-vi.mock('@/analytics/GoogleAnalytics', () => ({
-  default: wrapperMocks.analytics,
-}));
+vi.mock(
+  '@/analytics/GoogleAnalytics',
+  () =>
+    ({
+      default: wrapperMocks.analytics,
+    }) satisfies __ExactMockModule<__TestMockModule22>
+);
 
-vi.mock('@/components/modals/ConfirmationModal', () => ({
-  default: ({
-    closeModal,
-    isOpen,
-    onModalNo,
-    onModalYes,
-    titleText,
-  }: {
-    closeModal: () => void;
-    isOpen: boolean;
-    onModalNo: () => void;
-    onModalYes: () => void;
-    titleText: string;
-  }) =>
-    isOpen ? (
-      <dialog open aria-label={titleText}>
-        <button type='button' onClick={onModalYes}>
-          Confirm yes
-        </button>
-        <button type='button' onClick={onModalNo}>
-          Confirm no
-        </button>
-        <button type='button' onClick={closeModal}>
-          Close confirmation
-        </button>
-      </dialog>
-    ) : null,
-}));
+vi.mock(
+  '@/components/modals/ConfirmationModal',
+  () =>
+    ({
+      default: ({
+        closeModal,
+        isOpen,
+        onModalNo,
+        onModalYes,
+        titleText,
+      }: {
+        closeModal: () => void;
+        isOpen: boolean;
+        onModalNo: () => void;
+        onModalYes: () => void;
+        titleText: string;
+      }) =>
+        isOpen ? (
+          <dialog open aria-label={titleText}>
+            <button type='button' onClick={onModalYes}>
+              Confirm yes
+            </button>
+            <button type='button' onClick={onModalNo}>
+              Confirm no
+            </button>
+            <button type='button' onClick={closeModal}>
+              Close confirmation
+            </button>
+          </dialog>
+        ) : null,
+    }) satisfies __ExactMockModule<__TestMockModule23>
+);
 
 const step = (location: string) => (
   <WizardStep
@@ -88,11 +101,13 @@ describe('wizard control behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Finish' }));
+
     expect(
       screen.getByRole('dialog', { name: 'Confirm submission' })
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Confirm no' }));
+
     expect(
       screen.getByRole('dialog', { name: 'Confirm submission' })
     ).toBeInTheDocument();
@@ -100,6 +115,7 @@ describe('wizard control behavior', () => {
     await user.click(
       screen.getByRole('button', { name: 'Close confirmation' })
     );
+
     expect(
       screen.queryByRole('dialog', { name: 'Confirm submission' })
     ).not.toBeInTheDocument();
@@ -130,6 +146,7 @@ describe('wizard control behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -153,7 +170,10 @@ describe('wizard control behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() => expect(validate).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(validate).toHaveBeenCalledWith({ name: '' }, undefined)
+    );
+
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -172,6 +192,7 @@ describe('wizard control behavior', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Submit' }));
+
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-label', '');
   });
 
@@ -182,6 +203,7 @@ describe('wizard control behavior', () => {
         <PreviousStepButton steps={steps} currentStepIndex={0} url='/wizard' />
       </MemoryRouter>
     );
+
     expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
 
     rerender(
@@ -195,6 +217,7 @@ describe('wizard control behavior', () => {
         />
       </MemoryRouter>
     );
+
     expect(
       screen.getByRole('link', { name: 'Previous details' })
     ).toHaveAttribute('href', '/wizard/first');

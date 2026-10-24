@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../../.storybook/preview';
 import { within, expect, userEvent } from 'storybook/test';
 import RhfRadioButtonGroup from '.';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
@@ -8,7 +8,7 @@ import { withPortalProviders } from '../../../storybook/storybookHarness';
  * `FormProvider`; the portal harness supplies one through the `portal.rhf`
  * story parameter.
  */
-const meta = {
+const meta = preview.meta({
   title: 'Components/Inputs/RhfRadioButtonGroup',
   component: RhfRadioButtonGroup,
   decorators: [withPortalProviders],
@@ -35,61 +35,59 @@ const meta = {
       },
     ],
   },
-} satisfies Meta<typeof RhfRadioButtonGroup>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
 
     await expect(
-      canvas.getByLabelText('Use the request contact')
+      canvas.getByLabelText('Use the request contact'),
     ).toBeChecked();
 
     await user.click(canvas.getByLabelText('Use a different contact'));
 
     await expect(
-      canvas.getByLabelText('Use a different contact')
+      canvas.getByLabelText('Use a different contact'),
     ).toBeChecked();
     await expect(
-      canvas.getByLabelText('Use the request contact')
+      canvas.getByLabelText('Use the request contact'),
     ).not.toBeChecked();
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: { disabled: true },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByLabelText('Use the request contact')
+      canvas.getByLabelText('Use the request contact'),
     ).toBeDisabled();
     await expect(
-      canvas.getByLabelText('Use a different contact')
+      canvas.getByLabelText('Use a different contact'),
     ).toBeDisabled();
   },
-};
+});
 
-export const WithInlineHelp: Story = {
+export const WithInlineHelp = meta.story({
   args: { inlineHelp: 'Invoices are emailed to the chosen contact.' },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.getByText('Invoices are emailed to the chosen contact.')
+      canvas.getByText('Invoices are emailed to the chosen contact.'),
     ).toHaveAttribute('id', 'help-invoice-contact-option');
     await expect(
-      canvas.getByTestId('fs-invoice-contact-option')
+      canvas.getByTestId('fs-invoice-contact-option'),
     ).toHaveAttribute('aria-describedby', 'help-invoice-contact-option');
   },
-};
+});

@@ -19,7 +19,7 @@ const clients = vi.hoisted(() => ({
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
-  return msalReactModuleMock();
+  return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
@@ -36,39 +36,59 @@ vi.mock(
 
     return webApiClientModuleMock(original, {
       RequestForPatternApprovalClient: clients.patternApproval,
-    });
+    }) satisfies __ExactMockModule<__TestMockModule4>;
   }
 );
 
-vi.mock('../../../../ClientApp/src/authentication/authConfig', () => ({
-  tokenRequest: { scopes: ['api://ta/.default'] },
-}));
+vi.mock(
+  '../../../../ClientApp/src/authentication/authConfig',
+  () =>
+    ({
+      tokenRequest: { scopes: ['api://ta/.default'] },
+    }) satisfies __ExactMockModule<__TestMockModule8>
+);
 
-vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
-  default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-}));
+vi.mock(
+  '../../../../ClientApp/src/instrumentation/AppLogger',
+  () =>
+    ({
+      default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
+    }) satisfies __ExactMockModule<__TestMockModule5>
+);
 
 // The real accordion collapses its body; the summary inside it is what is under test.
-vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
-  CustomAccordion: ({ children }: { children: ReactNode }) => (
-    <div>{children}</div>
-  ),
-  CustomAccordionBody: ({
-    name,
-    children,
-  }: {
-    name: string;
-    children: ReactNode;
-  }) => <section aria-label={name}>{children}</section>,
-}));
+vi.mock(
+  '../../../../ClientApp/src/components/Accordion',
+  () =>
+    ({
+      CustomAccordion: ({ children }: { children: ReactNode }) => (
+        <div>{children}</div>
+      ),
+      CustomAccordionBody: ({
+        name,
+        children,
+      }: {
+        name: string;
+        children: ReactNode;
+      }) => <section aria-label={name}>{children}</section>,
+    }) satisfies __ExactMockModule<__TestMockModule74>
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/manage/appDocuments', () => ({
-  default: () => <div data-testid='application-documents' />,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/ta/manage/appDocuments',
+  () =>
+    ({
+      default: () => <div data-testid='application-documents' />,
+    }) satisfies __ExactMockModule<__TestMockModule124>
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/manage/appMessages', () => ({
-  default: () => <div data-testid='application-messages' />,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/ta/manage/appMessages',
+  () =>
+    ({
+      default: () => <div data-testid='application-messages' />,
+    }) satisfies __ExactMockModule<__TestMockModule125>
+);
 
 const details = {
   applicationDetails: { referenceId: 'PA-001', title: 'Balance approval' },
@@ -116,11 +136,13 @@ describe('application details summary', () => {
     const organisation = await screen.findByRole('region', {
       name: 'Organisation details',
     });
+
     expect(within(organisation).getByText('Acme Pty Ltd')).toBeInTheDocument();
 
     const application = screen.getByRole('region', {
       name: 'Application details',
     });
+
     expect(
       within(application).getByText('Provisional please')
     ).toBeInTheDocument();
@@ -128,9 +150,12 @@ describe('application details summary', () => {
     const documents = screen.getByRole('region', {
       name: 'Supporting documents',
     });
+
     // Documents come from the form state, which useForm({ values }) fills one
     // render after the props-driven regions above, so await them.
-    expect(await within(documents).findByText('spec.pdf')).toBeInTheDocument();
+    await expect(
+      within(documents).findByText('spec.pdf')
+    ).resolves.toBeInTheDocument();
     // Read-only here: the category is text, not a select.
     expect(within(documents).getByText('Manuals')).toBeInTheDocument();
     expect(within(documents).queryByRole('combobox')).not.toBeInTheDocument();

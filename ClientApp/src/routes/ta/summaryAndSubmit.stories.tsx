@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import preview from '../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import SummaryAndSubmit from './summaryAndSubmit';
@@ -19,7 +19,7 @@ const initialValues = {
   acceptDeclaration: false,
 };
 
-const meta = {
+const meta = preview.meta({
   title: 'Routes/TypeApproval/SummaryAndSubmit',
   component: SummaryAndSubmit,
   decorators: [withPortalProviders],
@@ -35,35 +35,35 @@ const meta = {
     name: 'summaryAndSubmit',
     isSubmitted: false,
   },
-} satisfies Meta<typeof SummaryAndSubmit>;
+});
 
-export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const Editable: Story = {
+export const Editable = meta.story({
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByText('Organisation details')).toBeVisible();
     await expect(canvas.getByText('Terms and conditions')).toBeVisible();
     await expect(
-      canvas.getByText(/before you submit your request/i)
+      canvas.getByText(/before you submit your request/i),
     ).toBeVisible();
   },
-};
+});
 
-export const Submitted: Story = {
+export const Submitted = meta.story({
   args: {
     isSubmitted: true,
   },
   play: async ({
     canvasElement,
-  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+  }) => {
     const canvas = within(canvasElement);
+
     await expect(canvas.getByTestId('back-button')).toBeVisible();
     await expect(
-      canvas.queryByText(/before you submit your request/i)
+      canvas.queryByText(/before you submit your request/i),
     ).toBeNull();
   },
-};
+});

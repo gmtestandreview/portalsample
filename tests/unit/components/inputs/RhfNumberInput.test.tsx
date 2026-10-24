@@ -37,7 +37,7 @@ const failingResolver: Resolver<Values> = async () => ({
   errors: { amount: { type: 'validation', message: 'Enter an amount' } },
 });
 
-describe('RhfNumberInput', () => {
+describe(RhfNumberInput, () => {
   it('renders a labelled text box showing the form value', () => {
     render(
       <Harness defaultValue='123'>
@@ -45,6 +45,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox', { name: 'Amount' });
+
     expect(input).toHaveValue('123');
     expect(input).toHaveAttribute('id', 'amount');
     expect(input).toHaveClass('form-field', 'form-text-input');
@@ -56,6 +57,7 @@ describe('RhfNumberInput', () => {
         <RhfNumberInput name='amount' />
       </Harness>
     );
+
     expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
@@ -76,6 +78,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox');
+
     expect(input).toHaveAttribute('id', 'p');
     expect(input).toHaveClass('extra');
     expect(input).toHaveAttribute('placeholder', '0.00');
@@ -92,6 +95,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '0412345678');
+
     expect(screen.getByRole('textbox')).toHaveValue('0412 345 678');
     expect(screen.getByTestId('value')).toHaveTextContent('"0412 345 678"');
   });
@@ -103,6 +107,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '0291234567');
+
     expect(screen.getByRole('textbox')).toHaveValue('02 9123 4567');
   });
 
@@ -121,11 +126,14 @@ describe('RhfNumberInput', () => {
         />
       </Harness>
     );
+
     expect(screen.getByText('AUD$')).toHaveAttribute(
       'id',
       'input-prepend-amount'
     );
+
     await userEvent.type(screen.getByRole('textbox'), '1234.5');
+
     expect(screen.getByRole('textbox')).toHaveValue('1,234.50');
     expect(screen.getByTestId('value')).toHaveTextContent('"1,234.50"');
   });
@@ -137,6 +145,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '-5');
+
     expect(screen.getByRole('textbox')).toHaveValue('5');
   });
 
@@ -149,8 +158,11 @@ describe('RhfNumberInput', () => {
     await userEvent.type(screen.getByRole('textbox'), '04');
     // The pattern input pads the unfilled slots with its default space mask.
     const padded = JSON.stringify('04'.padEnd('#### ### ###'.length));
+
     expect(screen.getByTestId('value').textContent).toBe(padded);
+
     await userEvent.tab();
+
     expect(screen.getByTestId('value').textContent).toBe(padded);
   });
 
@@ -164,6 +176,7 @@ describe('RhfNumberInput', () => {
         />
       </Harness>
     );
+
     expect(screen.getByText('Include area')).toHaveAttribute(
       'id',
       'help-amount'
@@ -186,10 +199,13 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     const input = screen.getByRole('textbox');
+
     expect(screen.queryByText('Enter an amount')).not.toBeInTheDocument();
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(input).not.toHaveClass('is-invalid');
+
     await form.submit();
+
     expect(screen.getByText('Enter an amount')).toHaveAttribute(
       'id',
       'amount-validation-msg'
@@ -213,6 +229,7 @@ describe('RhfNumberInput', () => {
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
     await form.trigger();
+
     expect(screen.getByText('Enter an amount')).toBeInTheDocument();
   });
 
@@ -228,6 +245,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     await form.submit();
+
     expect(screen.queryByText('Enter an amount')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox')).not.toHaveClass('is-invalid');
   });
@@ -243,6 +261,7 @@ describe('RhfNumberInput', () => {
         />
       </Harness>
     );
+
     expect(screen.getByText('Mobile')).toBeInTheDocument();
     expect(screen.getByText('0412 345 678')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
@@ -254,6 +273,7 @@ describe('RhfNumberInput', () => {
         <RhfNumberInput name='amount' label='Value' prepend='AUD$' isSummary />
       </Harness>
     );
+
     expect(screen.getByText('1,234.50')).toBeInTheDocument();
   });
 
@@ -269,6 +289,7 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '0412345678');
+
     expect(screen.getByRole('textbox')).toHaveValue('0412 345 678');
     expect(screen.getByTestId('value')).toHaveTextContent('"0412 345 678"');
   });

@@ -1,15 +1,9 @@
 /* eslint-disable no-useless-escape */
-import { isEmpty, trim } from 'lodash';
 import './yupExtensions';
 import * as yup from 'yup';
 import { isAfter, startOfDay } from 'date-fns';
 import { containsWhitespace, parseDate } from '../utils';
-
-export const NotEmpty = (value: string | undefined | null) =>
-  value !== undefined && value !== null && !isEmpty(trim(value));
-
-export const IsEmpty = (value: string | undefined | null) =>
-  value === undefined || value === null || isEmpty(trim(value));
+export { IsEmpty, NotEmpty } from './stringPredicates';
 
 export const isEmptyDate = (value: unknown) => {
   if (value === undefined || value === null) {
@@ -101,8 +95,39 @@ export const isFutureDate =
     return isAfter(dateValue!, startOfDayValue);
   };
 
-const urlMatchRegex =
-  /^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)(?<!\.)$/;
+const URL_HOST_PREFIX = /^[-a-zA-Z0-9@:%._+~#=]{2,256}$/;
+const URL_PATH = /^[-a-zA-Z0-9@:%_+.~#?&/=]*$/;
+const URL_TLD = /^[a-z]{2,6}$/;
+
+const isValidWebsiteUrl = (value: string): boolean => {
+  if (value.startsWith('.') || value.endsWith('.')) {
+    return false;
+  }
+
+  let remainder = value;
+  if (remainder.startsWith('http://')) {
+    remainder = remainder.slice('http://'.length);
+  } else if (remainder.startsWith('https://')) {
+    remainder = remainder.slice('https://'.length);
+  }
+  if (remainder.startsWith('www.')) {
+    remainder = remainder.slice('www.'.length);
+  }
+
+  const pathStart = remainder.search(/[/?&]/);
+  const host = pathStart === -1 ? remainder : remainder.slice(0, pathStart);
+  const path = pathStart === -1 ? '' : remainder.slice(pathStart);
+  const lastDot = host.lastIndexOf('.');
+  const hostPrefix = host.slice(0, lastDot);
+  const tld = host.slice(lastDot + 1);
+
+  return (
+    lastDot >= 0 &&
+    URL_HOST_PREFIX.test(hostPrefix) &&
+    URL_TLD.test(tld) &&
+    URL_PATH.test(path)
+  );
+};
 
 // To do - Explore create new Schema or stringExtensions Methods to support this
 export const serialNumMatchRegEx =
@@ -113,9 +138,11 @@ export const extAlphaNumMultiLineMatchRegex =
   /^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}\[\]<>\r\n]+$/;
 
 export const websiteUrlSchema = (message: string, excludeEmpty = true) =>
-  yup.string().matches(urlMatchRegex, {
-    message,
-    excludeEmptyString: excludeEmpty,
+  yup.string().test('websiteUrl', message, (value) => {
+    if (value === undefined || (excludeEmpty && value === '')) {
+      return true;
+    }
+    return typeof value === 'string' && isValidWebsiteUrl(value);
   });
 
 export const emailSchema = (label: string, required = true) =>
@@ -153,4 +180,4 @@ const DIGIT_WORDS: Readonly<Record<number, string>> = {
   10: 'ten',
 };
 export const numberToText = (digits: number): string =>
-  DIGIT_WORDS[digits] ?? `${digits}`;
+  (Reflect.get(DIGIT_WORDS, digits) as string | undefined) ?? `${digits}`;
