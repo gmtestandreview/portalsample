@@ -55,7 +55,7 @@ const mocks: {
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useAccount: () => mocks.account,
@@ -67,7 +67,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -303,7 +303,7 @@ describe('complex input behavior slice', () => {
     await user.click(option);
 
     await waitFor(() => {
-      expect(mocks.acquireTokenSilent).toHaveBeenCalledWith();
+      expect(mocks.acquireTokenSilent).toHaveBeenCalled();
       expect(mocks.setAuthToken).toHaveBeenCalledWith('unit-token');
       expect(mocks.addressSearch).toHaveBeenCalledWith(
         'barton',
@@ -712,7 +712,7 @@ describe('complex input behavior slice', () => {
 
     await user.keyboard('{Escape}');
 
-    expect(onCancel).toHaveBeenCalledWith();
+    expect(onCancel).toHaveBeenCalled();
   });
 
   it('wraps AutoSuggestContainer keyboard navigation and selects with Tab', async () => {
@@ -859,7 +859,7 @@ describe('complex input behavior slice', () => {
 
     await user.clear(combobox);
 
-    expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
+    expect(onSelectedOption).toHaveBeenCalledOnce();
     expect(onSelectedOption.mock.calls[0]).toEqual([]);
     expect(getOptions).not.toHaveBeenCalled();
 
@@ -1025,7 +1025,7 @@ describe('complex input behavior slice', () => {
       )
     );
 
-    expect(scrollIntoView).toHaveBeenCalledWith();
+    expect(scrollIntoView).toHaveBeenCalled();
 
     await user.keyboard('{Escape}');
 

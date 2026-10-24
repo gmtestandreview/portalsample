@@ -10,7 +10,7 @@ const reactGaMock = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('react-ga4'),
+  'react-ga4',
   () =>
     ({
       default: reactGaMock,
@@ -167,7 +167,11 @@ describe('googleAnalytics', () => {
     expect(consoleSpy).toHaveBeenCalledWith({
       originalData: { name: 'Alice' },
     });
-    expect(reactGaMock.send).toHaveBeenCalledWith();
+    expect(reactGaMock.send).toHaveBeenCalledWith({
+      hitType: 'event',
+      category: 'form_viewed_sanitized',
+      data: { name: '[REDACTED]' },
+    });
 
     Object.defineProperty(globalThis, 'location', {
       configurable: true,
@@ -190,7 +194,11 @@ describe('googleAnalytics', () => {
     trackGAPii();
 
     expect(consoleSpy).not.toHaveBeenCalled();
-    expect(reactGaMock.send).toHaveBeenCalledWith();
+    expect(reactGaMock.send).toHaveBeenCalledWith({
+      hitType: 'event',
+      category: 'form_viewed_sanitized',
+      data: { name: '[REDACTED]' },
+    });
 
     Object.defineProperty(globalThis, 'location', {
       configurable: true,

@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/authentication/hooks'),
+  '@/authentication/hooks',
   () =>
     ({
       useAccountDispatch: () => ({
@@ -22,7 +22,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: mocks.trackGAEvent,
@@ -30,7 +30,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Inputs/RadioButtonGroup'),
+  '@/components/Inputs/RadioButtonGroup',
   () =>
     ({
       default: ({

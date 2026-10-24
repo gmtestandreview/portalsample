@@ -18,14 +18,14 @@ describe('storybook runtime env stubs', () => {
       this.loadAppInsights = loadAppInsights;
     });
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      '@microsoft/applicationinsights-web',
       () =>
         ({
           ApplicationInsights: applicationInsightsCtor,
         }) satisfies __ExactMockModule<__TestMockModule57>
     );
     vi.doMock(
-      import('@microsoft/applicationinsights-react-js'),
+      '@microsoft/applicationinsights-react-js',
       () =>
         ({
           ReactPlugin: vi.fn(function ReactPlugin() {}),

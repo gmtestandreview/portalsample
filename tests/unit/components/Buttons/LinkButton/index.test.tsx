@@ -9,7 +9,7 @@ const ariaLinkMockState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('react-aria-components/Link'),
+  'react-aria-components/Link',
   () =>
     ({
       Link: ({

@@ -35,14 +35,14 @@ const editor = vi.hoisted(() => ({
   lastKey: null as string | null,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -61,7 +61,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  '../../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -69,7 +69,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
@@ -77,7 +77,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
@@ -89,7 +89,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/SlateEditor/SlateEditor'),
+  '../../../../ClientApp/src/components/SlateEditor/SlateEditor',
   () =>
     ({
       default: (props: typeof editor.props) => {
@@ -108,7 +108,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Pagination'),
+  '../../../../ClientApp/src/components/Pagination',
   () =>
     ({
       default: ({
@@ -134,7 +134,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/PaginationHeader'),
+  '../../../../ClientApp/src/components/PaginationHeader',
   () =>
     ({
       default: ({
@@ -495,9 +495,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       });
 
       await waitFor(() =>
-        expect(
-          clients.patternApproval.methods.addAppMessage
-        ).toHaveBeenCalledWith()
+        expect(clients.patternApproval.methods.addAppMessage).toHaveBeenCalled()
       );
       const [applicationId, html] = defined(
         clients.patternApproval.methods.addAppMessage.mock.calls[0],

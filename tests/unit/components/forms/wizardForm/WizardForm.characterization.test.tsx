@@ -22,7 +22,7 @@ import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput'
 // say what should happen. See the design addendum, parity contract.
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -31,7 +31,7 @@ vi.mock(
 
 // The real WizardStep wraps an error boundary and analytics; render children.
 vi.mock(
-  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -41,7 +41,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -51,7 +51,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/components/SteppedNavigation'),
+  '../../../../../ClientApp/src/components/SteppedNavigation',
   () =>
     ({
       default: () => <div data-testid='stepped-navigation' />,
@@ -226,7 +226,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
     await user.click(screen.getByTestId('back-button'));
 
-    await expect(screen.findByTestId(MODAL)).resolves.toBe(true);
+    await expect(screen.findByTestId(MODAL)).resolves.toBeInTheDocument();
     expect(screen.queryByLabelText('Name one')).toBeNull();
   });
 
@@ -237,12 +237,16 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await user.click(await screen.findByLabelText('Name one'));
     await user.keyboard('{Enter}');
 
-    await expect(screen.findByTestId('form-error-summary')).resolves.toBe(true);
+    await expect(
+      screen.findByTestId('form-error-summary')
+    ).resolves.toBeInTheDocument();
     expect(saves.step1).not.toHaveBeenCalled();
 
     await user.type(screen.getByLabelText('Name one'), 'abc{Enter}');
 
-    await expect(screen.findByLabelText('Name two')).resolves.toBe(true);
+    await expect(
+      screen.findByLabelText('Name two')
+    ).resolves.toBeInTheDocument();
     expect(saves.step1).toHaveBeenCalledTimes(1);
   });
 
@@ -252,7 +256,9 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
     await act(() => router.navigate('/elsewhere'));
 
-    await expect(screen.findByText('Elsewhere Page')).resolves.toBe(true);
+    await expect(
+      screen.findByText('Elsewhere Page')
+    ).resolves.toBeInTheDocument();
     expect(screen.queryByTestId(MODAL)).toBeNull();
   });
 
@@ -267,12 +273,12 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
     await navigateAndSettle(router);
 
-    expect(screen.getByTestId(MODAL)).toBe(true);
+    expect(screen.getByTestId(MODAL)).toBeInTheDocument();
 
     await user.click(screen.getByTestId('prompt-cancel-button'));
     await waitFor(() => expect(screen.queryByTestId(MODAL)).toBeNull());
 
-    expect(screen.getByLabelText('Name one')).toBe(true);
+    expect(screen.getByLabelText('Name one')).toBeInTheDocument();
   });
 
   it('blocks a dirty form and leaves when Discard is chosen', async () => {
@@ -287,6 +293,8 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     await navigateAndSettle(router);
     await user.click(screen.getByTestId('prompt-leave-button'));
 
-    await expect(screen.findByText('Elsewhere Page')).resolves.toBe(true);
+    await expect(
+      screen.findByText('Elsewhere Page')
+    ).resolves.toBeInTheDocument();
   });
 });

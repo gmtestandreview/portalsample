@@ -13,7 +13,7 @@ const mockInstance = {
 };
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: vi.fn(() => ({
@@ -34,7 +34,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  '@azure/msal-browser',
   () =>
     ({
       InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
@@ -44,7 +44,7 @@ vi.mock(
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
 
-vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
+vi.mock('../../../ClientApp/src/api/web-api-client', () => {
   return {
     UsersClient: class {
       setAuthToken = vi.fn();
@@ -55,7 +55,7 @@ vi.mock(import('../../../ClientApp/src/api/web-api-client'), () => {
 });
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -63,7 +63,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/targetOrganisation'),
+  '../../../ClientApp/src/storage/targetOrganisation',
   () =>
     ({
       default: vi.fn(),
@@ -72,7 +72,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/terms-config.json'),
+  '../../../ClientApp/src/terms-config.json',
   () =>
     ({
       default: { TermsVersion: '1' },
@@ -80,7 +80,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   () =>
     ({
       mapToUserProfile: vi.fn().mockReturnValue(undefined),
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: [] },
@@ -131,7 +131,7 @@ describe('accountProvider — errored state', () => {
       expect(screen.getByTestId('protected-content')).toBeInTheDocument()
     );
 
-    expect(mockSignIn).toHaveBeenCalledWith();
+    expect(mockSignIn).toHaveBeenCalled();
     expect(mockSignIn).toHaveBeenCalledWith({});
   });
 
@@ -145,7 +145,7 @@ describe('accountProvider — errored state', () => {
     // Wait for the error state to be set (loading spinner disappears)
     await waitFor(() => {
       // Check if logoutRedirect was called (which happens in the error handler)
-      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith();
+      expect(mockInstance.logoutRedirect).toHaveBeenCalled();
     });
 
     // The error message should be displayed
@@ -157,7 +157,7 @@ describe('accountProvider — errored state', () => {
     expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
 
     // Verify that logoutRedirect was called to handle the error
-    expect(mockInstance.logoutRedirect).toHaveBeenCalledWith();
+    expect(mockInstance.logoutRedirect).toHaveBeenCalled();
   });
 
   it('still requests logout when redirect response handling fails', async () => {

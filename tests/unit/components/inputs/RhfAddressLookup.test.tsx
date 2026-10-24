@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useAccount: () => mocks.account,
@@ -34,7 +34,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/api/web-api-client'),
+  '@/api/web-api-client',
   async (importOriginal) =>
     ({
       ...(await importOriginal<typeof WebApiClientModule>()),
@@ -230,7 +230,7 @@ describe('rhfAddressLookup results', () => {
 
     await search('12 Secret Street');
 
-    await waitFor(() => expect(logError).toHaveBeenCalledWith());
+    await waitFor(() => expect(logError).toHaveBeenCalled());
     logError.mock.calls.forEach(([message]) =>
       expect(String(message)).not.toContain('Secret')
     );

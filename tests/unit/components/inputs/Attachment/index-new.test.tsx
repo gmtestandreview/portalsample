@@ -167,7 +167,7 @@ describe(AttachmentNew, () => {
 
     await user.click(screen.getByTestId('attachments'));
 
-    expect(inputClick).toHaveBeenCalledWith();
+    expect(inputClick).toHaveBeenCalled();
 
     inputClick.mockRestore();
   });
@@ -184,7 +184,7 @@ describe(AttachmentNew, () => {
       .getByLabelText('Upload supporting documents')
       .dispatchEvent(clickEvent);
 
-    expect(preventDefault).toHaveBeenCalledWith();
+    expect(preventDefault).toHaveBeenCalled();
   });
 
   it('ignores null-valued and null-file input changes', () => {

@@ -54,7 +54,9 @@ describe(resolveErrorState, () => {
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
       expect(
         resolveErrorState(makeError(500), undefined, ErrorType.Load)
-      ).toEqual({ kind: 'loading' });
+      ).toEqual({
+        kind: 'loading',
+      });
     });
 
     it('returns loading for a network error with no status property', () => {

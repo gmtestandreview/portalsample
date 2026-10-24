@@ -14,7 +14,7 @@ import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/Uns
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },

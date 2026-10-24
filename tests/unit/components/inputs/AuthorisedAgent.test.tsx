@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import AuthorisedAgent from '@/components/Inputs/AuthorisedAgent';
 
 vi.mock(
-  import('@/components/Inputs/TextInput'),
+  '@/components/Inputs/TextInput',
   () =>
     ({
       default: ({
@@ -27,7 +27,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Inputs/NumberInput'),
+  '@/components/Inputs/NumberInput',
   () =>
     ({
       default: ({
@@ -60,7 +60,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Inputs/AddressLookup'),
+  '@/components/Inputs/AddressLookup',
   () =>
     ({
       default: ({

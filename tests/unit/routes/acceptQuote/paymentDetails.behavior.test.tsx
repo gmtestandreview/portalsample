@@ -29,14 +29,14 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
 const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => msalContext,
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -44,14 +44,14 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
-      vi.spyOn(this, 'setAuthToken').mockImplementation();
+      this.setAuthToken = vi.fn();
       this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -171,7 +171,7 @@ describe('paymentDetails form behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -228,7 +228,7 @@ describe('paymentDetails form behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toEqual(
       expect.objectContaining({
@@ -485,7 +485,7 @@ describe('paymentDetails form behavior', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',
@@ -516,7 +516,7 @@ describe('paymentDetails form behavior', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',

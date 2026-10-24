@@ -44,14 +44,14 @@ const selectNamed = (name: string) =>
 const checkboxGroupNamed = (name: string) =>
   defined(captured.checkboxGroups.get(name), `checkbox group "${name}"`);
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
@@ -60,7 +60,7 @@ vi.mock(
 
 // HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/HidableField'),
+  '../../../../ClientApp/src/components/forms/HidableField',
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/SelectInput'),
+  '../../../../ClientApp/src/components/Inputs/SelectInput',
   () =>
     ({
       default: ({
@@ -108,7 +108,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/CheckboxGroup'),
+  '../../../../ClientApp/src/components/Inputs/CheckboxGroup',
   () =>
     ({
       default: ({
@@ -128,7 +128,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/RadioButton'),
+  '../../../../ClientApp/src/components/Inputs/RadioButton',
   () =>
     ({
       default: ({
@@ -160,7 +160,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  '../../../../ClientApp/src/components/Inputs/TextInput',
   () =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
@@ -170,7 +170,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextAreaInput'),
+  '../../../../ClientApp/src/components/Inputs/TextAreaInput',
   () =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
@@ -180,7 +180,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/CertificateNumberLookup'),
+  '../../../../ClientApp/src/components/Inputs/CertificateNumberLookup',
   () =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
@@ -190,7 +190,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
+  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
   () =>
     ({
       default: ({
@@ -211,7 +211,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/SummaryDisplay'),
+  '../../../../ClientApp/src/components/SummaryDisplay',
   () =>
     ({
       default: ({

@@ -12,7 +12,7 @@ import { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import { defined } from '../helpers/defined';
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: vi.fn(),

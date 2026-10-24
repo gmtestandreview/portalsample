@@ -20,7 +20,7 @@ import type { FormikValues } from 'formik';
 // the RHF shell (see the design addendum, parity contract).
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -30,7 +30,7 @@ vi.mock(
 // The real WizardStep wraps an error boundary and analytics that are not under
 // test; render its children directly.
 vi.mock(
-  import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
+  '../../../../../ClientApp/src/analytics/GoogleAnalytics',
   () =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
@@ -220,7 +220,7 @@ describe('formik wizard shell characterisation', () => {
     await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
 
     expect(onSaveAndExit.mock.calls[0]?.[0]).toEqual({});
-    await expect(screen.findByText('Done Page')).resolves.toBe(true);
+    await expect(screen.findByText('Done Page')).resolves.toBeInTheDocument();
   });
 
   it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
@@ -236,7 +236,9 @@ describe('formik wizard shell characterisation', () => {
     await user.clear(input);
     await user.tab();
 
-    await expect(screen.findByText('Name is required')).resolves.toBe(true);
+    await expect(
+      screen.findByText('Name is required')
+    ).resolves.toBeInTheDocument();
   });
 
   it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {

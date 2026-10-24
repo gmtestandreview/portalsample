@@ -7,7 +7,7 @@ import type { CustomDatePickerProps } from '@/components/Inputs/DatePicker/types
 import { parseDateOnlyInput } from '@/utils/dateOnly';
 
 vi.mock(
-  import('@/components/Inputs/DatePicker/CustomDatePicker'),
+  '@/components/Inputs/DatePicker/CustomDatePicker',
   () =>
     ({
       default: ({

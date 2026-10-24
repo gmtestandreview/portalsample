@@ -31,7 +31,7 @@ const providerMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -48,7 +48,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  '@azure/msal-browser',
   () =>
     ({
       InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
@@ -56,7 +56,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       UsersClient: class {
@@ -68,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -79,7 +79,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/targetOrganisation'),
+  '../../../ClientApp/src/storage/targetOrganisation',
   () =>
     ({
       default: providerMocks.setStoredTargetOrganisation,
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/terms-config.json'),
+  '../../../ClientApp/src/terms-config.json',
   () =>
     ({
       default: { TermsVersion: '1' },
@@ -96,7 +96,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['read'] },
@@ -370,7 +370,7 @@ describe('accountProvider dispatch callbacks', () => {
     );
 
     await waitFor(() =>
-      expect(providerMocks.logoutRedirect).toHaveBeenCalledWith()
+      expect(providerMocks.logoutRedirect).toHaveBeenCalled()
     );
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
@@ -390,7 +390,7 @@ describe('accountProvider dispatch callbacks', () => {
     );
 
     await waitFor(() =>
-      expect(providerMocks.logoutRedirect).toHaveBeenCalledWith()
+      expect(providerMocks.logoutRedirect).toHaveBeenCalled()
     );
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledTimes(1);

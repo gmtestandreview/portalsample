@@ -25,14 +25,14 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -59,7 +59,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  '../../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -67,7 +67,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
@@ -156,7 +156,7 @@ describe('application documents with the real RHF form', () => {
     await waitFor(() =>
       expect(
         clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalledWith()
+      ).toHaveBeenCalled()
     );
     const [applicationId, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
@@ -204,7 +204,7 @@ describe('application documents with the real RHF form', () => {
     await waitFor(() =>
       expect(
         clients.patternApproval.methods.commitAppDocuments
-      ).toHaveBeenCalledWith()
+      ).toHaveBeenCalled()
     );
     const [, values] = defined(
       clients.patternApproval.methods.commitAppDocuments.mock.calls[0]

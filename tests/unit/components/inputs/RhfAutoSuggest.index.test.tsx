@@ -19,7 +19,7 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer'),
+  '@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer',
   () =>
     ({
       default: (props: MockContainerProps) => {
@@ -113,7 +113,7 @@ describe('rhfAutoSuggest parent state', () => {
       await containerState.props?.onSearchTermChange('');
     });
 
-    expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
+    expect(onSelectedOption).toHaveBeenCalledOnce();
     expect(onSelectedOption.mock.calls[0]).toEqual([]);
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
   });

@@ -40,7 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -57,7 +57,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/storage/notification'),
+  '@/storage/notification',
   () =>
     ({
       getBranchModalNotification: () => mocks.getBranchModalNotification(),
@@ -66,7 +66,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -76,7 +76,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>
 );
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -85,7 +85,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/components/Alert/NotificationMessage'),
+  '@/components/Alert/NotificationMessage',
   () =>
     ({
       default: ({ id }: { id: string }) => (
@@ -431,7 +431,7 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
+    expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
   });
 
   // ── sorting ─────────────────────────────────────────────────────────────
@@ -480,8 +480,12 @@ describe(BranchSelectorModal, () => {
 
     expect(mocks.navigate).toHaveBeenCalledWith('/');
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
-    expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith();
+    expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
+    expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
+      'ACME Corporation',
+      'ACME Corporation',
+      'Sydney Office'
+    );
   });
 
   // ── save — RFQSelectOrg ─────────────────────────────────────────────────
@@ -509,7 +513,7 @@ describe(BranchSelectorModal, () => {
       );
     });
 
-    expect(reloadMock).toHaveBeenCalledWith();
+    expect(reloadMock).toHaveBeenCalled();
     expect(mocks.navigate).not.toHaveBeenCalled();
 
     Object.defineProperty(globalThis, 'location', {
@@ -551,7 +555,7 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
     });
 
     // Helper returned early — no dispatch calls made
@@ -566,10 +570,10 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith();
+      expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
     });
 
-    expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith();
+    expect(mocks.setDefaultOrganisationId).toHaveBeenCalled();
     expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
   });
 
@@ -581,10 +585,13 @@ describe(BranchSelectorModal, () => {
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
     await waitFor(() => {
-      expect(mocks.setCompleted).toHaveBeenCalledWith();
+      expect(mocks.setCompleted).toHaveBeenCalled();
     });
 
-    expect(mocks.setTargetOrganisation).toHaveBeenCalledWith();
+    expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(
+      'ACME Corporation',
+      '00000000001'
+    );
   });
 
   it('does nothing when MSAL interaction is in progress (line 187 false branch)', async () => {

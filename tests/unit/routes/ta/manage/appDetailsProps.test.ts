@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../../../ClientApp/src/api/web-api-client'),
+  '../../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -39,7 +39,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/authentication/authConfig'),
+  '../../../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -47,7 +47,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {

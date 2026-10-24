@@ -5,7 +5,7 @@ const bridgeMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-browser/redirect-bridge'),
+  '@azure/msal-browser/redirect-bridge',
   () => bridgeMocks satisfies __ExactMockModule<__TestMockModule16>
 );
 

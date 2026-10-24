@@ -26,7 +26,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -36,7 +36,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -45,7 +45,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/hooks'),
+  '../../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: mocks.useAccountState,
@@ -53,7 +53,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  '../../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -61,7 +61,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -83,7 +83,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -94,7 +94,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/BlockUISpinner'),
+  '../../../../ClientApp/src/components/BlockUISpinner',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -104,7 +104,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: () => {},
@@ -112,7 +112,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/WizardForm'),
+  '../../../../ClientApp/src/components/forms/WizardForm',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -122,7 +122,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -132,28 +132,28 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  '../../../../ClientApp/src/routes/acceptQuote/reportRecipient',
   () =>
     ({
       default: () => <div data-testid='step-report-recipient' />,
     }) satisfies __ExactMockModule<__TestMockModule61>
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
+  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn',
   () =>
     ({
       default: () => <div data-testid='step-delivery-and-return' />,
     }) satisfies __ExactMockModule<__TestMockModule62>
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  '../../../../ClientApp/src/routes/acceptQuote/paymentDetails',
   () =>
     ({
       default: () => <div data-testid='step-payment-details' />,
     }) satisfies __ExactMockModule<__TestMockModule63>
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
+  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept',
   () =>
     ({
       default: () => <div data-testid='step-summary-and-accept' />,
@@ -161,28 +161,28 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps'),
+  '../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps',
   () =>
     ({
       default: () => ({}),
     }) satisfies __ExactMockModule<__TestMockModule65>
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps'),
+  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps',
   () =>
     ({
       default: () => ({}),
     }) satisfies __ExactMockModule<__TestMockModule66>
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps'),
+  '../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps',
   () =>
     ({
       default: () => ({}),
     }) satisfies __ExactMockModule<__TestMockModule67>
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps'),
+  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps',
   () =>
     ({
       default: () => ({}),

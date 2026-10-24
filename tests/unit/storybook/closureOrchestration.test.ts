@@ -214,7 +214,7 @@ describe('runClosure', () => {
       'release-freeze',
       'stop-server',
     ]);
-    expect(adapters.produceMcpReceipts).toHaveBeenCalledExactlyOnceWith();
+    expect(adapters.produceMcpReceipts).toHaveBeenCalledOnce();
   });
 
   it('fails closed when a pre-freeze gate is reported', async () => {

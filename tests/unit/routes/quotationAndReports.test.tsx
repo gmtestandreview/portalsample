@@ -43,7 +43,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -54,7 +54,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>
 );
 
-vi.mock(import('@azure/msal-browser'), async (importOriginal) => {
+vi.mock('@azure/msal-browser', async (importOriginal) => {
   const actual = await importOriginal<typeof MsalBrowserModule>();
 
   return {
@@ -64,7 +64,7 @@ vi.mock(import('@azure/msal-browser'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: mocks.useAccountState,
@@ -75,44 +75,41 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
     }) satisfies __ExactMockModule<__TestMockModule8>
 );
 
-vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof WebApiClientModule>();
+vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof WebApiClientModule>();
 
-    return {
-      ...actual,
-      ApplicationType: {
-        QuoteAccept: 'QuoteAccept',
-        QuoteRequest: 'QuoteRequest',
-      },
-      QuoteClient: vi.fn(function QuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-          declineQuote: mocks.declineQuote,
-        };
-      }),
-      DashboardClient: vi.fn(function DashboardClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
-            mocks.getDashboardInstrumentReports,
-        };
-      }),
-    } satisfies __ExactMockModule<__TestMockModule4>;
-  }
-);
+  return {
+    ...actual,
+    ApplicationType: {
+      QuoteAccept: 'QuoteAccept',
+      QuoteRequest: 'QuoteRequest',
+    },
+    QuoteClient: vi.fn(function QuoteClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+        declineQuote: mocks.declineQuote,
+      };
+    }),
+    DashboardClient: vi.fn(function DashboardClientMock() {
+      return {
+        setAuthToken: mocks.setAuthToken,
+        getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
+          mocks.getDashboardInstrumentReports,
+      };
+    }),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+});
 
 vi.mock(
-  import('../../../ClientApp/src/storage/notification'),
+  '../../../ClientApp/src/storage/notification',
   () =>
     ({
       getDashboardNotification: mocks.getDashboardNotification,
@@ -125,7 +122,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/types'),
+  '../../../ClientApp/src/storage/types',
   () =>
     ({
       NotificationSeverity: {
@@ -136,7 +133,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/sessionStorageCache'),
+  '../../../ClientApp/src/storage/sessionStorageCache',
   () =>
     ({
       default: () => ({
@@ -147,7 +144,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
+  '../../../ClientApp/src/components/Utilities/useHtmlTitle',
   () =>
     ({
       default: () => {},
@@ -155,7 +152,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/useBodyClass'),
+  '../../../ClientApp/src/components/Utilities/useBodyClass',
   () =>
     ({
       default: () => {},
@@ -163,7 +160,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/BlockUISpinner'),
+  '../../../ClientApp/src/components/BlockUISpinner',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -173,7 +170,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Breadcrumb'),
+  '../../../ClientApp/src/components/Breadcrumb',
   () =>
     ({
       default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
@@ -185,7 +182,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/HeaderIntroText'),
+  '../../../ClientApp/src/components/HeaderIntroText',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -195,7 +192,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
     ({
       default: ({
@@ -217,7 +214,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ConfirmationModal'),
+  '../../../ClientApp/src/components/modals/ConfirmationModal',
   () =>
     ({
       default: ({
@@ -246,7 +243,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms',
   () =>
     ({
       default: ({
@@ -265,7 +262,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
+  '../../../ClientApp/src/components/Utilities/ViewPdfQuote',
   () =>
     ({
       default: ({ text }: { text: string }) => (
@@ -275,7 +272,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/ViewMeasurementReport'),
+  '../../../ClientApp/src/components/Utilities/ViewMeasurementReport',
   () =>
     ({
       default: ({ text }: { text: string }) => (
@@ -285,7 +282,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/mailingLabel'),
+  '../../../ClientApp/src/components/Utilities/mailingLabel',
   () =>
     ({
       default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
@@ -295,7 +292,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Utilities/deliveryInstructions'),
+  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
   () =>
     ({
       default: ({
@@ -309,7 +306,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Pill/QuoteStatusPill'),
+  '../../../ClientApp/src/components/Pill/QuoteStatusPill',
   () =>
     ({
       default: ({ status }: { status: string }) => (
@@ -319,7 +316,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Pill/StatusPill'),
+  '../../../ClientApp/src/components/Pill/StatusPill',
   () =>
     ({
       default: ({ status }: { status: string }) => (
@@ -329,7 +326,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Pagination'),
+  '../../../ClientApp/src/components/Pagination',
   () =>
     ({
       default: ({
@@ -354,7 +351,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/InTextLink'),
+  '../../../ClientApp/src/components/InTextLink',
   () =>
     ({
       default: ({
@@ -372,7 +369,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
+  '../../../ClientApp/src/components/Icons/ExternalLinkIcon',
   () =>
     ({
       default: () => <span data-testid='external-link-icon' />,
@@ -380,7 +377,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/openWindow'),
+  '../../../ClientApp/src/routes/common/openWindow',
   () =>
     ({
       openInternalRouteInNewTab: mocks.openInternalRouteInNewTab,
@@ -388,7 +385,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   async (importOriginal) => {
     const actual = await importOriginal<typeof HelperFunctionsModule>();
 
@@ -400,7 +397,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -790,7 +787,7 @@ describe('quotation and measurement report routes', () => {
       expect(screen.getByTestId('not-found')).toBeInTheDocument()
     );
 
-    expect(mocks.handleReportFileError).toHaveBeenCalledWith();
+    expect(mocks.handleReportFileError).toHaveBeenCalled();
   });
 
   it('waits to load measurement reports until account and MSAL prerequisites are available', async () => {
@@ -863,9 +860,7 @@ describe('quotation and measurement report routes', () => {
 
     renderRoute('/reports/Balance', <InstrMeasurementReport />, '/reports/:id');
 
-    await waitFor(() =>
-      expect(mocks.handleReportFileError).toHaveBeenCalledWith()
-    );
+    await waitFor(() => expect(mocks.handleReportFileError).toHaveBeenCalled());
 
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to get Measurement report data',

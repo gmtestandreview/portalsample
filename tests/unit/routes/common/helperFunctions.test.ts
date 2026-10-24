@@ -56,7 +56,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
 
@@ -76,7 +76,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/notification'),
+  '../../../../ClientApp/src/storage/notification',
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -84,7 +84,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/openWindow'),
+  '../../../../ClientApp/src/routes/common/openWindow',
   () =>
     ({
       openUrlInSecureNewTab: mocks.openUrlInSecureNewTab,
@@ -93,7 +93,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('react-ga4'),
+  'react-ga4',
   () =>
     ({
       default: {
@@ -162,7 +162,7 @@ describe('route common helper functions', () => {
         true
       );
 
-      expect(DashboardClient).toHaveBeenCalledWith();
+      expect(DashboardClient).toHaveBeenCalled();
       expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
       expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalledWith(
         ...expectedArgs
@@ -227,7 +227,7 @@ describe('route common helper functions', () => {
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalledWith();
+    expect(mocks[methodName as keyof typeof mocks]).toHaveBeenCalled();
   });
 
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {
@@ -385,7 +385,7 @@ describe('route common helper functions', () => {
     triggerDownload('blob:unit-test', 'quote.pdf');
 
     expect(createElement).toHaveBeenCalledWith('a');
-    expect(click).toHaveBeenCalledWith();
+    expect(click).toHaveBeenCalled();
   });
 
   it('sets dashboard notifications for report and unexpected errors', () => {
@@ -405,7 +405,7 @@ describe('route common helper functions', () => {
       behavior: 'smooth',
       block: 'start',
     });
-    expect(notification.focus).toHaveBeenCalledWith();
+    expect(notification.focus).toHaveBeenCalled();
     expect(setDashboardNotification).toHaveBeenCalledWith({
       message: expect.stringContaining(
         'unexpected error has occurred with downloading the PDF report'

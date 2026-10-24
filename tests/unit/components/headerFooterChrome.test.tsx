@@ -24,7 +24,7 @@ const msalState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
@@ -35,7 +35,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: vi.fn(),
@@ -43,7 +43,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/authentication/hooks'),
+  '@/authentication/hooks',
   () =>
     ({
       useAccountState: vi.fn(),
@@ -51,7 +51,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/modals/ModalContext'),
+  '@/components/modals/ModalContext',
   () =>
     ({
       useModalDispatch: vi.fn(),
@@ -59,7 +59,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/routes/common/helperFunctions'),
+  '@/routes/common/helperFunctions',
   () =>
     ({
       getEnvironment: vi.fn(),
@@ -67,7 +67,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/assets/GovCrest.svg'),
+  '@/assets/GovCrest.svg',
   () =>
     ({
       default: 'gov-crest.svg',
@@ -75,7 +75,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/modals/ContentModal'),
+  '@/components/modals/ContentModal',
   () =>
     ({
       default: ({

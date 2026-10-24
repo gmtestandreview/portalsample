@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import { expect, type Page } from '@playwright/test';
 import type { DataTable } from 'playwright-bdd';
 import { Given, Then, When } from '../../support/fixtures';

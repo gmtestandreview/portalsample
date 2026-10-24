@@ -117,7 +117,7 @@ describe('storybook unhandled-request policy', () => {
       defaults,
     });
 
-    expect(defaults.error).toHaveBeenCalledExactlyOnceWith();
+    expect(defaults.error).toHaveBeenCalledOnce();
     expect(defaults.warn).not.toHaveBeenCalled();
   });
 

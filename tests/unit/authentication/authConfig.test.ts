@@ -2,7 +2,7 @@ import { LogLevel } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  import('@/env'),
+  '@/env',
   () =>
     ({
       env: {
@@ -110,7 +110,7 @@ describe('auth configuration', () => {
   it('falls back to empty strings when optional runtime auth env values are missing', async () => {
     vi.resetModules();
     vi.doMock(
-      import('@/env'),
+      '@/env',
       () =>
         ({
           env: {

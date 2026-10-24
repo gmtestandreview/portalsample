@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import Layout from '@/components/Layout';
 
 vi.mock(
-  import('@/components/Header'),
+  '@/components/Header',
   () =>
     ({
       default: () => <header>Mock header</header>,
@@ -12,7 +12,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Footer'),
+  '@/components/Footer',
   () =>
     ({
       default: () => <footer>Mock footer</footer>,
@@ -20,7 +20,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Utilities/skipLinks'),
+  '@/components/Utilities/skipLinks',
   () =>
     ({
       default: () => <a href='#main'>Skip to main content</a>,
@@ -28,7 +28,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Utilities/backToTopButton'),
+  '@/components/Utilities/backToTopButton',
   () =>
     ({
       default: () => <nav aria-label='Back to top'>Back to top</nav>,
@@ -36,7 +36,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Utilities/routeChangeScrollTop'),
+  '@/components/Utilities/routeChangeScrollTop',
   () =>
     ({
       default: () => null,
@@ -44,7 +44,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -52,7 +52,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/hooks/useRouteAccessibility'),
+  '@/hooks/useRouteAccessibility',
   () =>
     ({
       useRouteAccessibility: () => ({

@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -47,7 +47,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/authentication/hooks'),
+  '@/authentication/hooks',
   () =>
     ({
       useAccountState: () => ({
@@ -57,7 +57,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>
 );
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -72,7 +72,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: mocks.error },
@@ -82,7 +82,7 @@ vi.mock(
 // The lookup talks to the address service; stand in a marker element. The edit
 // form renders the RHF twin once migrated; the summary keeps the Formik one.
 vi.mock(
-  import('@/components/Inputs/AddressLookup'),
+  '@/components/Inputs/AddressLookup',
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -91,7 +91,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule31>
 );
 vi.mock(
-  import('@/components/Inputs/RhfAddressLookup'),
+  '@/components/Inputs/RhfAddressLookup',
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -268,7 +268,7 @@ describe('deliveryAndReturn behavior: visibility', () => {
     mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
+    await waitFor(() => expect(mocks.error).toHaveBeenCalled());
 
     expect(screen.getByTestId('info-summary')).toBeInTheDocument();
   });
@@ -326,7 +326,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(submittedValues(onSubmit)).toEqual({
       returnContactType: 'SamePerson',
@@ -367,7 +367,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(submittedValues(onSubmit)).toEqual({
       returnContactType: 'SamePerson',
@@ -397,7 +397,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     await user.type(screen.getByLabelText('Email address'), 'jane@example.com');
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(submittedValues(onSubmit)).toMatchObject({
       contact: {
@@ -498,7 +498,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save and exit' }));
 
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledExactlyOnceWith());
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
 
     expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
   });
