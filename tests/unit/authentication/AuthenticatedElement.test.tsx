@@ -1,7 +1,5 @@
 import { render, screen } from '@testing-library/react';
-
 import type { ComponentType, ReactNode } from 'react';
-
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const authElementMocks = vi.hoisted(() => ({
@@ -20,7 +18,7 @@ const authElementMocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       MsalAuthenticationTemplate: ({
@@ -62,7 +60,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  '@azure/msal-browser',
   () =>
     ({
       InteractionType: {
@@ -72,7 +70,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('react-router'),
+  'react-router',
   () =>
     ({
       isRouteErrorResponse: authElementMocks.isRouteErrorResponse,
@@ -84,7 +82,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/preConditions/PreConditions'),
+  '../../../ClientApp/src/routes/preConditions/PreConditions',
   () =>
     ({
       default: ({
@@ -136,7 +134,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
+  '../../../ClientApp/src/instrumentation/AppInsightsService',
   () =>
     ({
       ai: {
@@ -164,8 +162,8 @@ describe('authenticatedElement', () => {
     authElementMocks.msalTemplateProps = undefined;
     authElementMocks.routeError = undefined;
   });
+
   it('wraps children in preconditions, MSAL authentication, and an error boundary', async () => {
-    expect.assertions(5);
     const { default: AuthenticatedElement } =
       await import('../../../ClientApp/src/authentication/AuthenticatedElement');
 
@@ -192,5 +190,66 @@ describe('authenticatedElement', () => {
       },
       interactionType: 'Redirect',
     });
+  });
+
+  it('passes displayHeaderAndFooter as true by default', async () => {
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+
+    render(<AuthenticatedElement />);
+
+    expect(screen.getByTestId('preconditions')).toHaveAttribute(
+      'data-header-and-footer',
+      'true',
+    );
+  });
+
+  it('renders the logging in loading component for MSAL loading state', async () => {
+    authElementMocks.msalTemplateMode = 'loading';
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+
+    render(<AuthenticatedElement />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('Logging in...');
+  });
+
+  it('redirects 404 route errors to the not found route', async () => {
+    authElementMocks.msalTemplateMode = 'error';
+    authElementMocks.routeError = { status: 404 };
+    authElementMocks.isRouteErrorResponse.mockReturnValue(true);
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+
+    render(<AuthenticatedElement />);
+
+    expect(authElementMocks.setActiveAccount).toHaveBeenCalledWith(null);
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/not-found');
+  });
+
+  it('redirects non-404 route errors to the server error route', async () => {
+    authElementMocks.msalTemplateMode = 'error';
+    authElementMocks.routeError = { status: 500 };
+    authElementMocks.isRouteErrorResponse.mockReturnValue(true);
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+
+    render(<AuthenticatedElement />);
+
+    expect(authElementMocks.setActiveAccount).toHaveBeenCalledWith(null);
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/server-error');
+  });
+
+  it('redirects non-route errors to the home route', async () => {
+    authElementMocks.msalTemplateMode = 'error';
+    authElementMocks.routeError = new Error('Auth failed');
+    authElementMocks.isRouteErrorResponse.mockReturnValue(false);
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+
+    render(<AuthenticatedElement />);
+
+    expect(authElementMocks.setActiveAccount).toHaveBeenCalledWith(null);
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/');
   });
 });

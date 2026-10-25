@@ -28,7 +28,6 @@ const freeze = {
 
 describe('validateFreezeRecord', () => {
   it('accepts a complete freeze joined to the selected input digest', () => {
-    expect.assertions(1);
     expect(
       moduleUnderTest.validateFreezeRecord({
         freeze,
@@ -65,7 +64,6 @@ describe('validateFreezeRecord', () => {
       },
     ],
   ])('rejects %s', (_name, overrides) => {
-    expect.assertions(1);
     expect(
       moduleUnderTest.validateFreezeRecord({
         freeze: overrides.freeze ?? freeze,

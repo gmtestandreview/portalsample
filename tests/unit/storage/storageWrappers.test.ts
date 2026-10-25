@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
 import {
   clearBranchModalNotification,
   clearDashboardInfoNotification,
@@ -20,12 +19,10 @@ import {
   setManageAccessNotification,
   setReportingNotification,
 } from '../../../ClientApp/src/storage/notification';
-
 import setTargetOrganisation, {
   clearTargetOrganisation,
   getTargetOrganisation,
 } from '../../../ClientApp/src/storage/targetOrganisation';
-
 import {
   NotificationSeverity,
   type Notification,
@@ -36,9 +33,11 @@ describe('notification storage wrappers', () => {
     message: 'Saved successfully',
     severity: NotificationSeverity.Success,
   };
+
   beforeEach(() => {
     sessionStorage.clear();
   });
+
   it.each([
     [
       'branch modal',
@@ -85,7 +84,6 @@ describe('notification storage wrappers', () => {
   ])(
     'sets, gets, and clears the %s notification',
     (_name, setNotification, getNotification, clearNotification, key) => {
-      expect.assertions(5);
       expect(getNotification()).toBeUndefined();
 
       setNotification(notification);
@@ -99,4 +97,31 @@ describe('notification storage wrappers', () => {
       expect(getNotification()).toBeUndefined();
     },
   );
+});
+
+describe('target organisation storage wrapper', () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
+  it('sets, gets, and clears the target organisation', () => {
+    const targetOrganisation = {
+      targetOrganisationAbn: '12345678901',
+      targetOrganisationName: 'Acme Pty Ltd',
+    };
+
+    expect(getTargetOrganisation()).toBeUndefined();
+
+    setTargetOrganisation(targetOrganisation);
+
+    expect(sessionStorage.getItem('targetOrganisation')).toBe(
+      JSON.stringify(targetOrganisation),
+    );
+    expect(getTargetOrganisation()).toEqual(targetOrganisation);
+
+    clearTargetOrganisation();
+
+    expect(sessionStorage.getItem('targetOrganisation')).toBeNull();
+    expect(getTargetOrganisation()).toBeUndefined();
+  });
 });

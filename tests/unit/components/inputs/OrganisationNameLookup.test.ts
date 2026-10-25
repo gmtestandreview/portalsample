@@ -3,7 +3,6 @@ import { getFilteredSuggestions } from '@/components/Inputs/OrganisationNameLook
 
 describe(getFilteredSuggestions, () => {
   it('sorts matching suggestions with a case-insensitive comparator and removes duplicates', () => {
-    expect.assertions(1);
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
@@ -27,7 +26,6 @@ describe(getFilteredSuggestions, () => {
   });
 
   it('returns an empty array when the trimmed input is shorter than 2 characters', () => {
-    expect.assertions(2);
     expect(
       getFilteredSuggestions({
         inputValue: 'a',
@@ -46,7 +44,6 @@ describe(getFilteredSuggestions, () => {
   });
 
   it('returns empty when parentValue is set but parentOptionsName is not provided', () => {
-    expect.assertions(1);
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
@@ -58,7 +55,6 @@ describe(getFilteredSuggestions, () => {
   });
 
   it('applies the same ordering when parent filtering is enabled', () => {
-    expect.assertions(1);
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',

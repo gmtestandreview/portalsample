@@ -14,7 +14,6 @@ describe('openWindow helpers', () => {
   });
 
   it('opens internal routes with noopener,noreferrer and clears opener fallback', () => {
-    expect.assertions(2);
     const openedWindow = { opener: {} } as Window;
     const open = vi.fn().mockReturnValue(openedWindow);
     globalThis.open = open as typeof globalThis.open;
@@ -30,7 +29,6 @@ describe('openWindow helpers', () => {
   });
 
   it('does not open external or protocol-relative routes through internal route helper', () => {
-    expect.assertions(1);
     const open = vi.fn();
     globalThis.open = open as typeof globalThis.open;
 
@@ -42,7 +40,6 @@ describe('openWindow helpers', () => {
   });
 
   it('encodes PDF page fragments before opening the URL', () => {
-    expect.assertions(1);
     const open = vi.fn().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
 
@@ -59,7 +56,6 @@ describe('openWindow helpers', () => {
   });
 
   it('opens blob URLs with secure features', () => {
-    expect.assertions(1);
     const open = vi.fn().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
 

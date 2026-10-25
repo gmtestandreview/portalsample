@@ -42,6 +42,30 @@ const severityOf = (ruleId: string): Severity => {
   return Number(raw) as 0 | 1 | 2;
 };
 
+const severityIn = (
+  rules: Record<string, unknown> | undefined,
+  ruleId: string,
+): Severity => {
+  const configured = rules?.[ruleId];
+
+  if (configured === undefined) return 'absent';
+
+  const raw = Array.isArray(configured) ? configured[0] : configured;
+
+  return Number(raw) as 0 | 1 | 2;
+};
+
+const lintTextMessages = async (filePath: string, code: string) => {
+  const eslint = new ESLint();
+  const [result] = await eslint.lintText(code, { filePath });
+
+  if (!result) {
+    throw new Error(`ESLint returned no result for ${filePath}`);
+  }
+
+  return result.messages;
+};
+
 beforeAll(async () => {
   const eslint = new ESLint();
   const config = await eslint.calculateConfigForFile(PROBE_FILE);
@@ -65,11 +89,113 @@ describe('the resolved config actually applies to application files', () => {
   });
 });
 
+describe('runner-specific lint boundaries', () => {
+  it('keeps Vitest rules out of Playwright E2E files and rejects Vitest imports', async () => {
+    expect.assertions(3);
+
+    const eslint = new ESLint();
+    const config = await eslint.calculateConfigForFile(
+      'tests/e2e/steps/account.steps.ts',
+    );
+
+    expect(
+      severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
+    ).toBe(0);
+    expect(severityIn(config.rules, 'vitest/require-hook')).toBe(0);
+    expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
+  });
+
+  it('rejects Vitest assertion imports from Storybook stories', async () => {
+    expect.assertions(2);
+
+    const eslint = new ESLint();
+    const config = await eslint.calculateConfigForFile(
+      'ClientApp/src/components/Accordion/Accordion.stories.tsx',
+    );
+
+    expect(severityIn(config.rules, 'no-restricted-imports')).toBe(2);
+    expect(
+      severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
+    ).toBe(0);
+  });
+
+  it(
+    'reports a Vitest import in a Playwright E2E file',
+    async () => {
+      expect.assertions(1);
+
+      const messages = await lintTextMessages(
+        'tests/e2e/steps/account.steps.ts',
+        "import { expect } from 'vitest';",
+      );
+
+      expect(
+        messages.some(
+          ({ ruleId, severity }) =>
+            ruleId === 'no-restricted-imports' && severity === 2,
+        ),
+      ).toBe(true);
+    },
+    LOAD_TIMEOUT_MS,
+  );
+
+  it(
+    'reports a Vitest assertion import in a Storybook story',
+    async () => {
+      expect.assertions(1);
+
+      const messages = await lintTextMessages(
+        'ClientApp/src/components/Accordion/Accordion.stories.tsx',
+        "import { expect } from 'vitest';",
+      );
+
+      expect(
+        messages.some(
+          ({ ruleId, severity }) =>
+            ruleId === 'no-restricted-imports' && severity === 2,
+        ),
+      ).toBe(true);
+    },
+    LOAD_TIMEOUT_MS,
+  );
+});
+
 describe('the resolved config actually applies to application files', () => {
   it('loads the plugin whose rule surface these assertions describe', () => {
     expect.assertions(1);
     expect(pluginRuleNames.length).toBeGreaterThan(100);
   });
+});
+
+describe('the resolved config actually applies to application files', () => {
+  it(
+    'does not auto-fix partial Vitest mock module specifiers',
+    async () => {
+      expect.assertions(2);
+
+      const eslint = new ESLint({ fix: true });
+      const source =
+        "import { vi } from 'vitest';\nvi.mock('partial-module', () => ({}));\n";
+      const [result] = await eslint.lintText(source, {
+        filePath: 'tests/unit/config/eslintPolicy.test.ts',
+      });
+
+      if (result === undefined) {
+        throw new Error('ESLint returned no result for the policy probe');
+      }
+
+      expect(result.output).toBeUndefined();
+      expect(result.messages).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ruleId: 'vitest/prefer-import-in-mock',
+            severity: 1,
+          }),
+        ]),
+      );
+    },
+    LOAD_TIMEOUT_MS,
+  );
 });
 
 describe('the resolved config actually applies to application files', () => {
@@ -83,6 +209,7 @@ describe('the resolved config actually applies to application files', () => {
 describe('the resolved config actually applies to application files', () => {
   it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
     expect.assertions(1);
+
     const eslint = new ESLint();
     const config = await eslint.calculateConfigForFile('vite.config.mts');
 

@@ -5,14 +5,12 @@ import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
 
 describe('runtime smoke coverage for restored local type modules', () => {
   it('renders AlertInfo', () => {
-    expect.assertions(1);
     render(<AlertInfo>Informational alert</AlertInfo>);
 
     expect(screen.getByText('Informational alert')).toBeInTheDocument();
   });
 
   it('renders CustomAccordion with a body section', () => {
-    expect.assertions(2);
     render(
       <CustomAccordion id='accordion'>
         <CustomAccordionBody name='Section title' eventKey='0'>

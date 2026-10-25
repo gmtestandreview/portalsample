@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -42,7 +42,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -60,7 +60,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 // handler is unreachable without one. This stand-in is always rendered so the
 // "confirmed with no delete target" guard in PaRequestItem can be exercised.
 vi.mock(
-  import('@/components/modals/ConfirmationModal'),
+  '@/components/modals/ConfirmationModal',
   () =>
     ({
       default: ({ onModalYes }: { onModalYes: () => void }) => (
@@ -80,7 +80,6 @@ const request: PatternApprovalDashboardDetailsDto = {
 
 describe('paRequestItem without a delete target', () => {
   it('ignores a confirmation and makes no delete request', async () => {
-    expect.assertions(4);
     const user = userEvent.setup();
     render(
       <MemoryRouter>

@@ -14,8 +14,8 @@ describe('package formatting scripts', () => {
   it('defines repo-wide formatting commands', () => {
     expect.assertions(3);
 
-    expect(scripts.format).toBe('prettier --write .');
-    expect(scripts['format:check']).toBe('prettier --check .');
+    expect(scripts['format']).toBe('npm run format:source');
+    expect(scripts['format:check']).toBe('npm run format:source:check');
     expect(scripts['lint:prettier']).toBe('npm run format:check');
   });
 
@@ -23,9 +23,29 @@ describe('package formatting scripts', () => {
     expect.assertions(3);
 
     expect(scripts['lint:eslint']).toContain('eslint ');
-    expect(scripts.lint).toBe('npm run lint:eslint && npm run format:check');
+    expect(scripts['lint']).toBe('npm run lint:eslint && npm run format:check');
     expect(scripts['lint:fix']).toBe(
-      'npm run lint:eslint -- --fix && npm run format',
+      'npm run lint:eslint -- --fix && npm run format:source',
+    );
+  });
+
+  it('defines scoped formatting and reproducible lint and TypeScript diagnostics', () => {
+    expect.assertions(5);
+
+    expect(scripts['format:source']).toBe(
+      'node scripts/format-contract.mjs --write',
+    );
+    expect(scripts['format:source:check']).toBe(
+      'node scripts/format-contract.mjs --check',
+    );
+    expect(scripts['type-check:diagnostics']).toBe(
+      'node scripts/type-check-diagnostics.mjs --out reports/typescript/diagnostics.json',
+    );
+    expect(scripts['lint:diagnostics']).toBe(
+      'node scripts/lint-diagnostics.mjs --out reports/eslint/diagnostics.json',
+    );
+    expect(scripts['test:lint:diagnostics']).toBe(
+      'node --test scripts/lint-diagnostics.test.mjs',
     );
   });
 
@@ -35,6 +55,19 @@ describe('package formatting scripts', () => {
     expect(scripts['lint:eslint']).toContain(
       '.storybook/**/*.{ts,tsx,js,jsx,mjs}',
     );
+  });
+
+  it('covers maintained root, script, and quality sources in the ESLint contract', () => {
+    expect.assertions(8);
+
+    expect(scripts['lint:eslint']).toContain('eslint.config.mjs');
+    expect(scripts['lint:eslint']).toContain('remark.config.mjs');
+    expect(scripts['lint:eslint']).toContain('test-import.mjs');
+    expect(scripts['lint:eslint']).toContain('scripts/**/*.{js,mjs,ts,mts}');
+    expect(scripts['lint:eslint']).toContain('quality/**/*.{js,mjs,ts,mts}');
+    expect(scripts['lint:eslint']).toContain('storybook-vite-policies.ts');
+    expect(scripts['lint:eslint']).toContain('runtime-env-fixtures.ts');
+    expect(scripts['lint:eslint']).toContain('vitest.shims.d.ts');
   });
 
   it('routes migration-check through the Storybook build wrapper', () => {

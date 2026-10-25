@@ -1,15 +1,9 @@
 import { render, screen, within } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { describe, expect, it, beforeEach, vi } from 'vitest';
-
 import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
-
 import { PatternApprovalStatusEnumDto } from '@/api/web-api-client';
-
 import { DashboardTab } from '@/components/SearchFilter/types';
-
 import PaFilterMenu from '@/components/SearchFilter/TypeApproval/paFilterMenu';
 
 const mocks = vi.hoisted(() => ({
@@ -18,7 +12,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@/authentication/hooks'),
+  '@/authentication/hooks',
   () =>
     ({
       useAccountDispatch: () => ({
@@ -36,7 +30,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Inputs/RadioButtonGroup'),
+  '@/components/Inputs/RadioButtonGroup',
   () =>
     ({
       default: ({
@@ -100,8 +94,8 @@ describe(PaFilterMenu, () => {
     mocks.setUserProfile.mockReset();
     mocks.trackGAEvent.mockReset();
   });
+
   it('shows no applied filters when the initial filters are undefined', async () => {
-    expect.assertions(4);
     renderMenu(undefined);
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
@@ -116,5 +110,181 @@ describe(PaFilterMenu, () => {
       'show',
     );
     expect(mocks.trackGAEvent).toHaveBeenCalledWith('search-filter-dropdown');
+  });
+
+  it('counts changed year, status, and sort filters in the toggle title', () => {
+    renderMenu({
+      filterYearType: 'withintwoyears',
+      filterStatusType: PatternApprovalStatusEnumDto.OnHold,
+      filterSortOrder: 'ascending',
+      filtersChanged: true,
+    });
+
+    const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
+    expect(toggle).toHaveAttribute('title', '3 filters have been applied');
+    expect(within(toggle).getByRole('status')).toHaveTextContent('3');
+  });
+
+  it('applies changed filters, resets paging, and saves the pattern approval dashboard profile', async () => {
+    const initialFilters: PatternApprovalDashboardDto = {
+      filterYearType: 'allYears',
+      filterStatusType: 'allStatuses',
+      filterSortOrder: 'descending',
+      filtersChanged: false,
+      filterActiveTab: DashboardTab.Requests,
+      filterSearchText: 'pattern',
+    };
+    const { setInitialFilters, setCurrentPage } = renderMenu(initialFilters);
+    const user = await openMenu();
+
+    await user.click(
+      screen.getByRole('radio', { name: 'On hold - waiting on customer' }),
+    );
+    await user.click(screen.getByRole('radio', { name: 'Within 2 years' }));
+    await user.click(screen.getByRole('button', { name: 'Show results' }));
+
+    const expectedFilters = {
+      filterYearType: 'withintwoyears',
+      filterStatusType: PatternApprovalStatusEnumDto.OnHold,
+      filtersChanged: true,
+      filterSortOrder: 'descending',
+      filterCurrentPage: 1,
+      filterActiveTab: DashboardTab.Requests,
+      filterSearchText: 'pattern',
+    };
+
+    expect(setCurrentPage).toHaveBeenCalledWith(1);
+    expect(setInitialFilters).toHaveBeenCalledWith(expectedFilters);
+    expect(mocks.setUserProfile).toHaveBeenCalledWith({
+      patternApprovalDashboard: expectedFilters,
+    });
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith('FilterStatusType');
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith('Filteryeartype');
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith('ApplyFilter');
+  });
+
+  it('counts nothing when the changed flag is set but every value is still the default', () => {
+    // Filters changed and then changed back leave the flag set while the values match the
+    // defaults again, so the count has to compare each value rather than just check it is set.
+    renderMenu({
+      filterYearType: 'allYears',
+      filterStatusType: 'allStatuses',
+      filterSortOrder: 'descending',
+      filtersChanged: true,
+    });
+
+    const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+
+    expect(toggle).toHaveAttribute('title', '0 filters have been applied');
+    expect(within(toggle).getByRole('status')).toHaveTextContent('0');
+  });
+
+  it('treats a year-only change as a change even with the status left alone', async () => {
+    // The applied flag is an either-or: leaving the status at its default must not mask a
+    // year that did change.
+    const initialFilters: PatternApprovalDashboardDto = {
+      filterYearType: 'allYears',
+      filterStatusType: 'allStatuses',
+      filterSortOrder: 'descending',
+      filtersChanged: false,
+      filterActiveTab: DashboardTab.Requests,
+      filterSearchText: '',
+    };
+    const { setInitialFilters } = renderMenu(initialFilters);
+    const user = await openMenu();
+
+    await user.click(screen.getByRole('radio', { name: 'Within 2 years' }));
+    await user.click(screen.getByRole('button', { name: 'Show results' }));
+
+    expect(setInitialFilters).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filterYearType: 'withintwoyears',
+        filterStatusType: 'allStatuses',
+        filtersChanged: true,
+      }),
+    );
+  });
+
+  it('resets filters to defaults while preserving the active tab and search text', async () => {
+    const initialFilters: PatternApprovalDashboardDto = {
+      filterYearType: 'olderthantwoyears',
+      filterStatusType: PatternApprovalStatusEnumDto.Completed,
+      filterSortOrder: 'ascending',
+      filtersChanged: true,
+      filterActiveTab: DashboardTab.Instruments,
+      filterSearchText: 'certificate',
+    };
+    const { setInitialFilters, setCurrentPage } = renderMenu(initialFilters);
+    const user = await openMenu();
+
+    await user.click(screen.getByRole('button', { name: 'Reset' }));
+
+    const expectedFilters = {
+      filterYearType: 'allYears',
+      filterStatusType: 'allStatuses',
+      filtersChanged: false,
+      filterCurrentPage: 1,
+      filterActiveTab: DashboardTab.Instruments,
+      filterSearchText: 'certificate',
+    };
+
+    expect(setCurrentPage).toHaveBeenCalledWith(1);
+    expect(setInitialFilters).toHaveBeenCalledWith(expectedFilters);
+    expect(mocks.setUserProfile).toHaveBeenCalledWith({
+      patternApprovalDashboard: expectedFilters,
+    });
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith('ResetFilter');
+  });
+
+  it('closes without applying filters when cancel is selected', async () => {
+    const { setInitialFilters, setCurrentPage } = renderMenu({
+      filterYearType: 'olderthantwoyears',
+      filterStatusType: PatternApprovalStatusEnumDto.Completed,
+      filtersChanged: true,
+    });
+    const user = await openMenu();
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(setInitialFilters).not.toHaveBeenCalled();
+    expect(setCurrentPage).not.toHaveBeenCalled();
+    expect(mocks.setUserProfile).not.toHaveBeenCalled();
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith('CancelFilter');
+  });
+
+  it('discards unapplied edits when the menu is dismissed', async () => {
+    // Dismissing the dropdown routes through onToggle, which clicks the hidden close button so
+    // the same teardown runs however the menu was left - otherwise edits made and abandoned
+    // would still be sitting there the next time it opens.
+    const { setInitialFilters } = renderMenu({
+      filterYearType: 'olderthantwoyears',
+      filterStatusType: PatternApprovalStatusEnumDto.Completed,
+      filtersChanged: true,
+    });
+    const user = await openMenu();
+
+    await user.click(screen.getByRole('button', { name: /Filters.*applied/i }));
+
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith('CloseFilter');
+    expect(setInitialFilters).not.toHaveBeenCalled();
+  });
+
+  it('disables status options for draft pattern approval dashboard filters', async () => {
+    renderMenu({
+      filterYearType: 'allYears',
+      filterStatusType: 'allStatuses',
+      filtersChanged: false,
+      filterActiveTab: DashboardTab.Drafts,
+    });
+
+    await openMenu();
+
+    expect(
+      screen.getByRole('radio', { name: 'Show all statuses' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('radio', { name: 'Show all years' }),
+    ).not.toBeDisabled();
   });
 });

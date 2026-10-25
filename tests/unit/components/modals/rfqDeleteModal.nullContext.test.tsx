@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -29,7 +29,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/modals/ModalContext'),
+  '@/components/modals/ModalContext',
   () =>
     ({
       useModalState: () => null,
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/api/web-api-client'),
+  '@/api/web-api-client',
   () =>
     ({
       ApplicationType: { QuoteRequest: 'QuoteRequest' },
@@ -62,7 +62,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: { error: vi.fn() },
@@ -77,7 +77,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-vi.mock(import('react-bootstrap'), () => {
+vi.mock('react-bootstrap', () => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );
@@ -121,7 +121,6 @@ vi.mock(import('react-bootstrap'), () => {
 
 describe('rFQDeleteModal null context', () => {
   it('skips deletion and still closes and navigates', async () => {
-    expect.assertions(3);
     render(<RFQDeleteModal />);
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));

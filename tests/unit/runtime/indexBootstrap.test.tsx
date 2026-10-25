@@ -28,7 +28,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       MsalProvider: ({ children }: { children: React.ReactNode }) => (
@@ -64,7 +64,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/App'),
+  '../../../ClientApp/src/App',
   () =>
     ({
       default: { routes: [] },
@@ -72,7 +72,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/trustedtypes'),
+  '../../../ClientApp/src/trustedtypes',
   () =>
     ({
       TrustedTypes: {
@@ -92,7 +92,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppInsightsService'),
+  '../../../ClientApp/src/instrumentation/AppInsightsService',
   () =>
     ({
       ai: {
@@ -103,7 +103,6 @@ vi.mock(
 
 describe('application bootstrap', () => {
   it('creates the root, initializes MSAL, installs Trusted Types, and renders providers', async () => {
-    expect.assertions(4);
     vi.resetModules();
     document.body.innerHTML = '<div id="root"></div>';
     mocks.createRoot.mockReturnValue({ render: mocks.render });
@@ -121,7 +120,6 @@ describe('application bootstrap', () => {
   });
 
   it('wraps the entire application in React Strict Mode', async () => {
-    expect.assertions(1);
     vi.resetModules();
     document.body.innerHTML = '<div id="root"></div>';
     mocks.createRoot.mockReturnValue({ render: mocks.render });

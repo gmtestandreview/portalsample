@@ -1,11 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, it, vi } from 'vitest';
-
 import AuthorisedAgent from '@/components/Inputs/AuthorisedAgent';
 
 vi.mock(
-  import('@/components/Inputs/TextInput'),
+  '@/components/Inputs/TextInput',
   () =>
     ({
       default: ({
@@ -29,7 +27,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Inputs/NumberInput'),
+  '@/components/Inputs/NumberInput',
   () =>
     ({
       default: ({
@@ -62,7 +60,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/components/Inputs/AddressLookup'),
+  '@/components/Inputs/AddressLookup',
   () =>
     ({
       default: ({
@@ -93,56 +91,72 @@ vi.mock(
 
 describe(AuthorisedAgent, () => {
   it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
-    expect.assertions(1);
     render(<AuthorisedAgent />);
+
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-name',
       'manufacturerName',
     );
-  });
-});
-
-describe(AuthorisedAgent, () => {
-  it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
-    expect.assertions(1);
-    render(<AuthorisedAgent />);
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-name',
       'abn',
     );
-  });
-});
-
-describe(AuthorisedAgent, () => {
-  it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
-    expect.assertions(1);
-    render(<AuthorisedAgent />);
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-format',
       '## ### ### ###',
     );
-  });
-});
-
-describe(AuthorisedAgent, () => {
-  it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
-    expect.assertions(1);
-    render(<AuthorisedAgent />);
     expect(screen.getByTestId('number-input')).toHaveAttribute(
       'data-leading-zeros',
       'true',
     );
-  });
-});
-
-describe(AuthorisedAgent, () => {
-  it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
-    expect.assertions(1);
-    render(<AuthorisedAgent />);
     expect(
       screen.getByText(
         'For Australian manufacturers, enter ABN (Australian Business Number)',
       ),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Business street address' }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
+      'data-name',
+      'streetAddress',
+    );
+    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
+      'data-max-results',
+      '10',
+    );
+    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
+      'data-placeholder',
+      'Enter the main business address',
+    );
+  });
+
+  it('prefixes child field names and forwards summary mode', () => {
+    render(<AuthorisedAgent name='agent' isSummary />);
+
+    expect(screen.getByTestId('text-input')).toHaveAttribute(
+      'data-name',
+      'agent.manufacturerName',
+    );
+    expect(screen.getByTestId('text-input')).toHaveAttribute(
+      'data-summary',
+      'true',
+    );
+    expect(screen.getByTestId('number-input')).toHaveAttribute(
+      'data-name',
+      'agent.abn',
+    );
+    expect(screen.getByTestId('number-input')).toHaveAttribute(
+      'data-summary',
+      'true',
+    );
+    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
+      'data-name',
+      'agent.streetAddress',
+    );
+    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
+      'data-summary',
+      'true',
+    );
   });
 });

@@ -1,19 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import type {
   ProgressClient,
   UploadProgress,
 } from '../../../../ClientApp/src/api/web-api-client';
-
 import {
   PROGRESS_RETRY_DELAY_MS,
   pollUploadProgress,
 } from '../../../../ClientApp/src/routes/ta/pollUploadProgress';
 
 const appLoggerError = vi.hoisted(() => vi.fn());
-
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: appLoggerError },
@@ -35,11 +32,12 @@ describe(pollUploadProgress, () => {
     vi.useFakeTimers();
     appLoggerError.mockReset();
   });
+
   afterEach(() => {
     vi.useRealTimers();
   });
+
   it('feeds each poll the previous percent and stops on completion', async () => {
-    expect.assertions(4);
     const { client, getProgress, deleteProgressStatistics } = makeClient();
     getProgress
       .mockResolvedValueOnce({ percent: 40, status: 'InProgress' })
@@ -63,18 +61,8 @@ describe(pollUploadProgress, () => {
     expect(onFinished).toHaveBeenCalledExactlyOnceWith();
     expect(deleteProgressStatistics).toHaveBeenCalledWith('u1');
   });
-});
 
-describe(pollUploadProgress, () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    appLoggerError.mockReset();
-  });
-  afterEach(() => {
-    vi.useRealTimers();
-  });
   it('treats CompletedWithErrors as finished', async () => {
-    expect.assertions(1);
     const { client, getProgress } = makeClient();
     getProgress.mockResolvedValue({
       percent: 100,
@@ -91,5 +79,92 @@ describe(pollUploadProgress, () => {
     });
 
     expect(onFinished).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  it('logs a failed statistics cleanup without rejecting', async () => {
+    const { client, getProgress, deleteProgressStatistics } = makeClient();
+    getProgress.mockResolvedValue({ percent: 100, status: 'Completed' });
+    deleteProgressStatistics.mockRejectedValue(new Error('gone'));
+
+    await pollUploadProgress({
+      client,
+      uploadId: 'u1',
+      signal: new AbortController().signal,
+      onProgress: vi.fn(),
+      onFinished: vi.fn(),
+    });
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(appLoggerError).toHaveBeenCalledWith(
+      'Failed to delete progress statistics',
+      expect.any(Error),
+      { uploadId: 'u1' },
+    );
+  });
+
+  it('backs off then retries with the same percent after a failed poll', async () => {
+    const { client, getProgress } = makeClient();
+    getProgress
+      .mockResolvedValueOnce({ percent: 40, status: 'InProgress' })
+      .mockRejectedValueOnce(new Error('blip'))
+      .mockResolvedValueOnce({ percent: 100, status: 'Completed' });
+
+    const done = pollUploadProgress({
+      client,
+      uploadId: 'u1',
+      signal: new AbortController().signal,
+      onProgress: vi.fn(),
+      onFinished: vi.fn(),
+    });
+
+    await vi.advanceTimersByTimeAsync(PROGRESS_RETRY_DELAY_MS - 1);
+
+    expect(getProgress).toHaveBeenCalledTimes(2);
+
+    await vi.advanceTimersByTimeAsync(1);
+    await done;
+
+    expect(getProgress.mock.calls.map(([, percent]) => percent)).toEqual([
+      -1, 40, 40,
+    ]);
+  });
+
+  it('does not poll when already aborted', async () => {
+    const { client, getProgress } = makeClient();
+    const controller = new AbortController();
+    controller.abort();
+
+    await pollUploadProgress({
+      client,
+      uploadId: 'u1',
+      signal: controller.signal,
+      onProgress: vi.fn(),
+      onFinished: vi.fn(),
+    });
+
+    expect(getProgress).not.toHaveBeenCalled();
+  });
+
+  it('exits without retrying when a failed poll was caused by abort', async () => {
+    const { client, getProgress } = makeClient();
+    const controller = new AbortController();
+    getProgress.mockImplementation(() => {
+      controller.abort();
+      return Promise.reject(new Error('aborted'));
+    });
+
+    await pollUploadProgress({
+      client,
+      uploadId: 'u1',
+      signal: controller.signal,
+      onProgress: vi.fn(),
+      onFinished: vi.fn(),
+    });
+
+    expect(getProgress).toHaveBeenCalledExactlyOnceWith(
+      'u1',
+      -1,
+      expect.any(AbortSignal),
+    );
   });
 });

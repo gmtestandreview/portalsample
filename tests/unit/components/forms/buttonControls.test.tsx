@@ -1,15 +1,9 @@
 import { describe, it, expect } from 'vitest';
-
 import { render, screen, waitFor } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { useFormikContext } from 'formik';
-
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
-
 import SubmitFormButton from '@/components/forms/SubmitFormButton';
-
 import { FormikWrapper } from '../../helpers/formik';
 
 function ValuesProbe() {
@@ -19,7 +13,6 @@ function ValuesProbe() {
 
 describe('form button controls', () => {
   it('renders SaveAndExitButton default text and submits after click', async () => {
-    expect.assertions(3);
     const onSubmit = vi.fn();
     render(
       <FormikWrapper
@@ -45,11 +38,8 @@ describe('form button controls', () => {
       ),
     );
   });
-});
 
-describe('form button controls', () => {
   it('renders SaveAndExitButton via render prop', async () => {
-    expect.assertions(1);
     const onSubmit = vi.fn();
     render(
       <FormikWrapper
@@ -67,6 +57,57 @@ describe('form button controls', () => {
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'Custom save' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+  });
+
+  it('renders SubmitFormButton default text and submits after click', async () => {
+    const onSubmit = vi.fn();
+    render(
+      <FormikWrapper
+        initialValues={{ saveAndExit: true, submitClick: false }}
+        onSubmit={onSubmit}
+      >
+        <SubmitFormButton />
+        <ValuesProbe />
+      </FormikWrapper>,
+    );
+
+    await userEvent.click(screen.getByTestId('submit-button'));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"saveAndExit":false',
+      ),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"submitClick":false',
+      ),
+    );
+  });
+
+  it('renders SubmitFormButton via render prop', async () => {
+    const onSubmit = vi.fn();
+    render(
+      <FormikWrapper
+        initialValues={{ saveAndExit: false, submitClick: false }}
+        onSubmit={onSubmit}
+      >
+        <SubmitFormButton>
+          {(onClick) => (
+            <button type='button' onClick={onClick}>
+              Custom submit
+            </button>
+          )}
+        </SubmitFormButton>
+      </FormikWrapper>,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Custom submit' }),
+    );
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
   });

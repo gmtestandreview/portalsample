@@ -1,18 +1,12 @@
 import { describe, it, expect } from 'vitest';
-
 import { render, screen } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-
 import type { ReactNode } from 'react';
-
 import RhfHidableField, {
   RhfHiddenRulesProvider,
   useHiddenRules,
 } from '@/components/forms/RhfHidableField';
-
 import type { Hideable } from '@/components/forms/types';
 
 interface AccountValues {
@@ -22,7 +16,6 @@ interface AccountValues {
 const BUSINESS_VALUES: AccountValues = {
   account: { type: 'business', abn: '123' },
 };
-
 const INDIVIDUAL_VALUES: AccountValues = {
   account: { type: 'individual', abn: '123' },
 };
@@ -62,7 +55,6 @@ const SetTypeButton = ({ type }: Readonly<{ type: string }>) => {
 
 describe(RhfHidableField, () => {
   it('renders children when the rule evaluates to false', () => {
-    expect.assertions(1);
     render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
         <RhfHidableField name='account.abn'>
@@ -73,11 +65,8 @@ describe(RhfHidableField, () => {
 
     expect(screen.getByText('ABN field')).toBeInTheDocument();
   });
-});
 
-describe(RhfHidableField, () => {
   it('hides children when the callback rule on a nested path is true', () => {
-    expect.assertions(1);
     render(
       <Harness values={INDIVIDUAL_VALUES} rules={hideAbnUnlessBusiness}>
         <RhfHidableField name='account.abn'>
@@ -88,11 +77,8 @@ describe(RhfHidableField, () => {
 
     expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
   });
-});
 
-describe(RhfHidableField, () => {
   it('re-evaluates when a watched value changes through setValue', async () => {
-    expect.assertions(3);
     const user = userEvent.setup();
     render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
@@ -113,5 +99,86 @@ describe(RhfHidableField, () => {
     await user.click(screen.getByRole('button', { name: 'set business' }));
 
     expect(screen.getByText('ABN field')).toBeInTheDocument();
+  });
+
+  it('reacts to a rerender that supplies new rules', () => {
+    const { rerender } = render(
+      <Harness values={BUSINESS_VALUES} rules={{ account: { abn: false } }}>
+        <RhfHidableField name='account.abn'>
+          <p>ABN field</p>
+        </RhfHidableField>
+      </Harness>,
+    );
+
+    expect(screen.getByText('ABN field')).toBeInTheDocument();
+
+    rerender(
+      <Harness values={BUSINESS_VALUES} rules={{ account: { abn: true } }}>
+        <RhfHidableField name='account.abn'>
+          <p>ABN field</p>
+        </RhfHidableField>
+      </Harness>,
+    );
+
+    expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
+  });
+
+  it('hides every child field when a group "this" rule is true', () => {
+    render(
+      <Harness values={BUSINESS_VALUES} rules={{ account: { this: true } }}>
+        <RhfHidableField name='account.abn'>
+          <p>ABN field</p>
+        </RhfHidableField>
+      </Harness>,
+    );
+
+    expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
+  });
+
+  it('hides a field when a boolean rule is true', () => {
+    render(
+      <Harness values={BUSINESS_VALUES} rules={{ account: { abn: true } }}>
+        <RhfHidableField name='account.abn'>
+          <p>ABN field</p>
+        </RhfHidableField>
+      </Harness>,
+    );
+
+    expect(screen.queryByText('ABN field')).not.toBeInTheDocument();
+  });
+
+  it('renders children when no provider supplies rules', () => {
+    render(
+      <Harness values={BUSINESS_VALUES}>
+        <RhfHidableField name='account.abn'>
+          <p>ABN field</p>
+        </RhfHidableField>
+      </Harness>,
+    );
+
+    expect(screen.getByText('ABN field')).toBeInTheDocument();
+  });
+
+  it('renders an empty wrapper when a visible field has no children', () => {
+    render(
+      <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
+        <div data-testid='wrapper'>
+          <RhfHidableField name='account.abn' />
+        </div>
+      </Harness>,
+    );
+
+    expect(screen.getByTestId('wrapper')).toBeEmptyDOMElement();
+  });
+});
+
+describe(useHiddenRules, () => {
+  it('returns an empty rule set without a provider', () => {
+    const Probe = () => (
+      <output data-testid='rules'>{JSON.stringify(useHiddenRules())}</output>
+    );
+    render(<Probe />);
+
+    expect(screen.getByTestId('rules')).toHaveTextContent('{}');
   });
 });

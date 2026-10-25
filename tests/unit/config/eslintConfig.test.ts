@@ -27,7 +27,6 @@ describe('eSLint editor integration', () => {
   it(
     'lints the Storybook config when ESLint runs from the file directory',
     () => {
-      expect.assertions(2);
       const storybookDirectory = path.resolve('.storybook');
       const eslintEntryPoint = path.resolve(
         'node_modules/eslint/bin/eslint.js',

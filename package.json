@@ -21,9 +21,18 @@
     "verify:vite-build": "npm run build && node scripts/verify-vite-build.mjs",
     "verify:vite-runtime": "node scripts/verify-vite-runtime.mjs",
     "type-check": "tsc --noEmit",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint:eslint": "eslint \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx,mjs}\" \"tests/**/*.{ts,tsx}\" \"*.config.{ts,mts,js}\" \"vite.config.mts\" \"runtime-env-fixtures.ts\" \"scripts/verify-vite-build.mjs\" \"scripts/verify-vite-runtime.mjs\" \"scripts/storybook-coverage.mjs\" \"scripts/storybook-coverage-worklist.mjs\" \"scripts/verify-storybook-docs.mjs\" \"scripts/storybook-closure.mjs\" \"vitest*.{ts,js}\"",
+    "type-check:diagnostics": "node scripts/type-check-diagnostics.mjs --out reports/typescript/diagnostics.json",
+    "lint:diagnostics": "node scripts/lint-diagnostics.mjs --out reports/eslint/diagnostics.json",
+    "test:lint:diagnostics": "node --test scripts/lint-diagnostics.test.mjs",
+    "format": "npm run format:source",
+    "format:source": "node scripts/format-contract.mjs --write",
+    "format:source:check": "node scripts/format-contract.mjs --check",
+    "format:all": "prettier --write .",
+    "format:all:check": "prettier --check .",
+    "format:check": "npm run format:source:check",
+    "format:docs": "prettier --write \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
+    "format:docs:check": "prettier --check \"*.md\" \"docs/**/*.{md,mdx}\" \".github/**/*.{md,mdx}\"",
+    "lint:eslint": "eslint \"ClientApp/src/**/*.{ts,tsx}\" \".storybook/**/*.{ts,tsx,js,jsx,mjs}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{js,mjs,ts,mts}\" \"quality/**/*.{js,mjs,ts,mts}\" \"*.config.{ts,mts,js}\" \"eslint.config.mjs\" \"remark.config.mjs\" \"storybook-vite-policies.ts\" \"runtime-env-fixtures.ts\" \"test-import.mjs\" \"vitest.shims.d.ts\" \"vitest*.{ts,js}\"",
     "lint": "npm run lint:eslint && npm run format:check",
     "lint:prettier": "npm run format:check",
     "lint:mdx": "remark \".storybook/**/*.mdx\" \"ClientApp/src/**/*.mdx\" --frail",
@@ -32,7 +41,7 @@
     "validate:json": "node scripts/validate-json.mjs",
     "sonar:backlog": "node scripts/sonar-issues-backlog.mjs",
     "sonar:backlog:test-fixture": "node scripts/sonar-issues-backlog.mjs --fixture tests/fixtures/sonar --out analysis/sonar-issues-backlog.md",
-    "lint:fix": "npm run lint:eslint -- --fix && npm run format",
+    "lint:fix": "npm run lint:eslint -- --fix && npm run format:source",
     "test:unit": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.unit.config.ts",
     "test:unit:coverage": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.unit.config.ts --coverage",
     "test:unit:watch": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs --watch --configLoader runner --config vitest.unit.config.ts",
@@ -157,10 +166,7 @@
     "vitest": "4.1.12"
   },
   "msw": {
-    "workerDirectory": [
-      "ClientApp/public",
-      "storybook-static"
-    ]
+    "workerDirectory": ["ClientApp/public", "storybook-static"]
   },
   "overrides": {
     "@mizchi/lsmcp": {

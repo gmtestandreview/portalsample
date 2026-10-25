@@ -24,7 +24,6 @@
  * UNRESOLVED and left alone - guessing would reintroduce the defect this script exists to catch.
  */
 
-/* eslint-disable no-console -- this is a CLI reporter; stdout is its interface. */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 // Imported explicitly rather than relied on as a global: eslint.config.mjs gives `**/*.mjs` browser

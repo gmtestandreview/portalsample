@@ -1,5 +1,4 @@
 import type React from 'react';
-
 import {
   act,
   fireEvent,
@@ -7,20 +6,14 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-
 import '@testing-library/jest-dom/vitest';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { MemoryRouter, Route, Routes } from 'react-router';
-
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
-
 import {
   ServiceType,
   type ServicesOffered,
 } from '../../../../ClientApp/src/api/web-api-client';
-
 import { defined } from '../../helpers/defined';
 
 const {
@@ -80,7 +73,7 @@ const {
 let mockAccountDetails: AccountDetails | null;
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       PatternApprovalClient: vi.fn().mockImplementation(function (
@@ -98,7 +91,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => mockMsalContext,
@@ -106,7 +99,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  '@azure/msal-browser',
   () =>
     ({
       InteractionStatus: { None: 'none' },
@@ -114,7 +107,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/hooks'),
+  '../../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       default: () => mockAccountContextState.value,
@@ -157,7 +150,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
     ({
       default: ({
@@ -183,7 +176,6 @@ vi.mock(
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
-
 vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
   () =>
@@ -191,9 +183,8 @@ vi.mock(
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
-
 vi.mock(
-  import('../../../../ClientApp/src/components/tiles/StandardPathway'),
+  '../../../../ClientApp/src/components/tiles/StandardPathway',
   () =>
     ({
       default: ({ title }: { title: string }) => (
@@ -291,7 +282,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -303,7 +294,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/errorRoutes'),
+  '../../../../ClientApp/src/routes/common/errorRoutes',
   () =>
     ({
       default: (status: number) => `/server-error/${status}`,
@@ -311,7 +302,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/common/dashboardNotifications'),
+  '../../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
     ({
       DashBoardNotifications: {
@@ -345,7 +336,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/sessionStorageCache'),
+  '../../../../ClientApp/src/storage/sessionStorageCache',
   () =>
     ({
       default: () => ({
@@ -364,7 +355,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('react-number-format'),
+  'react-number-format',
   () =>
     ({
       PatternFormat: ({ value }: { value: string }) => <span>{value}</span>,
@@ -377,7 +368,6 @@ const ACTIVE_PATTERN_APPROVAL: ServicesOffered[] = [
     isActive: true,
   },
 ];
-
 const BASE_FILTERS = {
   filterYearType: 'allYears',
   filterStatusType: 'allStatuses',
@@ -387,7 +377,6 @@ const BASE_FILTERS = {
   filterActiveTab: 'drafts',
   filterSearchText: '',
 };
-
 const EMPTY_RESPONSE = {
   currentPage: 1,
   items: [],
@@ -395,7 +384,6 @@ const EMPTY_RESPONSE = {
   totalCount: 0,
   totalPages: 1,
 };
-
 const BASE_ACCOUNT: AccountDetails = {
   organisation: 'Acme Metrology',
   trading: 'Acme Trading',
@@ -474,8 +462,8 @@ describe('pattern/type approval dashboard', () => {
       value: mockScrollIntoView,
     });
   });
+
   it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
-    expect.assertions(1);
     mockGetDrafts.mockResolvedValue({
       currentPage: 2,
       items: [{ referenceId: 'TA-1001' }],
@@ -483,139 +471,15 @@ describe('pattern/type approval dashboard', () => {
       totalCount: 24,
       totalPages: 3,
     });
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
+
     expect((await screen.findAllByText('TA-1001')).length).toBeGreaterThan(0);
-  });
-});
-
-describe('pattern/type approval dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.accounts = [{ homeAccountId: 'account-id' }];
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockSessionGetItem.mockReturnValue(null);
-    mockSetUserProfile.mockResolvedValue(true);
-    mockAccountDetails = { ...BASE_ACCOUNT };
-    mockAccountDispatchState.value = {
-      setUserProfile: mockSetUserProfile,
-      setTargetOrganisation: mockSetTargetOrganisation,
-    };
-    mockAccountContextState.value = {
-      details: mockAccountDetails,
-      ...mockAccountDispatchState.value,
-    };
-    mockServicesState.value = ACTIVE_PATTERN_APPROVAL;
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: mockScrollIntoView,
-    });
-  });
-  it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
-    expect.assertions(1);
-    mockGetDrafts.mockResolvedValue({
-      currentPage: 2,
-      items: [{ referenceId: 'TA-1001' }],
-      pageSize: 10,
-      totalCount: 24,
-      totalPages: 3,
-    });
-    const Dashboard = await importDashboard();
-    renderDashboard(Dashboard);
     expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token');
-  });
-});
-
-describe('pattern/type approval dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.accounts = [{ homeAccountId: 'account-id' }];
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockSessionGetItem.mockReturnValue(null);
-    mockSetUserProfile.mockResolvedValue(true);
-    mockAccountDetails = { ...BASE_ACCOUNT };
-    mockAccountDispatchState.value = {
-      setUserProfile: mockSetUserProfile,
-      setTargetOrganisation: mockSetTargetOrganisation,
-    };
-    mockAccountContextState.value = {
-      details: mockAccountDetails,
-      ...mockAccountDispatchState.value,
-    };
-    mockServicesState.value = ACTIVE_PATTERN_APPROVAL;
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: mockScrollIntoView,
-    });
-  });
-  it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
-    expect.assertions(1);
-    mockGetDrafts.mockResolvedValue({
-      currentPage: 2,
-      items: [{ referenceId: 'TA-1001' }],
-      pageSize: 10,
-      totalCount: 24,
-      totalPages: 3,
-    });
-    const Dashboard = await importDashboard();
-    renderDashboard(Dashboard);
     expect(mockSetAuthToken.mock.invocationCallOrder[0]).toBeLessThan(
       defined(mockGetDrafts.mock.invocationCallOrder[0]),
     );
-  });
-});
-
-describe('pattern/type approval dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.accounts = [{ homeAccountId: 'account-id' }];
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockSessionGetItem.mockReturnValue(null);
-    mockSetUserProfile.mockResolvedValue(true);
-    mockAccountDetails = { ...BASE_ACCOUNT };
-    mockAccountDispatchState.value = {
-      setUserProfile: mockSetUserProfile,
-      setTargetOrganisation: mockSetTargetOrganisation,
-    };
-    mockAccountContextState.value = {
-      details: mockAccountDetails,
-      ...mockAccountDispatchState.value,
-    };
-    mockServicesState.value = ACTIVE_PATTERN_APPROVAL;
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: mockScrollIntoView,
-    });
-  });
-  it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
-    expect.assertions(1);
-    mockGetDrafts.mockResolvedValue({
-      currentPage: 2,
-      items: [{ referenceId: 'TA-1001' }],
-      pageSize: 10,
-      totalCount: 24,
-      totalPages: 3,
-    });
-    const Dashboard = await importDashboard();
-    renderDashboard(Dashboard);
     expect(mockGetDrafts).toHaveBeenCalledWith(
       'crm-guid-001',
       undefined,
@@ -626,51 +490,485 @@ describe('pattern/type approval dashboard', () => {
       10,
       undefined,
     );
+    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+      'data-current',
+      '2',
+    );
+    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+      'data-total',
+      '3',
+    );
+    expect(screen.getAllByTestId('pagination-header')[0]).toHaveAttribute(
+      'data-total',
+      '24',
+    );
   });
-});
 
-describe('pattern/type approval dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.accounts = [{ homeAccountId: 'account-id' }];
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockSessionGetItem.mockReturnValue(null);
-    mockSetUserProfile.mockResolvedValue(true);
-    mockAccountDetails = { ...BASE_ACCOUNT };
-    mockAccountDispatchState.value = {
-      setUserProfile: mockSetUserProfile,
-      setTargetOrganisation: mockSetTargetOrganisation,
+  it('applies non-default year, status, and search filters to the request', async () => {
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    fireEvent.click(screen.getByRole('button', { name: 'Apply filters' }));
+
+    await waitFor(() =>
+      expect(mockGetDrafts).toHaveBeenLastCalledWith(
+        'crm-guid-001',
+        '2024',
+        'Submitted',
+        'descending',
+        'meter',
+        1,
+        10,
+        undefined,
+      ),
+    );
+  });
+
+  it('loads applications, persists the selected tab after the debounce, and records analytics', async () => {
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Applications' }));
+
+    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+    await waitFor(
+      () =>
+        expect(mockSetUserProfile).toHaveBeenCalledWith({
+          patternApprovalDashboard: expect.objectContaining({
+            filterActiveTab: 'requests',
+            filterCurrentPage: 1,
+          }),
+        }),
+      { timeout: 1_000 },
+    );
+
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('requests');
+  });
+
+  it('returns to Drafts and records the selection', async () => {
+    mockSessionGetItem.mockReturnValue('requests');
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('drafts');
+  });
+
+  it('restores a saved tab from session storage and removes the one-shot override', async () => {
+    mockSessionGetItem.mockReturnValue('requests');
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+
+    expect(screen.getByRole('tab', { name: 'Applications' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(mockSessionRemoveItem).toHaveBeenCalledWith('set-tabop-after-save');
+  });
+
+  it('persists page changes, scrolls to the title, and records analytics', async () => {
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
+
+    await waitFor(() =>
+      expect(mockSetUserProfile).toHaveBeenCalledWith({
+        patternApprovalDashboard: expect.objectContaining({
+          filterActiveTab: 'drafts',
+          filterCurrentPage: 2,
+        }),
+      }),
+    );
+
+    expect(mockScrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('Request/pagechange');
+  });
+
+  it('resets the saved page once when a different organisation branch is selected', async () => {
+    mockAccountDetails = {
+      ...BASE_ACCOUNT,
+      branchSelectionModalMode: 'SelectAndEditOrg',
+      userProfile: {
+        ...BASE_ACCOUNT.userProfile,
+        patternApprovalDashboard: { ...BASE_FILTERS, filterCurrentPage: 4 },
+      },
     };
     mockAccountContextState.value = {
       details: mockAccountDetails,
       ...mockAccountDispatchState.value,
     };
-    mockServicesState.value = ACTIVE_PATTERN_APPROVAL;
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: mockScrollIntoView,
+    const Dashboard = await importDashboard();
+    const view = renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
+
+    expect(mockSetUserProfile).toHaveBeenCalledWith({
+      patternApprovalDashboard: expect.objectContaining({
+        filterCurrentPage: 1,
+      }),
     });
+
+    mockAccountDetails = {
+      ...mockAccountDetails,
+      userProfile: {
+        ...mockAccountDetails.userProfile,
+        patternApprovalDashboard: { ...BASE_FILTERS, filterCurrentPage: 4 },
+      },
+    };
+    mockAccountContextState.value = {
+      details: mockAccountDetails,
+      ...mockAccountDispatchState.value,
+    };
+    view.rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+        'data-current',
+        '1',
+      ),
+    );
+
+    expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
   });
-  it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
-    expect.assertions(1);
-    mockGetDrafts.mockResolvedValue({
-      currentPage: 2,
-      items: [{ referenceId: 'TA-1001' }],
-      pageSize: 10,
-      totalCount: 24,
-      totalPages: 3,
+
+  it('reports a rejected profile update without disrupting the dashboard', async () => {
+    const saveError = new Error('profile unavailable');
+    mockSetUserProfile.mockRejectedValueOnce(saveError);
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
+
+    await waitFor(() =>
+      expect(mockAppLoggerError).toHaveBeenCalledWith(
+        'T & C Dashboard failed to save user profile.',
+        saveError,
+      ),
+    );
+
+    expect(screen.getByTestId('welcome')).toBeInTheDocument();
+  });
+
+  it('redirects users who do not have active Pattern Approval service', async () => {
+    mockServicesState.value = [
+      { service: ServiceType.PatternApproval, isActive: false },
+    ];
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await expect(
+      screen.findByTestId('services-page'),
+    ).resolves.toBeInTheDocument();
+    expect(mockGetDrafts).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      'account context',
+      () => {
+        mockAccountContextState.value = null;
+      },
+    ],
+    [
+      'account details',
+      () => {
+        mockAccountContextState.value = { details: null };
+      },
+    ],
+    [
+      'organisation CRM GUID',
+      () => {
+        mockAccountDetails = {
+          ...BASE_ACCOUNT,
+          organisationCRMGuid: undefined,
+        };
+        mockAccountContextState.value = {
+          details: mockAccountDetails,
+          ...mockAccountDispatchState.value,
+        };
+      },
+    ],
+    [
+      'saved filters',
+      () => {
+        mockAccountDetails = {
+          ...BASE_ACCOUNT,
+          userProfile: { services: ACTIVE_PATTERN_APPROVAL },
+        };
+        mockAccountContextState.value = {
+          details: mockAccountDetails,
+          ...mockAccountDispatchState.value,
+        };
+      },
+    ],
+    [
+      'idle authentication',
+      () => {
+        mockMsalContext.inProgress = 'login';
+      },
+    ],
+    [
+      'signed-in account',
+      () => {
+        mockMsalContext.accounts = [];
+      },
+    ],
+  ])(
+    'does not request dashboard data without %s',
+    async (_condition, arrange) => {
+      arrange();
+      const Dashboard = await importDashboard();
+      renderDashboard(Dashboard);
+
+      await screen.findByTestId('welcome');
+
+      expect(mockGetDrafts).not.toHaveBeenCalled();
+      expect(mockGetApplications).not.toHaveBeenCalled();
+    },
+  );
+
+  it('routes fatal API failures using the returned status', async () => {
+    mockGetDrafts.mockRejectedValueOnce({ status: 500, title: 'Server Error' });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await expect(
+      screen.findByTestId('error-page'),
+    ).resolves.toBeInTheDocument();
+    expect(mockAppLoggerError).toHaveBeenCalledWith(
+      'Failed to load dashboard.',
+      { status: 500, title: 'Server Error' },
+    );
+  });
+
+  it('publishes a forbidden notification without leaving the dashboard', async () => {
+    mockGetDrafts.mockRejectedValueOnce({ status: 403, title: 'Forbidden' });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetDashboardNotification).toHaveBeenCalledWith({
+        message: 'forbidden',
+        severity: 'error',
+      }),
+    );
+
+    expect(screen.getByTestId('welcome')).toBeInTheDocument();
+  });
+
+  it('resets third-party organisation selection after an access failure', async () => {
+    mockGetDrafts.mockRejectedValueOnce({
+      status: 403,
+      title: 'No third-party access for organisation',
     });
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
-      'data-current',
-      '2',
+
+    await waitFor(() =>
+      expect(mockSetDashboardNotification).toHaveBeenCalledWith({
+        message: 'no-third-party:Target Labs',
+        severity: 'error',
+      }),
+    );
+
+    expect(mockSetTargetOrganisation).toHaveBeenCalledWith(
+      '12345678901',
+      'Acme Metrology',
+    );
+  });
+
+  it('uses empty organisation values when third-party account data is absent', async () => {
+    mockAccountDetails = {
+      ...BASE_ACCOUNT,
+      abn: undefined,
+      organisation: undefined,
+      targetOrganisation: undefined,
+    } as unknown as AccountDetails;
+    mockAccountContextState.value = {
+      details: mockAccountDetails,
+      ...mockAccountDispatchState.value,
+    };
+    mockGetDrafts.mockRejectedValueOnce({
+      status: 403,
+      title: 'No third-party access',
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', ''),
+    );
+
+    expect(mockSetDashboardNotification).toHaveBeenCalledWith({
+      message: 'no-third-party:undefined',
+      severity: 'error',
+    });
+  });
+
+  it('renders empty state instead of requests before terms are accepted and marks content inert', async () => {
+    mockAccountDetails = {
+      ...BASE_ACCOUNT,
+      userAcceptedTermsOfUse: false,
+      showBranchSelector: true,
+    };
+    mockAccountContextState.value = {
+      details: mockAccountDetails,
+      ...mockAccountDispatchState.value,
+    };
+    mockGetDrafts.mockResolvedValue({
+      ...EMPTY_RESPONSE,
+      items: [{ referenceId: 'TA-HIDDEN' }],
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(screen.queryByText('TA-HIDDEN')).not.toBeInTheDocument();
+    expect(screen.getAllByTestId('no-requests').length).toBeGreaterThan(0);
+    expect(document.querySelectorAll('[inert]').length).toBeGreaterThan(0);
+  });
+
+  it('renders persisted notifications and clears them from their controls and on unmount', async () => {
+    mockGetDashboardNotification.mockReturnValue({
+      message: 'saved',
+      severity: 'success',
+    });
+    mockGetDashboardInfoNotification.mockReturnValue({
+      message: 'information',
+      severity: 'info',
+    });
+    const Dashboard = await importDashboard();
+    const view = renderDashboard(Dashboard);
+
+    fireEvent.click(await screen.findByTestId('notif-message-1'));
+    fireEvent.click(screen.getByTestId('notif-info-message-2'));
+
+    expect(mockClearDashboardNotification).toHaveBeenCalledTimes(1);
+    expect(mockClearDashboardInfoNotification).toHaveBeenCalledWith();
+
+    view.unmount();
+
+    expect(mockClearDashboardNotification).toHaveBeenCalledTimes(2);
+  });
+
+  it('cancels a pending tab-profile save when unmounted', async () => {
+    vi.useFakeTimers();
+    const Dashboard = await importDashboard();
+    const view = renderDashboard(Dashboard);
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Applications' }));
+    view.unmount();
+    await act(async () => {
+      vi.advanceTimersByTime(301);
+    });
+
+    expect(mockSetUserProfile).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it('reloads after a request deletion and sends the current tab to request items', async () => {
+    mockGetDrafts.mockResolvedValue({
+      ...EMPTY_RESPONSE,
+      items: [{ referenceId: 'TA-DELETE' }],
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    const [deleteButton] = await screen.findAllByRole('button', {
+      name: 'Delete',
+    });
+
+    fireEvent.click(defined(deleteButton));
+
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThanOrEqual(2),
+    );
+
+    expect(screen.getAllByTestId('request-item')[0]).toHaveAttribute(
+      'data-tab',
+      'drafts',
+    );
+  });
+
+  it('retains the active tab while cleared filters suspend request loading', async () => {
+    mockGetDrafts.mockResolvedValue({
+      ...EMPTY_RESPONSE,
+      items: [{ referenceId: 'TA-CLEAR' }],
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+    await screen.findAllByText('TA-CLEAR');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
+
+    expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(screen.getAllByTestId('block-spinner').length).toBeGreaterThan(0);
+  });
+
+  it('renders organisation identity, service-management affordance, and navigation analytics', async () => {
+    mockServicesState.value = [
+      { service: ServiceType.PatternApproval, isActive: true },
+      { service: ServiceType.TestingCalibration, isActive: true },
+    ];
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await expect(
+      screen.findByText('Acme Metrology'),
+    ).resolves.toBeInTheDocument();
+    expect(screen.getByText('Acme Trading - Sydney')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Change' })).toHaveAttribute(
+      'href',
+      '/services-we-offer?mode=manage',
+    );
+
+    fireEvent.click(screen.getByTestId('new-application-button'));
+
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('New TA application');
+  });
+
+  it('converts an unsupported restored tab into the standard error route', async () => {
+    mockSessionGetItem.mockReturnValue('instruments');
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await expect(
+      screen.findByTestId('error-page'),
+    ).resolves.toBeInTheDocument();
+    expect(mockAppLoggerError).toHaveBeenCalledWith(
+      'Failed to load dashboard.',
+      expect.objectContaining({ message: 'Unsupported tab: instruments' }),
     );
   });
 });

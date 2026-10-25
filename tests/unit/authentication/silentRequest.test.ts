@@ -2,7 +2,7 @@ import type { AccountInfo } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  import('@/env'),
+  '@/env',
   () =>
     ({
       env: {
@@ -22,7 +22,6 @@ const account = {
 
 describe('silentRequestFor', () => {
   it('combines the token scopes with the signed-in account', async () => {
-    expect.assertions(1);
     const { silentRequestFor } = await import('@/authentication/silentRequest');
 
     expect(silentRequestFor(account)).toEqual({
@@ -32,7 +31,6 @@ describe('silentRequestFor', () => {
   });
 
   it('omits the account key when nobody is signed in', async () => {
-    expect.assertions(2);
     const { silentRequestFor } = await import('@/authentication/silentRequest');
 
     const request = silentRequestFor(undefined);

@@ -75,7 +75,6 @@ const vitestExcludes = unitConfig.test?.coverage?.exclude ?? [];
 
 describe('sonar coverage denominator contract', () => {
   it('carries every Vitest coverage exclude into sonar.coverage.exclusions', () => {
-    expect.assertions(1);
     const sonarCoverageExclusions = readSonarProperty(
       'sonar.coverage.exclusions',
     );
@@ -92,7 +91,6 @@ describe('sonar coverage denominator contract', () => {
   });
 
   it('does not carry coverage carve-outs into sonar.exclusions', () => {
-    expect.assertions(2);
     // sonar.exclusions removes files from analysis entirely. A coverage
     // carve-out must never be laundered through it.
     const sonarExclusions = readSonarProperty('sonar.exclusions');
@@ -106,7 +104,6 @@ describe('sonar coverage denominator contract', () => {
   });
 
   it('keeps the analysed sources aligned with the measured sources', () => {
-    expect.assertions(2);
     const sources = readSonarProperty('sonar.sources');
 
     expect(sources).toEqual(['ClientApp/src', 'vite.config.mts']);

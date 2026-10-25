@@ -4,7 +4,6 @@ import { onLog } from '../../../.storybook/rollupOnLog';
 
 describe('storybook rollup onLog filter', () => {
   it('suppresses vendor INVALID_ANNOTATION originating in node_modules', () => {
-    expect.assertions(1);
     const handler = vi.fn();
 
     onLog(
@@ -19,11 +18,8 @@ describe('storybook rollup onLog filter', () => {
 
     expect(handler).not.toHaveBeenCalled();
   });
-});
 
-describe('storybook rollup onLog filter', () => {
   it('suppresses PLUGIN_TIMINGS regardless of message', () => {
-    expect.assertions(1);
     const handler = vi.fn();
 
     onLog(
@@ -34,11 +30,8 @@ describe('storybook rollup onLog filter', () => {
 
     expect(handler).not.toHaveBeenCalled();
   });
-});
 
-describe('storybook rollup onLog filter', () => {
   it('forwards a first-party INVALID_ANNOTATION untouched', () => {
-    expect.assertions(1);
     const handler = vi.fn();
     const log = {
       code: 'INVALID_ANNOTATION',
@@ -50,11 +43,8 @@ describe('storybook rollup onLog filter', () => {
 
     expect(handler).toHaveBeenCalledExactlyOnceWith('warn', log);
   });
-});
 
-describe('storybook rollup onLog filter', () => {
   it('forwards an INVALID_ANNOTATION with no message (nullish path)', () => {
-    expect.assertions(1);
     const handler = vi.fn();
     const log = { code: 'INVALID_ANNOTATION' };
 
@@ -62,9 +52,7 @@ describe('storybook rollup onLog filter', () => {
 
     expect(handler).toHaveBeenCalledExactlyOnceWith('warn', log);
   });
-});
 
-describe('storybook rollup onLog filter', () => {
   it.each([
     { code: 'CIRCULAR_DEPENDENCY', message: 'a -> b -> a' },
     { code: 'UNRESOLVED_IMPORT', message: 'cannot resolve ./missing' },
@@ -72,11 +60,19 @@ describe('storybook rollup onLog filter', () => {
     { code: 'SOURCEMAP_ERROR', message: 'node_modules/x missing sourcemap' },
     {},
   ])('forwards other diagnostics untouched: %o', (log) => {
-    expect.assertions(1);
     const handler = vi.fn();
 
     onLog('warn', log, handler);
 
     expect(handler).toHaveBeenCalledExactlyOnceWith('warn', log);
+  });
+
+  it('passes the level through unchanged', () => {
+    const handler = vi.fn();
+    const log = { code: 'PLUGIN_ERROR', message: 'boom' };
+
+    onLog('error', log, handler);
+
+    expect(handler).toHaveBeenCalledExactlyOnceWith('error', log);
   });
 });

@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-
 import TermsAndConditionModal from '../../../../ClientApp/src/components/modals/TermsAndCondition/index';
 
 // ── Mock external dependencies ──────────────────────────────────────────────
@@ -13,7 +11,7 @@ const mockMsal = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -27,7 +25,6 @@ vi.mock(
 );
 
 const mockSetAgree = vi.fn();
-
 const mockDispatch = { setAgree: mockSetAgree };
 
 vi.mock(
@@ -42,11 +39,10 @@ vi.mock(
 // UsersClient must be a constructor (class/function), not an arrow function,
 // because the component uses `new UsersClient()`.
 const mockAcceptTermsAndCondition = vi.fn().mockResolvedValue(undefined);
-
 const mockSetAuthToken = vi.fn();
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       UsersClient: vi.fn(function (this: any) {
@@ -77,6 +73,8 @@ import {
   useAccountDispatch,
 } from '../../../../ClientApp/src/authentication/hooks';
 
+// ── Tests ────────────────────────────────────────────────────────────────────
+
 describe(TermsAndConditionModal, () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -89,8 +87,8 @@ describe(TermsAndConditionModal, () => {
     // Restore the default success implementation after clearAllMocks
     mockAcceptTermsAndCondition.mockResolvedValue(undefined);
   });
+
   it('renders the modal when userAcceptedTermsOfUse is false', () => {
-    expect.assertions(2);
     vi.mocked(useAccountState).mockReturnValue({
       details: {
         userAcceptedTermsOfUse: false,
@@ -106,22 +104,8 @@ describe(TermsAndConditionModal, () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId('termsofuse-heading')).toBeInTheDocument();
   });
-});
 
-describe(TermsAndConditionModal, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockMsal.inProgress = 'none';
-    mockMsal.accounts = [{ username: 'test@example.com' }];
-    mockMsal.acquireTokenSilent.mockResolvedValue({
-      accessToken: 'mock-token',
-    });
-    vi.mocked(useAccountDispatch).mockReturnValue(mockDispatch as any);
-    // Restore the default success implementation after clearAllMocks
-    mockAcceptTermsAndCondition.mockResolvedValue(undefined);
-  });
   it('does not render the modal when userAcceptedTermsOfUse is true', () => {
-    expect.assertions(1);
     vi.mocked(useAccountState).mockReturnValue({
       details: {
         userAcceptedTermsOfUse: true,
@@ -136,22 +120,8 @@ describe(TermsAndConditionModal, () => {
       screen.queryByTestId('prompt-termsandcondition-modal'),
     ).not.toBeInTheDocument();
   });
-});
 
-describe(TermsAndConditionModal, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockMsal.inProgress = 'none';
-    mockMsal.accounts = [{ username: 'test@example.com' }];
-    mockMsal.acquireTokenSilent.mockResolvedValue({
-      accessToken: 'mock-token',
-    });
-    vi.mocked(useAccountDispatch).mockReturnValue(mockDispatch as any);
-    // Restore the default success implementation after clearAllMocks
-    mockAcceptTermsAndCondition.mockResolvedValue(undefined);
-  });
   it('dispatches setAgree after successful ToU acceptance', async () => {
-    expect.assertions(1);
     vi.mocked(useAccountState).mockReturnValue({
       details: {
         userAcceptedTermsOfUse: false,
@@ -167,6 +137,146 @@ describe(TermsAndConditionModal, () => {
 
     await waitFor(() => {
       expect(mockSetAgree).toHaveBeenCalledExactlyOnceWith();
+    });
+  });
+
+  it('sends the auth token and configured terms version when accepting terms', async () => {
+    vi.mocked(useAccountState).mockReturnValue({
+      details: {
+        userAcceptedTermsOfUse: false,
+        givenName: 'Bob',
+        familyName: 'Jones',
+      },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /agree and continue/i }),
+    );
+
+    await waitFor(() => {
+      expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token');
+      expect(mockAcceptTermsAndCondition).toHaveBeenCalledWith({
+        termsVersion: 2,
+      });
+    });
+  });
+
+  it('uses the family name only when the given name is not available', () => {
+    vi.mocked(useAccountState).mockReturnValue({
+      details: { userAcceptedTermsOfUse: false, familyName: 'Solo' },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+
+    expect(
+      screen.getByRole('heading', { name: /welcome, solo/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders the exit portal link', () => {
+    vi.mocked(useAccountState).mockReturnValue({
+      details: {
+        userAcceptedTermsOfUse: false,
+        givenName: 'Alice',
+        familyName: 'Smith',
+      },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+
+    expect(
+      screen.getByRole('button', { name: /exit portal/i }),
+    ).toHaveAttribute('href', '/sign-out');
+  });
+
+  it('does not call the API while MSAL is in progress', async () => {
+    mockMsal.inProgress = 'login';
+    vi.mocked(useAccountState).mockReturnValue({
+      details: {
+        userAcceptedTermsOfUse: false,
+        givenName: 'Alice',
+        familyName: 'Smith',
+      },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /agree and continue/i }),
+    );
+
+    await waitFor(() => {
+      expect(mockAcceptTermsAndCondition).not.toHaveBeenCalled();
+    });
+  });
+
+  it('does not call the API when there is no MSAL account', async () => {
+    mockMsal.accounts = [];
+    vi.mocked(useAccountState).mockReturnValue({
+      details: {
+        userAcceptedTermsOfUse: false,
+        givenName: 'Alice',
+        familyName: 'Smith',
+      },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /agree and continue/i }),
+    );
+
+    await waitFor(() => {
+      expect(mockAcceptTermsAndCondition).not.toHaveBeenCalled();
+    });
+  });
+
+  it('accepts terms without dispatching when account dispatch is unavailable', async () => {
+    vi.mocked(useAccountDispatch).mockReturnValue(null);
+    vi.mocked(useAccountState).mockReturnValue({
+      details: {
+        userAcceptedTermsOfUse: false,
+        givenName: 'Bob',
+        familyName: 'Jones',
+      },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /agree and continue/i }),
+    );
+
+    await waitFor(() => {
+      expect(mockAcceptTermsAndCondition).toHaveBeenCalledWith({
+        termsVersion: 2,
+      });
+    });
+
+    expect(mockSetAgree).not.toHaveBeenCalled();
+  });
+
+  it('shows the error alert when acceptTermsAndCondition API call fails', async () => {
+    mockAcceptTermsAndCondition.mockRejectedValueOnce(
+      new Error('Network error'),
+    );
+
+    vi.mocked(useAccountState).mockReturnValue({
+      details: {
+        userAcceptedTermsOfUse: false,
+        givenName: 'Eve',
+        familyName: 'Error',
+      },
+    } as any);
+
+    render(<TermsAndConditionModal />);
+    fireEvent.click(
+      screen.getByRole('button', { name: /agree and continue/i }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(
+        screen.getByText(/error found trying to save/i),
+      ).toBeInTheDocument();
     });
   });
 });

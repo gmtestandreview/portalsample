@@ -33,6 +33,19 @@ export default defineConfig(
       'dist/**',
       'storybook-static/**',
       'reports/**',
+      'vendor/**',
+      '.github/migration-verifier/**',
+      '.github/skills/**',
+      '.claude/**',
+      '.agents/**',
+      '.codex/**',
+      '.superpowers/**',
+      '.tours/**',
+      'evals/**',
+      'hooks/**',
+      'plugins/**',
+      'skills/**',
+      'templates/**',
       'ClientApp/src/api/web-api-client.ts',
     ],
   },
@@ -161,14 +174,18 @@ export default defineConfig(
   {
     name: 'nmi/node-scripts',
     files: [
-      '.claude/skills/playwright-skill/**/*.{js,mjs}',
-      'scripts/**/*.{js,mjs}',
-      'skills/**/scripts/**/*.{js,mjs}',
-      '*.config.{js,mjs}',
+      'scripts/**/*.{js,mjs,ts,mts}',
+      'quality/**/*.{js,mjs,ts,mts}',
+      '*.config.{js,mjs,ts,mts}',
       'remark.config.mjs',
+      'storybook-vite-policies.ts',
+      'test-import.mjs',
     ],
     languageOptions: {
       globals: { ...globals.node },
+    },
+    rules: {
+      'no-console': ['error', { allow: ['log', 'warn', 'error'] }],
     },
   },
 
@@ -280,27 +297,89 @@ export default defineConfig(
   },
   {
     files: [
-      'tests/**',
+      'tests/unit/**/*.{js,jsx,ts,tsx}',
       'ClientApp/src/**/*.stories.{ts,tsx}',
-      '**/*.test.{js,jsx,ts,tsx}',
-      '**/*.spec.{js,jsx,ts,tsx}',
-      '**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
       'vitest.setup.ts',
       'vitest.storybook.setup.ts',
     ],
     ...vitest.configs.all,
   },
   {
+    name: 'nmi/vitest-partial-mock-fix-safety',
     files: [
-      'tests/**',
+      'tests/unit/**/*.{js,jsx,ts,tsx}',
       'ClientApp/src/**/*.stories.{ts,tsx}',
-      '**/*.test.{js,jsx,ts,tsx}',
-      '**/*.spec.{js,jsx,ts,tsx}',
-      '**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
+    rules: {
+      // Partial mock factories are intentionally not full module shapes. The
+      // dynamic-import fixer makes TypeScript reject those factories.
+      'vitest/prefer-import-in-mock': ['warn', { fixable: false }],
+    },
+  },
+  {
+    files: [
+      'tests/unit/**/*.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      'ClientApp/src/**/*.test.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/*.spec.{js,jsx,ts,tsx}',
+      'ClientApp/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
       'vitest.setup.ts',
       'vitest.storybook.setup.ts',
     ],
     ...vitestGlobals.configs['flat/recommended'],
+  },
+  {
+    name: 'nmi/playwright-runner-boundaries',
+    files: ['tests/e2e/**/*.{ts,tsx}', 'tests/api-contract/**/*.{ts,tsx}'],
+    rules: {
+      'vitest/prefer-importing-vitest-globals': 'off',
+      'vitest/require-hook': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'vitest',
+              message:
+                'Use the Playwright test API in Playwright and API-contract files.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    name: 'nmi/storybook-runner-boundaries',
+    files: [
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      '.storybook/**/*.{ts,tsx,js,jsx,mjs}',
+    ],
+    rules: {
+      // Storybook stories use @storybook/test. Do not let Vitest's
+      // auto-fixer rewrite those globals to imports from 'vitest'.
+      'vitest/prefer-importing-vitest-globals': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'vitest',
+              importNames: ['expect', 'test'],
+              message:
+                'Use @storybook/test for Storybook assertions and interactions.',
+            },
+          ],
+        },
+      ],
+    },
   },
 
   {

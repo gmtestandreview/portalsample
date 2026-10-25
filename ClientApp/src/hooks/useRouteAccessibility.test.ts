@@ -12,7 +12,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
-describe('useRouteAccessibility', () => {
+describe(useRouteAccessibility, () => {
   beforeEach(() => {
     vi.useFakeTimers();
     document.title = 'Test Page | NMI Portal';
@@ -29,16 +29,20 @@ describe('useRouteAccessibility', () => {
 
   it('returns empty announcement before first route effect fires', () => {
     expect.assertions(1);
+
     const { result } = renderHook(() => useRouteAccessibility(), { wrapper });
+
     expect(result.current.announcement).toBe('');
   });
 
   it('sets announcement to page title after 100 ms debounce on initial path', () => {
     expect.assertions(1);
+
     const { result } = renderHook(() => useRouteAccessibility(), { wrapper });
     act(() => {
       vi.advanceTimersByTime(100);
     });
+
     expect(result.current.announcement).toBe(
       'Navigated to Test Page | NMI Portal page.',
     );
@@ -46,20 +50,24 @@ describe('useRouteAccessibility', () => {
 
   it('clears the timeout on unmount', () => {
     expect.assertions(1);
+
     const { unmount } = renderHook(() => useRouteAccessibility(), { wrapper });
     const clearSpy = vi.spyOn(globalThis, 'clearTimeout');
     unmount();
-    expect(clearSpy).toHaveBeenCalled();
+
+    expect(clearSpy).toHaveBeenCalledWith();
   });
 
   it('focuses #main element after debounce fires', () => {
     expect.assertions(1);
+
     const main = document.getElementById('main')!;
     const focusSpy = vi.spyOn(main, 'focus');
     renderHook(() => useRouteAccessibility(), { wrapper });
     act(() => {
       vi.advanceTimersByTime(100);
     });
+
     expect(focusSpy).toHaveBeenCalledTimes(1);
   });
 });

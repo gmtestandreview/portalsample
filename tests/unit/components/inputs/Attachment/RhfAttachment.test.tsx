@@ -6,21 +6,13 @@ import {
   waitFor,
   within,
 } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { useEffect, useState } from 'react';
-
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-
 import type { Resolver, UseFormReturn } from 'react-hook-form';
-
 import { describe, expect, it, vi } from 'vitest';
-
 import type { AttachmentDto } from '@/api/web-api-client';
-
 import AttachmentNew from '@/components/Inputs/RhfAttachment';
-
 import { FileStatus } from '@/routes/ta/types';
 
 interface AttachmentHarnessProps {
@@ -137,67 +129,829 @@ const renderAttachment = (
 
 describe('rhfAttachment', () => {
   it('renders upload controls with help text, disabled state, and file constraints', () => {
-    expect.assertions(1);
     renderAttachment([], {
       className: 'drop-target',
       containerClassName: 'attachment-container',
       disableUpload: true,
     });
+
     expect(
       screen.getByLabelText('Upload supporting documents'),
     ).toBeInTheDocument();
-  });
-});
-
-describe('rhfAttachment', () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
-    expect.assertions(1);
-    renderAttachment([], {
-      className: 'drop-target',
-      containerClassName: 'attachment-container',
-      disableUpload: true,
-    });
     expect(screen.getByText('Upload files for assessment')).toHaveAttribute(
       'id',
       'help-supporting-documents',
     );
-  });
-});
-
-describe('rhfAttachment', () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
-    expect.assertions(1);
-    renderAttachment([], {
-      className: 'drop-target',
-      containerClassName: 'attachment-container',
-      disableUpload: true,
-    });
     expect(
       screen.getByTestId('drag-upload-supporting-documents'),
     ).toBeDisabled();
-  });
-});
-
-describe('rhfAttachment', () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
-    expect.assertions(1);
-    renderAttachment([], {
-      className: 'drop-target',
-      containerClassName: 'attachment-container',
-      disableUpload: true,
-    });
     expect(screen.getByTestId('supporting-documents')).toBeDisabled();
-  });
-});
-
-describe('rhfAttachment', () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
-    expect.assertions(1);
-    renderAttachment([], {
-      className: 'drop-target',
-      containerClassName: 'attachment-container',
-      disableUpload: true,
-    });
     expect(screen.getByText('.pdf, .jpg')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (_, element) =>
+          element?.textContent === 'Maximum size for each file: 1MB each',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('uses default upload button labels and forwards browse clicks to the file input', async () => {
+    const user = userEvent.setup();
+    const inputClick = vi.spyOn(HTMLInputElement.prototype, 'click');
+    renderAttachment([], undefined, true);
+
+    expect(screen.getByTestId('drag-upload-attachments')).toHaveAttribute(
+      'title',
+      'Drag files here',
+    );
+
+    await user.click(screen.getByTestId('attachments'));
+
+    expect(inputClick).toHaveBeenCalledWith();
+
+    inputClick.mockRestore();
+  });
+
+  it('prevents default browser handling when the file label is clicked', () => {
+    renderAttachment([]);
+    const clickEvent = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+    });
+    const preventDefault = vi.spyOn(clickEvent, 'preventDefault');
+
+    screen
+      .getByLabelText('Upload supporting documents')
+      .dispatchEvent(clickEvent);
+
+    expect(preventDefault).toHaveBeenCalledWith();
+  });
+
+  it('ignores a change event that carries no file list', () => {
+    const onUploadFiles = vi.fn();
+    renderAttachment([], { onUploadFiles });
+    const input = screen.getByTestId('drag-upload-supporting-documents');
+
+    Object.defineProperty(input, 'files', {
+      configurable: true,
+      get: () => null,
+    });
+    fireEvent.change(input);
+
+    expect(onUploadFiles).not.toHaveBeenCalled();
+    expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+  });
+
+  it('renders summary attachments or a no-details fallback', () => {
+    const { rerender } = renderAttachment([], { isSummary: true });
+
+    expect(screen.getByText('No details added')).toBeInTheDocument();
+
+    rerender(
+      <AttachmentHarness
+        initialAttachmentValue={[uploadedAttachment]}
+        props={{ isSummary: true }}
+      />,
+    );
+
+    expect(
+      screen.getByRole('link', { name: 'manual.pdf' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('No details added')).not.toBeInTheDocument();
+  });
+
+  it('reports invalid extensions and too many selected files without uploading', async () => {
+    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    renderAttachment([], {
+      maxFiles: 1,
+      onUploadFiles,
+    });
+
+    changeFileInput([
+      file('manual.pdf', 10),
+      file('diagram.gif', 10, 'image/gif'),
+    ]);
+
+    expect(onUploadFiles).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('Files must be one of the following types: .pdf, .jpg'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'The files selected have not been uploaded as you have selected more files than the maximum number allowed - (1).',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('reports a missing extension with singular file and allowed-type wording', () => {
+    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    renderAttachment([], {
+      allowedTypes: '.pdf',
+      onUploadFiles,
+    });
+
+    changeFileInput([file('manual', 10)]);
+
+    expect(onUploadFiles).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('File must be of the following type: .pdf'),
+    ).toBeInTheDocument();
+  });
+
+  it('reports a single oversized file without uploading it', async () => {
+    const user = userEvent.setup();
+    const onUploadFiles = vi.fn().mockResolvedValue(uploadedAttachment);
+    renderAttachment(null, {
+      allowMultiple: false,
+      allowedTypes: '.pdf',
+      maxSizeInMB: 1,
+      onUploadFiles,
+    });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('large.pdf', 1024 * 1024 + 1),
+    );
+
+    expect(onUploadFiles).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
+    ).toBeInTheDocument();
+  });
+
+  it('uploads one valid file into the attachment list', async () => {
+    const user = userEvent.setup();
+    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() =>
+      expect(onUploadFiles).toHaveBeenCalledWith([
+        expect.objectContaining({ name: 'manual.pdf' }),
+      ]),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[{"id":"doc-1"',
+      ),
+    );
+  });
+
+  it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
+    const user = userEvent.setup();
+    const result = [
+      {
+        ...uploadedAttachment,
+        id: 'doc-2',
+        attachmentName: 'diagram.jpg',
+      },
+    ] satisfies AttachmentDto[];
+    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    renderAttachment([uploadedAttachment], {
+      onUploadFiles,
+    });
+
+    await user.upload(screen.getByTestId('drag-upload-supporting-documents'), [
+      file('manual.pdf', 10),
+      file('diagram.jpg', 10, 'image/jpeg'),
+    ]);
+
+    await waitFor(() =>
+      expect(onUploadFiles).toHaveBeenCalledWith([
+        expect.objectContaining({ name: 'manual.pdf' }),
+        expect.objectContaining({ name: 'diagram.jpg' }),
+      ]),
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachmentName":"diagram.jpg"',
+      ),
+    );
+
+    expect(screen.getByTestId('values')).not.toHaveTextContent(
+      '"attachmentName":"manual.pdf"',
+    );
+  });
+
+  it('reports oversized files in a batch and uploads the files within the size limit', async () => {
+    const result = [
+      {
+        ...uploadedAttachment,
+        id: 'doc-3',
+        attachmentName: 'small.pdf',
+      },
+    ] satisfies AttachmentDto[];
+    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    renderAttachment([], { onUploadFiles });
+
+    changeFileInput([
+      file('large.pdf', 1024 * 1024 + 1),
+      file('small.pdf', 10),
+    ]);
+
+    await waitFor(() =>
+      expect(onUploadFiles).toHaveBeenCalledWith([
+        expect.objectContaining({ name: 'small.pdf' }),
+      ]),
+    );
+
+    expect(
+      screen.getByText('Upload failed: large.pdf exceeds the 1 mb limit.'),
+    ).toBeInTheDocument();
+
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachmentName":"small.pdf"',
+      ),
+    );
+  });
+
+  it('stores a single-file upload as a one-item list while progress is still running', async () => {
+    // Single-file mode used to store a lone object here, which AttachmentItemNew could not read
+    // because it addresses its field as `name[index]`. The field is always a list now.
+    const user = userEvent.setup();
+    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    renderAttachment(null, {
+      allowMultiple: false,
+      onUploadFiles,
+      progress: {
+        status: 'Uploading',
+        percent: 0,
+        completedFiles: 0,
+        totalFiles: 1,
+        files: [],
+      },
+    });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[{"id":"doc-1"',
+      ),
+    );
+
+    expect(
+      screen.getByRole('progressbar', { name: 'Uploading' }),
+    ).toBeInTheDocument();
+  });
+
+  it('points the control at its validation message once the form is submitted', async () => {
+    // Until the form is submitted the control is described by its help text; afterwards the
+    // error takes over, so assistive tech announces the problem rather than the hint.
+    render(
+      <AttachmentHarness
+        initialAttachmentValue={[]}
+        resolver={async () => ({
+          values: {},
+          errors: {
+            attachments: {
+              type: 'validation',
+              message: 'Upload at least one document',
+            },
+          },
+        })}
+      />,
+    );
+    const button = screen.getByTestId('supporting-documents');
+
+    expect(button).toHaveAttribute(
+      'aria-describedby',
+      'help-supporting-documents',
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(button).toHaveAttribute(
+      'aria-describedby',
+      'supporting-documents-validation-msg',
+    );
+  });
+
+  it('shows the missing-category message on every row after a submit attempt', async () => {
+    renderAttachment([{ ...uploadedAttachment, attachmentCategory: '' }]);
+
+    expect(
+      screen.queryByText(
+        'Select a category that best describes this document.',
+      ),
+    ).not.toBeInTheDocument();
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(
+      screen.getByText('Select a category that best describes this document.'),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps describing the control with its help text when the form is valid', async () => {
+    renderAttachment([]);
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
+      'aria-describedby',
+      'help-supporting-documents',
+    );
+  });
+
+  it('reports server validation errors from a failed upload', async () => {
+    const user = userEvent.setup();
+    const onUploadFiles = vi.fn().mockRejectedValue({
+      errors: {
+        first: 'Virus scan failed',
+        second: 'Document could not be stored',
+      },
+    });
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await expect(
+      screen.findByText('Virus scan failed'),
+    ).resolves.toBeInTheDocument();
+    expect(
+      screen.getByText('Document could not be stored'),
+    ).toBeInTheDocument();
+  });
+
+  it('recovers without listing errors when a failed upload has no errors collection', async () => {
+    const user = userEvent.setup();
+    // A rejection whose problem details carry no `errors` map exercises the
+    // `?? {}` fallback: Object.values({}).flat() yields nothing to display.
+    const onUploadFiles = vi
+      .fn()
+      .mockRejectedValue({ title: 'Server exploded' });
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() =>
+      expect(onUploadFiles).toHaveBeenCalledWith([expect.any(File)]),
+    );
+
+    expect(
+      within(screen.getByRole('list', { name: 'upload errors' })).queryByRole(
+        'listitem',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders active upload progress with cancellable file rows', async () => {
+    const user = userEvent.setup();
+    const handleCancelFile = vi.fn().mockResolvedValue(undefined);
+    renderAttachment([], {
+      handleCancelFile,
+      progress: {
+        status: 'Uploading',
+        percent: 25,
+        completedFiles: 1,
+        totalFiles: 4,
+        files: [
+          {
+            fileName: 'manual.pdf',
+            status: FileStatus.Uploading,
+            bytesUploaded: 100,
+            totalBytes: 400,
+          },
+        ],
+      },
+    });
+
+    expect(
+      screen.getByRole('progressbar', { name: 'Uploading' }),
+    ).toHaveAttribute('aria-valuenow', '25');
+    expect(screen.getByText('1 / 4 files processed')).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Cancel uploading manual.pdf' }),
+    );
+
+    expect(handleCancelFile).toHaveBeenCalledWith('manual.pdf');
+    expect(screen.getByText('Cancelling...')).toBeInTheDocument();
+  });
+
+  it('shows uploaded attachments once progress is complete', () => {
+    renderAttachment([uploadedAttachment], {
+      progress: {
+        status: 'Completed',
+        percent: 100,
+        completedFiles: 1,
+        totalFiles: 1,
+        files: [],
+      },
+    });
+
+    expect(
+      screen.queryByRole('progressbar', { name: 'Completed' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: '1 files uploaded' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Select a category to classify each document'),
+    ).toBeInTheDocument();
+  });
+
+  it('deletes an existing attachment and removes it from the field value', async () => {
+    const user = userEvent.setup();
+    const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+    renderAttachment([uploadedAttachment], { onDeleteFile });
+
+    await user.click(screen.getByRole('button', { name: /^Delete / }));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+
+    expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
+
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[]',
+      ),
+    );
+  });
+
+  it('does not call delete when the selected attachment has no id', async () => {
+    const consoleError = vi.spyOn(console, 'error');
+    try {
+      const user = userEvent.setup();
+      const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+      renderAttachment(
+        [
+          {
+            ...uploadedAttachment,
+            id: undefined,
+          },
+        ],
+        { onDeleteFile },
+      );
+
+      await user.click(screen.getByRole('button', { name: /^Delete / }));
+      await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+
+      expect(onDeleteFile).not.toHaveBeenCalled();
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachmentName":"manual.pdf"',
+      );
+      expect(consoleError).not.toHaveBeenCalled();
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('reports delete failures without removing the attachment', async () => {
+    const user = userEvent.setup();
+    const onDeleteFile = vi.fn().mockRejectedValue('Delete failed');
+    renderAttachment([uploadedAttachment], { onDeleteFile });
+
+    await user.click(screen.getByRole('button', { name: /^Delete / }));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+
+    await expect(
+      screen.findByText('Delete failed'),
+    ).resolves.toBeInTheDocument();
+    expect(screen.getByTestId('values')).toHaveTextContent(
+      '"attachmentName":"manual.pdf"',
+    );
+  });
+
+  it('keeps a locked attachment in summary mode without delete controls', () => {
+    renderAttachment([
+      {
+        ...uploadedAttachment,
+        documentLocked: true,
+      },
+    ]);
+
+    const attachmentRegion = screen
+      .getByText('manual.pdf')
+      .closest('.attachment');
+
+    expect(attachmentRegion).not.toBeNull();
+    expect(
+      within(attachmentRegion as HTMLElement).queryByRole('button', {
+        name: /^Delete /,
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows uploaded attachments when progress completed with errors', () => {
+    renderAttachment([uploadedAttachment], {
+      progress: {
+        status: 'CompletedWithErrors',
+        percent: 100,
+        completedFiles: 1,
+        totalFiles: 2,
+        files: [],
+      },
+    });
+
+    expect(
+      screen.queryByRole('progressbar', { name: 'CompletedWithErrors' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: '1 files uploaded' }),
+    ).toBeInTheDocument();
+  });
+
+  it('treats a field holding a single object as empty rather than throwing', () => {
+    // A form is free to hand over a bare object; the item addresses its field as
+    // `name.index.attachmentCategory`, so the control normalises to a list first.
+    renderAttachment(uploadedAttachment);
+
+    expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
+    expect(screen.getByTestId('supporting-documents')).toBeInTheDocument();
+  });
+
+  it('survives an upload that finishes after the control has gone', async () => {
+    let finishUpload: (value: AttachmentDto[]) => void = () => {};
+    const onUploadFiles = vi.fn(
+      () =>
+        new Promise<AttachmentDto[]>((resolve) => {
+          finishUpload = resolve;
+        }),
+    );
+    const { unmount } = renderAttachment([], { onUploadFiles });
+
+    await userEvent.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
+
+    // The post-upload reset of the file input has nothing to write to once the ref detaches.
+    unmount();
+    await act(async () => {
+      finishUpload([uploadedAttachment]);
+    });
+
+    expect(onUploadFiles).toHaveBeenCalledTimes(1);
+  });
+
+  it('survives a delete that finishes after the control has gone', async () => {
+    let finishDelete: () => void = () => {};
+    const onDeleteFile = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          finishDelete = resolve;
+        }),
+    );
+    const { unmount } = renderAttachment([uploadedAttachment], {
+      onDeleteFile,
+    });
+
+    await userEvent.click(screen.getByTestId('cancel-button-doc-1'));
+    await userEvent.click(screen.getByRole('button', { name: 'Yes, delete' }));
+    await waitFor(() => expect(onDeleteFile).toHaveBeenCalledWith('doc-1'));
+
+    unmount();
+    await act(async () => {
+      finishDelete();
+    });
+
+    expect(onDeleteFile).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows an error and keeps the saved category when a category update fails', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    renderAttachment([uploadedAttachment], { onCategoryUpdate });
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate',
+    );
+
+    await expect(
+      within(screen.getByRole('list', { name: 'upload errors' })).findByText(
+        'Could not save the category for manual.pdf.',
+      ),
+    ).resolves.toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+      'Manuals',
+    );
+  });
+
+  it('keeps the remaining category when an earlier attachment is deleted', async () => {
+    const user = userEvent.setup();
+    const second = {
+      ...uploadedAttachment,
+      id: 'doc-2',
+      attachmentName: 'second.pdf',
+      attachmentCategory: 'Certificate',
+    } satisfies AttachmentDto;
+    renderAttachment([uploadedAttachment, second]);
+
+    await user.click(screen.getByTestId('cancel-button-doc-1'));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+
+    await waitFor(() =>
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument(),
+    );
+
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+      'Certificate',
+    );
+  });
+
+  describe('category errors follow the document, not the row position', () => {
+    const CATEGORY_ERROR =
+      'Select a category that best describes this document.';
+    const uncategorised = (id: string, attachmentName: string) =>
+      ({
+        ...uploadedAttachment,
+        id,
+        attachmentName,
+        attachmentCategory: '',
+      }) satisfies AttachmentDto;
+    const rowOf = (fileName: string) =>
+      screen.getByText(fileName).closest('.attachment') as HTMLElement;
+    const touchCategory = async (
+      user: ReturnType<typeof userEvent.setup>,
+      fileName: string,
+    ) => {
+      await user.click(
+        within(rowOf(fileName)).getByRole('combobox', { name: 'Category' }),
+      );
+      await user.tab();
+    };
+    const deleteDocument = async (
+      user: ReturnType<typeof userEvent.setup>,
+      id: string,
+      fileName: string,
+    ) => {
+      await user.click(screen.getByTestId(`cancel-button-${id}`));
+      await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+      await waitFor(() =>
+        expect(screen.queryByText(fileName)).not.toBeInTheDocument(),
+      );
+    };
+
+    it('shows no error on an untouched row that moves up after a touched row is deleted', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+      ]);
+
+      await touchCategory(user, 'first.pdf');
+
+      expect(
+        within(rowOf('first.pdf')).getByText(CATEGORY_ERROR),
+      ).toBeInTheDocument();
+      expect(
+        within(rowOf('second.pdf')).queryByText(CATEGORY_ERROR),
+      ).not.toBeInTheDocument();
+
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
+    });
+
+    it('shows no stale error on a different document that replaces a touched one on re-upload', async () => {
+      const user = userEvent.setup();
+      const onUploadFiles = vi
+        .fn()
+        .mockResolvedValue([uncategorised('doc-2', 'second.pdf')]);
+      renderAttachment([uncategorised('doc-1', 'first.pdf')], {
+        onUploadFiles,
+      });
+
+      await touchCategory(user, 'first.pdf');
+
+      expect(screen.getByText(CATEGORY_ERROR)).toBeInTheDocument();
+
+      await user.upload(
+        screen.getByTestId('drag-upload-supporting-documents'),
+        file('second.pdf', 10),
+      );
+
+      await waitFor(() =>
+        expect(screen.getByText('second.pdf')).toBeInTheDocument(),
+      );
+
+      expect(screen.queryByText('first.pdf')).not.toBeInTheDocument();
+      expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
+    });
+
+    it('keeps the error on a touched row that moves up, and not on the row behind it', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+        uncategorised('doc-3', 'third.pdf'),
+      ]);
+
+      await touchCategory(user, 'second.pdf');
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      expect(
+        within(rowOf('second.pdf')).getByText(CATEGORY_ERROR),
+      ).toBeInTheDocument();
+      expect(
+        within(rowOf('third.pdf')).queryByText(CATEGORY_ERROR),
+      ).not.toBeInTheDocument();
+    });
+
+    it('still shows the error on every category-less row after a submit attempt', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+        uncategorised('doc-3', 'third.pdf'),
+      ]);
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      await act(async () => {
+        await formMethods?.handleSubmit(() => undefined)();
+      });
+
+      expect(screen.getAllByText(CATEGORY_ERROR)).toHaveLength(2);
+    });
+  });
+
+  it('reverts the right document when an earlier row is deleted mid-save', async () => {
+    const user = userEvent.setup();
+    const second = {
+      ...uploadedAttachment,
+      id: 'doc-2',
+      attachmentName: 'second.pdf',
+      attachmentCategory: 'Certificate',
+    } satisfies AttachmentDto;
+    let rejectSave: () => void = () => {};
+    const savePromise = new Promise<void>((_, reject) => {
+      rejectSave = () => reject(new Error('offline'));
+    });
+    const onCategoryUpdate = vi.fn().mockReturnValue(savePromise);
+    renderAttachment([uploadedAttachment, second], { onCategoryUpdate });
+
+    const secondRow = screen.getByText('second.pdf').closest('.attachment')!;
+    await user.selectOptions(
+      within(secondRow as HTMLElement).getByRole('combobox', {
+        name: 'Category',
+      }),
+      'Other',
+    );
+    await user.click(screen.getByTestId('cancel-button-doc-1'));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+    await waitFor(() =>
+      expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument(),
+    );
+    await act(async () => {
+      rejectSave();
+      await savePromise.catch(() => {});
+    });
+
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+        'Certificate',
+      ),
+    );
+    const values = JSON.parse(
+      screen.getByTestId('values').textContent ?? '{}',
+    ) as { attachments: AttachmentDto[] };
+
+    expect(values.attachments).toHaveLength(1);
+    expect(values.attachments[0]).toMatchObject({
+      id: 'doc-2',
+      attachmentCategory: 'Certificate',
+    });
+  });
+
+  it('lists the same category-save failure once when it repeats', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    renderAttachment([uploadedAttachment], { onCategoryUpdate });
+    const select = screen.getByRole('combobox', { name: 'Category' });
+
+    await user.selectOptions(select, 'Certificate');
+    await user.selectOptions(select, 'Other');
+
+    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(
+        within(
+          screen.getByRole('list', { name: 'upload errors' }),
+        ).getAllByText('Could not save the category for manual.pdf.'),
+      ).toHaveLength(1),
+    );
   });
 });

@@ -127,7 +127,6 @@ const options = {
 
 describe('runClosure', () => {
   it('runs gates in order, validates the native handoff, and cleans up', async () => {
-    expect.assertions(4);
     const { adapters, calls, freeze, producer } = makeAdapters();
 
     const result = await moduleUnderTest.runClosure(options, adapters);
@@ -183,5 +182,142 @@ describe('runClosure', () => {
       'release-freeze',
       'stop-server',
     ]);
+  });
+
+  it('fails before qualifying gates when the handoff is stale', async () => {
+    const { adapters, calls } = makeAdapters({
+      produceMcpReceipts: vi.fn(async () => ({
+        freezeId: 'old-freeze',
+        producerId: 'producer-1',
+        receiptFiles: ['receipt-cold.json'],
+      })),
+    });
+
+    const result = await moduleUnderTest.runClosure(options, adapters);
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'EXECUTION_INCOMPLETE',
+    });
+    expect(result.message).toContain('handoff');
+    expect(calls).toEqual([
+      'paths',
+      'freeze',
+      'producer',
+      'gate-1-type-check',
+      'gate-2-lint',
+      'gate-3-unit',
+      'gate-4-source',
+      'gate-5-storybook-build',
+      'gate-6-references',
+      'awaiting-mcp',
+      'release-freeze',
+      'stop-server',
+    ]);
+    expect(adapters.produceMcpReceipts).toHaveBeenCalledExactlyOnceWith({
+      receipts: options.receipts,
+      freeze: expect.objectContaining({ freezeId: 'freeze-1' }),
+      producer: expect.objectContaining({ producerId: 'producer-1' }),
+      timeout: options.mcpTimeoutMs,
+    });
+  });
+
+  it('fails closed when a pre-freeze gate is reported', async () => {
+    const { adapters, calls } = makeAdapters({
+      runGate: vi.fn(async (gate: string) => ({
+        name: gate,
+        ok: gate !== 'gate-3-unit',
+        inputDigest: 'sha256:inputs',
+        producerIdentityDigest: 'sha256:producer',
+        freezeId: 'freeze-1',
+      })),
+    });
+
+    const result = await moduleUnderTest.runClosure(options, adapters);
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'EXECUTION_INCOMPLETE',
+    });
+    expect(calls).toEqual([
+      'paths',
+      'freeze',
+      'producer',
+      'release-freeze',
+      'stop-server',
+    ]);
+    expect(adapters.runGate).toHaveBeenCalledTimes(3);
+    expect(adapters.runGate).toHaveBeenNthCalledWith(
+      3,
+      'gate-3-unit',
+      expect.any(Object),
+    );
+  });
+
+  it('surfaces cleanup failures even after an earlier gate failure', async () => {
+    const { adapters } = makeAdapters({
+      runGate: vi.fn(async (gate: string) => ({
+        name: gate,
+        ok: gate !== 'gate-3-unit',
+        inputDigest: 'sha256:inputs',
+        producerIdentityDigest: 'sha256:producer',
+        freezeId: 'freeze-1',
+      })),
+      releaseFreeze: vi.fn(async () => {
+        throw new Error('ACL restoration failed');
+      }),
+    });
+
+    const result = await moduleUnderTest.runClosure(options, adapters);
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'EXECUTION_INCOMPLETE',
+    });
+    expect(result.message).toContain('ACL restoration failed');
+  });
+
+  it('releases the freeze and owned server when cancellation is signalled', async () => {
+    const controller = new AbortController();
+    const { adapters, calls, producer } = makeAdapters();
+    vi.spyOn(adapters, 'establishProducer').mockImplementation(async () => {
+      calls.push('producer');
+      controller.abort(new Error('closure interrupted by SIGTERM'));
+      return producer;
+    });
+
+    const result = await moduleUnderTest.runClosure(
+      { ...options, signal: controller.signal },
+      adapters,
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'EXECUTION_INCOMPLETE',
+      message: 'closure interrupted by SIGTERM',
+    });
+    expect(calls).toEqual([
+      'paths',
+      'freeze',
+      'producer',
+      'release-freeze',
+      'stop-server',
+    ]);
+    expect(adapters.runGate).not.toHaveBeenCalled();
+  });
+
+  it('rejects invalid timeout values without touching the checkout', async () => {
+    const { adapters, calls } = makeAdapters();
+
+    const result = await moduleUnderTest.runClosure(
+      { ...options, mcpTimeoutMs: 0 },
+      adapters,
+    );
+
+    expect(result).toMatchObject({
+      ok: false,
+      code: 'INVALID_INVOCATION',
+    });
+    expect(calls).toEqual([]);
   });
 });

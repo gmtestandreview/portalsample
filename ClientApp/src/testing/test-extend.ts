@@ -4,7 +4,7 @@ import { mswHandlers as handlers } from '../../../.storybook/msw-handlers';
 
 export const test = testBase.extend({
   msw: [
-    async ({}, use) => {
+    async (_context, use) => {
       // Configure and start the browser service worker before each test runs
       network.configure({
         handlers,

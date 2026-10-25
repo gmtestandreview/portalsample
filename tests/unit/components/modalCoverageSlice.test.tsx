@@ -1,11 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { MemoryRouter } from 'react-router';
-
 import ConfirmationModal from '../../../ClientApp/src/components/modals/ConfirmationModal';
-
 import {
   type ModalDispatch,
   type ModalState,
@@ -14,11 +10,8 @@ import {
   useModalDispatch,
   useModalState,
 } from '../../../ClientApp/src/components/modals/ModalContext';
-
 import RFQDeleteModal from '../../../ClientApp/src/components/modals/RFQDeleteModal';
-
 import { trackGAEvent } from '../../../ClientApp/src/analytics/GoogleAnalytics';
-
 import { setDashboardNotification } from '../../../ClientApp/src/storage/notification';
 
 const mocks = vi.hoisted(() => ({
@@ -29,7 +22,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -50,7 +43,7 @@ vi.mock(import('react-router'), async () => {
 });
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       ApplicationType: {
@@ -83,7 +76,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/types'),
+  '../../../ClientApp/src/storage/types',
   () =>
     ({
       NotificationSeverity: {
@@ -93,7 +86,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -159,8 +152,8 @@ describe('modal coverage slice', () => {
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
     mocks.deleteApplication.mockResolvedValue(undefined);
   });
+
   it('exposes modal state and dispatch through providers', () => {
-    expect.assertions(2);
     const dispatch = {
       setShowBranchSelector: vi.fn(),
       setShowRFQDeleteModal: vi.fn(),
@@ -187,32 +180,16 @@ describe('modal coverage slice', () => {
 
     expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
   });
-});
 
-describe('modal coverage slice', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
-    mocks.deleteApplication.mockResolvedValue(undefined);
-  });
   it('returns null modal contexts when no provider is present', () => {
-    expect.assertions(1);
     render(<ModalConsumer />);
 
     expect(
       screen.getByRole('button', { name: 'Close from context' }),
     ).toBeInTheDocument();
   });
-});
 
-describe('modal coverage slice', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
-    mocks.deleteApplication.mockResolvedValue(undefined);
-  });
   it('closes confirmation modal before yes and no callbacks', () => {
-    expect.assertions(2);
     const calls: string[] = [];
     const closeModal = vi.fn(() => calls.push('close'));
     const onModalYes = vi.fn(() => calls.push('yes'));
@@ -239,5 +216,82 @@ describe('modal coverage slice', () => {
     fireEvent.click(screen.getByRole('button', { name: /no/i }));
 
     expect(calls).toEqual(['close', 'no']);
+  });
+
+  it('cancels RFQ deletion by closing the modal and tracking the event', () => {
+    const dispatch = {
+      setShowBranchSelector: vi.fn(),
+      setShowRFQDeleteModal: vi.fn(),
+      setShowRFQSelectModal: vi.fn(),
+    };
+    renderRFQDeleteModal(undefined, dispatch);
+
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
+    expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
+    expect(trackGAEvent).toHaveBeenCalledWith('Close RFQ Delete Modal');
+    expect(mocks.deleteApplication).not.toHaveBeenCalled();
+  });
+
+  it('deletes an RFQ, shows the dashboard notification, closes, tracks and navigates home', async () => {
+    const dispatch = {
+      setShowBranchSelector: vi.fn(),
+      setShowRFQDeleteModal: vi.fn(),
+      setShowRFQSelectModal: vi.fn(),
+    };
+    renderRFQDeleteModal(undefined, dispatch);
+
+    fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
+
+    await waitFor(() =>
+      expect(mocks.deleteApplication).toHaveBeenCalledWith('RFQ-123', {
+        applicationType: 'QuoteRequest',
+      }),
+    );
+
+    expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
+    expect(setDashboardNotification).toHaveBeenCalledWith({
+      message: 'The draft request has been successfully deleted',
+      severity: 'success',
+    });
+    expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
+    expect(trackGAEvent).toHaveBeenCalledWith('Save RFQ Delete Modal');
+    expect(mocks.navigate).toHaveBeenCalledWith('/');
+  });
+
+  it('still closes and navigates when RFQ deletion fails', async () => {
+    mocks.deleteApplication.mockRejectedValueOnce(new Error('delete failed'));
+    const dispatch = {
+      setShowBranchSelector: vi.fn(),
+      setShowRFQDeleteModal: vi.fn(),
+      setShowRFQSelectModal: vi.fn(),
+    };
+    renderRFQDeleteModal(undefined, dispatch);
+
+    fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
+
+    await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+
+    expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
+    expect(setDashboardNotification).not.toHaveBeenCalled();
+  });
+
+  it('closes and navigates without deleting when RFQ id is missing', async () => {
+    const dispatch = {
+      setShowBranchSelector: vi.fn(),
+      setShowRFQDeleteModal: vi.fn(),
+      setShowRFQSelectModal: vi.fn(),
+    };
+    renderRFQDeleteModal(
+      { showBranchSelector: false, showRFQDeleteModal: true },
+      dispatch,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));
+
+    await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith('/'));
+
+    expect(mocks.deleteApplication).not.toHaveBeenCalled();
+    expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
   });
 });

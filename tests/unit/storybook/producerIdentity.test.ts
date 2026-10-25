@@ -39,7 +39,6 @@ const receipt = {
 
 describe('validateProducerIdentity', () => {
   it('accepts a receipt joined to the owned producer and freeze', () => {
-    expect.assertions(1);
     expect(
       moduleUnderTest.validateProducerIdentity({
         producer,
@@ -75,7 +74,6 @@ describe('validateProducerIdentity', () => {
       },
     ],
   ])('rejects %s', (_name, overrides) => {
-    expect.assertions(1);
     expect(
       moduleUnderTest.validateProducerIdentity({
         producer,

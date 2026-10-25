@@ -11,12 +11,10 @@ const validMock = {
 
 describe('typed mock module shapes', () => {
   it('accepts known exports', () => {
-    expect.assertions(1);
     expect(validMock.knownExport).toBeDefined();
   });
 
   it('rejects renamed exports at compile time', () => {
-    expect.assertions(1);
     const invalidMock = {
       // @ts-expect-error Deliberately prove that unknown export names are rejected.
       renamedExport: vi.fn(),

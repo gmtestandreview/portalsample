@@ -11,32 +11,28 @@ const getPublicAsset = async (document: Document, selector: string) => {
     selector,
   );
 
-  if (element === null) {
-    throw new Error(`index.html declares no element matching ${selector}`);
-  }
+  expect(
+    element,
+    `index.html declares no element matching ${selector}`,
+  ).not.toBeNull();
 
   const publicUrl =
     element instanceof HTMLLinkElement
       ? element.getAttribute('href')
       : element?.getAttribute('content');
 
-  if (publicUrl === null || !/^\/[A-Za-z0-9.-]+$/.test(publicUrl)) {
-    throw new Error(`Invalid public asset URL for ${selector}: ${publicUrl}`);
-  }
+  expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/);
 
   const assetPath = path.join(publicDirectory, publicUrl!.slice(1));
   const asset = statPath(assetPath, publicDirectory);
 
-  if (!asset.isFile()) {
-    throw new Error(`Public asset is not a file: ${assetPath}`);
-  }
+  expect(asset.isFile()).toBe(true);
 
   return publicUrl;
 };
 
 describe('application shell identity assets', () => {
   it('publishes favicon and tile metadata backed by public files', async () => {
-    expect.assertions(4);
     const html = await readTextFile(
       path.join(repositoryRoot, 'index.html'),
       repositoryRoot,

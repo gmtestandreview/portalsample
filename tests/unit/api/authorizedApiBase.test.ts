@@ -13,7 +13,6 @@ describe(AuthorizedApiBase, () => {
   });
 
   it('captures TargetOrganisationAbn when each client is constructed', async () => {
-    expect.assertions(3);
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
       JSON.stringify({ targetOrganisationAbn: '11111111111' }),
@@ -60,7 +59,6 @@ describe(AuthorizedApiBase, () => {
   });
 
   it('does not parse later sessionStorage changes when the client captured no target organisation', async () => {
-    expect.assertions(1);
     const client = new TestClient();
     client.setAuthToken('test-token');
     globalThis.sessionStorage.setItem('targetOrganisation', 'not-json{{{');

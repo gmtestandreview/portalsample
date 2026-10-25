@@ -1,14 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { MemoryRouter, Route, Routes } from 'react-router';
-
 import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-
 import type { ReactNode } from 'react';
 
 import CreateRequestForTypeApproval from '../../../../ClientApp/src/routes/ta/create';
@@ -22,7 +18,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -43,7 +39,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       ApplicationType: {
@@ -69,7 +65,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -98,8 +94,8 @@ describe(CreateRequestForTypeApproval, () => {
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
     mocks.createApplication.mockResolvedValue({ referenceId: 'PA-100' });
   });
+
   it('creates a pattern approval application and redirects to organisation details', async () => {
-    expect.assertions(5);
     renderCreateRoute();
 
     expect(screen.getByTestId('block-ui-spinner')).toHaveTextContent(
@@ -120,5 +116,26 @@ describe(CreateRequestForTypeApproval, () => {
     expect(mocks.createApplication).toHaveBeenCalledWith({
       applicationType: 'PatternApproval',
     });
+  });
+
+  it('logs a client failure and leaves the user on the loading state', async () => {
+    const error = new Error('create failed');
+    mocks.createApplication.mockRejectedValue(error);
+
+    renderCreateRoute();
+
+    await waitFor(() => {
+      expect(mocks.appLoggerError).toHaveBeenCalledWith(
+        'Failed to create application',
+        error,
+      );
+    });
+
+    expect(screen.getByTestId('block-ui-spinner')).toHaveTextContent(
+      'Loading...',
+    );
+    expect(
+      screen.queryByText('Organisation details destination'),
+    ).not.toBeInTheDocument();
   });
 });

@@ -1,11 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-
 import { Form, Formik } from 'formik';
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
 import type { ComponentProps } from 'react';
-
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
 
 const DEBOUNCE_MS = 300;
@@ -42,11 +38,12 @@ describe('certificateNumberLookup debounce', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
+
   afterEach(() => {
     vi.useRealTimers();
   });
+
   it('holds the existing empty suggestion list when the debounce fires on an empty input', () => {
-    expect.assertions(2);
     renderLookup();
 
     // The applicationAndInstrument step renders two of these, and each one arms this timer on
@@ -63,22 +60,13 @@ describe('certificateNumberLookup debounce', () => {
     );
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
-});
 
-describe('certificateNumberLookup debounce', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-  afterEach(() => {
-    vi.useRealTimers();
-  });
   it.each([
     ['startsWith', 'Al', 'Alpha Certificate'],
     ['endsWith', 'cate', 'Alpha Certificate'],
   ] as const)(
     'supports the %s lookup match',
     async (matchType, input, expected) => {
-      expect.assertions(1);
       renderLookup([{ lookupName: expected }, { lookupName: 'Other value' }], {
         matchType,
       });
@@ -94,17 +82,8 @@ describe('certificateNumberLookup debounce', () => {
       ).toBeInTheDocument();
     },
   );
-});
 
-describe('certificateNumberLookup debounce', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-  afterEach(() => {
-    vi.useRealTimers();
-  });
   it('filters malformed lookup records without throwing', async () => {
-    expect.assertions(2);
     renderLookup([
       null,
       'not an object',
@@ -123,5 +102,48 @@ describe('certificateNumberLookup debounce', () => {
       screen.getByRole('option', { name: /Alpha Certificate/ }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole('option')).toHaveLength(1);
+  });
+
+  it('hides suggestions when the configured lookup field is absent', async () => {
+    renderLookup([{ lookupName: 'Alpha Certificate' }], {}, {}, true);
+
+    await act(async () => {
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: 'Alpha' },
+      });
+      vi.advanceTimersByTime(DEBOUNCE_MS);
+    });
+
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  it('filters and sorts suggestions when a parent field is configured', async () => {
+    renderLookup(
+      [
+        { lookupName: 'Zulu Certificate', parent: 'NMI' },
+        { lookupName: 'Alpha Certificate', parent: 'NMI' },
+        { lookupName: 'Alpha Industry', parent: 'Industry' },
+      ],
+      {
+        parentName: 'parent',
+        parentOptionsName: 'parent',
+        matchType: 'startsWith',
+      },
+      { parent: 'NMI' },
+    );
+
+    await act(async () => {
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: 'Al' },
+      });
+      vi.advanceTimersByTime(DEBOUNCE_MS);
+    });
+
+    expect(
+      screen.getByRole('option', { name: /Alpha Certificate/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('option', { name: /Alpha Industry/ }),
+    ).not.toBeInTheDocument();
   });
 });

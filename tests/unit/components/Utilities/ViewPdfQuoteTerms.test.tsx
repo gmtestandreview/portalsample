@@ -1,11 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import type { RequestForQuoteDetails } from '@/api/web-api-client';
-
 import ViewPdfQuoteTerms from '@/components/Utilities/ViewPdfQuoteTerms';
 
 const helperMocks = vi.hoisted(() => ({
@@ -16,11 +12,10 @@ const helperMocks = vi.hoisted(() => ({
 }));
 
 const trackGAEventMock = vi.hoisted(() => vi.fn());
-
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -31,7 +26,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/routes/common/helperFunctions'),
+  '@/routes/common/helperFunctions',
   () => helperMocks satisfies __ExactMockModule<__TestMockModule9>,
 );
 
@@ -44,7 +39,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -81,8 +76,8 @@ describe(ViewPdfQuoteTerms, () => {
       filename: 'quote-terms.pdf',
     });
   });
+
   it('renders the Note label, prefix text, Terms link, and suffix text', () => {
-    expect.assertions(4);
     const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);
 
     expect(screen.getByText('Note:')).toBeInTheDocument();
@@ -90,33 +85,70 @@ describe(ViewPdfQuoteTerms, () => {
     expect(getTermsAnchor(container)).toHaveTextContent('Terms');
     expect(screen.getByText(/before accepting/)).toBeInTheDocument();
   });
-});
 
-describe(ViewPdfQuoteTerms, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    acquireTokenSilentMock.mockResolvedValue({
-      accessToken: 'test-access-token',
-    });
-    helperMocks.getQuotationFileDetails.mockResolvedValue({
-      fileData: 'base64data',
-      mimeType: 'application/pdf',
-      filename: 'quote-terms.pdf',
-    });
-  });
   it('opens the PDF at the correct page and tracks a GA event on click', async () => {
-    expect.assertions(1);
     const user = userEvent.setup();
     const setIsLoading = vi.fn();
     const { container } = render(
       <ViewPdfQuoteTerms {...defaultProps} setIsLoading={setIsLoading} />,
     );
+
     await user.click(getTermsAnchor(container));
+
     await waitFor(() => {
       expect(acquireTokenSilentMock).toHaveBeenCalledWith({
         account: { homeAccountId: 'test-account' },
         scopes: ['openid', 'openid'],
       });
+      expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
+        'test-access-token',
+        mockQuotationData,
+        true,
+      );
+      expect(helperMocks.getFileUrlFromBase64).toHaveBeenCalledWith(
+        'base64data',
+      );
+      expect(helperMocks.openPdfPageInNewTab).toHaveBeenCalledWith(
+        'blob:test-url',
+        2,
+      );
+      expect(trackGAEventMock).toHaveBeenCalledWith('Terms', 'download');
+      expect(setIsLoading).toHaveBeenCalledWith(true);
+      expect(setIsLoading).toHaveBeenCalledWith(false);
+    });
+  });
+
+  it('sets a file error and clears loading when the token request fails', async () => {
+    const user = userEvent.setup();
+    const setFileError = vi.fn();
+    const setIsLoading = vi.fn();
+    acquireTokenSilentMock.mockRejectedValue(new Error('Token expired'));
+    const { container } = render(
+      <ViewPdfQuoteTerms
+        {...defaultProps}
+        setFileError={setFileError}
+        setIsLoading={setIsLoading}
+      />,
+    );
+
+    await user.click(getTermsAnchor(container));
+
+    await waitFor(() => {
+      expect(setFileError).toHaveBeenCalledWith(true);
+      expect(setIsLoading).toHaveBeenCalledWith(false);
+      expect(helperMocks.openPdfPageInNewTab).not.toHaveBeenCalled();
+    });
+  });
+
+  it('skips opening the PDF when the file response is incomplete', async () => {
+    const user = userEvent.setup();
+    helperMocks.getQuotationFileDetails.mockResolvedValue(null);
+    const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);
+
+    await user.click(getTermsAnchor(container));
+
+    await waitFor(() => {
+      expect(helperMocks.openPdfPageInNewTab).not.toHaveBeenCalled();
     });
   });
 });

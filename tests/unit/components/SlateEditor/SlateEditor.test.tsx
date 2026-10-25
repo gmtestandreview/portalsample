@@ -1,19 +1,13 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { Editor, Transforms } from 'slate';
-
 import type * as SlateModule from 'slate';
-
 import SlateEditor from '@/components/SlateEditor/SlateEditor';
-
 import {
   isBreakTag,
   isEmptyParagraphContent,
   serializeToHtml,
 } from '@/components/SlateEditor/SlateEditor';
-
 import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
 
 /**
@@ -29,7 +23,7 @@ import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
  */
 const captured = vi.hoisted(() => ({ editors: [] as Editor[] }));
 
-vi.mock(import('slate'), async (importOriginal) => {
+vi.mock('slate', async (importOriginal) => {
   const actual = await importOriginal<typeof SlateModule>();
 
   return {
@@ -85,7 +79,6 @@ const paragraph = (text: string): CustomElement[] => [
 
 describe('slateEditor helpers', () => {
   it('serializes paragraph text with inline mark formatting', () => {
-    expect.assertions(1);
     const html = serializeToHtml([
       {
         type: 'paragraph',
@@ -102,11 +95,8 @@ describe('slateEditor helpers', () => {
       '<p><strong>Bold</strong><em>Italic</em><u>Underline</u>Plain</p>',
     );
   });
-});
 
-describe('slateEditor helpers', () => {
   it('serializes unknown block types as their child content', () => {
-    expect.assertions(1);
     const html = serializeToHtml([
       {
         type: 'heading',
@@ -116,9 +106,7 @@ describe('slateEditor helpers', () => {
 
     expect(html).toBe('Heading text');
   });
-});
 
-describe('slateEditor helpers', () => {
   it.each([
     ['<br>', true],
     ['<br/>', true],
@@ -127,12 +115,9 @@ describe('slateEditor helpers', () => {
     ['plain text', false],
     ['<br', false],
   ])('classifies break tag %s as %s', (value, expected) => {
-    expect.assertions(1);
     expect(isBreakTag(value)).toBe(expected);
   });
-});
 
-describe('slateEditor helpers', () => {
   it.each([
     ['', true],
     ['&nbsp;&#xfeff; \n<br><br />', true],
@@ -140,7 +125,299 @@ describe('slateEditor helpers', () => {
     ['<br', false],
     ['visible text', false],
   ])('classifies paragraph content %j as empty=%s', (content, expected) => {
-    expect.assertions(1);
     expect(isEmptyParagraphContent(content)).toBe(expected);
+  });
+});
+
+describe(SlateEditor, () => {
+  it('renders toolbar controls, placeholder label, and the configured character limit', () => {
+    render(
+      <SlateEditor
+        value={paragraph('Hello')}
+        setValue={vi.fn()}
+        placeholder='Reply to NMI'
+        maxCharacters={25}
+      />,
+    );
+
+    expect(
+      screen.getByRole('textbox', { name: 'Reply to NMI' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bold' })).toHaveAttribute(
+      'title',
+      'Bold',
+    );
+    expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute(
+      'title',
+      'Italic',
+    );
+    expect(screen.getByRole('button', { name: 'Underline' })).toHaveAttribute(
+      'title',
+      'Underline',
+    );
+    expect(document.querySelector('.text-muted')).toHaveTextContent('0 /25');
+  });
+
+  it('prevents submitting empty or whitespace-only messages', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <SlateEditor
+        value={paragraph('   ')}
+        setValue={vi.fn()}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(
+      screen.getByText('Message cannot be empty or spaces only'),
+    ).toBeInTheDocument();
+  });
+
+  it('prevents submitting messages that exceed the configured character limit', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <SlateEditor
+        value={paragraph('abcdef')}
+        setValue={vi.fn()}
+        onSubmit={onSubmit}
+        maxCharacters={5}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(
+      screen.getByText(
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('submits valid messages and supports toolbar mouse interactions', () => {
+    const onSubmit = vi.fn();
+
+    render(
+      <SlateEditor
+        value={paragraph('ready')}
+        setValue={vi.fn()}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Bold' }));
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Italic' }));
+    fireEvent.mouseDown(screen.getByRole('button', { name: 'Underline' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders bold, italic and underline marks in the editor body', () => {
+    render(
+      <SlateEditor
+        value={[
+          {
+            type: 'paragraph',
+            children: [
+              { text: 'Bold bit', bold: true },
+              { text: 'Italic bit', italic: true },
+              { text: 'Underlined bit', underline: true },
+              { text: 'Plain bit' },
+            ],
+          },
+        ]}
+        setValue={vi.fn()}
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Bold bit').closest('strong')).not.toBeNull();
+    expect(screen.getByText('Italic bit').closest('em')).not.toBeNull();
+    expect(screen.getByText('Underlined bit').closest('u')).not.toBeNull();
+    expect(screen.getByText('Plain bit').closest('strong')).toBeNull();
+  });
+
+  it('does not stack the same error when send is pressed repeatedly', () => {
+    render(
+      <SlateEditor
+        value={paragraph('   ')}
+        setValue={vi.fn()}
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    const send = screen.getByRole('button', { name: 'Send' });
+    fireEvent.click(send);
+    fireEvent.click(send);
+    fireEvent.click(send);
+
+    expect(
+      screen.getAllByText('Message cannot be empty or spaces only'),
+    ).toHaveLength(1);
+  });
+
+  it('does not stack the length error when send is pressed repeatedly', () => {
+    render(
+      <SlateEditor
+        value={paragraph('abcdef')}
+        setValue={vi.fn()}
+        onSubmit={vi.fn()}
+        maxCharacters={5}
+      />,
+    );
+
+    const send = screen.getByRole('button', { name: 'Send' });
+    fireEvent.click(send);
+    fireEvent.click(send);
+
+    expect(
+      screen.getAllByText(
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
+    ).toHaveLength(1);
+  });
+});
+
+describe('slateEditor document changes', () => {
+  beforeEach(() => {
+    captured.editors.length = 0;
+  });
+
+  it('pushes edits back to the caller and updates the live character count', async () => {
+    const setValue = vi.fn();
+
+    render(
+      <SlateEditor
+        value={paragraph('Hello')}
+        setValue={setValue}
+        maxCharacters={1000}
+      />,
+    );
+
+    const editor = currentEditor();
+    await placeCaret(editor, 5);
+    await applyEdit(() => {
+      Transforms.insertText(editor, ' there');
+    });
+
+    const [lastValue] = setValue.mock.calls.at(-1) ?? [];
+
+    expect(serializeToHtml(lastValue)).toBe('<p>Hello there</p>');
+    // Counted over the serialized HTML, not the visible text: the limit exists to bound what
+    // gets sent, and the markup travels with it.
+    expect(document.querySelector('.text-muted')).toHaveTextContent('18 /1000');
+  });
+
+  it('reports a message that grows past the limit while it is being typed', async () => {
+    render(
+      <SlateEditor
+        value={paragraph('abcdef')}
+        setValue={vi.fn()}
+        maxCharacters={5}
+      />,
+    );
+
+    const editor = currentEditor();
+    await placeCaret(editor, 6);
+    await applyEdit(() => {
+      Transforms.insertText(editor, 'g');
+    });
+
+    expect(
+      screen.getByText(
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('does not stack the length error as typing continues past the limit', async () => {
+    render(
+      <SlateEditor
+        value={paragraph('abcdef')}
+        setValue={vi.fn()}
+        maxCharacters={5}
+      />,
+    );
+
+    const editor = currentEditor();
+    await placeCaret(editor, 6);
+    await applyEdit(() => {
+      Transforms.insertText(editor, 'g');
+    });
+    await applyEdit(() => {
+      Transforms.insertText(editor, 'h');
+    });
+
+    expect(
+      screen.getAllByText(
+        'Message cannot exceed 5 characters (including formatting)',
+      ),
+    ).toHaveLength(1);
+  });
+
+  it('clears the length error once the message fits again', async () => {
+    render(
+      <SlateEditor
+        value={paragraph('abcdefghijkl')}
+        setValue={vi.fn()}
+        maxCharacters={20}
+      />,
+    );
+
+    const editor = currentEditor();
+    await placeCaret(editor, 12);
+    await applyEdit(() => {
+      Transforms.insertText(editor, 'xy');
+    });
+
+    expect(
+      screen.getByText(
+        'Message cannot exceed 20 characters (including formatting)',
+      ),
+    ).toBeInTheDocument();
+
+    await applyEdit(() => {
+      editor.deleteBackward('character');
+    });
+    await applyEdit(() => {
+      editor.deleteBackward('character');
+    });
+
+    // Deleting back under the limit has to withdraw the error, otherwise a stale warning blocks
+    // a message that is now perfectly valid.
+    expect(
+      screen.queryByText(
+        'Message cannot exceed 20 characters (including formatting)',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
+  it('turns a mark off again when the toolbar button is pressed twice', async () => {
+    render(<SlateEditor value={paragraph('ready')} setValue={vi.fn()} />);
+
+    const editor = currentEditor();
+    // Slate drops marks when there is no selection, so the toolbar is inert until the caret is
+    // placed. Without this the second press would re-add the mark rather than remove it.
+    await placeCaret(editor, 0);
+
+    const bold = screen.getByRole('button', { name: 'Bold' });
+
+    await applyEdit(() => {
+      fireEvent.mouseDown(bold);
+    });
+
+    expect(Editor.marks(editor)).toMatchObject({ bold: true });
+
+    await applyEdit(() => {
+      fireEvent.mouseDown(bold);
+    });
+
+    expect(Editor.marks(editor)?.bold).toBeUndefined();
   });
 });

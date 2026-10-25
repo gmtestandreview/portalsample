@@ -16,7 +16,7 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
@@ -49,7 +49,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
@@ -58,7 +58,7 @@ vi.mock(
 
 // The real accordion collapses its body; the summary inside it is what is under test.
 vi.mock(
-  import('../../../../ClientApp/src/components/Accordion'),
+  '../../../../ClientApp/src/components/Accordion',
   () =>
     ({
       CustomAccordion: ({ children }: { children: ReactNode }) => (
@@ -124,7 +124,6 @@ describe('application details summary', () => {
   });
 
   it('shows the loaded organisation, application and documents without a Formik form', async () => {
-    expect.assertions(5);
     const ApplicationDetails = (
       await import('../../../../ClientApp/src/routes/ta/manage/appDetails')
     ).default;

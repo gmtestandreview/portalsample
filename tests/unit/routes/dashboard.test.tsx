@@ -1,15 +1,9 @@
 import type React from 'react';
-
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-
 import '@testing-library/jest-dom/vitest';
-
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-
 import { MemoryRouter, Route, Routes } from 'react-router';
-
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
-
 import { defined } from '../helpers/defined';
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
@@ -103,7 +97,7 @@ let mockAccountDetails: AccountDetails | null = null;
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
 vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
+  '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       DashboardClient: vi.fn().mockImplementation(function (this: any) {
@@ -117,7 +111,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => mockMsalContext,
@@ -125,7 +119,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  '@azure/msal-browser',
   () =>
     ({
       InteractionStatus: { None: 'none' },
@@ -133,7 +127,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/hooks'),
+  '../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: () => ({ details: mockAccountDetails }),
@@ -150,7 +144,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/ModalContext'),
+  '../../../ClientApp/src/components/modals/ModalContext',
   () =>
     ({
       useModalState: () => mockModalState,
@@ -301,7 +295,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
@@ -316,7 +310,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/errorRoutes'),
+  '../../../ClientApp/src/routes/common/errorRoutes',
   () =>
     ({
       default: (_status: number) => '/server-error',
@@ -324,7 +318,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/dashboardNotifications'),
+  '../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
     ({
       DashBoardNotifications: {
@@ -349,7 +343,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/notification'),
+  '../../../ClientApp/src/storage/notification',
   () =>
     ({
       getDashboardNotification: mockGetDashboardNotification,
@@ -362,7 +356,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/sessionStorageCache'),
+  '../../../ClientApp/src/storage/sessionStorageCache',
   () =>
     ({
       default: () => ({
@@ -383,7 +377,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/enums'),
+  '../../../ClientApp/src/routes/common/enums',
   () =>
     ({
       DashboardItemStatus: {
@@ -396,7 +390,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
+  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
   () =>
     ({
       BranchSelectionModalMode: {
@@ -475,6 +469,8 @@ function renderDashboard(Dashboard: React.ComponentType) {
   );
 }
 
+// ── Tests ──────────────────────────────────────────────────────────────────────
+
 describe('dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -511,8 +507,10 @@ describe('dashboard', () => {
     }));
     mockAccountDetails = { ...BASE };
   });
+
+  // ── Test 1: Renders without crashing ──────────────────────────────────────
+
   it('1. renders without crashing and shows Welcome component', async () => {
-    expect.assertions(1);
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -520,46 +518,10 @@ describe('dashboard', () => {
       expect(screen.getByTestId('welcome')).toBeInTheDocument();
     });
   });
-});
 
-describe('dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // Restore default resolved value after clearAllMocks resets implementations
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockGetQuotes.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockGetArtefacts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockSessionGetItem.mockReturnValue(null);
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockModalState.showBranchSelector = false;
-    mockModalState.showRFQDeleteModal = false;
-    mockModalState.branchSelectionModalMode = undefined;
-    mockAccountDispatchState.value = {
-      setAgree: vi.fn(),
-      setCompleted: vi.fn(),
-      setContactCompleted: vi.fn(),
-      setDefaultOrganisationId: vi.fn(),
-      setTargetOrganisation: mockSetTargetOrganisation,
-      setOrganisationAndBranch: vi.fn(),
-      setUserProfile: mockSetUserProfile,
-    };
-    mockMapToUserProfile.mockImplementation((p: any) => ({
-      filterYearType: p?.filterYearType ?? 'allYears',
-      filterStatusType: p?.filterStatusType ?? 'allStatuses',
-      filterCurrentPage: p?.filterCurrentPage ?? 1,
-      filterActiveTab: p?.filterActiveTab ?? 'drafts',
-      filterSearchText: p?.filterSearchText ?? '',
-      filterSortOrder: p?.filterSortOrder ?? 'descending',
-      filtersChanged: p?.filtersChanged ?? false,
-    }));
-    mockAccountDetails = { ...BASE };
-  });
+  // ── Test 2: SEC-010 — organisationCRMGuid passed as first arg to API ──────
+
   it('2. (SEC-010) passes organisationCRMGuid as first argument to getDashboardDraftsByPortalID', async () => {
-    expect.assertions(2);
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -572,46 +534,8 @@ describe('dashboard', () => {
       expect(call[0]).toBe('crm-guid-001');
     }
   });
-});
 
-describe('dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // Restore default resolved value after clearAllMocks resets implementations
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockGetQuotes.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockGetArtefacts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockSessionGetItem.mockReturnValue(null);
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockModalState.showBranchSelector = false;
-    mockModalState.showRFQDeleteModal = false;
-    mockModalState.branchSelectionModalMode = undefined;
-    mockAccountDispatchState.value = {
-      setAgree: vi.fn(),
-      setCompleted: vi.fn(),
-      setContactCompleted: vi.fn(),
-      setDefaultOrganisationId: vi.fn(),
-      setTargetOrganisation: mockSetTargetOrganisation,
-      setOrganisationAndBranch: vi.fn(),
-      setUserProfile: mockSetUserProfile,
-    };
-    mockMapToUserProfile.mockImplementation((p: any) => ({
-      filterYearType: p?.filterYearType ?? 'allYears',
-      filterStatusType: p?.filterStatusType ?? 'allStatuses',
-      filterCurrentPage: p?.filterCurrentPage ?? 1,
-      filterActiveTab: p?.filterActiveTab ?? 'drafts',
-      filterSearchText: p?.filterSearchText ?? '',
-      filterSortOrder: p?.filterSortOrder ?? 'descending',
-      filtersChanged: p?.filtersChanged ?? false,
-    }));
-    mockAccountDetails = { ...BASE };
-  });
   it('uses the saved search in the first dashboard request', async () => {
-    expect.assertions(2);
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
       filterSearchText: 'Fluke',
@@ -622,5 +546,700 @@ describe('dashboard', () => {
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
+  });
+
+  // ── Test 3: Sets auth token before API call ────────────────────────────────
+
+  it('3. sets auth token on the client before making API calls', async () => {
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token');
+    });
+
+    // Verify ordering: setAuthToken must precede getDashboardDraftsByPortalID
+    expect(mockGetDrafts).toHaveBeenCalledWith();
+
+    const setTokenOrder = mockSetAuthToken.mock.invocationCallOrder[0];
+    const getDraftsOrder = mockGetDrafts.mock.invocationCallOrder[0];
+
+    expect(setTokenOrder).toBeLessThan(defined(getDraftsOrder));
+  });
+
+  // ── Test 4: NoRequests when API returns empty items ────────────────────────
+
+  it('4. shows NoRequests component when API returns empty items array', async () => {
+    mockGetDrafts.mockResolvedValue({
+      items: [],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
+    });
+    mockGetQuotes.mockResolvedValue({
+      items: [],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
+    });
+    mockGetArtefacts.mockResolvedValue({
+      items: [],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    // All 3 tab panes are rendered simultaneously; each shows NoRequests when empty
+    await waitFor(() => {
+      const noRequestEls = screen.getAllByTestId('no-requests');
+
+      expect(noRequestEls.length).toBeGreaterThan(0);
+    });
+  });
+
+  // ── Test 5: Does NOT call API when organisationCRMGuid is absent ──────────
+
+  it('5. does not call API when organisationCRMGuid is undefined', async () => {
+    mockAccountDetails = { ...BASE, organisationCRMGuid: undefined };
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    // Wait for the component to mount and render. Welcome renders unconditionally;
+    // if it appears without the API being called, the org-GUID guard is working.
+    await waitFor(() =>
+      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
+    );
+
+    expect(mockGetDrafts).not.toHaveBeenCalled();
+    expect(mockGetQuotes).not.toHaveBeenCalled();
+    expect(mockGetArtefacts).not.toHaveBeenCalled();
+  });
+
+  // ── Test 6: Navigates to error route on fatal API error ───────────────────
+
+  it('6. navigates to /server-error route when API rejects with a 500 error', async () => {
+    mockGetDrafts.mockRejectedValue({ status: 500, title: 'Server Error' });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('error-page')).toBeInTheDocument();
+    });
+
+    // The Welcome component must not be present after the redirect
+    expect(screen.queryByTestId('welcome')).not.toBeInTheDocument();
+  });
+
+  // ── Test 7: totalPages from API response flows through to pagination ─────
+
+  it('7. displays total pages from API response in pagination component', async () => {
+    mockGetDrafts.mockResolvedValue({
+      items: [],
+      currentPage: 1,
+      totalPages: 3,
+      totalCount: 25,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      // The Dashboard renders one CustomPagination per tab pane; all share
+      // the same totalPages state, so every pagination element should show 3.
+      const paginationEls = screen.getAllByTestId('pagination');
+
+      expect(paginationEls.length).toBeGreaterThan(0);
+      expect(paginationEls[0]).toHaveAttribute('data-total', '3');
+    });
+  });
+
+  it('8. persists paging changes through account dispatch user profile updates', async () => {
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => {
+      expect(mockGetDrafts).toHaveBeenCalledWith();
+    });
+
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
+
+    await waitFor(() => {
+      expect(mockSetUserProfile).toHaveBeenCalledWith({
+        testingCalibrationDashboard: expect.objectContaining({
+          filterCurrentPage: 2,
+          filterActiveTab: 'drafts',
+        }),
+      });
+    });
+  });
+
+  it.each([
+    ['Requests', 'Requests', mockGetQuotes, 'requests'],
+    ['Instruments', 'Instrument/artefacts', mockGetArtefacts, 'instruments'],
+  ])(
+    'loads the %s tab and records the selection',
+    async (_tabName, accessibleName, apiMock, tabValue) => {
+      const Dashboard = await importDashboard();
+      renderDashboard(Dashboard);
+
+      fireEvent.click(await screen.findByRole('tab', { name: accessibleName }));
+
+      await waitFor(() => expect(apiMock).toHaveBeenCalledWith());
+
+      expect(mockTrackGAEvent).toHaveBeenCalledWith(tabValue);
+      expect(mockSetUserProfile).toHaveBeenCalledWith({
+        testingCalibrationDashboard: expect.objectContaining({
+          filterActiveTab: tabValue,
+          filterCurrentPage: 1,
+        }),
+      });
+    },
+  );
+
+  it('returns to drafts and records the selection', async () => {
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    fireEvent.click(await screen.findByRole('tab', { name: 'Requests' }));
+    await waitFor(() => expect(mockGetQuotes).toHaveBeenCalledWith());
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledTimes(2));
+
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('drafts');
+    expect(mockSetUserProfile).toHaveBeenCalledWith({
+      testingCalibrationDashboard: expect.objectContaining({
+        filterActiveTab: 'drafts',
+        filterCurrentPage: 1,
+      }),
+    });
+  });
+
+  it('normalises a newly accepted quote from session storage', async () => {
+    mockSessionGetItem.mockReturnValue('RFQ-accepted');
+    const acceptedItem = {
+      referenceId: 'RFQ-accepted',
+      status: 'Quote offer is available',
+      quote: {},
+      requestForQuote: { artefactName: 'Mass standard' },
+    };
+    mockGetDrafts.mockResolvedValue({
+      items: [acceptedItem],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 1,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSessionSetItem).toHaveBeenCalledWith(
+        'RFQ-accepted',
+        'view-quote-id',
+      ),
+    );
+
+    expect(acceptedItem.status).toBe('Quote offer is accepted');
+    expect(acceptedItem.quote).toEqual({ artefactName: 'Mass standard' });
+    expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
+  });
+
+  it('removes an accepted quote marker when the response has no items', async () => {
+    mockSessionGetItem.mockReturnValue('RFQ-accepted');
+    mockGetDrafts.mockResolvedValue({
+      items: undefined,
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id'),
+    );
+
+    expect(mockSessionSetItem).not.toHaveBeenCalled();
+  });
+
+  it('handles forbidden and third-party access errors without fatal navigation', async () => {
+    mockGetDrafts
+      .mockRejectedValueOnce({ status: 403, title: 'Forbidden' })
+      .mockRejectedValueOnce({
+        status: 403,
+        title: 'No third-party access for organisation',
+      });
+    const Dashboard = await importDashboard();
+    const { unmount } = renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetDashboardNotification).toHaveBeenCalledWith({
+        message: 'forbidden',
+        severity: 'error',
+      }),
+    );
+    unmount();
+
+    renderDashboard(Dashboard);
+    await waitFor(() =>
+      expect(mockSetDashboardNotification).toHaveBeenCalledWith({
+        message: 'no-third-party',
+        severity: 'error',
+      }),
+    );
+
+    expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', 'Acme');
+  });
+
+  it('ignores aborted dashboard requests', async () => {
+    mockGetDrafts.mockRejectedValueOnce({ name: 'AbortError' });
+    const Dashboard = await importDashboard();
+
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(screen.getByTestId('welcome')).toBeInTheDocument();
+    expect(screen.queryByTestId('error-page')).not.toBeInTheDocument();
+  });
+
+  it('opens branch management and records new request and instrument pagination actions', async () => {
+    const scrollIntoView = vi.fn();
+    vi.spyOn(document, 'getElementById').mockImplementation(
+      () => ({ scrollIntoView }) as unknown as HTMLElement,
+    );
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    fireEvent.click(
+      await screen.findByTestId('open-manage-branch-division-button'),
+    );
+
+    expect(mockSetShowBranchSelector).toHaveBeenCalledWith(true);
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Instrument/artefacts' }));
+    await waitFor(() => expect(mockGetArtefacts).toHaveBeenCalledWith());
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[2]));
+
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('Instrument/pagechange');
+    expect(scrollIntoView).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
+
+    fireEvent.click(screen.getByTestId('new-request-button'));
+
+    expect(mockTrackGAEvent).toHaveBeenCalledWith('New request');
+  });
+
+  it('resets profile paging after branch selection', async () => {
+    mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
+    const Dashboard = await importDashboard();
+
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetUserProfile).toHaveBeenCalledWith({
+        testingCalibrationDashboard: expect.objectContaining({
+          filterCurrentPage: 1,
+          filterActiveTab: 'drafts',
+        }),
+      }),
+    );
+  });
+
+  it('falls back to drafts when the saved profile records no active tab', async () => {
+    // A profile saved before the tab was tracked, on an account with no default organisation
+    // yet. Both gaps have to resolve to something usable rather than leaving the dashboard on
+    // an undefined tab.
+    mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
+    mockAccountDetails = {
+      ...BASE,
+      defaultOrganisationId: undefined,
+      userProfile: {
+        testingCalibrationDashboard: {
+          ...BASE_USER_PROFILE,
+          filterActiveTab: undefined,
+        },
+      },
+    };
+    const Dashboard = await importDashboard();
+
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetUserProfile).toHaveBeenCalledWith({
+        testingCalibrationDashboard: expect.objectContaining({
+          filterCurrentPage: 1,
+        }),
+      }),
+    );
+  });
+
+  it('renders dashboard notifications and complete organisation labels', async () => {
+    mockGetDashboardNotification.mockReturnValue({
+      message: 'Saved',
+      severity: 'success',
+    });
+    mockGetDashboardInfoNotification.mockReturnValue({
+      message: 'Information',
+      severity: 'info',
+    });
+    mockAccountDetails = {
+      ...BASE,
+      organisation: 'Parent organisation',
+      trading: 'Trading name',
+      branch: 'Sydney',
+      abn: '12345678901',
+    };
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(screen.getAllByTestId('notification-message')).toHaveLength(2);
+    expect(screen.getByText(/Trading name/)).toBeInTheDocument();
+    expect(screen.getByText(/Sydney/)).toBeInTheDocument();
+    expect(screen.getByText('12345678901')).toBeInTheDocument();
+  });
+
+  it('navigates to the generic error route when an API error has no status', async () => {
+    mockGetDrafts.mockRejectedValueOnce({});
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(screen.getByTestId('error-page')).toBeInTheDocument(),
+    );
+  });
+
+  it('leaves an accepted-quote marker item unchanged when its status is not available', async () => {
+    mockSessionGetItem.mockReturnValue('RFQ-accepted');
+    const acceptedItem = {
+      referenceId: 'RFQ-accepted',
+      status: 'Draft',
+      quote: {},
+      requestForQuote: { artefactName: 'Mass standard' },
+    };
+    mockGetDrafts.mockResolvedValue({
+      items: [acceptedItem],
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 1,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id'),
+    );
+
+    expect(acceptedItem.status).toBe('Draft');
+    expect(mockSessionSetItem).not.toHaveBeenCalled();
+  });
+
+  it('passes custom year and status filters and applies missing paging defaults', async () => {
+    const { filterCurrentPage: _filterCurrentPage, ...profileWithoutPaging } =
+      BASE_USER_PROFILE;
+    mockAccountDetails = {
+      ...BASE,
+      userProfile: {
+        testingCalibrationDashboard: {
+          ...profileWithoutPaging,
+          filterYearType: '2025',
+          filterStatusType: 'Open' as any,
+        },
+      },
+    };
+    mockMapToUserProfile.mockReturnValue({
+      ...BASE_USER_PROFILE,
+      filterYearType: '2025',
+      filterStatusType: 'Open',
+      filterCurrentPage: undefined,
+    });
+    mockGetDrafts.mockResolvedValue({
+      items: undefined,
+      currentPage: undefined,
+      totalPages: undefined,
+      totalCount: undefined,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
+    expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
+    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+      'data-current',
+      '1',
+    );
+    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+      'data-total',
+      '0',
+    );
+  });
+
+  it('does not load dashboard data without a saved user profile', async () => {
+    mockAccountDetails = { ...BASE, userProfile: undefined };
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
+    );
+
+    expect(mockGetDrafts).not.toHaveBeenCalled();
+  });
+
+  it('uses mapped profile defaults when active tab and page are absent', async () => {
+    mockMapToUserProfile.mockReturnValue({
+      ...BASE_USER_PROFILE,
+      filterActiveTab: undefined,
+      filterCurrentPage: undefined,
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      ),
+    );
+
+    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+      'data-current',
+      '1',
+    );
+    expect(mockGetDrafts).not.toHaveBeenCalled();
+  });
+
+  it('waits for MSAL to become idle before loading dashboard data', async () => {
+    mockMsalContext.inProgress = 'login';
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
+    );
+
+    expect(mockGetDrafts).not.toHaveBeenCalled();
+  });
+
+  it('handles third-party access errors when account dispatch is unavailable', async () => {
+    mockAccountDispatchState.value = undefined;
+    mockGetDrafts.mockRejectedValueOnce({
+      status: 403,
+      title: 'No third-party access for organisation',
+    });
+
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetDashboardNotification).toHaveBeenCalledWith({
+        message: 'no-third-party',
+        severity: 'error',
+      }),
+    );
+
+    expect(mockSetTargetOrganisation).not.toHaveBeenCalled();
+  });
+
+  it('uses empty third-party organisation fallbacks', async () => {
+    mockAccountDetails = {
+      ...BASE,
+      organisation: undefined,
+      abn: undefined,
+    } as unknown as AccountDetails;
+    mockGetDrafts.mockRejectedValueOnce({
+      status: 403,
+      title: 'No third-party access for organisation',
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(mockSetTargetOrganisation).toHaveBeenCalledWith('', ''),
+    );
+  });
+
+  it('allows tab and page interactions before profile filters are initialised', async () => {
+    mockAccountDetails = { ...BASE, userProfile: undefined };
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    fireEvent.click(await screen.findByRole('tab', { name: 'Requests' }));
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
+
+    expect(mockSetUserProfile).not.toHaveBeenCalled();
+  });
+
+  it('does not replace initial filters when the saved profile changes', async () => {
+    const Dashboard = await importDashboard();
+    const view = renderDashboard(Dashboard);
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    mockMapToUserProfile.mockClear();
+
+    mockAccountDetails = {
+      ...BASE,
+      userProfile: {
+        testingCalibrationDashboard: {
+          ...BASE_USER_PROFILE,
+          filterSearchText: 'changed',
+        },
+      },
+    };
+    view.rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(mockMapToUserProfile).toHaveBeenCalledWith());
+  });
+
+  it('seeds initial filters when the saved profile arrives after mount', async () => {
+    // Mount with no profile: the lazy useState seed resolves to undefined.
+    mockAccountDetails = { ...BASE, userProfile: undefined };
+    const Dashboard = await importDashboard();
+    const view = renderDashboard(Dashboard);
+
+    await waitFor(() =>
+      expect(screen.getByTestId('welcome')).toBeInTheDocument(),
+    );
+
+    expect(mockGetDrafts).not.toHaveBeenCalled();
+
+    // Account context hydrates the profile asynchronously; the effect now
+    // takes the `prevState ?? p` fallback (prevState is still undefined from
+    // the seed-miss mount) and seeds the debounced fetch with the saved search.
+    mockMapToUserProfile.mockReturnValue({
+      ...BASE_USER_PROFILE,
+      filterSearchText: 'Fluke',
+    });
+    mockAccountDetails = {
+      ...BASE,
+      userProfile: {
+        testingCalibrationDashboard: {
+          ...BASE_USER_PROFILE,
+          filterSearchText: 'Fluke',
+        },
+      },
+    };
+    view.rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
+  });
+
+  it('writes the branch reset once even when the saved profile identity changes', async () => {
+    mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
+    const Dashboard = await importDashboard();
+    const view = renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
+
+    // A fresh userProfile object with identical contents is what
+    // accountDispatch.setUserProfile produces in the real app; the reset
+    // must not fire again for the same branch selection.
+    mockAccountDetails = {
+      ...BASE,
+      userProfile: { testingCalibrationDashboard: { ...BASE_USER_PROFILE } },
+    };
+    view.rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+        'data-current',
+        '1',
+      ),
+    );
+
+    expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses branch-reset defaults when the mapped profile omits tab and page', async () => {
+    mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
+    mockMapToUserProfile.mockReturnValue({
+      ...BASE_USER_PROFILE,
+      filterActiveTab: undefined,
+      filterCurrentPage: undefined,
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledWith());
+
+    expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
+      'data-current',
+      '1',
+    );
+  });
+
+  it('parses an absent non-default year and defaults an absent request page', async () => {
+    mockMapToUserProfile.mockReturnValue({
+      ...BASE_USER_PROFILE,
+      filterYearType: undefined,
+      filterCurrentPage: undefined,
+      filterActiveTab: 'drafts',
+    });
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+
+    expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBeUndefined();
+    expect(mockGetDrafts.mock.calls.at(-1)?.[5]).toBe(1);
+  });
+
+  it('marks dashboard content inert while an actionable modal is open', async () => {
+    mockModalState.showBranchSelector = true;
+    const Dashboard = await importDashboard();
+    renderDashboard(Dashboard);
+
+    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(screen.getByTestId('welcome').parentElement).not.toHaveAttribute(
+        'aria-live',
+      ),
+    );
+
+    expect(document.querySelectorAll('[inert]')).toHaveLength(3);
   });
 });

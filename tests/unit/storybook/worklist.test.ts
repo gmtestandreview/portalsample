@@ -29,7 +29,6 @@ const worklistModule =
 
 describe('storybook coverage worklist', () => {
   it('uses declaration-aware discovery and emits a deterministic reviewed queue', () => {
-    expect.assertions(3);
     const input = {
       files: [
         {
@@ -113,5 +112,32 @@ describe('storybook coverage worklist', () => {
         },
       ],
     });
+  });
+
+  it('keeps unresolved discovery explicit and does not convert it into a claim', () => {
+    const result = worklistModule.buildWorklist({
+      files: [
+        {
+          path: 'ClientApp/src/components/index.ts',
+          content: "export { Missing } from './missing';\n",
+        },
+      ],
+    });
+
+    expect(result.worklist).toEqual([
+      {
+        source: 'ClientApp/src/components/index.ts',
+        export: 'Missing',
+        discoveryKind: 'unresolved',
+        unresolvedReason: 'module not found',
+        proposedClassification: null,
+        owner: 'unassigned',
+        batch: 'components',
+        status: 'blocked',
+      },
+    ]);
+    expect(result.summary.categoryCounts).toMatchObject({ unresolved: 1 });
+    expect(result.summary.discoveredExportsWithDiagnostics).toBe(0);
+    expect(result.summary.diagnosticCount).toBe(2);
   });
 });

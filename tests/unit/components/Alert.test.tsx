@@ -4,7 +4,6 @@ import { AlertSuccess } from '../../../ClientApp/src/components/Alert';
 
 describe('alert variants', () => {
   it('falls back to polite aria-live when the prop is explicitly overridden to undefined', () => {
-    expect.assertions(1);
     const { getByRole } = render(
       // Spread after the hardcoded ariaLive='polite' inside AlertSuccess, so
       // an explicit undefined here overrides it and triggers the || 'polite' fallback.

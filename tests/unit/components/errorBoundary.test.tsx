@@ -1,15 +1,9 @@
 import { render, screen } from '@testing-library/react';
-
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
-
 import { MemoryRouter } from 'react-router';
-
 import { afterEach, describe, expect, it, vi } from 'vitest';
-
 import ErrorBoundary from '@/components/ErrorBoundary';
-
 import ErrorDisplay from '@/components/ErrorBoundary/ErrorDisplay';
-
 import { HttpStatusCode } from '@/types';
 
 const renderErrorDisplay = (status: HttpStatusCode | number) =>
@@ -24,6 +18,7 @@ describe(ErrorDisplay, () => {
     document.body.className = '';
     document.title = '';
   });
+
   it.each([
     [
       HttpStatusCode.Conflict,
@@ -71,7 +66,6 @@ describe(ErrorDisplay, () => {
       'Server error | NMI Services portal',
     ],
   ])('renders the %s error state', (status, heading, title) => {
-    expect.assertions(5);
     renderErrorDisplay(status);
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName(
@@ -88,5 +82,218 @@ describe(ErrorDisplay, () => {
     );
     expect(document.title).toBe(title);
     expect(document.body).toHaveClass('http-error');
+  });
+});
+
+describe(ErrorBoundary, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const renderWithExpectedError = (
+    expectedError: Error,
+    ui: React.ReactElement,
+  ) => {
+    const unexpectedConsoleErrors: unknown[][] = [];
+    const preventExpectedError = (event: ErrorEvent) => {
+      if (event.error === expectedError) {
+        event.preventDefault();
+      }
+    };
+    vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      if (args.includes(expectedError)) {
+        return;
+      }
+
+      unexpectedConsoleErrors.push(args);
+    });
+    globalThis.addEventListener('error', preventExpectedError);
+
+    try {
+      render(ui);
+    } finally {
+      globalThis.removeEventListener('error', preventExpectedError);
+    }
+
+    expect(unexpectedConsoleErrors).toEqual([]);
+  };
+
+  it('renders children when no error is thrown', () => {
+    const trackException = vi.fn();
+    const appInsights = {
+      getAppInsights: () => ({ trackException }),
+    };
+
+    render(
+      <MemoryRouter>
+        <ErrorBoundary
+          appInsights={
+            appInsights as unknown as React.ComponentProps<
+              typeof ErrorBoundary
+            >['appInsights']
+          }
+        >
+          <p>Healthy child</p>
+        </ErrorBoundary>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Healthy child')).toBeInTheDocument();
+    expect(trackException).not.toHaveBeenCalled();
+  });
+
+  it('renders the fallback when telemetry is disabled', () => {
+    const expectedError = Object.assign(new Error('Request failed'), {
+      status: HttpStatusCode.Conflict,
+    });
+    const ThrowingChild = () => {
+      throw expectedError;
+    };
+
+    // createTelemetryService hands back a null reactPlugin whenever the App
+    // Insights connection string is missing or dummy - every environment
+    // without telemetry configured. The boundary is the last line of
+    // defence, so it has to render its fallback rather than throw from
+    // inside its own error handler.
+    renderWithExpectedError(
+      expectedError,
+      <MemoryRouter>
+        <ErrorBoundary
+          appInsights={
+            null as unknown as React.ComponentProps<
+              typeof ErrorBoundary
+            >['appInsights']
+          }
+        >
+          <ThrowingChild />
+        </ErrorBoundary>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName(
+      'Oops - Conflict 409',
+    );
+  });
+
+  it('renders the fallback and tracks an exception when a child throws', () => {
+    const expectedError = Object.assign(new Error('Request failed'), {
+      status: HttpStatusCode.Conflict,
+    });
+    const ThrowingChild = () => {
+      throw expectedError;
+    };
+    const trackException = vi.fn();
+    const appInsights = {
+      getAppInsights: () => ({ trackException }),
+    };
+
+    renderWithExpectedError(
+      expectedError,
+      <MemoryRouter>
+        <ErrorBoundary
+          appInsights={
+            appInsights as unknown as React.ComponentProps<
+              typeof ErrorBoundary
+            >['appInsights']
+          }
+        >
+          <ThrowingChild />
+        </ErrorBoundary>
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: /Oops - Conflict/i }),
+    ).toBeInTheDocument();
+    expect(trackException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        error: expectedError,
+        exception: expectedError,
+        severityLevel: SeverityLevel.Error,
+        properties: expect.objectContaining({
+          componentStack: expect.any(String),
+        }),
+      }),
+    );
+  });
+
+  it('uses the server-error fallback when a thrown error has no status', () => {
+    const expectedError = new Error('Unknown failure');
+    const ThrowingChild = () => {
+      throw expectedError;
+    };
+    const appInsights = {
+      getAppInsights: () => ({ trackException: vi.fn() }),
+    };
+
+    renderWithExpectedError(
+      expectedError,
+      <MemoryRouter>
+        <ErrorBoundary
+          appInsights={
+            appInsights as unknown as React.ComponentProps<
+              typeof ErrorBoundary
+            >['appInsights']
+          }
+        >
+          <ThrowingChild />
+        </ErrorBoundary>
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: /Oops - An unexpected error has occurred/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it('wraps a non-Error throw into an Error before tracking it', () => {
+    const thrown = 'plain string failure';
+    const ThrowingChild = () => {
+      throw thrown;
+    };
+    const trackException = vi.fn();
+    const appInsights = {
+      getAppInsights: () => ({ trackException }),
+    };
+
+    // react-error-boundary v6 surfaces the raw thrown value (here a string),
+    // so the boundary must normalise it to an Error before reporting. React
+    // logs its own error for the uncaught throw; suppress it for this
+    // deliberate failure so the test only asserts the normalisation.
+    const preventError = (event: ErrorEvent) => {
+      event.preventDefault();
+    };
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    globalThis.addEventListener('error', preventError);
+
+    try {
+      render(
+        <MemoryRouter>
+          <ErrorBoundary
+            appInsights={
+              appInsights as unknown as React.ComponentProps<
+                typeof ErrorBoundary
+              >['appInsights']
+            }
+          >
+            <ThrowingChild />
+          </ErrorBoundary>
+        </MemoryRouter>,
+      );
+    } finally {
+      globalThis.removeEventListener('error', preventError);
+    }
+
+    const [trackedException] = trackException.mock.calls[0] as [
+      { error: Error; exception: Error; severityLevel: SeverityLevel },
+    ];
+
+    expect(trackedException.error).toBeInstanceOf(Error);
+    expect(trackedException.exception).toBe(trackedException.error);
+    expect(trackedException.error.message).toBe('plain string failure');
+    expect(trackedException.severityLevel).toBe(SeverityLevel.Error);
   });
 });

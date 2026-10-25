@@ -37,6 +37,7 @@ const getStorybookWorker = async () => {
 };
 
 const preview = definePreview({
+  tags: ['autodocs'],
   addons: [
     addonDocs(),
     addonA11y(),

@@ -6,7 +6,6 @@ import {
   PatternApprovalRequiredValueOptions,
   PatternApprovalRequiredValues,
 } from '../../../../ClientApp/src/api/web-api-client';
-
 import { DisplayRules } from '../../../../ClientApp/src/routes/ta/displayRules';
 
 type InstrumentTypeContent = NonNullable<
@@ -67,16 +66,12 @@ const step = (
 
 describe('displayRules.isOIMLHiddenP', () => {
   it('hides the OIML option when the sub-option is not ticked', () => {
-    expect.assertions(1);
     const result = DisplayRules.isOIMLHiddenP(dto({ newSubOptions: [] }));
 
     expect(result).toBe(true);
   });
-});
 
-describe('displayRules.isOIMLHiddenP', () => {
   it('treats an absent sub-option list as ticked and falls through to content', () => {
-    expect.assertions(1);
     const result = DisplayRules.isOIMLHiddenP(
       dto({ newSubOptions: undefined, instrumentTypeContent: undefined }),
     );
@@ -84,11 +79,8 @@ describe('displayRules.isOIMLHiddenP', () => {
     // No content can be resolved, so eligibility cannot be determined.
     expect(result).toBe(true);
   });
-});
 
-describe('displayRules.isOIMLHiddenP', () => {
   it('hides the option when no content matches the selected type and category', () => {
-    expect.assertions(1);
     const result = DisplayRules.isOIMLHiddenP(
       dto({
         instrumentTypeContent: [
@@ -99,11 +91,8 @@ describe('displayRules.isOIMLHiddenP', () => {
 
     expect(result).toBe(true);
   });
-});
 
-describe('displayRules.isOIMLHiddenP', () => {
   it('requires both the type and the category to match before using content', () => {
-    expect.assertions(1);
     const result = DisplayRules.isOIMLHiddenP(
       dto({
         instrumentTypeContent: [
@@ -114,15 +103,141 @@ describe('displayRules.isOIMLHiddenP', () => {
 
     expect(result).toBe(true);
   });
-});
 
-describe('displayRules.isOIMLHiddenP', () => {
   it('reports hidden for matching content that is eligible for OIML', () => {
-    expect.assertions(1);
     const result = DisplayRules.isOIMLHiddenP(
       dto({ instrumentTypeContent: [content({ eligibleForOiml: true })] }),
     );
 
     expect(result).toBe(true);
+  });
+
+  it('reports not hidden for matching content that is ineligible for OIML', () => {
+    const result = DisplayRules.isOIMLHiddenP(
+      dto({
+        instrumentTypeContent: [content({ eligibleForOiml: false })],
+      }),
+    );
+
+    expect(result).toBe(false);
+  });
+});
+
+describe('displayRules.isOIMLHidden', () => {
+  it('hides the option when the sub-option list excludes the OIML certificate', () => {
+    const result = DisplayRules.isOIMLHidden({
+      newSubOptions: [
+        PatternApprovalRequiredValueOptions.CertificateofApproval,
+      ],
+    } as ApplicationAndInstrumentStep);
+
+    expect(result).toBe(true);
+  });
+
+  it('shows the option when the sub-option list includes the OIML certificate', () => {
+    const result = DisplayRules.isOIMLHidden({
+      newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
+    } as ApplicationAndInstrumentStep);
+
+    expect(result).toBe(false);
+  });
+
+  it('hides the option when no sub-options have been chosen', () => {
+    const result = DisplayRules.isOIMLHidden(
+      {} as ApplicationAndInstrumentStep,
+    );
+
+    expect(result).toBe(true);
+  });
+});
+
+describe.each([
+  {
+    name: 'isApplOtherHiddenP',
+    rule: DisplayRules.isApplOtherHiddenP,
+    shows: PatternApprovalRequiredValues.OtherApproval,
+  },
+  {
+    name: 'isVariationHiddenP',
+    rule: DisplayRules.isVariationHiddenP,
+    shows: PatternApprovalRequiredValues.Variation,
+  },
+  {
+    name: 'isNewCertificateHiddenP',
+    rule: DisplayRules.isNewCertificateHiddenP,
+    shows: PatternApprovalRequiredValues.NewCertificate,
+  },
+  {
+    name: 'isApplOtherHidden',
+    rule: DisplayRules.isApplOtherHidden,
+    shows: PatternApprovalRequiredValues.OtherApproval,
+  },
+  {
+    name: 'isVariationHidden',
+    rule: DisplayRules.isVariationHidden,
+    shows: PatternApprovalRequiredValues.Variation,
+  },
+  {
+    name: 'isNewCertificateHidden',
+    rule: DisplayRules.isNewCertificateHidden,
+    shows: PatternApprovalRequiredValues.NewCertificate,
+  },
+])('displayRules.$name', ({ rule, shows }) => {
+  it('shows the section for its own pattern approval type', () => {
+    expect(rule(step(shows))).toBe(false);
+  });
+
+  it('hides the section for a different pattern approval type', () => {
+    expect(rule(step(PatternApprovalRequiredValues.Cancellation))).toBe(true);
+  });
+
+  it('hides the section when no pattern approval type is chosen', () => {
+    expect(rule(step(undefined))).toBe(true);
+  });
+});
+
+describe('displayRules.isApplNewInstrumentHiddenP', () => {
+  it('hides the instrument section for a non new-certificate application', () => {
+    const result = DisplayRules.isApplNewInstrumentHiddenP(
+      step(PatternApprovalRequiredValues.Variation),
+    );
+
+    expect(result).toBe(true);
+  });
+
+  it('hides the instrument section when no pattern approval type is chosen', () => {
+    expect(DisplayRules.isApplNewInstrumentHiddenP(step(undefined))).toBe(true);
+  });
+
+  it('hides the instrument section when neither category nor type is selected', () => {
+    const result = DisplayRules.isApplNewInstrumentHiddenP({
+      patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+    } as ApplicationAndInstrumentStep);
+
+    expect(result).toBe(true);
+  });
+
+  it('shows the instrument section once a category is selected', () => {
+    const result = DisplayRules.isApplNewInstrumentHiddenP({
+      patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+      instrumentCategory: 'category-1',
+    } as ApplicationAndInstrumentStep);
+
+    expect(result).toBe(false);
+  });
+
+  it('shows the instrument section once a type is selected', () => {
+    const result = DisplayRules.isApplNewInstrumentHiddenP({
+      patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+      instrumentType: 'type-1',
+    } as ApplicationAndInstrumentStep);
+
+    expect(result).toBe(false);
+  });
+});
+
+describe('displayRules.defaultIsHidden', () => {
+  it('defaults sections to hidden', () => {
+    expect(DisplayRules.defaultIsHidden).toBe(true);
   });
 });

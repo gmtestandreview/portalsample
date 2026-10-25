@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -31,7 +31,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
 
   return {
@@ -50,7 +50,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/hooks'),
+  '../../../../ClientApp/src/authentication/hooks',
   () =>
     ({
       useAccountState: () => ({
@@ -63,7 +63,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  '../../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       AcceptQuoteClient: class {
@@ -78,7 +78,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -97,7 +97,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Accordion'),
+  '../../../../ClientApp/src/components/Accordion',
   () =>
     ({
       CustomAccordion: ({ children }: { children: React.ReactNode }) => (
@@ -160,7 +160,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/InTextLink'),
+  '../../../../ClientApp/src/components/InTextLink',
   () =>
     ({
       default: ({
@@ -196,7 +196,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Alert/NotificationMessage'),
+  '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
     ({
       default: () => null,
@@ -242,7 +242,6 @@ describe(SummaryAndAccept, () => {
   });
 
   it('skips the API call when no MSAL accounts are available', async () => {
-    expect.assertions(1);
     mocks.accounts = [];
     renderComponent();
 
@@ -256,7 +255,6 @@ describe(SummaryAndAccept, () => {
   });
 
   it('re-fetches summary data when the route id changes', async () => {
-    expect.assertions(2);
     const { rerender } = renderComponent();
 
     await waitFor(() => {

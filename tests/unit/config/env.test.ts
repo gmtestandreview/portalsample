@@ -1,27 +1,20 @@
 import { describe, it, expect } from 'vitest';
-
 import path from 'node:path';
 
 import { readDirectory, readTextFile } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
-
 const sourceRoot = path.join(repositoryRoot, 'ClientApp/src');
-
 const environmentSourcePath = path.join(sourceRoot, 'env.ts');
-
 const designPath = path.join(
   repositoryRoot,
   'docs/specs/2026-10-20-webpack-to-vite-design.md',
 );
 
 const sourceExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
-
 const legacyReferencePattern =
   /\b(?:REACT_APP_[A-Z0-9_]+|EXTERNAL_REDIRECT_URL)\b/u;
-
 const processEnvReferencePattern = /\bprocess\.env\b/u;
-
 const excludedSourceDirectories = new Set([
   path.join(sourceRoot, 'parent'),
   path.join(sourceRoot, 'external'),
@@ -59,7 +52,6 @@ const mappingRows = (design: string) =>
 
 describe('browser environment contract', () => {
   it('reads every browser variable from Vite import.meta.env', async () => {
-    expect.assertions(2);
     const [environmentSource, design] = await Promise.all([
       readTextFile(environmentSourcePath, repositoryRoot),
       readTextFile(designPath, repositoryRoot),
@@ -77,11 +69,8 @@ describe('browser environment contract', () => {
 
     expect(environmentSource).toMatch(/import\.meta\.env\.(?:DEV|PROD|MODE)/u);
   });
-});
 
-describe('browser environment contract', () => {
   it('preserves the application-facing env export while using the Vite contract', async () => {
-    expect.assertions(3);
     const environmentSource = await readTextFile(
       environmentSourcePath,
       repositoryRoot,
@@ -90,5 +79,20 @@ describe('browser environment contract', () => {
     expect(environmentSource).toContain('export const env');
     expect(environmentSource).toContain('VITE_ENVIRONMENT');
     expect(environmentSource).not.toMatch(/globalThis\.[A-Z_]*REACT_APP_/u);
+  });
+});
+
+describe('browser source environment policy', () => {
+  it('contains no legacy names or custom process.env access outside vendored parent code', async () => {
+    const sourceFiles = await readSourceFiles(sourceRoot);
+
+    for (const [index, source] of sourceFiles.entries()) {
+      expect(source, `browser source file ${index}`).not.toMatch(
+        legacyReferencePattern,
+      );
+      expect(source, `browser source file ${index}`).not.toMatch(
+        processEnvReferencePattern,
+      );
+    }
   });
 });

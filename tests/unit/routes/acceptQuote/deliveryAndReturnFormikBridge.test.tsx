@@ -1,13 +1,8 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
-
 import userEvent from '@testing-library/user-event';
-
 import { Form, Formik, useFormikContext } from 'formik';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import type * as WebApiClientModule from '@/api/web-api-client';
-
 import {
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
@@ -15,22 +10,15 @@ import {
   type AddressDetailsDto,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
-
 import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
-
 import ErrorSummary from '@/components/forms/ErrorSummary';
-
 import { MemoryRouter } from 'react-router';
-
 import DeliveryAndReturnFormikBridge from '@/routes/acceptQuote/deliveryAndReturnFormikBridge';
-
 import {
   deliveryAndReturnSaveValidation,
   deliveryAndReturnSubmitValidation,
 } from '@/routes/acceptQuote/validation';
-
 import { removeHidden, validateForm } from '@/components/forms/utils';
-
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
@@ -40,7 +28,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('@azure/msal-react'),
+  '@azure/msal-react',
   () =>
     ({
       useMsal: () => ({
@@ -52,7 +40,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -64,7 +52,7 @@ vi.mock(import('@/api/web-api-client'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('@/instrumentation/AppLogger'),
+  '@/instrumentation/AppLogger',
   () =>
     ({
       default: { verbose: vi.fn(), error: vi.fn() },
@@ -136,8 +124,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
     mocks.search.mockResolvedValue({ matches: [] });
   });
+
   it('mirrors a manually entered return address into the submit payload', async () => {
-    expect.assertions(2);
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(
@@ -167,16 +155,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
       },
     });
   });
-});
 
-describe(DeliveryAndReturnFormikBridge, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
-    mocks.search.mockResolvedValue({ matches: [] });
-  });
   it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
-    expect.assertions(3);
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(
@@ -211,5 +191,188 @@ describe(DeliveryAndReturnFormikBridge, () => {
     expect(submitted(onSubmit)).toMatchObject({
       returnOrganisationName: 'Edited return organisation',
     });
+  });
+
+  it('mirrors a selected return address as a whole object', async () => {
+    mocks.search.mockResolvedValue({
+      matches: [
+        {
+          unqiueId: 'a-1',
+          displayText: '1 Street Road, Lindfield NSW 2070',
+          addressLine1: '1 Street Road',
+          suburb: 'Lindfield',
+          postCode: '2070',
+          state: 'NSW',
+        },
+      ],
+    });
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{ returnAddressType: ReturnAddressTypeValues.Other }}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    await user.type(
+      screen.getByRole('combobox', { name: /Return address/ }),
+      '1 Street',
+    );
+    await user.click(
+      await screen.findByText('1 Street Road, Lindfield NSW 2070'),
+    );
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    expect(submitted(onSubmit)).toMatchObject({
+      returnAddress: {
+        isManuallyEntered: false,
+        line1: '1 Street Road',
+        postcode: '2070',
+        searchText: '1 Street Road, Lindfield NSW 2070',
+      },
+    });
+  });
+
+  it('shows address messages only after a failed submit', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{ returnAddressType: ReturnAddressTypeValues.Other }}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: /Enter it manually/ }));
+
+    expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await expect(
+      screen.findByText(/Address line 1 is required/i),
+    ).resolves.toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('shows messages for fields that were never given a value', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        values={{
+          returnContactType: ReturnContactTypeValues.DifferentPerson,
+          returnMethod: ReturnMethodValues.ClientWillProvide,
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await expect(
+      screen.findByText('Carrier name is required'),
+    ).resolves.toBeInTheDocument();
+    expect(screen.getByText('First name is required')).toBeInTheDocument();
+    expect(screen.getByLabelText('Carrier name')).toBeInvalid();
+    expect(screen.getByLabelText('Carrier name')).toHaveAccessibleDescription(
+      'Carrier name is required',
+    );
+  });
+
+  it('does not dirty the outer form when a failed submit touches an undefined address', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        values={{
+          returnAddressType: ReturnAddressTypeValues.Other,
+          returnAddress: undefined as never,
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText(/is required/i);
+
+    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+
+    expect(probe.dirty).toBe(false);
+    expect(probe.address).toBeUndefined();
+  });
+
+  it('applies the soft schema once the outer form is saving and exiting', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{
+          returnContactType: ReturnContactTypeValues.DifferentPerson,
+          returnMethod: ReturnMethodValues.ClientWillProvide,
+          saveAndExit: true,
+        }}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
+  });
+
+  it('follows the hide rules from the form status', () => {
+    const { unmount } = render(
+      <Harness
+        values={{ returnContactType: ReturnContactTypeValues.SamePerson }}
+      />,
+    );
+
+    expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('combobox', { name: /Return address/ }),
+    ).not.toBeInTheDocument();
+
+    unmount();
+
+    render(<Harness withHiddenRules={false} />);
+
+    expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
+    expect(screen.getByLabelText('First name')).toBeInTheDocument();
+    expect(
+      screen.getByRole('combobox', { name: /Return address/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders a field for every error summary link after a failed submit', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        withErrorSummary
+        values={{
+          returnContactType: ReturnContactTypeValues.DifferentPerson,
+          returnAddressType: ReturnAddressTypeValues.Other,
+          returnMethod: ReturnMethodValues.ClientWillProvide,
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    const summary = await screen.findByTestId('form-error-summary');
+    const keys = within(summary)
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href')?.replace(/^#/, '') ?? '');
+
+    expect(keys).toEqual(
+      expect.arrayContaining(['carrierName', 'contact.firstName']),
+    );
+    expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
+
+    keys.forEach((key) =>
+      expect(document.getElementById(key), key).not.toBeNull(),
+    );
   });
 });

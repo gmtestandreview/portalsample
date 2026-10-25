@@ -1,15 +1,10 @@
 import { Form, Formik } from 'formik';
-
 import { render, screen, within } from '@testing-library/react';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { MemoryRouter, Route, Routes } from 'react-router';
-
 import type { ReactNode } from 'react';
 
 import OrganisationAndContact from '../../../../ClientApp/src/routes/ta/organisationAndContact';
-
 import SummaryAndSubmit from '../../../../ClientApp/src/routes/ta/summaryAndSubmit';
 
 const mocks = vi.hoisted(() => ({
@@ -27,7 +22,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Accordion'),
+  '../../../../ClientApp/src/components/Accordion',
   () =>
     ({
       CustomAccordion: ({
@@ -53,7 +48,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Buttons/EditButton'),
+  '../../../../ClientApp/src/components/Buttons/EditButton',
   () =>
     ({
       default: ({ link }: { link: string }) => (
@@ -73,7 +68,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/InTextLink'),
+  '../../../../ClientApp/src/components/InTextLink',
   () =>
     ({
       default: ({
@@ -93,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/Checkbox'),
+  '../../../../ClientApp/src/components/Inputs/Checkbox',
   () =>
     ({
       default: ({
@@ -119,7 +114,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  '../../../../ClientApp/src/routes/ta/supportingDocuments',
   () =>
     ({
       default: ({
@@ -155,7 +150,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/RadioButtonGroup'),
+  '../../../../ClientApp/src/components/Inputs/RadioButtonGroup',
   () =>
     ({
       default: ({
@@ -192,7 +187,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/HidableField'),
+  '../../../../ClientApp/src/components/forms/HidableField',
   () =>
     ({
       default: ({ children, name }: { children: ReactNode; name: string }) => (
@@ -202,7 +197,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/TextInput'),
+  '../../../../ClientApp/src/components/Inputs/TextInput',
   () =>
     ({
       default: ({
@@ -226,7 +221,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/AddressLookup'),
+  '../../../../ClientApp/src/components/Inputs/AddressLookup',
   () =>
     ({
       default: ({
@@ -256,7 +251,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Inputs/AuthorisedAgent'),
+  '../../../../ClientApp/src/components/Inputs/AuthorisedAgent',
   () =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -270,7 +265,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/forms/CommonForms/ContactDetails'),
+  '../../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
   () =>
     ({
       default: ({ name, isSummary }: { name: string; isSummary?: boolean }) => (
@@ -340,92 +335,188 @@ describe(OrganisationAndContact, () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
   it('renders the editable organisation and contact fields with prefixed field names', () => {
-    expect.assertions(1);
     renderWithFormik(
       <OrganisationAndContact
         isSummary={false}
         name='organisationAndContact'
       />,
     );
+
     expect(
       screen.getByTestId('radio-organisationAndContact.isManufacturer'),
     ).toHaveAttribute('data-summary', 'false');
-  });
-});
-
-describe(OrganisationAndContact, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-  it('renders the editable organisation and contact fields with prefixed field names', () => {
-    expect.assertions(1);
-    renderWithFormik(
-      <OrganisationAndContact
-        isSummary={false}
-        name='organisationAndContact'
-      />,
-    );
     expect(screen.getByTestId('text-input')).toHaveAttribute(
       'data-name',
       'organisationAndContact.name',
-    );
-  });
-});
-
-describe(OrganisationAndContact, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-  it('renders the editable organisation and contact fields with prefixed field names', () => {
-    expect.assertions(1);
-    renderWithFormik(
-      <OrganisationAndContact
-        isSummary={false}
-        name='organisationAndContact'
-      />,
     );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-name',
       'organisationAndContact.streetAddress',
     );
-  });
-});
-
-describe(OrganisationAndContact, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-  it('renders the editable organisation and contact fields with prefixed field names', () => {
-    expect.assertions(1);
-    renderWithFormik(
-      <OrganisationAndContact
-        isSummary={false}
-        name='organisationAndContact'
-      />,
-    );
     expect(screen.getByTestId('address-lookup')).toHaveAttribute(
       'data-max-results',
       '10',
     );
-  });
-});
-
-describe(OrganisationAndContact, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-  it('renders the editable organisation and contact fields with prefixed field names', () => {
-    expect.assertions(1);
-    renderWithFormik(
-      <OrganisationAndContact
-        isSummary={false}
-        name='organisationAndContact'
-      />,
-    );
     expect(screen.getByTestId('authorised-agent')).toHaveAttribute(
       'data-name',
       'organisationAndContact.authorisedAgent',
+    );
+    expect(
+      screen
+        .getAllByTestId('contact-details')
+        .map((node) => node.getAttribute('data-name')),
+    ).toEqual([
+      'organisationAndContact.contact',
+      'organisationAndContact.invoiceContact',
+    ]);
+    expect(
+      screen.getByRole('heading', { name: 'Contact information' }),
+    ).toBeInTheDocument();
+
+    const principalContact = screen.getByTestId(
+      'radio-organisationAndContact.isPrincipalContact',
+    );
+
+    expect(principalContact).toHaveTextContent('Use my contact details');
+    expect(principalContact).toHaveTextContent('Dr Ada Lovelace');
+    expect(principalContact).toHaveTextContent('ada@example.gov.au');
+    expect(principalContact).toHaveTextContent('A different contact person');
+    expect(
+      screen.getByTestId('help-organisationAndContact.isPrincipalContact'),
+    ).toHaveTextContent('Dashboard > Settings menu > My contact details');
+  });
+
+  it('renders the summary field names without a prefix when no name is supplied', () => {
+    renderWithFormik(<OrganisationAndContact isSummary name='' />);
+
+    expect(screen.getByTestId('radio-isManufacturer')).toHaveAttribute(
+      'data-summary',
+      'true',
+    );
+    expect(screen.getByTestId('text-input')).toHaveAttribute(
+      'data-name',
+      'name',
+    );
+    expect(screen.getByTestId('address-lookup')).toHaveAttribute(
+      'data-name',
+      'streetAddress',
+    );
+    expect(screen.getByTestId('authorised-agent')).toHaveAttribute(
+      'data-name',
+      'authorisedAgent',
+    );
+    expect(
+      screen
+        .getAllByTestId('contact-details')
+        .map((node) => node.getAttribute('data-name')),
+    ).toEqual(['contact', 'invoiceContact']);
+    expect(
+      screen.getByRole('heading', { name: 'Contact' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Contact information' }),
+    ).not.toBeInTheDocument();
+
+    const principalContact = screen.getByTestId('radio-isPrincipalContact');
+
+    expect(principalContact).toHaveTextContent('Ms Grace Hopper');
+    expect(principalContact).toHaveTextContent('grace@example.gov.au');
+  });
+});
+
+describe(SummaryAndSubmit, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.supportingDocumentsUploadAttachment.mockClear();
+    mocks.supportingDocumentsUploadFiles.mockClear();
+  });
+
+  it('renders the summaries when the form carries no hiding rules', () => {
+    render(
+      <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
+        <Formik initialValues={formValues} onSubmit={() => {}}>
+          <Form>
+            <Routes>
+              <Route
+                path='/ta/:id/summary'
+                element={<SummaryAndSubmit name='summaryAndSubmit' />}
+              />
+            </Routes>
+          </Form>
+        </Formik>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText('Application type')).toBeInTheDocument();
+  });
+
+  it('renders editable summary sections with edit links and declaration fields', async () => {
+    renderSummary();
+
+    expect(mocks.useBodyClass).toHaveBeenCalledWith('summary');
+    expect(
+      screen.getByText(/Before you submit your request/),
+    ).toBeInTheDocument();
+    // Organisation and application read from the wizard's Formik values.
+    expect(screen.getByText('Organisation name')).toBeInTheDocument();
+    expect(screen.getByText('Application type')).toBeInTheDocument();
+    expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
+      'data-name',
+      'supportingDocuments.form.documents',
+    );
+    expect(
+      screen
+        .getAllByTestId('edit-link')
+        .map((link) => link.getAttribute('href')),
+    ).toEqual([
+      '/ta/PA-300/organisation-details',
+      '/ta/PA-300/application-details',
+      '/ta/PA-300/supporting-documents',
+    ]);
+
+    const checkboxes = screen.getAllByTestId('checkbox');
+
+    expect(
+      checkboxes.map((checkbox) => checkbox.getAttribute('data-name')),
+    ).toEqual([
+      'acceptNMIP106',
+      'acceptTermsAndConditions',
+      'acceptDeclaration',
+    ]);
+    expect(
+      within(
+        screen.getByTestId('accordion-applicationTermsAndConditions'),
+      ).getByText(/You must read and accept the NMI P 106/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', {
+        name: 'NMI P 106 Procedures for approval and certification of patterns of measuring instruments (PDF)',
+      }),
+    ).toHaveAttribute('target', '_blank');
+    expect(screen.queryByTestId('back-button')).not.toBeInTheDocument();
+    await expect
+      .poll(() => mocks.supportingDocumentsUploadAttachment)
+      .toHaveBeenCalledWith([]);
+    await expect
+      .poll(() => mocks.supportingDocumentsUploadFiles)
+      .toHaveBeenCalledWith([]);
+  });
+
+  it('renders the submitted summary without edit controls and with a dashboard return link', () => {
+    renderSummary(true);
+
+    expect(
+      screen.queryByText(/Before you submit your request/),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('edit-link')).not.toBeInTheDocument();
+    expect(screen.getByTestId('back-button')).toHaveAttribute(
+      'href',
+      '/dashboard',
+    );
+    expect(screen.getByTestId('back-button')).toHaveTextContent(
+      'Back to dashboard',
     );
   });
 });

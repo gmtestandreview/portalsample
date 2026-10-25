@@ -1,17 +1,13 @@
 import { render, screen } from '@testing-library/react';
-
 import { describe, expect, it, vi } from 'vitest';
-
 import useAccountContext, {
   useAccountDispatch,
   useAccountState,
 } from '@/authentication/hooks';
-
 import {
   AccountDispatchCtx,
   AccountStateCtx,
 } from '@/authentication/accountContext';
-
 import type {
   AccountDispatchContext,
   AccountStateContext,
@@ -68,7 +64,6 @@ const AccountProbe = () => {
 
 describe('authentication hooks', () => {
   it('return null when rendered without account providers', () => {
-    expect.assertions(3);
     render(<AccountProbe />);
 
     expect(
@@ -80,5 +75,55 @@ describe('authentication hooks', () => {
     expect(
       screen.getByRole('status', { name: 'Dispatch account' }),
     ).toHaveTextContent('none');
+  });
+
+  it('returns the direct state and dispatch contexts and merges them for the default hook', () => {
+    render(
+      <AccountStateCtx.Provider value={stateContext}>
+        <AccountDispatchCtx.Provider value={dispatchContext}>
+          <AccountProbe />
+        </AccountDispatchCtx.Provider>
+      </AccountStateCtx.Provider>,
+    );
+
+    expect(
+      screen.getByRole('status', { name: 'Combined account' }),
+    ).toHaveTextContent('National Measurement Institute');
+    expect(
+      screen.getByRole('status', { name: 'State account' }),
+    ).toHaveTextContent('National Measurement Institute');
+    expect(
+      screen.getByRole('status', { name: 'Dispatch account' }),
+    ).toHaveTextContent('available');
+  });
+
+  it('returns a partial combined context when only account state is provided', () => {
+    render(
+      <AccountStateCtx.Provider value={stateContext}>
+        <AccountProbe />
+      </AccountStateCtx.Provider>,
+    );
+
+    expect(
+      screen.getByRole('status', { name: 'Combined account' }),
+    ).toHaveTextContent('National Measurement Institute');
+    expect(
+      screen.getByRole('status', { name: 'Dispatch account' }),
+    ).toHaveTextContent('none');
+  });
+
+  it('returns a partial combined context when only account dispatch is provided', () => {
+    render(
+      <AccountDispatchCtx.Provider value={dispatchContext}>
+        <AccountProbe />
+      </AccountDispatchCtx.Provider>,
+    );
+
+    expect(
+      screen.getByRole('status', { name: 'Combined account' }),
+    ).toHaveTextContent('none');
+    expect(
+      screen.getByRole('status', { name: 'Dispatch account' }),
+    ).toHaveTextContent('available');
   });
 });

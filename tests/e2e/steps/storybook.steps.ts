@@ -11,7 +11,6 @@
  * project's baseURL setting.
  */
 
-import { expect } from 'vitest';
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import {

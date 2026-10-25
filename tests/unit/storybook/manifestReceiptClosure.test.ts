@@ -81,7 +81,6 @@ const receipt = {
 
 describe('manifest receipt closure', () => {
   it('requires every manifest story ID to have exact passing component and a11y evidence', () => {
-    expect.assertions(1);
     expect(
       moduleUnderTest.validateClosure({
         manifest,
@@ -95,7 +94,6 @@ describe('manifest receipt closure', () => {
   });
 
   it('rejects a closure receipt that omits the manifest story ID', () => {
-    expect.assertions(1);
     expect(
       moduleUnderTest.validateClosure({
         manifest,

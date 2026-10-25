@@ -209,7 +209,7 @@ export default defineConfig(({ command, mode }) => {
     VITE_ENV_KEYS.map((key) => [
       `import.meta.env.${key}`,
       JSON.stringify(envValues.get(key)),
-    ])
+    ]),
   );
 
   return {

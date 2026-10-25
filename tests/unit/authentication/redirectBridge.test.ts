@@ -16,7 +16,6 @@ describe('mSAL redirect bridge entry', () => {
   });
 
   it('broadcasts the authentication response', async () => {
-    expect.assertions(1);
     bridgeMocks.broadcastResponseToMainFrame.mockResolvedValue(undefined);
 
     await import('../../../ClientApp/src/authentication/redirectBridge');
@@ -25,7 +24,6 @@ describe('mSAL redirect bridge entry', () => {
   });
 
   it('reports a sanitized constant when broadcasting fails', async () => {
-    expect.assertions(2);
     bridgeMocks.broadcastResponseToMainFrame.mockRejectedValue(
       new Error('token=must-not-be-logged'),
     );

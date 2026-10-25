@@ -16,14 +16,14 @@ import ApplicationSummary from '../../../../../ClientApp/src/routes/ta/summary/A
 import OrganisationSummary from '../../../../../ClientApp/src/routes/ta/summary/OrganisationSummary';
 import { resetMsalMock } from '../../../helpers/mockMsal';
 
-vi.mock(import('@azure/msal-react'), async () => {
+vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
@@ -185,7 +185,6 @@ describe('form-free TA summary parity with the Formik summary', () => {
   it.each(Object.entries(fixtures))(
     'renders the same markup for %s',
     async (_name, values) => {
-      expect.assertions(1);
       const legacy = await renderLegacy(values);
       document.body.innerHTML = '';
       const summary = renderSummary(values);
@@ -195,7 +194,6 @@ describe('form-free TA summary parity with the Formik summary', () => {
   );
 
   it('shows the chosen sub-options that the Formik summary leaves blank', () => {
-    expect.assertions(1);
     const { container } = render(
       <ApplicationSummary
         values={fixtures['new certificate by a manufacturer']!}

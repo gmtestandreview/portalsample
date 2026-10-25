@@ -1,13 +1,11 @@
 import { createRequire } from 'node:module';
-
 import path from 'node:path';
-
 import { describe, expect, it, vi } from 'vitest';
 
 import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 vi.mock(
-  import('@storybook/addon-vitest/vitest-plugin'),
+  '@storybook/addon-vitest/vitest-plugin',
   () =>
     ({
       storybookTest: vi.fn(() => ({ name: 'storybook-test-mock' })),
@@ -15,7 +13,6 @@ vi.mock(
 );
 
 import { storybookVitestRuntimePlugin } from '../../../vitest.storybook.runtime';
-
 import storybookConfig from '../../../vitest.storybook.config';
 
 const requireFrom = createRequire(import.meta.url);
@@ -71,39 +68,50 @@ const readAddonSource = (): string =>
   );
 
 const vitestNodeSource = readVitestClassSource();
-
 const addonSource = readAddonSource();
 
 describe('storybook/Vitest runtime bridge contract', () => {
+  // The bridge exists solely because @storybook/addon-vitest calls a Vitest API
+  // that Vitest deprecated. Each half of that statement is asserted here, so the
+  // bridge cannot quietly outlive its justification.
+
   it('still has a dependency-owned deprecated call to bridge', () => {
-    expect.assertions(1);
     // When this fails, Storybook has moved off init(): delete the init
     // assignment in vitest.storybook.runtime.ts and this test with it.
     expect(addonSource).toContain('this.vitest.init()');
   });
-});
 
-describe('storybook/Vitest runtime bridge contract', () => {
   it('wires the runtime compatibility plugin into the Storybook Vitest config', () => {
-    expect.assertions(1);
     expect(storybookConfig.plugins).toContain(storybookVitestRuntimePlugin);
   });
-});
 
-describe('storybook/Vitest runtime bridge contract', () => {
   it('bridges to an API that Vitest still exposes as the supported replacement', () => {
-    expect.assertions(1);
     expect(vitestNodeSource).toMatch(/async standalone\(\)/);
   });
-});
 
-describe('storybook/Vitest runtime bridge contract', () => {
   it('bridges to an API that is behaviourally identical to the deprecated one', () => {
-    expect.assertions(1);
     // Vitest's own init() is a deprecation log plus a delegation to standalone(),
     // which is what makes the bridge a no-op in behaviour rather than a change.
     expect(vitestNodeSource).toMatch(
       /init\(\)\s*\{[^}]*deprecate[^}]*return this\.standalone\(\)/s,
     );
+  });
+
+  it('routes the deprecated call and keeps JSON out of manager-path remapping', () => {
+    const standalone = vi.fn();
+    const legacyInit = vi.fn();
+    const vitest = {
+      config: { coverage: { exclude: [] as string[] } },
+      init: legacyInit,
+      standalone,
+    };
+
+    storybookVitestRuntimePlugin.configureVitest({ vitest });
+
+    void vitest.init();
+
+    expect(standalone).toHaveBeenCalledExactlyOnceWith();
+    expect(legacyInit).not.toHaveBeenCalled();
+    expect(vitest.config.coverage.exclude).toContain('ClientApp/src/**/*.json');
   });
 });

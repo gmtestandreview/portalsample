@@ -3,16 +3,18 @@ import { MemoryRouter } from 'react-router';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import Layout from './index';
 
-describe('Layout AppShell — WCAG accessibility', () => {
+describe('layout AppShell — WCAG accessibility', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
+
   afterEach(() => {
     vi.useRealTimers();
   });
 
   it('renders an aria-live polite region', () => {
     expect.assertions(2);
+
     render(
       <MemoryRouter>
         <Layout>
@@ -21,12 +23,14 @@ describe('Layout AppShell — WCAG accessibility', () => {
       </MemoryRouter>,
     );
     const region = screen.getByRole('status');
+
     expect(region).toHaveAttribute('aria-live', 'polite');
     expect(region).toHaveClass('visually-hidden');
   });
 
   it('renders exactly one role=status region (no duplicate from old component)', () => {
     expect.assertions(1);
+
     render(
       <MemoryRouter>
         <Layout>
@@ -34,11 +38,13 @@ describe('Layout AppShell — WCAG accessibility', () => {
         </Layout>
       </MemoryRouter>,
     );
+
     expect(screen.getAllByRole('status')).toHaveLength(1);
   });
 
   it('populates the announcement after navigation', () => {
     expect.assertions(1);
+
     document.title = 'Dashboard | NMI Portal';
     render(
       <MemoryRouter initialEntries={['/dashboard']}>
@@ -50,6 +56,7 @@ describe('Layout AppShell — WCAG accessibility', () => {
     act(() => {
       vi.advanceTimersByTime(100);
     });
+
     expect(screen.getByRole('status').textContent).toBe(
       'Navigated to Dashboard | NMI Portal page.',
     );

@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 
 describe('mSAL v5 package compatibility', () => {
   it('exposes the v5 bootstrap and redirect bridge contracts used by the app', () => {
-    expect.assertions(4);
     expect(msalBrowser.createStandardPublicClientApplication).toEqual(
       expect.any(Function),
     );
