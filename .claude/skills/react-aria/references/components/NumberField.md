@@ -173,7 +173,7 @@ export function NumberField({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-1 font-sans'
+        'group flex flex-col gap-1 font-sans',
       )}
     >
       <Label>{label}</Label>

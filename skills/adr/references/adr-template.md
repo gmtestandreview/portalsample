@@ -78,8 +78,8 @@ choice, not a discussion of options.
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation |
-| --- | --- | --- |
-| | | |
+| ---- | ------ | ---------- |
+|      |        |            |
 
 ## Validation
 

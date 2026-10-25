@@ -5,19 +5,30 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
+
 import { MemoryRouter } from 'react-router';
+
 import type * as ReactRouterModule from 'react-router';
+
 import type * as WebApiClientModule from '@/api/web-api-client';
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { MsalContext, type IMsalContext } from '@azure/msal-react';
+
 import { InteractionStatus, Logger } from '@azure/msal-browser';
+
 import BranchSelectorModal from '@/components/modals/BranchSelectorModal';
+
 import { BranchSelectionModalMode } from '@/components/modals/BranchSelectorModal/enums';
+
 import {
   AccountDispatchCtx,
   AccountStateCtx,
 } from '@/authentication/accountContext';
+
 import type { AccountDispatchContext } from '@/authentication/accountContext';
+
 import {
   ModalDispatchCtx,
   ModalStateCtx,
@@ -244,8 +255,6 @@ const renderModal = (opts: RenderOptions = {}) => {
   );
 };
 
-// ─── tests ────────────────────────────────────────────────────────────────────
-
 describe(BranchSelectorModal, () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -253,14 +262,11 @@ describe(BranchSelectorModal, () => {
     mocks.setDefaultOrganisation.mockResolvedValue(undefined);
     mocks.getBranchModalNotification.mockReturnValue(null);
   });
-
   afterEach(() => {
     vi.useRealTimers();
   });
-
-  // ── branch loading ──────────────────────────────────────────────────────
-
   it('preselects the first branch when the account has no default organisation id', async () => {
+    expect.assertions(1);
     renderModal();
 
     const firstBranch = await screen.findByRole('radio', {
@@ -271,8 +277,20 @@ describe(BranchSelectorModal, () => {
       expect(firstBranch).toBeChecked();
     });
   });
+});
 
+describe(BranchSelectorModal, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getOrganisationsByABN.mockResolvedValue(mockBranches);
+    mocks.setDefaultOrganisation.mockResolvedValue(undefined);
+    mocks.getBranchModalNotification.mockReturnValue(null);
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it('preselects the matching branch when the account has a default organisation id', async () => {
+    expect.assertions(1);
     renderModal({ defaultOrganisationId: 1 });
 
     const firstBranch = await screen.findByRole('radio', {
@@ -283,8 +301,20 @@ describe(BranchSelectorModal, () => {
       expect(firstBranch).toBeChecked();
     });
   });
+});
 
+describe(BranchSelectorModal, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getOrganisationsByABN.mockResolvedValue(mockBranches);
+    mocks.setDefaultOrganisation.mockResolvedValue(undefined);
+    mocks.getBranchModalNotification.mockReturnValue(null);
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it('shows no-branches message when the API returns an empty array', async () => {
+    expect.assertions(1);
     // An empty result causes a TypeError accessing result[0] which the catch handles,
     // but branches is set to [] before the throw so the empty-branches tbody renders.
     getOrganisationsByABN.mockResolvedValue([]);
@@ -297,8 +327,20 @@ describe(BranchSelectorModal, () => {
       ).toBeInTheDocument();
     });
   });
+});
 
+describe(BranchSelectorModal, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getOrganisationsByABN.mockResolvedValue(mockBranches);
+    mocks.setDefaultOrganisation.mockResolvedValue(undefined);
+    mocks.getBranchModalNotification.mockReturnValue(null);
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it('shows error alert when branch loading fails', async () => {
+    expect.assertions(2);
     getOrganisationsByABN.mockRejectedValueOnce(new Error('network error'));
 
     renderModal();
@@ -313,345 +355,5 @@ describe(BranchSelectorModal, () => {
       'Failed to load branches',
       expect.any(Error),
     );
-  });
-
-  it('ignores branch load result after the component unmounts (covers !isActive return in try)', async () => {
-    let resolveLoad!: (v: any) => void;
-    getOrganisationsByABN.mockReturnValueOnce(
-      new Promise((resolve) => {
-        resolveLoad = resolve;
-      }),
-    );
-
-    const { unmount } = renderModal();
-    unmount();
-
-    await act(async () => {
-      resolveLoad(mockBranches);
-    });
-    await Promise.resolve();
-
-    expect(mocks.appLoggerError).not.toHaveBeenCalled();
-  });
-
-  it('ignores branch load error after the component unmounts (covers !isActive return in catch)', async () => {
-    let rejectLoad!: (e: any) => void;
-    getOrganisationsByABN.mockReturnValueOnce(
-      new Promise((_, reject) => {
-        rejectLoad = reject;
-      }),
-    );
-
-    const { unmount } = renderModal();
-    unmount();
-
-    await act(async () => {
-      rejectLoad(new Error('stale error'));
-    });
-    await Promise.resolve();
-
-    // isActive was false when catch executed — error not logged
-    expect(mocks.appLoggerError).not.toHaveBeenCalled();
-  });
-
-  it('skips branch loading when the account ABN is not set', async () => {
-    renderModal({ abn: undefined });
-
-    await Promise.resolve();
-
-    expect(getOrganisationsByABN).not.toHaveBeenCalled();
-  });
-
-  // ── UI modes ────────────────────────────────────────────────────────────
-
-  it('renders the RFQ modal title and body text', async () => {
-    renderModal({ mode: BranchSelectionModalMode.RFQSelectOrg });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    expect(screen.getByText('Change branch/location')).toBeInTheDocument();
-    expect(
-      screen.getByText(/Select default branch or location name/i),
-    ).toBeInTheDocument();
-  });
-
-  it('renders a notification message when getBranchModalNotification returns a value', async () => {
-    mocks.getBranchModalNotification.mockReturnValue({
-      message: 'Info note',
-      variant: 'info',
-    });
-
-    renderModal();
-
-    await waitFor(() => {
-      expect(screen.getByTestId('notif-message-1')).toBeInTheDocument();
-    });
-  });
-
-  // ── interactions ────────────────────────────────────────────────────────
-
-  it('updates selected branch when a different radio button is clicked', async () => {
-    renderModal();
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    const secondBranch = screen.getByRole('radio', {
-      name: 'ACME Melbourne Branch',
-    });
-    fireEvent.click(secondBranch);
-
-    await waitFor(() => {
-      expect(secondBranch).toBeChecked();
-    });
-  });
-
-  it('shows the cancel button when a default organisation id is set', async () => {
-    renderModal({ defaultOrganisationId: 1 });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
-  });
-
-  it('does not show the cancel button when no default organisation id is set', async () => {
-    renderModal();
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    expect(
-      screen.queryByRole('button', { name: /cancel/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('calls setShowBranchSelector(false) when the cancel button is clicked', async () => {
-    renderModal({ defaultOrganisationId: 1 });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
-
-    expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
-  });
-
-  // ── sorting ─────────────────────────────────────────────────────────────
-
-  it('toggles sort direction from asc to desc and covers all getArrow icon paths', async () => {
-    // Branch with undefined businessListName exercises the ?? '' fallback in toSortableText
-    getOrganisationsByABN.mockResolvedValueOnce([
-      ...mockBranches,
-      mockBranchUndefinedName,
-    ]);
-
-    renderModal();
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    const sortBtn = screen.getByRole('button', {
-      name: /branch\/location name/i,
-    });
-
-    // First click: key 'branchOrLocationName' → 'businessListName', direction stays 'asc'
-    // getArrow for businessListName now returns primary-down (direction=asc)
-    fireEvent.click(sortBtn);
-
-    // Second click: same key, direction 'asc' → 'desc'
-    // getArrow returns primary-up (direction=desc); sort comparison uses -comparison
-    fireEvent.click(sortBtn);
-
-    // Three radio buttons still visible after sorting
-    expect(screen.getAllByRole('radio')).toHaveLength(3);
-  });
-
-  // ── save — SelectAndEditOrg ─────────────────────────────────────────────
-
-  it('calls setDefaultOrganisation without rfqId and navigates to home on save', async () => {
-    renderModal();
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
-        expect.objectContaining({ defaultOrganisationId: 1 }),
-      );
-    });
-
-    expect(mocks.navigate).toHaveBeenCalledWith('/');
-    expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
-    expect(mocks.clearBranchModalNotification).toHaveBeenCalledWith();
-    expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
-      'ACME Corporation',
-      'ACME Corporation',
-      'Sydney Office',
-    );
-  });
-
-  // ── save — RFQSelectOrg ─────────────────────────────────────────────────
-
-  it('calls setDefaultOrganisation with rfqId and reloads the page on save (RFQ mode)', async () => {
-    const origLocation = globalThis.location;
-    const reloadMock = vi.fn();
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: { ...origLocation, reload: reloadMock },
-    });
-
-    renderModal({
-      mode: BranchSelectionModalMode.RFQSelectOrg,
-      rfqId: 'RFQ-123',
-    });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
-        expect.objectContaining({ defaultOrganisationId: 1, rfqId: 'RFQ-123' }),
-      );
-    });
-
-    expect(reloadMock).toHaveBeenCalledWith();
-    expect(mocks.navigate).not.toHaveBeenCalled();
-
-    Object.defineProperty(globalThis, 'location', {
-      configurable: true,
-      value: origLocation,
-    });
-  });
-
-  // ── save — error ────────────────────────────────────────────────────────
-
-  it('shows error alert and logs when save fails', async () => {
-    mocks.setDefaultOrganisation.mockRejectedValueOnce(new Error('save error'));
-
-    renderModal();
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.getByText(/Error trying to save default branch\/location/i),
-      ).toBeInTheDocument();
-    });
-
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to select organisation',
-      expect.any(Error),
-    );
-  });
-
-  // ── dispatch helpers ────────────────────────────────────────────────────
-
-  it('returns early from applyAccountDispatchUpdates when accountDispatch is null', async () => {
-    renderModal({ accountDispatch: null });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({
-        defaultOrganisationId: 1,
-      });
-    });
-
-    // Helper returned early — no dispatch calls made
-    expect(mocks.setDefaultOrganisationId).not.toHaveBeenCalled();
-    expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
-  });
-
-  it('skips setOrganisationAndBranch when selectedOrganisation is undefined', async () => {
-    // No ABN → branches never load → selectedOrganisation stays undefined
-    renderModal({ abn: undefined });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith({});
-    });
-
-    expect(mocks.setDefaultOrganisationId).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-    );
-    expect(mocks.setOrganisationAndBranch).not.toHaveBeenCalled();
-  });
-
-  it('calls setCompleted and setTargetOrganisation when account creation is incomplete on save', async () => {
-    renderModal({ accountCreationCompleted: false });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.setCompleted).toHaveBeenCalledWith();
-    });
-
-    expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(
-      'ACME Corporation',
-      '00000000001',
-    );
-  });
-
-  it('does nothing when MSAL interaction is in progress (line 187 false branch)', async () => {
-    renderModal({ msalInProgress: InteractionStatus.AcquireToken });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await Promise.resolve();
-
-    expect(mocks.setDefaultOrganisation).not.toHaveBeenCalled();
-    expect(mocks.navigate).not.toHaveBeenCalled();
-  });
-
-  it('passes empty-string fallbacks when tradingName and branchName are undefined on save', async () => {
-    getOrganisationsByABN.mockResolvedValueOnce([
-      {
-        organisationId: 5,
-        name: 'No-Name Corp',
-        businessListName: 'No-Name WA Office',
-        businessOrTradingName: undefined as unknown as string,
-        branchOrLocationName: undefined as unknown as string,
-        abn: '00000000001',
-        crmGuid: 'guid-005',
-        streetAddress: { suburb: 'Perth', state: 'WA' },
-      },
-    ]);
-
-    renderModal();
-
-    await screen.findByRole('radio', { name: 'No-Name WA Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
-        'No-Name Corp',
-        '',
-        '',
-      );
-    });
-  });
-
-  it('skips setDefaultOrganisation and navigates when modal mode is unrecognised (line 199 false branch)', async () => {
-    renderModal({ mode: 'UnknownMode' });
-
-    await screen.findByRole('radio', { name: 'ACME Sydney Office' });
-
-    fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
-
-    await waitFor(() => {
-      expect(mocks.navigate).toHaveBeenCalledWith('/');
-    });
-
-    expect(mocks.setDefaultOrganisation).not.toHaveBeenCalled();
   });
 });

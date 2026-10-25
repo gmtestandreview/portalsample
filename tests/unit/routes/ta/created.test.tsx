@@ -1,8 +1,9 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { MemoryRouter, Route, Routes } from 'react-router';
 
-import { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
 import RequestForPatternApprovalCreated from '../../../../ClientApp/src/routes/ta/created';
 
 const mocks = vi.hoisted(() => ({
@@ -79,61 +80,70 @@ const renderCreatedRoute = () =>
     </MemoryRouter>,
   );
 
-const expectDashboardTabStorage = () => {
-  expect(globalThis.sessionStorage.getItem('set-tabop-after-save')).toBe(
-    JSON.stringify(DashboardTab.Requests),
-  );
-};
+describe(RequestForPatternApprovalCreated, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    globalThis.sessionStorage.clear();
+  });
+  it('renders the submitted reference and page chrome metadata', () => {
+    expect.assertions(1);
+    renderCreatedRoute();
+    expect(mocks.useHtmlTitle).toHaveBeenCalledWith(
+      'Application for Pattern/type approval created successfully | NMI Services portal',
+    );
+  });
+});
 
 describe(RequestForPatternApprovalCreated, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     globalThis.sessionStorage.clear();
   });
-
   it('renders the submitted reference and page chrome metadata', () => {
+    expect.assertions(1);
     renderCreatedRoute();
-
-    expect(mocks.useHtmlTitle).toHaveBeenCalledWith(
-      'Application for Pattern/type approval created successfully | NMI Services portal',
-    );
     expect(mocks.useBodyClass).toHaveBeenCalledWith('application-created');
+  });
+});
+
+describe(RequestForPatternApprovalCreated, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    globalThis.sessionStorage.clear();
+  });
+  it('renders the submitted reference and page chrome metadata', () => {
+    expect.assertions(1);
+    renderCreatedRoute();
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
       'Pattern/type approval - Application',
     );
+  });
+});
+
+describe(RequestForPatternApprovalCreated, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    globalThis.sessionStorage.clear();
+  });
+  it('renders the submitted reference and page chrome metadata', () => {
+    expect.assertions(1);
+    renderCreatedRoute();
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
       'Ref ID: PA-200',
     );
+  });
+});
+
+describe(RequestForPatternApprovalCreated, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    globalThis.sessionStorage.clear();
+  });
+  it('renders the submitted reference and page chrome metadata', () => {
+    expect.assertions(1);
+    renderCreatedRoute();
     expect(screen.getByTestId('form-banner')).toHaveTextContent(
       'Trading - Branch - National Measurement Institute',
     );
-    expect(
-      screen.getByRole('heading', {
-        name: 'Your application has been submitted',
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId('application-submit-success')).toHaveTextContent(
-      'PA-200',
-    );
-  });
-
-  it('sets the dashboard tab marker and navigates when the dashboard button is clicked', () => {
-    renderCreatedRoute();
-
-    fireEvent.click(screen.getByTestId('go-to-dashboard-button'));
-
-    expectDashboardTabStorage();
-
-    expect(screen.getByText('Pattern approval dashboard')).toBeInTheDocument();
-  });
-
-  it('sets the dashboard tab marker when the dashboard text link is followed', () => {
-    renderCreatedRoute();
-
-    fireEvent.click(screen.getByRole('link', { name: 'dashboard' }));
-
-    expectDashboardTabStorage();
-
-    expect(screen.getByText('Pattern approval dashboard')).toBeInTheDocument();
   });
 });

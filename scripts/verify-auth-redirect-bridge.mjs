@@ -24,7 +24,11 @@ const assertRelativeScript = (source) => {
   }
 
   const scriptUrl = new URL(source, 'https://bridge.invalid/');
-  if (scriptUrl.origin !== 'https://bridge.invalid' || scriptUrl.search || scriptUrl.hash) {
+  if (
+    scriptUrl.origin !== 'https://bridge.invalid' ||
+    scriptUrl.search ||
+    scriptUrl.hash
+  ) {
     fail('bridge script must use a relative same-origin URL');
   }
 
@@ -55,7 +59,9 @@ export const verifyBridgeHtml = (html) => {
     fail('bridge page contains an inline event handler');
   }
 
-  const scriptTags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)];
+  const scriptTags = [
+    ...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi),
+  ];
   if (scriptTags.length !== 1) {
     fail('bridge page must contain exactly one script');
   }
@@ -66,7 +72,7 @@ export const verifyBridgeHtml = (html) => {
   }
 
   const srcMatch = attributes.match(
-    /\bsrc\s*=\s*(?:["']([^"']+)["']|([^\s>]+))/i
+    /\bsrc\s*=\s*(?:["']([^"']+)["']|([^\s>]+))/i,
   );
   const src = srcMatch?.[1] ?? srcMatch?.[2];
   assertRelativeScript(src);
@@ -92,7 +98,9 @@ export const verifyBridgeResponse = async (response, requestedUrl) => {
     fail('bridge URL must return HTTP 200 without a redirect');
   }
   if (finalUrl !== expectedUrl) {
-    fail('bridge URL must resolve to the requested scheme, host, port, and path');
+    fail(
+      'bridge URL must resolve to the requested scheme, host, port, and path',
+    );
   }
   if (!/\bno-store\b/i.test(response.headers.get('cache-control') ?? '')) {
     fail('bridge response must disable caching');
@@ -145,7 +153,8 @@ if (
   import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
 ) {
   run().catch((error) => {
-    const message = error instanceof Error ? error.message : 'unknown verification error';
+    const message =
+      error instanceof Error ? error.message : 'unknown verification error';
     console.error(`MSAL redirect bridge verification failed: ${message}`);
     process.exitCode = 1;
   });

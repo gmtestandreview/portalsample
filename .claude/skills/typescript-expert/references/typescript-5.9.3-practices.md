@@ -16,8 +16,7 @@ Official references:
   <https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-9.html>
 - TypeScript 5.9.3 release:
   <https://github.com/microsoft/TypeScript/releases/tag/v5.9.3>
-- TSConfig reference:
-  <https://www.typescriptlang.org/tsconfig/>
+- TSConfig reference: <https://www.typescriptlang.org/tsconfig/>
 
 ## Strictness baseline
 
@@ -30,10 +29,10 @@ property-access discipline, fallthrough prevention, and side-effect-import
 checking.
 
 Do not disable a strictness option just to clear generated errors. Fix the code
-or document an intentional project exception. The diagnostic baseline may
-accept a documented per-flag exception only when it is named explicitly; that
-result is a deviation warning, not proof that the full baseline is enabled.
-`strict` itself is not an allowable exception for this strict-mode skill.
+or document an intentional project exception. The diagnostic baseline may accept
+a documented per-flag exception only when it is named explicitly; that result is
+a deviation warning, not proof that the full baseline is enabled. `strict`
+itself is not an allowable exception for this strict-mode skill.
 
 ## Strict-flag fallout: fix patterns
 
@@ -45,10 +44,9 @@ the owner, not each call site, and never reach for casts or `!`.
   widen the owning prop or interface member to `x?: string | undefined`. It is
   type-only with no runtime change. Not `as string`, and not `x ?? ''` where
   that changes behavior.
-- Same error, but the target is third-party or generated and cannot be
-  widened: spread only when set, `{...(v !== undefined && { x: v })}`, or drop
-  undefined keys once at the boundary with a small helper. Never edit
-  generated code.
+- Same error, but the target is third-party or generated and cannot be widened:
+  spread only when set, `{...(v !== undefined && { x: v })}`, or drop undefined
+  keys once at the boundary with a small helper. Never edit generated code.
 - TS2532 / TS18048 on `arr[0]` or `record[key]`: narrow with
   `const [first] = arr; if (!first) return` (or throw), use `arr[0]?.x`, or a
   default such as `?? 0` when a fallback is meaningful. Not `arr[0]!`.
@@ -63,8 +61,8 @@ the owner, not each call site, and never reach for casts or `!`.
 
 Test mocks: a hoisted slot typed `Record<string, Mock>` forgets the method
 names, so every `mock.methods.x` access raises TS4111 and TS18048 together. Type
-the slot by name union instead (for example `ClientMockOf<'getA' | 'getB'>`)
-and fix it once in the mock factory.
+the slot by name union instead (for example `ClientMockOf<'getA' | 'getB'>`) and
+fix it once in the mock factory.
 
 When one widened type feeds a generated DTO that is not widened, convert once at
 that boundary (omit undefined keys) instead of widening the DTO's consumers.
@@ -83,7 +81,8 @@ Treat module/transpilation options as environment-dependent:
 - `moduleResolution: "bundler"` is for bundler-managed resolution and does not
   enforce every Node runtime import constraint.
 - Libraries must validate emitted declarations against how consumers resolve
-  modules; a bundler-safe source import is not automatically Node-safe in `.d.ts`.
+  modules; a bundler-safe source import is not automatically Node-safe in
+  `.d.ts`.
 
 References:
 
@@ -130,9 +129,9 @@ or SonarQube, verify analyzer/compiler compatibility in the project's current
 Sonar documentation rather than assuming this reference remains current.
 
 The built-in **Sonar way** quality profile is server-managed. Do not suppress or
-disable its findings to obtain a green result. Fix the source when possible.
-For a scanner-based gate, `sonar.qualitygate.wait=true` makes the scanner wait
-for the server result and fail when the quality gate fails.
+disable its findings to obtain a green result. Fix the source when possible. For
+a scanner-based gate, `sonar.qualitygate.wait=true` makes the scanner wait for
+the server result and fail when the quality gate fails.
 
 A successful waited scan proves the quality-gate result only. It does **not**
 prove which server-side quality profile is assigned. If a project requirement

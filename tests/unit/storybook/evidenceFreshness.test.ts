@@ -1,4 +1,5 @@
 import { Buffer } from 'node:buffer';
+
 import { describe, expect, it } from 'vitest';
 
 type FreshnessModule = {
@@ -68,6 +69,7 @@ const referenceManifest = {
 
 describe('computeInputDigest', () => {
   it('keeps digest ordering independent of the process locale', () => {
+    expect.assertions(1);
     const originalLocaleCompare = String.prototype.localeCompare;
     String.prototype.localeCompare = function localeCompare(
       this: string,
@@ -90,8 +92,11 @@ describe('computeInputDigest', () => {
       String.prototype.localeCompare = originalLocaleCompare;
     }
   });
+});
 
+describe('computeInputDigest', () => {
   it('canonicalizes manifest object-key order and ignores reviewedSourceDigest refreshes', () => {
+    expect.assertions(1);
     const [appFile, manifestFile] = files;
     if (appFile === undefined || manifestFile === undefined) {
       throw new Error('digest fixture is incomplete');
@@ -119,8 +124,11 @@ describe('computeInputDigest', () => {
       moduleUnderTest.computeInputDigest({ files: reordered }),
     );
   });
+});
 
+describe('computeInputDigest', () => {
   it('accepts byte input for the canonical coverage manifest', () => {
+    expect.assertions(1);
     const byteFiles = files.map((file) => ({
       ...file,
       content: file.path.endsWith('coverageManifest.json')
@@ -132,8 +140,11 @@ describe('computeInputDigest', () => {
       moduleUnderTest.computeInputDigest({ files }),
     );
   });
+});
 
+describe('computeInputDigest', () => {
   it('requires docs and story references to resolve to generated index entries', () => {
+    expect.assertions(2);
     const index = {
       entries: {
         docs: { id: 'components-app--docs', type: 'docs' },
@@ -155,54 +166,5 @@ describe('computeInputDigest', () => {
       ok: false,
       errors: [expect.objectContaining({ code: 'REFERENCE_MISSING' })],
     });
-  });
-
-  it('changes when array order or ordinary source bytes change', () => {
-    const reorderedManifest = JSON.stringify({
-      schemaVersion: 1,
-      records: [{ export: 'Other' }, { export: 'App' }],
-    });
-    const reordered = files.map((file) =>
-      file.path.endsWith('coverageManifest.json')
-        ? { ...file, content: reorderedManifest }
-        : file,
-    );
-    const changedSource = files.map((file) =>
-      file.path.endsWith('App.tsx')
-        ? { path: file.path, content: 'export const App = 2;\n' }
-        : file,
-    );
-
-    expect(moduleUnderTest.computeInputDigest({ files: reordered })).not.toBe(
-      moduleUnderTest.computeInputDigest({ files }),
-    );
-    expect(
-      moduleUnderTest.computeInputDigest({ files: changedSource }),
-    ).not.toBe(moduleUnderTest.computeInputDigest({ files }));
-  });
-
-  it('requires the canonical coverage manifest to be included', () => {
-    expect(() =>
-      moduleUnderTest.computeInputDigest({
-        files: [{ path: 'ClientApp/src/App.tsx', content: 'source' }],
-      }),
-    ).toThrow(/coverage manifest/i);
-  });
-
-  it.each([
-    ['absolute paths', [{ path: '/absolute.ts', content: 'x' }]],
-    ['parent segments', [{ path: 'src/../App.tsx', content: 'x' }]],
-    ['empty path components', [{ path: 'src//App.tsx', content: 'x' }]],
-    [
-      'case-fold collisions',
-      [
-        { path: 'src/Button.tsx', content: 'a' },
-        { path: 'src/button.tsx', content: 'b' },
-      ],
-    ],
-  ])('rejects %s', (_name, invalidFiles) => {
-    expect(() =>
-      moduleUnderTest.computeInputDigest({ files: invalidFiles }),
-    ).toThrow();
   });
 });

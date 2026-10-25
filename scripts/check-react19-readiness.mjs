@@ -38,10 +38,10 @@ const violations = SCAN_ROOTS.flatMap((scanRoot) =>
         .split(/\r?\n/)
         .flatMap((line, index) =>
           FORBIDDEN.filter(({ pattern }) => pattern.test(line)).map(
-            ({ name }) => `${relative(ROOT, file)}:${index + 1}  ${name}`
-          )
-        )
-    )
+            ({ name }) => `${relative(ROOT, file)}:${index + 1}  ${name}`,
+          ),
+        ),
+    ),
 );
 
 if (violations.length > 0) {

@@ -24,7 +24,8 @@
 
 **Problem**: External assets may contain malicious content or vulnerabilities.
 
-**Solution**: Ensure that external assets meet a team-agreed quality level before the workload consumes them.
+**Solution**: Ensure that external assets meet a team-agreed quality level
+before the workload consumes them.
 
 **When to Use**:
 
@@ -44,7 +45,8 @@
 
 **Problem**: Applications shouldn't proxy all client data access.
 
-**Solution**: Use a token or key that provides clients with restricted direct access to a specific resource or service.
+**Solution**: Use a token or key that provides clients with restricted direct
+access to a specific resource or service.
 
 **When to Use**:
 

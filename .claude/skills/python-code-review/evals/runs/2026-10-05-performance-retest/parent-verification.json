@@ -18,9 +18,7 @@
         "informationCount": 0,
         "timeInSec": 0.233
       },
-      "rules": [
-        "reportUnknownMemberType"
-      ]
+      "rules": ["reportUnknownMemberType"]
     },
     {
       "arm": "old_skill",

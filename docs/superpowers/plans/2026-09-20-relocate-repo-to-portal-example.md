@@ -91,6 +91,7 @@ venv, Claude Code project memory, and the tokensave/claude-mem indexes.
       ```
 
       Expected: no hits; otherwise add the hits to Task 7.
+
 - [ ] Close VS Code, Storybook, and all Claude Code sessions on this folder.
 
 ### Task 2: Move
@@ -202,4 +203,3 @@ Expected: type-check and lint exit 0; unit tests pass as before the move;
   ran, and the formal 100-point reviewer rubric was not applied.
 - Supported execution mode: manual, or `executing-plans` in a session opened
   outside the repo folder.
-  

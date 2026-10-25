@@ -292,8 +292,8 @@ works for tests and Storybook.
 
 **Key work items:**
 
-- Write `vite.config.mts` for production (SCSS/Bootstrap shim, env var injection,
-  chunk splitting)
+- Write `vite.config.mts` for production (SCSS/Bootstrap shim, env var
+  injection, chunk splitting)
 - Migrate `index.html` from HtmlWebpackPlugin template to Vite's native HTML
   transform
 - Validate `window.*` runtime env injection works with Vite dev server

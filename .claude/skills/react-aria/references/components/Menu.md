@@ -127,7 +127,7 @@ export function Menu<T>(props: MenuProps<T>) {
 }
 
 export function MenuItem(
-  props: Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }
+  props: Omit<MenuItemProps, 'children'> & { children?: React.ReactNode },
 ) {
   let textValue =
     props.textValue ||
@@ -474,7 +474,7 @@ export function MenuItem(props: MenuItemProps) {
               <ChevronRight aria-hidden className='absolute w-4 h-4 right-2' />
             )}
           </>
-        )
+        ),
       )}
     </AriaMenuItem>
   );

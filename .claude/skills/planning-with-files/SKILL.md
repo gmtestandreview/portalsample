@@ -59,7 +59,8 @@ When using this skill:
 | Your project directory                     | `task_plan.md`, `findings.md`, `progress.md` |
 | `$AIMAESTRO_PLANNING_DIR` (if set)         | Alternative project-level planning directory |
 
-Set `AIMAESTRO_PLANNING_DIR` to redirect planning files — for example, to `docs_dev/` — without changing the project root default.
+Set `AIMAESTRO_PLANNING_DIR` to redirect planning files — for example, to
+`docs_dev/` — without changing the project root default.
 
 This ensures your planning files live alongside your code, not buried in the
 skill installation folder.

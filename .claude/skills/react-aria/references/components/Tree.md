@@ -49,7 +49,9 @@ export function Tree<T>(props: TreeProps<T>) {
 }
 
 export function TreeItemContent(
-  props: Omit<TreeItemContentProps, 'children'> & { children?: React.ReactNode }
+  props: Omit<TreeItemContentProps, 'children'> & {
+    children?: React.ReactNode;
+  },
 ) {
   return (
     <AriaTreeItemContent>
@@ -106,7 +108,7 @@ export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
 }
 
 export function TreeSection(
-  props: React.ComponentProps<typeof AriaTreeSection>
+  props: React.ComponentProps<typeof AriaTreeSection>,
 ) {
   return <AriaTreeSection {...props} />;
 }
@@ -397,7 +399,7 @@ export function Tree<T>({ children, ...props }: TreeProps<T>) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'w-48 max-w-full overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg'
+        'w-48 max-w-full overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg',
       )}
     >
       {children}
@@ -551,7 +553,7 @@ function AsyncLoadingExample() {
 
       let res = await fetch(
         cursor || 'https://swapi.py4e.com/api/people/?search=',
-        { signal }
+        { signal },
       );
       let json = await res.json();
 

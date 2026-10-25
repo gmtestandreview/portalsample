@@ -27,11 +27,13 @@ describe(DashBoardNotifications, () => {
   ])(
     'returns the default dashboard error notification for %s',
     (_name, factory) => {
+      expect.assertions(1);
       expect(factory()).toEqual(defaultError);
     },
   );
 
   it('returns contextual third-party access and report generated notifications', () => {
+    expect.assertions(2);
     expect(
       DashBoardNotifications.getThirdPartyAccessNotification('NMI Branch'),
     ).toEqual({
@@ -59,6 +61,7 @@ describe(DashBoardNotifications, () => {
     [HttpStatusCode.InternalServerError],
     [HttpStatusCode.NotFound],
   ])('maps dashboard error status %s to an error notification', (status) => {
+    expect.assertions(1);
     expect(
       DashBoardNotifications.getDashboardErrorNotification(status),
     ).toEqual(defaultError);

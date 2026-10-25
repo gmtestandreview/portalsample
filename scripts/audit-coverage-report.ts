@@ -31,12 +31,12 @@ const normalizedDirectory = (path: string): string =>
 
 const isExecutable = (id: string): boolean =>
   EXECUTABLE_EXTENSIONS.some((extension) =>
-    withoutQuery(id).endsWith(extension)
+    withoutQuery(id).endsWith(extension),
   );
 
 const isIntendedApplicationSource = (
   id: string,
-  repositoryRoot: string
+  repositoryRoot: string,
 ): boolean => {
   const path = normalizedPath(id);
   const sourceRoot = `${normalizedDirectory(repositoryRoot)}/ClientApp/src/`;
@@ -53,12 +53,13 @@ const isIntendedApplicationSource = (
 export const auditCoverageReport = (
   report: Record<string, unknown>,
   minimumExecutableEntries: number,
-  repositoryRoot = process.cwd()
+  repositoryRoot = process.cwd(),
 ): CoverageReportAudit => {
   const ids = Object.keys(report);
   const nonExecutableEntries = ids.filter((id) => !isExecutable(id));
   const ineligibleExecutableEntries = ids.filter(
-    (id) => isExecutable(id) && !isIntendedApplicationSource(id, repositoryRoot)
+    (id) =>
+      isExecutable(id) && !isIntendedApplicationSource(id, repositoryRoot),
   );
   const executableEntryCount =
     ids.length -
@@ -96,7 +97,7 @@ if (isEntryPoint()) {
 
   if (reportPath === undefined) {
     process.stdout.write(
-      'usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>\n'
+      'usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>\n',
     );
     process.exitCode = 2;
   } else {
@@ -114,7 +115,7 @@ if (isEntryPoint()) {
           .join('') +
         audit.ineligibleExecutableEntries
           .map((id) => `  ineligible executable: ${id}\n`)
-          .join('')
+          .join(''),
     );
     process.exitCode = audit.verdict === 'clean' ? 0 : 1;
   }

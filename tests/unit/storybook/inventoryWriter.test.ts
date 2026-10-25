@@ -22,6 +22,7 @@ const moduleUnderTest =
 
 describe('storybook inventory writer', () => {
   it('replaces exactly the generated region in all inventory documents', async () => {
+    expect.assertions(3);
     const root = await mkdtemp(path.join(os.tmpdir(), 'storybook-inventory-'));
     try {
       await Promise.all([

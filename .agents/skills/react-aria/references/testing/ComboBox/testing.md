@@ -2,7 +2,8 @@
 
 ## Test utils
 
-`@react-aria/test-utils` offers common combobox interaction testing utilities. Install it with your preferred package manager.
+`@react-aria/test-utils` offers common combobox interaction testing utilities.
+Install it with your preferred package manager.
 
 ```bash
 npm install @react-aria/test-utils --dev
@@ -13,7 +14,10 @@ npm install @react-aria/test-utils --dev
   <Content>Please note that this library uses [@testing-library/dom@10](https://www.npmjs.com/package/@testing-library/dom) and [@testing-library/user-event@14](https://www.npmjs.com/package/@testing-library/user-event). This means that you need to be on React 18+ in order for these utilities to work.</Content>
 </InlineAlert>
 
-Initialize a `User` object at the top of your test file, and use it to create a `ComboBox` pattern tester in your test cases. The tester has methods that you can call within your test to query for specific subcomponents or simulate common interactions.
+Initialize a `User` object at the top of your test file, and use it to create a
+`ComboBox` pattern tester in your test cases. The tester has methods that you
+can call within your test to query for specific subcomponents or simulate common
+interactions.
 
 ```ts
 // Combobox.test.ts

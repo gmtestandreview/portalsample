@@ -170,7 +170,7 @@ function DroppableCOMPONENT() {
       let items = await Promise.all(
         e.items
           .filter(isTextDropItem)
-          .map(async (item) => JSON.parse(await item.getText('pokemon')))
+          .map(async (item) => JSON.parse(await item.getText('pokemon'))),
       );
       setItems(items);
     },
@@ -227,7 +227,7 @@ function DroppableGridList() {
           id: Math.random(),
           url: URL.createObjectURL(await item.getFile()),
           name: item.name,
-        }))
+        })),
       );
       setItems(items);
     },
@@ -403,7 +403,7 @@ function DroppableCOMPONENT() {
       let items = await Promise.all(
         e.items
           .filter(isTextDropItem)
-          .map(async (item) => JSON.parse(await item.getText('pokemon')))
+          .map(async (item) => JSON.parse(await item.getText('pokemon'))),
       );
       setItems(items);
     },
@@ -511,7 +511,7 @@ function DroppableCOMPONENT() {
             children: item.children?.map(processItem),
           });
           return processItem(pokemon);
-        })
+        }),
       );
 
       if (e.target.dropPosition === 'before') {
@@ -701,7 +701,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
       let processedItems = await Promise.all(
         e.items
           .filter(isTextDropItem)
-          .map(async (item) => JSON.parse(await item.getText('pokemon')))
+          .map(async (item) => JSON.parse(await item.getText('pokemon'))),
       );
       if (e.target.dropPosition === 'before') {
         list.insertBefore(e.target.key, ...processedItems);
@@ -715,7 +715,7 @@ function DndCOMPONENT(props: DndCOMPONENTProps) {
       let processedItems = await Promise.all(
         e.items
           .filter(isTextDropItem)
-          .map(async (item) => JSON.parse(await item.getText('pokemon')))
+          .map(async (item) => JSON.parse(await item.getText('pokemon'))),
       );
       list.append(...processedItems);
     },
@@ -818,7 +818,7 @@ function DroppableCOMPONENT() {
       let items = await Promise.all(
         e.items
           .filter(isTextDropItem)
-          .map(async (item) => JSON.parse(await item.getText('pokemon')))
+          .map(async (item) => JSON.parse(await item.getText('pokemon'))),
       );
       setItems(items);
     },

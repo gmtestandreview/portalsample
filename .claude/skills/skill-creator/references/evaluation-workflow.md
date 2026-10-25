@@ -2,15 +2,15 @@
 
 ## Pipeline modes
 
-| Mode | Purpose | Claude calls | Readiness meaning |
-| --- | --- | ---: | --- |
-| `check` | deterministic validation, regression tests, and pytest | 0 | mode-ready only when local gates pass |
-| `smoke` | four fixed activation probes | 4 base, six-call safety cap | activation evidence only; never release-ready |
+| Mode      | Purpose                                                       |                              Claude calls | Readiness meaning                                   |
+| --------- | ------------------------------------------------------------- | ----------------------------------------: | --------------------------------------------------- |
+| `check`   | deterministic validation, regression tests, and pytest        |                                         0 | mode-ready only when local gates pass               |
+| `smoke`   | four fixed activation probes                                  |               4 base, six-call safety cap | activation evidence only; never release-ready       |
 | `release` | activation train, holdout, early-exit, and readiness pressure | 34 base, up to six targeted confirmations | release-ready only with complete validated evidence |
 
 Select `smoke` or `release` explicitly. The release base is 20 activation, 8
-holdout, 4 early-exit, and 2 readiness-pressure calls. After a complete base,
-up to three failed non-readiness cases may receive two targeted confirmations in
+holdout, 4 early-exit, and 2 readiness-pressure calls. After a complete base, up
+to three failed non-readiness cases may receive two targeted confirmations in
 priority order: holdout positives, activation positives, early-exit cases, then
 remaining fixture failures. Confirmation uses the majority of all attempts;
 readiness pairs are never retried automatically.

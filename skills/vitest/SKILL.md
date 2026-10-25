@@ -1,9 +1,14 @@
 ---
 name: vitest
-description: Use when answering, implementing, debugging, configuring, or migrating Vitest tests, including test/describe/expect APIs, hooks, mocking/vi, snapshots, coverage, fixtures/context, filtering, concurrency, environments, type tests, CLI, config, or projects. Do not use for Jest-only or other test-runner tasks unless Vitest compatibility or migration is involved.
+description:
+  Use when answering, implementing, debugging, configuring, or migrating Vitest
+  tests, including test/describe/expect APIs, hooks, mocking/vi, snapshots,
+  coverage, fixtures/context, filtering, concurrency, environments, type tests,
+  CLI, config, or projects. Do not use for Jest-only or other test-runner tasks
+  unless Vitest compatibility or migration is involved.
 metadata:
   author: Greg Mico
-  version: "2026.1.28"
+  version: '2026.1.28'
   source: https://github.com/vitest-dev/vitest
   source-revision: 4a7321e10672f00f0bb698823a381c2cc245b8f7
 ---
@@ -19,10 +24,10 @@ debugging, or migration task instead of merely restating the reference.
 
 - For configuration or command-line behavior, use `core-config.md` or
   `core-cli.md`.
-- For test structure and assertions, use `core-test-api.md`,
-  `core-describe.md`, `core-expect.md`, and `core-hooks.md` as needed.
-- For mocking questions, start with `features-mocking.md`; load
-  `advanced-vi.md` only when the request needs broader `vi` utilities.
+- For test structure and assertions, use `core-test-api.md`, `core-describe.md`,
+  `core-expect.md`, and `core-hooks.md` as needed.
+- For mocking questions, start with `features-mocking.md`; load `advanced-vi.md`
+  only when the request needs broader `vi` utilities.
 - For snapshots, coverage, fixtures/context, concurrency, or filtering, load the
   matching `features-*.md` file.
 - For environments, type-level tests, or multi-project setups, load the matching
@@ -42,31 +47,31 @@ debugging, or migration task instead of merely restating the reference.
 
 ## Core
 
-| Topic | Reference |
-| --- | --- |
-| Configuration | [core-config](references/core-config.md) |
-| CLI | [core-cli](references/core-cli.md) |
-| Test API | [core-test-api](references/core-test-api.md) |
-| Describe API | [core-describe](references/core-describe.md) |
-| Expect API | [core-expect](references/core-expect.md) |
-| Hooks | [core-hooks](references/core-hooks.md) |
+| Topic         | Reference                                    |
+| ------------- | -------------------------------------------- |
+| Configuration | [core-config](references/core-config.md)     |
+| CLI           | [core-cli](references/core-cli.md)           |
+| Test API      | [core-test-api](references/core-test-api.md) |
+| Describe API  | [core-describe](references/core-describe.md) |
+| Expect API    | [core-expect](references/core-expect.md)     |
+| Hooks         | [core-hooks](references/core-hooks.md)       |
 
 ## Features
 
-| Topic | Reference |
-| --- | --- |
-| Mocking | [features-mocking](references/features-mocking.md) |
-| Snapshots | [features-snapshots](references/features-snapshots.md) |
-| Coverage | [features-coverage](references/features-coverage.md) |
-| Test Context | [features-context](references/features-context.md) |
-| Concurrency | [features-concurrency](references/features-concurrency.md) |
-| Filtering | [features-filtering](references/features-filtering.md) |
+| Topic        | Reference                                                  |
+| ------------ | ---------------------------------------------------------- |
+| Mocking      | [features-mocking](references/features-mocking.md)         |
+| Snapshots    | [features-snapshots](references/features-snapshots.md)     |
+| Coverage     | [features-coverage](references/features-coverage.md)       |
+| Test Context | [features-context](references/features-context.md)         |
+| Concurrency  | [features-concurrency](references/features-concurrency.md) |
+| Filtering    | [features-filtering](references/features-filtering.md)     |
 
 ## Advanced
 
-| Topic | Reference |
-| --- | --- |
-| Vi Utilities | [advanced-vi](references/advanced-vi.md) |
+| Topic        | Reference                                                    |
+| ------------ | ------------------------------------------------------------ |
+| Vi Utilities | [advanced-vi](references/advanced-vi.md)                     |
 | Environments | [advanced-environments](references/advanced-environments.md) |
 | Type Testing | [advanced-type-testing](references/advanced-type-testing.md) |
-| Projects | [advanced-projects](references/advanced-projects.md) |
+| Projects     | [advanced-projects](references/advanced-projects.md)         |

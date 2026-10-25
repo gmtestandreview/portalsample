@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, userEvent, fn } from 'storybook/test';
 import {

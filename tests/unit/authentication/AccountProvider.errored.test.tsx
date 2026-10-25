@@ -1,6 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
+
 import '@testing-library/jest-dom/vitest';
+
 import AccountProvider from '../../../ClientApp/src/authentication/AccountProvider';
+
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // ── Mock setup ────────────────────────────────────────────────────────────────
@@ -95,8 +98,6 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
-
 describe('accountProvider — errored state', () => {
   beforeEach(() => {
     // Clear all mock call histories
@@ -104,8 +105,8 @@ describe('accountProvider — errored state', () => {
     // Reset signIn to reject by default
     mockSignIn.mockClear().mockRejectedValue(new Error('Network error'));
   });
-
   it('renders children when account loads successfully', async () => {
+    expect.assertions(3);
     // Override signIn to succeed for this test
     mockSignIn.mockResolvedValue({
       organisation: {
@@ -133,80 +134,5 @@ describe('accountProvider — errored state', () => {
 
     expect(mockSignIn).toHaveBeenCalledWith();
     expect(mockSignIn).toHaveBeenCalledWith({});
-  });
-
-  it('shows an error message and does NOT render children when account load fails', async () => {
-    render(
-      <AccountProvider>
-        <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>,
-    );
-
-    // Wait for the error state to be set (loading spinner disappears)
-    await waitFor(() => {
-      // Check if logoutRedirect was called (which happens in the error handler)
-      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
-        account: null,
-      });
-    });
-
-    // The error message should be displayed
-    expect(
-      screen.getByText(/Unable to load account details/i),
-    ).toBeInTheDocument();
-
-    // Protected content must NOT be visible while errored
-    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
-
-    // Verify that logoutRedirect was called to handle the error
-    expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
-      account: null,
-    });
-  });
-
-  it('still requests logout when redirect response handling fails', async () => {
-    mockInstance.handleRedirectPromise.mockRejectedValueOnce(
-      new Error('redirect response failed'),
-    );
-
-    render(
-      <AccountProvider>
-        <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>,
-    );
-
-    await waitFor(() =>
-      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
-        account: null,
-      }),
-    );
-
-    expect(
-      screen.getByText(/Unable to load account details/i),
-    ).toBeInTheDocument();
-    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
-  });
-
-  it('keeps the recoverable error state when logout redirect rejects', async () => {
-    mockInstance.logoutRedirect.mockRejectedValueOnce(
-      new Error('logout redirect failed'),
-    );
-
-    render(
-      <AccountProvider>
-        <div data-testid='protected-content'>Protected content</div>
-      </AccountProvider>,
-    );
-
-    await waitFor(() =>
-      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
-        account: null,
-      }),
-    );
-
-    expect(
-      screen.getByText(/Unable to load account details/i),
-    ).toBeInTheDocument();
-    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
   });
 });

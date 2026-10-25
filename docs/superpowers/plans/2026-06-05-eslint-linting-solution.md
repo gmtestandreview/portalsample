@@ -518,7 +518,7 @@ PASTE THE EXACT WARNING OUTPUT FROM THE FINAL LINT RUN HERE
 Do not add new warnings. When editing a file listed in this baseline, reduce or
 remove warnings in that file as part of the same change.
 
-````markdown
+`````markdown
 Replace `PASTE THE EXACT WARNING OUTPUT FROM THE FINAL LINT RUN HERE` with the
 actual warning lines from the final lint run before committing. If this file is
 created, it must contain concrete output.
@@ -537,6 +537,7 @@ Run ESLint from the repository root:
 npm run lint
 ```
 ````
+`````
 
 Apply safe automatic fixes:
 

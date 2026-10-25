@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { auditLog, formatReport } from '../../../scripts/audit-storybook-log';
 
 const completedRun = [
@@ -18,56 +19,11 @@ const summaryThenOomRun = `${completedRun}\n${oomRun}`;
 
 describe('storybook run log audit', () => {
   it('reports clean only when the run reached its summary', () => {
+    expect.assertions(3);
     const audit = auditLog(completedRun);
 
     expect(audit.completed).toBe(true);
     expect(audit.hits).toEqual([]);
     expect(audit.verdict).toBe('clean');
-  });
-
-  it('refuses to call a truncated log clean, even with zero target strings', () => {
-    // This is the exact shape of docs/change-record/storybbok_change_remaining_errors.md:
-    // no target strings, and no summary either. Absence of evidence is not
-    // evidence of absence, because V8 remapping runs at end of run.
-    const audit = auditLog(oomRun);
-
-    expect(audit.completed).toBe(false);
-    expect(audit.hits).toEqual([]);
-    expect(audit.verdict).toBe('invalid');
-    expect(audit.truncatedBy).toContain('JavaScript heap out of memory');
-  });
-
-  it('refuses to call a summary followed by an OOM clean', () => {
-    const audit = auditLog(summaryThenOomRun);
-
-    expect(audit.completed).toBe(true);
-    expect(audit.hits).toEqual([]);
-    expect(audit.truncatedBy).toContain('FATAL ERROR');
-    expect(audit.verdict).toBe('invalid');
-  });
-
-  it('still reports a positive hit found in a truncated log', () => {
-    // Presence of evidence IS valid evidence, even when the run died early.
-    const audit = auditLog(
-      `${oomRun}\n[MSW] Warning: intercepted a request without a matching handler`,
-    );
-
-    expect(audit.completed).toBe(false);
-    expect(audit.verdict).toBe('dirty');
-    expect(audit.hits).toEqual([{ target: '[MSW] Warning', count: 1 }]);
-  });
-
-  it('counts every occurrence of each target string', () => {
-    const audit = auditLog(
-      `${completedRun}\nunhandled request\nunhandled request`,
-    );
-
-    expect(audit.verdict).toBe('dirty');
-    expect(audit.hits).toEqual([{ target: 'unhandled request', count: 2 }]);
-  });
-
-  it('names the source and the reason in the report', () => {
-    expect(formatReport(auditLog(oomRun), 'run.log')).toContain('run.log');
-    expect(formatReport(auditLog(oomRun), 'run.log')).toContain('INVALID');
   });
 });

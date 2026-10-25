@@ -7,7 +7,10 @@
     "ms-python.vscode-pylance",
     "dbaeumer.vscode-eslint",
     "sonarsource.sonarlint-vscode",
-    "codacy-app.codacy"
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "ms-vscode.vscode-typescript-next",
+    "ms-vscode.vscode-typescript-tslint-plugin"
   ],
-  "unwantedRecommendations": ["biomejs.biome"]
+  "unwantedRecommendations": ["biomejs.biome", "codacy-app.codacy"]
 }

@@ -81,7 +81,7 @@ import { ErrorType } from '../../../../ClientApp/src/components/forms/WizardForm
 function makeError(
   status: number,
   title?: string,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
 ) {
   return { status, title: title ?? '', headers: headers ?? {} };
 }
@@ -90,13 +90,13 @@ describe('resolveErrorState', () => {
   describe('Load errors — HttpStatus dispatch', () => {
     it('returns notFound for 404', () => {
       expect(
-        resolveErrorState(makeError(404), undefined, ErrorType.Load)
+        resolveErrorState(makeError(404), undefined, ErrorType.Load),
       ).toEqual({ kind: 'notFound' });
     });
 
     it('returns gone for 410', () => {
       expect(
-        resolveErrorState(makeError(410), undefined, ErrorType.Load)
+        resolveErrorState(makeError(410), undefined, ErrorType.Load),
       ).toEqual({ kind: 'gone' });
     });
 
@@ -105,8 +105,8 @@ describe('resolveErrorState', () => {
         resolveErrorState(
           makeError(403, 'No third-party access to this resource'),
           undefined,
-          ErrorType.Load
-        )
+          ErrorType.Load,
+        ),
       ).toEqual({ kind: 'noThirdPartyAccess' });
     });
 
@@ -114,27 +114,27 @@ describe('resolveErrorState', () => {
       const result = resolveErrorState(
         makeError(403, 'Forbidden'),
         undefined,
-        ErrorType.Load
+        ErrorType.Load,
       );
       expect(result.kind).toBe('serverError');
     });
 
     it('returns loading for unrecognised HTTP status — restores the previously silent failure', () => {
       expect(
-        resolveErrorState(makeError(500), undefined, ErrorType.Load)
+        resolveErrorState(makeError(500), undefined, ErrorType.Load),
       ).toEqual({ kind: 'loading' });
     });
 
     it('returns loading for a network error with no status property', () => {
       expect(
-        resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load)
+        resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load),
       ).toEqual({ kind: 'loading' });
     });
 
     it('returns none for an aborted request — stays silent', () => {
       const abort = new DOMException(
         'The operation was aborted.',
-        'AbortError'
+        'AbortError',
       );
       expect(resolveErrorState(abort, undefined, ErrorType.Load)).toEqual({
         kind: 'none',
@@ -169,7 +169,7 @@ describe('resolveErrorState', () => {
       const result = resolveErrorState(
         makeError(500),
         undefined,
-        ErrorType.Update
+        ErrorType.Update,
       );
       expect(result.kind).toBe('serverError');
     });
@@ -188,7 +188,7 @@ describe('resolveErrorState', () => {
     it('falls through to default dispatch when callback returns undefined', () => {
       const cb = () => undefined;
       expect(resolveErrorState(makeError(404), cb, ErrorType.Load).kind).toBe(
-        'notFound'
+        'notFound',
       );
     });
 
@@ -265,7 +265,7 @@ export function resolveErrorState(
   getRedirectionLocationOnError:
     | ((errorCode: number, errorType: ErrorType) => string | undefined)
     | undefined,
-  errorType: ErrorType
+  errorType: ErrorType,
 ): WizardStepError {
   const serverError = error as ProblemDetails;
 
@@ -274,7 +274,7 @@ export function resolveErrorState(
   if (getRedirectionLocationOnError && serverError?.status) {
     const location = getRedirectionLocationOnError(
       serverError.status,
-      errorType
+      errorType,
     );
     if (location) return { kind: 'redirect', location };
   }
@@ -383,7 +383,7 @@ vi.mock(
   '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
   () => ({
     default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  })
+  }),
 );
 
 vi.mock('../../../../ClientApp/src/analytics/GoogleAnalytics', () => ({
@@ -442,7 +442,7 @@ function makeStepElement() {
 
 function makeRouter(
   propsOverride: Partial<WizardRoutedStepProps<FormikValues>>,
-  extraRoutes: Array<{ path: string; element: React.ReactNode }> = []
+  extraRoutes: Array<{ path: string; element: React.ReactNode }> = [],
 ) {
   const defaultStatuses: FormStepStatusDto[] = [
     { status: FormStepStatus.NotStarted },
@@ -478,7 +478,7 @@ function makeRouter(
       { path: '/done', element: <div>Done Page</div> },
       ...extraRoutes,
     ],
-    { initialEntries: ['/step-1'] }
+    { initialEntries: ['/step-1'] },
   );
 }
 
@@ -498,7 +498,7 @@ describe('WizardRoutedStep — error navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Not Found Page')).toBeInTheDocument()
+      expect(screen.getByText('Not Found Page')).toBeInTheDocument(),
     );
   });
 
@@ -511,7 +511,7 @@ describe('WizardRoutedStep — error navigation', () => {
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Server Error Page')).toBeInTheDocument()
+      expect(screen.getByText('Server Error Page')).toBeInTheDocument(),
     );
   });
 
@@ -523,12 +523,12 @@ describe('WizardRoutedStep — error navigation', () => {
           .mockRejectedValue({ status: 404, title: 'Not Found' }),
         getRedirectionLocationOnError: () => '/custom-gone',
       },
-      [{ path: '/custom-gone', element: <div>Custom Gone Page</div> }]
+      [{ path: '/custom-gone', element: <div>Custom Gone Page</div> }],
     );
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
-      expect(screen.getByText('Custom Gone Page')).toBeInTheDocument()
+      expect(screen.getByText('Custom Gone Page')).toBeInTheDocument(),
     );
   });
 });
@@ -639,7 +639,7 @@ const loadData = useCallback(async () => {
       err,
     });
     setErrorState(
-      resolveErrorState(error, getRedirectionLocationOnError, ErrorType.Load)
+      resolveErrorState(error, getRedirectionLocationOnError, ErrorType.Load),
     );
     AppLogger.error('Failed to Load step values', err);
   } finally {
@@ -683,7 +683,7 @@ Replace the entire `onSubmitStep` function (lines 170–232):
 ```typescript
 const onSubmitStep = async (
   values: FormikValues,
-  formikHelpers: FormikHelpers<FormikValues>
+  formikHelpers: FormikHelpers<FormikValues>,
 ) => {
   if (onSaveAndNext) {
     abortSignal();
@@ -694,7 +694,7 @@ const onSubmitStep = async (
         values,
         isDirty,
         formikHelpers,
-        controllerRef.current?.signal
+        controllerRef.current?.signal,
       );
       // Immutable update: replace the DTO at currentStepIndex with a new
       // object, rather than mutating the existing one in place (was line 190).
@@ -724,8 +724,8 @@ const onSubmitStep = async (
         resolveErrorState(
           error,
           getRedirectionLocationOnError,
-          ErrorType.Update
-        )
+          ErrorType.Update,
+        ),
       );
     }
   }
@@ -739,7 +739,7 @@ Replace the entire `onSaveAndExitStep` function (lines 234–285):
 ```typescript
 const onSaveAndExitStep = async (
   values: FormikValues,
-  formikHelpers: FormikHelpers<FormikValues>
+  formikHelpers: FormikHelpers<FormikValues>,
 ) => {
   if (onSaveAndExit) {
     abortSignal();
@@ -750,7 +750,7 @@ const onSaveAndExitStep = async (
         values,
         isDirty,
         formikHelpers,
-        controllerRef.current?.signal
+        controllerRef.current?.signal,
       );
       navigate(locationAfterExit || '/');
     } catch (error) {
@@ -770,8 +770,8 @@ const onSaveAndExitStep = async (
         resolveErrorState(
           error,
           getRedirectionLocationOnError,
-          ErrorType.Update
-        )
+          ErrorType.Update,
+        ),
       );
     }
   } else {
@@ -963,24 +963,24 @@ export interface WizardStepProps<T extends FormikValues> {
   isSummaryPage?: boolean;
   getRedirectionLocationOnError?: (
     errorCode: number,
-    errorType: ErrorType
+    errorType: ErrorType,
   ) => string | undefined;
   discard?: DiscardProps | undefined;
   onSaveAndExit?: (
     values: T,
     isDirty: boolean,
     formikHelpers: FormikHelpers<T>,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => void | Promise<any>;
   onSaveAndNext?: (
     values: T,
     isDirty: boolean,
     formikHelpers: FormikHelpers<T>,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => void | Promise<any>;
   stepStatuses: FormStepStatusDto[];
   loadStepValues: (
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
   validateHard?: any;
   validateSoft?: any;
@@ -1036,7 +1036,7 @@ export interface WizardFormProps {
   confirmationOnSubmission?: ModalProps | undefined;
   getRedirectionLocationOnError?: (
     errorCode: number,
-    errorType: ErrorType
+    errorType: ErrorType,
   ) => string | undefined;
   [key: string]: any;
 }

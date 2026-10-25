@@ -30,16 +30,16 @@ If any security issue is found:
 
 ## OWASP Top 10 — Quick Reference
 
-| Risk | Prevention |
-| ------ | ----------- |
-| Injection | Parameterized queries, input sanitization |
-| Broken Auth | bcrypt/argon2, JWT validation, session security |
-| Sensitive Data | HTTPS, env vars, PII encryption, sanitized logs |
-| Broken Access Control | Auth check on every route, CORS configured |
-| Security Misconfiguration | Debug off in prod, security headers set |
-| XSS | Output escaping, CSP, DOMPurify |
-| Known Vulnerabilities | npm audit, govulncheck, cargo audit |
-| Insufficient Logging | Security events logged, alerts configured |
+| Risk                      | Prevention                                      |
+| ------------------------- | ----------------------------------------------- |
+| Injection                 | Parameterized queries, input sanitization       |
+| Broken Auth               | bcrypt/argon2, JWT validation, session security |
+| Sensitive Data            | HTTPS, env vars, PII encryption, sanitized logs |
+| Broken Access Control     | Auth check on every route, CORS configured      |
+| Security Misconfiguration | Debug off in prod, security headers set         |
+| XSS                       | Output escaping, CSP, DOMPurify                 |
+| Known Vulnerabilities     | npm audit, govulncheck, cargo audit             |
+| Insufficient Logging      | Security events logged, alerts configured       |
 
 ## Defense in Depth
 

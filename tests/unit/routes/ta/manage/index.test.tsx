@@ -12,6 +12,7 @@ vi.mock(
 
 describe(TAApplicationManage, () => {
   it('renders the application details route content', () => {
+    expect.assertions(1);
     render(<TAApplicationManage />);
 
     expect(screen.getByText('Application details route')).toBeInTheDocument();

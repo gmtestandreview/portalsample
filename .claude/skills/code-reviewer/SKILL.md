@@ -79,7 +79,8 @@ Flag for a senior engineer when a change involves:
 - performance-critical code paths;
 - security-sensitive functionality.
 
-Reference: [Sentry Code Review Guidelines](https://develop.sentry.dev/engineering-practices/code-review/).
+Reference:
+[Sentry Code Review Guidelines](https://develop.sentry.dev/engineering-practices/code-review/).
 
 ## Progressive reference loading
 

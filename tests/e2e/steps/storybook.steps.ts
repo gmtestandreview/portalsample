@@ -51,7 +51,7 @@ Given('the Storybook MCP server is running', async ({ page, request }) => {
 
   expect(response.status()).toBe(200);
   expect(await response.text()).toContain(
-    'Storybook MCP server successfully running'
+    'Storybook MCP server successfully running',
   );
 
   await page.goto(STORYBOOK_BASE);
@@ -89,7 +89,7 @@ Then(
     const initializeEnvelope = await readMcpEvent(initialize, 1);
 
     expect(initializeEnvelope.result?.serverInfo?.name).toBe(
-      '@storybook/addon-mcp'
+      '@storybook/addon-mcp',
     );
 
     const sessionHeaders = {
@@ -120,9 +120,9 @@ Then(
         'stories-preview',
         'review-create',
         'test-run',
-      ])
+      ]),
     );
-  }
+  },
 );
 
 type NormalizedReceipt = {
@@ -174,7 +174,7 @@ When(
           value !== undefined &&
           typeof value === 'object' &&
           value !== null &&
-          'status' in value
+          'status' in value,
       );
     const structuredContent =
       envelope.result?.structuredContent ?? contentStructured;
@@ -205,20 +205,20 @@ When(
       expect(
         componentTestStatuses
           .map(({ storyId }) => storyId)
-          .sort((a, b) => a.localeCompare(b))
+          .sort((a, b) => a.localeCompare(b)),
       ).toEqual([...storyIds].sort((a, b) => a.localeCompare(b)));
       expect(
         a11yStatuses
           .map(({ storyId }) => storyId)
-          .sort((a, b) => a.localeCompare(b))
+          .sort((a, b) => a.localeCompare(b)),
       ).toEqual([...storyIds].sort((a, b) => a.localeCompare(b)));
       expect(
         componentTestStatuses.every(
-          ({ status }) => status === 'status-value:success'
-        )
+          ({ status }) => status === 'status-value:success',
+        ),
       ).toBe(true);
       expect(
-        a11yStatuses.every(({ status }) => status === 'status-value:success')
+        a11yStatuses.every(({ status }) => status === 'status-value:success'),
       ).toBe(true);
       expect(execution?.counts).toEqual({
         requested: storyIds.length,
@@ -231,16 +231,16 @@ When(
       const report = parseMcpMarkdownReport(contentText ?? '');
       reportEvidence = report;
       const passingStoryIds = [...new Set(report.passingStoryIds)].sort(
-        (a, b) => a.localeCompare(b)
+        (a, b) => a.localeCompare(b),
       );
       const requestedStoryIds = [...storyIds].sort((a, b) =>
-        a.localeCompare(b)
+        a.localeCompare(b),
       );
 
       expect(report.missingSections).not.toContain('Passing Stories');
       expect(passingStoryIds).toEqual(requestedStoryIds);
       expect(
-        report.failingStoryIds.filter((storyId) => storyIds.includes(storyId))
+        report.failingStoryIds.filter((storyId) => storyIds.includes(storyId)),
       ).toEqual([]);
       expect(report.accessibilityViolationStoryIds).toEqual([]);
       expect(report.unhandledErrors).toEqual([]);
@@ -263,7 +263,7 @@ When(
         a11yStatuses,
       },
     };
-  }
+  },
 );
 
 Then(
@@ -273,11 +273,11 @@ Then(
 
     if (latestMcpExecution?.report !== undefined) {
       expect(latestMcpExecution.report.missingSections).not.toContain(
-        'Passing Stories'
+        'Passing Stories',
       );
       expect(latestMcpExecution.report.failingStoryIds).toEqual([]);
       expect(latestMcpExecution.report.accessibilityViolationStoryIds).toEqual(
-        []
+        [],
       );
       expect(latestMcpExecution.report.unhandledErrors).toEqual([]);
 
@@ -285,19 +285,19 @@ Then(
     }
 
     expect(latestMcpExecution?.receipt?.requestedStoryIds).toEqual(
-      latestMcpExecution?.receipt?.executedStoryIds
+      latestMcpExecution?.receipt?.executedStoryIds,
     );
     expect(latestMcpExecution?.receipt?.componentTestStatuses).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: 'status-value:success' }),
-      ])
+      ]),
     );
     expect(latestMcpExecution?.receipt?.a11yStatuses).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ status: 'status-value:success' }),
-      ])
+      ]),
     );
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -331,7 +331,7 @@ Given('I am viewing Storybook stories for the site footer', async () => {});
 Given('I am viewing Storybook stories for search filter', async () => {});
 Given(
   'I am viewing Storybook stories for dashboard request items',
-  async () => {}
+  async () => {},
 );
 Given('I am viewing Storybook stories for form inputs', async () => {});
 Given('I am viewing Storybook stories for the wizard form', async () => {});
@@ -345,7 +345,7 @@ When(
   'I open a representative component documentation page',
   async ({ page }) => {
     await loadDocsIframe(page, REPRESENTATIVE_DOCS_ID);
-  }
+  },
 );
 
 When('I open a representative component story', async ({ page }) => {
@@ -358,7 +358,7 @@ When('I open a representative component story', async ({ page }) => {
   // compiled. Warm the story: wait for the preview iframe to render real content
   // so the Code addon has a source to display.
   await expect(
-    page.frameLocator('#storybook-preview-iframe').locator('#storybook-root')
+    page.frameLocator('#storybook-preview-iframe').locator('#storybook-root'),
   ).not.toBeEmpty({
     timeout: STORY_RENDER_TIMEOUT_MS,
   });
@@ -384,7 +384,7 @@ When(
   'I load the Storybook story {string}',
   async ({ page }, storyId: string) => {
     await loadStoryIframe(page, storyId);
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -397,7 +397,7 @@ Then(
     const root = page.locator('#storybook-root');
 
     await expect(root).toContainText(text, { timeout: 10_000 });
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -406,10 +406,10 @@ Then(
 
 Then('the component documentation page is visible', async ({ page }) => {
   await expect(
-    page.getByRole('heading', { name: 'Pill', exact: true })
+    page.getByRole('heading', { name: 'Pill', exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByText('Presents a compact, colour-coded label', { exact: false })
+    page.getByText('Presents a compact, colour-coded label', { exact: false }),
   ).toBeVisible();
 });
 
@@ -426,10 +426,10 @@ Then('the component API documentation is visible', async ({ page }) => {
 Then('the component stories are visible', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Stories' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Dashboard Statuses' })
+    page.getByRole('heading', { name: 'Dashboard Statuses' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Quote Statuses' })
+    page.getByRole('heading', { name: 'Quote Statuses' }),
   ).toBeVisible();
 });
 
@@ -449,7 +449,7 @@ Then(
 
     await expect(source).not.toContainText('RouterProvider');
     await expect(source).not.toContainText('createMemoryRouter');
-  }
+  },
 );
 
 Then('the Storybook Code Panel is available', async ({ page }) => {
@@ -475,12 +475,12 @@ Then(
     await expect(source).toContainText('DashboardItemStatus.QuoteAvailable', {
       timeout: STORY_RENDER_TIMEOUT_MS,
     });
-  }
+  },
 );
 
 Then('the Style Guide is visible', async ({ page }) => {
   await expect(
-    page.getByRole('heading', { name: 'Style Guide' })
+    page.getByRole('heading', { name: 'Style Guide' }),
   ).toBeVisible();
 });
 
@@ -491,10 +491,10 @@ Then('its typography documentation is visible', async ({ page }) => {
 
 Then('its colour documentation is visible', async ({ page }) => {
   await expect(
-    page.getByRole('heading', { name: 'Color System' })
+    page.getByRole('heading', { name: 'Color System' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Color Usage Rules' })
+    page.getByRole('heading', { name: 'Color Usage Rules' }),
   ).toBeVisible();
 });
 
@@ -505,7 +505,7 @@ Then('its Markdown table is rendered', async ({ page }) => {
 
   await expect(typeScaleTable).toBeVisible();
   await expect(
-    typeScaleTable.getByRole('columnheader', { name: 'Token' })
+    typeScaleTable.getByRole('columnheader', { name: 'Token' }),
   ).toBeVisible();
 });
 
@@ -517,14 +517,14 @@ Then(
     await expect(guide).toBeVisible();
     await expect(guide).toHaveAttribute(
       'href',
-      /documentation-.*--documentation/
+      /documentation-.*--documentation/,
     );
-  }
+  },
 );
 
 Then('the AutoSuggestContainer owner is visible', async ({ page }) => {
   await expect(
-    page.getByText('AutoSuggestContainer', { exact: true }).last()
+    page.getByText('AutoSuggestContainer', { exact: true }).last(),
   ).toBeVisible();
 });
 
@@ -534,9 +534,9 @@ Then(
     await expect(
       page
         .locator('#loading-autosuggestcontainer')
-        .getByText('Loading (AutoSuggestContainer)', { exact: true })
+        .getByText('Loading (AutoSuggestContainer)', { exact: true }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then(
@@ -545,7 +545,7 @@ Then(
     const docs = page.locator('#storybook-docs');
 
     await expect(
-      page.getByRole('heading', { name: 'AcceptQuote', exact: true })
+      page.getByRole('heading', { name: 'AcceptQuote', exact: true }),
     ).toBeVisible();
 
     await Promise.all(
@@ -555,10 +555,10 @@ Then(
         'QuotationSummary',
         'SummaryAndAccept',
       ].map((apiName) =>
-        expect(docs.getByText(apiName, { exact: true }).last()).toBeVisible()
-      )
+        expect(docs.getByText(apiName, { exact: true }).last()).toBeVisible(),
+      ),
     );
-  }
+  },
 );
 
 Then(
@@ -573,22 +573,22 @@ Then(
     await expect(
       page
         .locator('#custom-title-body-and-button-labels')
-        .getByText('Custom title, body, and button labels', { exact: true })
+        .getByText('Custom title, body, and button labels', { exact: true }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then(
   'the Storybook portal should contain {string}',
   async ({ page }, text: string) => {
     const portalContent = page.locator(
-      '.modal, [role="dialog"], [role="alert"], [id^="notif-"]'
+      '.modal, [role="dialog"], [role="alert"], [id^="notif-"]',
     );
 
     await expect(portalContent.filter({ hasText: text }).first()).toBeVisible({
       timeout: 10_000,
     });
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -601,7 +601,7 @@ Then(
     const btn = page.getByRole('button', { name });
 
     await expect(btn.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 Then(
@@ -610,7 +610,7 @@ Then(
     const link = page.getByRole('link', { name });
 
     await expect(link.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 Then(
@@ -619,7 +619,7 @@ Then(
     const dialog = page.getByRole('dialog', { name });
 
     await expect(dialog.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 Then(
@@ -628,7 +628,7 @@ Then(
     const btn = page.getByRole('button', { name });
 
     await expect(btn.first()).toBeDisabled({ timeout: 10_000 });
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -647,7 +647,7 @@ Then(
     const footer = page.getByRole('contentinfo');
 
     await expect(footer.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 Then(
@@ -656,7 +656,7 @@ Then(
     const footer = page.getByRole('contentinfo');
 
     await expect(footer.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -668,11 +668,11 @@ Then(
   async ({ page }) => {
     // SearchFilter uses a search input or text input with a placeholder
     const searchInput = page.locator(
-      'input[type="search"], input[type="text"]'
+      'input[type="search"], input[type="text"]',
     );
 
     await expect(searchInput.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -689,11 +689,11 @@ Then(
 
     // At least one pill should be rendered
     const pills = root.locator(
-      'span, .badge, [class*="pill"], [class*="status"]'
+      'span, .badge, [class*="pill"], [class*="status"]',
     );
 
     await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 Then(
@@ -704,11 +704,11 @@ Then(
     await expect(root).toBeVisible({ timeout: 10_000 });
 
     const pills = root.locator(
-      'span, .badge, [class*="pill"], [class*="status"]'
+      'span, .badge, [class*="pill"], [class*="status"]',
     );
 
     await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -719,14 +719,14 @@ Then(
   'the story iframe should not show pagination controls',
   async ({ page }) => {
     await expect(
-      page.getByRole('navigation', { name: /pagination/i })
+      page.getByRole('navigation', { name: /pagination/i }),
     ).toHaveCount(0);
     await expect(
       page.getByRole('button', {
         name: /next page|previous page/i,
-      })
+      }),
     ).toHaveCount(0);
-  }
+  },
 );
 
 // ---------------------------------------------------------------------------
@@ -738,7 +738,7 @@ Then('the story iframe should be visible', async ({ page }) => {
     timeout: 10_000,
   });
   await expect(
-    page.getByText('Something went wrong', { exact: false })
+    page.getByText('Something went wrong', { exact: false }),
   ).toHaveCount(0);
 });
 
@@ -751,7 +751,7 @@ When(
   async ({ page }, name: string) => {
     const btn = page.getByRole('button', { name });
     await btn.first().click();
-  }
+  },
 );
 
 When(
@@ -759,7 +759,7 @@ When(
   async ({ page }, name: string) => {
     const link = page.getByRole('link', { name });
     await link.first().click();
-  }
+  },
 );
 
 Then('the story should not throw a JavaScript error', async ({ page }) => {

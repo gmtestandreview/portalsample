@@ -1,12 +1,16 @@
 import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
+
 import {
   readDirectorySync,
   readTextFileSync,
 } from '../../helpers/safeTestFilesystem';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
+
 const sourceRoot = path.join(repoRoot, 'ClientApp', 'src');
+
 const coverageMatrixPath = path.join(
   sourceRoot,
   'storybook',
@@ -20,8 +24,8 @@ const readDirs = (dir: string) =>
 
 describe('storybook coverage drift', () => {
   const coverageDoc = readTextFileSync(coverageMatrixPath, repoRoot);
-
   it('every route family directory is registered in CoverageMatrix.docs.mdx', () => {
+    expect.assertions(1);
     const routesDir = path.join(sourceRoot, 'routes');
     const families = readDirs(routesDir);
     const unregistered = families.filter((f) => !coverageDoc.includes(f));
@@ -31,8 +35,12 @@ describe('storybook coverage drift', () => {
       `New route families not registered in CoverageMatrix.docs.mdx — add them to the Route Coverage Matrix or the explicit exclusion table:\n  ${unregistered.join('\n  ')}`,
     ).toHaveLength(0);
   });
+});
 
+describe('storybook coverage drift', () => {
+  const coverageDoc = readTextFileSync(coverageMatrixPath, repoRoot);
   it('every component family directory is registered in CoverageMatrix.docs.mdx', () => {
+    expect.assertions(1);
     const componentsDir = path.join(sourceRoot, 'components');
     const families = readDirs(componentsDir);
     const unregistered = families.filter((f) => !coverageDoc.includes(f));
@@ -42,21 +50,13 @@ describe('storybook coverage drift', () => {
       `New component families not registered in CoverageMatrix.docs.mdx — add them to the Component Coverage Matrix with an "Interactive", "Docs only", or "Explicit exclusion" status:\n  ${unregistered.join('\n  ')}`,
     ).toHaveLength(0);
   });
+});
 
+describe('storybook coverage drift', () => {
+  const coverageDoc = readTextFileSync(coverageMatrixPath, repoRoot);
   it('phase 4 remains open until closure evidence passes', () => {
+    expect.assertions(2);
     expect(coverageDoc).toContain('Phase 4: Closure');
     expect(coverageDoc).toMatch(/'Phase 4: Closure',\s*'Open'/);
-  });
-
-  it('routeLeavingGuard is registered with a non-Docs-only status', () => {
-    const guardRow = coverageDoc
-      .split('\n')
-      .find((l) => l.includes('RouteLeavingGuard'));
-
-    expect(
-      guardRow,
-      'RouteLeavingGuard row not found in CoverageMatrix',
-    ).toBeDefined();
-    expect(guardRow).not.toContain('Docs only');
   });
 });

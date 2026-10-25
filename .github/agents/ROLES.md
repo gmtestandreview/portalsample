@@ -34,5 +34,7 @@ Role-based grouping for team and specialist agents.
 
 ## Notes
 
-- `workflows/ai-team/ai-team-producer.agent.md` is both a role and an orchestrator.
-- This dual classification is intentional and documented in `AGENT_REGISTRY.json`.
+- `workflows/ai-team/ai-team-producer.agent.md` is both a role and an
+  orchestrator.
+- This dual classification is intentional and documented in
+  `AGENT_REGISTRY.json`.

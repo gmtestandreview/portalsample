@@ -1,13 +1,15 @@
 # Python Review Guide
 
-Use this guide for Python application, library, async, data-processing, and test-code reviews.
+Use this guide for Python application, library, async, data-processing, and
+test-code reviews.
 
 ## Type Hints and Data Shapes
 
 - [ ] Public functions and changed internal boundaries have useful type hints.
 - [ ] Optional values are represented explicitly.
 - [ ] `Any` is avoided unless the boundary is genuinely dynamic.
-- [ ] `TypedDict`, dataclasses, Pydantic models, or protocols are used where they clarify structure.
+- [ ] `TypedDict`, dataclasses, Pydantic models, or protocols are used where
+      they clarify structure.
 - [ ] Runtime validation and static typing agree.
 
 ```python
@@ -28,7 +30,8 @@ class UserPayload(TypedDict):
 
 ## Error Handling
 
-- [ ] Catch specific exceptions, not broad `Exception`, unless there is a clear boundary.
+- [ ] Catch specific exceptions, not broad `Exception`, unless there is a clear
+      boundary.
 - [ ] Do not swallow exceptions with empty `except` blocks.
 - [ ] Preserve causes with `raise ... from exc` when wrapping errors.
 - [ ] Error messages include useful context without leaking secrets.
@@ -61,7 +64,8 @@ def add_item(item, items=None):
 - [ ] Use generators or iterators for large streams.
 - [ ] Avoid loading unbounded datasets into memory.
 - [ ] Cache only when invalidation and size are bounded.
-- [ ] Use process pools for CPU-bound parallelism and thread pools for blocking I/O.
+- [ ] Use process pools for CPU-bound parallelism and thread pools for blocking
+      I/O.
 - [ ] Avoid per-row database or API calls in loops.
 
 ## Testing
@@ -70,7 +74,8 @@ def add_item(item, items=None):
 - [ ] Boundary cases and error paths are covered.
 - [ ] Async code has async tests and awaited assertions.
 - [ ] Fixtures clean up resources.
-- [ ] Mocks isolate expensive or external dependencies without hiding the behavior under review.
+- [ ] Mocks isolate expensive or external dependencies without hiding the
+      behavior under review.
 - [ ] Parametrized tests cover meaningful input variation.
 
 ## Security

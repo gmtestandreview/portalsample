@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { linkTo } from '@storybook/addon-links';
 import { expect } from 'storybook/test';

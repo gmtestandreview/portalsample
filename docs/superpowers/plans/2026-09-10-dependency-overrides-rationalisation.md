@@ -258,11 +258,11 @@ it('brace-expansion resolves only patched versions per major', () => {
     const floor = floors.get(semver.major(version));
     expect(
       floor,
-      `unexpected brace-expansion major in ${version}`
+      `unexpected brace-expansion major in ${version}`,
     ).toBeDefined();
     expect(
       semver.gte(version, floor as string),
-      `brace-expansion@${version} must be at least ${floor}`
+      `brace-expansion@${version} must be at least ${floor}`,
     ).toBe(true);
   }
 });

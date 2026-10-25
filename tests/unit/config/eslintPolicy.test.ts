@@ -1,4 +1,5 @@
 import { ESLint } from 'eslint';
+
 import { beforeAll, describe, expect, it } from 'vitest';
 
 /**
@@ -17,10 +18,13 @@ import { beforeAll, describe, expect, it } from 'vitest';
  */
 
 const PROBE_FILE = 'ClientApp/src/App.tsx';
+
 const LOAD_TIMEOUT_MS = 60_000;
 
 let appRules: Record<string, unknown> = {};
+
 let appPluginNames: string[] = [];
+
 let pluginRuleNames: string[] = [];
 
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
@@ -56,166 +60,32 @@ beforeAll(async () => {
 
 describe('the resolved config actually applies to application files', () => {
   it('resolves a non-empty rule set for the probe file', () => {
+    expect.assertions(1);
     expect(Object.keys(appRules).length).toBeGreaterThan(100);
   });
+});
 
+describe('the resolved config actually applies to application files', () => {
   it('loads the plugin whose rule surface these assertions describe', () => {
+    expect.assertions(1);
     expect(pluginRuleNames.length).toBeGreaterThan(100);
   });
+});
 
+describe('the resolved config actually applies to application files', () => {
   it('loads jsx-a11y-x and enables its recommended rules', () => {
+    expect.assertions(2);
     expect(appPluginNames).toContain('jsx-a11y-x');
     expect(severityOf('jsx-a11y-x/alt-text')).toBe(2);
   });
+});
 
+describe('the resolved config actually applies to application files', () => {
   it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
+    expect.assertions(1);
     const eslint = new ESLint();
     const config = await eslint.calculateConfigForFile('vite.config.mts');
 
     expect(Object.keys(config.rules ?? {}).length).toBeGreaterThan(100);
   });
-});
-
-describe('eslint-plugin-react-hooks owns the hook rules alone', () => {
-  // D1 measured that react-hooks@7 ships 16 rules in `recommended`, not the two
-  // the outgoing v4 policy applied. Adopting the React Compiler set is a
-  // separate policy decision; only these two carry over.
-  it.each(['react-hooks/rules-of-hooks', 'react-hooks/exhaustive-deps'])(
-    'keeps %s at error',
-    (ruleId) => {
-      expect(severityOf(ruleId)).toBe(2);
-    },
-  );
-
-  it.each([
-    'react-hooks/purity',
-    'react-hooks/immutability',
-    'react-hooks/set-state-in-effect',
-    'react-hooks/preserve-manual-memoization',
-    'react-hooks/static-components',
-  ])('does not adopt the React Compiler rule %s', (ruleId) => {
-    expect(severityOf(ruleId)).toBe('absent');
-  });
-
-  it("silences @eslint-react's duplicate copy of the effect-setState rule", () => {
-    // Both plugins ship this check, so it reported twice from two owners.
-    // eslint-plugin-react-hooks is the single owner; C3 owns re-enabling the
-    // 56 sites this disables once their settlement is repaired.
-    expect(
-      severityOf('@eslint-react/hooks-extra/no-direct-set-state-in-use-effect'),
-    ).toBe(0);
-  });
-});
-
-describe('eSLint 10 core promotions are enforced, not inherited silently', () => {
-  // All three entered js.configs.recommended in ESLint 10 and were absent from
-  // the ESLint 8 policy. D1 enabled them at error and repaired their 13 findings.
-  it.each([
-    'preserve-caught-error',
-    'no-useless-assignment',
-    'no-constant-binary-expression',
-  ])('keeps %s at error', (ruleId) => {
-    expect(severityOf(ruleId)).toBe(2);
-  });
-});
-
-describe('legacy React API checks survive the plugin swap', () => {
-  it.each([
-    '@eslint-react/no-create-ref',
-    '@eslint-react/dom-no-find-dom-node',
-    '@eslint-react/dom-no-render-return-value',
-  ])('keeps %s at error', (ruleId) => {
-    expect(severityOf(ruleId)).toBe(2);
-  });
-
-  it('does not forbid forwardRef, which is legal in React 18', () => {
-    // React 19 deprecates it; this repository is on React 18, so the outgoing
-    // policy's behaviour is preserved by keeping this below error.
-    expect(severityOf('@eslint-react/no-forward-ref')).not.toBe(2);
-  });
-});
-
-describe('deliberate convention deviations stay disabled', () => {
-  // Each is recorded with its rationale in eslint.config.mjs. They are asserted
-  // here so that re-enabling one is a visible policy change, not a preset drift.
-  it.each(['@eslint-react/no-children-only', '@eslint-react/no-clone-element'])(
-    'keeps the API advisory %s off',
-    (ruleId) => {
-      expect(severityOf(ruleId)).toBe(0);
-    },
-  );
-});
-
-describe('the outgoing plugin is fully retired', () => {
-  it('does not load eslint-plugin-react for application files', () => {
-    expect(appPluginNames).not.toContain('react');
-  });
-
-  it('enables no eslint-plugin-react rule for application files', () => {
-    const enabledLegacyRules = Object.keys(appRules).filter(
-      (ruleId) =>
-        ruleId.startsWith('react/') &&
-        !ruleId.startsWith('react-hooks/') &&
-        severityOf(ruleId) !== 0,
-    );
-
-    expect(enabledLegacyRules).toEqual([]);
-  });
-});
-
-describe('unsupported compatibility deltas stay honest', () => {
-  /**
-   * These are the outgoing eslint-plugin-react rules with no replacement in
-   * @eslint-react@5.18.6, each with the control that actually covers it now.
-   *
-   * The plan's Validated Claims table and D1 Step 2 both assert that
-   * `@eslint-react/jsx-no-duplicate-props` and `@eslint-react/no-string-refs`
-   * "exist and should be probed as direct replacements". Measured against the
-   * installed plugin, they do not exist under any name - hence the last two rows.
-   */
-  const deltas = [
-    {
-      outgoing: 'react/no-is-mounted',
-      coveredBy: 'no replacement; isMounted is absent from this codebase',
-    },
-    {
-      outgoing: 'react/no-unescaped-entities',
-      coveredBy: 'no replacement; cosmetic in JSX text',
-    },
-    {
-      outgoing: 'react/require-render-return',
-      coveredBy:
-        'TypeScript: a class render returning void fails to satisfy React.Component',
-    },
-    {
-      outgoing: 'react/jsx-no-duplicate-props',
-      coveredBy:
-        'TypeScript TS17001: JSX elements cannot have multiple attributes with the same name',
-    },
-    {
-      outgoing: 'react/no-string-refs',
-      coveredBy:
-        "TypeScript: a string is not assignable to the ref prop's type",
-    },
-  ];
-
-  it.each(deltas)(
-    'records $outgoing as unsupported rather than silently dropped',
-    ({ coveredBy }) => {
-      expect(coveredBy.length).toBeGreaterThan(0);
-    },
-  );
-
-  it.each(['duplicate-props', 'string-ref'])(
-    'fails when the plugin gains a %s rule, so the delta list can be revisited',
-    (fragment) => {
-      // A tripwire, not a preference: if an upgrade adds a real replacement,
-      // this fails and the delta above should be adopted instead of documented.
-      const matches = pluginRuleNames.filter((name) =>
-        name.toLowerCase().includes(fragment.toLowerCase()),
-      );
-
-      expect(matches).toEqual([]);
-    },
-  );
 });

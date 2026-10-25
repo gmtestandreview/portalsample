@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import storybookProjectConfig from './vitest.storybook.config';
+import { playwright } from '@vitest/browser-playwright';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,7 +40,17 @@ const workspaceConfig = defineConfig({
     // long-lived process grows past the default Node heap and OOMs after a
     // few minutes. The `test:*:watch` scripts opt back in with `--watch`.
     watch: false,
+    globals: true,
     projects: ['./vitest.unit.config.ts', './vitest.storybook.config.ts'],
+    browser: {
+      provider: playwright({
+        // ...custom playwright options
+      }),
+      instances: [{ browser: 'chromium' }],
+    },
+    coverage: {
+      provider: 'v8',
+    },
   },
 });
 

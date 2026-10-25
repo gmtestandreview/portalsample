@@ -59,9 +59,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -71,9 +69,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -83,9 +79,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -95,9 +89,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -107,9 +99,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -119,9 +109,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -131,9 +119,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -143,9 +129,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -155,9 +139,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -167,9 +149,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -179,9 +159,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -191,9 +169,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -203,9 +179,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -215,9 +189,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     },
     {
@@ -227,9 +199,7 @@
       "triggers": 0,
       "runs": 1,
       "execution_errors": 1,
-      "error_messages": [
-        "claude CLI reported an error result"
-      ],
+      "error_messages": ["claude CLI reported an error result"],
       "pass": false
     }
   ],

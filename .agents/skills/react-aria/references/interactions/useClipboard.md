@@ -71,9 +71,9 @@ function Pasteable() {
         items
           .filter(
             (item): item is TextDropItem =>
-              item.kind === 'text' && item.types.has('text/plain')
+              item.kind === 'text' && item.types.has('text/plain'),
           )
-          .map((item) => item.getText('text/plain'))
+          .map((item) => item.getText('text/plain')),
       );
       setPasted(pasted.join('\n'));
     },
@@ -177,7 +177,7 @@ function Pasteable() {
             (item): item is TextDropItem =>
               item.kind === 'text' &&
               (item.types.has('text/plain') ||
-                item.types.has('my-app-custom-type'))
+                item.types.has('my-app-custom-type')),
           )
           .map(async (item) => {
             if (item.types.has('my-app-custom-type')) {
@@ -185,7 +185,7 @@ function Pasteable() {
             } else {
               return { message: await item.getText('text/plain') };
             }
-          })
+          }),
       );
       setPasted(pasted);
     },
@@ -306,7 +306,7 @@ function Pasteable() {
             (item): item is TextDropItem =>
               item.kind === 'text' &&
               (item.types.has('text/plain') ||
-                item.types.has('my-app-custom-type'))
+                item.types.has('my-app-custom-type')),
           )
           .map(async (item) => {
             if (item.types.has('my-app-custom-type')) {
@@ -314,7 +314,7 @@ function Pasteable() {
             } else {
               return { message: await item.getText('text/plain') };
             }
-          })
+          }),
       );
       setPasted(pasted);
     },
@@ -373,7 +373,7 @@ function Pasteable() {
       let item = items.find(
         (item) =>
           item.kind === 'file' &&
-          (item.type === 'image/jpeg' || item.type === 'image/png')
+          (item.type === 'image/jpeg' || item.type === 'image/png'),
       ) as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
@@ -432,7 +432,7 @@ function Pasteable() {
     async onPaste(items) {
       // Find the first dropped item that is a directory.
       let dir = items.find(
-        (item) => item.kind === 'directory'
+        (item) => item.kind === 'directory',
       ) as DirectoryDropItem;
       if (dir) {
         // Read entries in directory and update state with relevant info.
@@ -518,9 +518,9 @@ function Pasteable() {
         items
           .filter(
             (item): item is TextDropItem =>
-              item.kind === 'text' && item.types.has('text/plain')
+              item.kind === 'text' && item.types.has('text/plain'),
           )
-          .map((item) => item.getText('text/plain'))
+          .map((item) => item.getText('text/plain')),
       );
       setPasted(pasted.join('\n'));
     },

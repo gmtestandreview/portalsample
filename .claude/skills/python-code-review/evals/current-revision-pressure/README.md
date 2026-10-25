@@ -38,7 +38,8 @@ file when changing that contract. Never write PASS solely because the
 instruction text matches the expected behavior.
 
 The [prior-revision plan](../prior-revision-pressure/run-record.json) is
-preserved unchanged for its original candidate hash and 43-case contract. The archived 2026-10-11 plan preserves the 44-case pre-change contract. The
-current 47-case plan adds bounded-review, reference-loading and unchanged-
-environment reuse branches. Both `SKILL.md` and active supporting resources
-are hash-bound; every arm remains `NHR` with no behavioral run claimed.
+preserved unchanged for its original candidate hash and 43-case contract. The
+archived 2026-10-11 plan preserves the 44-case pre-change contract. The current
+47-case plan adds bounded-review, reference-loading and unchanged- environment
+reuse branches. Both `SKILL.md` and active supporting resources are hash-bound;
+every arm remains `NHR` with no behavioral run claimed.

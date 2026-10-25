@@ -342,7 +342,7 @@ export function Tag({ children, color, ...props }: TagProps) {
       textValue={textValue}
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        tagStyles({ ...renderProps, className, color: color || groupColor })
+        tagStyles({ ...renderProps, className, color: color || groupColor }),
       )}
     >
       {composeRenderProps(children, (children, { allowsRemoving }) => (

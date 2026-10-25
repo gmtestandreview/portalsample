@@ -9,7 +9,10 @@
   "properties": {
     "name": { "type": "string" },
     "description": { "type": "string" },
-    "skill": { "type": "string", "description": "Name of the skill under test." },
+    "skill": {
+      "type": "string",
+      "description": "Name of the skill under test."
+    },
     "version": { "type": "string" },
     "config": {
       "type": "object",
@@ -58,7 +61,10 @@
             "additionalProperties": true,
             "properties": {
               "contains": { "type": "array", "items": { "type": "string" } },
-              "not_contains": { "type": "array", "items": { "type": "string" } },
+              "not_contains": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
               "max_tokens": { "type": "integer", "minimum": 1 }
             }
           }

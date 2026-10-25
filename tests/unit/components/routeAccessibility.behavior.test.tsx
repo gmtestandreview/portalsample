@@ -30,6 +30,7 @@ describe('route accessibility behavior', () => {
   });
 
   it('announces the current title and focuses main content after navigation', async () => {
+    expect.assertions(3);
     render(
       <MemoryRouter initialEntries={['/start']}>
         <AccessibilityProbe />
@@ -55,6 +56,7 @@ describe('route accessibility behavior', () => {
   });
 
   it('clears a pending announcement timer on unmount', () => {
+    expect.assertions(1);
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
     const { unmount } = render(
       <MemoryRouter>

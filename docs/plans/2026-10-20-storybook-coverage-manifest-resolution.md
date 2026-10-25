@@ -24,8 +24,8 @@ The following status supersedes stale interim counts elsewhere in this plan:
   source mode now reports 621 remaining diagnostics and no missing claim for the
   renderable `CommandPalette` export. `CommandPaletteProps` remains separately
   unclaimed.
-- The focused validator suite for the current continuation passed 5 files and
-  29 tests; the exact CommandPalette, Menu, and Modal MCP stories passed with
+- The focused validator suite for the current continuation passed 5 files and 29
+  tests; the exact CommandPalette, Menu, and Modal MCP stories passed with
   accessibility enabled.
 - Manifest JSON parsing, targeted story linting, coverage-script linting, and
   `git diff --check` passed. The Storybook build also completed with exit 0.
@@ -34,8 +34,8 @@ The following status supersedes stale interim counts elsewhere in this plan:
   fresh full-suite run after the latest Phase 2 changes has not yet been
   performed.
 - The CommandPalette batch was initially rejected and rolled back after three
-  targeted accessibility corrections failed. No CommandPalette claims were
-  added during that rejection.
+  targeted accessibility corrections failed. No CommandPalette claims were added
+  during that rejection.
 - The approved component-local experiment then added the documented
   `disableVirtualFocus` prop and a Storybook play assertion. The open-state
   browser trace now reports no `scrollable-region-focusable` violation; the
@@ -65,12 +65,12 @@ Resolve the 668 initial `EVIDENCE_MISSING` diagnostics produced by:
 node scripts/storybook-coverage.mjs --mode source
 ```
 
-The initial cause was confirmed:
-`ClientApp/src/storybook/coverageManifest.json` contained an empty `records`
-array. The resolution must first prove that the discovery denominator is
-correct, then create reviewed claims for every accepted discovered export while
-distinguishing renderable UI exports from reviewed nonvisual exports. It must
-not turn the manifest into a list of unverified or guessed Storybook IDs.
+The initial cause was confirmed: `ClientApp/src/storybook/coverageManifest.json`
+contained an empty `records` array. The resolution must first prove that the
+discovery denominator is correct, then create reviewed claims for every accepted
+discovered export while distinguishing renderable UI exports from reviewed
+nonvisual exports. It must not turn the manifest into a list of unverified or
+guessed Storybook IDs.
 
 The work passes only when all of the following are true:
 
@@ -192,17 +192,16 @@ source count returned to 622.
 The browser-level diagnostic trace for the open story state recorded the
 following evidence:
 
-- `axe.run` with only the `scrollable-region-focusable` rule reported a
-  serious violation on the rendered `.react-aria-Menu` element, with the
-  failure summary stating that the element should have focusable content or
-  be focusable.
+- `axe.run` with only the `scrollable-region-focusable` rule reported a serious
+  violation on the rendered `.react-aria-Menu` element, with the failure summary
+  stating that the element should have focusable content or be focusable.
 - The menu had `role="menu"`, `overflow-y: auto`, `scrollHeight: 264`, and
   `clientHeight: 245`, but no `tabindex` and zero focusable descendants.
-- The search input remained `document.activeElement`, exposed
-  `aria-controls` for the menu, and moved the active item through
-  `aria-activedescendant` after `ArrowDown`; the menu item itself remained
-  unfocusable. This is the current rendered virtual-focus model, not a proven
-  defect in the shared Menu or Modal implementation.
+- The search input remained `document.activeElement`, exposed `aria-controls`
+  for the menu, and moved the active item through `aria-activedescendant` after
+  `ArrowDown`; the menu item itself remained unfocusable. This is the current
+  rendered virtual-focus model, not a proven defect in the shared Menu or Modal
+  implementation.
 - The Storybook documentation and React Aria reference describe
   `disableVirtualFocus` as the documented way to require focus to move between
   the input and list. The approved component-local experiment used this prop;
@@ -221,8 +220,8 @@ Batch-level verification performed so far includes:
 - references validation — zero errors.
 
 The current continuation has not rerun the full unit suite, full lint, or
-Storybook BDD. References mode still exits 1 because the remaining source
-claims are unresolved. Type-check still exits 2 only on the unrelated
+Storybook BDD. References mode still exits 1 because the remaining source claims
+are unresolved. Type-check still exits 2 only on the unrelated
 `ComboBox.stories.tsx:31` error. The managed closure launcher did not produce an
 exact receipt: the first attempt exposed a byte-input defect in the closure
 digest path, and the corrected retry was blocked by the launcher's freeze ACL
@@ -251,34 +250,34 @@ failed.
    exact closure evidence remains blocked:
 
    a. Reproduce the open state in the managed Storybook browser and capture a
-      deterministic DOM/focus trace containing the axe rule result, the
-      scroll container's computed overflow and dimensions, the active element,
-      the input's `aria-controls`/`aria-activedescendant`, the active menu item,
-      and the menu's focusable descendants. Preserve the trace as redacted
-      structured evidence under `reports/storybook-coverage/`; do not record
-      credentials, tokens, or unrelated page content.
+   deterministic DOM/focus trace containing the axe rule result, the scroll
+   container's computed overflow and dimensions, the active element, the input's
+   `aria-controls`/`aria-activedescendant`, the active menu item, and the menu's
+   focusable descendants. Preserve the trace as redacted structured evidence
+   under `reports/storybook-coverage/`; do not record credentials, tokens, or
+   unrelated page content.
 
    b. Preserve the passing local change and its play assertion as the
-      CommandPalette evidence. Do not repeat the rejected `tabIndex={0}`,
-      `autoFocus`, or shared flex/min-height variants, and do not change
-      `Menu.tsx`, `Modal.tsx`, or their shared CSS.
+   CommandPalette evidence. Do not repeat the rejected `tabIndex={0}`,
+   `autoFocus`, or shared flex/min-height variants, and do not change
+   `Menu.tsx`, `Modal.tsx`, or their shared CSS.
 
    c. Record that no shared-contract decision was required for this local
-      experiment. Consult the identified owner only if a later proposal would
-      change the shared Menu/Modal accessibility contract; absence of that
-      consultation is not approval for such a change.
+   experiment. Consult the identified owner only if a later proposal would
+   change the shared Menu/Modal accessibility contract; absence of that
+   consultation is not approval for such a change.
 
    d. Accept a candidate only if the open-state axe rule passes, the input or
-      menu has the intended keyboard focus ownership, arrow navigation reaches
-      the active option, Escape/dismissal restores focus to the trigger, and
-      the existing Menu and Modal stories remain free of new accessibility
-      violations. A closed-story pass is insufficient.
+   menu has the intended keyboard focus ownership, arrow navigation reaches the
+   active option, Escape/dismissal restores focus to the trigger, and the
+   existing Menu and Modal stories remain free of new accessibility violations.
+   A closed-story pass is insufficient.
 
    e. Rerun source/reference validation against the final frozen source and
-      obtain the required exact MCP receipt for the passing story once the native
-      MCP response includes structured execution statuses and the managed freeze
-      can complete. Do not claim closure from the current human-readable-only
-      MCP result or from the failed launcher attempt.
+   obtain the required exact MCP receipt for the passing story once the native
+   MCP response includes structured execution statuses and the managed freeze
+   can complete. Do not claim closure from the current human-readable-only MCP
+   result or from the failed launcher attempt.
 
 2. Continue Phase 2 with the next documented component-family batch, including
    non-blocked queue entries where appropriate. For each batch, obtain the
@@ -698,9 +697,9 @@ Additional risks to inspect during implementation:
 - the passing story play assertion covers the open state, virtual-focus removal,
   tab-based menu focus, and the focused MCP run covers CommandPalette, Menu, and
   Modal with accessibility enabled;
-- the CommandPalette source record is present and current, but its exact
-   closure receipt is still pending because the managed launcher and native MCP
-   response failed the receipt contract;
+- the CommandPalette source record is present and current, but its exact closure
+  receipt is still pending because the managed launcher and native MCP response
+  failed the receipt contract;
 - the independent reviewer has not supplied an external finding because the
   retry timed out;
 - repository type-check remains blocked by the unrelated existing

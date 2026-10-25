@@ -19,7 +19,7 @@ class SearchBox extends React.Component {
   render() {
     return (
       <div>
-        <input ref="searchInput" type="text" placeholder="Search..." />
+        <input ref='searchInput' type='text' placeholder='Search...' />
         <button onClick={() => this.handleSearch()}>Search</button>
       </div>
     );
@@ -44,7 +44,7 @@ class SearchBox extends React.Component {
   render() {
     return (
       <div>
-        <input ref={this.searchInputRef} type="text" placeholder="Search..." />
+        <input ref={this.searchInputRef} type='text' placeholder='Search...' />
         <button onClick={() => this.handleSearch()}>Search</button>
       </div>
     );
@@ -71,9 +71,9 @@ class LoginForm extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <input ref="emailField" type="email" />
-        <input ref="passwordField" type="password" />
-        <button type="submit">Log in</button>
+        <input ref='emailField' type='email' />
+        <input ref='passwordField' type='password' />
+        <button type='submit'>Log in</button>
       </form>
     );
   }
@@ -96,9 +96,9 @@ class LoginForm extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <input ref={this.emailFieldRef} type="email" />
-        <input ref={this.passwordFieldRef} type="password" />
-        <button type="submit">Log in</button>
+        <input ref={this.emailFieldRef} type='email' />
+        <input ref={this.passwordFieldRef} type='password' />
+        <button type='submit'>Log in</button>
       </form>
     );
   }
@@ -179,7 +179,9 @@ class TabPanel extends React.Component {
         {this.props.tabs.map((tab, i) => (
           <button
             key={tab.id}
-            ref={el => { this.tabRefs[i] = el; }}  // callback ref stores DOM node directly
+            ref={(el) => {
+              this.tabRefs[i] = el;
+            }} // callback ref stores DOM node directly
           >
             {tab.label}
           </button>
@@ -196,7 +198,8 @@ class TabPanel extends React.Component {
 
 ## Callback Refs (Alternative to createRef) {#callback-refs}
 
-Callback refs are an alternative to `createRef()`. They're useful for lists (above) and when you need to run code when the ref attaches/detaches.
+Callback refs are an alternative to `createRef()`. They're useful for lists
+(above) and when you need to run code when the ref attaches/detaches.
 
 ```jsx
 // Callback ref syntax:
@@ -218,10 +221,14 @@ class MyComponent extends React.Component {
 
 **When to use callback refs vs createRef:**
 
-- `createRef()` - for a fixed number of refs known at component definition time (most cases)
-- Callback refs - for dynamic lists, when you need to react to attach/detach, or when the ref might change
+- `createRef()` - for a fixed number of refs known at component definition time
+  (most cases)
+- Callback refs - for dynamic lists, when you need to react to attach/detach, or
+  when the ref might change
 
-**Important:** Inline callback refs (defined in render) re-create a new function on every render, which causes the ref to be called with `null` then the element on each render cycle. Use a bound method or class field arrow function instead:
+**Important:** Inline callback refs (defined in render) re-create a new function
+on every render, which causes the ref to be called with `null` then the element
+on each render cycle. Use a bound method or class field arrow function instead:
 
 ```jsx
 // AVOID - new function every render, causes ref flicker:
@@ -240,7 +247,8 @@ render() {
 
 ## Ref Passed to a Child Component {#forwarded-refs}
 
-If a string ref was passed to a custom component (not a DOM element), the migration also requires updating the child.
+If a string ref was passed to a custom component (not a DOM element), the
+migration also requires updating the child.
 
 ```jsx
 // Before:
@@ -251,7 +259,7 @@ class Parent extends React.Component {
   render() {
     return (
       <div>
-        <MyInput ref="myInput" />
+        <MyInput ref='myInput' />
         <button onClick={() => this.handleClick()}>Focus</button>
       </div>
     );
@@ -261,7 +269,7 @@ class Parent extends React.Component {
 // MyInput.js (child - class component):
 class MyInput extends React.Component {
   render() {
-    return <input className="my-input" />;
+    return <input className='my-input' />;
   }
 }
 ```
@@ -289,12 +297,12 @@ class Parent extends React.Component {
 // MyInput.js (React 18 - use forwardRef):
 import { forwardRef } from 'react';
 const MyInput = forwardRef(function MyInput(props, ref) {
-  return <input ref={ref} className="my-input" />;
+  return <input ref={ref} className='my-input' />;
 });
 
 // MyInput.js (React 19 - ref as direct prop, no forwardRef):
 function MyInput({ ref, ...props }) {
-  return <input ref={ref} className="my-input" />;
+  return <input ref={ref} className='my-input' />;
 }
 ```
 

@@ -1,11 +1,18 @@
 ---
 name: playwright-skill
-description: Complete browser automation with Playwright. Auto-detects dev servers, writes reusable test scripts, and supports screenshots, responsive checks, UX validation, login flows, link checks, and arbitrary browser automation. Use when the user wants to test a website, automate browser interactions, validate web functionality, or perform browser-based testing.
+description:
+  Complete browser automation with Playwright. Auto-detects dev servers, writes
+  reusable test scripts, and supports screenshots, responsive checks, UX
+  validation, login flows, link checks, and arbitrary browser automation. Use
+  when the user wants to test a website, automate browser interactions, validate
+  web functionality, or perform browser-based testing.
 license: MIT
-compatibility: Requires Node.js 20+, npm, and network access on first setup to install Playwright and Chromium.
+compatibility:
+  Requires Node.js 20+, npm, and network access on first setup to install
+  Playwright and Chromium.
 metadata:
   author: lackeyjb
-  version: "5.0.0"
+  version: '5.0.0'
 allowed-tools: Bash(node:*) Bash(npm:*) Read Write
 ---
 
@@ -30,7 +37,8 @@ for `$SKILL_DIR` and `$TMP_DIR` in each command instead.
 
 Common installation paths:
 
-- Plugin system: `~/.claude/plugins/marketplaces/playwright-skill/skills/playwright-skill`
+- Plugin system:
+  `~/.claude/plugins/marketplaces/playwright-skill/skills/playwright-skill`
 - Manual global: `~/.claude/skills/playwright-skill`
 - Project-specific: `<project>/.claude/skills/playwright-skill`
 
@@ -44,10 +52,11 @@ Common installation paths:
 
    Use the only result automatically. Ask which URL to use when there are
    multiple results. Ask for a URL or offer to start a server when none exist.
+
 2. Write reusable scripts to `$TMP_DIR/playwright-test-*.mjs` unless the user
    asks to save them in the project. Use `PW_SCRIPT_DIR` to preserve scripts.
-3. Use a visible browser by default. Use `headless: true` only when requested
-   or when the environment has no display.
+3. Use a visible browser by default. Use `headless: true` only when requested or
+   when the environment has no display.
 4. Put the target URL in a constant or environment variable.
 5. Run scripts with `node "$SKILL_DIR/run.js" <script.mjs>`.
 6. Report actions, failures, and artifact paths. Do not claim success without
@@ -61,8 +70,9 @@ Run once:
 cd "$SKILL_DIR" && npm run setup
 ```
 
-This installs Playwright and Chromium. Use `cd "$SKILL_DIR" && npm run
-install-all-browsers` when Firefox or WebKit is required.
+This installs Playwright and Chromium. Use
+`cd "$SKILL_DIR" && npm run install-all-browsers` when Firefox or WebKit is
+required.
 
 ## Minimal example
 
@@ -80,7 +90,10 @@ const artifactDir = process.env.PW_ARTIFACT_DIR || os.tmpdir();
     const page = await browser.newPage();
     await page.goto(targetUrl);
     console.log('Page loaded:', await page.title());
-    await page.screenshot({ path: path.join(artifactDir, 'page.png'), fullPage: true });
+    await page.screenshot({
+      path: path.join(artifactDir, 'page.png'),
+      fullPage: true,
+    });
   } finally {
     await browser.close();
   }
@@ -127,8 +140,8 @@ await page.getByRole('heading', { name: 'Dashboard' }).waitFor();
 
 ```javascript
 {
-import os from 'node:os';
-import path from 'node:path';
+  import os from 'node:os';
+  import path from 'node:path';
 
   const artifactDir = process.env.PW_ARTIFACT_DIR || os.tmpdir();
   const viewports = [
@@ -139,7 +152,10 @@ import path from 'node:path';
   for (const viewport of viewports) {
     await page.setViewportSize(viewport);
     await page.goto(targetUrl);
-    await page.screenshot({ path: path.join(artifactDir, `${viewport.name}.png`), fullPage: true });
+    await page.screenshot({
+      path: path.join(artifactDir, `${viewport.name}.png`),
+      fullPage: true,
+    });
   }
 }
 ```

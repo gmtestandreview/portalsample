@@ -20,7 +20,7 @@ const playwrightCli = path.join(
   'node_modules',
   '@playwright',
   'test',
-  'cli.js'
+  'cli.js',
 );
 
 const child = spawn(
@@ -36,7 +36,7 @@ const child = spawn(
     env,
     stdio: 'inherit',
     shell: false,
-  }
+  },
 );
 
 child.on('exit', (code, signal) => {
@@ -50,7 +50,7 @@ child.on('exit', (code, signal) => {
 
 child.on('error', (error) => {
   process.stderr.write(
-    `Failed to start Playwright API contract tests: ${error.message}\n`
+    `Failed to start Playwright API contract tests: ${error.message}\n`,
   );
   process.exitCode = 1;
 });

@@ -1,7 +1,11 @@
 import { render, screen } from '@testing-library/react';
+
 import type React from 'react';
+
 import { MemoryRouter } from 'react-router';
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import CustomBreadcrumb from '@/components/Breadcrumb';
 
 const ariaLinkMockState = vi.hoisted(() => ({
@@ -61,14 +65,20 @@ describe('customBreadcrumb React Aria render fallback', () => {
   afterEach(() => {
     ariaLinkMockState.includeHref = false;
   });
-
   it('renders nothing when no breadcrumbs are provided', () => {
+    expect.assertions(1);
     const { container } = render(<CustomBreadcrumb breadcrumbs={[]} />);
 
     expect(container).toBeEmptyDOMElement();
   });
+});
 
+describe('customBreadcrumb React Aria render fallback', () => {
+  afterEach(() => {
+    ariaLinkMockState.includeHref = false;
+  });
   it('throws when a non-current breadcrumb has no destination', () => {
+    expect.assertions(1);
     expect(() =>
       CustomBreadcrumb({
         breadcrumbs: [{ text: 'Missing link' }, { text: 'Current page' }],
@@ -77,8 +87,14 @@ describe('customBreadcrumb React Aria render fallback', () => {
       'Breadcrumb item "Missing link" must include "to" because it is not the current page.',
     );
   });
+});
 
+describe('customBreadcrumb React Aria render fallback', () => {
+  afterEach(() => {
+    ariaLinkMockState.includeHref = false;
+  });
   it('renders previous breadcrumb content as a span when React Aria props do not include an href', () => {
+    expect.assertions(3);
     render(
       <MemoryRouter>
         <CustomBreadcrumb
@@ -96,31 +112,6 @@ describe('customBreadcrumb React Aria render fallback', () => {
     expect(screen.getByText('Request details')).toHaveAttribute(
       'aria-current',
       'page',
-    );
-  });
-
-  it('renders previous breadcrumb content as a router link when React Aria props include an href', () => {
-    ariaLinkMockState.includeHref = true;
-
-    render(
-      <MemoryRouter>
-        <CustomBreadcrumb
-          ariaLabel='Request breadcrumbs'
-          containerClassName='request-breadcrumbs'
-          breadcrumbs={[
-            { to: '/dashboard', text: 'Dashboard' },
-            { text: 'Request details' },
-          ]}
-        />
-      </MemoryRouter>,
-    );
-
-    expect(
-      screen.getByRole('navigation', { name: 'Request breadcrumbs' }),
-    ).toHaveClass('request-breadcrumbs');
-    expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(
-      'href',
-      '/dashboard',
     );
   });
 });

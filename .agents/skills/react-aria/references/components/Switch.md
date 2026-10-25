@@ -222,7 +222,7 @@ export function Switch({ children, ...props }: SwitchProps) {
       <SwitchButton
         className={composeTailwindRenderProps(
           props.className,
-          'group relative flex gap-2 items-center text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]'
+          'group relative flex gap-2 items-center text-neutral-800 disabled:text-neutral-300 dark:text-neutral-200 dark:disabled:text-neutral-600 forced-colors:disabled:text-[GrayText] text-sm transition [-webkit-tap-highlight-color:transparent]',
         )}
       >
         {(renderProps) => (

@@ -14,11 +14,11 @@ function resolvePlaywright() {
   try {
     return import.meta.resolve(
       'playwright',
-      pathToFileURL(path.join(skillDir, 'run.js')).href
+      pathToFileURL(path.join(skillDir, 'run.js')).href,
     );
   } catch {
     console.error(
-      'Playwright is not installed. Run `npm run setup` in the skill directory.'
+      'Playwright is not installed. Run `npm run setup` in the skill directory.',
     );
     process.exit(1);
   }
@@ -78,12 +78,12 @@ if (args[0] === '-e' || args[0] === '--eval') {
   const source = args.slice(1).join(' ');
   if (!source) {
     console.error(
-      'Usage: node run.js -e "await page.goto(\'https://example.com\')"'
+      'Usage: node run.js -e "await page.goto(\'https://example.com\')"',
     );
     process.exit(1);
   }
   const helpersUrl = JSON.stringify(
-    pathToFileURL(path.join(skillDir, 'lib/helpers.js')).href
+    pathToFileURL(path.join(skillDir, 'lib/helpers.js')).href,
   );
   const prefix = `import * as playwright from ${JSON.stringify(playwrightUrl)};\nimport * as helpers from ${helpersUrl};\nconst { chromium, firefox, webkit, devices } = playwright;\n`;
   // ponytail: exit once the snippet settles so a snippet that leaves the browser open
@@ -105,13 +105,13 @@ if (args[0] === '-e' || args[0] === '--eval') {
   run([file, ...args.slice(1)]);
 } else if (!process.stdin.isTTY) {
   console.error(
-    'Stdin execution is no longer supported. Use a script file or `-e`.'
+    'Stdin execution is no longer supported. Use a script file or `-e`.',
   );
   process.exit(1);
 } else {
   console.error('Usage: node run.js <script.js> [args...]');
   console.error(
-    '   or: node run.js -e "await page.goto(\'https://example.com\')"'
+    '   or: node run.js -e "await page.goto(\'https://example.com\')"',
   );
   process.exit(1);
 }

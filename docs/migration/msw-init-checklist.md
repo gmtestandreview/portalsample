@@ -4,8 +4,8 @@
 
 `mockServiceWorker.js` is **absent from this workspace snapshot**. It is a
 browser-side service-worker script that MSW (`msw` v2) registers to intercept
-fetch/XHR calls in the browser. It must be present in the `/public` directory
-of the production build and the Storybook static output.
+fetch/XHR calls in the browser. It must be present in the `/public` directory of
+the production build and the Storybook static output.
 
 ## Why it is absent here
 
@@ -44,8 +44,8 @@ npx bddgen -c playwright.storybook.config.ts
 npm run test:e2e:storybook
 ```
 
-All 129 Storybook BDD scenarios must pass with no MSW worker registration
-errors in the browser console.
+All 129 Storybook BDD scenarios must pass with no MSW worker registration errors
+in the browser console.
 
 For the Vitest-based Storybook play-function suite, also run:
 
@@ -79,9 +79,9 @@ npm run test:e2e
 ```
 
 Current CRD-041 source result: `type-check` and `lint` pass with zero
-diagnostics, `test:unit` passes 114 files / 1,169 tests, and
-`test:storybook` passes 87 files / 218 tests. The BDD source contains 28
-application and 129 Storybook scenarios.
+diagnostics, `test:unit` passes 114 files / 1,169 tests, and `test:storybook`
+passes 87 files / 218 tests. The BDD source contains 28 application and 129
+Storybook scenarios.
 
 Transport retry and behavior-lock TODO completion (CRD-031) does not change this
 MSW checklist scope; this document remains focused on worker generation and
@@ -98,8 +98,8 @@ using `http.get()` / `HttpResponse` API). When regenerating in the target:
 
 ## Files involved
 
-| File | Status |
-| --- | --- |
-| `public/mockServiceWorker.js` | Absent — must be generated in target via `npx msw init public/` |
-| `.storybook/msw-handlers.ts` | Present — uses MSW v2 `http.*` / `HttpResponse` API |
-| `package.json` | Must contain `"msw": { "workerDirectory": ["public"] }` after init |
+| File                          | Status                                                             |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `public/mockServiceWorker.js` | Absent — must be generated in target via `npx msw init public/`    |
+| `.storybook/msw-handlers.ts`  | Present — uses MSW v2 `http.*` / `HttpResponse` API                |
+| `package.json`                | Must contain `"msw": { "workerDirectory": ["public"] }` after init |

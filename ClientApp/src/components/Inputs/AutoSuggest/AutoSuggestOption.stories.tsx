@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { ListBox } from 'react-aria-components';
 import { expect } from 'storybook/test';

@@ -17,6 +17,7 @@ const LocationProbe = () => {
 
 describe(renderWithProviders, () => {
   it('renders components inside a memory router', () => {
+    expect.assertions(2);
     renderWithProviders(<LocationProbe />, { route: '/start' });
 
     expect(screen.getByTestId('pathname')).toHaveTextContent('/start');
@@ -27,6 +28,7 @@ describe(renderWithProviders, () => {
   });
 
   it('keeps the memory router wrapper when render options include a wrapper', () => {
+    expect.assertions(1);
     const NoRouterWrapper = ({ children }: { children: ReactNode }) => (
       <>{children}</>
     );

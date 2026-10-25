@@ -8,7 +8,8 @@ export PWCLI="$CODEX_HOME/skills/playwright/scripts/playwright_cli.sh"
 "$PWCLI" --help
 ```
 
-User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
+User-scoped skills install under `$CODEX_HOME/skills` (default:
+`~/.codex/skills`).
 
 Optional convenience alias:
 

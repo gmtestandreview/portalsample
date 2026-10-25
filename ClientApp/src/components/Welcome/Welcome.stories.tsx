@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import type { ComponentType } from 'react';
 import { expect, within } from 'storybook/test';

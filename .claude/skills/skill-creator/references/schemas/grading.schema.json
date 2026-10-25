@@ -3,10 +3,7 @@
   "$id": "grading.schema.json",
   "title": "Skill Creator Grading Result",
   "type": "object",
-  "required": [
-    "expectations",
-    "summary"
-  ],
+  "required": ["expectations", "summary"],
   "properties": {
     "expectations": {
       "type": "array",
@@ -16,12 +13,7 @@
     },
     "summary": {
       "type": "object",
-      "required": [
-        "passed",
-        "failed",
-        "total",
-        "pass_rate"
-      ],
+      "required": ["passed", "failed", "total", "pass_rate"],
       "properties": {
         "passed": {
           "type": "integer",
@@ -69,12 +61,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "claim",
-          "type",
-          "verified",
-          "evidence"
-        ],
+        "required": ["claim", "type", "verified", "evidence"],
         "properties": {
           "claim": {
             "type": "string",
@@ -82,17 +69,10 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "factual",
-              "process",
-              "quality"
-            ]
+            "enum": ["factual", "process", "quality"]
           },
           "verified": {
-            "type": [
-              "boolean",
-              "null"
-            ]
+            "type": ["boolean", "null"]
           },
           "evidence": {
             "type": "string"
@@ -132,10 +112,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "assertion",
-              "reason"
-            ],
+            "required": ["assertion", "reason"],
             "properties": {
               "assertion": {
                 "type": "string",

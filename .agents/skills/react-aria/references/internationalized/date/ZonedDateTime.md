@@ -27,7 +27,7 @@ let date = new ZonedDateTime(
   // Time
   9,
   15,
-  0
+  0,
 );
 ```
 
@@ -114,7 +114,7 @@ let date = new ZonedDateTime(
   -28800000,
   12,
   24,
-  45
+  45,
 );
 
 date.toString(); // '2022-02-03T12:24:45-08:00[America/Los_Angeles]'
@@ -150,7 +150,7 @@ let date = new ZonedDateTime(
   'America/Los_Angeles',
   -28800000,
   9,
-  15
+  15,
 );
 ```
 
@@ -181,7 +181,7 @@ let date = new ZonedDateTime(
   'America/Los_Angeles',
   -28800000,
   9,
-  15
+  15,
 );
 ```
 
@@ -206,7 +206,7 @@ let gregorianDate = new ZonedDateTime(
   'America/Los_Angeles',
   -28800000,
   10,
-  30
+  30,
 );
 
 let hebrewDate = toCalendar(gregorianDate, new HebrewCalendar());
@@ -453,7 +453,7 @@ let date = new ZonedDateTime(
   -28800000,
   12,
   24,
-  45
+  45,
 );
 
 date.toString(); // '2022-02-03T12:24:45-08:00[America/Los_Angeles]'
@@ -576,12 +576,12 @@ import { isSameMonth } from '@internationalized/date';
 
 isSameMonth(
   parseZonedDateTime('2022-04-16T09:45[America/Los_Angeles]'),
-  parseZonedDateTime('2022-04-30T05:15[America/Los_Angeles]')
+  parseZonedDateTime('2022-04-30T05:15[America/Los_Angeles]'),
 ); // true
 
 isSameMonth(
   parseZonedDateTime('2022-04-16T09:45[America/Los_Angeles]'),
-  parseZonedDateTime('2022-08-020T05:15[America/Los_Angeles]')
+  parseZonedDateTime('2022-08-020T05:15[America/Los_Angeles]'),
 ); // false
 ```
 

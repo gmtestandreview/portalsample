@@ -2,19 +2,29 @@
 
 ## Purpose
 
-These knowledge check questions are designed for use at the end of each SAFe course lesson to check learning and comprehension. They are optional and may be used for live class discussion, small-group discussion, individual reflection, or copied into a polling tool for real-time class feedback and discussion.
+These knowledge check questions are designed for use at the end of each SAFe
+course lesson to check learning and comprehension. They are optional and may be
+used for live class discussion, small-group discussion, individual reflection,
+or copied into a polling tool for real-time class feedback and discussion.
 
 ## Intended audience
 
-**Primary audience:** AI agents that need to retrieve, present, quiz, or evaluate the supplied Lean Portfolio Management knowledge-check content accurately.
+**Primary audience:** AI agents that need to retrieve, present, quiz, or
+evaluate the supplied Lean Portfolio Management knowledge-check content
+accurately.
 
 ## Agent usage rules
 
-- Treat the questions, answer options, and supplied correct answers in this document as the source of truth for this document.
-- Preserve the wording and answer choices when generating quizzes unless the user explicitly asks for transformation or simplification.
-- Do not infer answers to open-ended discussion questions; no model answers are supplied in the source.
-- When checking responses, match against the supplied answer letter or letters for each multiple-choice question.
-- For multi-select questions, require all supplied correct choices unless the user requests partial-credit behavior.
+- Treat the questions, answer options, and supplied correct answers in this
+  document as the source of truth for this document.
+- Preserve the wording and answer choices when generating quizzes unless the
+  user explicitly asks for transformation or simplification.
+- Do not infer answers to open-ended discussion questions; no model answers are
+  supplied in the source.
+- When checking responses, match against the supplied answer letter or letters
+  for each multiple-choice question.
+- For multi-select questions, require all supplied correct choices unless the
+  user requests partial-credit behavior.
 - Keep lesson boundaries intact when filtering or presenting content.
 
 ---
@@ -23,7 +33,8 @@ These knowledge check questions are designed for use at the end of each SAFe cou
 
 ### Question 1
 
-**What are the three essential collaborations necessary for Lean portfolio management implementation? (Choose three.)**
+**What are the three essential collaborations necessary for Lean portfolio
+management implementation? (Choose three.)**
 
 - A. Program increment planning
 - B. Lean governance
@@ -90,18 +101,21 @@ What is a benefit of using strategic themes?
 
 ### Question 1
 
-**When creating an epic hypothesis, the value statement is supported by what quantifiable outputs and technical considerations?**
+**When creating an epic hypothesis, the value statement is supported by what
+quantifiable outputs and technical considerations?**
 
 - A. Leading indicators, budget, and technical requirements
 - B. Key partners, business outcome hypothesis, and design specifications
-- C. Leading indicators, business outcome hypothesis, and non-functional requirements
+- C. Leading indicators, business outcome hypothesis, and non-functional
+  requirements
 - D. Key partners, budget, and minimum viable product functionality
 
 **Correct answer:** C
 
 ### Question 2
 
-**Maria needs some technical guidance in order to complete the Lean business case. Who should she ask for help?**
+**Maria needs some technical guidance in order to complete the Lean business
+case. Who should she ask for help?**
 
 - A. The enterprise architect
 - B. The solution manager
@@ -122,7 +136,8 @@ Which role is typically the epic owner for an enabler epic?
 
 ### Question 1
 
-**How do you ensure that near-term opportunities are not missed while allocating money for the future?**
+**How do you ensure that near-term opportunities are not missed while allocating
+money for the future?**
 
 - A. Maintain a balance across investment horizons
 - B. Sequence strategic themes with objectives and key results
@@ -154,7 +169,8 @@ What are two ways Lean budgets help produce better outcomes?
 
 ### Question 1
 
-**Who can approve an epic in the portfolio kanban, if it exceeds the portfolio threshold?**
+**Who can approve an epic in the portfolio kanban, if it exceeds the portfolio
+threshold?**
 
 - A. Lean portfolio management
 - B. Enterprise architects
@@ -165,7 +181,8 @@ What are two ways Lean budgets help produce better outcomes?
 
 ### Question 2
 
-**How does the SAFe principle #1, take an economic view, apply to the portfolio?**
+**How does the SAFe principle #1, take an economic view, apply to the
+portfolio?**
 
 - A. By considering money already spent
 - B. By making funding decisions annually
@@ -176,7 +193,8 @@ What are two ways Lean budgets help produce better outcomes?
 
 ### Open-ended discussion question
 
-What is the goal of the weighted shortest job first prioritization model in Lean portfolio management?
+What is the goal of the weighted shortest job first prioritization model in Lean
+portfolio management?
 
 **Supplied answer:** Not provided in the source.
 
@@ -186,7 +204,8 @@ What is the goal of the weighted shortest job first prioritization model in Lean
 
 ### Question 1
 
-**What would be appropriate areas of focus for a Lean-Agile Center of Excellence? (Choose three.)**
+**What would be appropriate areas of focus for a Lean-Agile Center of
+Excellence? (Choose three.)**
 
 - A. Create alignment around organizational change
 - B. Manage decentralized decision-making
@@ -199,7 +218,8 @@ What is the goal of the weighted shortest job first prioritization model in Lean
 
 ### Question 2
 
-**What are three activities supported by a Lean-Agile Center of Excellence? (Choose three.)**
+**What are three activities supported by a Lean-Agile Center of Excellence?
+(Choose three.)**
 
 - A. Identifying value streams
 - B. Establishing objective metrics
@@ -222,7 +242,8 @@ What is one advantage of having an Agile program management office?
 
 ### Question 1
 
-**When establishing metrics, what might an organization focus on from a portfolio perspective that closely aligns with SAFe principles?**
+**When establishing metrics, what might an organization focus on from a
+portfolio perspective that closely aligns with SAFe principles?**
 
 - A. CapEx vs OpEx spending
 - B. Flow and cycle time
@@ -244,6 +265,7 @@ What is one advantage of having an Agile program management office?
 
 ### Open-ended discussion question
 
-What is one thing an organization can do to move from traditional quality management systems to Lean quality management systems?
+What is one thing an organization can do to move from traditional quality
+management systems to Lean quality management systems?
 
 **Supplied answer:** Not provided in the source.

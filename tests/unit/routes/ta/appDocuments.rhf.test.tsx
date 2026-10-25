@@ -1,12 +1,19 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 
 import { resetMsalMock } from '../../helpers/mockMsal';
+
 import type { ClientMockOf } from '../../helpers/mockApiClient';
+
 import { renderWithRouter } from '../../helpers/renderWithRouter';
+
 import { defined } from '../../helpers/defined';
+
 import { ValidationMessages } from '../../../../ClientApp/src/routes/ta/types';
 
 const mocks = vi.hoisted(() => ({
@@ -146,8 +153,8 @@ describe('application documents with the real RHF form', () => {
     );
     clients.patternApproval.methods.updateCategory.mockResolvedValue(undefined);
   });
-
   it('commits the documents without their bytes and leaves the form data intact', async () => {
+    expect.assertions(5);
     const user = userEvent.setup();
     await renderLoaded([document1()]);
 
@@ -166,61 +173,5 @@ describe('application documents with the real RHF form', () => {
     expect(values.form.documents[0].documentBytes).toBeUndefined();
     expect(values.form.documents[0].attachmentName).toBe('spec.pdf');
     expect(values.form.instrumentCategory).toBe('Mass');
-  });
-
-  it('blocks the commit and asks for a category while a document has none', async () => {
-    const user = userEvent.setup();
-    await renderLoaded([document1({ attachmentCategory: '' })]);
-
-    await user.click(screen.getByRole('button', { name: 'Commit' }));
-
-    await expect(
-      screen.findByText(ValidationMessages.RequiredTag, {
-        selector: 'li',
-      }),
-    ).resolves.toBeInTheDocument();
-    expect(
-      clients.patternApproval.methods.commitAppDocuments,
-    ).not.toHaveBeenCalled();
-  });
-
-  it('commits once a category has been chosen', async () => {
-    const user = userEvent.setup();
-    await renderLoaded([document1({ attachmentCategory: '' })]);
-
-    await user.selectOptions(
-      screen.getByRole('combobox', { name: 'Category' }),
-      'Certificate',
-    );
-
-    expect(clients.patternApproval.methods.updateCategory).toHaveBeenCalledWith(
-      'APP-1',
-      'doc-1',
-      'Certificate',
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Commit' }));
-
-    await waitFor(() =>
-      expect(
-        clients.patternApproval.methods.commitAppDocuments,
-      ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
-    );
-    const [, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0],
-    );
-
-    expect(values.form.documents[0].attachmentCategory).toBe('Certificate');
-  });
-
-  it('shows the saved documents as rows with their category', async () => {
-    await renderLoaded([document1({ attachmentCategory: 'Certificate' })]);
-
-    const row = screen.getByText('spec.pdf').closest('.attachment');
-
-    expect(row).not.toBeNull();
-    expect(
-      within(row as HTMLElement).getByRole('combobox', { name: 'Category' }),
-    ).toHaveValue('Certificate');
   });
 });

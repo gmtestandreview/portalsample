@@ -1,28 +1,37 @@
 ---
 applyTo: '**/*.ts, **/*.js, **/*.json, **/*.spec.ts, **/*.e2e-spec.ts'
-description: 'NestJS development standards and best practices for building scalable Node.js server-side applications'
+description:
+  'NestJS development standards and best practices for building scalable Node.js
+  server-side applications'
 ---
 
 # NestJS Development Best Practices
 
 ## Your Mission
 
-As GitHub Copilot, you are an expert in NestJS development with deep knowledge of TypeScript, decorators, dependency injection, and modern Node.js patterns. Your goal is to guide developers in building scalable, maintainable, and well-architected server-side applications using NestJS framework principles and best practices.
+As GitHub Copilot, you are an expert in NestJS development with deep knowledge
+of TypeScript, decorators, dependency injection, and modern Node.js patterns.
+Your goal is to guide developers in building scalable, maintainable, and
+well-architected server-side applications using NestJS framework principles and
+best practices.
 
 ## Core NestJS Principles
 
 ### **1. Dependency Injection (DI)**
 
-- **Principle:** NestJS uses a powerful DI container that manages the instantiation and lifetime of providers.
+- **Principle:** NestJS uses a powerful DI container that manages the
+  instantiation and lifetime of providers.
 - **Guidance for Copilot:**
-  - Use `@Injectable()` decorator for services, repositories, and other providers
+  - Use `@Injectable()` decorator for services, repositories, and other
+    providers
   - Inject dependencies through constructor parameters with proper typing
   - Prefer interface-based dependency injection for better testability
   - Use custom providers when you need specific instantiation logic
 
 ### **2. Modular Architecture**
 
-- **Principle:** Organize code into feature modules that encapsulate related functionality.
+- **Principle:** Organize code into feature modules that encapsulate related
+  functionality.
 - **Guidance for Copilot:**
   - Create feature modules with `@Module()` decorator
   - Import only necessary modules and avoid circular dependencies
@@ -31,9 +40,11 @@ As GitHub Copilot, you are an expert in NestJS development with deep knowledge o
 
 ### **3. Decorators and Metadata**
 
-- **Principle:** Leverage decorators to define routes, middleware, guards, and other framework features.
+- **Principle:** Leverage decorators to define routes, middleware, guards, and
+  other framework features.
 - **Guidance for Copilot:**
-  - Use appropriate decorators: `@Controller()`, `@Get()`, `@Post()`, `@Injectable()`
+  - Use appropriate decorators: `@Controller()`, `@Get()`, `@Post()`,
+    `@Injectable()`
   - Apply validation decorators from `class-validator` library
   - Use custom decorators for cross-cutting concerns
   - Implement metadata reflection for advanced scenarios
@@ -178,7 +189,7 @@ export class User {
   @Column({ select: false })
   password: string;
 
-  @OneToMany(() => Post, post => post.author)
+  @OneToMany(() => Post, (post) => post.author)
   posts: Post[];
 
   @CreateDateColumn()
@@ -252,9 +263,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const status = exception instanceof HttpException 
-      ? exception.getStatus() 
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
     this.logger.error(`${request.method} ${request.url}`, exception);
 
@@ -262,9 +274,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception instanceof HttpException 
-        ? exception.message 
-        : 'Internal server error',
+      message:
+        exception instanceof HttpException
+          ? exception.message
+          : 'Internal server error',
     });
   }
 }
@@ -390,12 +403,14 @@ export class ConfigService {
 
 ## Common Pitfalls to Avoid
 
-- **Circular Dependencies:** Avoid importing modules that create circular references
+- **Circular Dependencies:** Avoid importing modules that create circular
+  references
 - **Heavy Controllers:** Don't put business logic in controllers
 - **Missing Error Handling:** Always handle errors appropriately
 - **Improper DI Usage:** Don't create instances manually when DI can handle it
 - **Missing Validation:** Always validate input data
-- **Synchronous Operations:** Use async/await for database and external API calls
+- **Synchronous Operations:** Use async/await for database and external API
+  calls
 - **Memory Leaks:** Properly dispose of subscriptions and event listeners
 
 ## Development Workflow
@@ -415,13 +430,17 @@ export class ConfigService {
 - [ ] Appropriate error handling and exception filters
 - [ ] Consistent naming conventions
 - [ ] Proper module organization and imports
-- [ ] Security considerations (authentication, authorization, input sanitization)
+- [ ] Security considerations (authentication, authorization, input
+      sanitization)
 - [ ] Performance considerations (caching, database optimization)
 - [ ] Comprehensive testing coverage
 
 ## Conclusion
 
-NestJS provides a powerful, opinionated framework for building scalable Node.js applications. By following these best practices, you can create maintainable, testable, and efficient server-side applications that leverage the full power of TypeScript and modern development patterns.
+NestJS provides a powerful, opinionated framework for building scalable Node.js
+applications. By following these best practices, you can create maintainable,
+testable, and efficient server-side applications that leverage the full power of
+TypeScript and modern development patterns.
 
 ---
 

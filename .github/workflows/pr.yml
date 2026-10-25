@@ -111,15 +111,21 @@ jobs:
         uses: ./.github/actions/verify-rolldown-binding
 
       - name: Type-check
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run: npm run type-check 2>&1 | tee reports/ci/quality/type-check.log
 
       - name: Lint
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run: npm run lint 2>&1 | tee reports/ci/quality/lint.log
 
       - name: Lint MDX
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run: npm run lint:mdx 2>&1 | tee reports/ci/quality/lint-mdx.log
 
       # Guards analysis/BUSINESS_RULES.md against citation rot. A 2026-09-02 audit (CRD-044) found
@@ -127,20 +133,28 @@ jobs:
       # numbers decay on every edit above them. Fails only on citations that are provably wrong or
       # unreachable; weakly-anchored ones are reported without failing the build.
       - name: Verify business rule citations
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run: npm run lint:rules 2>&1 | tee reports/ci/quality/lint-rules.log
 
       - name: Run quality tests
         id: quality_tests
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run: npm run test:ci:quality
 
       - name: Build app
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run: npm run build 2>&1 | tee reports/ci/quality/app-build.log
 
       - name: Verify Storybook documentation
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' }}
         run:
           npm run storybook:verify:docs 2>&1 | tee
           reports/ci/quality/storybook-build.log
@@ -153,25 +167,33 @@ jobs:
       # tests/hooks imports pytest; the runner's system Python does not ship
       # it. --break-system-packages is safe here: the runner is ephemeral.
       - name: Install Python test dependencies
-        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
+        if:
+          ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling ==
+          'true' }}
         run:
           python3 -m pip install --disable-pip-version-check
           --break-system-packages pytest==9.1.1
 
       - name: Python tooling syntax
-        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
+        if:
+          ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling ==
+          'true' }}
         run:
           python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee
           reports/ci/agent-tooling/python-compile.log
 
       - name: Hook guard behaviour
-        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
+        if:
+          ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling ==
+          'true' }}
         run:
           python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee
           reports/ci/agent-tooling/hook-guard.log
 
       - name: Watcher pid handling
-        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
+        if:
+          ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling ==
+          'true' }}
         run:
           python3 tests/hooks/test_watcher_pid.py 2>&1 | tee
           reports/ci/agent-tooling/watcher-pid.log
@@ -182,7 +204,10 @@ jobs:
       # the "east of UTC, date already rolled over" edge.
       - name: Run focused date suite under Australia/Sydney
         id: date_tests
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' && needs.detect-changes.outputs.date-logic == 'true' }}
+        if:
+          ${{ !cancelled() && steps.install.outcome == 'success' &&
+          steps.binding.outcome == 'success' &&
+          needs.detect-changes.outputs.date-logic == 'true' }}
         env:
           TZ: Australia/Sydney
         run: >-

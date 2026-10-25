@@ -181,7 +181,7 @@ export function DateRangePicker<T extends DateValue>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'group flex flex-col gap-1 font-sans max-w-full'
+        'group flex flex-col gap-1 font-sans max-w-full',
       )}
     >
       {label && <Label>{label}</Label>}
@@ -244,7 +244,7 @@ function Example() {
         {range
           ? formatter.formatRange(
               range.start.toDate(getLocalTimeZone()),
-              range.end.toDate(getLocalTimeZone())
+              range.end.toDate(getLocalTimeZone()),
             )
           : '--'}
       </p>
@@ -335,7 +335,7 @@ function Example(props) {
           isWeekend(date, locale) ||
           disabledRanges.some(
             (interval) =>
-              date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+              date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
           )
         }
       />

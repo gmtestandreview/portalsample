@@ -93,7 +93,7 @@ export function Link(props: LinkProps) {
     <AriaLink
       {...props}
       className={composeRenderProps(props.className, (className, renderProps) =>
-        styles({ ...renderProps, className, variant: props.variant })
+        styles({ ...renderProps, className, variant: props.variant }),
       )}
     />
   );

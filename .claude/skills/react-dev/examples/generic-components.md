@@ -1,6 +1,8 @@
 # Generic Component Patterns
 
-Generic components provide type safety while maintaining reusability. TypeScript infers generic type parameters from prop values — no manual type annotations needed at call site.
+Generic components provide type safety while maintaining reusability. TypeScript
+infers generic type parameters from prop values — no manual type annotations
+needed at call site.
 
 ## Generic Table Component
 

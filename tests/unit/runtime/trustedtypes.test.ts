@@ -22,6 +22,7 @@ describe('trustedTypes', () => {
   });
 
   it('creates a default trusted types policy that sanitizes HTML and script URLs', async () => {
+    expect.assertions(4);
     const createPolicy = vi.fn();
     (
       globalThis as { trustedTypes?: { createPolicy: typeof createPolicy } }
@@ -49,6 +50,7 @@ describe('trustedTypes', () => {
   });
 
   it('does nothing when trusted types are unavailable', async () => {
+    expect.assertions(1);
     const { TrustedTypes } =
       await import('../../../ClientApp/src/trustedtypes');
 

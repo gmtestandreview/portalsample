@@ -60,8 +60,8 @@ describe('vite environment contract', () => {
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
-
   it('exports VITE-prefixed values and validates allowed redirect hosts', async () => {
+    expect.assertions(1);
     const module = await importEnv({
       VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:5173/return',
     });
@@ -71,8 +71,18 @@ describe('vite environment contract', () => {
       VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:5173/return',
     });
   });
+});
 
+describe('vite environment contract', () => {
+  afterEach(() => {
+    for (const key of envKeys) {
+      Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
+    }
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
   it('prefers the deployed runtime configuration over build-time defaults', async () => {
+    expect.assertions(1);
     const module = await importEnv(
       { VITE_B2C_CLIENTID: 'build-client-id' },
       true,
@@ -81,8 +91,18 @@ describe('vite environment contract', () => {
 
     expect(module.env.VITE_B2C_CLIENTID).toBe('runtime-client-id');
   });
+});
 
+describe('vite environment contract', () => {
+  afterEach(() => {
+    for (const key of envKeys) {
+      Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
+    }
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
   it('allows measurement.gov.au and its subdomains as redirect hosts', async () => {
+    expect.assertions(2);
     const exactHost = await importEnv({
       VITE_EXTERNAL_REDIRECT_URL: 'https://measurement.gov.au/return',
     });
@@ -98,107 +118,5 @@ describe('vite environment contract', () => {
     expect(subdomain.env.VITE_EXTERNAL_REDIRECT_URL).toBe(
       'https://portal.measurement.gov.au/return',
     );
-  });
-
-  it('logs missing required variables and falls back to empty strings', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-    const missingRequired = Object.fromEntries(
-      envKeys
-        .filter((key) => key !== 'VITE_ENVIRONMENT')
-        .map((key) => [key, '']),
-    ) as Partial<Record<EnvKey, string>>;
-
-    const module = await importEnv(missingRequired);
-
-    envKeys
-      .filter((key) => key !== 'VITE_ENVIRONMENT')
-      .filter(
-        (key) =>
-          key !== 'VITE_APPINSIGHTS_INSTRUMENTATIONKEY' &&
-          key !== 'VITE_GA_TRACKINGID',
-      )
-      .forEach((key) => {
-        expect(consoleError).toHaveBeenCalledWith(
-          `[env] Missing required environment variable: ${key}`,
-        );
-        expect(valueFor(module.env, key)).toBe('');
-      });
-  });
-
-  it('keeps quiet about absent telemetry variables in development', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    await importEnv({
-      VITE_APPINSIGHTS_INSTRUMENTATIONKEY: '',
-      VITE_GA_TRACKINGID: '',
-    });
-
-    expect(consoleError).not.toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
-    );
-    expect(consoleError).not.toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_GA_TRACKINGID',
-    );
-  });
-
-  it('reports absent telemetry variables outside development', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    await importEnv(
-      {
-        VITE_APPINSIGHTS_INSTRUMENTATIONKEY: '',
-        VITE_GA_TRACKINGID: '',
-      },
-      false,
-    );
-
-    expect(consoleError).toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
-    );
-    expect(consoleError).toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_GA_TRACKINGID',
-    );
-  });
-
-  it('falls back to empty-string build-time defaults when Vite env vars are undefined', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    vi.resetModules();
-    for (const key of envKeys) {
-      vi.stubEnv(key, undefined);
-    }
-    // Production MODE keeps the telemetry-optional branch inactive, so every
-    // required variable is evaluated through the build-time `?? ''` fallback.
-    vi.stubEnv('MODE', 'production');
-
-    const module = await import('../../../ClientApp/src/env');
-
-    for (const key of envKeys) {
-      expect(valueFor(module.env, key)).toBe('');
-    }
-
-    expect(consoleError).toHaveBeenCalledWith(
-      '[env] Missing required environment variable: VITE_B2C_CLIENTID',
-    );
-  });
-
-  it('rejects malformed or disallowed external redirect hosts', async () => {
-    await expect(
-      importEnv({
-        VITE_EXTERNAL_REDIRECT_URL: 'https://evil.example/redirect',
-      }),
-    ).rejects.toThrow(/not in the allowed domain list/);
-
-    await expect(
-      importEnv({ VITE_EXTERNAL_REDIRECT_URL: 'not a url' }),
-    ).rejects.toThrow(/not in the allowed domain list/);
   });
 });

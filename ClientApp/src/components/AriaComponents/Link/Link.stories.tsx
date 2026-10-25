@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, fn } from 'storybook/test';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';

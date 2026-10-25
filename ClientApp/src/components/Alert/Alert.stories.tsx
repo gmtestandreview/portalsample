@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect } from 'storybook/test';
 import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from './index';

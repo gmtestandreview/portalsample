@@ -65,7 +65,7 @@ export function ColorArea(props: ColorAreaProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'w-full max-w-56 aspect-square rounded-lg bg-neutral-300 dark:bg-neutral-800 forced-colors:bg-[GrayText]'
+        'w-full max-w-56 aspect-square rounded-lg bg-neutral-300 dark:bg-neutral-800 forced-colors:bg-[GrayText]',
       )}
       style={({ defaultStyle, isDisabled }) => ({
         ...defaultStyle,

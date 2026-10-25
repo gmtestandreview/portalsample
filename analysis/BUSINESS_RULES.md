@@ -228,10 +228,10 @@ immediately after the create-account wizard completes **Confidence:** High
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
 `ClientApp/src/routes/common/enums.ts:1-28`,
-`ClientApp/src/routes/common/quoteStatus.ts:1-44` **Plain English:** Every RFQ and
-quote request moves through a defined set of statuses controlled by the NMI CRM.
-The portal can only trigger two transitions (Accept, Decline); all others are
-server-side. **Specification:**
+`ClientApp/src/routes/common/quoteStatus.ts:1-44` **Plain English:** Every RFQ
+and quote request moves through a defined set of statuses controlled by the NMI
+CRM. The portal can only trigger two transitions (Accept, Decline); all others
+are server-side. **Specification:**
 
 ```text
 Given  a RequestForQuoteDto with field quoteRequestStatus
@@ -457,8 +457,8 @@ Then   status transitions to QuoteDeclined (server-side)
 ### RULE-013: RFQ Submission is Irreversible
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/requestForQuote/index.tsx:132-138` **Plain English:** Once a
-Request for Quote has been submitted, the customer cannot make further changes
+`ClientApp/src/routes/requestForQuote/index.tsx:132-138` **Plain English:** Once
+a Request for Quote has been submitted, the customer cannot make further changes
 through the portal. **Specification:**
 
 ```text
@@ -787,10 +787,10 @@ Then:
 "0100" → INVALID           "200"  → INVALID (length ≠ 4)
 ```
 
-**Parameters:** Ranges hardcoded: `200–299`, `800–9999` **Implementation method constant:**
-`YUP_AUSTPOSTCODE_METHOD` **Confidence:** High —
-SME note: Postcodes 1000–1999 (NSW/ACT PO Box ranges) fall within 800–9999 and
-are accepted. Is this intentional for postal addresses?
+**Parameters:** Ranges hardcoded: `200–299`, `800–9999` **Implementation method
+constant:** `YUP_AUSTPOSTCODE_METHOD` **Confidence:** High — SME note: Postcodes
+1000–1999 (NSW/ACT PO Box ranges) fall within 800–9999 and are accepted. Is this
+intentional for postal addresses?
 
 ---
 
@@ -815,18 +815,18 @@ Field limits (contactValidation.ts):
 ```
 
 **Parameters:** Regex literals hardcoded; implementation method constant:
-`YUP_PHONE_METHOD`; area codes `[2-47-8]` (excludes 5 and
-6, per AU geography) **Confidence:** High — SME question: Does maxLength(12)
-intentionally exclude some `+61`-prefixed variants with spaces?
+`YUP_PHONE_METHOD`; area codes `[2-47-8]` (excludes 5 and 6, per AU geography)
+**Confidence:** High — SME question: Does maxLength(12) intentionally exclude
+some `+61`-prefixed variants with spaces?
 
 ---
 
 ### RULE-033: Email Address Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:577-610` **Plain
-English:** Email addresses must match a custom RFC 5321-aligned regex and cannot
-exceed 100 characters. **Specification:**
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:577-610`
+**Plain English:** Email addresses must match a custom RFC 5321-aligned regex
+and cannot exceed 100 characters. **Specification:**
 
 ```text
 Regex: /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9-]){0,62}\.[a-zA-Z](-?[a-zA-Z0-9])+$/
@@ -858,8 +858,8 @@ nameAllowedFormat(extended=false) regex: /^[-–—A-Za-z ']*$/
 "Müller" → INVALID
 ```
 
-**Parameters:** `extended = false` used for all person-name fields; implementation
-method constant: `YUP_NAMEALLOWEDFORMAT_METHOD` **Suspected
+**Parameters:** `extended = false` used for all person-name fields;
+implementation method constant: `YUP_NAMEALLOWEDFORMAT_METHOD` **Suspected
 defect:** The `extended = true` mode regex has only an end-anchor `$` but no
 start-anchor `^` — only validates the last character **Confidence:** High for
 normal case — **SME question: Should person names accept diacritical characters
@@ -884,10 +884,9 @@ businessName() regex: /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/
 "ACME Corp. Pty Ltd" → VALID
 ```
 
-**Parameters:** Implementation method constant: `YUP_BUSINESSNAME_METHOD`. Character
-set referenced to ASIC BRS message implementation guide v1.7 (comment in source)
-**Confidence:** High _(raised from Medium
-2026-09-02, CRD-043)_
+**Parameters:** Implementation method constant: `YUP_BUSINESSNAME_METHOD`.
+Character set referenced to ASIC BRS message implementation guide v1.7 (comment
+in source) **Confidence:** High _(raised from Medium 2026-09-02, CRD-043)_
 
 > **CORRECTION — 2026-09-02 (CRD-043). The previous entry was factually wrong
 > and its SME question rested on a false premise.** It stated that the
@@ -940,18 +939,18 @@ Then   regex = /([a-z])\1{2,}/i  (matches 3+ consecutive identical letters)
 ```
 
 **Parameters:** Default threshold: `3` (hardcoded in `stringExtensions.ts:733`);
-implementation method constant: `YUP_NOCONSECUTIVECHARS_METHOD`
-**Edge cases handled:** Minimum enforced threshold is `2`; case-insensitive;
-only applies to letters, not digits or punctuation **Confidence:** High
+implementation method constant: `YUP_NOCONSECUTIVECHARS_METHOD` **Edge cases
+handled:** Minimum enforced threshold is `2`; case-insensitive; only applies to
+letters, not digits or punctuation **Confidence:** High
 
 ---
 
 ### RULE-037: No Consecutive Punctuation
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:614-643` **Plain
-English:** Adjacent apostrophes, hyphens, or spaces (including Unicode variants)
-are rejected in name and text fields. **Specification:**
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:614-643`
+**Plain English:** Adjacent apostrophes, hyphens, or spaces (including Unicode
+variants) are rejected in name and text fields. **Specification:**
 
 ```text
 Characters covered: space, ASCII apostrophe ', U+2019 ', ASCII hyphen -, U+2013 –, U+2014 —

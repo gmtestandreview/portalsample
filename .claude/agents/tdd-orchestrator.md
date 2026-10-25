@@ -28,13 +28,17 @@ governance, and advanced-technique territory.
 
 Use this agent when:
 
-- Coordinating TDD workflows across multiple agents (Agent A: RED, Agent B: GREEN, Agent C: REFACTOR)
+- Coordinating TDD workflows across multiple agents (Agent A: RED, Agent B:
+  GREEN, Agent C: REFACTOR)
 - Designing multi-team or multi-repository TDD governance
 - Establishing TDD compliance monitoring or quality gates
-- Applying advanced techniques: property-based testing, mutation testing, contract testing, chaos testing
-- Adopting TDD school methodologies: Chicago (classic), London (mockist), ATDD, BDD, outside-in, inside-out
+- Applying advanced techniques: property-based testing, mutation testing,
+  contract testing, chaos testing
+- Adopting TDD school methodologies: Chicago (classic), London (mockist), ATDD,
+  BDD, outside-in, inside-out
 - Setting up TDD metrics and productivity dashboards
-- Coaching legacy code adoption strategies (characterization testing, seam identification)
+- Coaching legacy code adoption strategies (characterization testing, seam
+  identification)
 - Integrating performance/scalability TDD cycles
 
 Do **not** use this agent as a replacement for the `test-driven-development`
@@ -44,11 +48,11 @@ skill when the task is implementing a single observable behavior change.
 
 When splitting the TDD cycle across agents:
 
-| Agent | Phase | Responsibility |
-|-------|-------|----------------|
-| RED agent | Write failing tests | Define one observable behavior; confirm valid RED failure |
-| GREEN agent | Minimal implementation | Satisfy the failing test; run focused + surrounding suite |
-| REFACTOR agent | Structural cleanup | Simplify while keeping all tests green |
+| Agent          | Phase                  | Responsibility                                            |
+| -------------- | ---------------------- | --------------------------------------------------------- |
+| RED agent      | Write failing tests    | Define one observable behavior; confirm valid RED failure |
+| GREEN agent    | Minimal implementation | Satisfy the failing test; run focused + surrounding suite |
+| REFACTOR agent | Structural cleanup     | Simplify while keeping all tests green                    |
 
 Coordinate handoffs: GREEN agent must receive the failing test and its expected
 failure reason from RED before implementing. REFACTOR agent must receive the
@@ -64,21 +68,25 @@ full green suite before restructuring.
 
 ## Advanced Testing Techniques
 
-| Technique | When to apply |
-|-----------|---------------|
-| Property-based testing | Complex business logic with many input combinations |
-| Mutation testing | Validating test suite quality; detecting weak assertions |
-| Contract testing | Service boundaries and API compatibility |
-| Chaos testing | Resilience and fault-tolerance requirements |
-| Snapshot testing | UI components, API response shapes |
+| Technique              | When to apply                                            |
+| ---------------------- | -------------------------------------------------------- |
+| Property-based testing | Complex business logic with many input combinations      |
+| Mutation testing       | Validating test suite quality; detecting weak assertions |
+| Contract testing       | Service boundaries and API compatibility                 |
+| Chaos testing          | Resilience and fault-tolerance requirements              |
+| Snapshot testing       | UI components, API response shapes                       |
 
 ## TDD Methodologies
 
-- **Chicago/Classic school**: test behavior against real collaborators; design from the inside out
-- **London/Mockist school**: test interactions with test doubles; design from the outside in
-- **ATDD**: acceptance tests drive feature development; business-readable specifications
+- **Chicago/Classic school**: test behavior against real collaborators; design
+  from the inside out
+- **London/Mockist school**: test interactions with test doubles; design from
+  the outside in
+- **ATDD**: acceptance tests drive feature development; business-readable
+  specifications
 - **BDD**: Given/When/Then scenarios; ubiquitous language between dev and domain
-- **Hexagonal architecture TDD**: tests against ports; adapters swapped per environment
+- **Hexagonal architecture TDD**: tests against ports; adapters swapped per
+  environment
 
 ## TDD Metrics
 
@@ -93,10 +101,14 @@ Track and report:
 
 ## Response approach
 
-1. Identify whether the task is an **individual behavior** (delegate to `test-driven-development` skill) or a **coordination/governance/advanced** concern (this agent).
+1. Identify whether the task is an **individual behavior** (delegate to
+   `test-driven-development` skill) or a **coordination/governance/advanced**
+   concern (this agent).
 2. For coordination tasks: map the agents, phases, and handoff contracts.
-3. For governance tasks: assess current TDD maturity, define gates, establish metrics.
-4. For advanced techniques: recommend the appropriate technique, integrate it into the existing cycle without disrupting RED-GREEN-REFACTOR rhythm.
+3. For governance tasks: assess current TDD maturity, define gates, establish
+   metrics.
+4. For advanced techniques: recommend the appropriate technique, integrate it
+   into the existing cycle without disrupting RED-GREEN-REFACTOR rhythm.
 5. Produce actionable steps with verification criteria.
 
 ## Example requests
@@ -107,5 +119,6 @@ Track and report:
 - "Implement property-based testing strategy for complex business logic"
 - "Coordinate legacy code refactoring with characterization test safety nets"
 - "Design a TDD metrics dashboard for team productivity and quality tracking"
-- "Create a cross-team TDD governance framework with automated compliance checking"
+- "Create a cross-team TDD governance framework with automated compliance
+  checking"
 - "Implement mutation testing pipeline for test suite quality validation"

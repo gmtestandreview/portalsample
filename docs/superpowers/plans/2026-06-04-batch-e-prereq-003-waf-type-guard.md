@@ -270,7 +270,7 @@ consumer of WAF detection logic).
       const result = resolveErrorState(
         domainError,
         undefined,
-        ErrorType.Update
+        ErrorType.Update,
       );
       expect(result.kind).toBe('serverError');
     });
@@ -284,7 +284,7 @@ consumer of WAF detection logic).
       const result = resolveErrorState(
         noAccessError,
         undefined,
-        ErrorType.Update
+        ErrorType.Update,
       );
       expect(result.kind).toBe('noThirdPartyAccess');
     });
@@ -338,7 +338,7 @@ consumer of WAF detection logic).
   function resolveForbiddenState(
     error: unknown,
     serverError: ProblemDetails,
-    errorType: ErrorType
+    errorType: ErrorType,
   ): WizardStepError {
     if (serverError.title?.includes('No third-party access'))
       return { kind: 'noThirdPartyAccess' };
@@ -359,7 +359,7 @@ consumer of WAF detection logic).
   function resolveForbiddenState(
     error: unknown,
     serverError: ProblemDetails,
-    errorType: ErrorType
+    errorType: ErrorType,
   ): WizardStepError {
     if (serverError.title?.includes('No third-party access'))
       return { kind: 'noThirdPartyAccess' };

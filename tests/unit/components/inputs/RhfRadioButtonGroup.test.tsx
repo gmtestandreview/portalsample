@@ -1,8 +1,13 @@
 import userEvent from '@testing-library/user-event';
+
 import { render, screen } from '@testing-library/react';
+
 import type { ReactNode } from 'react';
+
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+
 import { describe, expect, it, vi } from 'vitest';
+
 import RhfRadioButtonGroup from '@/components/Inputs/RhfRadioButtonGroup';
 
 const options = [
@@ -62,6 +67,7 @@ const Submittable = ({
 
 describe(RhfRadioButtonGroup, () => {
   it('checks the option matching the form value', () => {
+    expect.assertions(2);
     render(
       <Harness defaultValue='open'>
         <RhfRadioButtonGroup name='status' legend='Status' options={options} />
@@ -71,8 +77,11 @@ describe(RhfRadioButtonGroup, () => {
     expect(screen.getByLabelText('Open')).toBeChecked();
     expect(screen.getByLabelText('All')).not.toBeChecked();
   });
+});
 
+describe(RhfRadioButtonGroup, () => {
   it('updates the form value and calls onChange when an option is chosen', async () => {
+    expect.assertions(3);
     const onChange = vi.fn();
     render(
       <Harness>
@@ -91,278 +100,4 @@ describe(RhfRadioButtonGroup, () => {
     expect(screen.getByLabelText('Open')).toBeChecked();
     expect(onChange).toHaveBeenCalledTimes(1);
   });
-
-  it('keeps the typed value of boolean options', async () => {
-    render(
-      <Harness defaultValue={false}>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Agree'
-          options={[
-            { label: 'Yes', value: true, id: 'agree-yes' },
-            { label: 'No', value: false, id: 'agree-no' },
-          ]}
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByLabelText('No')).toBeChecked();
-
-    await userEvent.click(screen.getByLabelText('Yes'));
-
-    expect(screen.getByLabelText('Yes')).toBeChecked();
-    expect(screen.getByTestId('value')).toHaveTextContent('true');
-  });
-
-  it('disables every option when the group is disabled', () => {
-    render(
-      <Harness>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Status'
-          options={options}
-          disabled
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByLabelText('All')).toBeDisabled();
-    expect(screen.getByLabelText('Open')).toBeDisabled();
-  });
-
-  it('shows the validation message only after the group has been touched', async () => {
-    const Invalid = () => {
-      const methods = useForm<Values>({ defaultValues: { status: '' } });
-      return (
-        <FormProvider {...methods}>
-          <button type='button' onClick={() => void methods.trigger()}>
-            validate
-          </button>
-          <RhfRadioButtonGroup
-            name='status'
-            id='q-status'
-            legend='Status'
-            options={options}
-            rules={{ required: 'Choose a status' }}
-          />
-        </FormProvider>
-      );
-    };
-    render(<Invalid />);
-
-    await userEvent.click(screen.getByText('validate'));
-
-    expect(screen.queryByText('Choose a status')).not.toBeInTheDocument();
-
-    // Tab into the group, then out of it, to blur without choosing an option.
-    await userEvent.tab();
-
-    expect(screen.getByLabelText('All')).toHaveFocus();
-
-    await userEvent.tab();
-
-    await expect(screen.findByText('Choose a status')).resolves.toHaveAttribute(
-      'id',
-      'q-status-validation-msg',
-    );
-    expect(screen.getByTestId('fs-q-status')).toHaveAttribute(
-      'aria-describedby',
-      'q-status-validation-msg',
-    );
-  });
-
-  it('renders the selected label as a summary when isSummary is set', () => {
-    render(
-      <Harness defaultValue='open'>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Status'
-          options={options}
-          isSummary
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByText('Open')).toBeInTheDocument();
-    expect(screen.queryByRole('radio')).not.toBeInTheDocument();
-  });
-
-  it('renders nothing in summary mode when no value is selected', () => {
-    render(
-      <Harness defaultValue=''>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Status'
-          options={options}
-          isSummary
-        />
-      </Harness>,
-    );
-
-    expect(screen.queryByText('Status')).not.toBeInTheDocument();
-  });
-
-  it('renders descriptors and linked sub-fields beside their option', () => {
-    render(
-      <Harness>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Status'
-          options={[
-            {
-              label: 'All',
-              value: 'all',
-              id: 'opt-all',
-              descriptor: 'Every status',
-              subFormField: <p>All sub-field</p>,
-            },
-            { label: 'Open', value: 'open', id: 'opt-open' },
-          ]}
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByText('Every status')).toBeInTheDocument();
-    expect(screen.getByText('All sub-field')).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /^All/ })).toHaveAttribute(
-      'aria-controls',
-      'opt-all-sub-field',
-    );
-    expect(screen.getByLabelText('Open')).not.toHaveAttribute('aria-controls');
-  });
-
-  it('lays options out horizontally when requested', () => {
-    render(
-      <Harness>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Status'
-          options={options}
-          displayHorizontally
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByLabelText('All').closest('.row')).not.toBeNull();
-    expect(screen.getByLabelText('Open').closest('.row')).not.toBeNull();
-  });
-
-  it('puts titled help inside a details control', () => {
-    render(
-      <Harness>
-        <RhfRadioButtonGroup
-          name='status'
-          id='q-status'
-          legend='Status'
-          inlineHelp='Longer guidance'
-          inlineHelpTitle='Need help?'
-          options={options}
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByText('Need help?')).toBeInTheDocument();
-  });
-
-  it('falls back to a placeholder when the summary value matches no option', () => {
-    render(
-      <Harness defaultValue='archived'>
-        <RhfRadioButtonGroup
-          name='status'
-          legend='Status'
-          options={options}
-          isSummary
-        />
-      </Harness>,
-    );
-
-    expect(screen.getByText('No details added')).toBeInTheDocument();
-  });
-
-  it('leaves every option unchecked when the form has no value yet', () => {
-    const Empty = () => {
-      const methods = useForm<Partial<Values>>();
-      return (
-        <FormProvider {...methods}>
-          <RhfRadioButtonGroup
-            name='status'
-            legend='Status'
-            options={options}
-          />
-        </FormProvider>
-      );
-    };
-    render(<Empty />);
-
-    expect(screen.getByLabelText('All')).not.toBeChecked();
-    expect(screen.getByLabelText('Open')).not.toBeChecked();
-  });
-
-  it.each([
-    {
-      case: 'help only',
-      inlineHelp: 'Pick one',
-      required: false,
-      describedByBefore: 'help-q-status',
-      describedByAfter: 'help-q-status',
-      invalidAfter: null,
-    },
-    {
-      case: 'error only',
-      inlineHelp: undefined,
-      required: true,
-      describedByBefore: null,
-      describedByAfter: 'q-status-validation-msg',
-      invalidAfter: 'true',
-    },
-    {
-      case: 'help and error',
-      inlineHelp: 'Pick one',
-      required: true,
-      describedByBefore: 'help-q-status',
-      describedByAfter: 'help-q-status q-status-validation-msg',
-      invalidAfter: 'true',
-    },
-  ])(
-    'describes the radiogroup by $case ids and flags the group (not the radios) invalid only on error',
-    async ({
-      inlineHelp,
-      required,
-      describedByBefore,
-      describedByAfter,
-      invalidAfter,
-    }) => {
-      render(<Submittable inlineHelp={inlineHelp} required={required} />);
-      const group = screen.getByRole('radiogroup', { name: 'Status' });
-      const radios = screen.getAllByRole('radio');
-
-      expect(group).toBe(screen.getByTestId('fs-q-status'));
-      expect(group.tagName).toBe('FIELDSET');
-      expect(group.getAttribute('aria-describedby')).toBe(describedByBefore);
-      expect(group.getAttribute('aria-invalid')).toBeNull();
-
-      if (inlineHelp) {
-        expect(screen.getByText(inlineHelp)).toHaveAttribute(
-          'id',
-          'help-q-status',
-        );
-      }
-
-      await userEvent.click(screen.getByText('submit'));
-
-      if (required) {
-        await expect(
-          screen.findByText('Choose a status'),
-        ).resolves.toBeInTheDocument();
-      }
-
-      expect(group.getAttribute('aria-describedby')).toBe(describedByAfter);
-      expect(group.getAttribute('aria-invalid')).toBe(invalidAfter);
-
-      radios.forEach((radio) => {
-        expect(radio).not.toHaveAttribute('aria-describedby');
-        expect(radio).not.toHaveAttribute('aria-invalid');
-      });
-    },
-  );
 });

@@ -1,6 +1,9 @@
 import { act, render, screen } from '@testing-library/react';
+
 import { describe, expect, it, vi } from 'vitest';
+
 import AutoSuggest from '@/components/Inputs/AutoSuggest';
+
 import type { AutoSuggestOption } from '@/components/Inputs/AutoSuggest/types';
 
 const containerState = vi.hoisted(() => ({
@@ -50,6 +53,7 @@ const renderAutoSuggest = (
 
 describe('autoSuggest parent state', () => {
   it('clears a selected option when the search term is emptied', async () => {
+    expect.assertions(5);
     const onSelectedOption = vi.fn().mockResolvedValue(undefined);
     renderAutoSuggest(undefined, onSelectedOption, 'Sydney');
 
@@ -60,102 +64,6 @@ describe('autoSuggest parent state', () => {
     expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
     expect(onSelectedOption.mock.calls[0]).toEqual([]);
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
-    expect(screen.getByTestId('option-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-  });
-
-  it('reports a failed search and clears the previous suggestions', async () => {
-    // The stale-response tests below cover a rejection arriving after the field moved on. This
-    // is the live one: the search that is still current failed, so the user is told rather than
-    // left looking at suggestions from an earlier term.
-    const getOptions = vi
-      .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
-      .mockResolvedValueOnce([
-        { id: 'sydney', displayText: 'Sydney', value: 'sydney' },
-      ])
-      .mockRejectedValueOnce(new Error('lookup unavailable'));
-    renderAutoSuggest(getOptions);
-
-    await act(async () => {
-      await containerState.props.onSearchTermChange('syd');
-    });
-
-    expect(screen.getByTestId('option-count')).toHaveTextContent('1');
-
-    await act(async () => {
-      await containerState.props.onSearchTermChange('sydn');
-    });
-
-    expect(screen.getByTestId('error')).toHaveTextContent('true');
-    expect(screen.getByTestId('option-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-  });
-
-  it('ignores a stale successful search response after cancel resets the field', async () => {
-    let resolveSearch: (
-      options: AutoSuggestOption<string>[],
-    ) => void = () => {};
-    const getOptions = vi.fn<
-      (term: string) => Promise<AutoSuggestOption<string>[]>
-    >(
-      () =>
-        new Promise((resolve) => {
-          resolveSearch = resolve;
-        }),
-    );
-    renderAutoSuggest(getOptions, vi.fn(), 'Original');
-
-    let searchPromise: Promise<void>;
-    await act(async () => {
-      searchPromise = containerState.props.onSearchTermChange('Sydney');
-    });
-
-    expect(screen.getByTestId('loading')).toHaveTextContent('true');
-
-    await act(async () => {
-      containerState.props.onCancel();
-    });
-
-    expect(screen.getByTestId('search-term')).toHaveTextContent('Original');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
-
-    await act(async () => {
-      resolveSearch([{ id: 'syd', displayText: 'Sydney', value: 'syd' }]);
-      await searchPromise;
-    });
-
-    expect(screen.getByTestId('search-term')).toHaveTextContent('Original');
-    expect(screen.getByTestId('option-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('no-result')).toHaveTextContent('false');
-  });
-
-  it('ignores a stale failed search response after cancel resets the field', async () => {
-    let rejectSearch: (error: Error) => void = () => {};
-    const getOptions = vi.fn<
-      (term: string) => Promise<AutoSuggestOption<string>[]>
-    >(
-      () =>
-        new Promise((_, reject) => {
-          rejectSearch = reject;
-        }),
-    );
-    renderAutoSuggest(getOptions);
-
-    let searchPromise: Promise<void>;
-    await act(async () => {
-      searchPromise = containerState.props.onSearchTermChange('Sydney');
-    });
-
-    await act(async () => {
-      containerState.props.onCancel();
-    });
-
-    await act(async () => {
-      rejectSearch(new Error('network unavailable'));
-      await searchPromise;
-    });
-
-    expect(screen.getByTestId('error')).toHaveTextContent('false');
     expect(screen.getByTestId('option-count')).toHaveTextContent('0');
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
   });

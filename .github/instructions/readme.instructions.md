@@ -1,5 +1,9 @@
 ---
-description: 'This file describes best practices for writing GitHub Copilot Chat prompt files (.prompt.md) in this repository. Follow these guidelines to create effective, safe, and maintainable prompts that align with repository policy and provide clear value to users.'
+description:
+  'This file describes best practices for writing GitHub Copilot Chat prompt
+  files (.prompt.md) in this repository. Follow these guidelines to create
+  effective, safe, and maintainable prompts that align with repository policy
+  and provide clear value to users.'
 applyTo: 'README.md'
 ---
 
@@ -11,10 +15,10 @@ Use these rules when editing `README.md`.
 
 - Follow `AGENTS.md` and repository policy first.
 - Keep README edits minimal and focused on the requested documentation change.
-- Do not change scripts, workflows, linting, formatting, CI, package policy,
-  or repository architecture just to make README text true.
-- If a documented command is wrong, either update the documentation to match
-  the repo or ask for a task to change the underlying workflow.
+- Do not change scripts, workflows, linting, formatting, CI, package policy, or
+  repository architecture just to make README text true.
+- If a documented command is wrong, either update the documentation to match the
+  repo or ask for a task to change the underlying workflow.
 
 ## Command documentation
 
@@ -28,8 +32,8 @@ Treat documented commands as claims that require current evidence.
   context.
 - If a command cannot be run, document the limitation or caveat instead of
   implying success.
-- If reusing older workflow evidence, rerun the relevant current commands
-  before treating it as valid.
+- If reusing older workflow evidence, rerun the relevant current commands before
+  treating it as valid.
 - Prefer the repository command canon when available, and do not invent new
   command names.
 
@@ -59,8 +63,8 @@ health, stop the process when finished, and report exactly what was verified.
 
 - Record current command results accurately.
 - Put environment-specific setup or failures next to the relevant command.
-- Do not imply green validation from stale workflow runs, old tracking slugs,
-  or previous local checks.
+- Do not imply green validation from stale workflow runs, old tracking slugs, or
+  previous local checks.
 - If validation is deferred, state what remains unverified.
 
 ## Links and structure

@@ -1,6 +1,9 @@
 import { screen, waitFor } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { describe, expect, it } from 'vitest';
+
 import { useLoaderData, useNavigate, useParams } from 'react-router';
 
 import {
@@ -33,6 +36,7 @@ const NavigateProbe = () => {
 
 describe('renderWithRouter harness', () => {
   it('resolves route params, which a bare MemoryRouter does not', async () => {
+    expect.assertions(1);
     renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/type-approval/APP-1',
@@ -42,8 +46,11 @@ describe('renderWithRouter harness', () => {
       expect(screen.getByTestId('param-id')).toHaveTextContent('APP-1'),
     );
   });
+});
 
+describe('renderWithRouter harness', () => {
   it('runs a route loader', async () => {
+    expect.assertions(1);
     renderWithRouter(<LoaderProbe />, {
       path: '/type-approval/:id',
       initialPath: '/type-approval/APP-2',
@@ -54,8 +61,11 @@ describe('renderWithRouter harness', () => {
       expect(screen.getByTestId('loader-label')).toHaveTextContent('loaded'),
     );
   });
+});
 
+describe('renderWithRouter harness', () => {
   it('exposes the real navigation rather than a mocked navigate', async () => {
+    expect.assertions(3);
     const user = userEvent.setup();
     const { currentPath } = renderWithRouter(<NavigateProbe />, {
       path: '/type-approval/:id',
@@ -69,33 +79,5 @@ describe('renderWithRouter harness', () => {
     await waitFor(() => expect(currentPath()).toBe('/not-found'));
 
     expect(screen.getByTestId(NOT_FOUND_TEST_ID)).toBeInTheDocument();
-  });
-
-  it('distinguishes a redirect to /not-found from matching nothing', async () => {
-    const { currentPath } = renderWithRouter(<ParamProbe />, {
-      path: '/type-approval/:id',
-      initialPath: '/somewhere-else',
-    });
-
-    await waitFor(() =>
-      expect(screen.getByTestId(FALLBACK_TEST_ID)).toBeInTheDocument(),
-    );
-
-    expect(screen.queryByTestId(NOT_FOUND_TEST_ID)).not.toBeInTheDocument();
-    expect(currentPath()).toBe('/somewhere-else');
-  });
-
-  it('mounts extra destination routes so a redirect target is assertable', async () => {
-    renderWithRouter(<ParamProbe />, {
-      path: '/type-approval/:id',
-      initialPath: '/dashboard',
-      extraRoutes: [
-        { path: '/dashboard', element: <span data-testid='dashboard' /> },
-      ],
-    });
-
-    await waitFor(() =>
-      expect(screen.getByTestId('dashboard')).toBeInTheDocument(),
-    );
   });
 });

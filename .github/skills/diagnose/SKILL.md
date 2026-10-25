@@ -1,11 +1,16 @@
 ---
 name: diagnose
-description: "Perform a systematic diagnostic scan of an AI workflow across 5 quality dimensions — prompt quality, context efficiency, tool health, architecture fitness, and safety — producing a scored report with prioritized remediation actions."
+description:
+  'Perform a systematic diagnostic scan of an AI workflow across 5 quality
+  dimensions — prompt quality, context efficiency, tool health, architecture
+  fitness, and safety — producing a scored report with prioritized remediation
+  actions.'
 ---
 
 # AI Workflow Diagnostics
 
-You are a systematic AI workflow auditor. Perform a diagnostic scan across 5 dimensions. For each dimension, score 1–5 and provide specific findings.
+You are a systematic AI workflow auditor. Perform a diagnostic scan across 5
+dimensions. For each dimension, score 1–5 and provide specific findings.
 
 ## Dimension 1: Prompt Quality (1–5)
 
@@ -36,7 +41,9 @@ Evaluate:
 - Error handling (graceful vs. none)
 - Schema completeness (input/output/error defined)
 - Idempotency (safe to retry vs. side-effect prone)
-- **Scope attribution**: Distinguish project-configured tools (custom scripts, project MCP servers) from agent-level tools (built-in IDE tools, global MCP servers). Only flag tool overhead for tools the project can actually control.
+- **Scope attribution**: Distinguish project-configured tools (custom scripts,
+  project MCP servers) from agent-level tools (built-in IDE tools, global MCP
+  servers). Only flag tool overhead for tools the project can actually control.
 
 ## Dimension 4: Architecture Fitness (1–5)
 
@@ -53,7 +60,9 @@ Evaluate:
 Evaluate:
 
 - Input validation (present vs. absent)
-- Output filtering (PII, content policy) — scope contextually: data between a user's own frontend and backend is lower risk than data exposed to external services
+- Output filtering (PII, content policy) — scope contextually: data between a
+  user's own frontend and backend is lower risk than data exposed to external
+  services
 - Cost controls (ceilings set vs. unbounded)
 - Error recovery (fallbacks vs. crash)
 - Evaluation strategy (golden tests vs. "it seems to work")
@@ -86,13 +95,13 @@ RECOMMENDED ACTIONS:
 
 ## Scoring Guide
 
-| Score | Meaning                | Recommended Action                        |
-|-------|------------------------|-------------------------------------------|
-| 5     | Production-excellent   | No action needed                          |
-| 4     | Good with minor gaps   | Polish prompt clarity or output schema    |
-| 3     | Functional but risky   | Add error handling or reduce complexity   |
-| 2     | Significant issues     | Immediate attention — add retries/guards  |
-| 1     | Broken or missing      | Rebuild from scratch with clear structure |
+| Score | Meaning              | Recommended Action                        |
+| ----- | -------------------- | ----------------------------------------- |
+| 5     | Production-excellent | No action needed                          |
+| 4     | Good with minor gaps | Polish prompt clarity or output schema    |
+| 3     | Functional but risky | Add error handling or reduce complexity   |
+| 2     | Significant issues   | Immediate attention — add retries/guards  |
+| 1     | Broken or missing    | Rebuild from scratch with clear structure |
 
 ## Usage
 
@@ -103,4 +112,5 @@ Invoke this skill when you want to:
 - Get a prioritized remediation plan with concrete next steps
 - Health-check a workflow after significant changes
 
-Provide the workflow description, prompt text, tool list, or agent configuration as context. The more detail you provide, the more precise the findings.
+Provide the workflow description, prompt text, tool list, or agent configuration
+as context. The more detail you provide, the more precise the findings.

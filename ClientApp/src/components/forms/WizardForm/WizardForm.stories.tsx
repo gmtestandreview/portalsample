@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect } from 'storybook/test';
 import { Container, Row, Col } from 'react-bootstrap';

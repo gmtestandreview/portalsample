@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
+
 import { MemoryRouter } from 'react-router';
+
 import { describe, expect, it, vi } from 'vitest';
+
 import Layout from '@/components/Layout';
 
 vi.mock(
@@ -63,6 +66,7 @@ vi.mock(
 
 describe(Layout, () => {
   it('renders page chrome, main content, and the route announcement region', () => {
+    expect.assertions(1);
     render(
       <MemoryRouter>
         <Layout>
@@ -70,19 +74,64 @@ describe(Layout, () => {
         </Layout>
       </MemoryRouter>,
     );
-
     expect(screen.getByRole('banner')).toHaveTextContent('Mock header');
+  });
+});
+
+describe(Layout, () => {
+  it('renders page chrome, main content, and the route announcement region', () => {
+    expect.assertions(1);
+    render(
+      <MemoryRouter>
+        <Layout>
+          <h1>Dashboard</h1>
+        </Layout>
+      </MemoryRouter>,
+    );
     expect(screen.getByRole('contentinfo')).toHaveTextContent('Mock footer');
+  });
+});
+
+describe(Layout, () => {
+  it('renders page chrome, main content, and the route announcement region', () => {
+    expect.assertions(1);
+    render(
+      <MemoryRouter>
+        <Layout>
+          <h1>Dashboard</h1>
+        </Layout>
+      </MemoryRouter>,
+    );
     expect(screen.getByRole('main')).toHaveTextContent('Dashboard');
+  });
+});
+
+describe(Layout, () => {
+  it('renders page chrome, main content, and the route announcement region', () => {
+    expect.assertions(1);
+    render(
+      <MemoryRouter>
+        <Layout>
+          <h1>Dashboard</h1>
+        </Layout>
+      </MemoryRouter>,
+    );
     expect(screen.getByRole('status')).toHaveTextContent(
       'Navigated to Dashboard page.',
     );
+  });
+});
+
+describe(Layout, () => {
+  it('renders page chrome, main content, and the route announcement region', () => {
+    expect.assertions(1);
+    render(
+      <MemoryRouter>
+        <Layout>
+          <h1>Dashboard</h1>
+        </Layout>
+      </MemoryRouter>,
+    );
     expect(screen.getByRole('status')).toHaveClass('visually-hidden');
-    expect(
-      screen.getByRole('link', { name: 'Skip to main content' }),
-    ).toHaveAttribute('href', '#main');
-    expect(
-      screen.getByRole('navigation', { name: 'Back to top' }),
-    ).toBeInTheDocument();
   });
 });

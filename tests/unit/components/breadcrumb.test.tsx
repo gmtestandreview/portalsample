@@ -5,6 +5,7 @@ import { renderWithProviders } from '../helpers/renderWithProviders';
 
 describe(CustomBreadcrumb, () => {
   it('marks the final breadcrumb item as the current page', () => {
+    expect.assertions(2);
     renderWithProviders(
       <CustomBreadcrumb
         breadcrumbs={[
@@ -25,6 +26,7 @@ describe(CustomBreadcrumb, () => {
   });
 
   it('renders previous breadcrumb items as links', () => {
+    expect.assertions(1);
     renderWithProviders(
       <CustomBreadcrumb
         breadcrumbs={[{ to: '/', text: 'Home' }, { text: 'Request for quote' }]}

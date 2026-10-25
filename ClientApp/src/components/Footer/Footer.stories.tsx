@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 import Footer from './index';

@@ -24,15 +24,15 @@ export const Example: Story = {
   assert.equal(result.changes.length, 2);
   assert.match(
     result.source,
-    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u
+    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u,
   );
   assert.match(
     result.source,
-    /play: async \(\{ canvas \}: Readonly<Parameters<NonNullable<Story\['play'\]>>\[0\]>\) =>/u
+    /play: async \(\{ canvas \}: Readonly<Parameters<NonNullable<Story\['play'\]>>\[0\]>\) =>/u,
   );
   assert.equal(
     transformStory(result.source, 'Widget.stories.tsx').changes.length,
-    0
+    0,
   );
 });
 
@@ -44,14 +44,14 @@ export const Example: Story = (args) => <Widget {...args} />;
   assert.equal(result.changes.length, 1);
   assert.match(
     result.source,
-    /Example: Story = \(args: Readonly<Parameters<Story>\[0\]>\) =>/u
+    /Example: Story = \(args: Readonly<Parameters<Story>\[0\]>\) =>/u,
   );
 });
 
 it('leaves files with no local Story alias untouched', () => {
   const result = transformStory(
     'export const Example = (args) => <Widget {...args} />;\n',
-    'Widget.stories.tsx'
+    'Widget.stories.tsx',
   );
   assert.equal(result.changes.length, 0);
   assert.equal(result.skipped.length, 0);
@@ -67,7 +67,7 @@ export const Rest: Story = {
   render: (...args: unknown[]) => <Widget />,
 };
 `,
-    'Widget.stories.tsx'
+    'Widget.stories.tsx',
   );
   assert.equal(result.changes.length, 0);
 });
@@ -80,7 +80,7 @@ export const Broken: Story = {
   render: existingRenderFunction,
 };
 `,
-    'Widget.stories.tsx'
+    'Widget.stories.tsx',
   );
   assert.equal(result.changes.length, 0);
   assert.equal(result.skipped.length, 2);
@@ -114,7 +114,7 @@ function fixture(context) {
         skipLibCheck: true,
       },
       include: ['ClientApp/src/**/*'],
-    })
+    }),
   );
   const filename = path.join(root, 'ClientApp/src/Widget.stories.tsx');
   writeFileSync(
@@ -134,7 +134,7 @@ export const Example: Story = {
   render: (args) => <div>{args.name}</div>,
   play: async ({ canvas }) => { canvas.getByText('default'); },
 };
-`
+`,
   );
   const git = (...args) =>
     execFileSync('git', ['-C', root, ...args], { stdio: 'pipe' });
@@ -149,7 +149,7 @@ export const Example: Story = {
     'commit.gpgsign=false',
     'commit',
     '-qm',
-    'fixture'
+    'fixture',
   );
   return {
     root,
@@ -175,7 +175,7 @@ it('CLI previews without writing, checks, applies after validation and is idempo
   assert.equal(write.status, 0, write.stderr);
   assert.match(
     readFileSync(filename, 'utf8'),
-    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u
+    /render: \(args: Readonly<Parameters<NonNullable<Story\['render'\]>>\[0\]>\) =>/u,
   );
   assert.equal(run('--check').status, 0);
 });

@@ -46,6 +46,7 @@ const renderLookup = (
 
 describe(OrganisationNameLookup, () => {
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
+    expect.assertions(1);
     vi.useFakeTimers();
     renderLookup();
 
@@ -76,6 +77,7 @@ describe(OrganisationNameLookup, () => {
    * of the render itself rather than the absence of the warning.
    */
   it('does not re-render when the debounce fires with an empty input', async () => {
+    expect.assertions(1);
     vi.useFakeTimers();
     const onRender = vi.fn();
     render(
@@ -104,6 +106,7 @@ describe(OrganisationNameLookup, () => {
   });
 
   it('falls back to typed input if the active suggestion is unexpectedly absent', async () => {
+    expect.assertions(1);
     vi.useFakeTimers();
     const originalAt = Array.prototype.at;
     const atSpy = vi.spyOn(Array.prototype, 'at').mockImplementation(function (

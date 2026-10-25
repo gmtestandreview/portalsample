@@ -1,6 +1,11 @@
 ---
 name: senior-secops
-description: Comprehensive SecOps skill for application security, vulnerability management, compliance, and secure development practices. Includes security scanning, vulnerability assessment, compliance checking, and security automation. Use when implementing security controls, conducting security audits, responding to vulnerabilities, or ensuring compliance requirements.
+description:
+  Comprehensive SecOps skill for application security, vulnerability management,
+  compliance, and secure development practices. Includes security scanning,
+  vulnerability assessment, compliance checking, and security automation. Use
+  when implementing security controls, conducting security audits, responding to
+  vulnerabilities, or ensuring compliance requirements.
 ---
 
 # Senior Secops
@@ -91,7 +96,8 @@ Comprehensive guide available in `references/security_standards.md`:
 
 ### Vulnerability Management Guide
 
-Complete workflow documentation in `references/vulnerability_management_guide.md`:
+Complete workflow documentation in
+`references/vulnerability_management_guide.md`:
 
 - Step-by-step processes
 - Optimization strategies
@@ -111,12 +117,10 @@ Technical reference guide in `references/compliance_requirements.md`:
 
 ## Tech Stack
 
-**Languages:** TypeScript, JavaScript, Python, Go, Swift, Kotlin
-**Frontend:** React, Next.js, React Native, Flutter
-**Backend:** Node.js, Express, GraphQL, REST APIs
-**Database:** PostgreSQL, Prisma, NeonDB, Supabase
-**DevOps:** Docker, Kubernetes, Terraform, GitHub Actions, CircleCI
-**Cloud:** AWS, GCP, Azure
+**Languages:** TypeScript, JavaScript, Python, Go, Swift, Kotlin **Frontend:**
+React, Next.js, React Native, Flutter **Backend:** Node.js, Express, GraphQL,
+REST APIs **Database:** PostgreSQL, Prisma, NeonDB, Supabase **DevOps:** Docker,
+Kubernetes, Terraform, GitHub Actions, CircleCI **Cloud:** AWS, GCP, Azure
 
 ## Development Workflow
 
@@ -203,7 +207,8 @@ kubectl apply -f k8s/
 
 ### Common Issues
 
-Check the comprehensive troubleshooting section in `references/compliance_requirements.md`.
+Check the comprehensive troubleshooting section in
+`references/compliance_requirements.md`.
 
 ### Getting Help
 

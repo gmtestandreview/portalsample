@@ -119,8 +119,8 @@ Ask yourself about each piece of content: "Would the agent get this wron without
 this instruction?" If the answer is no, cut it. If you're unsure, test it. And
 if the agent already handles the entire task well without the skill, the skill
 may not be adding value. See
-[Evaluating skill output quality](evaluating-skill-output.md) for how to test this
-systematically.
+[Evaluating skill output quality](evaluating-skill-output.md) for how to test
+this systematically.
 
 ### Design coherent units
 
@@ -391,7 +391,7 @@ For more on designing and bundling scripts, see
 
 Once you have a working skill, two guides can help you refine it further:
 
-- **[Evaluating skill output quality](evaluating-skill-output.md)** - Set up test
-  cases, grade results, and iterate systematically.
+- **[Evaluating skill output quality](evaluating-skill-output.md)** - Set up
+  test cases, grade results, and iterate systematically.
 - **[Optimizing skill descriptions](description-optimization.md)** - Test and
   improve your skill's `description` field so it triggers on the right prompts.

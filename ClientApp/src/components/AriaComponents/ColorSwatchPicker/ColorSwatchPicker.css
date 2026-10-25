@@ -6,7 +6,7 @@
   flex-wrap: wrap;
   &[data-layout='stack'] {
     flex-direction: column;
-    }
+  }
 }
 
 .react-aria-ColorSwatchPickerItem {

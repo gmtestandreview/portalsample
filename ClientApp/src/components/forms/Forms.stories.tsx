@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import type { ReactNode } from 'react';
 import { Formik, Form } from 'formik';

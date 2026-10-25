@@ -7,6 +7,7 @@ describe('dOMPurify security regressions', () => {
   });
 
   it('neutralizes a detached descendant after an IN_PLACE hook removes its ancestor', () => {
+    expect.assertions(2);
     const root = document.createElement('div');
     root.innerHTML = [
       '<footer>',

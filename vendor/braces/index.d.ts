@@ -1,6 +1,6 @@
 declare function braces(
   pattern: string,
-  options?: braces.Options
+  options?: braces.Options,
 ): string | string[];
 
 declare namespace braces {

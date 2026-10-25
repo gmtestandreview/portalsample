@@ -72,7 +72,7 @@ organisation via constructor argument or React context rather than reading from
 ```ts
 // Option A: pass via constructor
 const client = new DashboardClient(
-  accountState.details.targetOrganisation?.targetOrganisationAbn
+  accountState.details.targetOrganisation?.targetOrganisationAbn,
 );
 
 // Option B: centralise via useAuthenticatedClient hook (see ADR)

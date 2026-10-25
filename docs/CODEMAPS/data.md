@@ -17,7 +17,8 @@ HttpStatusCode   — enum for error page routing
 
 ## Wizard / Form State (sessionStorage)
 
-Multi-step wizards persist step data across navigation using `SessionStorageCache`:
+Multi-step wizards persist step data across navigation using
+`SessionStorageCache`:
 
 ```text
 ClientApp/src/storage/sessionStorageCache.ts   StorageCache interface
@@ -27,11 +28,11 @@ ClientApp/src/storage/types.ts                 StorageCache interface
 
 Keys written by domain:
 
-| Key pattern | Domain | Cleared on |
-|-------------|--------|-----------|
-| `rfq:*` | Request For Quote wizard steps | RFQ submit / cancel |
-| `ta:*` | Type Approval wizard steps | TA submit / cancel |
-| `aq:*` | Accept Quote wizard steps | AQ submit / cancel |
+| Key pattern      | Domain                                | Cleared on           |
+| ---------------- | ------------------------------------- | -------------------- |
+| `rfq:*`          | Request For Quote wizard steps        | RFQ submit / cancel  |
+| `ta:*`           | Type Approval wizard steps            | TA submit / cancel   |
+| `aq:*`           | Accept Quote wizard steps             | AQ submit / cancel   |
 | `notification:*` | Dashboard banners / modal shown flags | explicit clear calls |
 
 ## Validation Schemas (`ClientApp/src/validationSchemas/`)
@@ -46,7 +47,8 @@ validationSchemas/
 └── [domain-specific schemas]  Per-wizard-step schemas
 ```
 
-**Import requirement**: any schema using custom methods must import the side-effect module:
+**Import requirement**: any schema using custom methods must import the
+side-effect module:
 
 ```ts
 import '../../validationSchemas/yupExtensions';
@@ -64,4 +66,5 @@ silentRequest.ts       Token acquisition scope builder
 
 ## No Database / No ORM
 
-All persistent data (accounts, applications, quotes) is owned by the .NET backend. The SPA has no direct DB access.
+All persistent data (accounts, applications, quotes) is owned by the .NET
+backend. The SPA has no direct DB access.

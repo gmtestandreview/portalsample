@@ -41,7 +41,7 @@ const run = spawnSync(process.execPath, [CHECKER, '--json'], {
 
 if (run.error) {
   console.error(
-    `analysis/BUSINESS_RULES.md(1,1): error RULE-000: failed to run ${CHECKER}: ${run.error.message}`
+    `analysis/BUSINESS_RULES.md(1,1): error RULE-000: failed to run ${CHECKER}: ${run.error.message}`,
   );
   process.exit(1);
 }
@@ -51,7 +51,7 @@ try {
   payload = JSON.parse(run.stdout);
 } catch (error) {
   console.error(
-    `analysis/BUSINESS_RULES.md(1,1): error RULE-000: failed to parse ${CHECKER} --json output: ${error.message}`
+    `analysis/BUSINESS_RULES.md(1,1): error RULE-000: failed to parse ${CHECKER} --json output: ${error.message}`,
   );
   if (run.stdout.trim()) console.error(run.stdout.trim());
   if (run.stderr.trim()) console.error(run.stderr.trim());

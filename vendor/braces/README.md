@@ -1,8 +1,12 @@
 # braces [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=W8YFZ425KND68) [![NPM version](https://img.shields.io/npm/v/braces.svg?style=flat)](https://www.npmjs.com/package/braces) [![NPM monthly downloads](https://img.shields.io/npm/dm/braces.svg?style=flat)](https://npmjs.org/package/braces) [![NPM total downloads](https://img.shields.io/npm/dt/braces.svg?style=flat)](https://npmjs.org/package/braces)
 
-> Bash-like brace expansion, implemented in JavaScript. Safer than other brace expansion libs, with complete support for the Bash 4.3 braces specification, without sacrificing speed.
+> Bash-like brace expansion, implemented in JavaScript. Safer than other brace
+> expansion libs, with complete support for the Bash 4.3 braces specification,
+> without sacrificing speed.
 
-Please consider following this project's author, [Jon Schlinkert](https://github.com/jonschlinkert), and consider starring the project to show your :heart: and support.
+Please consider following this project's author,
+[Jon Schlinkert](https://github.com/jonschlinkert), and consider starring the
+project to show your :heart: and support.
 
 ## Install
 
@@ -18,21 +22,35 @@ See the [changelog](CHANGELOG.md) for details.
 
 ## Why use braces?
 
-Brace patterns make globs more powerful by adding the ability to match specific ranges and sequences of characters.
+Brace patterns make globs more powerful by adding the ability to match specific
+ranges and sequences of characters.
 
-- **Accurate** - complete support for the [Bash 4.3 Brace Expansion](www.gnu.org/software/bash/) specification (passes all of the Bash braces tests)
-- **[fast and performant](#benchmarks)** - Starts fast, runs fast and [scales well](#performance) as patterns increase in complexity.
-- **Organized code base** - The parser and compiler are easy to maintain and update when edge cases crop up.
-- **Well-tested** - Thousands of test assertions, and passes all of the Bash, minimatch, and [brace-expansion](https://github.com/juliangruber/brace-expansion) unit tests (as of the date this was written).
-- **Safer** - You shouldn't have to worry about users defining aggressive or malicious brace patterns that can break your application. Braces takes measures to prevent malicious regex that can be used for DDoS attacks (see [catastrophic backtracking](https://www.regular-expressions.info/catastrophic.html)).
+- **Accurate** - complete support for the
+  [Bash 4.3 Brace Expansion](www.gnu.org/software/bash/) specification (passes
+  all of the Bash braces tests)
+- **[fast and performant](#benchmarks)** - Starts fast, runs fast and
+  [scales well](#performance) as patterns increase in complexity.
+- **Organized code base** - The parser and compiler are easy to maintain and
+  update when edge cases crop up.
+- **Well-tested** - Thousands of test assertions, and passes all of the Bash,
+  minimatch, and
+  [brace-expansion](https://github.com/juliangruber/brace-expansion) unit tests
+  (as of the date this was written).
+- **Safer** - You shouldn't have to worry about users defining aggressive or
+  malicious brace patterns that can break your application. Braces takes
+  measures to prevent malicious regex that can be used for DDoS attacks (see
+  [catastrophic backtracking](https://www.regular-expressions.info/catastrophic.html)).
 - [Supports lists](#lists) - (aka "sets") `a/{b,c}/d` => `['a/b/d', 'a/c/d']`
-- [Supports sequences](#sequences) - (aka "ranges") `{01..03}` => `['01', '02', '03']`
-- [Supports steps](#steps) - (aka "increments") `{2..10..2}` => `['2', '4', '6', '8', '10']`
+- [Supports sequences](#sequences) - (aka "ranges") `{01..03}` =>
+  `['01', '02', '03']`
+- [Supports steps](#steps) - (aka "increments") `{2..10..2}` =>
+  `['2', '4', '6', '8', '10']`
 - [Supports escaping](#escaping) - To prevent evaluation of special characters.
 
 ## Usage
 
-The main export is a function that takes one or more brace `patterns` and `options`.
+The main export is a function that takes one or more brace `patterns` and
+`options`.
 
 ```js
 import braces from 'braces';
@@ -47,7 +65,8 @@ console.log(braces(['{01..05}', '{a..e}'], { expand: true }));
 
 ### Brace Expansion vs. Compilation
 
-By default, brace patterns are compiled into strings that are optimized for creating regular expressions and matching.
+By default, brace patterns are compiled into strings that are optimized for
+creating regular expressions and matching.
 
 **Compiled**
 
@@ -60,7 +79,9 @@ console.log(braces(['a/{01..20}/b', 'a/{1..5}/b']));
 
 **Expanded**
 
-Enable brace expansion by setting the `expand` option to true, or by using [braces.expand()](#expand) (returns an array similar to what you'd expect from Bash, or `echo {1..5}`, or [minimatch](https://github.com/isaacs/minimatch)):
+Enable brace expansion by setting the `expand` option to true, or by using
+[braces.expand()](#expand) (returns an array similar to what you'd expect from
+Bash, or `echo {1..5}`, or [minimatch](https://github.com/isaacs/minimatch)):
 
 ```js
 console.log(braces('a/{x,y,z}/b', { expand: true }));
@@ -97,7 +118,8 @@ console.log(braces('a/{01..03}/b')); //=> ['a/(0[1-3])/b']
 console.log(braces('a/{001..300}/b')); //=> ['a/(0{2}[1-9]|0[1-9][0-9]|[12][0-9]{2}|300)/b']
 ```
 
-See [fill-range](https://github.com/jonschlinkert/fill-range) for all available range-expansion options.
+See [fill-range](https://github.com/jonschlinkert/fill-range) for all available
+range-expansion options.
 
 ### Steppped ranges
 
@@ -111,11 +133,14 @@ console.log(braces('{2..10..2}'));
 //=> ['(2|4|6|8|10)']
 ```
 
-When the [.optimize](#optimize) method is used, or [options.optimize](#optionsoptimize) is set to true, sequences are passed to [to-regex-range](https://github.com/jonschlinkert/to-regex-range) for expansion.
+When the [.optimize](#optimize) method is used, or
+[options.optimize](#optionsoptimize) is set to true, sequences are passed to
+[to-regex-range](https://github.com/jonschlinkert/to-regex-range) for expansion.
 
 ### Nesting
 
-Brace patterns may be nested. The results of each expanded string are not sorted, and left to right order is preserved.
+Brace patterns may be nested. The results of each expanded string are not
+sorted, and left to right order is preserved.
 
 **"Expanded" braces**
 
@@ -141,7 +166,8 @@ console.log(braces('a/{x,{1..5},y}/c'));
 
 **Escaping braces**
 
-A brace pattern will not be expanded or evaluted if _either the opening or closing brace is escaped_:
+A brace pattern will not be expanded or evaluted if _either the opening or
+closing brace is escaped_:
 
 ```js
 console.log(braces.expand('a\\{d,c,b}e'));
@@ -165,7 +191,8 @@ console.log(braces.expand('a{d\\,c,b}e'));
 
 **Single items**
 
-Following bash conventions, a brace pattern is also not expanded when it contains a single character:
+Following bash conventions, a brace pattern is also not expanded when it
+contains a single character:
 
 ```js
 console.log(braces.expand('a{b}c'));
@@ -180,7 +207,9 @@ console.log(braces.expand('a{b}c'));
 
 **Default**: `10,000`
 
-**Description**: Limit the length of the input string. Useful when the input string is generated or your application allows users to pass a string, et cetera.
+**Description**: Limit the length of the input string. Useful when the input
+string is generated or your application allows users to pass a string, et
+cetera.
 
 ```js
 console.log(braces('a/{b,c}/d', { maxLength: 3 })); //=> throws an error
@@ -192,7 +221,9 @@ console.log(braces('a/{b,c}/d', { maxLength: 3 })); //=> throws an error
 
 **Default**: `100`
 
-**Description**: Limit the nesting depth of braces and parentheses. Values greater than 100 are capped at 100 to prevent stack overflow in recursive AST processing.
+**Description**: Limit the nesting depth of braces and parentheses. Values
+greater than 100 are capped at 100 to prevent stack overflow in recursive AST
+processing.
 
 ```js
 console.log(braces('{{a,b},c}', { maxDepth: 1 })); //=> throws an error
@@ -204,7 +235,8 @@ console.log(braces('{{a,b},c}', { maxDepth: 1 })); //=> throws an error
 
 **Default**: `undefined`
 
-**Description**: Generate an "expanded" brace pattern (alternatively you can use the `braces.expand()` method, which does the same thing).
+**Description**: Generate an "expanded" brace pattern (alternatively you can use
+the `braces.expand()` method, which does the same thing).
 
 ```js
 console.log(braces('a/{b,c}/d', { expand: true }));
@@ -225,9 +257,12 @@ console.log(braces('a/{b,c}/d', { expand: true }));
 
 **Default**: `1000`
 
-**Description**: To prevent malicious patterns from being passed by users, an error is thrown when `braces.expand()` is used or `options.expand` is true and the generated range will exceed the `rangeLimit`.
+**Description**: To prevent malicious patterns from being passed by users, an
+error is thrown when `braces.expand()` is used or `options.expand` is true and
+the generated range will exceed the `rangeLimit`.
 
-You can customize `options.rangeLimit` or set it to `Inifinity` to disable this altogether.
+You can customize `options.rangeLimit` or set it to `Inifinity` to disable this
+altogether.
 
 **Examples**
 
@@ -281,11 +316,16 @@ console.log(numeric);
 
 **Default**: `undefined`
 
-**Description**: In regular expressions, quanitifiers can be used to specify how many times a token can be repeated. For example, `a{1,3}` will match the letter `a` one to three times.
+**Description**: In regular expressions, quanitifiers can be used to specify how
+many times a token can be repeated. For example, `a{1,3}` will match the letter
+`a` one to three times.
 
-Unfortunately, regex quantifiers happen to share the same syntax as [Bash lists](#lists)
+Unfortunately, regex quantifiers happen to share the same syntax as
+[Bash lists](#lists)
 
-The `quantifiers` option tells braces to detect when [regex quantifiers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#quantifiers) are defined in the given pattern, and not to try to expand them as lists.
+The `quantifiers` option tells braces to detect when
+[regex quantifiers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#quantifiers)
+are defined in the given pattern, and not to try to expand them as lists.
 
 **Examples**
 
@@ -305,11 +345,14 @@ console.log(braces('a/b{1,3}/{x,y,z}', { quantifiers: true, expand: true }));
 
 **Default**: `undefined`
 
-**Description**: Do not strip backslashes that were used for escaping from the result.
+**Description**: Do not strip backslashes that were used for escaping from the
+result.
 
 ## What is "brace expansion"?
 
-Brace expansion is a type of parameter expansion that was made popular by unix shells for generating lists of strings, as well as regex-like matching when used alongside wildcards (globs).
+Brace expansion is a type of parameter expansion that was made popular by unix
+shells for generating lists of strings, as well as regex-like matching when used
+alongside wildcards (globs).
 
 In addition to "expansion", braces are also used for matching. In other words:
 
@@ -321,8 +364,12 @@ In addition to "expansion", braces are also used for matching. In other words:
 
 There are two main types of brace expansion:
 
-1. **lists**: which are defined using comma-separated values inside curly braces: `{a,b,c}`
-2. **sequences**: which are defined using a starting value and an ending value, separated by two dots: `a{1..3}b`. Optionally, a third argument may be passed to define a "step" or increment to use: `a{1..100..10}b`. These are also sometimes referred to as "ranges".
+1. **lists**: which are defined using comma-separated values inside curly
+   braces: `{a,b,c}`
+2. **sequences**: which are defined using a starting value and an ending value,
+   separated by two dots: `a{1..3}b`. Optionally, a third argument may be passed
+   to define a "step" or increment to use: `a{1..100..10}b`. These are also
+   sometimes referred to as "ranges".
 
 Here are some example brace patterns to illustrate how they work:
 
@@ -353,11 +400,14 @@ Sets and sequences can be mixed together or used along with any other strings.
 foo/{a,b,c}/bar => foo/a/bar foo/b/bar foo/c/bar
 ```
 
-The fact that braces can be "expanded" from relatively simple patterns makes them ideal for quickly generating test fixtures, file paths, and similar use cases.
+The fact that braces can be "expanded" from relatively simple patterns makes
+them ideal for quickly generating test fixtures, file paths, and similar use
+cases.
 
 ## Brace matching
 
-In addition to _expansion_, brace patterns are also useful for performing regular-expression-like matching.
+In addition to _expansion_, brace patterns are also useful for performing
+regular-expression-like matching.
 
 For example, the pattern `foo/{1..3}/bar` would match any of following strings:
 
@@ -375,7 +425,10 @@ baz/2/qux
 baz/3/qux
 ```
 
-Braces can also be combined with [glob patterns](https://github.com/jonschlinkert/micromatch) to perform more advanced wildcard matching. For example, the pattern `*/{1..3}/*` would match any of following strings:
+Braces can also be combined with
+[glob patterns](https://github.com/jonschlinkert/micromatch) to perform more
+advanced wildcard matching. For example, the pattern `*/{1..3}/*` would match
+any of following strings:
 
 ```
 foo/1/bar
@@ -388,25 +441,34 @@ baz/3/qux
 
 ## Brace matching pitfalls
 
-Although brace patterns offer a user-friendly way of matching ranges or sets of strings, there are also some major disadvantages and potential risks you should be aware of.
+Although brace patterns offer a user-friendly way of matching ranges or sets of
+strings, there are also some major disadvantages and potential risks you should
+be aware of.
 
 ### tldr
 
 **"brace bombs"**
 
 - brace expansion can eat up a huge amount of processing resources
-- as brace patterns increase _linearly in size_, the system resources required to expand the pattern increase exponentially
-- users can accidentally (or intentially) exhaust your system's resources resulting in the equivalent of a DoS attack (bonus: no programming knowledge is required!)
+- as brace patterns increase _linearly in size_, the system resources required
+  to expand the pattern increase exponentially
+- users can accidentally (or intentially) exhaust your system's resources
+  resulting in the equivalent of a DoS attack (bonus: no programming knowledge
+  is required!)
 
-For a more detailed explanation with examples, see the [geometric complexity](#geometric-complexity) section.
+For a more detailed explanation with examples, see the
+[geometric complexity](#geometric-complexity) section.
 
 ### The solution
 
-Jump to the [performance section](#performance) to see how Braces solves this problem in comparison to other libraries.
+Jump to the [performance section](#performance) to see how Braces solves this
+problem in comparison to other libraries.
 
 ### Geometric complexity
 
-At minimum, brace patterns with sets limited to two elements have quadradic or `O(n^2)` complexity. But the complexity of the algorithm increases exponentially as the number of sets, _and elements per set_, increases, which is `O(n^c)`.
+At minimum, brace patterns with sets limited to two elements have quadradic or
+`O(n^2)` complexity. But the complexity of the algorithm increases exponentially
+as the number of sets, _and elements per set_, increases, which is `O(n^c)`.
 
 For example, the following sets demonstrate quadratic (`O(n^2)`) complexity:
 
@@ -415,7 +477,8 @@ For example, the following sets demonstrate quadratic (`O(n^2)`) complexity:
 {1,2}{3,4}{5,6} => (2X2X2)  => 135 136 145 146 235 236 245 246
 ```
 
-But add an element to a set, and we get a n-fold Cartesian product with `O(n^c)` complexity:
+But add an element to a set, and we get a n-fold Cartesian product with `O(n^c)`
+complexity:
 
 ```
 {1,2,3}{4,5,6}{7,8,9} => (3X3X3) => 147 148 149 157 158 159 167 168 169 247 248
@@ -430,7 +493,8 @@ Now, imagine how this complexity grows given that each element is a n-tuple:
 {1..100}{1..100}{1..100} => (100X100X100) => 1,000,000 elements (5.76 MB)
 ```
 
-Although these examples are clearly contrived, they demonstrate how brace patterns can quickly grow out of control.
+Although these examples are clearly contrived, they demonstrate how brace
+patterns can quickly grow out of control.
 
 **More information**
 
@@ -444,17 +508,23 @@ Interested in learning more about brace expansion?
 
 ## Performance
 
-Braces is not only screaming fast, it's also more accurate the other brace expansion libraries.
+Braces is not only screaming fast, it's also more accurate the other brace
+expansion libraries.
 
 ### Better algorithms
 
-Fortunately there is a solution to the ["brace bomb" problem](#brace-matching-pitfalls): _don't expand brace patterns into an array when they're used for matching_.
+Fortunately there is a solution to the
+["brace bomb" problem](#brace-matching-pitfalls): _don't expand brace patterns
+into an array when they're used for matching_.
 
-Instead, convert the pattern into an optimized regular expression. This is easier said than done, and braces is the only library that does this currently.
+Instead, convert the pattern into an optimized regular expression. This is
+easier said than done, and braces is the only library that does this currently.
 
 **The proof is in the numbers**
 
-Minimatch gets exponentially slower as patterns increase in complexity, braces does not. The following results were generated using `braces()` and `minimatch.braceExpand()`, respectively.
+Minimatch gets exponentially slower as patterns increase in complexity, braces
+does not. The following results were generated using `braces()` and
+`minimatch.braceExpand()`, respectively.
 
 | **Pattern**                 | **braces**          | **[minimatch][]**            |
 | --------------------------- | ------------------- | ---------------------------- |
@@ -480,7 +550,8 @@ Minimatch gets exponentially slower as patterns increase in complexity, braces d
 
 When you need expansion, braces is still much faster.
 
-_(the following results were generated using `braces.expand()` and `minimatch.braceExpand()`, respectively)_
+_(the following results were generated using `braces.expand()` and
+`minimatch.braceExpand()`, respectively)_
 
 | **Pattern**     | **braces**                  | **[minimatch][]**            |
 | --------------- | --------------------------- | ---------------------------- |
@@ -493,7 +564,8 @@ _(the following results were generated using `braces.expand()` and `minimatch.br
 | `{1..10}`       | `20 B` (487μs)              | `20 B` (72μs)                |
 | `{1..3}`        | `5 B` (166μs)               | `5 B` (27μs)                 |
 
-If you'd like to run these comparisons yourself, see [test/support/generate.js](test/support/generate.js).
+If you'd like to run these comparisons yourself, see
+[test/support/generate.js](test/support/generate.js).
 
 ## Benchmarks
 
@@ -541,14 +613,17 @@ Braces is more accurate, without sacrificing performance.
 <details>
 <summary><strong>Contributing</strong></summary>
 
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
+Pull requests and stars are always welcome. For bugs and feature requests,
+[please create an issue](../../issues/new).
 
 </details>
 
 <details>
 <summary><strong>Running Tests</strong></summary>
 
-Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+Running and reviewing unit tests is a great way to get familiarized with a
+library and its API. You can install dependencies and run tests with the
+following command:
 
 ```sh
 $ npm install && npm test
@@ -559,7 +634,10 @@ $ npm install && npm test
 <details>
 <summary><strong>Building docs</strong></summary>
 
-_(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
+_(This project's readme.md is generated by
+[verb](https://github.com/verbose/verb-generate-readme), please don't edit the
+readme directly. Any changes to the readme must be made in the
+[.verb.md](.verb.md) readme template.)_
 
 To generate the readme, run the following command:
 
@@ -590,9 +668,11 @@ $ npm install -g verbose/verb#dev verb-generate-readme && verb
 
 ### License
 
-Copyright © 2019, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT License](LICENSE).
+Copyright © 2019, [Jon Schlinkert](https://github.com/jonschlinkert). Released
+under the [MIT License](LICENSE).
 
 ---
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.8.0, on April 08, 2019._
+_This file was generated by
+[verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.8.0,
+on April 08, 2019._

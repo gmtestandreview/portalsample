@@ -13,7 +13,8 @@ ClientApp/src/env.ts    → Runtime config from window.* injected by Vite
 
 ## Route Tree (App.tsx)
 
-All protected routes wrap with `<AuthenticatedElement>`. Routes with multi-step wizards pass `displayHeaderAndFooter={false}`.
+All protected routes wrap with `<AuthenticatedElement>`. Routes with multi-step
+wizards pass `displayHeaderAndFooter={false}`.
 
 ```text
 /                          → Home (public, Layout)
@@ -97,18 +98,21 @@ ClientApp/src/components/
 
 ## State Management
 
-| Layer | Mechanism |
-|-------|-----------|
-| Auth | React Context (`AccountContext`) via `AccountProvider` — provides MSAL accounts |
-| Wizard forms | `sessionStorage` (`SessionStorageCache`) — step data survives navigation |
-| Notifications | `ClientApp/src/storage/notification.ts` — dashboard/modal flags in sessionStorage |
-| No global state library | No Redux/Zustand/Jotai — everything is co-located or in session |
+| Layer                   | Mechanism                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| Auth                    | React Context (`AccountContext`) via `AccountProvider` — provides MSAL accounts   |
+| Wizard forms            | `sessionStorage` (`SessionStorageCache`) — step data survives navigation          |
+| Notifications           | `ClientApp/src/storage/notification.ts` — dashboard/modal flags in sessionStorage |
+| No global state library | No Redux/Zustand/Jotai — everything is co-located or in session                   |
 
 ## Form Strategy
 
 Two form libraries coexist:
 
 - **Formik** — original; used in older routes
-- **React Hook Form (RHF)** — active migration target; Waves 1–5 completed on main
-- **`useFormikRhfBridge`** — adapter allows RHF-API code to run inside a Formik context (incremental migration)
-- **Yup** — validation for both libraries; 19 custom string methods in `stringExtensions.ts`
+- **React Hook Form (RHF)** — active migration target; Waves 1–5 completed on
+  main
+- **`useFormikRhfBridge`** — adapter allows RHF-API code to run inside a Formik
+  context (incremental migration)
+- **Yup** — validation for both libraries; 19 custom string methods in
+  `stringExtensions.ts`

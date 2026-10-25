@@ -2,7 +2,8 @@
 
 ## Identifying Multiple Contexts
 
-A React 16/17 codebase often has several legacy contexts used for different concerns:
+A React 16/17 codebase often has several legacy contexts used for different
+concerns:
 
 ```bash
 # Find distinct context names used in childContextTypes
@@ -34,7 +35,8 @@ For each legacy context:
   5. Move to the next context
 ```
 
-Do not migrate all providers first then all consumers - it leaves the app in a broken intermediate state.
+Do not migrate all providers first then all consumers - it leaves the app in a
+broken intermediate state.
 
 ---
 
@@ -70,7 +72,11 @@ class AppProvider extends React.Component {
 export const ThemeContext = React.createContext('light');
 
 // src/contexts/AuthContext.js
-export const AuthContext = React.createContext({ user: null, login: () => {}, logout: () => {} });
+export const AuthContext = React.createContext({
+  user: null,
+  login: () => {},
+  logout: () => {},
+});
 
 // src/contexts/LocaleContext.js
 export const LocaleContext = React.createContext('en');
@@ -91,7 +97,9 @@ class AppProvider extends React.Component {
     const { theme, user, locale, notifications } = this.state;
     return (
       <ThemeContext.Provider value={theme}>
-        <AuthContext.Provider value={{ user, login: this.login, logout: this.logout }}>
+        <AuthContext.Provider
+          value={{ user, login: this.login, logout: this.logout }}
+        >
           <LocaleContext.Provider value={locale}>
             <NotificationContext.Provider value={notifications}>
               {this.props.children}
@@ -108,7 +116,8 @@ class AppProvider extends React.Component {
 
 ## Consumer With Multiple Contexts (Class Component)
 
-Class components can only use ONE `static contextType`. For multiple, use `Consumer` render props or convert to a function component.
+Class components can only use ONE `static contextType`. For multiple, use
+`Consumer` render props or convert to a function component.
 
 ### Option A - Render Props (keep as class component)
 
@@ -156,7 +165,9 @@ function UserPanel() {
 }
 ```
 
-If converting to a function component is out of scope for this migration sprint - use Option A. If the class component is simple (mostly just render), Option B is worth the minor rewrite.
+If converting to a function component is out of scope for this migration
+sprint - use Option A. If the class component is simple (mostly just render),
+Option B is worth the minor rewrite.
 
 ---
 
@@ -172,7 +183,8 @@ src/
     LocaleContext.js     → exports: LocaleContext
 ```
 
-Each file exports the context object. The provider can stay in its original file and just import the context.
+Each file exports the context object. The provider can stay in its original file
+and just import the context.
 
 ---
 
@@ -192,4 +204,5 @@ grep -rn "getChildContext" src/ --include="*.js" --include="*.jsx" | grep -v "\.
 echo "All three should be 0"
 ```
 
-Note: `static contextType` (singular) is the MODERN API - that's correct. Only `contextTypes` (plural) is legacy.
+Note: `static contextType` (singular) is the MODERN API - that's correct. Only
+`contextTypes` (plural) is legacy.

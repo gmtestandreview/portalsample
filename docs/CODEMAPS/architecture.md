@@ -4,7 +4,8 @@
 
 ## System Type
 
-Single-page React application (SPA) hosted on Azure. Server-side is a .NET backend exposing an OpenAPI-spec REST API; the portal is the front-end only.
+Single-page React application (SPA) hosted on Azure. Server-side is a .NET
+backend exposing an OpenAPI-spec REST API; the portal is the front-end only.
 
 ## High-Level Data Flow
 
@@ -19,12 +20,12 @@ Browser
 
 ## Service Boundaries
 
-| Boundary | Description |
-|----------|-------------|
-| Auth | Azure AD B2C — MSAL popup/redirect + silent token renewal |
-| API | NMI backend REST — auto-generated typed client (`web-api-client.ts`) |
-| Analytics | App Insights (instrumentation) + Google Analytics (page tracking) |
-| Storage | sessionStorage only — multi-step wizard state, notification flags |
+| Boundary  | Description                                                          |
+| --------- | -------------------------------------------------------------------- |
+| Auth      | Azure AD B2C — MSAL popup/redirect + silent token renewal            |
+| API       | NMI backend REST — auto-generated typed client (`web-api-client.ts`) |
+| Analytics | App Insights (instrumentation) + Google Analytics (page tracking)    |
+| Storage   | sessionStorage only — multi-step wizard state, notification flags    |
 
 ## Bootstrap Sequence
 
@@ -48,9 +49,9 @@ Key changes on branch:
 
 ## Key Technology Decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| No Redux/Zustand | Session-scoped wizard state fits sessionStorage; no global shared state needed |
-| Formik → RHF migration | Incremental, per-component via useFormikRhfBridge adapter |
-| Vite (replacing Webpack 5) | Faster HMR, ESM-native, simpler config |
-| SCSS @import shim | Bootstrap 5 requires @import cascade; full @use migration deferred to Bootstrap 6 |
+| Decision                   | Rationale                                                                         |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| No Redux/Zustand           | Session-scoped wizard state fits sessionStorage; no global shared state needed    |
+| Formik → RHF migration     | Incremental, per-component via useFormikRhfBridge adapter                         |
+| Vite (replacing Webpack 5) | Faster HMR, ESM-native, simpler config                                            |
+| SCSS @import shim          | Bootstrap 5 requires @import cascade; full @use migration deferred to Bootstrap 6 |

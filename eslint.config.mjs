@@ -11,6 +11,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import vitest from '@vitest/eslint-plugin';
+import vitestGlobals from 'eslint-plugin-vitest-globals';
 
 const packageJsonPath = fileURLToPath(
   new URL('./package.json', import.meta.url),
@@ -281,11 +282,27 @@ export default defineConfig(
     files: [
       'tests/**',
       'ClientApp/src/**/*.stories.{ts,tsx}',
+      '**/*.test.{js,jsx,ts,tsx}',
+      '**/*.spec.{js,jsx,ts,tsx}',
+      '**/__tests__/**/*.{js,jsx,ts,tsx}',
       'vitest.setup.ts',
       'vitest.storybook.setup.ts',
     ],
     ...vitest.configs.all,
   },
+  {
+    files: [
+      'tests/**',
+      'ClientApp/src/**/*.stories.{ts,tsx}',
+      '**/*.test.{js,jsx,ts,tsx}',
+      '**/*.spec.{js,jsx,ts,tsx}',
+      '**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'vitest.setup.ts',
+      'vitest.storybook.setup.ts',
+    ],
+    ...vitestGlobals.configs['flat/recommended'],
+  },
+
   {
     // Setup files intentionally register global hooks and browser shims at
     // module scope so they are installed before each test file is imported.

@@ -17,7 +17,8 @@ Find and safely remove dead code, unused dependencies, and duplicates.
 - `npx depcheck` — unused npm dependencies
 - `npx ts-prune` — unused TypeScript exports
 
-**Process:** Analyze → Verify each item → Remove SAFE items → Run tests → Commit per batch
+**Process:** Analyze → Verify each item → Remove SAFE items → Run tests → Commit
+per batch
 
 **Never run:**
 

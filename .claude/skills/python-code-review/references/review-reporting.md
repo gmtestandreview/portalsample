@@ -138,9 +138,9 @@ For each material finding report:
 - **Regression test**
 - **Verification method**
 
-Use P0 for credible security, data loss, or major correctness failures;
-P1 for material correctness/resource risks, and P2 for maintainability or
-non-critical style. Treat optional preferences as recommendations, not defects.
+Use P0 for credible security, data loss, or major correctness failures; P1 for
+material correctness/resource risks, and P2 for maintainability or non-critical
+style. Treat optional preferences as recommendations, not defects.
 
 Group diagnostics sharing one root cause instead of counting downstream messages
 as separate defects.

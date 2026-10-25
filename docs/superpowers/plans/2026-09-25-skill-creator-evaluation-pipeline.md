@@ -162,8 +162,8 @@ stream-JSON protocol.
 
 Complete. Tasks 1–7 were implemented and verified. Focused regression suites,
 the full regression suite, legacy regression tests, syntax checks, skill
-validation, and smoke/release dry runs all passed. The red-phase commands in
-the original TDD checklist were not repeated as standalone commands after the
+validation, and smoke/release dry runs all passed. The red-phase commands in the
+original TDD checklist were not repeated as standalone commands after the
 snapshot had already moved beyond the failing state; passing focused and full
 gates are the completion evidence. No live Claude calls were made.
 
@@ -1130,7 +1130,8 @@ real skill remains unverified because no live Claude run was authorized.
 
 ## Execution Handoff
 
-- Plan path: `docs/superpowers/plans/2026-09-25-skill-creator-evaluation-pipeline.md`
+- Plan path:
+  `docs/superpowers/plans/2026-09-25-skill-creator-evaluation-pipeline.md`
 - Blocking unknowns: None.
 - Required human decision: authorize any real `smoke` or `release` run after
   deterministic implementation verification; implementation itself does not

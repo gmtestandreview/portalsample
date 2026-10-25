@@ -146,26 +146,26 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: __dirname + '/dist',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         use: 'babel-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html'
-    })
-  ]
+      template: './src/index.html',
+    }),
+  ],
 };
 ```
 
@@ -223,7 +223,7 @@ describe('sum function', () => {
   test('adds 1 + 2 to equal 3', () => {
     expect(sum(1, 2)).toBe(3);
   });
-  
+
   test('handles negative numbers', () => {
     expect(sum(-1, -2)).toBe(-3);
   });
@@ -269,8 +269,8 @@ module.exports = {
   extends: ['eslint:recommended'],
   rules: {
     'no-console': 'warn',
-    'no-unused-vars': 'error'
-  }
+    'no-unused-vars': 'error',
+  },
 };
 ```
 

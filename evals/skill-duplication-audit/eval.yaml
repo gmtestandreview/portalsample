@@ -11,24 +11,26 @@
 #   - one trivially-unrelated request as a sanity floor
 name: skill-duplication-audit-eval
 description: >-
-  Fires-when-it-should / silent-when-it-should-not eval for skill-duplication-audit,
-  with positives also checked for the skill's completion block and >=1 classification.
+  Fires-when-it-should / silent-when-it-should-not eval for
+  skill-duplication-audit, with positives also checked for the skill's
+  completion block and >=1 classification.
 skill: skill-duplication-audit
-version: "1.1"
+version: '1.1'
 config:
-  trials_per_task: 3        # was 1 - trigger behaviour is stochastic; 3 gives a variance signal
+  trials_per_task: 3 # was 1 - trigger behaviour is stochastic; 3 gives a variance signal
   timeout_seconds: 300
-  parallel: true            # was false - tasks share no state
+  parallel: true # was false - tasks share no state
   executor: copilot-sdk
-  model: claude-sonnet-5     # was claude-sonnet-4.6 - match the model users actually run
+  model: claude-sonnet-5 # was claude-sonnet-4.6 - match the model users actually run
 metrics:
   - name: task_completion
     weight: 0.7
     threshold: 0.8
     description: >-
-      Positives fire the skill and emit its Output contract (completion block plus
-      at least one classification); negatives do not fire it and stay brief. Scored
-      from each task's expected.should_trigger and its text grader.
+      Positives fire the skill and emit its Output contract (completion block
+      plus at least one classification); negatives do not fire it and stay
+      brief. Scored from each task's expected.should_trigger and its text
+      grader.
   - name: efficiency
     weight: 0.3
     threshold: 0.7
@@ -45,4 +47,4 @@ graders:
     config:
       max_tokens: 2800
 tasks:
-  - "tasks/*.yaml"
+  - 'tasks/*.yaml'

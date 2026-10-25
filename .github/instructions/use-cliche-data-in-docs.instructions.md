@@ -1,17 +1,25 @@
 ---
-description: 'This file describes best practices for using placeholder data in documentation, prompts, instruction files, skills, examples, and public-facing snippets in this repository. Follow these guidelines to ensure that private or sensitive information is not exposed while keeping examples valid and useful for readers.'
+description:
+  'This file describes best practices for using placeholder data in
+  documentation, prompts, instruction files, skills, examples, and public-facing
+  snippets in this repository. Follow these guidelines to ensure that private or
+  sensitive information is not exposed while keeping examples valid and useful
+  for readers.'
 applyTo: 'README.md,docs/**/*.md,.github/prompts/**/*.prompt.md,.github/instructions/**/*.instructions.md,.github/skills/**/SKILL.md,examples/**/*.{md,mdx,json,js,ts,tsx}'
 ---
 
 # Placeholder data rules
 
-Use these rules when writing or updating documentation, prompts, instruction files, skills, examples, or public-facing snippets.
+Use these rules when writing or updating documentation, prompts, instruction
+files, skills, examples, or public-facing snippets.
 
 ## Core rule
 
-This rule is about public-facing documentation and examples, not normal application logic, package metadata, or runtime configuration.
+This rule is about public-facing documentation and examples, not normal
+application logic, package metadata, or runtime configuration.
 
-Do not copy private, environment-specific, customer/client, credential, account, or prompt-provided data into public-facing documentation or examples.
+Do not copy private, environment-specific, customer/client, credential, account,
+or prompt-provided data into public-facing documentation or examples.
 
 Use obvious placeholder data instead.
 
@@ -67,13 +75,16 @@ When replacing real data with placeholders:
 
 In source comments or snippets, remove private or sensitive data.
 
-Do not remove useful repo-specific rationale, public product names, issue context, or technical constraints merely because they are specific.
+Do not remove useful repo-specific rationale, public product names, issue
+context, or technical constraints merely because they are specific.
 
 ## Validation
 
 Before finishing:
 
-- confirm no private data was copied from prompts, local config, scripts, task files, or git-ignored files into docs or examples
+- confirm no private data was copied from prompts, local config, scripts, task
+  files, or git-ignored files into docs or examples
 - confirm placeholder replacements remain valid and understandable
 - confirm public technical identifiers that readers need were preserved
-- if unsure whether a value is public or private, treat it as private and flag the uncertainty
+- if unsure whether a value is public or private, treat it as private and flag
+  the uncertainty

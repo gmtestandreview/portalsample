@@ -82,13 +82,7 @@
     },
     {
       "name": "controller_frontmatter",
-      "command": [
-        "uv",
-        "run",
-        "skills-ref",
-        "validate",
-        "../"
-      ],
+      "command": ["uv", "run", "skills-ref", "validate", "../"],
       "exit_code": 0,
       "elapsed_seconds": 0.262,
       "stdout": "Valid skill: ..\n",

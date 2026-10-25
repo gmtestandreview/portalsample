@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, fn } from 'storybook/test';
 import type { PatternApprovalDashboardDetailsDto } from '../../api/web-api-client';

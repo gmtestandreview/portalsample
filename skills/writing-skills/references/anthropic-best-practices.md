@@ -9,8 +9,7 @@ Good Skills are concise, well-structured, and tested with real usage. This guide
 provides practical authoring decisions to help you write Skills that Claude can
 discover and use effectively.
 
-For conceptual background on how Skills work, see the
-Skills overview.
+For conceptual background on how Skills work, see the Skills overview.
 
 ## Core principles
 
@@ -171,9 +170,7 @@ all of them.
 - `description` - One-line description of what the Skill does and when to use it
   (1024 characters maximum)
 
-  For complete Skill structure details, see the
-  Skills overview.
-  </Note>
+  For complete Skill structure details, see the Skills overview. </Note>
 
 ### Naming conventions
 
@@ -275,9 +272,7 @@ description: Does stuff with files
 
 SKILL.md serves as an overview that points Claude to detailed materials as
 needed, like a table of contents in an onboarding guide. For an explanation of
-how progressive disclosure works, see
-How Skills work
-in the overview.
+how progressive disclosure works, see How Skills work in the overview.
 
 **Practical guidance:**
 
@@ -445,7 +440,7 @@ when previewing with partial reads.
 
 **Example**:
 
-````markdown theme={null}
+```markdown theme={null}
 # API Reference
 
 ## Contents
@@ -463,7 +458,7 @@ when previewing with partial reads.
 ## Core methods
 
 ...
-````
+```
 
 Claude can then read the complete file or jump to specific sections as needed.
 
@@ -1184,16 +1179,14 @@ Skills run in the code execution environment with platform-specific limitations:
   repositories
 - **Anthropic API**: Has no network access and no runtime package installation
 
-List required packages in your SKILL.md and verify they're available in the
-code execution tool documentation.
+List required packages in your SKILL.md and verify they're available in the code
+execution tool documentation.
 
 ### Runtime environment
 
 Skills run in a code execution environment with filesystem access, bash
 commands, and code execution capabilities. For the conceptual explanation of
-this architecture, see
-The Skills architecture
-in the overview.
+this architecture, see The Skills architecture in the overview.
 
 **How this affects your authoring:**
 
@@ -1244,9 +1237,8 @@ until needed. This filesystem-based model is what enables progressive
 disclosure. Claude can navigate and selectively load exactly what each task
 requires.
 
-For complete details on the technical architecture, see
-How Skills work
-in the Skills overview.
+For complete details on the technical architecture, see How Skills work in the
+Skills overview.
 
 ### MCP tool references
 
@@ -1294,9 +1286,8 @@ reader = PdfReader("file.pdf")
 ### YAML frontmatter requirements
 
 The SKILL.md frontmatter includes only `name` (64 characters max) and
-`description` (1024 characters max) fields. See the
-Skills overview
-for complete structure details.
+`description` (1024 characters max) fields. See the Skills overview for complete
+structure details.
 
 ### Token budgets
 

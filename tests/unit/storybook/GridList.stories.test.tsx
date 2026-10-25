@@ -7,7 +7,7 @@ import {
 
 describe('gridList stories', () => {
   it('provides alt text for every image in the example story', () => {
-    expect.hasAssertions();
+    expect.assertions(1);
 
     render(<>{renderExample({ selectionMode: 'multiple', layout: 'grid' })}</>);
 
@@ -17,7 +17,7 @@ describe('gridList stories', () => {
   });
 
   it('provides alt text for every image in the sections story', () => {
-    expect.hasAssertions();
+    expect.assertions(1);
 
     render(
       <>{renderSections({ selectionMode: 'multiple', layout: 'grid' })}</>,

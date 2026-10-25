@@ -63,7 +63,7 @@ defects in production, not artefacts of the snapshot.
 | **Frontend**        | React 18.3.1 SPA (`createRoot`), React Router 7.18.2 (`createBrowserRouter`)                                                                                                                                                                                          |
 | **Backend**         | **none in this repository.** The SPA calls a co-hosted ASP.NET API at same-origin relative paths (`/api/...`); the client is NSwag-generated into `ClientApp/src/api/web-api-client.ts` with an empty `baseUrl`. The backend lives in a separate repository and team. |
 | **Database**        | **none.** No DB driver, ORM, migration tool, or connection string exists in this repo. Client-side persistence is `sessionStorage` only (`ClientApp/src/storage/**`).                                                                                                 |
-| **Runtime**         | Node.js **>= 24.0.0** (`engines` + `devEngines.runtime` with `onFail: "error"`); local dev pinned to **24.20.0** via `.node-version`                                                                                                                                  |
+| **Runtime**         | Node.js **>= 24.21.0** (`engines` + `devEngines.runtime` with `onFail: "error"`); local dev pinned to **24.21.0** via `.node-version`                                                                                                                                  |
 | **Package manager** | npm **11.17.0** (`packageManager` field; CI invokes `npx npm@11.17.0 ci` explicitly so the lockfile is resolved by the declared npm, not the runner's bundled one)                                                                                                    |
 | **CI/CD**           | **GitHub Actions** — `pr.yml`, `release.yml`, `chromatic.yml`. Plus **SonarCloud** (EU) and **Chromatic** as external gates.                                                                                                                                          |
 
@@ -306,7 +306,7 @@ reach Resolved only when closure evidence is recorded.
 | Package manager     | npm 11.17.0                                                            | `packageManager` field + `package-lock.json`                       |
 | Module/build system | **Vite 8:** production, Storybook, and test tooling | `vite.config.mts`; `@storybook/react-vite`                       |
 | React version       | 18.3.1                                                                 | `node_modules/react/package.json`                                  |
-| Node.js             | >= 24.0.0 required; 24.20.0 pinned locally                             | `engines`, `devEngines.runtime` (`onFail: error`), `.node-version` |
+| Node.js             | >= 24.21.0 required; 24.21.0 pinned locally                             | `engines`, `devEngines.runtime` (`onFail: error`), `.node-version` |
 | CSP                 | Trusted Types policy + DOMPurify                                       | `ClientApp/src/trustedtypes.ts`                                    |
 
 ---
@@ -427,7 +427,7 @@ one red leg never hides another.
 | `build-node24`                                                         | Production Vite build + `storybook:verify:docs`                                                                                                                                                                     |
 | `date-timezone` x 3 (`UTC`, `Australia/Sydney`, `America/Los_Angeles`) | The date suite is timezone-sensitive by construction; each zone is a separate leg so a failure stays attributable                                                                                                    |
 | `e2e-node24`                                                           | Both BDD suites; each Playwright project starts its own server (app on `:3000`, Storybook on `:6006`) and mocks API + MSAL, so no backend is needed                                                                  |
-| `lower-bound-node24`                                                   | Installs on the **exact declared floor** (Node 24.0.0, `--strict-peer-deps`) and runs the dependency-security policy tests. Proves the floor itself works, not merely "some Node 24".                                |
+| `lower-bound-node24`                                                   | Installs on the **exact declared floor** (Node 24.21.0, `--strict-peer-deps`) and runs the dependency-security policy tests. Proves the floor itself works, not merely "some Node 24".                                |
 | `sonarcloud`                                                           | `needs: vitest` — consumes that job's coverage artifact rather than re-running the suite. `fetch-depth: 0` so SCM blame drives new-code attribution. `sonar.qualitygate.wait=true` makes a red gate block the merge. |
 
 **Two recurring CI mechanics worth knowing before you touch these files:**

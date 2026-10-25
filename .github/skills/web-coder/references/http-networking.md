@@ -1,30 +1,34 @@
 # HTTP & Networking Reference
 
-Comprehensive reference for HTTP protocol, networking concepts, and web communication.
+Comprehensive reference for HTTP protocol, networking concepts, and web
+communication.
 
 ## HTTP (HyperText Transfer Protocol)
 
-Protocol for transferring hypertext between client and server. Foundation of data communication on the web.
+Protocol for transferring hypertext between client and server. Foundation of
+data communication on the web.
 
 ### HTTP Versions
 
 - **HTTP/1.1** (1997): Text-based, persistent connections, pipelining
-- **HTTP/2** (2015): Binary protocol, multiplexing, server push, header compression
-- **HTTP/3** (2022): Based on QUIC (UDP), improved performance, better handling of packet loss
+- **HTTP/2** (2015): Binary protocol, multiplexing, server push, header
+  compression
+- **HTTP/3** (2022): Based on QUIC (UDP), improved performance, better handling
+  of packet loss
 
 ## Request Methods
 
-| Method | Purpose | Idempotent | Safe | Cacheable |
-| -------- | --------- | ------------ | ------ | ----------- |
-| GET | Retrieve resource | Yes | Yes | Yes |
-| POST | Create resource | No | No | Rarely |
-| PUT | Update/replace resource | Yes | No | No |
-| PATCH | Partial update | No | No | No |
-| DELETE | Delete resource | Yes | No | No |
-| HEAD | Like GET but no body | Yes | Yes | Yes |
-| OPTIONS | Get allowed methods | Yes | Yes | No |
-| CONNECT | Establish tunnel | No | No | No |
-| TRACE | Echo request | Yes | Yes | No |
+| Method  | Purpose                 | Idempotent | Safe | Cacheable |
+| ------- | ----------------------- | ---------- | ---- | --------- |
+| GET     | Retrieve resource       | Yes        | Yes  | Yes       |
+| POST    | Create resource         | No         | No   | Rarely    |
+| PUT     | Update/replace resource | Yes        | No   | No        |
+| PATCH   | Partial update          | No         | No   | No        |
+| DELETE  | Delete resource         | Yes        | No   | No        |
+| HEAD    | Like GET but no body    | Yes        | Yes  | Yes       |
+| OPTIONS | Get allowed methods     | Yes        | Yes  | No        |
+| CONNECT | Establish tunnel        | No         | No   | No        |
+| TRACE   | Echo request            | Yes        | Yes  | No        |
 
 **Safe**: Doesn't modify server state  
 **Idempotent**: Multiple identical requests have same effect as single request
@@ -33,60 +37,60 @@ Protocol for transferring hypertext between client and server. Foundation of dat
 
 ### 1xx Informational
 
-| Code | Message | Meaning |
-|------|---------|---------|
-| 100 | Continue | Client should continue request |
-| 101 | Switching Protocols | Server switching protocols |
+| Code | Message             | Meaning                        |
+| ---- | ------------------- | ------------------------------ |
+| 100  | Continue            | Client should continue request |
+| 101  | Switching Protocols | Server switching protocols     |
 
 ### 2xx Success
 
-| Code | Message | Meaning |
-| ------ | --------- | --------- |
-| 200 | OK | Request succeeded |
-| 201 | Created | Resource created |
-| 202 | Accepted | Accepted but not processed |
-| 204 | No Content | Success but no content to return |
-| 206 | Partial Content | Partial resource (range request) |
+| Code | Message         | Meaning                          |
+| ---- | --------------- | -------------------------------- |
+| 200  | OK              | Request succeeded                |
+| 201  | Created         | Resource created                 |
+| 202  | Accepted        | Accepted but not processed       |
+| 204  | No Content      | Success but no content to return |
+| 206  | Partial Content | Partial resource (range request) |
 
 ### 3xx Redirection
 
-| Code | Message | Meaning |
-| ------ | --------- | --------- |
-| 301 | Moved Permanently | Resource permanently moved |
-| 302 | Found | Temporary redirect |
-| 303 | See Other | Response at different URI |
-| 304 | Not Modified | Resource not modified (cache) |
-| 307 | Temporary Redirect | Like 302 but keep method |
-| 308 | Permanent Redirect | Like 301 but keep method |
+| Code | Message            | Meaning                       |
+| ---- | ------------------ | ----------------------------- |
+| 301  | Moved Permanently  | Resource permanently moved    |
+| 302  | Found              | Temporary redirect            |
+| 303  | See Other          | Response at different URI     |
+| 304  | Not Modified       | Resource not modified (cache) |
+| 307  | Temporary Redirect | Like 302 but keep method      |
+| 308  | Permanent Redirect | Like 301 but keep method      |
 
 ### 4xx Client Errors
 
-| Code | Message | Meaning |
-| ------ | --------- | --------- |
-| 400 | Bad Request | Invalid syntax |
-| 401 | Unauthorized | Authentication required |
-| 403 | Forbidden | Access denied |
-| 404 | Not Found | Resource not found |
-| 405 | Method Not Allowed | Method not supported |
-| 408 | Request Timeout | Request took too long |
-| 409 | Conflict | Request conflicts with state |
-| 410 | Gone | Resource permanently gone |
-| 413 | Payload Too Large | Request body too large |
-| 414 | URI Too Long | URI too long |
-| 415 | Unsupported Media Type | Media type not supported |
-| 422 | Unprocessable Entity | Semantic errors |
-| 429 | Too Many Requests | Rate limit exceeded |
+| Code | Message                | Meaning                      |
+| ---- | ---------------------- | ---------------------------- |
+| 400  | Bad Request            | Invalid syntax               |
+| 401  | Unauthorized           | Authentication required      |
+| 403  | Forbidden              | Access denied                |
+| 404  | Not Found              | Resource not found           |
+| 405  | Method Not Allowed     | Method not supported         |
+| 408  | Request Timeout        | Request took too long        |
+| 409  | Conflict               | Request conflicts with state |
+| 410  | Gone                   | Resource permanently gone    |
+| 413  | Payload Too Large      | Request body too large       |
+| 414  | URI Too Long           | URI too long                 |
+| 415  | Unsupported Media Type | Media type not supported     |
+| 422  | Unprocessable Entity   | Semantic errors              |
+| 429  | Too Many Requests      | Rate limit exceeded          |
 
 ### 5xx Server Errors
 
-| Code | Message | Meaning |
-| ------ | --------- | --------- |
-| 500 | Internal Server Error | Generic server error |
-| 501 | Not Implemented | Method not supported |
-| 502 | Bad Gateway | Invalid response from upstream |
-| 503 | Service Unavailable | Server temporarily unavailable |
-| 504 | Gateway Timeout | Upstream timeout |
-| 505 | HTTP Version Not Supported | HTTP version not supported |
+| Code | Message                    | Meaning                        |
+| ---- | -------------------------- | ------------------------------ |
+| 500  | Internal Server Error      | Generic server error           |
+| 501  | Not Implemented            | Method not supported           |
+| 502  | Bad Gateway                | Invalid response from upstream |
+| 503  | Service Unavailable        | Server temporarily unavailable |
+| 504  | Gateway Timeout            | Upstream timeout               |
+| 505  | HTTP Version Not Supported | HTTP version not supported     |
 
 ## HTTP Headers
 
@@ -170,7 +174,8 @@ Automatically allowed if:
 
 - Method: GET, HEAD, or POST
 - Safe headers only
-- Content-Type: `application/x-www-form-urlencoded`, `multipart/form-data`, or `text/plain`
+- Content-Type: `application/x-www-form-urlencoded`, `multipart/form-data`, or
+  `text/plain`
 
 ### Preflight Requests
 
@@ -397,7 +402,8 @@ example.com → 93.184.216.34
 **Bandwidth**: Amount of data transferred per unit time (Mbps, Gbps)  
 **Latency**: Time delay in data transmission (milliseconds)
 
-**Round Trip Time (RTT)**: Time for request to reach server and response to return
+**Round Trip Time (RTT)**: Time for request to reach server and response to
+return
 
 ## WebSockets
 

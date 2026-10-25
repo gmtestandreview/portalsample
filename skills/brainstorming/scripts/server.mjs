@@ -134,7 +134,7 @@ const TELEMETRY_DISABLE_ENV_VARS = [
   'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC',
 ];
 const SUPERPOWERS_TELEMETRY_DISABLED = TELEMETRY_DISABLE_ENV_VARS.some((name) =>
-  isTruthyEnv(process.env[name])
+  isTruthyEnv(process.env[name]),
 );
 let ownerPid = process.env.BRAINSTORM_OWNER_PID
   ? Number(process.env.BRAINSTORM_OWNER_PID)
@@ -247,11 +247,11 @@ location.replace('/');
 
 const frameTemplate = fs.readFileSync(
   path.join(__dirname, 'frame-template.html'),
-  'utf-8'
+  'utf-8',
 );
 const helperScript = fs.readFileSync(
   path.join(__dirname, 'helper.js'),
-  'utf-8'
+  'utf-8',
 );
 const helperInjection = '<script>\n' + helperScript + '\n</script>';
 
@@ -356,7 +356,7 @@ function browserLauncherForPlatform(
     platform = process.platform,
     osRelease = os.release(),
     env = process.env,
-  } = {}
+  } = {},
 ) {
   const isWSL = platform === 'linux' && /microsoft/i.test(osRelease);
   if (platform === 'darwin') return { bin: 'open', args: [url] };
@@ -455,7 +455,7 @@ function handleRequest(req, res) {
   if (!isAuthorized(req)) {
     res.writeHead(
       403,
-      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' }),
     );
     res.end(FORBIDDEN_PAGE);
     return;
@@ -467,7 +467,7 @@ function handleRequest(req, res) {
   // WebSocket Origin check below is what blocks cross-origin localhost injection.
   res.setHeader(
     'Set-Cookie',
-    COOKIE_NAME + '=' + TOKEN + '; HttpOnly; SameSite=Strict; Path=/'
+    COOKIE_NAME + '=' + TOKEN + '; HttpOnly; SameSite=Strict; Path=/',
   );
 
   const pathname = pathnameOf(req.url);
@@ -480,7 +480,7 @@ function handleRequest(req, res) {
   ) {
     res.writeHead(
       200,
-      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' }),
     );
     // Render the server-owned TOKEN, never the request value. The guard above
     // proves they are equal, so output is unchanged but no request data is reflected.
@@ -501,7 +501,7 @@ function handleRequest(req, res) {
 
     res.writeHead(
       200,
-      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' }),
     );
     res.end(html);
   } else if (req.method === 'GET' && pathname.startsWith('/files/')) {
@@ -551,7 +551,7 @@ function handleUpgrade(req, socket) {
       'Connection: Upgrade\r\n' +
       'Sec-WebSocket-Accept: ' +
       accept +
-      '\r\n\r\n'
+      '\r\n\r\n',
   );
 
   let buffer = Buffer.alloc(0);
@@ -642,7 +642,7 @@ function maybeOpenBrowser() {
     try {
       cp.exec(
         process.env.BRAINSTORM_OPEN_CMD + ' ' + JSON.stringify(url),
-        () => {}
+        () => {},
       );
     } catch (e) {
       /* best effort */
@@ -689,7 +689,7 @@ const debounceTimers = new Map();
 function startServer() {
   if (!SESSION_DIR) {
     console.error(
-      'BRAINSTORM_DIR is required; start the server with start-server.sh'
+      'BRAINSTORM_DIR is required; start the server with start-server.sh',
     );
     process.exit(1);
   }
@@ -703,7 +703,7 @@ function startServer() {
   const knownFiles = new Set(
     fs
       .readdirSync(CONTENT_DIR)
-      .filter((f) => !f.startsWith('.') && f.endsWith('.html'))
+      .filter((f) => !f.startsWith('.') && f.endsWith('.html')),
   );
 
   const server = http.createServer(handleRequest);
@@ -735,7 +735,7 @@ function startServer() {
         }
 
         broadcast({ type: 'reload' });
-      }, 100)
+      }, 100),
     );
   });
   watcher.on('error', (err) => console.error('fs.watch error:', err.message));
@@ -746,7 +746,7 @@ function startServer() {
     if (fs.existsSync(infoFile)) fs.unlinkSync(infoFile);
     fs.writeFileSync(
       path.join(STATE_DIR, 'server-stopped'),
-      JSON.stringify({ reason, timestamp: Date.now() }) + '\n'
+      JSON.stringify({ reason, timestamp: Date.now() }) + '\n',
     );
     watcher.close();
     clearInterval(lifecycleCheck);
@@ -841,7 +841,7 @@ function startServer() {
     fs.writeFileSync(
       path.join(STATE_DIR, 'server-info'),
       JSON.stringify(info) + '\n',
-      { mode: 0o600 }
+      { mode: 0o600 },
     );
   }
 
@@ -849,7 +849,7 @@ function startServer() {
     if (err.code === 'EADDRINUSE' && !triedFallback) {
       if (tokenSource === 'env') {
         console.error(
-          'Server failed to bind: preferred port is in use and BRAINSTORM_TOKEN is set; refusing fallback with explicit token'
+          'Server failed to bind: preferred port is in use and BRAINSTORM_TOKEN is set; refusing fallback with explicit token',
         );
         process.exit(1);
       }

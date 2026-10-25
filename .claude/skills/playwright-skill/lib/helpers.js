@@ -23,7 +23,7 @@ function getExtraHeadersFromEnv() {
 
 async function launchBrowser(
   browserType = process.env.PW_BROWSER || 'chromium',
-  options = {}
+  options = {},
 ) {
   const browser = { chromium, firefox, webkit }[browserType];
   if (!browser) throw new Error(`Invalid browser type: ${browserType}`);
@@ -67,7 +67,7 @@ async function takeScreenshot(page, name, options = {}) {
     fs.mkdirSync(outputDirectory, { recursive: true });
     filename = path.join(
       outputDirectory,
-      `${name}-${new Date().toISOString().replace(/[:.]/g, '-')}.png`
+      `${name}-${new Date().toISOString().replace(/[:.]/g, '-')}.png`,
     );
   }
   await page.screenshot({
@@ -138,7 +138,7 @@ async function detectDevServers(customPorts = []) {
             if (response.statusCode < 500) servers.push(port);
             response.resume();
             resolve();
-          }
+          },
         );
         request.on('error', resolve);
         request.on('timeout', () => {
@@ -147,7 +147,7 @@ async function detectDevServers(customPorts = []) {
         });
         request.end();
       });
-    })
+    }),
   );
   return servers
     .toSorted((a, b) => a - b)

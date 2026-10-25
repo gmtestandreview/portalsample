@@ -1424,10 +1424,10 @@ export type DateOnlyValue = string & {
 export function parseDateOnlyValue(value: string): DateOnlyValue | undefined;
 
 export function parseApiDateOnly(
-  value: Date | string
+  value: Date | string,
 ): DateOnlyValue | undefined;
 export function parseDateOnlyInput(
-  value: Date | string
+  value: Date | string,
 ): DateOnlyValue | undefined;
 export function dateOnlyToPickerDate(value: DateOnlyValue): Date;
 export function dateOnlyToApiDate(value: DateOnlyValue): Date;
@@ -1543,7 +1543,7 @@ export async function expectConsoleMessage(
   level: GuardedConsoleLevel,
   pattern: RegExp,
   count: number,
-  action: () => void | Promise<void>
+  action: () => void | Promise<void>,
 ): Promise<void>;
 ```
 
@@ -1705,7 +1705,7 @@ Add initial-render assertions on the actual control:
 
 ```ts
 expect(
-  screen.getByRole('combobox', { name: /expected visible label/i })
+  screen.getByRole('combobox', { name: /expected visible label/i }),
 ).toBeInTheDocument();
 ```
 

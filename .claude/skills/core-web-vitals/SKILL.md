@@ -1,25 +1,30 @@
 ---
 name: core-web-vitals
-description: Optimize Core Web Vitals (LCP, INP, CLS) for better page experience and search ranking. Use when asked to "improve Core Web Vitals", "fix LCP", "reduce CLS", "optimize INP", "page experience optimization", or "fix layout shifts".
+description:
+  Optimize Core Web Vitals (LCP, INP, CLS) for better page experience and search
+  ranking. Use when asked to "improve Core Web Vitals", "fix LCP", "reduce CLS",
+  "optimize INP", "page experience optimization", or "fix layout shifts".
 license: MIT
 metadata:
   author: web-quality-skills
-  version: "1.0"
+  version: '1.0'
 ---
 
 # Core Web Vitals optimization
 
-Targeted optimization for the three Core Web Vitals metrics that affect Google Search ranking and user experience.
+Targeted optimization for the three Core Web Vitals metrics that affect Google
+Search ranking and user experience.
 
 ## The three metrics
 
-| Metric | Measures | Good | Needs work | Poor |
-| -------- | ---------- | ------ | ------------ | ------ |
-| **LCP** | Loading | ≤ 2.5s | 2.5s – 4s | > 4s |
-| **INP** | Interactivity | ≤ 200ms | 200ms – 500ms | > 500ms |
-| **CLS** | Visual Stability | ≤ 0.1 | 0.1 – 0.25 | > 0.25 |
+| Metric  | Measures         | Good    | Needs work    | Poor    |
+| ------- | ---------------- | ------- | ------------- | ------- |
+| **LCP** | Loading          | ≤ 2.5s  | 2.5s – 4s     | > 4s    |
+| **INP** | Interactivity    | ≤ 200ms | 200ms – 500ms | > 500ms |
+| **CLS** | Visual Stability | ≤ 0.1   | 0.1 – 0.25    | > 0.25  |
 
-Google measures at the **75th percentile** — 75% of page visits must meet "Good" thresholds.
+Google measures at the **75th percentile** — 75% of page visits must meet "Good"
+thresholds.
 
 ---
 
@@ -44,23 +49,29 @@ Fix: CDN, caching, optimized backend, edge rendering
 
 ```html
 <!-- ❌ Blocks rendering -->
-<link rel="stylesheet" href="/all-styles.css">
+<link rel="stylesheet" href="/all-styles.css" />
 
 <!-- ✅ Critical CSS inlined, rest deferred -->
-<style>/* Critical above-fold CSS */</style>
-<link rel="preload" href="/styles.css" as="style" 
-      onload="this.onload=null;this.rel='stylesheet'">
+<style>
+  /* Critical above-fold CSS */
+</style>
+<link
+  rel="preload"
+  href="/styles.css"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+/>
 ```
 
 **3. Slow resource load times**
 
 ```html
 <!-- ❌ No hints, discovered late -->
-<img src="/hero.jpg" alt="Hero">
+<img src="/hero.jpg" alt="Hero" />
 
 <!-- ✅ Preloaded with high priority -->
-<link rel="preload" href="/hero.webp" as="image" fetchpriority="high">
-<img src="/hero.webp" alt="Hero" fetchpriority="high">
+<link rel="preload" href="/hero.webp" as="image" fetchpriority="high" />
+<img src="/hero.webp" alt="Hero" fetchpriority="high" />
 ```
 
 **4. Client-side rendering delays**
@@ -68,7 +79,9 @@ Fix: CDN, caching, optimized backend, edge rendering
 ```javascript
 // ❌ Content loads after JavaScript
 useEffect(() => {
-  fetch('/api/hero-text').then(r => r.json()).then(setHeroText);
+  fetch('/api/hero-text')
+    .then((r) => r.json())
+    .then(setHeroText);
 }, []);
 
 // ✅ Server-side or static rendering
@@ -107,17 +120,19 @@ new PerformanceObserver((list) => {
 
 ## INP: Interaction to Next Paint
 
-INP measures responsiveness across ALL interactions (clicks, taps, key presses) during a page visit. It reports the worst interaction (at 98th percentile for high-traffic pages).
+INP measures responsiveness across ALL interactions (clicks, taps, key presses)
+during a page visit. It reports the worst interaction (at 98th percentile for
+high-traffic pages).
 
 ### INP breakdown
 
 Total INP = **Input Delay** + **Processing Time** + **Presentation Delay**
 
-| Phase | Target | Optimization |
-| ------- | -------- | -------------- |
-| Input Delay | < 50ms | Reduce main thread blocking |
-| Processing | < 100ms | Optimize event handlers |
-| Presentation | < 50ms | Minimize rendering work |
+| Phase        | Target  | Optimization                |
+| ------------ | ------- | --------------------------- |
+| Input Delay  | < 50ms  | Reduce main thread blocking |
+| Processing   | < 100ms | Optimize event handlers     |
+| Presentation | < 50ms  | Minimize rendering work     |
 
 ### Common INP issues
 
@@ -126,7 +141,7 @@ Total INP = **Input Delay** + **Processing Time** + **Presentation Delay**
 ```javascript
 // ❌ Long synchronous task
 function processLargeArray(items) {
-  items.forEach(item => expensiveOperation(item));
+  items.forEach((item) => expensiveOperation(item));
 }
 
 // ✅ Break into chunks with yielding
@@ -134,10 +149,10 @@ async function processLargeArray(items) {
   const CHUNK_SIZE = 100;
   for (let i = 0; i < items.length; i += CHUNK_SIZE) {
     const chunk = items.slice(i, i + CHUNK_SIZE);
-    chunk.forEach(item => expensiveOperation(item));
-    
+    chunk.forEach((item) => expensiveOperation(item));
+
     // Yield to main thread
-    await new Promise(r => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
     // Or use scheduler.yield() when available
   }
 }
@@ -160,13 +175,13 @@ button.addEventListener('click', () => {
 button.addEventListener('click', () => {
   // Immediate visual feedback
   button.classList.add('loading');
-  
+
   // Defer non-critical work
   requestAnimationFrame(() => {
     const result = calculateComplexThing();
     updateUI(result);
   });
-  
+
   // Use requestIdleCallback for analytics
   requestIdleCallback(() => trackEvent('click'));
 });
@@ -176,12 +191,11 @@ button.addEventListener('click', () => {
 
 ```javascript
 // ❌ Eagerly loaded, blocks interactions
-<script src="https://heavy-widget.com/widget.js"></script>
+<script src='https://heavy-widget.com/widget.js'></script>;
 
 // ✅ Lazy loaded on interaction or visibility
 const loadWidget = () => {
-  import('https://heavy-widget.com/widget.js')
-    .then(widget => widget.init());
+  import('https://heavy-widget.com/widget.js').then((widget) => widget.init());
 };
 button.addEventListener('click', loadWidget, { once: true });
 ```
@@ -238,7 +252,7 @@ new PerformanceObserver((list) => {
         duration: entry.duration,
         processingStart: entry.processingStart,
         processingEnd: entry.processingEnd,
-        target: entry.target
+        target: entry.target,
       });
     }
   }
@@ -249,7 +263,8 @@ new PerformanceObserver((list) => {
 
 ## CLS: Cumulative Layout Shift
 
-CLS measures unexpected layout shifts. A shift occurs when a visible element changes position between frames without user interaction.
+CLS measures unexpected layout shifts. A shift occurs when a visible element
+changes position between frames without user interaction.
 
 **CLS Formula:** `impact fraction × distance fraction`
 
@@ -259,13 +274,13 @@ CLS measures unexpected layout shifts. A shift occurs when a visible element cha
 
 ```html
 <!-- ❌ Causes layout shift when loaded -->
-<img src="photo.jpg" alt="Photo">
+<img src="photo.jpg" alt="Photo" />
 
 <!-- ✅ Space reserved -->
-<img src="photo.jpg" alt="Photo" width="800" height="600">
+<img src="photo.jpg" alt="Photo" width="800" height="600" />
 
 <!-- ✅ Or use aspect-ratio -->
-<img src="photo.jpg" alt="Photo" style="aspect-ratio: 4/3; width: 100%;">
+<img src="photo.jpg" alt="Photo" style="aspect-ratio: 4/3; width: 100%;" />
 ```
 
 **2. Ads, embeds, and iframes**
@@ -281,8 +296,10 @@ CLS measures unexpected layout shifts. A shift occurs when a visible element cha
 
 <!-- ✅ Or use aspect-ratio container -->
 <div style="aspect-ratio: 16/9;">
-  <iframe src="https://youtube.com/embed/..." 
-          style="width: 100%; height: 100%;"></iframe>
+  <iframe
+    src="https://youtube.com/embed/..."
+    style="width: 100%; height: 100%;"
+  ></iframe>
 </div>
 ```
 
@@ -338,7 +355,9 @@ if (insertBelow) {
 ```css
 /* ❌ Animates layout properties */
 .animate {
-  transition: height 0.3s, width 0.3s;
+  transition:
+    height 0.3s,
+    width 0.3s;
 }
 
 /* ✅ Use transform instead */
@@ -370,7 +389,7 @@ new PerformanceObserver((list) => {
   for (const entry of list.getEntries()) {
     if (!entry.hadRecentInput) {
       console.log('Layout shift:', entry.value);
-      entry.sources?.forEach(source => {
+      entry.sources?.forEach((source) => {
         console.log('  Shifted element:', source.node);
         console.log('  Previous rect:', source.previousRect);
         console.log('  Current rect:', source.currentRect);
@@ -397,13 +416,13 @@ new PerformanceObserver((list) => {
 - **web-vitals library** → Send to your analytics
 
 ```javascript
-import {onLCP, onINP, onCLS} from 'web-vitals';
+import { onLCP, onINP, onCLS } from 'web-vitals';
 
-function sendToAnalytics({name, value, rating}) {
+function sendToAnalytics({ name, value, rating }) {
   gtag('event', name, {
     event_category: 'Web Vitals',
     value: Math.round(name === 'CLS' ? value * 1000 : value),
-    event_label: rating
+    event_label: rating,
   });
 }
 
@@ -421,7 +440,7 @@ onCLS(sendToAnalytics);
 ```jsx
 // LCP: Use next/image with priority
 import Image from 'next/image';
-<Image src="/hero.jpg" priority fill alt="Hero" />
+<Image src='/hero.jpg' priority fill alt='Hero' />;
 
 // INP: Use dynamic imports
 const HeavyComponent = dynamic(() => import('./Heavy'), { ssr: false });
@@ -433,7 +452,7 @@ const HeavyComponent = dynamic(() => import('./Heavy'), { ssr: false });
 
 ```jsx
 // LCP: Preload in head
-<link rel="preload" href="/hero.jpg" as="image" fetchpriority="high" />
+<link rel='preload' href='/hero.jpg' as='image' fetchpriority='high' />;
 
 // INP: Memoize and useTransition
 const [isPending, startTransition] = useTransition();

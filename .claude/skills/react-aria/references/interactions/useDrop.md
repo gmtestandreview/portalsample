@@ -42,9 +42,9 @@ function DropTarget() {
         e.items
           .filter(
             (item): item is TextDropItem =>
-              item.kind === 'text' && item.types.has('text/plain')
+              item.kind === 'text' && item.types.has('text/plain'),
           )
-          .map((item) => item.getText('text/plain'))
+          .map((item) => item.getText('text/plain')),
       );
       setDropped(items.join('\n'));
     },
@@ -109,7 +109,7 @@ function DropTarget() {
     /*- begin highlight -*/
     async onDrop(e) {
       let item = e.items.find(
-        (item) => item.kind === 'text' && item.types.has('my-app-custom-type')
+        (item) => item.kind === 'text' && item.types.has('my-app-custom-type'),
       ) as TextDropItem;
       if (item) {
         setDropped(await item.getText('my-app-custom-type'));
@@ -162,7 +162,7 @@ function DropTarget() {
       let item = e.items.find(
         (item) =>
           item.kind === 'file' &&
-          (item.type === 'image/jpeg' || item.type === 'image/png')
+          (item.type === 'image/jpeg' || item.type === 'image/png'),
       ) as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
@@ -225,7 +225,7 @@ function DropTarget() {
     async onDrop(e) {
       // Find the first dropped item that is a directory.
       let dir = e.items.find(
-        (item) => item.kind === 'directory'
+        (item) => item.kind === 'directory',
       ) as DirectoryDropItem;
       if (dir) {
         // Read entries in directory and update state with relevant info.
@@ -330,7 +330,7 @@ function DropTarget() {
     /*- end highlight -*/
     async onDrop(e) {
       let item = e.items.find(
-        (item) => item.kind === 'file' && item.type === 'image/png'
+        (item) => item.kind === 'file' && item.type === 'image/png',
       ) as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
@@ -372,7 +372,7 @@ function DropTarget(props) {
     ref,
     async onDrop(e) {
       let item = e.items.find(
-        (item) => item.kind === 'text' && item.types.has('my-app-file')
+        (item) => item.kind === 'text' && item.types.has('my-app-file'),
       ) as TextDropItem;
       if (!item) {
         return;
@@ -472,9 +472,9 @@ function DropTarget() {
         e.items
           .filter(
             (item): item is TextDropItem =>
-              item.kind === 'text' && item.types.has('text/plain')
+              item.kind === 'text' && item.types.has('text/plain'),
           )
-          .map((item) => item.getText('text/plain'))
+          .map((item) => item.getText('text/plain')),
       );
       setDropped(items.join('\n'));
     },

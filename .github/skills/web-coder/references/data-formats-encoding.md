@@ -49,9 +49,9 @@ const obj = {
   toJSON() {
     return {
       name: this.name,
-      date: this.date.toISOString()
+      date: this.date.toISOString(),
     };
-  }
+  },
 };
 ```
 
@@ -104,7 +104,7 @@ const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
 // Query elements
 const users = xmlDoc.querySelectorAll('user');
-users.forEach(user => {
+users.forEach((user) => {
   const name = user.querySelector('name').textContent;
   console.log(name);
 });
@@ -127,7 +127,7 @@ Universal character encoding (recommended for web).
 - Supports all Unicode characters
 
 ```html
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 ```
 
 ### UTF-16
@@ -159,7 +159,7 @@ String.fromCharCode(65); // 'A'
 ```javascript
 // Code points
 'A'.codePointAt(0); // 65
-String.fromCodePoint(0x1F600); // '😀'
+String.fromCodePoint(0x1f600); // '😀'
 
 // Iterate code points
 for (const char of 'Hello 😀') {
@@ -220,27 +220,27 @@ Media type identification.
 
 ### Common MIME Types
 
-| Type | MIME Type |
-| ------ | ----------- |
-| HTML | `text/html` |
-| CSS | `text/css` |
+| Type       | MIME Type                                   |
+| ---------- | ------------------------------------------- |
+| HTML       | `text/html`                                 |
+| CSS        | `text/css`                                  |
 | JavaScript | `text/javascript`, `application/javascript` |
-| JSON | `application/json` |
-| XML | `application/xml`, `text/xml` |
-| Plain Text | `text/plain` |
-| JPEG | `image/jpeg` |
-| PNG | `image/png` |
-| GIF | `image/gif` |
-| SVG | `image/svg+xml` |
-| PDF | `application/pdf` |
-| ZIP | `application/zip` |
-| MP4 Video | `video/mp4` |
-| MP3 Audio | `audio/mpeg` |
-| Form Data | `application/x-www-form-urlencoded` |
-| Multipart | `multipart/form-data` |
+| JSON       | `application/json`                          |
+| XML        | `application/xml`, `text/xml`               |
+| Plain Text | `text/plain`                                |
+| JPEG       | `image/jpeg`                                |
+| PNG        | `image/png`                                 |
+| GIF        | `image/gif`                                 |
+| SVG        | `image/svg+xml`                             |
+| PDF        | `application/pdf`                           |
+| ZIP        | `application/zip`                           |
+| MP4 Video  | `video/mp4`                                 |
+| MP3 Audio  | `audio/mpeg`                                |
+| Form Data  | `application/x-www-form-urlencoded`         |
+| Multipart  | `multipart/form-data`                       |
 
 ```html
-<link rel="stylesheet" href="styles.css" type="text/css">
+<link rel="stylesheet" href="styles.css" type="text/css" />
 <script src="app.js" type="text/javascript"></script>
 ```
 
@@ -287,15 +287,24 @@ Objects that can be serialized by structured clone algorithm:
 HTML entities for special characters.
 
 ```html
-&lt;    <!-- < -->
-&gt;    <!-- > -->
-&amp;   <!-- & -->
-&quot;  <!-- " -->
-&apos;  <!-- ' -->
-&nbsp;  <!-- non-breaking space -->
-&copy;  <!-- © -->
-&#8364; <!-- € -->
-&#x20AC; <!-- € (hex) -->
+&lt;
+<!-- < -->
+&gt;
+<!-- > -->
+&amp;
+<!-- & -->
+&quot;
+<!-- " -->
+&apos;
+<!-- ' -->
+&nbsp;
+<!-- non-breaking space -->
+&copy;
+<!-- © -->
+&#8364;
+<!-- € -->
+&#x20AC;
+<!-- € (hex) -->
 ```
 
 ## Data URLs
@@ -304,13 +313,13 @@ Embed data directly in URLs.
 
 ```html
 <!-- Inline image -->
-<img src="data:image/png;base64,iVBORw0KGgoAAAANS..." alt="Icon">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANS..." alt="Icon" />
 
 <!-- Inline SVG -->
-<img src="data:image/svg+xml,%3Csvg xmlns='...'%3E...%3C/svg%3E" alt="Logo">
+<img src="data:image/svg+xml,%3Csvg xmlns='...'%3E...%3C/svg%3E" alt="Logo" />
 
 <!-- Inline CSS -->
-<link rel="stylesheet" href="data:text/css,body%7Bmargin:0%7D">
+<link rel="stylesheet" href="data:text/css,body%7Bmargin:0%7D" />
 ```
 
 ```javascript

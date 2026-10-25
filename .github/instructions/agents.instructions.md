@@ -5,16 +5,21 @@ applyTo: '**/*.agent.md'
 
 # Custom Agent File Guidelines
 
-Instructions for creating effective and maintainable custom agent files that provide specialized expertise for specific development tasks in GitHub Copilot.
+Instructions for creating effective and maintainable custom agent files that
+provide specialized expertise for specific development tasks in GitHub Copilot.
 
 ## Project Context
 
 - Target audience: Developers creating custom agents for GitHub Copilot
 - File format: Markdown with YAML frontmatter
-- File naming convention: lowercase with hyphens (e.g., `test-specialist.agent.md`)
-- Location: `.github/agents/` directory (repository-level) or `agents/` directory (organization/enterprise-level)
-- Purpose: Define specialized agents with tailored expertise, tools, and instructions for specific tasks
-- Official documentation: <https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents>
+- File naming convention: lowercase with hyphens (e.g.,
+  `test-specialist.agent.md`)
+- Location: `.github/agents/` directory (repository-level) or `agents/`
+  directory (organization/enterprise-level)
+- Purpose: Define specialized agents with tailored expertise, tools, and
+  instructions for specific tasks
+- Official documentation:
+  <https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents>
 
 ## Required Frontmatter
 
@@ -69,13 +74,16 @@ target: 'vscode'
 
 - Boolean controlling whether the agent appears in the agents dropdown in chat
 - Default: `true` if omitted
-- Set to `false` to create agents that are only accessible as subagents or programmatically
+- Set to `false` to create agents that are only accessible as subagents or
+  programmatically
 
 #### **disable-model-invocation** (OPTIONAL)
 
-- Boolean controlling whether the agent can be invoked as a subagent by other agents
+- Boolean controlling whether the agent can be invoked as a subagent by other
+  agents
 - Default: `false` if omitted
-- Set to `true` to prevent subagent invocation while keeping it available in the picker
+- Set to `true` to prevent subagent invocation while keeping it available in the
+  picker
 
 #### **metadata** (OPTIONAL, GitHub.com only)
 
@@ -91,22 +99,32 @@ target: 'vscode'
 
 #### **handoffs** (OPTIONAL, VS Code only)
 
-- Enable guided sequential workflows that transition between agents with suggested next steps
-- List of handoff configurations, each specifying a target agent and optional prompt
-- After a chat response completes, handoff buttons appear allowing users to move to the next agent
+- Enable guided sequential workflows that transition between agents with
+  suggested next steps
+- List of handoff configurations, each specifying a target agent and optional
+  prompt
+- After a chat response completes, handoff buttons appear allowing users to move
+  to the next agent
 - Only supported in VS Code (version 1.106+)
 - See "Handoffs Configuration" section below for details
 
 ## Handoffs Configuration
 
-Handoffs enable you to create guided sequential workflows that transition seamlessly between custom agents. This is useful for orchestrating multi-step development workflows where users can review and approve each step before moving to the next one.
+Handoffs enable you to create guided sequential workflows that transition
+seamlessly between custom agents. This is useful for orchestrating multi-step
+development workflows where users can review and approve each step before moving
+to the next one.
 
 ### Common Handoff Patterns
 
-- **Planning → Implementation**: Generate a plan in a planning agent, then hand off to an implementation agent to start coding
-- **Implementation → Review**: Complete implementation, then switch to a code review agent to check for quality and security issues
-- **Write Failing Tests → Write Passing Tests**: Generate failing tests, then hand off to implement the code that makes those tests pass
-- **Research → Documentation**: Research a topic, then transition to a documentation agent to write guides
+- **Planning → Implementation**: Generate a plan in a planning agent, then hand
+  off to an implementation agent to start coding
+- **Implementation → Review**: Complete implementation, then switch to a code
+  review agent to check for quality and security issues
+- **Write Failing Tests → Write Passing Tests**: Generate failing tests, then
+  hand off to implement the code that makes those tests pass
+- **Research → Documentation**: Research a topic, then transition to a
+  documentation agent to write guides
 
 ### Handoff Frontmatter Structure
 
@@ -133,40 +151,50 @@ handoffs:
 
 Each handoff in the list must include the following properties:
 
-| Property | Type | Required | Description |
-| ---------- | ------ | ---------- | ------------- |
-| `label` | string | Yes | The display text shown on the handoff button in the chat interface |
-| `agent` | string | Yes | The target agent identifier to switch to (name or filename without `.agent.md`) |
-| `prompt` | string | No | The prompt text to pre-fill in the target agent's chat input |
-| `send` | boolean | No | If `true`, automatically submits the prompt to the target agent (default: `false`) |
+| Property | Type    | Required | Description                                                                        |
+| -------- | ------- | -------- | ---------------------------------------------------------------------------------- |
+| `label`  | string  | Yes      | The display text shown on the handoff button in the chat interface                 |
+| `agent`  | string  | Yes      | The target agent identifier to switch to (name or filename without `.agent.md`)    |
+| `prompt` | string  | No       | The prompt text to pre-fill in the target agent's chat input                       |
+| `send`   | boolean | No       | If `true`, automatically submits the prompt to the target agent (default: `false`) |
 
 ### Handoff Behavior
 
-- **Button Display**: Handoff buttons appear as interactive suggestions after a chat response completes
-- **Context Preservation**: When users select a handoff button, they switch to the target agent with conversation context maintained
-- **Pre-filled Prompt**: If a `prompt` is specified, it appears pre-filled in the target agent's chat input
-- **Manual vs Auto**: When `send: false`, users must review and manually send the pre-filled prompt; when `send: true`, the prompt is automatically submitted
+- **Button Display**: Handoff buttons appear as interactive suggestions after a
+  chat response completes
+- **Context Preservation**: When users select a handoff button, they switch to
+  the target agent with conversation context maintained
+- **Pre-filled Prompt**: If a `prompt` is specified, it appears pre-filled in
+  the target agent's chat input
+- **Manual vs Auto**: When `send: false`, users must review and manually send
+  the pre-filled prompt; when `send: true`, the prompt is automatically
+  submitted
 
 ### Handoff Configuration Guidelines
 
 #### When to Use Handoffs
 
-- **Multi-step workflows**: Breaking down complex tasks across specialized agents
+- **Multi-step workflows**: Breaking down complex tasks across specialized
+  agents
 - **Quality gates**: Ensuring review steps between implementation phases
 - **Guided processes**: Directing users through a structured development process
-- **Skill transitions**: Moving from planning/design to implementation/testing specialists
+- **Skill transitions**: Moving from planning/design to implementation/testing
+  specialists
 
 #### Best Practices
 
-- **Clear Labels**: Use action-oriented labels that clearly indicate the next step
+- **Clear Labels**: Use action-oriented labels that clearly indicate the next
+  step
   - ✅ Good: "Start Implementation", "Review for Security", "Write Tests"
   - ❌ Avoid: "Next", "Go to agent", "Do something"
 
-- **Relevant Prompts**: Provide context-aware prompts that reference the completed work
+- **Relevant Prompts**: Provide context-aware prompts that reference the
+  completed work
   - ✅ Good: `'Now implement the plan outlined above.'`
   - ❌ Avoid: Generic prompts without context
 
-- **Selective Use**: Don't create handoffs to every possible agent; focus on logical workflow transitions
+- **Selective Use**: Don't create handoffs to every possible agent; focus on
+  logical workflow transitions
   - Limit to 2-3 most relevant next steps per agent
   - Only add handoffs for agents that naturally follow in the workflow
 
@@ -261,8 +289,10 @@ This workflow allows a developer to:
 ### Version Compatibility
 
 - **VS Code**: Handoffs are supported in VS Code 1.106 and later
-- **GitHub.com**: Not currently supported; agent transition workflows use different mechanisms
-- **Other IDEs**: Limited or no support; focus on VS Code implementations for maximum compatibility
+- **GitHub.com**: Not currently supported; agent transition workflows use
+  different mechanisms
+- **Other IDEs**: Limited or no support; focus on VS Code implementations for
+  maximum compatibility
 
 ## Tool Configuration
 
@@ -297,23 +327,23 @@ tools: []
 
 All aliases are case-insensitive:
 
-| Alias | Alternative Names | Category | Description |
-| ------- | ------------------ | ---------- | ------------- |
-| `execute` | shell, Bash, powershell | Shell execution | Execute commands in appropriate shell |
-| `read` | Read, NotebookRead, view | File reading | Read file contents |
-| `edit` | Edit, MultiEdit, Write, NotebookEdit | File editing | Edit and modify files |
-| `search` | Grep, Glob, search | Code search | Search for files or text in files |
-| `agent` | custom-agent, Task | Agent invocation | Invoke other custom agents |
-| `web` | WebSearch, WebFetch | Web access | Fetch web content and search |
-| `todo` | TodoWrite | Task management | Create and manage task lists (VS Code only) |
+| Alias     | Alternative Names                    | Category         | Description                                 |
+| --------- | ------------------------------------ | ---------------- | ------------------------------------------- |
+| `execute` | shell, Bash, powershell              | Shell execution  | Execute commands in appropriate shell       |
+| `read`    | Read, NotebookRead, view             | File reading     | Read file contents                          |
+| `edit`    | Edit, MultiEdit, Write, NotebookEdit | File editing     | Edit and modify files                       |
+| `search`  | Grep, Glob, search                   | Code search      | Search for files or text in files           |
+| `agent`   | custom-agent, Task                   | Agent invocation | Invoke other custom agents                  |
+| `web`     | WebSearch, WebFetch                  | Web access       | Fetch web content and search                |
+| `todo`    | TodoWrite                            | Task management  | Create and manage task lists (VS Code only) |
 
 ### Built-in MCP Server Tools
 
 **GitHub MCP Server**:
 
 ```yaml
-tools: ['github/*']  # All GitHub tools
-tools: ['github/get_file_contents', 'github/search_repositories']  # Specific tools
+tools: ['github/*'] # All GitHub tools
+tools: ['github/get_file_contents', 'github/search_repositories'] # Specific tools
 ```
 
 - All read-only tools available by default
@@ -322,8 +352,8 @@ tools: ['github/get_file_contents', 'github/search_repositories']  # Specific to
 **Playwright MCP Server**:
 
 ```yaml
-tools: ['playwright/*']  # All Playwright tools
-tools: ['playwright/navigate', 'playwright/screenshot']  # Specific tools
+tools: ['playwright/*'] # All Playwright tools
+tools: ['playwright/navigate', 'playwright/screenshot'] # Specific tools
 ```
 
 - Configured to access localhost only
@@ -331,30 +361,36 @@ tools: ['playwright/navigate', 'playwright/screenshot']  # Specific tools
 
 ### Tool Selection Best Practices
 
-- **Principle of Least Privilege**: Only enable tools necessary for the agent's purpose
+- **Principle of Least Privilege**: Only enable tools necessary for the agent's
+  purpose
 - **Security**: Limit `execute` access unless explicitly required
 - **Focus**: Fewer tools = clearer agent purpose and better performance
-- **Documentation**: Comment why specific tools are required for complex configurations
+- **Documentation**: Comment why specific tools are required for complex
+  configurations
 
 ## Sub-Agent Invocation (Agent Orchestration)
 
-Agents can invoke other agents using the **agent invocation tool** (the `agent` tool) to orchestrate multi-step workflows.
+Agents can invoke other agents using the **agent invocation tool** (the `agent`
+tool) to orchestrate multi-step workflows.
 
 The recommended approach is **prompt-based orchestration**:
 
 - The orchestrator defines a step-by-step workflow in natural language.
 - Each step is delegated to a specialized agent.
-- The orchestrator passes only the essential context (e.g., base path, identifiers) and requires each sub-agent to read its own `.agent.md` spec for tools/constraints.
+- The orchestrator passes only the essential context (e.g., base path,
+  identifiers) and requires each sub-agent to read its own `.agent.md` spec for
+  tools/constraints.
 
 ### How It Works
 
-1) Enable agent invocation by including `agent` in the orchestrator's tools list:
+1. Enable agent invocation by including `agent` in the orchestrator's tools
+   list:
 
 ```yaml
 tools: ['read', 'edit', 'search', 'agent']
 ```
 
-1) For each step, invoke a sub-agent by providing:
+1. For each step, invoke a sub-agent by providing:
 
 - **Agent name** (the identifier users select/invoke)
 - **Agent spec path** (the `.agent.md` file to read and follow)
@@ -362,7 +398,8 @@ tools: ['read', 'edit', 'search', 'agent']
 
 ### Prompt Pattern (Recommended)
 
-Use a consistent “wrapper prompt” for every step so sub-agents behave predictably:
+Use a consistent “wrapper prompt” for every step so sub-agents behave
+predictably:
 
 ```text
 This phase must be performed as the agent "<AGENT_NAME>" defined in "<AGENT_SPEC_PATH>".
@@ -374,7 +411,8 @@ IMPORTANT:
 - Return a clear summary (actions taken + files produced/modified + issues).
 ```
 
-Optional: if you need a lightweight, structured wrapper for traceability, embed a small JSON block in the prompt (still human-readable and tool-agnostic):
+Optional: if you need a lightweight, structured wrapper for traceability, embed
+a small JSON block in the prompt (still human-readable and tool-agnostic):
 
 ```text
 {
@@ -389,13 +427,18 @@ Optional: if you need a lightweight, structured wrapper for traceability, embed 
 
 For maintainable orchestrators, document these structural elements:
 
-- **Dynamic parameters**: what values are extracted from the user (e.g., `projectName`, `fileName`, `basePath`).
-- **Sub-agent registry**: a list/table mapping each step to `agentName` + `agentSpecPath`.
+- **Dynamic parameters**: what values are extracted from the user (e.g.,
+  `projectName`, `fileName`, `basePath`).
+- **Sub-agent registry**: a list/table mapping each step to `agentName` +
+  `agentSpecPath`.
 - **Step ordering**: explicit sequence (Step 1 → Step N).
-- **Trigger conditions** (optional but recommended): define when a step runs vs is skipped.
-- **Logging strategy** (optional but recommended): a single log/report file updated after each step.
+- **Trigger conditions** (optional but recommended): define when a step runs vs
+  is skipped.
+- **Logging strategy** (optional but recommended): a single log/report file
+  updated after each step.
 
-Avoid embedding orchestration “code” (JavaScript, Python, etc.) inside the orchestrator prompt; prefer deterministic, tool-driven coordination.
+Avoid embedding orchestration “code” (JavaScript, Python, etc.) inside the
+orchestrator prompt; prefer deterministic, tool-driven coordination.
 
 ### Basic Pattern
 
@@ -403,7 +446,8 @@ Structure each step invocation with:
 
 1. **Step description**: Clear one-line purpose (used for logs and traceability)
 2. **Agent identity**: `agentName` + `agentSpecPath`
-3. **Context**: A small, explicit set of variables (paths, IDs, environment name)
+3. **Context**: A small, explicit set of variables (paths, IDs, environment
+   name)
 4. **Expected outputs**: Files to create/update and where they should be written
 5. **Return summary**: Ask the sub-agent to return a short, structured summary
 
@@ -432,12 +476,16 @@ Expected: write ${basePath}/analysis/report.md
 - **Pass variables in prompts**: Use `${variableName}` for all dynamic values
 - **Keep prompts focused**: Clear, specific tasks for each sub-agent
 - **Return summaries**: Each sub-agent should report what it accomplished
-- **Sequential execution**: Run steps in order when dependencies exist between outputs/inputs
+- **Sequential execution**: Run steps in order when dependencies exist between
+  outputs/inputs
 - **Error handling**: Check results before proceeding to dependent steps
 
 ### ⚠️ Tool Availability Requirement
 
-**Critical**: If a sub-agent requires specific tools (e.g., `edit`, `execute`, `search`), the orchestrator must include those tools in its own `tools` list. Sub-agents cannot access tools that aren't available to their parent orchestrator.
+**Critical**: If a sub-agent requires specific tools (e.g., `edit`, `execute`,
+`search`), the orchestrator must include those tools in its own `tools` list.
+Sub-agents cannot access tools that aren't available to their parent
+orchestrator.
 
 **Example**:
 
@@ -446,22 +494,28 @@ Expected: write ${basePath}/analysis/report.md
 tools: ['read', 'edit', 'search', 'execute', 'agent']
 ```
 
-The orchestrator's tool permissions act as a ceiling for all invoked sub-agents. Plan your tool list carefully to ensure all sub-agents have the tools they need.
+The orchestrator's tool permissions act as a ceiling for all invoked sub-agents.
+Plan your tool list carefully to ensure all sub-agents have the tools they need.
 
 ### ⚠️ Important Limitation
 
-**Sub-agent orchestration is NOT suitable for large-scale data processing.** Avoid using multi-step sub-agent pipelines when:
+**Sub-agent orchestration is NOT suitable for large-scale data processing.**
+Avoid using multi-step sub-agent pipelines when:
 
 - Processing hundreds or thousands of files
 - Handling large datasets
 - Performing bulk transformations on big codebases
 - Orchestrating more than 5-10 sequential steps
 
-Each sub-agent invocation adds latency and context overhead. For high-volume processing, implement logic directly in a single agent instead. Use orchestration only for coordinating specialized tasks on focused, manageable datasets.
+Each sub-agent invocation adds latency and context overhead. For high-volume
+processing, implement logic directly in a single agent instead. Use
+orchestration only for coordinating specialized tasks on focused, manageable
+datasets.
 
 ## Agent Prompt Structure
 
-The markdown content below the frontmatter defines the agent's behavior, expertise, and instructions. Well-structured prompts typically include:
+The markdown content below the frontmatter defines the agent's behavior,
+expertise, and instructions. Well-structured prompts typically include:
 
 1. **Agent Identity and Role**: Who the agent is and its primary role
 2. **Core Responsibilities**: What specific tasks the agent performs
@@ -471,15 +525,19 @@ The markdown content below the frontmatter defines the agent's behavior, experti
 
 ### Prompt Writing Best Practices
 
-- **Be Specific and Direct**: Use imperative mood ("Analyze", "Generate"); avoid vague terms
+- **Be Specific and Direct**: Use imperative mood ("Analyze", "Generate"); avoid
+  vague terms
 - **Define Boundaries**: Clearly state scope limits and constraints
-- **Include Context**: Explain domain expertise and reference relevant frameworks
+- **Include Context**: Explain domain expertise and reference relevant
+  frameworks
 - **Focus on Behavior**: Describe how the agent should think and work
 - **Use Structured Format**: Headers, bullets, and lists make prompts scannable
 
 ## Variable Definition and Extraction
 
-Agents can define dynamic parameters to extract values from user input and use them throughout the agent's behavior and sub-agent communications. This enables flexible, context-aware agents that adapt to user-provided data.
+Agents can define dynamic parameters to extract values from user input and use
+them throughout the agent's behavior and sub-agent communications. This enables
+flexible, context-aware agents that adapt to user-provided data.
 
 ### When to Use Variables
 
@@ -501,7 +559,8 @@ Agents can define dynamic parameters to extract values from user input and use t
 
 ### Variable Declaration Pattern
 
-Define variables section early in the agent prompt to document expected parameters:
+Define variables section early in the agent prompt to document expected
+parameters:
 
 ```markdown
 # Agent Name
@@ -528,7 +587,9 @@ Ask the user to provide the variable if not detected in the prompt:
 Process the project by analyzing your codebase.
 
 ### Step 1: Identify Project
+
 If no project name is provided, **ASK THE USER** for:
+
 - Project name or identifier
 - Base path or directory location
 - Configuration type (if applicable)
@@ -542,7 +603,7 @@ Automatically extract variables from the user's natural language input:
 
 ```javascript
 // Example: Extract certification name from user input
-const userInput = "Process My Certification";
+const userInput = 'Process My Certification';
 
 // Extract key information
 const certificationName = extractCertificationName(userInput);
@@ -576,6 +637,7 @@ Use template variables in agent prompts to make them dynamic:
 # Agent Name
 
 ## Dynamic Parameters
+
 - **Project Name**: ${projectName}
 - **Base Path**: ${basePath}
 - **Output Directory**: ${outputDir}
@@ -599,7 +661,8 @@ Process the **${projectName}** project located at `${basePath}`.
 
 #### Passing Variables to Sub-Agents
 
-When invoking a sub-agent, pass all context through substituted variables in the prompt. Prefer passing **paths and identifiers**, not entire file contents.
+When invoking a sub-agent, pass all context through substituted variables in the
+prompt. Prefer passing **paths and identifiers**, not entire file contents.
 
 Example (prompt template):
 
@@ -620,18 +683,22 @@ Task:
 4. Return a concise summary (files created/updated, key decisions, issues).
 ```
 
-The sub-agent receives all necessary context embedded in the prompt. Variables are resolved before sending the prompt, so the sub-agent works with concrete paths and values, not variable placeholders.
+The sub-agent receives all necessary context embedded in the prompt. Variables
+are resolved before sending the prompt, so the sub-agent works with concrete
+paths and values, not variable placeholders.
 
 ### Real-World Example: Code Review Orchestrator
 
-Example of a simple orchestrator that validates code through multiple specialized agents:
+Example of a simple orchestrator that validates code through multiple
+specialized agents:
 
-1) Determine shared context:
+1. Determine shared context:
 
 - `repositoryName`, `prNumber`
 - `basePath` (e.g., `projects/${repositoryName}/pr-${prNumber}`)
 
-1) Invoke specialized agents sequentially (each agent reads its own `.agent.md` spec):
+1. Invoke specialized agents sequentially (each agent reads its own `.agent.md`
+   spec):
 
 ```text
 Step 1: Security Review
@@ -655,7 +722,8 @@ Output: projects/${repositoryName}/pr-${prNumber}/final-review.md
 
 #### Example: Conditional Step Orchestration (Code Review)
 
-This example shows a more complete orchestration with **pre-flight checks**, **conditional steps**, and **required vs optional** behavior.
+This example shows a more complete orchestration with **pre-flight checks**,
+**conditional steps**, and **required vs optional** behavior.
 
 **Dynamic parameters (inputs):**
 
@@ -665,19 +733,22 @@ This example shows a more complete orchestration with **pre-flight checks**, **c
 
 **Pre-flight checks (recommended):**
 
-- Verify expected folders/files exist (e.g., `${basePath}/changes/`, `${basePath}/reports/`).
-- Detect high-level characteristics that influence step triggers (e.g., repo language, presence of `package.json`, `pom.xml`, `requirements.txt`, test folders).
+- Verify expected folders/files exist (e.g., `${basePath}/changes/`,
+  `${basePath}/reports/`).
+- Detect high-level characteristics that influence step triggers (e.g., repo
+  language, presence of `package.json`, `pom.xml`, `requirements.txt`, test
+  folders).
 - Log the findings once at the start.
 
 **Step trigger conditions:**
 
-| Step | Status | Trigger Condition | On Failure |
-| ------ | -------- | ------------------- | ----------- |
-| 1: Security Review | **Required** | Always run | Stop pipeline |
-| 2: Dependency Audit | Optional | If a dependency manifest exists (`package.json`, `pom.xml`, etc.) | Continue |
-| 3: Test Coverage Check | Optional | If test projects/files are present | Continue |
-| 4: Performance Checks | Optional | If perf-sensitive code changed OR a perf config exists | Continue |
-| 5: Aggregate & Verdict | **Required** | Always run if Step 1 completed | Stop pipeline |
+| Step                   | Status       | Trigger Condition                                                 | On Failure    |
+| ---------------------- | ------------ | ----------------------------------------------------------------- | ------------- |
+| 1: Security Review     | **Required** | Always run                                                        | Stop pipeline |
+| 2: Dependency Audit    | Optional     | If a dependency manifest exists (`package.json`, `pom.xml`, etc.) | Continue      |
+| 3: Test Coverage Check | Optional     | If test projects/files are present                                | Continue      |
+| 4: Performance Checks  | Optional     | If perf-sensitive code changed OR a perf config exists            | Continue      |
+| 5: Aggregate & Verdict | **Required** | Always run if Step 1 completed                                    | Stop pipeline |
 
 **Execution flow (natural language):**
 
@@ -687,9 +758,12 @@ This example shows a more complete orchestration with **pre-flight checks**, **c
 4. For each step:
 
 - If trigger condition is false: mark as **SKIPPED** and continue.
-- Otherwise: invoke the sub-agent using the wrapper prompt and capture its summary.
+- Otherwise: invoke the sub-agent using the wrapper prompt and capture its
+  summary.
 - Mark as **SUCCESS** or **FAILED**.
-- If the step is **Required** and failed: stop the pipeline and write a failure summary.
+- If the step is **Required** and failed: stop the pipeline and write a failure
+  summary.
+
 1. End with a final summary section (overall status, artifacts, next actions).
 
 **Sub-agent invocation prompt (example):**
@@ -712,16 +786,15 @@ Task:
 
 ```markdown
 ## Step 2: Dependency Audit
-**Status:** ✅ SUCCESS / ⚠️ SKIPPED / ❌ FAILED
-**Trigger:** package.json present
-**Started:** 2026-01-16T10:30:15Z
-**Completed:** 2026-01-16T10:31:05Z
-**Duration:** 00:00:50
-**Artifacts:** reports/dependency-audit.md
-**Summary:** [brief agent summary]
+
+**Status:** ✅ SUCCESS / ⚠️ SKIPPED / ❌ FAILED **Trigger:** package.json
+present **Started:** 2026-01-16T10:30:15Z **Completed:** 2026-01-16T10:31:05Z
+**Duration:** 00:00:50 **Artifacts:** reports/dependency-audit.md **Summary:**
+[brief agent summary]
 ```
 
-This pattern applies to any orchestration scenario: extract variables, call sub-agents with clear context, await results.
+This pattern applies to any orchestration scenario: extract variables, call
+sub-agents with clear context, await results.
 
 ### Variable Best Practices
 
@@ -731,14 +804,17 @@ Always document what variables are expected:
 
 ```markdown
 ## Required Variables
+
 - **projectName**: The name of the project (string, required)
 - **basePath**: Root directory for project files (path, required)
 
 ## Optional Variables
+
 - **mode**: Processing mode - quick/standard/detailed (enum, default: standard)
 - **outputFormat**: Output format - markdown/json/html (enum, default: markdown)
 
 ## Derived Variables
+
 - **outputDir**: Automatically set to ${basePath}/output
 - **logFile**: Automatically set to ${basePath}/.log.md
 ```
@@ -750,19 +826,19 @@ Use consistent variable naming conventions:
 ```javascript
 // Good: Clear, descriptive naming
 const variables = {
-  projectName,          // What project to work on
-  basePath,            // Where project files are located
-  outputDirectory,     // Where to save results
-  processingMode,      // How to process (detail level)
-  configurationPath    // Where config files are
+  projectName, // What project to work on
+  basePath, // Where project files are located
+  outputDirectory, // Where to save results
+  processingMode, // How to process (detail level)
+  configurationPath, // Where config files are
 };
 
 // Avoid: Ambiguous or inconsistent
 const bad_variables = {
-  name,     // Too generic
-  path,     // Unclear which path
-  mode,     // Too short
-  config    // Too vague
+  name, // Too generic
+  path, // Unclear which path
+  mode, // Too short
+  config, // Too vague
 };
 ```
 
@@ -774,12 +850,14 @@ Document valid values and constraints:
 ## Variable Constraints
 
 **projectName**:
+
 - Type: string (alphanumeric, hyphens, underscores allowed)
 - Length: 1-100 characters
 - Required: yes
 - Pattern: `/^[a-zA-Z0-9_-]+$/`
 
 **processingMode**:
+
 - Type: enum
 - Valid values: "quick" (< 5min), "standard" (5-15min), "detailed" (15+ min)
 - Default: "standard"
@@ -788,7 +866,8 @@ Document valid values and constraints:
 
 ## MCP Server Configuration (Organization/Enterprise Only)
 
-MCP servers extend agent capabilities with additional tools. Only supported for organization and enterprise-level agents.
+MCP servers extend agent capabilities with additional tools. Only supported for
+organization and enterprise-level agents.
 
 ### Configuration Format
 
@@ -802,7 +881,7 @@ mcp-servers:
     type: 'local'
     command: 'some-command'
     args: ['--arg1', '--arg2']
-    tools: ["*"]
+    tools: ['*']
     env:
       ENV_VAR_NAME: ${{ secrets.API_KEY }}
 ---
@@ -902,8 +981,10 @@ Each level can override settings from previous levels.
 - [ ] `tools` configured appropriately (or intentionally omitted)
 - [ ] `model` specified for optimal performance
 - [ ] `target` set if environment-specific
-- [ ] Use `user-invocable: false` to hide from picker while allowing subagent invocation
-- [ ] Use `disable-model-invocation: true` to prevent subagent invocation while keeping picker visibility
+- [ ] Use `user-invocable: false` to hide from picker while allowing subagent
+      invocation
+- [ ] Use `disable-model-invocation: true` to prevent subagent invocation while
+      keeping picker visibility
 
 ### Prompt Content
 
@@ -937,33 +1018,33 @@ Each level can override settings from previous levels.
 
 ### Testing Specialist
 
-**Purpose**: Focus on test coverage and quality
-**Tools**: All tools (for comprehensive test creation)
-**Approach**: Analyze, identify gaps, write tests, avoid production code changes
+**Purpose**: Focus on test coverage and quality **Tools**: All tools (for
+comprehensive test creation) **Approach**: Analyze, identify gaps, write tests,
+avoid production code changes
 
 ### Implementation Planner
 
-**Purpose**: Create detailed technical plans and specifications
-**Tools**: Limited to `['read', 'search', 'edit']`
-**Approach**: Analyze requirements, create documentation, avoid implementation
+**Purpose**: Create detailed technical plans and specifications **Tools**:
+Limited to `['read', 'search', 'edit']` **Approach**: Analyze requirements,
+create documentation, avoid implementation
 
 ### Code Reviewer
 
-**Purpose**: Review code quality and provide feedback
-**Tools**: `['read', 'search']` only
-**Approach**: Analyze, suggest improvements, no direct modifications
+**Purpose**: Review code quality and provide feedback **Tools**:
+`['read', 'search']` only **Approach**: Analyze, suggest improvements, no direct
+modifications
 
 ### Refactoring Specialist
 
-**Purpose**: Improve code structure and maintainability
-**Tools**: `['read', 'search', 'edit']`
-**Approach**: Analyze patterns, propose refactorings, implement safely
+**Purpose**: Improve code structure and maintainability **Tools**:
+`['read', 'search', 'edit']` **Approach**: Analyze patterns, propose
+refactorings, implement safely
 
 ### Security Auditor
 
-**Purpose**: Identify security issues and vulnerabilities
-**Tools**: `['read', 'search', 'web']`
-**Approach**: Scan code, check against OWASP, report findings
+**Purpose**: Identify security issues and vulnerabilities **Tools**:
+`['read', 'search', 'web']` **Approach**: Scan code, check against OWASP, report
+findings
 
 ## Common Mistakes to Avoid
 
@@ -1041,8 +1122,10 @@ Each level can override settings from previous levels.
 
 ### Related Files
 
-- [Prompt Files Guidelines](./prompt.instructions.md) - For creating prompt files
-- [Instructions Guidelines](./instructions.instructions.md) - For creating instruction files
+- [Prompt Files Guidelines](./prompt.instructions.md) - For creating prompt
+  files
+- [Instructions Guidelines](./instructions.instructions.md) - For creating
+  instruction files
 
 ## Version Compatibility Notes
 
@@ -1061,4 +1144,6 @@ Each level can override settings from previous levels.
 - ❌ Cannot configure MCP servers at repository level
 - ⚠️ Some properties may behave differently
 
-When creating agents for multiple environments, focus on common properties and test in all target environments. Use `target` property to create environment-specific agents when necessary.
+When creating agents for multiple environments, focus on common properties and
+test in all target environments. Use `target` property to create
+environment-specific agents when necessary.

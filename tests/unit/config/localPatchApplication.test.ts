@@ -54,14 +54,18 @@ async function createPatchFixture() {
     encoding: 'utf8',
   });
 
-  expect(gitInit.status).toBe(0);
+  if (gitInit.status !== 0) {
+    throw new Error(`git init failed with status ${gitInit.status}`);
+  }
 
   const gitAdd = spawnSync('git', ['add', 'node_modules'], {
     cwd: root,
     encoding: 'utf8',
   });
 
-  expect(gitAdd.status).toBe(0);
+  if (gitAdd.status !== 0) {
+    throw new Error(`git add failed with status ${gitAdd.status}`);
+  }
 
   return root;
 }
@@ -76,6 +80,7 @@ afterEach(async () => {
 
 describe('repository-owned local patches', () => {
   it('applies all patches and is safe to run again', async () => {
+    expect.assertions(5);
     const root = await createPatchFixture();
 
     expect(runPatchApplicator(root).status).toBe(0);

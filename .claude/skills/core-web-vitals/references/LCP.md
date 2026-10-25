@@ -2,7 +2,8 @@
 
 ## What is LCP?
 
-Largest Contentful Paint (LCP) measures when the largest content element in the viewport becomes visible. This is typically:
+Largest Contentful Paint (LCP) measures when the largest content element in the
+viewport becomes visible. This is typically:
 
 - An `<img>` element
 - An `<image>` element inside `<svg>`
@@ -50,17 +51,26 @@ res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
 
 ```html
 <!-- Preload LCP image -->
-<link rel="preload" as="image" href="/hero.webp" 
-      imagesrcset="/hero-400.webp 400w, /hero-800.webp 800w"
-      imagesizes="100vw"
-      fetchpriority="high">
+<link
+  rel="preload"
+  as="image"
+  href="/hero.webp"
+  imagesrcset="/hero-400.webp 400w, /hero-800.webp 800w"
+  imagesizes="100vw"
+  fetchpriority="high"
+/>
 
 <!-- Modern format with fallback -->
 <picture>
-  <source srcset="/hero.avif" type="image/avif">
-  <source srcset="/hero.webp" type="image/webp">
-  <img src="/hero.jpg" width="1200" height="600" 
-       fetchpriority="high" alt="Hero">
+  <source srcset="/hero.avif" type="image/avif" />
+  <source srcset="/hero.webp" type="image/webp" />
+  <img
+    src="/hero.jpg"
+    width="1200"
+    height="600"
+    fetchpriority="high"
+    alt="Hero"
+  />
 </picture>
 ```
 
@@ -83,13 +93,21 @@ res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
   <!-- Inline critical CSS -->
   <style>
     /* Only above-fold styles, < 14KB */
-    .hero { /* ... */ }
-    .nav { /* ... */ }
+    .hero {
+      /* ... */
+    }
+    .nav {
+      /* ... */
+    }
   </style>
-  
+
   <!-- Defer non-critical CSS -->
-  <link rel="preload" href="/styles.css" as="style" 
-        onload="this.onload=null;this.rel='stylesheet'">
+  <link
+    rel="preload"
+    href="/styles.css"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
 </head>
 ```
 
@@ -155,24 +173,13 @@ function Page() {
 import Image from 'next/image';
 
 // LCP image with priority
-<Image 
-  src="/hero.jpg"
-  priority
-  fill
-  sizes="100vw"
-  alt="Hero"
-/>
+<Image src='/hero.jpg' priority fill sizes='100vw' alt='Hero' />;
 ```
 
 ### Nuxt
 
 ```vue
-<NuxtImg
-  src="/hero.jpg"
-  preload
-  loading="eager"
-  sizes="100vw"
-/>
+<NuxtImg src="/hero.jpg" preload loading="eager" sizes="100vw" />
 ```
 
 ### Astro
@@ -182,11 +189,11 @@ import Image from 'next/image';
 import { Image } from 'astro:assets';
 import hero from '../assets/hero.jpg';
 ---
-<Image 
-  src={hero} 
-  loading="eager" 
+<Image
+  src={hero}
+  loading="eager"
   decoding="sync"
-  alt="Hero" 
+  alt="Hero"
 />
 ```
 
@@ -197,24 +204,24 @@ import hero from '../assets/hero.jpg';
 new PerformanceObserver((entryList) => {
   const entries = entryList.getEntries();
   const lastEntry = entries[entries.length - 1];
-  
+
   console.log('LCP:', {
     element: lastEntry.element,
     time: lastEntry.startTime,
     size: lastEntry.size,
     url: lastEntry.url,
     renderTime: lastEntry.renderTime,
-    loadTime: lastEntry.loadTime
+    loadTime: lastEntry.loadTime,
   });
 }).observe({ type: 'largest-contentful-paint', buffered: true });
 ```
 
 ## Common issues
 
-| Issue | Impact | Fix |
-| ------- | -------- | ----- |
+| Issue                    | Impact      | Fix                        |
+| ------------------------ | ----------- | -------------------------- |
 | No preload for LCP image | +500-1000ms | Add `<link rel="preload">` |
-| Large unoptimized image | +300-800ms | Compress, use WebP/AVIF |
-| Render-blocking CSS | +200-500ms | Inline critical CSS |
-| Slow TTFB | +300-2000ms | CDN, edge caching |
-| Client-rendered content | +500-2000ms | SSR/SSG |
+| Large unoptimized image  | +300-800ms  | Compress, use WebP/AVIF    |
+| Render-blocking CSS      | +200-500ms  | Inline critical CSS        |
+| Slow TTFB                | +300-2000ms | CDN, edge caching          |
+| Client-rendered content  | +500-2000ms | SSR/SSG                    |

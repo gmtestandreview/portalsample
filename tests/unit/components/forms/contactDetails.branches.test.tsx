@@ -15,6 +15,7 @@ const customLabels = {
 
 describe('contactDetails branch coverage', () => {
   it('renders all supplied labels in edit mode', () => {
+    expect.assertions(1);
     render(
       <Formik
         initialValues={{
@@ -43,6 +44,7 @@ describe('contactDetails branch coverage', () => {
   });
 
   it('omits the empty-title fallback when a summary has a title', () => {
+    expect.assertions(1);
     render(
       <Formik
         initialValues={{

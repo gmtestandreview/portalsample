@@ -5,11 +5,15 @@ import constants from './constants.js';
 const { MAX_DEPTH } = constants;
 
 const compile = (ast, options = {}) => {
-  const maxDepth = Number.isFinite(options.maxDepth) ? Math.min(MAX_DEPTH, options.maxDepth) : MAX_DEPTH;
+  const maxDepth = Number.isFinite(options.maxDepth)
+    ? Math.min(MAX_DEPTH, options.maxDepth)
+    : MAX_DEPTH;
 
   const walk = (node, parent = {}, depth = 0) => {
     if (node.nodes && depth > maxDepth) {
-      throw new RangeError(`AST depth (${depth}), exceeds max depth (${maxDepth})`);
+      throw new RangeError(
+        `AST depth (${depth}), exceeds max depth (${maxDepth})`,
+      );
     }
     const invalidBlock = utils.isInvalidBrace(parent);
     const invalidNode = node.invalid === true && options.escapeInvalid === true;
@@ -44,7 +48,12 @@ const compile = (ast, options = {}) => {
 
     if (node.nodes && node.ranges > 0) {
       const args = utils.reduce(node.nodes);
-      const range = fill(...args, { ...options, wrap: false, toRegex: true, strictZeros: true });
+      const range = fill(...args, {
+        ...options,
+        wrap: false,
+        toRegex: true,
+        strictZeros: true,
+      });
 
       if (range.length !== 0) {
         return args.length > 1 && range.length > 1 ? `(${range})` : range;

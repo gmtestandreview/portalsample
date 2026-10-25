@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';

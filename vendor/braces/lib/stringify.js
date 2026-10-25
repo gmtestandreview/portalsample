@@ -4,11 +4,15 @@ import constants from './constants.js';
 const { MAX_DEPTH } = constants;
 
 const stringify = (ast, options = {}) => {
-  const maxDepth = Number.isFinite(options.maxDepth) ? Math.min(MAX_DEPTH, options.maxDepth) : MAX_DEPTH;
+  const maxDepth = Number.isFinite(options.maxDepth)
+    ? Math.min(MAX_DEPTH, options.maxDepth)
+    : MAX_DEPTH;
 
   const stringify = (node, parent = {}, depth = 0) => {
     if (node.nodes && depth > maxDepth) {
-      throw new RangeError(`AST depth (${depth}), exceeds max depth (${maxDepth})`);
+      throw new RangeError(
+        `AST depth (${depth}), exceeds max depth (${maxDepth})`,
+      );
     }
     const invalidBlock = options.escapeInvalid && utils.isInvalidBrace(parent);
     const invalidNode = node.invalid === true && options.escapeInvalid === true;

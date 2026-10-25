@@ -2,17 +2,16 @@
 name: subagent-driven-development
 description: >-
   Use when executing a written implementation plan whose tasks are mostly
-  independent, in the current session. Dispatches a fresh subagent per task
-  with a combined spec-compliance and code-quality review after each, then
-  a final whole-branch review. Prefer over executing-plans when all work
-  stays in one session and tasks do not need parallel worktrees.
+  independent, in the current session. Dispatches a fresh subagent per task with
+  a combined spec-compliance and code-quality review after each, then a final
+  whole-branch review. Prefer over executing-plans when all work stays in one
+  session and tasks do not need parallel worktrees.
 ---
 
 # Subagent-Driven Development
 
-Execute a plan by dispatching a fresh subagent per task, reviewing each
-task's implementation for spec compliance and code quality, then finishing
-the branch.
+Execute a plan by dispatching a fresh subagent per task, reviewing each task's
+implementation for spec compliance and code quality, then finishing the branch.
 
 ## When to use
 
@@ -23,8 +22,8 @@ Choose this skill when **all three** conditions hold:
 3. You will execute all tasks in the current session (no parallel worktrees).
 
 If tasks are tightly coupled or you need parallel sessions, use
-`executing-plans` instead. If no plan exists, run `writing-plans` first
-(or `brainstorming` before that).
+`executing-plans` instead. If no plan exists, run `writing-plans` first (or
+`brainstorming` before that).
 
 ## Prerequisites
 
@@ -51,14 +50,13 @@ directory at `.agent-sync/sdd/<plan-basename>/`. All intermediate artifacts
    brief to `<workspace>/task-N-brief.md`.
 
 2. **Dispatch implementer subagent** using `./implementer-prompt.md`.
-   - If the implementer asks questions, answer clearly, then re-dispatch or
-     let them continue.
-   - The implementer implements, writes tests (TDD), commits, self-reviews,
-     and writes a report file.
+   - If the implementer asks questions, answer clearly, then re-dispatch or let
+     them continue.
+   - The implementer implements, writes tests (TDD), commits, self-reviews, and
+     writes a report file.
 
-3. **Generate review package:** Run
-   `scripts/review-package PLAN_FILE BASE HEAD` to write the diff to
-   `<workspace>/review-<base7>..<head7>.diff`.
+3. **Generate review package:** Run `scripts/review-package PLAN_FILE BASE HEAD`
+   to write the diff to `<workspace>/review-<base7>..<head7>.diff`.
 
 4. **Dispatch reviewer subagent** using `./task-reviewer-prompt.md` (combined
    spec-compliance + code-quality, single pass).
@@ -79,42 +77,41 @@ directory at `.agent-sync/sdd/<plan-basename>/`. All intermediate artifacts
 
 ## Model selection
 
-Choose the reviewer model deliberately. An omitted `model:` parameter
-silently inherits the session's most expensive model, wasting budget on
-review work a mid-tier model handles well.
+Choose the reviewer model deliberately. An omitted `model:` parameter silently
+inherits the session's most expensive model, wasting budget on review work a
+mid-tier model handles well.
 
-| Role | Recommended tier | Rationale |
-| --- | --- | --- |
-| Implementer | Tier 2 (balanced) | Writes code, runs tests |
-| Task reviewer | Tier 2 (balanced) | Reads diffs, assesses quality |
-| Re-reviewer (small fix) | Tier 3 (lightweight) | Scoped to the fix diff only |
-| Final branch reviewer | Tier 2 (balanced) | Broader scope, still review |
+| Role                    | Recommended tier     | Rationale                     |
+| ----------------------- | -------------------- | ----------------------------- |
+| Implementer             | Tier 2 (balanced)    | Writes code, runs tests       |
+| Task reviewer           | Tier 2 (balanced)    | Reads diffs, assesses quality |
+| Re-reviewer (small fix) | Tier 3 (lightweight) | Scoped to the fix diff only   |
+| Final branch reviewer   | Tier 2 (balanced)    | Broader scope, still review   |
 
 ## Templates and scripts
 
 ### Templates
 
-| Template | Purpose |
-| --- | --- |
-| `./implementer-prompt.md` | Dispatch an implementer subagent for one task |
-| `./task-reviewer-prompt.md` | Combined spec-compliance + code-quality review (primary) |
-| `./re-review-prompt.md` | Scoped re-review after a fix round |
-| `./spec-reviewer-prompt.md` | Spec-compliance-only review (alternative) |
-| `./code-quality-reviewer-prompt.md` | Code-quality-only review (alternative) |
+| Template                            | Purpose                                                  |
+| ----------------------------------- | -------------------------------------------------------- |
+| `./implementer-prompt.md`           | Dispatch an implementer subagent for one task            |
+| `./task-reviewer-prompt.md`         | Combined spec-compliance + code-quality review (primary) |
+| `./re-review-prompt.md`             | Scoped re-review after a fix round                       |
+| `./spec-reviewer-prompt.md`         | Spec-compliance-only review (alternative)                |
+| `./code-quality-reviewer-prompt.md` | Code-quality-only review (alternative)                   |
 
-The combined `task-reviewer-prompt.md` is the recommended default: one
-subagent invocation instead of two, with both verdicts in a single pass. Use
-the separate `spec-reviewer-prompt.md` + `code-quality-reviewer-prompt.md`
-pair only when you need an adversarial spec review by a different model than
-the quality review.
+The combined `task-reviewer-prompt.md` is the recommended default: one subagent
+invocation instead of two, with both verdicts in a single pass. Use the separate
+`spec-reviewer-prompt.md` + `code-quality-reviewer-prompt.md` pair only when you
+need an adversarial spec review by a different model than the quality review.
 
 ### Scripts
 
-| Script | Purpose |
-| --- | --- |
-| `scripts/sdd-workspace PLAN_FILE` | Create per-plan workspace at `.agent-sync/sdd/<plan>/` |
-| `scripts/task-brief PLAN_FILE N` | Extract task N's full text to a brief file |
-| `scripts/review-package PLAN_FILE BASE HEAD` | Generate diff package for review |
+| Script                                       | Purpose                                                |
+| -------------------------------------------- | ------------------------------------------------------ |
+| `scripts/sdd-workspace PLAN_FILE`            | Create per-plan workspace at `.agent-sync/sdd/<plan>/` |
+| `scripts/task-brief PLAN_FILE N`             | Extract task N's full text to a brief file             |
+| `scripts/review-package PLAN_FILE BASE HEAD` | Generate diff package for review                       |
 
 All scripts are Bash. Run from the skill directory or with a full path.
 
@@ -163,38 +160,38 @@ Task 2:
 - Let self-review replace the actual review (both are needed).
 - Move to the next task while the current task has open review findings.
 
-**If a subagent asks questions:** answer clearly and completely before
-letting them proceed.
+**If a subagent asks questions:** answer clearly and completely before letting
+them proceed.
 
-**If a reviewer finds issues:** the implementer fixes, the re-reviewer
-verifies, repeat until clean.
+**If a reviewer finds issues:** the implementer fixes, the re-reviewer verifies,
+repeat until clean.
 
-**If a subagent fails entirely:** dispatch a fresh fix subagent with
-specific instructions. Do not fix manually (context pollution).
+**If a subagent fails entirely:** dispatch a fresh fix subagent with specific
+instructions. Do not fix manually (context pollution).
 
 ## Safety
 
 - Record the base SHA before each task starts. If a task must be reverted,
   `git reset --soft <base>` undoes only that task's commits.
-- The controller never writes product code — all implementation goes
-  through subagents.
+- The controller never writes product code — all implementation goes through
+  subagents.
 - Reviews are read-only. Templates enforce this explicitly.
-- Do not dispatch a new task until the previous task's review loop is
-  fully closed.
+- Do not dispatch a new task until the previous task's review loop is fully
+  closed.
 
 ## Edge cases
 
-- **Task depends on a previous task's output:** dispatch sequentially
-  (the default). Include the prior task's report and relevant file paths
-  as additional context for the dependent task.
-- **Plan changes mid-execution:** stop, update the plan, re-extract
-  affected briefs with `scripts/task-brief`, and resume. Do not continue
-  with stale briefs.
-- **Reviewer and implementer disagree:** the reviewer's verdict stands.
-  If the implementer raises a valid concern, the controller adjudicates.
-  The implementer never overrules the review.
-- **Review loop exceeds 3 rounds:** escalate to the controller. The task
-  may need re-planning or a different implementer approach.
+- **Task depends on a previous task's output:** dispatch sequentially (the
+  default). Include the prior task's report and relevant file paths as
+  additional context for the dependent task.
+- **Plan changes mid-execution:** stop, update the plan, re-extract affected
+  briefs with `scripts/task-brief`, and resume. Do not continue with stale
+  briefs.
+- **Reviewer and implementer disagree:** the reviewer's verdict stands. If the
+  implementer raises a valid concern, the controller adjudicates. The
+  implementer never overrules the review.
+- **Review loop exceeds 3 rounds:** escalate to the controller. The task may
+  need re-planning or a different implementer approach.
 
 ## Integration
 

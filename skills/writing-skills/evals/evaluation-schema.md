@@ -1,8 +1,8 @@
 # Behavioral Evaluation Schema
 
 This file defines the common record format and outcome semantics for every case
-in this package's `evals/` library. Evaluators consume the definitions
-and produce campaign records; this schema is not an executable validator.
+in this package's `evals/` library. Evaluators consume the definitions and
+produce campaign records; this schema is not an executable validator.
 
 Parameters shown in braces, such as `{candidate_skill}` or
 `{representative_request}`, are evaluator-supplied campaign values. They are

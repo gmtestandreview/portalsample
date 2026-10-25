@@ -12,6 +12,7 @@ describe('Layout AppShell — WCAG accessibility', () => {
   });
 
   it('renders an aria-live polite region', () => {
+    expect.assertions(2);
     render(
       <MemoryRouter>
         <Layout>
@@ -25,6 +26,7 @@ describe('Layout AppShell — WCAG accessibility', () => {
   });
 
   it('renders exactly one role=status region (no duplicate from old component)', () => {
+    expect.assertions(1);
     render(
       <MemoryRouter>
         <Layout>
@@ -36,6 +38,7 @@ describe('Layout AppShell — WCAG accessibility', () => {
   });
 
   it('populates the announcement after navigation', () => {
+    expect.assertions(1);
     document.title = 'Dashboard | NMI Portal';
     render(
       <MemoryRouter initialEntries={['/dashboard']}>

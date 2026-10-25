@@ -255,7 +255,7 @@ import { ErrorType, WizardStepError } from './types';
 function resolveForbiddenState(
   error: unknown,
   serverError: ProblemDetails,
-  errorType: ErrorType
+  errorType: ErrorType,
 ): WizardStepError {
   if (serverError.title?.includes('No third-party access'))
     return { kind: 'noThirdPartyAccess' };
@@ -279,7 +279,7 @@ export function resolveErrorState(
   getRedirectionLocationOnError:
     | ((errorCode: number, errorType: ErrorType) => string | undefined)
     | undefined,
-  errorType: ErrorType
+  errorType: ErrorType,
 ): WizardStepError {
   const serverError = error as ProblemDetails;
 
@@ -288,7 +288,7 @@ export function resolveErrorState(
   if (getRedirectionLocationOnError && serverError?.status) {
     const location = getRedirectionLocationOnError(
       serverError.status,
-      errorType
+      errorType,
     );
     if (location) return { kind: 'redirect', location };
   }
@@ -353,7 +353,7 @@ Line 73:
 
 ```typescript
 useHtmlTitle(
-  `${allSteps.length > 1 ? `Step ${currentStepIndex + 1}: ` : ''}${bannerTitle} | NMI Services portal`
+  `${allSteps.length > 1 ? `Step ${currentStepIndex + 1}: ` : ''}${bannerTitle} | NMI Services portal`,
 );
 ```
 
@@ -507,7 +507,7 @@ Line 90:
 renderErrorListItem(
   key,
   `${keyToSentenceCase(key, 1)}${errors[key]}`,
-  disableLinkedError
+  disableLinkedError,
 );
 ```
 
@@ -520,7 +520,7 @@ Use `String()` to make the intent explicit and satisfy SonarLint:
 renderErrorListItem(
   key,
   `${keyToSentenceCase(key, 1)}${String(errors[key])}`,
-  disableLinkedError
+  disableLinkedError,
 );
 ```
 

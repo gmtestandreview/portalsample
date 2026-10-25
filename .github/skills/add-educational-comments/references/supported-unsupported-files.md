@@ -1,10 +1,13 @@
 # Supported and Unsupported Files
 
-Use this reference when target classification is uncertain or the target may be unsupported.
+Use this reference when target classification is uncertain or the target may be
+unsupported.
 
 ## Supported by Default
 
-Direct inline comments are usually appropriate for source code and comment-capable configuration files when syntax is known and validation is possible:
+Direct inline comments are usually appropriate for source code and
+comment-capable configuration files when syntax is known and validation is
+possible:
 
 - Python
 - JavaScript and TypeScript
@@ -38,13 +41,20 @@ Proceed with extra caution or confirmation for:
 
 Do not directly insert comments into:
 
-- JSON files, including `package.json`, `tsconfig.json`, and API payload examples, unless a specific comment-supporting dialect is confirmed and validation is available
-- Lockfiles such as `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `Gemfile.lock`, `poetry.lock`, and `Cargo.lock`
-- Binary files, images, archives, fonts, PDFs, compiled artifacts, model files, and media files
-- Minified or bundled files such as `*.min.js`, generated bundles, sourcemaps, or compressed assets
-- Vendored dependencies and generated output directories such as `node_modules`, `.venv`, `vendor`, `dist`, and `build`
+- JSON files, including `package.json`, `tsconfig.json`, and API payload
+  examples, unless a specific comment-supporting dialect is confirmed and
+  validation is available
+- Lockfiles such as `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`,
+  `Gemfile.lock`, `poetry.lock`, and `Cargo.lock`
+- Binary files, images, archives, fonts, PDFs, compiled artifacts, model files,
+  and media files
+- Minified or bundled files such as `*.min.js`, generated bundles, sourcemaps,
+  or compressed assets
+- Vendored dependencies and generated output directories such as `node_modules`,
+  `.venv`, `vendor`, `dist`, and `build`
 - Generated files unless explicitly authorized
-- Secret-bearing files such as `.env`, private keys, credentials, token stores, certificates, and production config containing secrets
+- Secret-bearing files such as `.env`, private keys, credentials, token stores,
+  certificates, and production config containing secrets
 - Exact-format files where comments invalidate syntax or semantics
 
 Use sidecar notes for unsupported targets.

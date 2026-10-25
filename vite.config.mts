@@ -3,41 +3,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
-import type { DeprecationOrId } from 'sass';
 import { msw } from 'msw/vite';
+import { VITE_ENV_FIXTURES, VITE_ENV_KEYS } from './runtime-env-fixtures';
+import {
+  APPLICATION_VENDOR_CHUNK_GROUPS,
+  SASS_PREPROCESSOR_OPTIONS,
+} from './storybook-vite-policies';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUNTIME_ENVIRONMENT_FILE = path.resolve(dirname, 'ClientApp/env.js');
 
-const VITE_ENV_KEYS = [
-  'VITE_B2C_CLIENTID',
-  'VITE_B2C_AUTHORITY',
-  'VITE_B2C_KNOWN_AUTHORITIES',
-  'VITE_B2C_POST_LOGOUT_REDIRECT_URL',
-  'VITE_B2C_READ_SCOPE',
-  'VITE_B2C_USER_IMPERSONATION_SCOPE',
-  'VITE_B2C_REDIRECT_URL',
-  'VITE_EXTERNAL_REDIRECT_URL',
-  'VITE_APPINSIGHTS_INSTRUMENTATIONKEY',
-  'VITE_APPINSIGHTS_CONN_STRING',
-  'VITE_GA_TRACKINGID',
-  'VITE_ENVIRONMENT',
-] as const;
-
-const DEVELOPMENT_DEFAULTS: Readonly<Record<string, string>> = {
-  VITE_B2C_CLIENTID: 'dev-client-id',
-  VITE_B2C_AUTHORITY: 'https://login.microsoftonline.com/common',
-  VITE_B2C_KNOWN_AUTHORITIES: 'login.microsoftonline.com',
-  VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'http://localhost:3000',
-  VITE_B2C_READ_SCOPE: 'openid',
-  VITE_B2C_USER_IMPERSONATION_SCOPE: 'openid',
-  VITE_B2C_REDIRECT_URL: 'http://localhost:3000/redirect.html',
-  VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:3000',
-  VITE_APPINSIGHTS_INSTRUMENTATIONKEY: '',
-  VITE_APPINSIGHTS_CONN_STRING: 'dummy-key',
-  VITE_GA_TRACKINGID: '',
-  VITE_ENVIRONMENT: 'development',
-};
+const DEVELOPMENT_DEFAULTS = VITE_ENV_FIXTURES.viteDevelopment;
 
 function resolveEnvVars(mode: string, command: string): Record<string, string> {
   const loadedEnv = loadEnv(mode, dirname, '');
@@ -226,13 +202,6 @@ function msalRedirectCspPlugin(): Plugin {
   };
 }
 
-const sassDeprecationsToSilence: DeprecationOrId[] = [
-  'import',
-  'global-builtin',
-  'color-functions',
-  'if-function',
-];
-
 export default defineConfig(({ command, mode }) => {
   const envVars = resolveEnvVars(mode, command);
   const envValues = new Map(Object.entries(envVars));
@@ -240,7 +209,7 @@ export default defineConfig(({ command, mode }) => {
     VITE_ENV_KEYS.map((key) => [
       `import.meta.env.${key}`,
       JSON.stringify(envValues.get(key)),
-    ]),
+    ])
   );
 
   return {
@@ -267,8 +236,7 @@ export default defineConfig(({ command, mode }) => {
       preprocessorOptions: {
         scss: {
           loadPaths: [path.resolve(dirname, 'node_modules')],
-          quietDeps: true,
-          silenceDeprecations: sassDeprecationsToSilence,
+          ...SASS_PREPROCESSOR_OPTIONS,
         },
       },
     },
@@ -313,29 +281,7 @@ export default defineConfig(({ command, mode }) => {
           chunkFileNames: 'js/[name].[hash:8].js',
           assetFileNames,
           codeSplitting: {
-            groups: [
-              {
-                name: 'react-runtime',
-                test: /node_modules[\\/](react|react-dom|react-router)[\\/]/,
-              },
-              {
-                name: 'auth',
-                test: /node_modules[\\/]@azure[\\/]/,
-              },
-              {
-                name: 'forms',
-                test: /node_modules[\\/](formik|yup)[\\/]/,
-              },
-              {
-                name: 'ui',
-                test: /node_modules[\\/]react-bootstrap[\\/]/,
-              },
-              {
-                name: 'utilities',
-                // Lodash remains a transitive runtime dependency of Formik and Slate.
-                test: /node_modules[\\/](lodash|date-fns)[\\/]/,
-              },
-            ],
+            groups: [...APPLICATION_VENDOR_CHUNK_GROUPS],
           },
         },
       },

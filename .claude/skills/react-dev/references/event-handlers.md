@@ -1,6 +1,7 @@
 # Event Handler TypeScript Patterns
 
-Proper event typing ensures type-safe access to event properties and target elements.
+Proper event typing ensures type-safe access to event properties and target
+elements.
 
 ## Mouse Events
 
@@ -299,11 +300,15 @@ function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
 
 ```typescript
 // For international input methods (Chinese, Japanese, etc.)
-function handleCompositionStart(event: React.CompositionEvent<HTMLInputElement>) {
+function handleCompositionStart(
+  event: React.CompositionEvent<HTMLInputElement>,
+) {
   console.log('Composition started');
 }
 
-function handleCompositionUpdate(event: React.CompositionEvent<HTMLInputElement>) {
+function handleCompositionUpdate(
+  event: React.CompositionEvent<HTMLInputElement>,
+) {
   console.log('Composing:', event.data);
 }
 
@@ -338,7 +343,7 @@ function handleMultiTouch(event: React.TouchEvent<HTMLDivElement>) {
 
     const distance = Math.hypot(
       touch2.clientX - touch1.clientX,
-      touch2.clientY - touch1.clientY
+      touch2.clientY - touch1.clientY,
     );
 
     console.log('Pinch distance:', distance);
@@ -376,7 +381,7 @@ Reusable handlers with proper typing.
 ```typescript
 // Generic change handler
 function createChangeHandler<T extends HTMLElement>(
-  callback: (value: string) => void
+  callback: (value: string) => void,
 ) {
   return (event: React.ChangeEvent<T>) => {
     if ('value' in event.target) {
@@ -397,7 +402,7 @@ const handleBioChange = createChangeHandler<HTMLTextAreaElement>((value) => {
 // Generic click handler with target validation
 function createClickHandler<T extends HTMLElement>(
   selector: string,
-  callback: (element: T) => void
+  callback: (element: T) => void,
 ) {
   return (event: React.MouseEvent<HTMLElement>) => {
     const target = event.target as HTMLElement;
@@ -410,10 +415,13 @@ function createClickHandler<T extends HTMLElement>(
 }
 
 // Usage
-const handleItemClick = createClickHandler<HTMLLIElement>('li[data-id]', (item) => {
-  const id = item.dataset.id;
-  console.log('Clicked item:', id);
-});
+const handleItemClick = createClickHandler<HTMLLIElement>(
+  'li[data-id]',
+  (item) => {
+    const id = item.dataset.id;
+    console.log('Clicked item:', id);
+  },
+);
 ```
 
 ## Event Handler Type Aliases
@@ -439,13 +447,14 @@ const handleSubmit: FormSubmitHandler = (event) => {
 
 // Generic handler type
 type EventHandler<E extends HTMLElement, Evt extends React.SyntheticEvent> = (
-  event: Evt & { currentTarget: E }
+  event: Evt & { currentTarget: E },
 ) => void;
 
 // Usage
-const handleInput: EventHandler<HTMLInputElement, React.ChangeEvent<HTMLInputElement>> = (
-  event
-) => {
+const handleInput: EventHandler<
+  HTMLInputElement,
+  React.ChangeEvent<HTMLInputElement>
+> = (event) => {
   console.log(event.currentTarget.value);
 };
 ```

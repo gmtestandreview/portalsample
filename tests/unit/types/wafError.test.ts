@@ -6,6 +6,7 @@ import {
 
 describe(isWafError, () => {
   it('returns true for Azure WAF server headers', () => {
+    expect.assertions(2);
     expect(
       isWafError({
         headers: { server: 'Microsoft-Azure-Application-Gateway/2.5' },
@@ -31,6 +32,7 @@ describe(isWafError, () => {
     42,
     undefined,
   ])('returns false for non-WAF errors %#', (error) => {
+    expect.assertions(1);
     expect(isWafError(error)).toBe(false);
   });
 });

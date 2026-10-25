@@ -2,9 +2,11 @@
 
 ## Anti-Corruption Layer Pattern
 
-**Problem**: New systems must integrate with legacy systems that use outdated models or technologies.
+**Problem**: New systems must integrate with legacy systems that use outdated
+models or technologies.
 
-**Solution**: Implement a façade or adapter layer between a modern application and a legacy system to prevent legacy constraints from affecting new design.
+**Solution**: Implement a façade or adapter layer between a modern application
+and a legacy system to prevent legacy constraints from affecting new design.
 
 **When to Use**:
 
@@ -24,7 +26,8 @@
 
 **Problem**: A single backend may not optimally serve different client types.
 
-**Solution**: Create separate backend services to serve specific frontend applications or interfaces.
+**Solution**: Create separate backend services to serve specific frontend
+applications or interfaces.
 
 **When to Use**:
 
@@ -44,7 +47,8 @@
 
 **Problem**: Clients need data from multiple backend services.
 
-**Solution**: Use a gateway to aggregate multiple individual requests into a single request.
+**Solution**: Use a gateway to aggregate multiple individual requests into a
+single request.
 
 **When to Use**:
 
@@ -64,7 +68,8 @@
 
 **Problem**: Shared functionality is duplicated across multiple services.
 
-**Solution**: Offload shared or specialized service functionality to a gateway proxy.
+**Solution**: Offload shared or specialized service functionality to a gateway
+proxy.
 
 **When to Use**:
 
@@ -104,7 +109,8 @@
 
 **Problem**: Applications need auxiliary functionality without coupling.
 
-**Solution**: Deploy components of an application into a separate process or container to provide isolation and encapsulation.
+**Solution**: Deploy components of an application into a separate process or
+container to provide isolation and encapsulation.
 
 **When to Use**:
 
@@ -124,7 +130,8 @@
 
 **Problem**: Legacy systems are risky to replace all at once.
 
-**Solution**: Incrementally migrate a legacy system by gradually replacing specific pieces of functionality with new applications and services.
+**Solution**: Incrementally migrate a legacy system by gradually replacing
+specific pieces of functionality with new applications and services.
 
 **When to Use**:
 

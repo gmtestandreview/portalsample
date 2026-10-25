@@ -80,6 +80,7 @@ const request: PatternApprovalDashboardDetailsDto = {
 
 describe('paRequestItem without a delete target', () => {
   it('ignores a confirmation and makes no delete request', async () => {
+    expect.assertions(4);
     const user = userEvent.setup();
     render(
       <MemoryRouter>

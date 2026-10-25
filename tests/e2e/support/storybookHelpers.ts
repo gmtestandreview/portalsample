@@ -51,12 +51,12 @@ export type McpEnvelope = {
 
 const isTransientMcpTransportError = (error: unknown): boolean =>
   /ECONNRESET|ECONNREFUSED|socket hang up/i.test(
-    error instanceof Error ? error.message : String(error)
+    error instanceof Error ? error.message : String(error),
   );
 
 export async function executeMcpTestRun(
   request: APIRequestContext,
-  storyIds: string[]
+  storyIds: string[],
 ): Promise<APIResponse> {
   let lastError: unknown;
 
@@ -135,7 +135,7 @@ export async function executeMcpTestRun(
 
 export async function readMcpEvent(
   response: APIResponse,
-  expectedId?: number | string
+  expectedId?: number | string,
 ): Promise<McpEnvelope> {
   const body = await response.text();
   const contentType = response.headers()['content-type'] ?? '';
@@ -143,7 +143,7 @@ export async function readMcpEvent(
     const envelope = JSON.parse(body) as McpEnvelope;
     if (expectedId !== undefined && envelope.id !== expectedId) {
       throw new Error(
-        `MCP JSON-RPC response ID ${String(envelope.id)} did not match ${String(expectedId)}`
+        `MCP JSON-RPC response ID ${String(envelope.id)} did not match ${String(expectedId)}`,
       );
     }
     return envelope;
@@ -158,23 +158,23 @@ export async function readMcpEvent(
       ? events
       : events.filter((candidate) => candidate.id === expectedId);
   const errorEvent = matchingEvents.find(
-    (candidate) => candidate.error !== undefined
+    (candidate) => candidate.error !== undefined,
   );
   if (errorEvent !== undefined) {
     throw new Error(
-      `MCP JSON-RPC response contained an error: ${JSON.stringify(errorEvent.error)}`
+      `MCP JSON-RPC response contained an error: ${JSON.stringify(errorEvent.error)}`,
     );
   }
   const event =
     matchingEvents.find(
-      (candidate) => candidate.result?.structuredContent !== undefined
+      (candidate) => candidate.result?.structuredContent !== undefined,
     ) ?? matchingEvents.at(-1);
 
   if (event === undefined) {
     throw new Error(
       expectedId === undefined
         ? `MCP response did not contain an SSE data event: ${body}`
-        : `MCP response did not contain JSON-RPC response ID ${String(expectedId)}`
+        : `MCP response did not contain JSON-RPC response ID ${String(expectedId)}`,
     );
   }
 
@@ -198,7 +198,7 @@ export async function loadStoryIframe(page: Page, storyId: string) {
       {
         timeout: STORY_RENDER_TIMEOUT_MS,
         polling: 100,
-      }
+      },
     )
     .catch(() => {
       // Slow cold compile — fall through to the assertion's own wait.

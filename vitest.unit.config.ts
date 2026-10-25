@@ -70,6 +70,15 @@ export default defineConfig({
     maxWorkers: 2,
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
+    // Keep snapshot output aligned with @vitest/pretty-format's documented
+    // snapshot defaults while making the safety budget explicit.
+    snapshotFormat: {
+      escapeRegex: true,
+      escapeString: false,
+      maxOutputLength: 2 ** 27,
+      printBasicPrototype: false,
+      printFunctionName: false,
+    },
     include: ['tests/unit/**/*.test.{ts,tsx}'],
     css: false,
     coverage: coverageConfig,

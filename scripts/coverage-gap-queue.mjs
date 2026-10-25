@@ -113,7 +113,7 @@ const buildRow = (absolutePath, entry) => {
   const functionTotal = Object.keys(entry.f ?? {}).length;
   const branchTotal = Object.values(entry.b ?? {}).reduce(
     (sum, arms) => sum + arms.length,
-    0
+    0,
   );
 
   const family = familyOf(relativeFile);
@@ -128,15 +128,15 @@ const buildRow = (absolutePath, entry) => {
     uncoveredStatements: uncoveredLines.length,
     statementsPct: percentage(
       statementTotal - uncoveredLines.length,
-      statementTotal
+      statementTotal,
     ),
     branchesPct: percentage(
       branchTotal - uncoveredBranches.length,
-      branchTotal
+      branchTotal,
     ),
     functionsPct: percentage(
       functionTotal - uncoveredFunctions.length,
-      functionTotal
+      functionTotal,
     ),
     uncoveredLines,
     uncoveredFunctionNames: uncoveredFunctions,
@@ -152,13 +152,13 @@ const rows = Object.entries(coverage)
     (row) =>
       row.uncoveredBranches > 0 ||
       row.uncoveredFunctions > 0 ||
-      row.uncoveredStatements > 0
+      row.uncoveredStatements > 0,
   )
   .sort(
     (a, b) =>
       b.uncoveredBranches - a.uncoveredBranches ||
       b.uncoveredFunctions - a.uncoveredFunctions ||
-      b.uncoveredStatements - a.uncoveredStatements
+      b.uncoveredStatements - a.uncoveredStatements,
   );
 
 const totals = rows.reduce(
@@ -167,7 +167,7 @@ const totals = rows.reduce(
     functions: accumulator.functions + row.uncoveredFunctions,
     statements: accumulator.statements + row.uncoveredStatements,
   }),
-  { branches: 0, functions: 0, statements: 0 }
+  { branches: 0, functions: 0, statements: 0 },
 );
 
 const byFamily = {};
@@ -188,7 +188,7 @@ for (const row of rows) {
 mkdirSync(path.dirname(OUTPUT), { recursive: true });
 writeFileSync(
   OUTPUT,
-  `${JSON.stringify({ generatedFrom: COVERAGE_FINAL, measuredFiles: Object.keys(coverage).length, filesNeedingWork: rows.length, totals, byFamily, rows }, null, 2)}\n`
+  `${JSON.stringify({ generatedFrom: COVERAGE_FINAL, measuredFiles: Object.keys(coverage).length, filesNeedingWork: rows.length, totals, byFamily, rows }, null, 2)}\n`,
 );
 
 console.warn(`Measured files:      ${Object.keys(coverage).length}`);
@@ -202,10 +202,10 @@ for (const [id, family] of Object.entries(byFamily).sort(
     if (leftId < rightId) return -1;
     if (leftId > rightId) return 1;
     return 0;
-  }
+  },
 )) {
   console.warn(
-    `  ${id}. ${family.name.padEnd(62)} ${String(family.files).padStart(3)} files  ${String(family.branches).padStart(5)}b ${String(family.functions).padStart(4)}f ${String(family.statements).padStart(5)}s`
+    `  ${id}. ${family.name.padEnd(62)} ${String(family.files).padStart(3)} files  ${String(family.branches).padStart(5)}b ${String(family.functions).padStart(4)}f ${String(family.statements).padStart(5)}s`,
   );
 }
 console.warn(`\nWrote ${OUTPUT}`);

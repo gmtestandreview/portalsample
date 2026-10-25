@@ -2,25 +2,26 @@
 
 Date: 2026-09-14
 
-Representative task: audit and revise a deliberately messy `target-skill/` Agent Skill directory
-for release.
+Representative task: audit and revise a deliberately messy `target-skill/` Agent
+Skill directory for release.
 
 ## Independence
 
 - RED ran in an isolated Claude project with only `target-skill/`.
-- GREEN ran in a separate isolated Claude project with the same `target-skill/` plus the candidate
-  `skill-creator` under `.claude/skills/skill-creator`.
-- Both runs used the same prompt, `claude -p`, `--setting-sources project`, and separate transcripts.
+- GREEN ran in a separate isolated Claude project with the same `target-skill/`
+  plus the candidate `skill-creator` under `.claude/skills/skill-creator`.
+- Both runs used the same prompt, `claude -p`, `--setting-sources project`, and
+  separate transcripts.
 
 ## Results
 
-| Check | RED | GREEN |
-| --- | --- | --- |
-| Candidate skill activated | PASS | PASS |
-| Stale reference removed | PASS | PASS |
-| Existing evaluation reference linked | PASS | FAIL |
-| Validation/package evidence mentioned | PASS | PASS |
-| Missing evidence/NHR mentioned | FAIL | FAIL |
+| Check                                 | RED  | GREEN |
+| ------------------------------------- | ---- | ----- |
+| Candidate skill activated             | PASS | PASS  |
+| Stale reference removed               | PASS | PASS  |
+| Existing evaluation reference linked  | PASS | FAIL  |
+| Validation/package evidence mentioned | PASS | PASS  |
+| Missing evidence/NHR mentioned        | FAIL | FAIL  |
 
 ## Outcome
 

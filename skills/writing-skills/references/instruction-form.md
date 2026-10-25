@@ -6,12 +6,12 @@ wording by default.
 
 Map the observed failure to the smallest corrective form:
 
-| Observed failure | Preferred corrective form |
-| --- | --- |
-| Rule skipped under pressure | Explicit prohibition, red flag, or rationalization counter scoped to that rule |
-| Wrong output shape | Positive output contract or template |
-| Required element omitted | Required structural field, slot, or completion check |
-| Conditional behavior applied incorrectly | Condition keyed to an observable predicate |
+| Observed failure                         | Preferred corrective form                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------ |
+| Rule skipped under pressure              | Explicit prohibition, red flag, or rationalization counter scoped to that rule |
+| Wrong output shape                       | Positive output contract or template                                           |
+| Required element omitted                 | Required structural field, slot, or completion check                           |
+| Conditional behavior applied incorrectly | Condition keyed to an observable predicate                                     |
 
 Use these rules when refining the correction:
 

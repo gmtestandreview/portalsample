@@ -1,28 +1,28 @@
 # mergeProps
 
-Merges multiple props objects together. Event handlers are chained,
-classNames are combined, ids are deduplicated, and refs are merged.
-For all other props, the last prop object overrides all previous ones.
+Merges multiple props objects together. Event handlers are chained, classNames
+are combined, ids are deduplicated, and refs are merged. For all other props,
+the last prop object overrides all previous ones.
 
 ```tsx
-import {mergeProps} from '@react-aria/utils';
+import { mergeProps } from '@react-aria/utils';
 
 let a = {
   className: 'foo',
   onKeyDown(e) {
     if (e.key === 'Enter') {
-      console.log('enter')
+      console.log('enter');
     }
-  }
+  },
 };
 
 let b = {
   className: 'bar',
   onKeyDown(e) {
     if (e.key === ' ') {
-      console.log('space')
+      console.log('space');
     }
-  }
+  },
 };
 
 let merged = mergeProps(a, b);
@@ -36,7 +36,7 @@ let merged = {
   onKeyDown(e) {
     a.onKeyDown(e);
     b.onKeyDown(e);
-  }
+  },
 };
 ```
 

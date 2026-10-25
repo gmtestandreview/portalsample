@@ -427,6 +427,7 @@ where loading state was planned but never wired up.
   the `<strong>` tags. The S6772 fires for the text between/after the `<strong>`
   closing tag.
   <!-- markdownlint-disable-next-line MD038 -->
+
   The pattern `, ` is already in `{', '}` but the text before the `<strong>` at
   L126 ends with the preceding element. Fix: ensure whitespace is explicit
   around `<strong>` elements. This is already handled via `{', '}` between
@@ -483,11 +484,11 @@ where loading state was planned but never wired up.
   ```ts
   // Before:
   throw Error(
-    'There was an error retrieving your organisation and contact details.'
+    'There was an error retrieving your organisation and contact details.',
   );
   // After:
   throw new Error(
-    'There was an error retrieving your organisation and contact details.'
+    'There was an error retrieving your organisation and contact details.',
   );
   ```
 
@@ -518,11 +519,11 @@ where loading state was planned but never wired up.
         : '',
       values.branchOrLocationName !== undefined
         ? values.branchOrLocationName
-        : ''
+        : '',
     );
     await accountContext?.setDefaultOrganisationId(
       user.defaultOrganisationId,
-      user.organisation?.crmGuid
+      user.organisation?.crmGuid,
     );
   }
   ```
@@ -542,11 +543,11 @@ where loading state was planned but never wired up.
     await accountContext.setOrganisationAndBranch(
       values.name,
       values.businessOrTradingName ?? '',
-      values.branchOrLocationName ?? ''
+      values.branchOrLocationName ?? '',
     );
     await accountContext.setDefaultOrganisationId(
       user.defaultOrganisationId,
-      user.organisation?.crmGuid
+      user.organisation?.crmGuid,
     );
   }
   ```
@@ -604,7 +605,7 @@ where loading state was planned but never wired up.
     user: {
       defaultOrganisationId?: number;
       organisation?: { crmGuid?: string };
-    }
+    },
   ) => {
     if (
       values.name !== undefined &&
@@ -614,11 +615,11 @@ where loading state was planned but never wired up.
       await accountContext.setOrganisationAndBranch(
         values.name,
         values.businessOrTradingName ?? '',
-        values.branchOrLocationName ?? ''
+        values.branchOrLocationName ?? '',
       );
       await accountContext.setDefaultOrganisationId(
         user.defaultOrganisationId,
-        user.organisation?.crmGuid
+        user.organisation?.crmGuid,
       );
     }
   };
@@ -629,7 +630,7 @@ where loading state was planned but never wired up.
   ```ts
   const handleBranchSaveError = (
     error: unknown,
-    onShowBranchSelector: () => void
+    onShowBranchSelector: () => void,
   ) => {
     const problemDetails = error as ValidationProblemDetails;
     if (problemDetails?.status === HttpStatusCode.PreconditionFailed) {
@@ -816,7 +817,7 @@ where loading state was planned but never wired up.
   const renderPhoneValue = (
     value: string,
     className: string,
-    as: 'p' | 'span'
+    as: 'p' | 'span',
   ) => {
     const Tag = as === 'p' ? 'p' : 'span';
     return (
@@ -985,12 +986,12 @@ where loading state was planned but never wired up.
   // Before:
   const showArtefactHeading = useMemo(
     () => viewArtefactHeadingStatus.some((x) => x === status),
-    [status]
+    [status],
   );
   // After:
   const showArtefactHeading = useMemo(
     () => status !== undefined && viewArtefactHeadingStatus.includes(status),
-    [status]
+    [status],
   );
   ```
 
@@ -1069,7 +1070,7 @@ where loading state was planned but never wired up.
         onShowRFQDeleteModalClick();
         trackGAEvent('Delete request');
       },
-    }
+    },
   );
   ```
 
@@ -1102,7 +1103,7 @@ where loading state was planned but never wired up.
       text: 'Request recalibration',
       route: `/request-for-quote-copy/${referenceId}`,
       onClick: () => trackGAEvent('Request recalibration'),
-    }
+    },
   );
   ```
 
@@ -1242,13 +1243,13 @@ where loading state was planned but never wired up.
   if (accountDispatch) {
     await accountDispatch.setDefaultOrganisationId(
       selectedBranch,
-      selectedCRMGuid
+      selectedCRMGuid,
     );
     if (selectedOrganisation !== undefined) {
       await accountDispatch.setOrganisationAndBranch(
         selectedOrganisation,
         selectedTradingName !== undefined ? selectedTradingName : '',
-        selectedBranchName !== undefined ? selectedBranchName : ''
+        selectedBranchName !== undefined ? selectedBranchName : '',
       );
     }
   }
@@ -1265,25 +1266,25 @@ where loading state was planned but never wired up.
   // Before:
   await accountDispatch?.setDefaultOrganisationId(
     selectedBranch,
-    selectedCRMGuid
+    selectedCRMGuid,
   );
   if (selectedOrganisation !== undefined) {
     await accountDispatch?.setOrganisationAndBranch(
       selectedOrganisation,
       selectedTradingName !== undefined ? selectedTradingName : '',
-      selectedBranchName !== undefined ? selectedBranchName : ''
+      selectedBranchName !== undefined ? selectedBranchName : '',
     );
   }
   // After (inside the existing `if (accountDispatch)` guard):
   await accountDispatch.setDefaultOrganisationId(
     selectedBranch,
-    selectedCRMGuid
+    selectedCRMGuid,
   );
   if (selectedOrganisation !== undefined) {
     await accountDispatch.setOrganisationAndBranch(
       selectedOrganisation,
       selectedTradingName ?? '',
-      selectedBranchName ?? ''
+      selectedBranchName ?? '',
     );
   }
   ```
@@ -1372,18 +1373,18 @@ where loading state was planned but never wired up.
     selectedCRMGuid: string | undefined,
     selectedOrganisation: string | undefined,
     selectedTradingName: string | undefined,
-    selectedBranchName: string | undefined
+    selectedBranchName: string | undefined,
   ) => {
     if (!accountDispatch) return;
     await accountDispatch.setDefaultOrganisationId(
       selectedBranch,
-      selectedCRMGuid
+      selectedCRMGuid,
     );
     if (selectedOrganisation !== undefined) {
       await accountDispatch.setOrganisationAndBranch(
         selectedOrganisation,
         selectedTradingName ?? '',
-        selectedBranchName ?? ''
+        selectedBranchName ?? '',
       );
     }
   };
@@ -1398,7 +1399,7 @@ where loading state was planned but never wired up.
     selectedBranch: number | undefined,
     selectedCRMGuid: string | undefined,
     selectedOrganisation: string | undefined,
-    selectedABN: string | undefined
+    selectedABN: string | undefined,
   ) => {
     const accountCreationIncomplete =
       !accountState?.details?.accountCreationCompleted;
@@ -1406,11 +1407,11 @@ where loading state was planned but never wired up.
       accountDispatch?.setCompleted();
       accountDispatch?.setDefaultOrganisationId(
         selectedBranch,
-        selectedCRMGuid
+        selectedCRMGuid,
       );
       accountDispatch?.setTargetOrganisation(
         selectedOrganisation!,
-        selectedABN!
+        selectedABN!,
       );
     }
   };

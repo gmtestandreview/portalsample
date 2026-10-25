@@ -70,7 +70,7 @@ const preview = definePreview({
       JSON.stringify({
         targetOrganisationAbn: '00000000000',
         targetOrganisationName: 'Storybook Organisation',
-      })
+      }),
     );
     MockDate.set('2024-04-01T12:00:00Z');
   },

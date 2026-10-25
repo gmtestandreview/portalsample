@@ -1,13 +1,17 @@
 ---
 name: reducing-entropy
-description: Manual-only skill for minimizing total codebase size. Only activate when explicitly requested by user. Measures success by final code amount, not effort. Bias toward deletion.
+description:
+  Manual-only skill for minimizing total codebase size. Only activate when
+  explicitly requested by user. Measures success by final code amount, not
+  effort. Bias toward deletion.
 ---
 
 # Reducing Entropy
 
-More code begets more code. Entropy accumulates. This skill biases toward the smallest possible codebase.
+More code begets more code. Entropy accumulates. This skill biases toward the
+smallest possible codebase.
 
-**Core question:** "What does the codebase look like *after*?"
+**Core question:** "What does the codebase look like _after_?"
 
 ## Before You Begin
 
@@ -22,7 +26,8 @@ More code begets more code. Entropy accumulates. This skill biases toward the sm
 
 ## The Goal
 
-The goal is **less total code in the final codebase** - not less code to write right now.
+The goal is **less total code in the final codebase** - not less code to write
+right now.
 
 - Writing 50 lines that delete 200 lines = net win
 - Keeping 14 functions to avoid writing 2 = net loss
@@ -34,7 +39,7 @@ The goal is **less total code in the final codebase** - not less code to write r
 
 ### 1. What's the smallest codebase that solves this?
 
-Not "what's the smallest change" - what's the smallest *result*.
+Not "what's the smallest change" - what's the smallest _result_.
 
 - Could this be 2 functions instead of 14?
 - Could this be 0 functions (delete the feature)?
@@ -58,10 +63,13 @@ Every change is an opportunity to delete. Ask:
 
 ## Red Flags
 
-- **"Keep what exists"** - Status quo bias. The question is total code, not churn.
+- **"Keep what exists"** - Status quo bias. The question is total code, not
+  churn.
 - **"This adds flexibility"** - Flexibility for what? YAGNI.
-- **"Better separation of concerns"** - More files/functions = more code. Separation isn't free.
-- **"Type safety"** - Worth how many lines? Sometimes runtime checks in less code wins.
+- **"Better separation of concerns"** - More files/functions = more code.
+  Separation isn't free.
+- **"Type safety"** - Worth how many lines? Sometimes runtime checks in less
+  code wins.
 - **"Easier to understand"** - 14 things are not easier than 2 things.
 
 ## When This Doesn't Apply

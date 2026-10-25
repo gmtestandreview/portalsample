@@ -185,6 +185,7 @@ describe('form-free TA summary parity with the Formik summary', () => {
   it.each(Object.entries(fixtures))(
     'renders the same markup for %s',
     async (_name, values) => {
+      expect.assertions(1);
       const legacy = await renderLegacy(values);
       document.body.innerHTML = '';
       const summary = renderSummary(values);
@@ -194,6 +195,7 @@ describe('form-free TA summary parity with the Formik summary', () => {
   );
 
   it('shows the chosen sub-options that the Formik summary leaves blank', () => {
+    expect.assertions(1);
     const { container } = render(
       <ApplicationSummary
         values={fixtures['new certificate by a manufacturer']!}

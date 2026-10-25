@@ -2,7 +2,9 @@
 
 ## Overview
 
-Few-shot learning enables LLMs to perform tasks by providing a small number of examples (typically 1-10) within the prompt. This technique is highly effective for tasks requiring specific formats, styles, or domain knowledge.
+Few-shot learning enables LLMs to perform tasks by providing a small number of
+examples (typically 1-10) within the prompt. This technique is highly effective
+for tasks requiring specific formats, styles, or domain knowledge.
 
 ## Example Selection Strategies
 

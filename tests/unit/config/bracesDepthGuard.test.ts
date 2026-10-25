@@ -7,10 +7,12 @@ function nestedPattern(depth: number) {
 
 describe('braces depth guard', () => {
   it('accepts patterns at the supported nesting limit', () => {
+    expect.assertions(1);
     expect(() => braces(nestedPattern(100))).not.toThrow();
   });
 
   it('rejects patterns beyond the supported nesting limit', () => {
+    expect.assertions(1);
     expect(() => braces(nestedPattern(101))).toThrow(/exceeds max depth/);
   });
 });

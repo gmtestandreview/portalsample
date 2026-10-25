@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const repositoryRoot = path.dirname(
-  path.dirname(fileURLToPath(import.meta.url))
+  path.dirname(fileURLToPath(import.meta.url)),
 );
 const dispatcherPath = path.join(
   repositoryRoot,
@@ -10,7 +10,7 @@ const dispatcherPath = path.join(
   'storybook',
   'dist',
   'bin',
-  'dispatcher.js'
+  'dispatcher.js',
 );
 
 process.env.VITE_ENVIRONMENT ??= 'storybook';

@@ -99,19 +99,19 @@ describe('Yup stringExtensions — businessName', () => {
 
   it('accepts a valid ASIC-compliant business name', async () => {
     await expect(schema.validate('Test Pty Ltd & Co.')).resolves.toBe(
-      'Test Pty Ltd & Co.'
+      'Test Pty Ltd & Co.',
     );
   });
 
   it("accepts characters from the ASIC allowed set: ! @ # $ % ^ & * ( ) ? ; : = _ - / . , '", async () => {
     await expect(
-      schema.validate("O'Brien-Smith Pty Ltd")
+      schema.validate("O'Brien-Smith Pty Ltd"),
     ).resolves.toBeDefined();
   });
 
   it('rejects a name containing < or > (disallowed ASIC chars)', async () => {
     await expect(schema.validate('<script>bad</script>')).rejects.toThrow(
-      'Business name contains invalid characters'
+      'Business name contains invalid characters',
     );
   });
 
@@ -180,21 +180,21 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
   it('accepts a valid email address', async () => {
     const schema = emailSchema('Email address');
     await expect(schema.validate('user@example.com')).resolves.toBe(
-      'user@example.com'
+      'user@example.com',
     );
   });
 
   it('rejects an invalid email format', async () => {
     const schema = emailSchema('Email address');
     await expect(schema.validate('not-an-email')).rejects.toThrow(
-      'Email address is not a valid email address'
+      'Email address is not a valid email address',
     );
   });
 
   it('rejects an empty string when required (default)', async () => {
     const schema = emailSchema('Email address');
     await expect(schema.validate('')).rejects.toThrow(
-      'Email address is required'
+      'Email address is required',
     );
   });
 
@@ -1386,7 +1386,7 @@ const requestsResponse = await fetchRequestsByTab(
   stableFilters.filterSearchText,
   actualYear,
   actualStatus,
-  controller.signal
+  controller.signal,
 );
 
 // After:
@@ -1418,7 +1418,7 @@ simply cut it from inside Dashboard and paste it at module scope:
 ```typescript
 // Place this BEFORE: const Dashboard = () => {
 const checkAcceptedQuoteStatus = (
-  requestsResponse: PagedListOfDashboardItemDto
+  requestsResponse: PagedListOfDashboardItemDto,
 ) => {
   const newlyAcceptedQuoteId =
     SessionStorageCache().getItem('accepted-quote-id');
@@ -1430,7 +1430,7 @@ const checkAcceptedQuoteStatus = (
     }
 
     const requestResponse = items.find(
-      (x) => x.referenceId === newlyAcceptedQuoteId
+      (x) => x.referenceId === newlyAcceptedQuoteId,
     );
     if (requestResponse?.status === DashboardItemStatus.QuoteAvailable) {
       requestResponse.status = DashboardItemStatus.QuoteAccepted;
@@ -1439,7 +1439,7 @@ const checkAcceptedQuoteStatus = (
       requestResponse.lastUpdated = new Date();
 
       const index = items.findIndex(
-        (x) => x.referenceId === newlyAcceptedQuoteId
+        (x) => x.referenceId === newlyAcceptedQuoteId,
       );
       if (index !== -1) {
         const [updatedItem] = items.splice(index, 1);
@@ -1448,7 +1448,7 @@ const checkAcceptedQuoteStatus = (
 
       SessionStorageCache().setItem(
         requestResponse.referenceId!,
-        'view-quote-id'
+        'view-quote-id',
       );
     }
     SessionStorageCache().removeItem('accepted-quote-id');
@@ -1473,7 +1473,7 @@ const handleDashboardLoadError = (
       forbidden: boolean;
       noThirdPartyAccess: boolean;
     }>
-  >
+  >,
 ) => {
   const problemDetails = error as ProblemDetails;
   if ((problemDetails.status ?? 0) > 0) {
@@ -1804,7 +1804,7 @@ const buildErrMsg = (
   label: string | undefined,
   errorMessage: string | undefined,
   labelMessage: (l: string) => string,
-  fallback: string
+  fallback: string,
 ): string => {
   if (typeof errorMessage === 'string' && errorMessage) return errorMessage;
   if (typeof label === 'string' && label) return labelMessage(label);
@@ -1844,7 +1844,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} must be ${digits} digits`,
-  `\${path} must be ${digits} digits`
+  `\${path} must be ${digits} digits`,
 );
 ```
 
@@ -1856,7 +1856,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} must only include numbers`,
-  '${path} must only include numbers'
+  '${path} must only include numbers',
 );
 ```
 
@@ -1868,7 +1868,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} cannot be less than ${minValue} characters`,
-  '${path} cannot be less than ${minValue} characters'
+  '${path} cannot be less than ${minValue} characters',
 );
 ```
 
@@ -1880,7 +1880,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} cannot be greater than ${maxValue} characters`,
-  '${path} cannot be greater than ${maxValue} characters'
+  '${path} cannot be greater than ${maxValue} characters',
 );
 ```
 
@@ -1892,7 +1892,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} must only include numbers`,
-  '${path} must only include numbers'
+  '${path} must only include numbers',
 );
 ```
 
@@ -1904,7 +1904,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} is not a valid Australian postcode`,
-  '${path} is not a valid Australian postcode'
+  '${path} is not a valid Australian postcode',
 );
 ```
 
@@ -1916,7 +1916,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} contains invalid characters`,
-  '${path} contains invalid characters'
+  '${path} contains invalid characters',
 );
 ```
 
@@ -1928,7 +1928,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} ${errType}`,
-  `\${path} ${errType}`
+  `\${path} ${errType}`,
 );
 ```
 
@@ -1940,7 +1940,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} is not a valid email address`,
-  '${path} is not a valid email address'
+  '${path} is not a valid email address',
 );
 ```
 
@@ -1953,7 +1953,7 @@ const errMsg = buildErrMsg(
   errorMessage,
   (l) =>
     `${l} must not contain consecutive apostrophe, hyphen or space characters`,
-  '${path} must not contain consecutive apostrophe, hyphen or space characters'
+  '${path} must not contain consecutive apostrophe, hyphen or space characters',
 );
 ```
 
@@ -1965,7 +1965,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} must contain at least one letter`,
-  '${path} must contain at least one letter'
+  '${path} must contain at least one letter',
 );
 ```
 
@@ -1978,7 +1978,7 @@ const errMsg = buildErrMsg(
   errorMessage,
   (l) =>
     `${l} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
-  '${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters'
+  '${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters',
 );
 ```
 
@@ -1991,7 +1991,7 @@ const errMsg = buildErrMsg(
   errorMessage,
   (l) =>
     `${l} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
-  '${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen'
+  '${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen',
 );
 ```
 
@@ -2003,7 +2003,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} contains invalid characters`,
-  '${path} contains invalid characters'
+  '${path} contains invalid characters',
 );
 ```
 
@@ -2016,7 +2016,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} cannot have more than ${numChars} repeating characters`,
-  `\${path} cannot have more than ${numChars} repeating characters`
+  `\${path} cannot have more than ${numChars} repeating characters`,
 );
 ```
 
@@ -2028,7 +2028,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} cannot be less than ${minLength} characters`,
-  `\${path} cannot be less than ${minLength} characters`
+  `\${path} cannot be less than ${minLength} characters`,
 );
 ```
 
@@ -2040,7 +2040,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} must be between ${minValue} and ${maxValue}`,
-  `\${path} must be between ${minValue} and ${maxValue}`
+  `\${path} must be between ${minValue} and ${maxValue}`,
 );
 ```
 
@@ -2052,7 +2052,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} cannot be greater than ${maxLength} characters`,
-  `\${path} cannot be greater than ${maxLength} characters`
+  `\${path} cannot be greater than ${maxLength} characters`,
 );
 ```
 
@@ -2064,7 +2064,7 @@ const errMsg = buildErrMsg(
   label,
   errorMessage,
   (l) => `${l} is required`,
-  '${path} is required'
+  '${path} is required',
 );
 ```
 

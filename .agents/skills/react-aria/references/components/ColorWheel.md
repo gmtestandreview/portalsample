@@ -136,7 +136,7 @@ import { useState } from 'react';
 
 function Example() {
   let [currentValue, setCurrentValue] = useState(
-    parseColor('hsl(50, 100%, 50%)')
+    parseColor('hsl(50, 100%, 50%)'),
   );
   let [finalValue, setFinalValue] = useState(currentValue);
 

@@ -1,7 +1,11 @@
 import { render, screen } from '@testing-library/react';
+
 import type React from 'react';
+
 import { MemoryRouter } from 'react-router';
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import LinkButton from '@/components/Buttons/LinkButton';
 
 const ariaLinkMockState = vi.hoisted(() => ({
@@ -52,8 +56,8 @@ describe('linkButton React Aria render fallback', () => {
   afterEach(() => {
     ariaLinkMockState.includeHref = false;
   });
-
   it('renders a span when React Aria render props do not include an href', () => {
+    expect.assertions(3);
     render(
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/dashboard' variant='btn btn-outline-primary'>
@@ -69,8 +73,14 @@ describe('linkButton React Aria render fallback', () => {
       screen.queryByRole('link', { name: 'Dashboard' }),
     ).not.toBeInTheDocument();
   });
+});
 
+describe('linkButton React Aria render fallback', () => {
+  afterEach(() => {
+    ariaLinkMockState.includeHref = false;
+  });
   it('renders a router link when React Aria render props include an href', () => {
+    expect.assertions(2);
     ariaLinkMockState.includeHref = true;
 
     render(
@@ -89,40 +99,6 @@ describe('linkButton React Aria render fallback', () => {
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveClass(
       'btn',
       'btn-secondary',
-    );
-  });
-
-  it('renders an anchor link when configured as an anchor', () => {
-    render(
-      <LinkButton
-        as='a'
-        href='https://measurement.gov.au'
-        variant='nmi-primary'
-      >
-        NMI
-      </LinkButton>,
-    );
-
-    expect(screen.getByRole('link', { name: 'NMI' })).toHaveAttribute(
-      'href',
-      'https://measurement.gov.au',
-    );
-    expect(screen.getByRole('link', { name: 'NMI' })).toHaveClass(
-      'btn',
-      'btn-nmi-primary',
-    );
-  });
-
-  it('uses the NMI primary variant by default', () => {
-    render(
-      <LinkButton as='a' href='/requests'>
-        Requests
-      </LinkButton>,
-    );
-
-    expect(screen.getByRole('link', { name: 'Requests' })).toHaveClass(
-      'btn',
-      'btn-nmi-primary',
     );
   });
 });

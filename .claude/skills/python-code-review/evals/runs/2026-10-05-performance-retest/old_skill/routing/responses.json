@@ -9,7 +9,11 @@
     {
       "id": "activation-mypy",
       "applicability": true,
-      "resources": ["SKILL.md", "references/python-remediation-method.md", "references/ruff-pyright-verification.md"],
+      "resources": [
+        "SKILL.md",
+        "references/python-remediation-method.md",
+        "references/ruff-pyright-verification.md"
+      ],
       "action": "Obtain the module, full mypy diagnostic, exact artifact/revision, mypy version/configuration and Python floor. Confirm the diagnostic still applies, inspect the boundary representation and public return contract, and trace inaccurate optionality or heterogeneous types upstream. Propose the smallest model repair preserving serialized behavior; then rerun the original mypy command and relevant regression/compatibility tests against the final artifact. Avoid casts or ignores that hide an incorrect model."
     },
     {
@@ -51,7 +55,11 @@
     {
       "id": "compatibility-branch",
       "applicability": true,
-      "resources": ["SKILL.md", "references/python-remediation-method.md", "references/ruff-pyright-verification.md"],
+      "resources": [
+        "SKILL.md",
+        "references/python-remediation-method.md",
+        "references/ruff-pyright-verification.md"
+      ],
       "action": "Inspect the schema, consumers, supported Python version and exact Pyright diagnostic/configuration first. Prefer correcting the internal boundary model while preserving the public JSON contract. The request explicitly authorizes a breaking replacement, but compatibility impact still must be understood: classify it as schema/API-breaking, stage a reviewable candidate with a checkpoint and rollback/migration plan, and compare old/new representative consumer fixtures plus rerun Pyright. Do not skip compatibility evidence or claim preservation. No breaking replacement was executed."
     }
   ]

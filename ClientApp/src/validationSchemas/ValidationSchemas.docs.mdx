@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Migration/Validation" />
+<Meta title='Migration/Validation' />
 
 # Validation
 
@@ -8,24 +8,24 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## Validation Files
 
-| File | Responsibility |
-| --- | --- |
-| `common.ts` | Shared nullable, required, enum, URL, and helper schemas |
-| `addressValidation.ts` | Address object rules with manual-entry branching |
-| `contactValidation.ts` | Contact title, name, role, email, phone, and mobile rules |
-| `yupExtensions/index.ts` | Required side-effect import entry point |
-| `yupExtensions/stringExtensions.ts` | Custom string validators used across routes |
+| File                                | Responsibility                                            |
+| ----------------------------------- | --------------------------------------------------------- |
+| `common.ts`                         | Shared nullable, required, enum, URL, and helper schemas  |
+| `addressValidation.ts`              | Address object rules with manual-entry branching          |
+| `contactValidation.ts`              | Contact title, name, role, email, phone, and mobile rules |
+| `yupExtensions/index.ts`            | Required side-effect import entry point                   |
+| `yupExtensions/stringExtensions.ts` | Custom string validators used across routes               |
 
 ## Route-Level Schema Entry Points
 
-| File | Notes |
-| --- | --- |
-| `routes/account/validation.ts` | Account create flow |
-| `routes/account/update/validation.ts` | Organisation update flow |
-| `routes/account/addBranch/validation.ts` | Branch creation flow |
-| `routes/contact/validation.ts` | Contact flow |
-| `routes/requestForQuote/validation.ts` | RFQ wizard flow |
-| `routes/acceptQuote/validation.ts` | Quote acceptance wizard flow |
+| File                                     | Notes                        |
+| ---------------------------------------- | ---------------------------- |
+| `routes/account/validation.ts`           | Account create flow          |
+| `routes/account/update/validation.ts`    | Organisation update flow     |
+| `routes/account/addBranch/validation.ts` | Branch creation flow         |
+| `routes/contact/validation.ts`           | Contact flow                 |
+| `routes/requestForQuote/validation.ts`   | RFQ wizard flow              |
+| `routes/acceptQuote/validation.ts`       | Quote acceptance wizard flow |
 
 ## Custom Yup Methods
 
@@ -62,6 +62,7 @@ import '../../validationSchemas/yupExtensions';
 ## Migration Notes
 
 - Validation behaviour is part of the functional contract, not just form polish.
-- Custom methods are heavily reused and should be ported before route form rewrites.
-- Schema migration should be tested against Storybook form surfaces and route-level
-  wizard scenarios, not only unit tests.
+- Custom methods are heavily reused and should be ported before route form
+  rewrites.
+- Schema migration should be tested against Storybook form surfaces and
+  route-level wizard scenarios, not only unit tests.

@@ -16,12 +16,14 @@ const manualAddress = {
 
 describe(addressSchema, () => {
   it('accepts a manually entered address with required fields', async () => {
+    expect.assertions(1);
     await expect(
       addressSchema('Street address').validate(manualAddress),
     ).resolves.toMatchObject(manualAddress);
   });
 
   it('requires manual address fields when manually entered', async () => {
+    expect.assertions(1);
     await expect(
       addressSchema('Street address').validate(
         {
@@ -43,6 +45,7 @@ describe(addressSchema, () => {
   });
 
   it('validates manual address formats and max lengths', async () => {
+    expect.assertions(1);
     await expect(
       addressSchema('Street address').validate(
         {
@@ -67,6 +70,7 @@ describe(addressSchema, () => {
   });
 
   it('requires search text when address is not manually entered', async () => {
+    expect.assertions(1);
     await expect(
       addressSchema('Postal address').validate({
         isManuallyEntered: false,
@@ -76,6 +80,7 @@ describe(addressSchema, () => {
   });
 
   it('does not require manual fields when using searched address text', async () => {
+    expect.assertions(1);
     await expect(
       addressSchema('Postal address').validate({
         isManuallyEntered: false,

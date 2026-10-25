@@ -5,6 +5,7 @@ import { PatternApprovalDashboard } from '../../../../ClientApp/src/routes/ta/ty
 
 describe(PatternApprovalDashboard, () => {
   it('uses default dashboard filters when no initial values are supplied', () => {
+    expect.assertions(1);
     expect(new PatternApprovalDashboard()).toEqual({
       filterStatusType: 'allStatuses',
       filterYearType: 'allYears',
@@ -17,6 +18,7 @@ describe(PatternApprovalDashboard, () => {
   });
 
   it('uses provided dashboard filters, including falsy but intentional values', () => {
+    expect.assertions(1);
     expect(
       new PatternApprovalDashboard({
         filterStatusType: '',

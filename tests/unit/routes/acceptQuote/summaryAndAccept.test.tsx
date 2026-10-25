@@ -242,6 +242,7 @@ describe(SummaryAndAccept, () => {
   });
 
   it('skips the API call when no MSAL accounts are available', async () => {
+    expect.assertions(1);
     mocks.accounts = [];
     renderComponent();
 
@@ -255,6 +256,7 @@ describe(SummaryAndAccept, () => {
   });
 
   it('re-fetches summary data when the route id changes', async () => {
+    expect.assertions(2);
     const { rerender } = renderComponent();
 
     await waitFor(() => {

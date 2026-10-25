@@ -72,7 +72,7 @@ likely in production if using same filter logic).
 ```typescript
 const draftItems = dashboardItems.filter((i) => i.status === 'Quote drafted'); // ← empty!
 const instrumentItems = dashboardItems.filter(
-  (i) => i.status === 'Report issued'
+  (i) => i.status === 'Report issued',
 ); // ← empty!
 ```
 

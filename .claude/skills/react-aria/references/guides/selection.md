@@ -26,7 +26,7 @@ import { useState } from 'react';
 
 function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(
-    new Set(['cheese'])
+    new Set(['cheese']),
   );
 
   return (
@@ -62,7 +62,7 @@ import { useState } from 'react';
 
 export default function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(
-    new Set(['Blastoise'])
+    new Set(['Blastoise']),
   );
 
   return (
@@ -109,7 +109,7 @@ import { useState } from 'react';
 
 function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(
-    new Set(['project'])
+    new Set(['project']),
   );
 
   return (
@@ -149,7 +149,7 @@ import { useState } from 'react';
 
 function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(
-    new Set(['cheese'])
+    new Set(['cheese']),
   );
 
   return (
@@ -201,7 +201,7 @@ const rows = [
 
 function Example() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(
-    new Set(['cheese'])
+    new Set(['cheese']),
   );
 
   return (
@@ -282,7 +282,7 @@ function Example() {
       alert('Performing action on all items');
     } else {
       alert(
-        `Performing action on selected items: ${[...selectedKeys].join(', ')}`
+        `Performing action on selected items: ${[...selectedKeys].join(', ')}`,
       );
     }
   }

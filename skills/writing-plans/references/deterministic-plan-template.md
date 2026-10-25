@@ -1,24 +1,38 @@
 # Deterministic Implementation Plan Mode
 
-Load this reference only when the user or target system requires a rigid, machine-readable implementation-plan format, explicit identifier prefixes, or fixed case-sensitive sections.
+Load this reference only when the user or target system requires a rigid,
+machine-readable implementation-plan format, explicit identifier prefixes, or
+fixed case-sensitive sections.
 
-This mode consolidates the supplied create/update implementation-plan formats. It does not replace the default `writing-plans` output.
+This mode consolidates the supplied create/update implementation-plan formats.
+It does not replace the default `writing-plans` output.
 
 ## Create vs update
 
-- **Create mode:** create a new plan from the supplied requirements and repository evidence.
-- **Update mode:** edit an existing plan in place, preserving valid requirements, identifiers, decisions, and sections unless the new requirements supersede them. Update affected metadata such as `last_updated` when that field exists.
-- Do not silently renumber stable identifiers in update mode unless the target format requires it.
+- **Create mode:** create a new plan from the supplied requirements and
+  repository evidence.
+- **Update mode:** edit an existing plan in place, preserving valid
+  requirements, identifiers, decisions, and sections unless the new requirements
+  supersede them. Update affected metadata such as `last_updated` when that
+  field exists.
+- Do not silently renumber stable identifiers in update mode unless the target
+  format requires it.
 
-Use the user's/project's path convention. If the target system explicitly requires the legacy deterministic convention, use `/plan/[purpose]-[component]-[version].md` with one of these purpose prefixes: `upgrade`, `refactor`, `feature`, `data`, `infrastructure`, `process`, `architecture`, `design`.
+Use the user's/project's path convention. If the target system explicitly
+requires the legacy deterministic convention, use
+`/plan/[purpose]-[component]-[version].md` with one of these purpose prefixes:
+`upgrade`, `refactor`, `feature`, `data`, `infrastructure`, `process`,
+`architecture`, `design`.
 
 ## Deterministic rules
 
 - Use explicit, unambiguous language.
 - Keep phases atomic and give each phase measurable completion criteria.
 - Declare dependencies between phases/tasks.
-- Include exact file paths, function/type names, code references, and validation criteria where supported by evidence.
-- Use identifier prefixes consistently: `REQ-`, `SEC-`, `CON-`, `GUD-`, `PAT-`, `GOAL-`, `TASK-`, `ALT-`, `DEP-`, `FILE-`, `TEST-`, `RISK-`, `ASSUMPTION-`.
+- Include exact file paths, function/type names, code references, and validation
+  criteria where supported by evidence.
+- Use identifier prefixes consistently: `REQ-`, `SEC-`, `CON-`, `GUD-`, `PAT-`,
+  `GOAL-`, `TASK-`, `ALT-`, `DEP-`, `FILE-`, `TEST-`, `RISK-`, `ASSUMPTION-`.
 - Populate every required section.
 - Remove every drafting placeholder before finalization.
 
@@ -53,9 +67,9 @@ tags: [<relevant tags if used>]
 
 - **GOAL-001**: <measurable phase goal>
 
-| Task | Description | Completed | Date |
-|---|---|---|---|
-| TASK-001 | <specific actionable task> |  |  |
+| Task     | Description                | Completed | Date |
+| -------- | -------------------------- | --------- | ---- |
+| TASK-001 | <specific actionable task> |           |      |
 
 ## 3. Alternatives
 
@@ -83,4 +97,6 @@ tags: [<relevant tags if used>]
 - <source spec or relevant documentation>
 ```
 
-The source format included a status badge in the introduction. Preserve it when the target system specifically requires that legacy presentation; otherwise the status frontmatter is sufficient.
+The source format included a status badge in the introduction. Preserve it when
+the target system specifically requires that legacy presentation; otherwise the
+status frontmatter is sufficient.

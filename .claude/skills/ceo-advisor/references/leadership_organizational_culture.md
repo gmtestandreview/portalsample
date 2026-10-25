@@ -293,15 +293,15 @@ Low │Performer│  -ent   │ Learning
 
 #### Communication Channels
 
-| Channel | Frequency | Purpose | Audience |
-| --------- | ----------- | --------- | ---------- |
-| All-hands meeting | Monthly | Updates, Q&A | All employees |
-| Leadership cascade | Weekly | Alignment | Managers |
-| CEO email | Bi-weekly | Vision, recognition | All employees |
-| Town halls | Quarterly | Deep dives | All employees |
-| Skip-levels | Monthly | Direct feedback | Various levels |
-| Intranet | Daily | News, resources | All employees |
-| Slack/Teams | Real-time | Collaboration | All employees |
+| Channel            | Frequency | Purpose             | Audience       |
+| ------------------ | --------- | ------------------- | -------------- |
+| All-hands meeting  | Monthly   | Updates, Q&A        | All employees  |
+| Leadership cascade | Weekly    | Alignment           | Managers       |
+| CEO email          | Bi-weekly | Vision, recognition | All employees  |
+| Town halls         | Quarterly | Deep dives          | All employees  |
+| Skip-levels        | Monthly   | Direct feedback     | Various levels |
+| Intranet           | Daily     | News, resources     | All employees  |
+| Slack/Teams        | Real-time | Collaboration       | All employees  |
 
 #### CEO Communication Calendar
 
@@ -390,13 +390,8 @@ Low │Performer│  -ent   │ Learning
 
 #### OKR Setting Process
 
-**Company OKRs** (Annual)
-↓
-**Department OKRs** (Quarterly)
-↓
-**Team OKRs** (Quarterly)
-↓
-**Individual OKRs** (Quarterly)
+**Company OKRs** (Annual) ↓ **Department OKRs** (Quarterly) ↓ **Team OKRs**
+(Quarterly) ↓ **Individual OKRs** (Quarterly)
 
 #### OKR Template
 
@@ -683,13 +678,13 @@ Key Results:
 
 #### DEI Metrics Dashboard
 
-| Metric | Current | Target | Timeline |
-| -------- | --------- | -------- | ---------- |
-| Women in leadership | X% | Y% | Z years |
-| Ethnic diversity | X% | Y% | Z years |
-| Pay equity gap | X% | 0% | Z years |
-| Inclusion index | X/100 | Y/100 | Z years |
-| Retention equality | X% diff | 0% diff | Z years |
+| Metric              | Current | Target  | Timeline |
+| ------------------- | ------- | ------- | -------- |
+| Women in leadership | X%      | Y%      | Z years  |
+| Ethnic diversity    | X%      | Y%      | Z years  |
+| Pay equity gap      | X%      | 0%      | Z years  |
+| Inclusion index     | X/100   | Y/100   | Z years  |
+| Retention equality  | X% diff | 0% diff | Z years  |
 
 ## Executive Presence
 
@@ -697,11 +692,9 @@ Key Results:
 
 #### Brand Elements
 
-**Vision**: What future you're creating
-**Values**: What you stand for
-**Voice**: How you communicate
-**Visibility**: Where you show up
-**Value**: What you deliver
+**Vision**: What future you're creating **Values**: What you stand for
+**Voice**: How you communicate **Visibility**: Where you show up **Value**: What
+you deliver
 
 #### Executive Communication
 

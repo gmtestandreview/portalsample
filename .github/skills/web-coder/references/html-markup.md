@@ -12,7 +12,8 @@ The standard markup language for creating web pages and web applications.
 
 ### Elements
 
-Building blocks of HTML documents. Each element has opening/closing tags (except void elements).
+Building blocks of HTML documents. Each element has opening/closing tags (except
+void elements).
 
 **Common Elements**:
 
@@ -62,67 +63,67 @@ HTML that clearly describes its meaning to both the browser and the developer.
 
 ### Semantic Elements
 
-| Element | Purpose | When to Use |
-| --------- | --------- | ------------- |
-| `<article>` | Self-contained composition | Blog posts, news articles |
-| `<section>` | Thematic grouping of content | Chapters, tabbed content |
-| `<nav>` | Navigation links | Main menu, breadcrumbs |
-| `<aside>` | Tangential content | Sidebars, related links |
-| `<header>` | Introductory content | Page/section headers |
-| `<footer>` | Footer content | Copyright, contact info |
-| `<main>` | Main content | Primary page content |
-| `<figure>` | Self-contained content | Images with captions |
-| `<figcaption>` | Caption for figure | Image descriptions |
-| `<time>` | Date/time | Publishing dates |
-| `<mark>` | Highlighted text | Search results |
-| `<details>` | Expandable details | Accordions, FAQs |
-| `<summary>` | Summary for details | Accordion headers |
+| Element        | Purpose                      | When to Use               |
+| -------------- | ---------------------------- | ------------------------- |
+| `<article>`    | Self-contained composition   | Blog posts, news articles |
+| `<section>`    | Thematic grouping of content | Chapters, tabbed content  |
+| `<nav>`        | Navigation links             | Main menu, breadcrumbs    |
+| `<aside>`      | Tangential content           | Sidebars, related links   |
+| `<header>`     | Introductory content         | Page/section headers      |
+| `<footer>`     | Footer content               | Copyright, contact info   |
+| `<main>`       | Main content                 | Primary page content      |
+| `<figure>`     | Self-contained content       | Images with captions      |
+| `<figcaption>` | Caption for figure           | Image descriptions        |
+| `<time>`       | Date/time                    | Publishing dates          |
+| `<mark>`       | Highlighted text             | Search results            |
+| `<details>`    | Expandable details           | Accordions, FAQs          |
+| `<summary>`    | Summary for details          | Accordion headers         |
 
 ### Example: Semantic Document Structure
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Semantic Page Example</title>
-</head>
-<body>
-  <header>
-    <h1>Site Title</h1>
-    <nav aria-label="Main navigation">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semantic Page Example</title>
+  </head>
+  <body>
+    <header>
+      <h1>Site Title</h1>
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <article>
+        <header>
+          <h2>Article Title</h2>
+          <time datetime="2026-03-04">March 4, 2026</time>
+        </header>
+        <p>Article content goes here...</p>
+        <footer>
+          <p>Author: John Doe</p>
+        </footer>
+      </article>
+    </main>
+
+    <aside>
+      <h3>Related Content</h3>
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
+        <li><a href="/related">Related Article</a></li>
       </ul>
-    </nav>
-  </header>
-  
-  <main>
-    <article>
-      <header>
-        <h2>Article Title</h2>
-        <time datetime="2026-03-04">March 4, 2026</time>
-      </header>
-      <p>Article content goes here...</p>
-      <footer>
-        <p>Author: John Doe</p>
-      </footer>
-    </article>
-  </main>
-  
-  <aside>
-    <h3>Related Content</h3>
-    <ul>
-      <li><a href="/related">Related Article</a></li>
-    </ul>
-  </aside>
-  
-  <footer>
-    <p>&copy; 2026 Company Name</p>
-  </footer>
-</body>
+    </aside>
+
+    <footer>
+      <p>&copy; 2026 Company Name</p>
+    </footer>
+  </body>
 </html>
 ```
 
@@ -153,30 +154,30 @@ Contains metadata about the document.
 ```html
 <head>
   <!-- Character encoding -->
-  <meta charset="UTF-8">
-  
+  <meta charset="UTF-8" />
+
   <!-- Responsive viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <!-- SEO metadata -->
-  <meta name="description" content="Page description for search engines">
-  <meta name="keywords" content="html, web, development">
-  <meta name="author" content="Author Name">
-  
+  <meta name="description" content="Page description for search engines" />
+  <meta name="keywords" content="html, web, development" />
+  <meta name="author" content="Author Name" />
+
   <!-- Open Graph (social media) -->
-  <meta property="og:title" content="Page Title">
-  <meta property="og:description" content="Page description">
-  <meta property="og:image" content="https://example.com/image.jpg">
-  
+  <meta property="og:title" content="Page Title" />
+  <meta property="og:description" content="Page description" />
+  <meta property="og:image" content="https://example.com/image.jpg" />
+
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/favicon.png">
-  
+  <link rel="icon" type="image/png" href="/favicon.png" />
+
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css">
-  
+  <link rel="stylesheet" href="styles.css" />
+
   <!-- Preload critical resources -->
-  <link rel="preload" href="critical.css" as="style">
-  <link rel="preconnect" href="https://api.example.com">
+  <link rel="preload" href="critical.css" as="style" />
+  <link rel="preconnect" href="https://api.example.com" />
 </head>
 ```
 
@@ -188,16 +189,16 @@ Contains metadata about the document.
 <form action="/submit" method="POST">
   <!-- Text input -->
   <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required>
-  
+  <input type="text" id="name" name="name" required />
+
   <!-- Email input -->
   <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required>
-  
+  <input type="email" id="email" name="email" required />
+
   <!-- Password input -->
   <label for="password">Password:</label>
-  <input type="password" id="password" name="password" minlength="8" required>
-  
+  <input type="password" id="password" name="password" minlength="8" required />
+
   <!-- Select dropdown -->
   <label for="country">Country:</label>
   <select id="country" name="country">
@@ -205,30 +206,30 @@ Contains metadata about the document.
     <option value="us">United States</option>
     <option value="uk">United Kingdom</option>
   </select>
-  
+
   <!-- Textarea -->
   <label for="message">Message:</label>
   <textarea id="message" name="message" rows="4"></textarea>
-  
+
   <!-- Checkbox -->
   <label>
-    <input type="checkbox" name="terms" required>
+    <input type="checkbox" name="terms" required />
     I agree to the terms
   </label>
-  
+
   <!-- Radio buttons -->
   <fieldset>
     <legend>Choose an option:</legend>
     <label>
-      <input type="radio" name="option" value="a">
+      <input type="radio" name="option" value="a" />
       Option A
     </label>
     <label>
-      <input type="radio" name="option" value="b">
+      <input type="radio" name="option" value="b" />
       Option B
     </label>
   </fieldset>
-  
+
   <!-- Submit button -->
   <button type="submit">Submit</button>
 </form>
@@ -236,28 +237,29 @@ Contains metadata about the document.
 
 ### Input Types
 
-| Type | Purpose | Example |
-| ------ | --------- | --------- |
-| `text` | Single-line text | `<input type="text">` |
-| `email` | Email address | `<input type="email">` |
-| `password` | Password field | `<input type="password">` |
-| `number` | Numeric input | `<input type="number" min="0" max="100">` |
-| `tel` | Telephone number | `<input type="tel">` |
-| `url` | URL | `<input type="url">` |
-| `date` | Date picker | `<input type="date">` |
-| `time` | Time picker | `<input type="time">` |
-| `file` | File upload | `<input type="file" accept="image/*">` |
-| `checkbox` | Checkbox | `<input type="checkbox">` |
-| `radio` | Radio button | `<input type="radio">` |
-| `range` | Slider | `<input type="range" min="0" max="100">` |
-| `color` | Color picker | `<input type="color">` |
-| `search` | Search field | `<input type="search">` |
+| Type       | Purpose          | Example                                   |
+| ---------- | ---------------- | ----------------------------------------- |
+| `text`     | Single-line text | `<input type="text">`                     |
+| `email`    | Email address    | `<input type="email">`                    |
+| `password` | Password field   | `<input type="password">`                 |
+| `number`   | Numeric input    | `<input type="number" min="0" max="100">` |
+| `tel`      | Telephone number | `<input type="tel">`                      |
+| `url`      | URL              | `<input type="url">`                      |
+| `date`     | Date picker      | `<input type="date">`                     |
+| `time`     | Time picker      | `<input type="time">`                     |
+| `file`     | File upload      | `<input type="file" accept="image/*">`    |
+| `checkbox` | Checkbox         | `<input type="checkbox">`                 |
+| `radio`    | Radio button     | `<input type="radio">`                    |
+| `range`    | Slider           | `<input type="range" min="0" max="100">`  |
+| `color`    | Color picker     | `<input type="color">`                    |
+| `search`   | Search field     | `<input type="search">`                   |
 
 ## Related Markup Languages
 
 ### XML (Extensible Markup Language)
 
-A markup language for encoding documents in a format that is both human-readable and machine-readable.
+A markup language for encoding documents in a format that is both human-readable
+and machine-readable.
 
 **Key Differences from HTML**:
 
@@ -306,7 +308,7 @@ Defines how characters are represented as bytes.
 **UTF-8**: Universal character encoding standard (recommended)
 
 ```html
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 ```
 
 ### Character References
@@ -335,13 +337,16 @@ Ways to represent special characters in HTML.
 
 Elements that create a "block" in the layout, starting on a new line.
 
-**Examples**: `<div>`, `<p>`, `<h1>`-`<h6>`, `<article>`, `<section>`, `<header>`, `<footer>`, `<nav>`, `<aside>`, `<ul>`, `<ol>`, `<li>`
+**Examples**: `<div>`, `<p>`, `<h1>`-`<h6>`, `<article>`, `<section>`,
+`<header>`, `<footer>`, `<nav>`, `<aside>`, `<ul>`, `<ol>`, `<li>`
 
 ### Inline-Level Content
 
-Elements that don't start on a new line and only take up as much width as necessary.
+Elements that don't start on a new line and only take up as much width as
+necessary.
 
-**Examples**: `<span>`, `<a>`, `<strong>`, `<em>`, `<img>`, `<code>`, `<abbr>`, `<cite>`
+**Examples**: `<span>`, `<a>`, `<strong>`, `<em>`, `<img>`, `<code>`, `<abbr>`,
+`<cite>`
 
 ## Best Practices
 

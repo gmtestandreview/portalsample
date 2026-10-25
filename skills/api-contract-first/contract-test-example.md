@@ -1,14 +1,15 @@
 ---
 name: contract-test-example
-Description: Example of contract tests for the api-contract-first skill 
+Description: Example of contract tests for the api-contract-first skill
 ---
+
 # Contract Test example
 
 Contract tests must exercise the actual service boundary and verify its
 consumer-visible behavior against the approved contract.
 
-Use the project's existing contract/conformance tooling where available.
-Do not introduce a validator solely because it appears in this example.
+Use the project's existing contract/conformance tooling where available. Do not
+introduce a validator solely because it appears in this example.
 
 At minimum, cover every materially changed applicable behavior:
 
@@ -92,9 +93,8 @@ describe('POST /orders contract', () => {
 ```
 
 `assertResponseMatchesOpenApi` represents the project's existing OpenAPI
-validation tooling. It must validate the actual status code, applicable
-response headers/content type, and response body against the approved
-OpenAPI operation.
+validation tooling. It must validate the actual status code, applicable response
+headers/content type, and response body against the approved OpenAPI operation.
 
 Do not introduce a new validator library when the repository already has
 contract/conformance tooling.
@@ -128,5 +128,5 @@ test('Order matches schema', () => {
 });
 ```
 
-Passing one success-path schema check does not establish conformance.
-Run applicable contract tests for every materially changed boundary behavior.
+Passing one success-path schema check does not establish conformance. Run
+applicable contract tests for every materially changed boundary behavior.

@@ -22,7 +22,8 @@ dependencies, public contracts, requested scope, and execution permissions.
 - **Write / isolated feature:** establish contracts, supported version, errors,
   and edge cases; implement the smallest clear solution and appropriate tests.
 - **Debug a local failure:** reproduce from available evidence, isolate the
-  condition, correct the cause, and add a focused regression case when practical.
+  condition, correct the cause, and add a focused regression case when
+  practical.
 - **Review / audit / harden / broad remediation:** follow the review order and
   evidence boundary below; include root cause, safety, compatibility, and fresh
   verification.
@@ -39,16 +40,16 @@ available.
 
 ## Effort and reuse gate
 
-Choose the smallest review or implementation scope that answers the request.
-For one diagnostic or local bug, inspect its affected interfaces and relevant
-sinks; do not expand to all 15 broad-review steps without an observed reason.
-Reuse earlier checks **only** for the same unchanged artifact, effective
+Choose the smallest review or implementation scope that answers the request. For
+one diagnostic or local bug, inspect its affected interfaces and relevant sinks;
+do not expand to all 15 broad-review steps without an observed reason. Reuse
+earlier checks **only** for the same unchanged artifact, effective
 configuration, environment, and acceptance question; after edits rerun affected
 gates. Do not repeat analyzers/agent reviews merely to increase confidence
 without a new failure, changed input, or mandatory missing gate. Run the
 smallest failing/reproduction case first, then relevant regression and contract
-checks. Two bounded evaluation waves are the default; additional runs require
-a material unresolved decision. If a gate cannot run, report it rather than
+checks. Two bounded evaluation waves are the default; additional runs require a
+material unresolved decision. If a gate cannot run, report it rather than
 substituting unbounded exploration. Leave enough effort for final delivery.
 
 ## Evidence boundary
@@ -84,10 +85,10 @@ remediation as AMBER; do not silently omit the gate or weaken project rules.
 
 ## Required review order
 
-For **broad** review, hardening, or broad remediation, follow the ordered
-checks below where applicable. For a **focused** finding, apply only the
-relevant steps and their independent safety, compatibility, and verification
-gates; record significant omitted coverage instead of calling it exhaustive:
+For **broad** review, hardening, or broad remediation, follow the ordered checks
+below where applicable. For a **focused** finding, apply only the relevant steps
+and their independent safety, compatibility, and verification gates; record
+significant omitted coverage instead of calling it exhaustive:
 
 1. **Freeze provenance.** Identify exact artifact/copy and Python floor. For
    supplied diagnostics, use the
@@ -98,12 +99,13 @@ gates; record significant omitted coverage instead of calling it exhaustive:
    behavior-changing remediation.
 3. **Map interfaces/data model.** Identify APIs, CLI contracts, schemas,
    consumers, invariants, fallback precedence, and compatibility constraints.
-4. **Review semantics first.** Check missing vs zero/`None`, numeric coercion and
-   non-finite values, units, ordering, aggregation completeness, independent
+4. **Review semantics first.** Check missing vs zero/`None`, numeric coercion
+   and non-finite values, units, ordering, aggregation completeness, independent
    fallback fields, parsing/errors, async cancellation/timeouts, and cleanup.
-5. **Trace untrusted values through every sink.** Validate type/shape/range/name/
-   length/missingness, then trace filesystem, serialization/config, subprocess,
-   logs, mapping keys, IDs, HTML/API identifiers, and filenames separately.
+5. **Trace untrusted values through every sink.** Validate
+   type/shape/range/name/ length/missingness, then trace filesystem,
+   serialization/config, subprocess, logs, mapping keys, IDs, HTML/API
+   identifiers, and filenames separately.
 6. **Review filesystem/security boundaries.** Resolve and constrain influenced
    paths; consider symlinks, traversal, separators, control characters,
    serialization injection, and platform-sensitive names.
@@ -117,19 +119,20 @@ gates; record significant omitted coverage instead of calling it exhaustive:
    file coverage using the analyzer evidence record. Proxies/pre-scans are only
    heuristics; Sonar hotspots are review prompts, not automatic vulnerabilities.
 10. **Respect compatibility/change risk.** Classify proposed changes as
-    non-breaking, behavior-changing, schema-, CLI-, API-breaking, or destructive.
-    Prefer the smallest compatibility-preserving repair.
+    non-breaking, behavior-changing, schema-, CLI-, API-breaking, or
+    destructive. Prefer the smallest compatibility-preserving repair.
 11. **Stage high-impact remediation.** Breaking/destructive changes require
     explicit authorization. For broad fixes/refactors/migrations preserve a
     checkpoint, review/stage the diff, validate, and keep rollback practical.
 12. **Protect demonstrated defects.** Add/identify the smallest regression case;
     rerun the failing case first, then relevant positive and near-miss cases.
 13. **Differential-test behavior-preserving refactors.** Compare old/new on the
-    same fixtures across applicable structures, text/JSON/HTML, CLI output,
-    exit codes, ordering, side effects, and independent metadata.
+    same fixtures across applicable structures, text/JSON/HTML, CLI output, exit
+    codes, ordering, side effects, and independent metadata.
 14. **Pressure-test relevant boundaries.** Include malformed/hostile data,
     path/serialization injection, ordering/ID collisions, CLI/server/network,
-    subprocess shutdown, concurrency, timeout, and disconnect cases as applicable.
+    subprocess shutdown, concurrency, timeout, and disconnect cases as
+    applicable.
 15. **Verify freshly, then assess.** Rerun formerly failing/applicable analyzers
     plus relevant compile/format/type/tests/CLI/end-to-end/output checks against
     the final artifact. Score only from applicable fresh evidence.
@@ -141,8 +144,8 @@ For reviewed code:
 - **RED** — unresolved material behavioral/security/compatibility defect.
 - **AMBER** — no known material RED, but required runtime/analyzer/pressure
   evidence is unavailable or materially incomplete.
-- **GREEN** — required behavioral, analyzer, runtime, compatibility, and pressure
-  gates are evidenced for the stated scope.
+- **GREEN** — required behavioral, analyzer, runtime, compatibility, and
+  pressure gates are evidenced for the stated scope.
 
 Counts never dilute a material RED; analyzer cleanliness cannot override it.
 
@@ -156,20 +159,21 @@ Load the smallest sufficient set:
   correctness, external-data/sink tracing, compatibility, determinism,
   filesystem, CLI/server/subprocess, async, and remediation.
 - [General review](references/python-general-review.md) — broad pitfalls,
-  performance/data volume, testing quality, security, concurrency, modernization.
+  performance/data volume, testing quality, security, concurrency,
+  modernization.
 - [Analyzer verification](references/ruff-pyright-verification.md) — Ruff,
   Pyright/Pylance, mypy, Sonar, provenance, coverage, and fresh verification.
-- [Compact completion](references/completion-contract.md) — load for
-  substantive Python task finals, not interim comments or basic explanations.
-- [Formal review reporting](references/review-reporting.md) — only for
-  material findings, formal reports, pressure matrices, or requested scores.
+- [Compact completion](references/completion-contract.md) — load for substantive
+  Python task finals, not interim comments or basic explanations.
+- [Formal review reporting](references/review-reporting.md) — only for material
+  findings, formal reports, pressure matrices, or requested scores.
 
 Examples: async/filesystem/CLI/server/subprocess review → remediation method;
 broad application/performance review → general review; analyzer diagnostics →
 analyzer verification. For artifact-producing tests consult
-[fixture ownership/disposition](references/python-general-review.md).
-Open only the listed resources the active task requires; avoid unrelated
-examples, broad review matrices, and evaluation fixtures.
+[fixture ownership/disposition](references/python-general-review.md). Open only
+the listed resources the active task requires; avoid unrelated examples, broad
+review matrices, and evaluation fixtures.
 
 ## Validation (skill maintainers only)
 
@@ -189,7 +193,7 @@ are preserved for regression/provenance, not current PASS claims.
 Report the artifact/patch, assumptions/tradeoffs, checks actually executed,
 required checks not executed, compatibility implications, and remaining risk.
 Illustrative snippets are not tests. For substantive task finals follow
-[compact completion](references/completion-contract.md); formal reviews also
-use [review reporting](references/review-reporting.md) and state residual
-RED/AMBER/GREEN.
-Never claim production readiness without required behavioral/analyzer evidence.
+[compact completion](references/completion-contract.md); formal reviews also use
+[review reporting](references/review-reporting.md) and state residual
+RED/AMBER/GREEN. Never claim production readiness without required
+behavioral/analyzer evidence.

@@ -61,8 +61,8 @@ function alreadyReadonly(type) {
     ts.isTypeLiteralNode(type) &&
     type.members.every((member) =>
       member.modifiers?.some(
-        (modifier) => modifier.kind === ts.SyntaxKind.ReadonlyKeyword
-      )
+        (modifier) => modifier.kind === ts.SyntaxKind.ReadonlyKeyword,
+      ),
     )
   );
 }
@@ -74,7 +74,7 @@ export function transformProps(source, filename = 'component.tsx') {
     source,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TSX
+    ts.ScriptKind.TSX,
   );
   if (file.parseDiagnostics.length) throw new Error(`Cannot parse ${filename}`);
   const changes = [];
@@ -164,7 +164,10 @@ export function projectDiagnostics(root, replacements = new Map()) {
     return ts.sys.useCaseSensitiveFileNames ? absolute : absolute.toLowerCase();
   };
   const canonicalReplacements = new Map(
-    [...replacements].map(([filename, source]) => [canonical(filename), source])
+    [...replacements].map(([filename, source]) => [
+      canonical(filename),
+      source,
+    ]),
   );
   const host = ts.createCompilerHost(parsed.options);
   const originalRead = host.readFile;
@@ -180,12 +183,12 @@ export function projectDiagnostics(root, replacements = new Map()) {
     program
       .getSourceFiles()
       .filter((file) => !file.isDeclarationFile)
-      .map((file) => canonical(file.fileName))
+      .map((file) => canonical(file.fileName)),
   );
   for (const filename of replacements.keys()) {
     if (!covered.has(canonical(filename))) {
       throw new Error(
-        `Proposed file is not included in the TypeScript project: ${filename}; no files written`
+        `Proposed file is not included in the TypeScript project: ${filename}; no files written`,
       );
     }
   }
@@ -234,7 +237,7 @@ function gitExecutable() {
   cachedGitExecutable = configured ?? trustedDefault;
   if (!cachedGitExecutable) {
     throw new Error(
-      'git executable not found in a standard location; set GIT_EXECUTABLE to its absolute path'
+      'git executable not found in a standard location; set GIT_EXECUTABLE to its absolute path',
     );
   }
   return cachedGitExecutable;
@@ -257,20 +260,20 @@ async function auditParameters(root, files) {
     const messages = result.messages.filter(
       (message) =>
         message.fatal ||
-        message.ruleId === '@typescript-eslint/prefer-readonly-parameter-types'
+        message.ruleId === '@typescript-eslint/prefer-readonly-parameter-types',
     );
     if (!messages.length) continue;
     const relative = slash(path.relative(root, result.filePath));
     for (const message of messages) {
       process.stdout.write(
-        `${relative}:${message.line}:${message.column} ${message.message}\n`
+        `${relative}:${message.line}:${message.column} ${message.message}\n`,
       );
       if (message.fatal) fatal++;
       else count++;
     }
   }
   process.stdout.write(
-    `${count} readonly parameter findings; ${fatal} fatal lint errors. Audit only: nested models and callbacks need individual review.\n`
+    `${count} readonly parameter findings; ${fatal} fatal lint errors. Audit only: nested models and callbacks need individual review.\n`,
   );
   return count || fatal ? 1 : 0;
 }
@@ -282,7 +285,7 @@ function resolveCandidateFiles(root, args, flags) {
   const selections = args
     .filter((arg) => !arg.startsWith('--'))
     .map((arg) =>
-      slash(path.relative(root, path.resolve(root, arg))).replace(/\/$/u, '')
+      slash(path.relative(root, path.resolve(root, arg))).replace(/\/$/u, ''),
     );
   const candidates = tracked.filter((file) =>
     flags.has('--audit-parameters')
@@ -290,12 +293,12 @@ function resolveCandidateFiles(root, args, flags) {
         !file.endsWith('.d.ts') &&
         !/(^|\/)(external|parent|node_modules)\//u.test(file) &&
         file !== 'ClientApp/src/api/web-api-client.ts'
-      : isEligible(file)
+      : isEligible(file),
   );
   for (const selection of selections) {
     if (
       !candidates.some(
-        (file) => file === selection || file.startsWith(`${selection}/`)
+        (file) => file === selection || file.startsWith(`${selection}/`),
       )
     ) {
       throw new Error(`No eligible tracked source files at: ${selection}`);
@@ -305,8 +308,8 @@ function resolveCandidateFiles(root, args, flags) {
     (file) =>
       !selections.length ||
       selections.some(
-        (selection) => file === selection || file.startsWith(`${selection}/`)
-      )
+        (selection) => file === selection || file.startsWith(`${selection}/`),
+      ),
   );
 }
 
@@ -323,12 +326,12 @@ function previewTransforms(root, files) {
     const result = transformProps(original, file);
     for (const change of result.changes) {
       process.stdout.write(
-        `${file}:${change.line} ${change.name}: ${change.before.replaceAll(/\s+/gu, ' ')} -> Readonly<...>\n`
+        `${file}:${change.line} ${change.name}: ${change.before.replaceAll(/\s+/gu, ' ')} -> Readonly<...>\n`,
       );
     }
     for (const item of result.skipped)
       process.stdout.write(
-        `${file}:${item.line} REVIEW ${item.name}: ${item.reason}\n`
+        `${file}:${item.line} REVIEW ${item.name}: ${item.reason}\n`,
       );
     total += result.changes.length;
     skipped += result.skipped.length;
@@ -338,7 +341,7 @@ function previewTransforms(root, files) {
     }
   }
   process.stdout.write(
-    `${total} proposed props fixes in ${replacements.size} files; ${skipped} manual reviews. Detection is conservative; rerun Sonar for complete S6759 coverage.\n`
+    `${total} proposed props fixes in ${replacements.size} files; ${skipped} manual reviews. Detection is conservative; rerun Sonar for complete S6759 coverage.\n`,
   );
   return { total, skipped, originals, replacements };
 }
@@ -347,21 +350,21 @@ function applyReplacements(root, replacements, originals) {
   for (const file of replacements.keys()) {
     if (git(root, ['status', '--porcelain', '--', file]).trim())
       throw new Error(
-        `Refusing to overwrite staged or unstaged changes: ${path.relative(root, file)}`
+        `Refusing to overwrite staged or unstaged changes: ${path.relative(root, file)}`,
       );
   }
   process.stdout.write(
-    'Checking baseline and proposed types across the project before writing...\n'
+    'Checking baseline and proposed types across the project before writing...\n',
   );
   const baseline = projectDiagnostics(root);
   if (baseline.length)
     throw new Error(
-      `Baseline has ${baseline.length} TypeScript errors; no files written.\n${diagnosticText(baseline)}`
+      `Baseline has ${baseline.length} TypeScript errors; no files written.\n${diagnosticText(baseline)}`,
     );
   const proposed = projectDiagnostics(root, replacements);
   if (proposed.length)
     throw new Error(
-      `Proposed changes have ${proposed.length} TypeScript errors; no files written.\n${diagnosticText(proposed)}`
+      `Proposed changes have ${proposed.length} TypeScript errors; no files written.\n${diagnosticText(proposed)}`,
     );
   // Refuse to overwrite edits made while the potentially long type-check ran.
   for (const [file, original] of originals) {
@@ -370,7 +373,7 @@ function applyReplacements(root, replacements, originals) {
       git(root, ['status', '--porcelain', '--', file]).trim()
     ) {
       throw new Error(
-        `File changed during validation: ${file}; no files written`
+        `File changed during validation: ${file}; no files written`,
       );
     }
   }
@@ -394,17 +397,17 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
   }
   if (flags.has('--help')) {
     process.stdout.write(
-      'Usage: node scripts/readonly-props.mjs [--check | --write | --audit-parameters] [ClientApp/src/path ...]\nDefault: preview eligible React props; --check exits 1 when changes or manual review remain.\n--write requires clean target files and a clean baseline/candidate TypeScript check.\n--audit-parameters reports the existing ESLint rule without changing files.\n'
+      'Usage: node scripts/readonly-props.mjs [--check | --write | --audit-parameters] [ClientApp/src/path ...]\nDefault: preview eligible React props; --check exits 1 when changes or manual review remain.\n--write requires clean target files and a clean baseline/candidate TypeScript check.\n--audit-parameters reports the existing ESLint rule without changing files.\n',
     );
     return 0;
   }
   if (
     ['--write', '--check', '--audit-parameters'].filter((flag) =>
-      flags.has(flag)
+      flags.has(flag),
     ).length > 1
   ) {
     throw new Error(
-      'Choose only one of --write, --check and --audit-parameters'
+      'Choose only one of --write, --check and --audit-parameters',
     );
   }
   root = path.resolve(root);
@@ -418,7 +421,7 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
 
   const { total, skipped, originals, replacements } = previewTransforms(
     root,
-    files
+    files,
   );
   if (!flags.has('--write'))
     return flags.has('--check') && (total || skipped) ? 1 : 0;
@@ -426,7 +429,7 @@ export async function main(args = process.argv.slice(2), root = process.cwd()) {
 
   applyReplacements(root, replacements, originals);
   process.stdout.write(
-    `Applied ${total} props fixes. Review the diff, format touched files, run lint/tests and rerun Sonar.\n`
+    `Applied ${total} props fixes. Review the diff, format touched files, run lint/tests and rerun Sonar.\n`,
   );
   return skipped ? 1 : 0;
 }

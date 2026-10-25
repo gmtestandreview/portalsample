@@ -55,6 +55,7 @@ describe('account created route', () => {
   });
 
   it('renders the account holder name and dashboard action', async () => {
+    expect.assertions(3);
     mocks.useAccountState.mockReturnValue({ details: { givenName: 'Alex' } });
     const AccountCreated = (
       await import('../../../ClientApp/src/routes/account/created')
@@ -81,6 +82,7 @@ describe('account created route', () => {
   });
 
   it('renders without a name when account details are unavailable', async () => {
+    expect.assertions(1);
     mocks.useAccountState.mockReturnValue(undefined);
     const AccountCreated = (
       await import('../../../ClientApp/src/routes/account/created')

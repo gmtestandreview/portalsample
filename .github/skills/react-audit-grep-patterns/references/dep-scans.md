@@ -1,6 +1,7 @@
 # Dependency Scans - Both Auditors
 
-Scans for dependency compatibility and peer conflicts. Run during both R18 and R19 audits.
+Scans for dependency compatibility and peer conflicts. Run during both R18 and
+R19 audits.
 
 ---
 

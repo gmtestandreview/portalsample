@@ -5,6 +5,10 @@ const STORYBOOK_COMMAND =
   'node --max-old-space-size=8192 ./node_modules/storybook/dist/bin/dispatcher.js dev';
 const STORYBOOK_SERVER_TIMEOUT_MS = 120_000;
 
+// Managed mode starts a local HTTP Storybook server and is loopback-only.
+// External mode connects to an existing target: HTTPS may use a remote host,
+// while HTTP remains loopback-only to avoid sending test traffic in plaintext.
+
 const isLoopbackHost = (hostname) => {
   const normalized = hostname.replace(/^\[|\]$/g, '').toLowerCase();
   if (normalized === 'localhost') return true;
@@ -25,7 +29,7 @@ const explicitPort = (value) => {
   return /:(\d+)$/.exec(hostPort)?.[1];
 };
 
-const parseTargetURL = (value) => {
+const parseTargetURL = (value, serverMode) => {
   const portText = explicitPort(value);
   if (portText === undefined) throw new Error('an explicit port is required');
 
@@ -34,12 +38,14 @@ const parseTargetURL = (value) => {
     target = new URL(value);
   } catch {
     throw new Error(
-      'the port must be in the valid range or the URL syntax is invalid'
+      'the port must be in the valid range or the URL syntax is invalid',
     );
   }
-  if (target.protocol !== 'http:')
-    throw new Error('only http URLs are supported');
-  if (!isLoopbackHost(target.hostname))
+  if (!['http:', 'https:'].includes(target.protocol))
+    throw new Error('only http and https URLs are supported');
+  if (serverMode === 'managed' && target.protocol !== 'http:')
+    throw new Error('managed targets must use http');
+  if (target.protocol === 'http:' && !isLoopbackHost(target.hostname))
     throw new Error('only loopback hosts are supported');
   if (target.username !== '' || target.password !== '') {
     throw new Error('credentials are not allowed');
@@ -52,7 +58,11 @@ const parseTargetURL = (value) => {
   if (!Number.isInteger(port) || port < 1 || port > 65_535) {
     throw new Error('the port must be in the valid range');
   }
-  return { host: target.hostname.replace(/^\[|\]$/g, ''), port };
+  return {
+    host: target.hostname.replace(/^\[|\]$/g, ''),
+    port,
+    protocol: target.protocol,
+  };
 };
 
 const formatHostForURL = (host) => (host.includes(':') ? `[${host}]` : host);
@@ -65,8 +75,8 @@ export const resolveStorybookTestTargetImplementation = ({
   if (serverMode !== 'managed' && serverMode !== 'external') {
     throw new Error('serverMode must be managed or external');
   }
-  const { host, port } = parseTargetURL(url);
-  const baseURL = `http://${formatHostForURL(host)}:${port}`;
+  const { host, port, protocol } = parseTargetURL(url, serverMode);
+  const baseURL = `${protocol}//${formatHostForURL(host)}:${port}`;
   const command = `${STORYBOOK_COMMAND} --host ${host} -p ${port} --no-open`;
   return {
     baseURL,

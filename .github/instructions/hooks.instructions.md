@@ -1,12 +1,15 @@
 ---
-description: 'Portable guidance for authoring safe, fast, and clear hooks and reusable hook examples'
+description:
+  'Portable guidance for authoring safe, fast, and clear hooks and reusable hook
+  examples'
 applyTo: '.github/hooks/**, hooks/**'
 ---
 
 # Hook Authoring Guidelines
 
-Hooks are **small, deterministic commands or scripts** that run at specific lifecycle events.
-An awesome hook does one clear job, runs quickly, and makes its side effects explicit.
+Hooks are **small, deterministic commands or scripts** that run at specific
+lifecycle events. An awesome hook does one clear job, runs quickly, and makes
+its side effects explicit.
 
 ## Folder Structure
 
@@ -21,13 +24,15 @@ A GitHub Copilot hook lives in `.github/hooks/` inside your repository:
         └── block-dangerous-commands.ps1 ← PowerShell implementation (optional if Bash-only)
 ```
 
-You can have multiple `.json` files — each one registers hooks for one or more events. The host loads all of them.
+You can have multiple `.json` files — each one registers hooks for one or more
+events. The host loads all of them.
 
 ## The Config File
 
 Each `.json` file maps events to an array of hook entries.
 
-- **Command hooks** (`type: "command"`): run a local script. The host passes event JSON on stdin, your script responds through exit code and stdout.
+- **Command hooks** (`type: "command"`): run a local script. The host passes
+  event JSON on stdin, your script responds through exit code and stdout.
 
 ### Config example
 
@@ -54,53 +59,60 @@ Each `.json` file maps events to an array of hook entries.
 
 ### Config fields
 
-| Field | Required | What it does |
-| ---- | ---- | ---- |
-| `type` | yes | `"command"` for scripts |
-| `matcher` | no | Host-level filter — hook only fires when the tool name matches this value (e.g. `"bash"`, `"powershell"`, `"edit"`, `"create"`). Locally verified working in Copilot CLI v1.0.36; not yet used in repo hook samples. |
-| `bash` | one or both | Command line invoked on Unix / Bash-capable hosts |
-| `powershell` | one or both | Command line invoked on Windows / PowerShell-capable hosts |
-| `cwd` | no | Working directory, relative to repo root |
-| `timeoutSec` | no | Max seconds before the host kills the process (default 30) |
-| `env` | no | Extra process environment variables passed to the script |
+| Field        | Required    | What it does                                                                                                                                                                                                         |
+| ------------ | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`       | yes         | `"command"` for scripts                                                                                                                                                                                              |
+| `matcher`    | no          | Host-level filter — hook only fires when the tool name matches this value (e.g. `"bash"`, `"powershell"`, `"edit"`, `"create"`). Locally verified working in Copilot CLI v1.0.36; not yet used in repo hook samples. |
+| `bash`       | one or both | Command line invoked on Unix / Bash-capable hosts                                                                                                                                                                    |
+| `powershell` | one or both | Command line invoked on Windows / PowerShell-capable hosts                                                                                                                                                           |
+| `cwd`        | no          | Working directory, relative to repo root                                                                                                                                                                             |
+| `timeoutSec` | no          | Max seconds before the host kills the process (default 30)                                                                                                                                                           |
+| `env`        | no          | Extra process environment variables passed to the script                                                                                                                                                             |
 
 ### Why matchers matter
 
-Without a matcher, every `preToolUse` hook fires on **every** tool call. Your script starts with boilerplate like:
+Without a matcher, every `preToolUse` hook fires on **every** tool call. Your
+script starts with boilerplate like:
 
 ```bash
 tool_name="$(printf '%s' "$payload" | jq -r '.toolName')"
 [[ "$tool_name" != "bash" ]] && exit 0
 ```
 
-With a matcher, the host does this filtering for you — no boilerplate, no process spawn for irrelevant tools. This will likely become the standard pattern once the feature stabilizes.
+With a matcher, the host does this filtering for you — no boilerplate, no
+process spawn for irrelevant tools. This will likely become the standard pattern
+once the feature stabilizes.
 
-If your hooks must work on both the CLI and the cloud agent (or on older CLI versions), keep the in-script filtering as a fallback even when using matchers.
+If your hooks must work on both the CLI and the cloud agent (or on older CLI
+versions), keep the in-script filtering as a fallback even when using matchers.
 
 ### `env` — static configuration for your script
 
-`env` is a **standard host field**. The keys inside it are **author-defined variables** — you choose the names and values.
+`env` is a **standard host field**. The keys inside it are **author-defined
+variables** — you choose the names and values.
 
-They arrive as **process environment variables**, not inside the stdin JSON payload. Use them for static configuration that should not be hardcoded:
+They arrive as **process environment variables**, not inside the stdin JSON
+payload. Use them for static configuration that should not be hardcoded:
 
-| Pattern | Example |
-| ---- | ---- |
-| Mode flag | `"BLOCK_MODE": "deny"` — same script logs in one repo, blocks in another |
-| Threshold | `"MAX_CHANGED_FILES": "20"` |
-| Path | `"AUDIT_LOG_PATH": ".github/logs/hooks.log"` |
-| Feature toggle | `"ENABLE_NOTIFICATIONS": "false"` |
+| Pattern        | Example                                                                  |
+| -------------- | ------------------------------------------------------------------------ |
+| Mode flag      | `"BLOCK_MODE": "deny"` — same script logs in one repo, blocks in another |
+| Threshold      | `"MAX_CHANGED_FILES": "20"`                                              |
+| Path           | `"AUDIT_LOG_PATH": ".github/logs/hooks.log"`                             |
+| Feature toggle | `"ENABLE_NOTIFICATIONS": "false"`                                        |
 
 ### `bash` and `powershell` — when to provide one or both
 
-The host picks whichever entry matches the current environment. It does not run both, and does not fall back from one to the other.
+The host picks whichever entry matches the current environment. It does not run
+both, and does not fall back from one to the other.
 
-| Situation | Provide |
-| ---- | ---- |
-| Private hook, one known platform | Only that platform's entry |
-| Published hook claiming cross-platform support | Both entries |
+| Situation                                          | Provide                                     |
+| -------------------------------------------------- | ------------------------------------------- |
+| Private hook, one known platform                   | Only that platform's entry                  |
+| Published hook claiming cross-platform support     | Both entries                                |
 | Single cross-platform runtime (Python, Node, pwsh) | Expose the same script through both entries |
-| Bash-only dependency | `bash` only |
-| Windows-only dependency | `powershell` only |
+| Bash-only dependency                               | `bash` only                                 |
+| Windows-only dependency                            | `powershell` only                           |
 
 Cross-platform example using Python through both entries:
 
@@ -114,9 +126,11 @@ Cross-platform example using Python through both entries:
 
 ## The Script Contract
 
-Every hook script follows the same basic contract: read JSON from stdin, do work, and respond through exit code, stdout, and stderr.
+Every hook script follows the same basic contract: read JSON from stdin, do
+work, and respond through exit code, stdout, and stderr.
 
-**Important**: `toolArgs` is a **JSON string**, not a nested object. You must parse it a second time to access its fields.
+**Important**: `toolArgs` is a **JSON string**, not a nested object. You must
+parse it a second time to access its fields.
 
 ### Reading stdin and responding — Bash and PowerShell
 
@@ -150,37 +164,44 @@ exit 0
 
 ### What the script receives
 
-| Input | What it carries |
-| ---- | ---- |
-| `stdin` | One JSON payload describing the current event |
+| Input               | What it carries                                                |
+| ------------------- | -------------------------------------------------------------- |
+| `stdin`             | One JSON payload describing the current event                  |
 | process environment | Normal env vars plus any you defined under `env` in the config |
-| working directory | `cwd` from the config, or the host default |
+| working directory   | `cwd` from the config, or the host default                     |
 
 ### How the script responds
 
-| Channel | Purpose |
-| ---- | ---- |
-| exit `0` | Script succeeded — host continues unless stdout carried a structured deny |
-| non-zero exit | **Blocks the triggering action** and signals hook failure |
-| `stdout` | Structured machine-readable output — only for events that document a stdout schema (like `preToolUse`) |
-| `stderr` | Human-readable diagnostics for logs |
+| Channel       | Purpose                                                                                                |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| exit `0`      | Script succeeded — host continues unless stdout carried a structured deny                              |
+| non-zero exit | **Blocks the triggering action** and signals hook failure                                              |
+| `stdout`      | Structured machine-readable output — only for events that document a stdout schema (like `preToolUse`) |
+| `stderr`      | Human-readable diagnostics for logs                                                                    |
 
 ### Exit codes and deny: the full picture
 
 The deny mechanism **depends on the event**:
 
-| Event type | How to allow | How to deny / block |
-| ---- | ---- | ---- |
-| `preToolUse` | exit `0`, empty or `{"permissionDecision":"allow"}` on stdout | **Preferred**: exit `0` + `{"permissionDecision":"deny","permissionDecisionReason":"..."}` on stdout — gives the host a reason to show. **Also works**: non-zero exit blocks the tool call, but without a structured reason. |
-| `userPromptSubmitted` | exit `0` | Non-zero exit blocks the prompt (stdout is ignored for this event) |
-| `agentStop` | exit `0` | Non-zero exit blocks the action |
-| Other events (`sessionStart`, `sessionEnd`, `postToolUse`, `errorOccurred`) | exit `0` | Non-zero exit signals failure; the host may skip subsequent hooks for that event |
+| Event type                                                                  | How to allow                                                  | How to deny / block                                                                                                                                                                                                          |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `preToolUse`                                                                | exit `0`, empty or `{"permissionDecision":"allow"}` on stdout | **Preferred**: exit `0` + `{"permissionDecision":"deny","permissionDecisionReason":"..."}` on stdout — gives the host a reason to show. **Also works**: non-zero exit blocks the tool call, but without a structured reason. |
+| `userPromptSubmitted`                                                       | exit `0`                                                      | Non-zero exit blocks the prompt (stdout is ignored for this event)                                                                                                                                                           |
+| `agentStop`                                                                 | exit `0`                                                      | Non-zero exit blocks the action                                                                                                                                                                                              |
+| Other events (`sessionStart`, `sessionEnd`, `postToolUse`, `errorOccurred`) | exit `0`                                                      | Non-zero exit signals failure; the host may skip subsequent hooks for that event                                                                                                                                             |
 
-**Rule of thumb**: if the event has a structured stdout schema (like `preToolUse`), use it — it gives a clean reason and is the officially documented deny path. For events without structured stdout, non-zero exit is the practical block mechanism — this is confirmed by repo samples and learning hub docs, though the official GitHub reference does not explicitly document "non-zero = block" as a contract guarantee.
+**Rule of thumb**: if the event has a structured stdout schema (like
+`preToolUse`), use it — it gives a clean reason and is the officially documented
+deny path. For events without structured stdout, non-zero exit is the practical
+block mechanism — this is confirmed by repo samples and learning hub docs,
+though the official GitHub reference does not explicitly document "non-zero =
+block" as a contract guarantee.
 
 ### Example 1: Commit gate — block commits until lint, types, and tests pass
 
-**Why this pattern matters**: the deny reason includes the actual errors, so the agent sees what's broken and fixes it before trying again. This creates a self-correcting feedback loop — the most powerful thing hooks can do.
+**Why this pattern matters**: the deny reason includes the actual errors, so the
+agent sees what's broken and fixes it before trying again. This creates a
+self-correcting feedback loop — the most powerful thing hooks can do.
 
 **Event**: `preToolUse` — fires before the agent runs `git commit`
 
@@ -254,15 +275,17 @@ exit 0
 
 **What happens at runtime:**
 
-| Scenario | stdout | exit | Host action |
-| ---- | ---- | ---- | ---- |
-| All checks pass | empty | `0` | Commit proceeds |
-| Lint fails | `{"permissionDecision":"deny","permissionDecisionReason":"Cannot commit — fix these issues first:\n=== Lint Errors ===\n..."}` | `0` | Blocks commit; agent sees the errors and fixes them |
-| jq missing | empty | non-zero | Hook failure |
+| Scenario        | stdout                                                                                                                         | exit     | Host action                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------- |
+| All checks pass | empty                                                                                                                          | `0`      | Commit proceeds                                     |
+| Lint fails      | `{"permissionDecision":"deny","permissionDecisionReason":"Cannot commit — fix these issues first:\n=== Lint Errors ===\n..."}` | `0`      | Blocks commit; agent sees the errors and fixes them |
+| jq missing      | empty                                                                                                                          | non-zero | Hook failure                                        |
 
 ### Example 2: Auto-format after file edits
 
-**Why this pattern matters**: the agent writes code, and your formatter runs immediately after — no manual step needed. The agent's next read of that file sees the formatted version.
+**Why this pattern matters**: the agent writes code, and your formatter runs
+immediately after — no manual step needed. The agent's next read of that file
+sees the formatted version.
 
 **Event**: `postToolUse` — fires after `edit` or `create` tool calls
 
@@ -315,15 +338,16 @@ exit 0
 
 **What happens at runtime:**
 
-| Scenario | What the hook does | exit |
-| ---- | ---- | ---- |
-| Agent edits `src/app.ts` successfully | Runs `prettier --write src/app.ts` | `0` |
-| Agent runs `bash ls` | Skips (not a file-writing tool) | `0` |
-| Prettier not installed | Silently skips formatting | `0` |
+| Scenario                              | What the hook does                 | exit |
+| ------------------------------------- | ---------------------------------- | ---- |
+| Agent edits `src/app.ts` successfully | Runs `prettier --write src/app.ts` | `0`  |
+| Agent runs `bash ls`                  | Skips (not a file-writing tool)    | `0`  |
+| Prettier not installed                | Silently skips formatting          | `0`  |
 
 ### Example 3: Block dangerous commands with structured deny
 
-**Why this pattern matters**: the simplest guardrail — prevent destructive shell commands before they execute, with a clear reason the agent can read.
+**Why this pattern matters**: the simplest guardrail — prevent destructive shell
+commands before they execute, with a clear reason the agent can read.
 
 **Event**: `preToolUse` — fires before any tool call
 
@@ -377,37 +401,40 @@ exit 0
 
 **What happens at runtime:**
 
-| Scenario | BLOCK_MODE | stdout | exit | Host action |
-| ---- | ---- | ---- | ---- | ---- |
-| Safe command | any | empty | `0` | Proceeds |
-| `git push --force` | `deny` | `{"permissionDecision":"deny",...}` | `0` | Blocks with reason |
-| `git push --force` | `log` | empty | `0` | Proceeds (log only) |
+| Scenario           | BLOCK_MODE | stdout                              | exit | Host action         |
+| ------------------ | ---------- | ----------------------------------- | ---- | ------------------- |
+| Safe command       | any        | empty                               | `0`  | Proceeds            |
+| `git push --force` | `deny`     | `{"permissionDecision":"deny",...}` | `0`  | Blocks with reason  |
+| `git push --force` | `log`      | empty                               | `0`  | Proceeds (log only) |
 
 ## Event Types
 
-The full hooks reference is authoritative. **Always check it for the latest payload shapes** before writing a hook:
+The full hooks reference is authoritative. **Always check it for the latest
+payload shapes** before writing a hook:
 
 - [Hooks configuration reference](https://docs.github.com/en/copilot/reference/hooks-configuration)
 - [About hooks](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-hooks)
 
-| Event | stdout | Typical use |
-| ---- | ---- | ---- |
-| `sessionStart` | **parsed** — `additionalContext` in stdout is injected into the session | Setup, validation, context injection, logging |
-| `sessionEnd` | ignored | Cleanup, summaries |
-| `userPromptSubmitted` | ignored | Auditing, prompt blocking |
-| `preToolUse` | **parsed** — `permissionDecision`, `modifiedArgs`/`updatedInput`, `additionalContext` | Guardrails, deny/block, argument modification |
-| `postToolUse` | ignored | Logging, formatting |
-| `postToolUseFailure` | — | Recovery after a failed tool run |
-| `agentStop` | — | Final validation |
-| `subagentStart` | — | Subagent audit |
-| `subagentStop` | — | Subagent output validation |
-| `errorOccurred` | ignored | Diagnostics, alerts |
-| `preCompact` | — | Pre-compaction work |
-| `permissionRequest` | — | Approval workflow |
+| Event                 | stdout                                                                                | Typical use                                   |
+| --------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `sessionStart`        | **parsed** — `additionalContext` in stdout is injected into the session               | Setup, validation, context injection, logging |
+| `sessionEnd`          | ignored                                                                               | Cleanup, summaries                            |
+| `userPromptSubmitted` | ignored                                                                               | Auditing, prompt blocking                     |
+| `preToolUse`          | **parsed** — `permissionDecision`, `modifiedArgs`/`updatedInput`, `additionalContext` | Guardrails, deny/block, argument modification |
+| `postToolUse`         | ignored                                                                               | Logging, formatting                           |
+| `postToolUseFailure`  | —                                                                                     | Recovery after a failed tool run              |
+| `agentStop`           | —                                                                                     | Final validation                              |
+| `subagentStart`       | —                                                                                     | Subagent audit                                |
+| `subagentStop`        | —                                                                                     | Subagent output validation                    |
+| `errorOccurred`       | ignored                                                                               | Diagnostics, alerts                           |
+| `preCompact`          | —                                                                                     | Pre-compaction work                           |
+| `permissionRequest`   | —                                                                                     | Approval workflow                             |
 
 ### Payload schemas for common events
 
-These are the payload shapes from the hooks reference. Always verify against the [official reference](https://docs.github.com/en/copilot/reference/hooks-configuration) for the latest fields.
+These are the payload shapes from the hooks reference. Always verify against the
+[official reference](https://docs.github.com/en/copilot/reference/hooks-configuration)
+for the latest fields.
 
 **`sessionStart`**
 
@@ -420,7 +447,8 @@ These are the payload shapes from the hooks reference. Always verify against the
 }
 ```
 
-`source` is `"new"`, `"resume"`, or `"startup"`. `initialPrompt` is the user's first prompt if provided.
+`source` is `"new"`, `"resume"`, or `"startup"`. `initialPrompt` is the user's
+first prompt if provided.
 
 **`sessionStart` stdout output** — the host parses stdout for:
 
@@ -430,7 +458,8 @@ These are the payload shapes from the hooks reference. Always verify against the
 }
 ```
 
-`additionalContext` is injected directly into the session conversation, letting hooks provide environment-specific context dynamically.
+`additionalContext` is injected directly into the session conversation, letting
+hooks provide environment-specific context dynamically.
 
 **`sessionEnd`**
 
@@ -471,12 +500,12 @@ The field is `prompt` — the exact text the user submitted.
 
 **`preToolUse` stdout output** — the host parses stdout for:
 
-| Field | What it does |
-| ---- | ---- |
-| `permissionDecision` | `"deny"` blocks the tool call. `"allow"` and `"ask"` also accepted; only `"deny"` is currently processed. |
-| `permissionDecisionReason` | Human-readable reason shown to the user |
-| `modifiedArgs` or `updatedInput` | Replacement tool arguments — used instead of the originals |
-| `additionalContext` | Text injected into the agent's context for this turn |
+| Field                            | What it does                                                                                              |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `permissionDecision`             | `"deny"` blocks the tool call. `"allow"` and `"ask"` also accepted; only `"deny"` is currently processed. |
+| `permissionDecisionReason`       | Human-readable reason shown to the user                                                                   |
+| `modifiedArgs` or `updatedInput` | Replacement tool arguments — used instead of the originals                                                |
+| `additionalContext`              | Text injected into the agent's context for this turn                                                      |
 
 **`postToolUse`**
 
@@ -518,35 +547,37 @@ The field is `prompt` — the exact text the user submitted.
 }
 ```
 
-Minimal payload — use it to trigger end-of-session actions like running `git diff --stat` or final validation.
+Minimal payload — use it to trigger end-of-session actions like running
+`git diff --stat` or final validation.
 
 ## When Hooks Are the Wrong Tool
 
-| Avoid hooks for | Better fit |
-| ---- | ---- |
-| Open-ended reasoning or style guidance | Instructions, prompts, or agents |
-| Long multi-step workflows with memory, retries, or branching | Agents, scripts, or workflow engines |
-| Background daemons, watchers, debounce loops, or async jobs | Dedicated automation, services, or CI |
-| Heavy repository-wide validation | CI, scheduled jobs, or dedicated automation |
+| Avoid hooks for                                              | Better fit                                  |
+| ------------------------------------------------------------ | ------------------------------------------- |
+| Open-ended reasoning or style guidance                       | Instructions, prompts, or agents            |
+| Long multi-step workflows with memory, retries, or branching | Agents, scripts, or workflow engines        |
+| Background daemons, watchers, debounce loops, or async jobs  | Dedicated automation, services, or CI       |
+| Heavy repository-wide validation                             | CI, scheduled jobs, or dedicated automation |
 
 ## Universal Design Rules
 
-| Rule | Why it matters |
-| ---- | ---- |
-| One hook, one responsibility | Small hooks are easier to trust and debug |
-| Default to **observe first** | Blocking or mutation should be an explicit choice |
-| Keep hooks synchronous, bounded, and non-interactive | Hooks run in the critical path |
-| Make hooks deterministic and idempotent | Re-runs should not create drift |
-| Do not mutate branch, index, or worktree state by default | Git-destructive behavior is high risk |
-| Treat prompts, tool arguments, and tool output as untrusted and sensitive | Input may be hostile or private |
-| Redact secrets, credentials, tokens, and private content from logs | Logs often outlive the hook run |
+| Rule                                                                      | Why it matters                                    |
+| ------------------------------------------------------------------------- | ------------------------------------------------- |
+| One hook, one responsibility                                              | Small hooks are easier to trust and debug         |
+| Default to **observe first**                                              | Blocking or mutation should be an explicit choice |
+| Keep hooks synchronous, bounded, and non-interactive                      | Hooks run in the critical path                    |
+| Make hooks deterministic and idempotent                                   | Re-runs should not create drift                   |
+| Do not mutate branch, index, or worktree state by default                 | Git-destructive behavior is high risk             |
+| Treat prompts, tool arguments, and tool output as untrusted and sensitive | Input may be hostile or private                   |
+| Redact secrets, credentials, tokens, and private content from logs        | Logs often outlive the hook run                   |
 
 ## Script Authoring Rules
 
 - Validate the JSON fields you actually use
 - Quote shell variables and never build commands from raw input
 - Keep stdout clean unless the host requires structured output
-- Use strict modes: Bash `set -euo pipefail`, PowerShell `Set-StrictMode -Version Latest`
+- Use strict modes: Bash `set -euo pipefail`, PowerShell
+  `Set-StrictMode -Version Latest`
 - Check dependencies early and fail clearly if they are missing
 - Avoid prompts, hidden installs, or environment mutation during execution
 - Test scripts by piping representative JSON payloads into them manually
@@ -562,15 +593,18 @@ Do **not** introduce a new compiled runtime just to implement an ordinary hook.
 ## Packaging a Reusable Hook
 
 - Package config, scripts, and docs together
-- Document the trigger event, purpose, side effects, dependencies, and disable path
+- Document the trigger event, purpose, side effects, dependencies, and disable
+  path
 - Explain what the hook reads, what it writes, and what it blocks
 
 ## Anti-Patterns
 
-- Long-running hooks, watchers, background daemons, or fire-and-forget async work
+- Long-running hooks, watchers, background daemons, or fire-and-forget async
+  work
 - Heavy scans on every event when a narrower trigger would do
 - Hidden network calls or uploads in the critical path
-- Silent mutation of Git state (checkout, reset, clean, stash, stage, commit, push, or history rewriting) by default
+- Silent mutation of Git state (checkout, reset, clean, stash, stage, commit,
+  push, or history rewriting) by default
 - Interactive prompts or implicit approval steps
 - Noisy stdout, ad-hoc output formats, or mixed machine/human output
 - Logging raw prompts, secrets, credentials, or large tool outputs
@@ -580,9 +614,14 @@ Do **not** introduce a new compiled runtime just to implement an ordinary hook.
 
 ### GitHub Copilot: CLI, VS Code, and Cloud Agent
 
-The same `.github/hooks/*.json` config, the same payload schema, and the same script contract work across CLI, VS Code, and the cloud agent. Event names accept both camelCase (`preToolUse`) and PascalCase (`PreToolUse`). The documented payload field for tool arguments is `toolArgs` (a JSON string).
+The same `.github/hooks/*.json` config, the same payload schema, and the same
+script contract work across CLI, VS Code, and the cloud agent. Event names
+accept both camelCase (`preToolUse`) and PascalCase (`PreToolUse`). The
+documented payload field for tool arguments is `toolArgs` (a JSON string).
 
-One thing to know: the cloud agent only loads hooks from the repository's **default branch**. If your hooks.json is only on a feature branch, the cloud agent won't see it.
+One thing to know: the cloud agent only loads hooks from the repository's
+**default branch**. If your hooks.json is only on a feature branch, the cloud
+agent won't see it.
 
 ### Claude Code
 
@@ -594,4 +633,5 @@ Claude Code uses a different hook system:
 - 5 hook types (command, http, mcp_tool, prompt, agent)
 - 29+ events including `FileChanged`, `CwdChanged`, `ConfigChange`
 
-The shared best practice is the same: keep hooks small, deterministic, explicit about I/O, and strict about side effects.
+The shared best practice is the same: keep hooks small, deterministic, explicit
+about I/O, and strict about side effects.

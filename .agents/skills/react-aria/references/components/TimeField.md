@@ -91,7 +91,7 @@ export function TimeField<T extends TimeValue>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex flex-col gap-1 font-sans'
+        'flex flex-col gap-1 font-sans',
       )}
     >
       <Label>{label}</Label>

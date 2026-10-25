@@ -442,7 +442,7 @@ function Example() {
         // Reset animation state once it is complete.
         onAnimationComplete={(animation) => {
           setAnimation((a) =>
-            animation === 'hidden' && a === 'hidden' ? 'unmounted' : a
+            animation === 'hidden' && a === 'hidden' ? 'unmounted' : a,
           );
         }}
         /*- end highlight -*/

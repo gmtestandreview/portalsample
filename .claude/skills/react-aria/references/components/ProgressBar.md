@@ -168,7 +168,7 @@ export function ProgressBar({ label, ...props }: ProgressBarProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex flex-col gap-2 font-sans w-64 max-w-full'
+        'flex flex-col gap-2 font-sans w-64 max-w-full',
       )}
     >
       {({ percentage, valueText, isIndeterminate }) => (

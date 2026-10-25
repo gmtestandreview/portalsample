@@ -1,10 +1,8 @@
 # Repository dependency upgrade: smaller replacement proposal
 
-**Date:** 2026-10-12 (Australia/Sydney)
-**Status:** Proposed; security-graph feasibility must be resolved before
-implementation clearance.
-**Baseline:** `aa05cdae`, with current user changes preserved.
-**Companion evidence:**
+**Date:** 2026-10-12 (Australia/Sydney) **Status:** Proposed; security-graph
+feasibility must be resolved before implementation clearance. **Baseline:**
+`aa05cdae`, with current user changes preserved. **Companion evidence:**
 [Revalidation review](2026-10-12-repository-dependency-upgrade-revalidation.md)
 
 This proposal replaces the September plan's single coordinated programme with
@@ -289,6 +287,5 @@ migration.
 | Replacement proposal     | User scope selection   |    1 | PROPOSED     | Three stages plus a feasibility preflight; not implementation-cleared |
 
 **UNRESOLVED:** Concrete upstream/patch-owner remedies and operational inputs
-listed above.
-**VERDICT:** Planning review complete; implementation clearance withheld until
-feasibility and refreshed targets are evidenced.
+listed above. **VERDICT:** Planning review complete; implementation clearance
+withheld until feasibility and refreshed targets are evidenced.

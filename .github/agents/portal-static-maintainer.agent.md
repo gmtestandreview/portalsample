@@ -44,6 +44,7 @@ There is no test runner or build available. Validate every change by:
    ```
 
    If it is missing, add it.
+
 3. **Auth-guard consistency** — if you are adding or moving a route in
    `static/js/App.tsx`, confirm it is wrapped with `<AuthenticatedElement>` if
    it requires a login, matching the pattern of existing protected routes.

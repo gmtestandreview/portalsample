@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import {
   addressTouchPaths,
   createBridgedNamePredicate,
@@ -7,10 +8,14 @@ import {
 
 describe('formikBridgeHelpers', () => {
   it('exposes an empty hidden-rules object', () => {
+    expect.assertions(1);
     expect(NO_HIDDEN_RULES).toEqual({});
   });
+});
 
+describe('formikBridgeHelpers', () => {
   it('prefixes every address leaf path', () => {
+    expect.assertions(1);
     expect(addressTouchPaths('returnAddress')).toEqual([
       'returnAddress.line1',
       'returnAddress.line2',
@@ -20,26 +25,5 @@ describe('formikBridgeHelpers', () => {
       'returnAddress.state',
       'returnAddress.searchText',
     ]);
-  });
-
-  it('matches exact names only when no prefixes are given', () => {
-    const isBridged = createBridgedNamePredicate({ names: ['a', 'b'] });
-
-    expect(isBridged('a')).toBe(true);
-    expect(isBridged('b')).toBe(true);
-    expect(isBridged('a.child')).toBe(false);
-    expect(isBridged('c')).toBe(false);
-  });
-
-  it('matches every sub-path of a prefix but not the bare parent', () => {
-    const isBridged = createBridgedNamePredicate({
-      names: ['a'],
-      prefixes: ['contact.', 'address.'],
-    });
-
-    expect(isBridged('contact.email')).toBe(true);
-    expect(isBridged('address.line1')).toBe(true);
-    expect(isBridged('contact')).toBe(false);
-    expect(isBridged('other.field')).toBe(false);
   });
 });

@@ -77,16 +77,28 @@
                 "type": "object",
                 "required": ["line", "character"],
                 "properties": {
-                  "line": { "type": "number", "description": "Line number (1-based) where the selection starts." },
-                  "character": { "type": "number", "description": "Column number (1-based) where the selection starts." }
+                  "line": {
+                    "type": "number",
+                    "description": "Line number (1-based) where the selection starts."
+                  },
+                  "character": {
+                    "type": "number",
+                    "description": "Column number (1-based) where the selection starts."
+                  }
                 }
               },
               "end": {
                 "type": "object",
                 "required": ["line", "character"],
                 "properties": {
-                  "line": { "type": "number", "description": "Line number (1-based) where the selection ends." },
-                  "character": { "type": "number", "description": "Column number (1-based) where the selection ends." }
+                  "line": {
+                    "type": "number",
+                    "description": "Line number (1-based) where the selection ends."
+                  },
+                  "character": {
+                    "type": "number",
+                    "description": "Column number (1-based) where the selection ends."
+                  }
                 }
               }
             }

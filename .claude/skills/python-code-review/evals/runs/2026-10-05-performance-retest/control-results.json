@@ -36,9 +36,7 @@
       "informationCount": 0,
       "timeInSec": 0.223
     },
-    "rules": [
-      "reportUnnecessaryCast"
-    ],
+    "rules": ["reportUnnecessaryCast"],
     "stderr": ""
   },
   {
@@ -58,10 +56,7 @@
       "informationCount": 0,
       "timeInSec": 0.233
     },
-    "rules": [
-      "reportUnnecessaryCast",
-      "reportUnknownMemberType"
-    ],
+    "rules": ["reportUnnecessaryCast", "reportUnknownMemberType"],
     "stderr": ""
   },
   {
@@ -91,15 +86,7 @@
   },
   {
     "name": "false-green-harness",
-    "argv": [
-      "python",
-      "-B",
-      "-m",
-      "pytest",
-      "-q",
-      "-p",
-      "no:cacheprovider"
-    ],
+    "argv": ["python", "-B", "-m", "pytest", "-q", "-p", "no:cacheprovider"],
     "cwd": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\harness",
     "exit_code": 0,
     "result": "2 passed although read-secret decision violates expected exit2"

@@ -1,8 +1,8 @@
 # Playwright CLI Workflows
 
-Use the wrapper script and snapshot often.
-Assume `PWCLI` is set and `pwcli` is an alias for `"$PWCLI"`.
-In this repo, run commands from `output/playwright/<label>/` to keep artifacts contained.
+Use the wrapper script and snapshot often. Assume `PWCLI` is set and `pwcli` is
+an alias for `"$PWCLI"`. In this repo, run commands from
+`output/playwright/<label>/` to keep artifacts contained.
 
 ## Standard interaction loop
 
@@ -71,7 +71,8 @@ pwcli open https://example.com/checkout
 
 ## Configuration file
 
-By default, the CLI reads `playwright-cli.json` from the current directory. Use `--config` to point at a specific file.
+By default, the CLI reads `playwright-cli.json` from the current directory. Use
+`--config` to point at a specific file.
 
 Minimal example:
 

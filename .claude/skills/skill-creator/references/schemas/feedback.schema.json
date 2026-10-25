@@ -3,20 +3,13 @@
   "$id": "feedback.schema.json",
   "title": "Skill Creator Review Feedback",
   "type": "object",
-  "required": [
-    "reviews",
-    "status"
-  ],
+  "required": ["reviews", "status"],
   "properties": {
     "reviews": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "run_id",
-          "feedback",
-          "timestamp"
-        ],
+        "required": ["run_id", "feedback", "timestamp"],
         "properties": {
           "run_id": {
             "type": "string",
@@ -35,10 +28,7 @@
     },
     "status": {
       "type": "string",
-      "enum": [
-        "in_progress",
-        "complete"
-      ]
+      "enum": ["in_progress", "complete"]
     }
   },
   "additionalProperties": false

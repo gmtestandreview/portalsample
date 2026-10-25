@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation';
 import { Slider } from './Slider';
@@ -40,7 +39,7 @@ export const Unlabelled = meta.story({
   play: async ({ canvas }) => {
     // No label prop renders no Label element; the group is named by aria-label instead.
     await expect(
-      canvas.getByRole('group', { name: 'Range' })
+      canvas.getByRole('group', { name: 'Range' }),
     ).toBeInTheDocument();
   },
 });
@@ -61,10 +60,10 @@ export const NamedThumbs = meta.story({
     // accessible name is composed from the thumb label plus the group label and current output, so
     // this matches on the thumb's own contribution.
     await expect(
-      canvas.getByRole('slider', { name: /^Minimum/ })
+      canvas.getByRole('slider', { name: /^Minimum/ }),
     ).toBeInTheDocument();
     await expect(
-      canvas.getByRole('slider', { name: /^Maximum/ })
+      canvas.getByRole('slider', { name: /^Maximum/ }),
     ).toBeInTheDocument();
   },
 });

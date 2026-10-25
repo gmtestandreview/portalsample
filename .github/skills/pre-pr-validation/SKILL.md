@@ -1,6 +1,9 @@
 ---
 name: pre-pr-validation
-description: 'Run consistent pre-PR validation for this monorepo and return a pass/fail summary. Use for PR readiness checks, regression gates, and final validation before merge.'
+description:
+  'Run consistent pre-PR validation for this monorepo and return a pass/fail
+  summary. Use for PR readiness checks, regression gates, and final validation
+  before merge.'
 argument-hint: 'Optional scope: frontend, backend, or full'
 user-invocable: true
 ---
@@ -27,7 +30,8 @@ If no scope is provided, use `full`.
 
 Mode normalization:
 
-- If scope is `backend`, normalize to `full` so .NET tests run in the mandatory gate.
+- If scope is `backend`, normalize to `full` so .NET tests run in the mandatory
+  gate.
 
 ## Decision Flow
 
@@ -58,8 +62,8 @@ Optional as needed:
 
 ### Backend Targeted Checks
 
-No standalone backend-only targeted command is required in this repository.
-Use `full` mode for backend validation so .NET tests run in the mandatory gate.
+No standalone backend-only targeted command is required in this repository. Use
+`full` mode for backend validation so .NET tests run in the mandatory gate.
 
 ### Final PR Gate (Full)
 
@@ -73,7 +77,8 @@ Always run this sequence before declaring PR-ready:
 ## Execution Rules
 
 - Run the full planned command set in one pass to collect all failures.
-- Do not stop on the first failure unless the environment is genuinely blocked (for example toolchain unavailable).
+- Do not stop on the first failure unless the environment is genuinely blocked
+  (for example toolchain unavailable).
 - If a command fails, capture:
   - command
   - exit status

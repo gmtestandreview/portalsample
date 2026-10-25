@@ -15,7 +15,7 @@ const guardPath: string = resolve(scriptDir, 'pre_tool_use.py');
 
 if (!existsSync(guardPath)) {
   process.stderr.write(
-    '[A Team] BLOCKED: security gate missing (guard script not found)\n'
+    '[A Team] BLOCKED: security gate missing (guard script not found)\n',
   );
   process.exit(2);
 }
@@ -32,14 +32,14 @@ try {
   interpreter = findPython314();
 } catch {
   process.stderr.write(
-    '[A Team] BLOCKED: Python 3.14 launcher failed to initialize.\n'
+    '[A Team] BLOCKED: Python 3.14 launcher failed to initialize.\n',
   );
   process.exit(2);
 }
 
 if (!interpreter) {
   process.stderr.write(
-    '[A Team] BLOCKED: no Python 3.14 interpreter found; security gate cannot run.\n'
+    '[A Team] BLOCKED: no Python 3.14 interpreter found; security gate cannot run.\n',
   );
   process.exit(2);
 }
@@ -65,13 +65,13 @@ const result: SpawnSyncReturns<Buffer> = spawnSync(
   {
     input: inputData,
     stdio: ['pipe', 'inherit', 'inherit'],
-  }
+  },
 );
 
 // Atom 8: single exit-code check, null-safe fallback, no orphaned tokens.
 if (result.status !== EXIT_SUCCESS && result.status !== EXIT_BLOCKED) {
   process.stderr.write(
-    `[A Team] BLOCKED: security gate failed to execute (exit ${result.status ?? 'null'}).\n`
+    `[A Team] BLOCKED: security gate failed to execute (exit ${result.status ?? 'null'}).\n`,
   );
   process.exit(EXIT_BLOCKED);
 }

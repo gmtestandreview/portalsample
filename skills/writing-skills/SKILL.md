@@ -1,11 +1,12 @@
 ---
 name: writing-skills
 description:
-  Use when creating, editing, auditing, optimizing, testing, validating, merging,
-  installing, or deploying Agent Skills/SKILL.md packages, especially activation
-  boundaries, frontmatter, scope, progressive disclosure, supporting resources,
-  evals, SKILL-specific validators, Codex installation, or deployment readiness.
-  Use also when explicitly asked to call "writing skills" or "called writing skills".
+  Use when creating, editing, auditing, optimizing, testing, validating,
+  merging, installing, or deploying Agent Skills/SKILL.md packages, especially
+  activation boundaries, frontmatter, scope, progressive disclosure, supporting
+  resources, evals, SKILL-specific validators, Codex installation, or deployment
+  readiness. Use also when explicitly asked to call "writing skills" or "called
+  writing skills".
 compatibility: Codex, Claude, A Team, Claude Code, GitHub Copilot
 metadata:
   version: '2026-10-17-bounded-evidence'
@@ -32,16 +33,17 @@ about packaging them as an Agent Skill.
 ## Evidence and authority
 
 - Read the candidate and task-relevant resources before judging or editing.
-- Use `references/index.md` first and load the smallest sufficient reference set.
+- Use `references/index.md` first and load the smallest sufficient reference
+  set.
 - Use `references/specification.md` for mandatory format/compliance claims.
 - Treat best-practice, provider, repository, and local-client guidance as
   subordinate to mandatory specification and safety requirements.
-- Precedence:
-  `safety/trust/permissions > mandatory current spec > explicit user requirements
+- Precedence: `safety/trust/permissions > mandatory current spec > explicit user
+  requirements
   > applicable skill/project/domain requirements > audit policy > best-practice
-  defaults > examples/legacy material`.
-- Only claim edits, tests, validator runs, builds, or behavior that were actually
-  performed or directly evidenced.
+  > defaults > examples/legacy material`.
+- Only claim edits, tests, validator runs, builds, or behavior that were
+  actually performed or directly evidenced.
 - Mark required but unverifiable outcomes `Needs Human Review` (`NHR`).
 - A checklist defines required evidence; it is not execution evidence.
 - Tested behavior is evidence, not authority to waive mandatory requirements.
@@ -52,8 +54,8 @@ about packaging them as an Agent Skill.
 ### 1. Explore
 
 Review scope, target environment, supplied resources, risks, references, and
-available evidence. Preserve a baseline before meaningful implementation.
-Report missing or broken references rather than inventing substitutes.
+available evidence. Preserve a baseline before meaningful implementation. Report
+missing or broken references rather than inventing substitutes.
 
 ### 2. Qualify
 
@@ -81,8 +83,8 @@ criteria. Planning is read-only unless implementation is authorized.
 
 For scored audits, load `references/best-practices-evaluations.md` and
 `references/audit-scoring.md`. Classify artifact completeness before scoring.
-Use the current 100-point rubric and normalize only genuine `N/A` criteria.
-A numeric score never overrides a blocker.
+Use the current 100-point rubric and normalize only genuine `N/A` criteria. A
+numeric score never overrides a blocker.
 
 ### 6. Test or assess evidence
 
@@ -164,7 +166,8 @@ Always start with `references/index.md`. Important conditional routes:
 - scripts or commands -> `references/using-scripts-in-skills.md`;
 - runtime/client support -> `references/adding-skills-support.md`;
 - Codex installation -> `references/codex-skill-installation.md`;
-- Claude/Anthropic-specific authoring -> `references/anthropic-best-practices.md`;
+- Claude/Anthropic-specific authoring ->
+  `references/anthropic-best-practices.md`;
 - merge planning or execution -> the merge workflow selected by the index.
 
 Do not rely on a path that has not been supplied or verified. Keep reference

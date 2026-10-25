@@ -1,6 +1,7 @@
 # Component Patterns
 
-Modern React component architecture for the application emphasizing type safety, lazy loading, and Suspense boundaries.
+Modern React component architecture for the application emphasizing type safety,
+lazy loading, and Suspense boundaries.
 
 ---
 
@@ -64,15 +65,13 @@ Lazy load components that are:
 import React from 'react';
 
 // Lazy load heavy component
-const PostDataGrid = React.lazy(() =>
-    import('./grids/PostDataGrid')
-);
+const PostDataGrid = React.lazy(() => import('./grids/PostDataGrid'));
 
 // For named exports
 const MyComponent = React.lazy(() =>
-    import('./MyComponent').then(module => ({
-        default: module.MyComponent
-    }))
+  import('./MyComponent').then((module) => ({
+    default: module.MyComponent,
+  })),
 );
 ```
 
@@ -379,9 +378,9 @@ export default MyComponent;
 
 ```typescript
 const MyComponent = React.lazy(() =>
-    import('./MyComponent').then(module => ({
-        default: module.MyComponent
-    }))
+  import('./MyComponent').then((module) => ({
+    default: module.MyComponent,
+  })),
 );
 ```
 
@@ -513,5 +512,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 **See Also:**
 
 - [data-fetching.md](data-fetching.md) - useSuspenseQuery details
-- [loading-and-error-states.md](loading-and-error-states.md) - Suspense best practices
+- [loading-and-error-states.md](loading-and-error-states.md) - Suspense best
+  practices
 - [complete-examples.md](complete-examples.md) - Full working examples

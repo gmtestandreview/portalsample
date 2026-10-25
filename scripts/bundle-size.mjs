@@ -27,7 +27,7 @@ const total = chunks.reduce(
     rawBytes: sum.rawBytes + chunk.rawBytes,
     gzipBytes: sum.gzipBytes + chunk.gzipBytes,
   }),
-  { rawBytes: 0, gzipBytes: 0 }
+  { rawBytes: 0, gzipBytes: 0 },
 );
 const result = { node: process.version, chunks, total };
 
@@ -36,5 +36,5 @@ if (output) {
   writeFileSync(output, `${JSON.stringify(result, null, 2)}\n`);
 }
 console.log(
-  `${chunks.length} chunks, raw ${total.rawBytes} B, gzip ${total.gzipBytes} B`
+  `${chunks.length} chunks, raw ${total.rawBytes} B, gzip ${total.gzipBytes} B`,
 );

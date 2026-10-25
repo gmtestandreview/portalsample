@@ -700,7 +700,7 @@ for all child components and MSAL hooks to isolate the routing logic.
         SelectAndEditOrg: 'SelectAndEditOrg',
         RFQSelectOrg: 'RFQSelectOrg',
       },
-    })
+    }),
   );
   vi.mock('../../../static/js/storage/notification', () => ({
     clearDashboardNotification: vi.fn(),
@@ -710,14 +710,14 @@ for all child components and MSAL hooks to isolate the routing logic.
   }));
   vi.mock(
     '../../../static/js/components/Utilities/routeChangeScrollTop',
-    () => ({ default: () => null })
+    () => ({ default: () => null }),
   );
   vi.mock('../../../static/js/components/Utilities/backToTopButton', () => ({
     default: () => null,
   }));
   vi.mock(
     '../../../static/js/components/Utilities/routeAccessibleNavigation',
-    () => ({ default: () => null })
+    () => ({ default: () => null }),
   );
 
   // ─── Auth mocks ────────────────────────────────────────────────────────────────
@@ -754,7 +754,7 @@ for all child components and MSAL hooks to isolate the routing logic.
   const renderAt = (
     path: string,
     details: AccountDetails | null = BASE_DETAILS,
-    authenticated = true
+    authenticated = true,
   ) => {
     mockIsAuthenticated.mockReturnValue(authenticated);
     mockAccountState.mockReturnValue({ details });
@@ -772,7 +772,7 @@ for all child components and MSAL hooks to isolate the routing logic.
         <PreConditions displayHeaderAndFooter>
           <div data-testid='child-content'>child</div>
         </PreConditions>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -867,7 +867,7 @@ for all child components and MSAL hooks to isolate the routing logic.
     it('autoShowBranchSelector: does NOT render BranchSelectorModal when defaultOrganisationId is set', () => {
       renderAt('/dashboard');
       expect(
-        screen.queryByTestId('branch-selector-modal')
+        screen.queryByTestId('branch-selector-modal'),
       ).not.toBeInTheDocument();
     });
 
@@ -880,7 +880,7 @@ for all child components and MSAL hooks to isolate the routing logic.
       };
       renderAt('/success-creating-account', details);
       expect(
-        screen.queryByTestId('branch-selector-modal')
+        screen.queryByTestId('branch-selector-modal'),
       ).not.toBeInTheDocument();
     });
   });
@@ -1080,7 +1080,7 @@ call.
     '../../../static/js/components/modals/BranchSelectorModal/enums',
     () => ({
       BranchSelectionModalMode: { SelectAndEditOrg: 'SelectAndEditOrg' },
-    })
+    }),
   );
   vi.mock('../../../static/js/analytics/GoogleAnalytics', () => ({
     trackGAEvent: vi.fn(),
@@ -1190,7 +1190,7 @@ call.
     render(
       <MemoryRouter>
         <Dashboard />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
   // ─── Tests ─────────────────────────────────────────────────────────────────────
@@ -1203,7 +1203,7 @@ call.
       setupMocks();
       renderDashboard();
       await waitFor(() =>
-        expect(screen.getByTestId('welcome')).toBeInTheDocument()
+        expect(screen.getByTestId('welcome')).toBeInTheDocument(),
       );
     });
 
@@ -1230,7 +1230,7 @@ call.
       setupMocks();
       renderDashboard();
       await waitFor(() =>
-        expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token')
+        expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token'),
       );
     });
 
@@ -1250,7 +1250,7 @@ call.
       });
       renderDashboard();
       await waitFor(() =>
-        expect(screen.getByTestId('no-requests')).toBeInTheDocument()
+        expect(screen.getByTestId('no-requests')).toBeInTheDocument(),
       );
     });
 
@@ -1301,7 +1301,7 @@ call.
       // Navigate renders to /unexpected-error; child is absent
       await waitFor(
         () => expect(screen.queryByTestId('welcome')).not.toBeInTheDocument(),
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
     });
   });

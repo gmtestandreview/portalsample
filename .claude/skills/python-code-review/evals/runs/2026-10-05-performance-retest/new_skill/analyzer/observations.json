@@ -41,9 +41,7 @@
     "project": {
       "path": "project/pyrightconfig.json",
       "mode": "basic",
-      "include": [
-        "not_present/*.py"
-      ],
+      "include": ["not_present/*.py"],
       "filesAnalyzed": 0,
       "policy_unchanged_sha256": "e540a91ca4c3bdc84e4b2ad6085268eeca424ba348a00e8f92b2ff419e9042a7",
       "interpretation": "zero-file pass does not support clean target status"
@@ -147,9 +145,7 @@
         "import_target.py",
         "test_assertion.py"
       ],
-      "rules": [
-        "I001"
-      ]
+      "rules": ["I001"]
     },
     {
       "stage": "baseline",

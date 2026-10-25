@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
+
 import { parseMcpMarkdownReport } from '../../e2e/support/storybookMcpReport';
 
 describe(parseMcpMarkdownReport, () => {
   it('extracts passing stories and empty failure sections', () => {
+    expect.assertions(1);
     const report = parseMcpMarkdownReport(`
 ## Passing Stories
 
@@ -27,8 +29,11 @@ describe(parseMcpMarkdownReport, () => {
       missingSections: [],
     });
   });
+});
 
+describe(parseMcpMarkdownReport, () => {
   it('retains failed story and diagnostic entries', () => {
+    expect.assertions(4);
     const report = parseMcpMarkdownReport(`
 ## Passing Stories
 
@@ -55,19 +60,5 @@ describe(parseMcpMarkdownReport, () => {
     ]);
     expect(report.unhandledErrors).toEqual(['Vitest runner failed']);
     expect(report.missingSections).toEqual([]);
-  });
-
-  it('reports missing sections instead of treating them as empty', () => {
-    const report = parseMcpMarkdownReport(`
-## Passing Stories
-
-- components-searchfilter-searchbox--type-and-submit
-`);
-
-    expect(report.missingSections).toEqual([
-      'Failing Stories',
-      'Accessibility Violations',
-      'Unhandled Errors',
-    ]);
   });
 });

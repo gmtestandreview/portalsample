@@ -13,6 +13,7 @@ describe(getPhoneNumberFormat, () => {
     [undefined, '## #### ####'],
     [null, '## #### ####'],
   ])('returns %s => %s', (value, expected) => {
+    expect.assertions(1);
     expect(getPhoneNumberFormat(value)).toBe(expected);
   });
 });

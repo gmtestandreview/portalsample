@@ -26,6 +26,7 @@ import {
   validateFreezeRecord,
   validateProducerIdentity,
 } from './storybook-coverage.mjs';
+import { resolveStorybookTestTargetImplementation } from '../.storybook/storybook-test-target.mjs';
 
 const execFileAsync = promisify(execFile);
 const MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS = 15_000;
@@ -205,9 +206,6 @@ const failure = (code, message, phases) => ({
 const assertPositiveTimeout = (value) =>
   Number.isFinite(value) && Number.isInteger(value) && value > 0;
 
-const isLoopbackHostname = (hostname) =>
-  ['localhost', '127.0.0.1', '[::1]', '::1'].includes(hostname);
-
 const assertPermittedUrl = (value, serverMode) => {
   let parsed;
   try {
@@ -218,14 +216,16 @@ const assertPermittedUrl = (value, serverMode) => {
   if (parsed.username || parsed.password) {
     return 'url must not contain credentials';
   }
-  if (!['http:', 'https:'].includes(parsed.protocol)) {
-    return 'url scheme must be http or https';
-  }
-  if (parsed.protocol === 'http:' && !isLoopbackHostname(parsed.hostname)) {
-    return 'http targets must use a loopback hostname';
-  }
-  if (serverMode === 'managed' && !isLoopbackHostname(parsed.hostname)) {
-    return 'managed Storybook targets must use a loopback hostname';
+  try {
+    resolveStorybookTestTargetImplementation({ url: value, serverMode });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === 'only loopback hosts are supported'
+    ) {
+      return 'http targets must use a loopback hostname';
+    }
+    return error instanceof Error ? error.message : String(error);
   }
   return undefined;
 };
@@ -388,7 +388,7 @@ export async function runClosure(options, adapters) {
       ci: true,
     });
     const targetUrlError = assertPermittedUrl(
-      target?.mcpURL ?? options.url,
+      target?.baseURL ?? options.url,
       options.serverMode,
     );
     if (targetUrlError) throw new Error(targetUrlError);
@@ -575,12 +575,6 @@ const parseArguments = (argv) => {
 };
 
 const createProductionAdapters = async () => {
-  const { resolveStorybookTestTarget } =
-    await import('../.storybook/storybook-test-target.mjs').then(
-      ({ resolveStorybookTestTargetImplementation }) => ({
-        resolveStorybookTestTarget: resolveStorybookTestTargetImplementation,
-      }),
-    );
   let ownedServer;
   let ownedServerMetadata;
   let ownedServerExitPromise;
@@ -978,7 +972,8 @@ const createProductionAdapters = async () => {
   };
 
   return {
-    resolveTarget: (targetOptions) => resolveStorybookTestTarget(targetOptions),
+    resolveTarget: (targetOptions) =>
+      resolveStorybookTestTargetImplementation(targetOptions),
     assertOwnedPaths: async ({ checkout, receipts }) => {
       const checkoutPath = path.resolve(checkout);
       if (process.env.STORYBOOK_CLOSURE_OWNED_CHECKOUT !== checkoutPath) {

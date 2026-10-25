@@ -234,7 +234,7 @@ export function Calendar<T extends DateValue>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex font-sans w-full max-w-fit overflow-auto gap-3'
+        'flex font-sans w-full max-w-fit overflow-auto gap-3',
       )}
     >
       {Array.from({ length: months }, (_, i) => (
@@ -470,7 +470,7 @@ function Example(props) {
         isWeekend(date, locale) ||
         disabledRanges.some(
           (interval) =>
-            date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0
+            date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0,
         )
       }
     />

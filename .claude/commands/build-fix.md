@@ -1,6 +1,7 @@
 # /build-fix
 
-Diagnose and fix build errors or TypeScript type errors with minimal code changes.
+Diagnose and fix build errors or TypeScript type errors with minimal code
+changes.
 
 **Invokes:** `build-error-resolver` agent
 
@@ -12,7 +13,8 @@ Diagnose and fix build errors or TypeScript type errors with minimal code change
 /build-fix --lint-only       ESLint errors only
 ```
 
-**Scope:** Fix errors with smallest possible diffs. No refactoring. No architectural changes.
+**Scope:** Fix errors with smallest possible diffs. No refactoring. No
+architectural changes.
 
 **Prioritization:**
 

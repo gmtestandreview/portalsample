@@ -30,8 +30,8 @@ The guide notes where these differences matter. You don't need to support every
 scenario - follow the path that fits your agent.
 
 **Prerequisites**: Familiarity with the
-[Agent Skills specification](specification.md), which defines the `SKILL.md` file
-format, frontmatter fields, and directory conventions.
+[Agent Skills specification](specification.md), which defines the `SKILL.md`
+file format, frontmatter fields, and directory conventions.
 
 ## The core principle: progressive disclosure
 

@@ -27,11 +27,11 @@ the audit trail for the corrections incorporated here.
 - User request on 2026-09-27: complete the repository dependency upgrade, remove
   overrides, keep React `18.3.1`, and keep TypeScript `5.9.3`.
 - User decision on 2026-09-27: raise the Node floor to `24.21.0`.
-- Planned follow-on change: add `react-hook-form` with manifest range
-  `^7.89.0`. The supplied lock entry resolves `7.89.0`, requires Node
-  `>=18.0.0`, and declares React peers covering React 18. This is compatible
-  with Node `24.21.0` and React `18.3.1`, but remains outside this migration
-  unless it is already present in the preserved implementation baseline.
+- Planned follow-on change: add `react-hook-form` with manifest range `^7.89.0`.
+  The supplied lock entry resolves `7.89.0`, requires Node `>=18.0.0`, and
+  declares React peers covering React 18. This is compatible with Node `24.21.0`
+  and React `18.3.1`, but remains outside this migration unless it is already
+  present in the preserved implementation baseline.
 - `docs/superpowers/plans/2026-09-27-repository-dependency-upgrade-review.md`:
   devil's advocate findings and 66/100 baseline score.
 - `package.json` and `package-lock.json`: direct declarations, npm `11.19.1`,
@@ -59,21 +59,21 @@ the audit trail for the corrections incorporated here.
 - Live `npm outdated --json --long`, `npm audit`, `npm ls`, and registry
   metadata captured 2026-09-27.
 - MSAL Browser 5.23 migration guide:
-  `AzureAD/microsoft-authentication-library-for-js`, ref
-  `msal-browser-v5.23.0`, document `lib/msal-browser/docs/v4-migration.md`.
+  `AzureAD/microsoft-authentication-library-for-js`, ref `msal-browser-v5.23.0`,
+  document `lib/msal-browser/docs/v4-migration.md`.
 - MSAL Browser 3-to-4 migration guide:
-  `AzureAD/microsoft-authentication-library-for-js`, ref
-  `msal-browser-v5.23.0`, document `lib/msal-browser/docs/v3-migration.md`;
-  required because the repository starts on browser 3.30.0.
+  `AzureAD/microsoft-authentication-library-for-js`, ref `msal-browser-v5.23.0`,
+  document `lib/msal-browser/docs/v3-migration.md`; required because the
+  repository starts on browser 3.30.0.
 - MSAL Browser redirect bridge guide:
-  `AzureAD/microsoft-authentication-library-for-js`, ref
-  `msal-browser-v5.23.0`, document `lib/msal-browser/docs/redirect-bridge.md`.
+  `AzureAD/microsoft-authentication-library-for-js`, ref `msal-browser-v5.23.0`,
+  document `lib/msal-browser/docs/redirect-bridge.md`.
 - MSAL Browser token-lifetime and cache-policy guide:
-  `AzureAD/microsoft-authentication-library-for-js`, ref
-  `msal-browser-v5.23.0`, document `lib/msal-browser/docs/token-lifetimes.md`;
-  including deterministic `CacheLookupPolicy.Skip` hidden-iframe renewal.
-- Webpack Dev Server 6 release notes:
-  repository `webpack/webpack-dev-server`, release `v6.0.0`.
+  `AzureAD/microsoft-authentication-library-for-js`, ref `msal-browser-v5.23.0`,
+  document `lib/msal-browser/docs/token-lifetimes.md`; including deterministic
+  `CacheLookupPolicy.Skip` hidden-iframe renewal.
+- Webpack Dev Server 6 release notes: repository `webpack/webpack-dev-server`,
+  release `v6.0.0`.
 - Live `https://portal.measurement.gov.au/sign-in/` response headers captured
   2026-09-27: site-wide baseline includes
   `Cross-Origin-Opener-Policy: same-origin` and cache validators but not
@@ -87,9 +87,9 @@ the audit trail for the corrections incorporated here.
 - Every package changed by this migration uses an exact manifest pin. Relaxing
   ranges is a separate future policy change. The planned `react-hook-form`
   `^7.89.0` existing user-owned baseline dependency — preserve ^7.89.0 unless
-  separately authorised.
-  If it exists before Task 0 starts, preserve it byte-for-byte as baseline and
-  refresh the dependency inventory rather than normalizing its range.
+  separately authorised. If it exists before Task 0 starts, preserve it
+  byte-for-byte as baseline and refresh the dependency inventory rather than
+  normalizing its range.
 - React type packages remain on exact React 18-compatible releases:
   `@types/react` `18.3.31` and `@types/react-dom` `18.3.7`.
 - The Node floor is exactly `24.21.0` in `engines`, `devEngines`, and the
@@ -110,8 +110,7 @@ the audit trail for the corrections incorporated here.
   `fetch(..., { redirect: 'manual' })` and requires `response.url` to equal the
   PR-recorded URI byte-for-byte after URL normalization.
 - `/redirect.html` gets a route-specific CSP of
-  `default-src 'none'; script-src 'self'; base-uri 'none';
-  form-action 'none'; object-src 'none'; frame-ancestors 'self'`.
+  `default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'`.
   Broader portal analytics/telemetry sources are not inherited by this
   auth-response page.
 - `REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL` keeps its current application
@@ -191,8 +190,8 @@ All targets are exact registry results captured on 2026-09-27.
 - **Cohort:** Node policy
   - **Current:** `>=24.0.0`
   - **Exact target:** `>=24.21.0`
-  - **Decision:** Standardize the supported Node 24 baseline at `24.21.0`;
-    this remains above jsdom 30's minimum Node 24 requirement.
+  - **Decision:** Standardize the supported Node 24 baseline at `24.21.0`; this
+    remains above jsdom 30's minimum Node 24 requirement.
 
 - **Cohort:** MSAL
   - **Current:** browser `3.30.0`; React `2.2.0`
@@ -227,8 +226,8 @@ All targets are exact registry results captured on 2026-09-27.
 - **Cohort:** DOM tests
   - **Current:** jsdom `29.1.1`; jest-dom `6.9.1`
   - **Exact target:** `30.1.1`; `7.0.1`
-  - **Decision:** Compatible with the repository Node `24.21.0` baseline;
-    jsdom 30 requires at least Node `24.15.0` on the Node 24 line.
+  - **Decision:** Compatible with the repository Node `24.21.0` baseline; jsdom
+    30 requires at least Node `24.15.0` on the Node 24 line.
 
 - **Cohort:** Vitest cohort
   - **Current:** four direct packages at `4.1.11`
@@ -363,8 +362,7 @@ receives it.
   iframe, object, embed, or meta refresh, and no external `src` or `href`.
 - The deployed bridge response has `Cache-Control: no-store`, no
   `Cross-Origin-Opener-Policy` header, and the exact route-specific CSP
-  `default-src 'none'; script-src 'self'; base-uri 'none';
-  form-action 'none'; object-src 'none'; frame-ancestors 'self'`
+  `default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'`
   while retaining non-conflicting security headers.
 - The bridge URI has no query or fragment and returns `200` directly. Any `3xx`,
   final-URL mismatch, or CDN/hosting rewrite is a release blocker because an
@@ -738,13 +736,13 @@ git -C $upgradeRoot status --short
 
 Expected: the source workspace is unchanged; the new worktree contains
 byte-identical manifest/lockfile changes; status shows only the preserved
-baseline changes. Classify every entry from
-`git status --porcelain=v1 -uall` as dependency-relevant,
-dependency-independent, or unknown. Unknown entries stop execution. Copy every
-dependency-relevant tracked or untracked supporting file into the worktree and
-verify its SHA-256 before proceeding. This includes `.npmrc`, patch files,
-workspace manifests, generated package-manager policy, and other files required
-for the preserved package state. Never reset or stash the source workspace.
+baseline changes. Classify every entry from `git status --porcelain=v1 -uall` as
+dependency-relevant, dependency-independent, or unknown. Unknown entries stop
+execution. Copy every dependency-relevant tracked or untracked supporting file
+into the worktree and verify its SHA-256 before proceeding. This includes
+`.npmrc`, patch files, workspace manifests, generated package-manager policy,
+and other files required for the preserved package state. Never reset or stash
+the source workspace.
 
 If `react-hook-form` `^7.89.0` is already present when Task 0 runs, treat it as
 user-owned baseline rather than migration drift. Verify that the lock entry
@@ -891,10 +889,10 @@ bodies.
 Set `persist-credentials: false` on every SHA-pinned checkout in all three
 workflows; add `npm run dependency:install-scripts` immediately after every
 `npm ci`; and add `corepack enable npm` plus
-`test "$(npm --version)" = "11.19.1"`
-before every install. Move release job-level secret-derived `VITE_*` values to
-only the build/test steps proven to consume them. Keep current least-privilege
-permissions and do not expose secrets to checkout, install, or inventory steps.
+`test "$(npm --version)" = "11.19.1"` before every install. Move release
+job-level secret-derived `VITE_*` values to only the build/test steps proven to
+consume them. Keep current least-privilege permissions and do not expose secrets
+to checkout, install, or inventory steps.
 
 - [ ] **Step 3: Verify and commit the focused hardening cohort**
 
@@ -1078,9 +1076,8 @@ Expected: FAIL on current ranges, versions, and lower-bound workflow.
 Update the manifest and only the lower-bound PR job. Raise its timeout from 20
 to 45 minutes to cover the added complete unit suite. Preserve
 `corepack enable npm`, exact npm-version assertion, `npm ci`, lifecycle
-inventory,
-`COREPACK_ENABLE_DOWNLOAD_PROMPT`, permissions, action pins, and every existing
-gate.
+inventory, `COREPACK_ENABLE_DOWNLOAD_PROMPT`, permissions, action pins, and
+every existing gate.
 
 - [ ] **Step 3: Regenerate and verify**
 
@@ -1277,8 +1274,7 @@ Expected: FAIL against MSAL 3 code and missing bridge module.
 Update the Webpack test types and assert:
 
 - entries are
-  `{ main: './ClientApp/src/index.tsx',
-  redirect: './ClientApp/src/authentication/redirectBridge.ts' }`;
+  `{ main: './ClientApp/src/index.tsx', redirect: './ClientApp/src/authentication/redirectBridge.ts' }`;
 - development output is `js/[name].js`, avoiding a two-entry filename collision;
 - production output remains `js/[name].[contenthash:8].js`;
 - the main `HtmlWebpackPlugin` emits `index.html` with only `main`;
@@ -1366,8 +1362,7 @@ Expected: FAIL against the single-entry build and missing verifier.
   reject every `3xx`; require `response.url` to equal the normalized configured
   URI in scheme, host, port, and path; require `Cache-Control` to contain
   `no-store`; require the COOP header to be absent; require the exact route CSP
-  `default-src 'none'; script-src 'self'; base-uri 'none';
-  form-action 'none'; object-src 'none'; frame-ancestors 'self'`;
+  `default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'`;
   and apply the same body checks;
 - both modes: reject inline scripts/handlers, `<base>`, form, iframe, object,
   embed, meta refresh, external assets, and any script other than the single
@@ -1443,8 +1438,7 @@ git commit -m "build: migrate authentication to msal 5"
 The hosting owner adds a route-specific `/redirect.html` rule that returns `200`
 directly, never rewrites or redirects, returns `Cache-Control: no-store`, omits
 COOP, and sets
-`Content-Security-Policy: default-src 'none'; script-src 'self';
-base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'`.
+`Content-Security-Policy: default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'`.
 Preserve only non-conflicting security headers; do not copy the portal's broader
 analytics/telemetry CSP to the bridge. The Entra owner adds the new URI without
 removing the old URI. Neither change switches application traffic yet.
@@ -1500,7 +1494,7 @@ Record pass/fail evidence for:
 1. unauthenticated protected-route visit reaches B2C;
 2. login returns through `/redirect.html` to the initiating route;
 3. deterministic `CacheLookupPolicy.Skip` completes the same
-`acquireTokenSilent` hidden-iframe path MSAL uses after refresh-token expiry;
+   `acquireTokenSilent` hidden-iframe path MSAL uses after refresh-token expiry;
 4. a protected API call succeeds with the renewed token;
 5. `logoutRedirect` returns to the existing post-logout destination;
 6. browser console and network logs contain no raw auth response or token.
@@ -1640,8 +1634,8 @@ tag both with a new cryptographically strong per-run correlation identifier,
 then poll or intercept the approved non-production telemetry boundary at the
 configured interval until all three required observations are proven or the
 bounded timeout expires. Events with another correlation are ignored. It must
-fail nonzero on timeout, zero or multiple current-correlation page views,
-zero or multiple current-correlation handled exceptions, ambiguous correlation,
+fail nonzero on timeout, zero or multiple current-correlation page views, zero
+or multiple current-correlation handled exceptions, ambiguous correlation,
 production-resource detection, sanitization-policy violation, or any missing
 assertion.
 
@@ -1762,12 +1756,12 @@ changed-current, changed-latest, malformed-output, and npm-command-failure
 cases. The live CLI must treat npm's normal exit code 1 with valid JSON as a
 report, not a process failure.
 
-If the Task 0 baseline existing user-owned dependency `react-hook-form` `^7.89.0`,
-its installed `7.89.0` entry is not an unexpected direct-package drift caused by
-this migration. Preserve its range and require Task 0's refreshed registry
-evidence to classify any `npm outdated` result explicitly. Do not add a wildcard
-or date-based exception: any captured latest-version change still fails and
-requires evidence refresh.
+If the Task 0 baseline existing user-owned dependency `react-hook-form`
+`^7.89.0`, its installed `7.89.0` entry is not an unexpected direct-package
+drift caused by this migration. Preserve its range and require Task 0's
+refreshed registry evidence to classify any `npm outdated` result explicitly. Do
+not add a wildcard or date-based exception: any captured latest-version change
+still fails and requires evidence refresh.
 
 ```powershell
 npm run test:unit -- tests/unit/config/dependencySecurity.test.ts `
@@ -2057,11 +2051,9 @@ task and repeat its focused gate before the full gate is rerun.
 
 ## Plan Review
 
-**Status:** Approved after remediation
-**Score:** 98/100
-**Critical Failures:** None
-**Ready for Implementation:** Yes. Tasks 0–4 may proceed immediately. Task 5
-starts only after Task 0 has an accepted ADR plus the exact external
+**Status:** Approved after remediation **Score:** 98/100 **Critical Failures:**
+None **Ready for Implementation:** Yes. Tasks 0–4 may proceed immediately. Task
+5 starts only after Task 0 has an accepted ADR plus the exact external
 prerequisites and executable rollback operations; Task 6 and production release
 require secure environment execution and evidence. Task 7 production acceptance
 requires the deterministic staging telemetry verifier to pass 3/3 fresh

@@ -222,7 +222,7 @@ export const TermsModalOpen: Story = {
     const closeBtn = screen.getByTestId('close-button');
     await user.click(closeBtn);
     await expect(
-      screen.queryByRole('heading', { name: /portal terms of use/i })
+      screen.queryByRole('heading', { name: /portal terms of use/i }),
     ).not.toBeInTheDocument();
   },
 };
@@ -659,7 +659,7 @@ const addressSearchHandler = http.get('/api/address/*', () =>
         },
       },
     ],
-  })
+  }),
 );
 
 const meta = {
@@ -961,7 +961,7 @@ export const Populated: Story = {
     const draftCard = await canvas.findByText(
       'RFQ-2024-001234',
       {},
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
     await expect(draftCard).toBeVisible();
   },
@@ -976,13 +976,13 @@ export const EmptyState: Story = {
     msw: {
       handlers: [
         http.get('/api/dashboard/get-filtered-dashboard-drafts', () =>
-          buildDashboardResponse([])
+          buildDashboardResponse([]),
         ),
         http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
-          buildDashboardResponse([])
+          buildDashboardResponse([]),
         ),
         http.get('/api/dashboard/get-filtered-dashboard-artefacts', () =>
-          buildDashboardResponse([])
+          buildDashboardResponse([]),
         ),
       ],
     },
@@ -993,7 +993,7 @@ export const EmptyState: Story = {
     const noRequestsText = await canvas.findByText(
       /you currently have no requests/i,
       {},
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
     await expect(noRequestsText).toBeVisible();
   },

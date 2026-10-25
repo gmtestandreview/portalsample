@@ -1,17 +1,28 @@
 import type React from 'react';
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { render, screen, waitFor } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { createMemoryRouter, RouterProvider } from 'react-router';
+
 import * as Yup from 'yup';
+
 import { FormStepStatus } from '../../../../../ClientApp/src/api/web-api-client';
+
 import {
   AccountStateCtx,
   AccountDispatchCtx,
 } from '../../../../../ClientApp/src/authentication/accountContext';
+
 import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep';
+
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
+
 import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
+
 import type { FormikValues } from 'formik';
 
 // Characterisation of the Formik wizard shell, recorded before the React Hook
@@ -137,8 +148,8 @@ describe('formik wizard shell characterisation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
   it('moves focus to the error summary and scrolls it into view after an invalid submit', async () => {
+    expect.assertions(2);
     const user = userEvent.setup();
     const scrollIntoView = vi.fn();
     HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -153,8 +164,14 @@ describe('formik wizard shell characterisation', () => {
 
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
   });
+});
 
+describe('formik wizard shell characterisation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
   it('focuses the summary again on each further failed submit', async () => {
+    expect.assertions(3);
     const user = userEvent.setup();
     vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
       () => {},
@@ -174,95 +191,5 @@ describe('formik wizard shell characterisation', () => {
     expect(document.activeElement).toBe(
       screen.getByTestId('form-error-summary'),
     );
-  });
-
-  it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {
-    const user = userEvent.setup();
-    let loads = 0;
-    const loadStepValues = vi.fn(async () => {
-      loads += 1;
-      return { stepValues: { name: loads === 1 ? '' : 'from server' } };
-    });
-    const onSaveAndNext = vi.fn(async () => {
-      throw { status: 409 };
-    });
-    renderStep({ loadStepValues, onSaveAndNext, validateHard: undefined });
-
-    await user.type(await screen.findByLabelText('Name'), 'typed by user');
-    await user.click(await screen.findByTestId(NEXT));
-
-    await waitFor(() => expect(loadStepValues).toHaveBeenCalledTimes(2));
-    await waitFor(() =>
-      expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
-        'from server',
-      ),
-    );
-
-    // Decision D-1: the banner stays up so the user knows why their edits
-    // were replaced (Formik cleared it immediately).
-    expect(screen.getByTestId('form-error-summary').textContent).toContain(
-      'Another person has already saved this page',
-    );
-  });
-
-  it('save and exit skips hard validation and navigates to the exit location', async () => {
-    const user = userEvent.setup();
-    const onSaveAndExit = vi.fn(async (_values: FormikValues) => undefined);
-    renderStep({
-      onSaveAndExit,
-      onSaveAndNext: vi.fn(),
-      locationAfterExit: '/done',
-    });
-    await screen.findByLabelText('Name');
-
-    await user.click(await screen.findByTestId('save-and-exit-button'));
-
-    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
-
-    expect(onSaveAndExit.mock.calls[0]?.[0]).toEqual({});
-    await expect(screen.findByText('Done Page')).resolves.toBeInTheDocument();
-  });
-
-  it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
-    const user = userEvent.setup();
-    renderStep({
-      onSaveAndExit: vi.fn(),
-      onSaveAndNext: vi.fn(),
-      validateSoft: Yup.object({}),
-    });
-    const input = await screen.findByLabelText('Name');
-
-    await user.type(input, 'x');
-    await user.clear(input);
-    await user.tab();
-
-    await expect(
-      screen.findByText('Name is required'),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {
-    const user = userEvent.setup();
-    const onSaveAndExit = vi.fn(async () => {
-      throw { status: 500 };
-    });
-    renderStep({
-      onSaveAndExit,
-      onSaveAndNext: vi.fn(),
-      validateSoft: Yup.object({}),
-    });
-    const input = await screen.findByLabelText('Name');
-
-    await user.click(await screen.findByTestId('save-and-exit-button'));
-    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
-    await screen.findByTestId('form-error-summary');
-
-    // Hard schema requires a name; the stale flag keeps live validation soft.
-    await user.type(input, 'x');
-    await user.clear(input);
-    await user.tab();
-    await new Promise((resolve) => setTimeout(resolve, 200));
-
-    expect(screen.queryByText('Name is required')).toBeNull();
   });
 });

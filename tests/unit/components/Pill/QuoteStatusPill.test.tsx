@@ -11,6 +11,7 @@ describe(QuoteStatusPill, () => {
     QuoteStatus.ArtifactReceived,
     QuoteStatus.QuoteAccepted,
   ])('renders accepted copy for %s', async (status) => {
+    expect.assertions(1);
     render(<QuoteStatusPill status={status} />);
 
     const pill = await screen.findByText('Quotation accepted');
@@ -35,6 +36,7 @@ describe(QuoteStatusPill, () => {
   ])(
     'renders mapped quote state for %s',
     async (status, label, bgClass, textClass) => {
+      expect.assertions(1);
       render(<QuoteStatusPill status={status} />);
 
       const pill = await screen.findByText(label);
@@ -44,6 +46,7 @@ describe(QuoteStatusPill, () => {
   );
 
   it('renders the raw value for an unmapped status', async () => {
+    expect.assertions(1);
     const customStatus = 'Quote sent to delegate' as QuoteStatus;
 
     render(<QuoteStatusPill status={customStatus} />);

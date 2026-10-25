@@ -13,7 +13,7 @@ const append = (queue = '', stash = '', enclose = false) => {
 
   if (!stash.length) return queue;
   if (!queue.length) {
-    return enclose ? utils.flatten(stash).map(ele => `{${ele}}`) : stash;
+    return enclose ? utils.flatten(stash).map((ele) => `{${ele}}`) : stash;
   }
 
   for (const item of queue) {
@@ -24,15 +24,18 @@ const append = (queue = '', stash = '', enclose = false) => {
     } else {
       for (let ele of stash) {
         if (enclose === true && typeof ele === 'string') ele = `{${ele}}`;
-        result.push(Array.isArray(ele) ? append(item, ele, enclose) : item + ele);
+        result.push(
+          Array.isArray(ele) ? append(item, ele, enclose) : item + ele,
+        );
       }
     }
   }
   return utils.flatten(result);
 };
 
-const queueOwner = node => {
-  if (node.type === 'brace' || node.type === 'root' || !node.parent) return node;
+const queueOwner = (node) => {
+  if (node.type === 'brace' || node.type === 'root' || !node.parent)
+    return node;
 
   const seen = new Set();
   while (node.type !== 'brace' && node.type !== 'root' && node.parent) {
@@ -46,12 +49,17 @@ const queueOwner = node => {
 };
 
 const expand = (ast, options = {}) => {
-  const rangeLimit = options.rangeLimit === undefined ? 1000 : options.rangeLimit;
-  const maxDepth = Number.isFinite(options.maxDepth) ? Math.min(MAX_DEPTH, options.maxDepth) : MAX_DEPTH;
+  const rangeLimit =
+    options.rangeLimit === undefined ? 1000 : options.rangeLimit;
+  const maxDepth = Number.isFinite(options.maxDepth)
+    ? Math.min(MAX_DEPTH, options.maxDepth)
+    : MAX_DEPTH;
 
   const walk = (node, parent = {}, depth = 0) => {
     if (node.nodes && depth > maxDepth) {
-      throw new RangeError(`AST depth (${depth}), exceeds max depth (${maxDepth})`);
+      throw new RangeError(
+        `AST depth (${depth}), exceeds max depth (${maxDepth})`,
+      );
     }
     node.queue = [];
 
@@ -62,7 +70,11 @@ const expand = (ast, options = {}) => {
       return;
     }
 
-    if (node.type === 'brace' && node.invalid !== true && node.nodes.length === 2) {
+    if (
+      node.type === 'brace' &&
+      node.invalid !== true &&
+      node.nodes.length === 2
+    ) {
       q.push(append(q.pop(), ['{}']));
       return;
     }
@@ -71,7 +83,9 @@ const expand = (ast, options = {}) => {
       const args = utils.reduce(node.nodes);
 
       if (utils.exceedsLimit(...args, options.step, rangeLimit)) {
-        throw new RangeError('expanded array length exceeds range limit. Use options.rangeLimit to increase or disable the limit.');
+        throw new RangeError(
+          'expanded array length exceeds range limit. Use options.rangeLimit to increase or disable the limit.',
+        );
       }
 
       let range = fill(...args, options);

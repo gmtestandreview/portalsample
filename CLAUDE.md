@@ -75,10 +75,10 @@ Prettier formats it automatically.
 
 ## Markdown headings
 
-Respect `MD036/no-emphasis-as-heading`: use Markdown headings (`#`, `##`,
-etc.) for section titles. Do not use standalone bold or italic text as a
-heading. Keep heading levels logical, and do not disable or weaken MD036
-to avoid fixing a heading.
+Respect `MD036/no-emphasis-as-heading`: use Markdown headings (`#`, `##`, etc.)
+for section titles. Do not use standalone bold or italic text as a heading. Keep
+heading levels logical, and do not disable or weaken MD036 to avoid fixing a
+heading.
 
 ## Technology stack
 
@@ -92,7 +92,7 @@ to avoid fixing a heading.
 | CSS          | Bootstrap 5 (custom NMI theme) + SCSS partials               |
 | API client   | Auto-generated `web-api-client.ts` (NSwag/OpenAPI)           |
 | Analytics    | Azure Application Insights + Google Analytics                |
-| Bundler      | Vite 8 (`vite.config.mts`)                                  |
+| Bundler      | Vite 8 (`vite.config.mts`)                                   |
 | CSP          | Trusted Types policy via `trustedtypes.ts` + DOMPurify       |
 
 ## Storybook
@@ -100,8 +100,8 @@ to avoid fixing a heading.
 For UI component work in a configured Storybook environment, use the
 `my-storybook-mcp-server` MCP tools to access Storybook's component and
 documentation knowledge before answering or taking any action. If the endpoint
-is unavailable, record that limitation and do not infer undocumented
-component properties.
+is unavailable, record that limitation and do not infer undocumented component
+properties.
 
 ### Storybook async/render hygiene
 
@@ -113,16 +113,16 @@ await the user-visible settled state in the story play function with
 behind `useEffect` + `setState`; it creates post-render updates outside the
 Storybook test interaction boundary.
 
-When a UI task uses Storybook MCP, first ensure `npm run storybook` is running and
-`http://localhost:6006/mcp` responds successfully. Confirm the configured
+When a UI task uses Storybook MCP, first ensure `npm run storybook` is running
+and `http://localhost:6006/mcp` responds successfully. Confirm the configured
 `my-storybook-mcp-server` points to that endpoint. If the agent client started
 before Storybook was ready and the tools are absent, restart the client after
 the endpoint is healthy; do not bypass the MCP requirement.
 
 - **CRITICAL: Never hallucinate component properties!** For each property on a
   design-system component, including common-sounding ones like `shadow`, verify
-  it against the available MCP documentation or example stories before using
-  it. If that evidence is unavailable, do not infer the property.
+  it against the available MCP documentation or example stories before using it.
+  If that evidence is unavailable, do not infer the property.
 - Query `docs-list` to get a list of all components
 - Query `docs-show` for that component to see all available properties and
   examples
@@ -305,7 +305,7 @@ the `Skill` tool.
 | `scalability-review`             | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone.                                                                                                                                                 |
 | `skill-creator`                  | Creating, evaluating, benchmarking, packaging, or fixing activation for an Agent Skill, or running a skill release-readiness review. Complements `writing-skills` (authoring workflow and gates); `skill-creator` owns eval/benchmark/package tooling and Claude Code runtime activation.           |
 | `skill-duplication-audit`        | Two or more skills appear to overlap in scope and need classification.                                                                                                                                                                                                                              |
-| `smart-init`                     | The project's initialization instructions are missing and it needs conversational onboarding.                                                                                                                                                                                                      |
+| `smart-init`                     | The project's initialization instructions are missing and it needs conversational onboarding.                                                                                                                                                                                                       |
 | `subagent-driven-development`    | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review.                                                                                                                                                                                         |
 | `systematic-debugging`           | Any bug, failing or flaky test, regression, crash, or incorrect output whose cause is not established.                                                                                                                                                                                              |
 | `test-driven-development`        | Implementing or changing observable behavior — new feature, bug fix, or refactor. RED before GREEN.                                                                                                                                                                                                 |

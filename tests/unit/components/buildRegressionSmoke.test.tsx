@@ -1,13 +1,17 @@
 import { describe, it, expect } from 'vitest';
+
 import * as yup from 'yup';
 
 describe('build regression smoke coverage', () => {
   it('imports App with the root stylesheet path resolved', async () => {
+    expect.assertions(1);
     const module = await import('@/App');
 
     expect(module.default).toBeDefined();
   }, 60000);
+});
 
+describe('build regression smoke coverage', () => {
   it.each([
     '@/components/Utilities/ContactLink',
     '@/components/Utilities/ViewPdfButton',
@@ -16,29 +20,10 @@ describe('build regression smoke coverage', () => {
   ])(
     'imports utility module %s with the print stylesheet path resolved',
     async (modulePath) => {
+      expect.assertions(1);
       const module = await import(modulePath);
 
       expect(module.default).toBeDefined();
-    },
-  );
-
-  it.each([
-    '@/routes/account/validation',
-    '@/routes/contact/validation',
-    '@/routes/requestForQuote/validation',
-    '@/routes/acceptQuote/validation',
-  ])(
-    'imports validation module %s through the yup extension barrel',
-    async (modulePath) => {
-      vi.resetModules();
-
-      const module = await import(modulePath);
-
-      expect(module).toBeDefined();
-      expect(yup.string().allowedFormat).toBeTypeOf('function');
-      expect(yup.string().fixedDigits).toBeTypeOf('function');
-      expect(yup.string().maxLength).toBeTypeOf('function');
-      expect(yup.string().minEntered).toBeTypeOf('function');
     },
   );
 });

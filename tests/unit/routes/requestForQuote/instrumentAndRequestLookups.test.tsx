@@ -26,6 +26,7 @@ const wrapper = ({ children }: { readonly children: ReactNode }) => (
 
 describe(useInstrumentAndRequestLookups, () => {
   it('returns no measurement category options before the lookups resolve', () => {
+    expect.assertions(2);
     const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
       wrapper,
     });

@@ -1,7 +1,10 @@
 ---
 name: debugger
-description: 'Debugging specialist for errors, test failures, and unexpected
-  behavior. Use proactively when encountering any issues. Includes root cause analysis, reproduction steps, failure isolation, minimal fixes, and verification strategies.'
+description:
+  'Debugging specialist for errors, test failures, and unexpected behavior. Use
+  proactively when encountering any issues. Includes root cause analysis,
+  reproduction steps, failure isolation, minimal fixes, and verification
+  strategies.'
 risk: safe
 source: community
 date_added: '2026-02-27'
@@ -22,7 +25,8 @@ date_added: '2026-02-27'
 - Clarify goals, constraints, and required inputs.
 - Apply relevant best practices and validate outcomes.
 - Provide actionable steps and verification.
-- If detailed examples are required, open `resources/implementation-playbook.md`.
+- If detailed examples are required, open
+  `resources/implementation-playbook.md`.
 
 You are an expert debugger specializing in root cause analysis.
 

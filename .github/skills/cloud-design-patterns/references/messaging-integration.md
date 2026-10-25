@@ -4,7 +4,8 @@
 
 **Problem**: Central orchestrators create coupling and single points of failure.
 
-**Solution**: Let individual services decide when and how a business operation is processed through event-driven collaboration.
+**Solution**: Let individual services decide when and how a business operation
+is processed through event-driven collaboration.
 
 **When to Use**:
 
@@ -24,7 +25,8 @@
 
 **Problem**: Large messages can overwhelm message infrastructure.
 
-**Solution**: Split a large message into a claim check (reference) and a payload stored separately.
+**Solution**: Split a large message into a claim check (reference) and a payload
+stored separately.
 
 **When to Use**:
 
@@ -44,7 +46,8 @@
 
 **Problem**: Single consumer may not keep up with message volume.
 
-**Solution**: Enable multiple concurrent consumers to process messages from the same messaging channel.
+**Solution**: Enable multiple concurrent consumers to process messages from the
+same messaging channel.
 
 **When to Use**:
 
@@ -64,7 +67,8 @@
 
 **Problem**: Different systems use incompatible messaging technologies.
 
-**Solution**: Build an intermediary to enable communication between messaging systems that are otherwise incompatible.
+**Solution**: Build an intermediary to enable communication between messaging
+systems that are otherwise incompatible.
 
 **When to Use**:
 
@@ -84,7 +88,8 @@
 
 **Problem**: Complex processing tasks are difficult to maintain and reuse.
 
-**Solution**: Break down a task that performs complex processing into a series of separate, reusable elements (filters) connected by channels (pipes).
+**Solution**: Break down a task that performs complex processing into a series
+of separate, reusable elements (filters) connected by channels (pipes).
 
 **When to Use**:
 
@@ -102,9 +107,11 @@
 
 ## Publisher-Subscriber Pattern
 
-**Problem**: Applications need to broadcast information to multiple interested consumers.
+**Problem**: Applications need to broadcast information to multiple interested
+consumers.
 
-**Solution**: Enable an application to announce events to multiple consumers asynchronously, without coupling senders to receivers.
+**Solution**: Enable an application to announce events to multiple consumers
+asynchronously, without coupling senders to receivers.
 
 **When to Use**:
 
@@ -124,7 +131,8 @@
 
 **Problem**: Distributed actions need coordination and monitoring.
 
-**Solution**: Coordinate a set of actions across distributed services and resources with a supervisor that monitors and manages the workflow.
+**Solution**: Coordinate a set of actions across distributed services and
+resources with a supervisor that monitors and manages the workflow.
 
 **When to Use**:
 

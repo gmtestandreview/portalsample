@@ -1,5 +1,12 @@
 ---
-description: 'This file describes the Markdown rules for the project. Follow these guidelines when creating or editing Markdown files to maintain consistency, readability, and accessibility across the documentation. These rules cover formatting, technical content, accessibility considerations, and special cases for generated or blog content. Adhering to these standards will help ensure that the Markdown files are clear, well-structured, and easy to navigate for all contributors and readers.'
+description:
+  'This file describes the Markdown rules for the project. Follow these
+  guidelines when creating or editing Markdown files to maintain consistency,
+  readability, and accessibility across the documentation. These rules cover
+  formatting, technical content, accessibility considerations, and special cases
+  for generated or blog content. Adhering to these standards will help ensure
+  that the Markdown files are clear, well-structured, and easy to navigate for
+  all contributors and readers.'
 applyTo: '**/*.md'
 ---
 
@@ -43,8 +50,8 @@ Use these rules when creating or editing Markdown files.
 
 ## Accessibility
 
-- Use descriptive link text. Avoid “click here,” “here,” “this,” “read more,”
-  or bare URLs in prose.
+- Use descriptive link text. Avoid “click here,” “here,” “this,” “read more,” or
+  bare URLs in prose.
 - Give images meaningful alt text unless they are explicitly decorative.
 - Do not use emoji as the only way to convey meaning.
 - Do not use bold text as a fake heading.
@@ -73,15 +80,14 @@ Do not change the meaning of:
 Do not require blog-specific frontmatter fields globally.
 
 If a file lives in a known blog/content path and that path has its own
-frontmatter rules, follow the path-specific instruction for that folder
-instead.
+frontmatter rules, follow the path-specific instruction for that folder instead.
 
 ## Localization
 
 Do not localize Markdown from this instruction.
 
-Use `.github/prompts/localize-markdown.prompt.md` only when the user
-explicitly requests localization.
+Use `.github/prompts/localize-markdown.prompt.md` only when the user explicitly
+requests localization.
 
 ## Validation
 
@@ -91,9 +97,9 @@ Before finishing a Markdown change:
 - confirm links still resolve or flag any unverified links
 - confirm code fences, tables, and lists still render correctly
 - if the task is about Markdown diagnostics, run a targeted markdownlint check
-  on the touched file when feasible, or clearly report why it was skipped
-  using the repository's focused Markdown lint rules for fenced code blocks and
-  table formatting
+  on the touched file when feasible, or clearly report why it was skipped using
+  the repository's focused Markdown lint rules for fenced code blocks and table
+  formatting
 - if you are changing repo-quality behavior, remember that `pnpm lint` now
   includes the targeted markdownlint check as part of the existing quality
   workflow

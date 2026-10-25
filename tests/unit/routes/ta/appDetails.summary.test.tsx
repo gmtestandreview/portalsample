@@ -124,6 +124,7 @@ describe('application details summary', () => {
   });
 
   it('shows the loaded organisation, application and documents without a Formik form', async () => {
+    expect.assertions(5);
     const ApplicationDetails = (
       await import('../../../../ClientApp/src/routes/ta/manage/appDetails')
     ).default;

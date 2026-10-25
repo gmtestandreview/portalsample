@@ -102,9 +102,7 @@
       "category": "happy-path-output-contract",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/minimal-node-api. Create the complete docs/codebase output.",
       "expected_output": "Seven populated public Markdown files in docs/codebase plus a hidden .codebase-scan.txt working artefact. Claims are backed by source paths or scan output. Unknowns use [TODO].",
-      "files": [
-        "evals/files/minimal-node-api"
-      ],
+      "files": ["evals/files/minimal-node-api"],
       "assertions": [
         "docs/codebase contains STACK.md, STRUCTURE.md, ARCHITECTURE.md, CONVENTIONS.md, INTEGRATIONS.md, TESTING.md, and CONCERNS.md.",
         "docs/codebase/.codebase-scan.txt may exist but is not presented as final documentation.",
@@ -119,9 +117,7 @@
       "category": "focus-area-mode",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/minimal-node-api, architecture only.",
       "expected_output": "Phase 1 still runs fully. ARCHITECTURE.md is fully populated first. Other six docs exist with required sections and [TODO] where not yet analyzed. Validation still runs across all seven docs.",
-      "files": [
-        "evals/files/minimal-node-api"
-      ],
+      "files": ["evals/files/minimal-node-api"],
       "assertions": [
         "All seven required docs exist even though the prompt requested a focus area.",
         "ARCHITECTURE.md contains system flow, layer/module responsibilities, reused patterns, known architectural risks, and evidence.",
@@ -135,9 +131,7 @@
       "category": "ambiguous-stack",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/polyglot-ambiguous-repo. Document the stack and structure.",
       "expected_output": "The agent detects ambiguity from multiple manifests, uses stack-detection guidance, records evidence, and marks unresolved stack choices as [ASK USER] or [TODO] rather than guessing.",
-      "files": [
-        "evals/files/polyglot-ambiguous-repo"
-      ],
+      "files": ["evals/files/polyglot-ambiguous-repo"],
       "assertions": [
         "STACK.md references each relevant manifest that contributed to stack detection.",
         "Ambiguous runtime ownership is not guessed; unresolved choices are marked [ASK USER] or [TODO].",
@@ -150,9 +144,7 @@
       "category": "redaction",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/repo-with-env-secret. Produce docs/codebase.",
       "expected_output": "The docs identify required environment variables and credential handling patterns without copying secret-like values.",
-      "files": [
-        "evals/files/repo-with-env-secret"
-      ],
+      "files": ["evals/files/repo-with-env-secret"],
       "assertions": [
         "No generated doc or final response contains raw values matching secret-like assignments such as API keys, tokens, passwords, private keys, cookies, or credential-bearing URLs.",
         "Secret-like values are replaced with [REDACTED] or described structurally without value exposure.",
@@ -165,9 +157,7 @@
       "category": "validation-failure-repair",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/minimal-node-api. Intentionally run the validator before final response and repair any failures.",
       "expected_output": "The agent runs the lightweight validator, reports validation failures if any, fixes repairable issues, reruns validation, and only then finalizes.",
-      "files": [
-        "evals/files/minimal-node-api"
-      ],
+      "files": ["evals/files/minimal-node-api"],
       "assertions": [
         "The validator command is run or its equivalent validation checks are explicitly performed.",
         "Initial validation failures, if present, are described with evidence.",
@@ -181,9 +171,7 @@
       "category": "scan-script-behavior",
       "prompt": "Use the acquire-codebase-knowledge scan script against evals/files/go-cmd-layout and then produce STRUCTURE.md and STACK.md.",
       "expected_output": "The scan detects Go-style cmd/*/main.go entrypoints and does not falsely claim git history when run outside a git repository.",
-      "files": [
-        "evals/files/go-cmd-layout"
-      ],
+      "files": ["evals/files/go-cmd-layout"],
       "assertions": [
         "STRUCTURE.md identifies cmd/<app>/main.go-style entry points when present.",
         "STACK.md identifies Go from go.mod when present.",
@@ -196,9 +184,7 @@
       "category": "container-glob-detection",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/repo-with-dockerfile-variants. Document stack, integrations, and concerns.",
       "expected_output": "The scan and docs detect Dockerfile variants such as Dockerfile.dev or Dockerfile.prod and include container/runtime constraints where relevant.",
-      "files": [
-        "evals/files/repo-with-dockerfile-variants"
-      ],
+      "files": ["evals/files/repo-with-dockerfile-variants"],
       "assertions": [
         "STACK.md or STRUCTURE.md references Dockerfile variants found via glob matching.",
         "Deployment/runtime constraints mention container files when supported by evidence.",
@@ -211,9 +197,7 @@
       "category": "stale-readme-vs-source",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/stale-readme-repo. Produce all docs.",
       "expected_output": "The docs prefer source/config evidence over stale README claims, note divergence, and do not treat README intent as implementation fact.",
-      "files": [
-        "evals/files/stale-readme-repo"
-      ],
+      "files": ["evals/files/stale-readme-repo"],
       "assertions": [
         "STACK.md uses manifest/config evidence for runtime and dependencies rather than stale README claims.",
         "Final response includes intent-vs-reality divergences when README conflicts with source/config evidence.",
@@ -226,9 +210,7 @@
       "category": "monorepo",
       "prompt": "Use the acquire-codebase-knowledge skill on evals/files/simple-monorepo. Produce docs/codebase.",
       "expected_output": "The docs recognize monorepo structure, workspace manifests, multiple entrypoints, and package-specific boundaries without collapsing everything into one app.",
-      "files": [
-        "evals/files/simple-monorepo"
-      ],
+      "files": ["evals/files/simple-monorepo"],
       "assertions": [
         "STRUCTURE.md identifies workspace/package boundaries when manifest evidence supports them.",
         "STACK.md distinguishes root tooling from package-level production dependencies.",
@@ -241,9 +223,7 @@
       "category": "negative-narrow-task",
       "prompt": "Fix the failing login unit test in evals/files/minimal-node-api.",
       "expected_output": "The acquire-codebase-knowledge skill should not be used. No docs/codebase output should be created solely because this skill exists.",
-      "files": [
-        "evals/files/minimal-node-api"
-      ],
+      "files": ["evals/files/minimal-node-api"],
       "assertions": [
         "The skill is not activated for this narrow bug-fix task.",
         "No docs/codebase directory is created by the skill.",

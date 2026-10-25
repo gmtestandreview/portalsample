@@ -288,17 +288,7 @@
   "evaluation": {
     "evaluator": "root grading after isolated synthetic runs",
     "kind": "behavioral",
-    "expected_case_ids": [
-      "R1",
-      "R2",
-      "R3",
-      "R4",
-      "S1",
-      "S2",
-      "S3",
-      "S4",
-      "S5"
-    ],
+    "expected_case_ids": ["R1", "R2", "R3", "R4", "S1", "S2", "S3", "S4", "S5"],
     "cases": [
       {
         "id": "R1",

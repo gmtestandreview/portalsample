@@ -100,10 +100,10 @@ One HTML update.
       it('returns the parsed value for a valid JSON entry', () => {
         globalThis.sessionStorage.setItem(
           'test-key',
-          JSON.stringify({ id: 42 })
+          JSON.stringify({ id: 42 }),
         );
         expect(
-          SessionStorageCache().getItem<{ id: number }>('test-key')
+          SessionStorageCache().getItem<{ id: number }>('test-key'),
         ).toEqual({ id: 42 });
       });
 
@@ -124,7 +124,7 @@ One HTML update.
       it('stores a value as JSON-serialised string', () => {
         SessionStorageCache().setItem({ name: 'Acme' }, 'org');
         expect(globalThis.sessionStorage.getItem('org')).toBe(
-          JSON.stringify({ name: 'Acme' })
+          JSON.stringify({ name: 'Acme' }),
         );
       });
 
@@ -145,7 +145,7 @@ One HTML update.
 
       it('does not throw when removing a non-existent key', () => {
         expect(() =>
-          SessionStorageCache().removeItem('ghost-key')
+          SessionStorageCache().removeItem('ghost-key'),
         ).not.toThrow();
       });
     });
@@ -187,49 +187,49 @@ One HTML update.
   describe('getUnexpectedErrorRoute', () => {
     it('maps 403 Forbidden to /forbidden', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.Forbidden)).toBe(
-        '/forbidden'
+        '/forbidden',
       );
     });
 
     it('maps 409 Conflict to /conflict', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.Conflict)).toBe(
-        '/conflict'
+        '/conflict',
       );
     });
 
     it('maps 410 Gone to /no-longer-available', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.Gone)).toBe(
-        '/no-longer-available'
+        '/no-longer-available',
       );
     });
 
     it('maps 412 PreconditionFailed to /precondition-failed', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.PreconditionFailed)).toBe(
-        '/precondition-failed'
+        '/precondition-failed',
       );
     });
 
     it('maps 422 UnprocessableEntity to /unprocessable', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.UnprocessableEntity)).toBe(
-        '/unprocessable'
+        '/unprocessable',
       );
     });
 
     it('maps 500 InternalServerError to /server-error', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.InternalServerError)).toBe(
-        '/server-error'
+        '/server-error',
       );
     });
 
     it('maps 503 ServiceUnavailable to /service-unavailable', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.ServiceUnavailable)).toBe(
-        '/service-unavailable'
+        '/service-unavailable',
       );
     });
 
     it('maps an unmapped status code (404) to /server-error (default)', () => {
       expect(getUnexpectedErrorRoute(HttpStatusCode.NotFound)).toBe(
-        '/server-error'
+        '/server-error',
       );
     });
 
@@ -345,7 +345,7 @@ Content must document:
   ```ts
   // Option A: pass via constructor
   const client = new DashboardClient(
-    accountState.details.targetOrganisation?.abn
+    accountState.details.targetOrganisation?.abn,
   );
 
   // Option B: inject via useAuthenticatedClient hook

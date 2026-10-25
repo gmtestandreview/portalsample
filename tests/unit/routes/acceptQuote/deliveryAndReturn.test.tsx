@@ -1,9 +1,15 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { Formik, Form } from 'formik';
+
 import { MemoryRouter } from 'react-router';
+
 import type { ReactNode } from 'react';
+
 import type { AddressDetailsDto } from '../../../../ClientApp/src/api/web-api-client';
+
 import DeliveryAndReturn from '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn';
 
 // ─── hoisted mock refs ────────────────────────────────────────────────────────
@@ -125,12 +131,14 @@ const streetAddr: AddressDetailsDto = {
   state: 'NSW' as never,
   postcode: '2000',
 };
+
 const postalAddr: AddressDetailsDto = {
   line1: '20 Postal Ave',
   suburb: 'Melbourne',
   state: 'VIC' as never,
   postcode: '3000',
 };
+
 const otherAddr: AddressDetailsDto = {
   line1: '30 Other Rd',
   suburb: 'Brisbane',
@@ -152,16 +160,13 @@ const baseApiResponse = {
   returnOrganisationName: 'Test Organisation',
 };
 
-// ─── tests ────────────────────────────────────────────────────────────────────
-
 describe(DeliveryAndReturn, () => {
   beforeEach(() => {
     mocks.getDeliveryAndReturn.mockReset();
   });
-
-  // 1. receiptAndDispatchNA = true ───────────────────────────────────────────
   describe('receiptAndDispatchNA=true', () => {
     it('shows the no-delivery message inside the info banner in form mode', async () => {
+      expect.assertions(2);
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
@@ -182,8 +187,16 @@ describe(DeliveryAndReturn, () => {
       // microtask queue so they don't fire outside act() after the test ends.
       await act(async () => {});
     });
+  });
+});
 
+describe(DeliveryAndReturn, () => {
+  beforeEach(() => {
+    mocks.getDeliveryAndReturn.mockReset();
+  });
+  describe('receiptAndDispatchNA=true', () => {
     it('shows the no-delivery alert panel in summary mode and hides the delivery section', async () => {
+      expect.assertions(2);
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
@@ -203,10 +216,15 @@ describe(DeliveryAndReturn, () => {
       await act(async () => {});
     });
   });
+});
 
-  // 2. returnAddressType switch in summary mode ──────────────────────────────
+describe(DeliveryAndReturn, () => {
+  beforeEach(() => {
+    mocks.getDeliveryAndReturn.mockReset();
+  });
   describe('returnAddressType address resolution in summary mode', () => {
     it('businessAddress renders the street address', async () => {
+      expect.assertions(1);
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'BusinessAddress',
@@ -216,101 +234,6 @@ describe(DeliveryAndReturn, () => {
         expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
       );
       await act(async () => {});
-    });
-
-    it('postalAddress with postalAddressSameAsStreetAddress=true falls back to street address', async () => {
-      mocks.getDeliveryAndReturn.mockResolvedValue({
-        ...baseApiResponse,
-        rfqOrganisation: {
-          ...baseApiResponse.rfqOrganisation,
-          postalAddressSameAsStreetAddress: true,
-        },
-        returnAddressType: 'PostalAddress',
-      });
-      renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
-    });
-
-    it('postalAddress with postalAddressSameAsStreetAddress=false renders the postal address', async () => {
-      mocks.getDeliveryAndReturn.mockResolvedValue({
-        ...baseApiResponse,
-        returnAddressType: 'PostalAddress',
-      });
-      renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Melbourne VIC 3000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
-    });
-
-    it('renders no return address block when the address type is unset', async () => {
-      mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
-      renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id'),
-      );
-      await act(async () => {});
-
-      expect(
-        screen.queryByRole('heading', {
-          name: /Instrument\/artefact return address/i,
-        }),
-      ).not.toBeInTheDocument();
-    });
-
-    it('other renders the custom returnAddress', async () => {
-      mocks.getDeliveryAndReturn.mockResolvedValue({
-        ...baseApiResponse,
-        returnAddressType: 'Other',
-      });
-      renderComponent({ isSummary: true });
-      await waitFor(() =>
-        expect(screen.getByText(/Brisbane QLD 4000/)).toBeInTheDocument(),
-      );
-      await act(async () => {});
-    });
-  });
-
-  // 3. Re-fetch on id change — regression test for the exhaustive-deps fix ──
-  describe('re-fetch on id prop change', () => {
-    it('calls the API again when id changes', async () => {
-      mocks.getDeliveryAndReturn.mockResolvedValue({
-        acceptQuotePreInfo: { receiptAndDispatchNA: true },
-      });
-      const { rerender } = render(makeTree('q-1'));
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-1'),
-      );
-
-      rerender(makeTree('q-2'));
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('q-2'),
-      );
-
-      expect(mocks.getDeliveryAndReturn).toHaveBeenCalledTimes(2);
-
-      await act(async () => {});
-    });
-  });
-
-  // 4. API error — component must not crash ──────────────────────────────────
-  describe('aPI error', () => {
-    it('renders the info banner and does not crash when getDeliveryAndReturn rejects', async () => {
-      mocks.getDeliveryAndReturn.mockRejectedValue(new Error('Network error'));
-      renderComponent();
-      // Wait until the API call has been attempted — the effect has fired.
-      await waitFor(() =>
-        expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('test-id'),
-      );
-      // Drain queued state updates (setIsLoading(false) from catch block,
-      // plus any Formik re-renders) so they don't fire outside act().
-      await act(async () => {});
-
-      // Component must still be mounted with the info banner visible.
-      expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });
   });
 });

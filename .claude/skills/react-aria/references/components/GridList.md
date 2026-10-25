@@ -556,7 +556,7 @@ export function GridList<T>({ children, ...props }: GridListProps<T>) {
         props.className,
         isHorizontal
           ? 'flex flex-row flex-nowrap overflow-x-auto relative w-full max-w-[500px] bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg font-sans empty:flex empty:items-center empty:justify-center empty:italic empty:text-sm'
-          : 'overflow-auto w-[200px] relative bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg font-sans empty:flex empty:items-center empty:justify-center empty:italic empty:text-sm'
+          : 'overflow-auto w-[200px] relative bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg font-sans empty:flex empty:items-center empty:justify-center empty:italic empty:text-sm',
       )}
     >
       {children}
@@ -602,7 +602,7 @@ export function GridListItem({ children, ...props }: GridListItemProps) {
             )}
             {children}
           </>
-        )
+        ),
       )}
     </AriaGridListItem>
   );
@@ -617,7 +617,7 @@ export function GridListHeader({
       {...props}
       className={twMerge(
         'text-sm font-semibold text-neutral-500 dark:text-neutral-300 px-4 py-1 -mt-px z-10 bg-neutral-100/60 dark:bg-neutral-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-neutral-100 border-y border-y-neutral-200 dark:border-y-neutral-700',
-        props.className
+        props.className,
       )}
     >
       {children}
@@ -961,13 +961,13 @@ function AsyncLoadingExample() {
       let page = cursor || 1;
       let res = await fetch(
         `https://api.unsplash.com/topics/nature/photos?page=${page}&per_page=30&client_id=AJuU-FPh11hn7RuumUllp4ppT8kgiLS7LtOHp_sp4nc`,
-        { signal }
+        { signal },
       );
       let nextItems = await res.json();
       // Filter duplicates which might be returned by the API.
       let existingKeys = new Set(items.map((i) => i.id));
       nextItems = nextItems.filter(
-        (i) => !existingKeys.has(i.id) && (i.description || i.alt_description)
+        (i) => !existingKeys.has(i.id) && (i.description || i.alt_description),
       );
       return { items: nextItems, cursor: nextItems.length ? page + 1 : null };
     },

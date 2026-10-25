@@ -13,13 +13,13 @@
 
 #### Board Roles
 
-| Role | Responsibilities | Typical Background |
-| ------ | ----------------- | ------------------- |
-| Chairman | Board leadership, CEO liaison | Former CEO, Industry veteran |
-| Lead Independent Director | Independent voice, executive sessions | Senior executive experience |
-| Audit Committee Chair | Financial oversight, auditor relationship | CFO/CPA background |
-| Compensation Committee Chair | Executive compensation, succession | HR/Executive experience |
-| Nominating Committee Chair | Board composition, governance | Governance expertise |
+| Role                         | Responsibilities                          | Typical Background           |
+| ---------------------------- | ----------------------------------------- | ---------------------------- |
+| Chairman                     | Board leadership, CEO liaison             | Former CEO, Industry veteran |
+| Lead Independent Director    | Independent voice, executive sessions     | Senior executive experience  |
+| Audit Committee Chair        | Financial oversight, auditor relationship | CFO/CPA background           |
+| Compensation Committee Chair | Executive compensation, succession        | HR/Executive experience      |
+| Nominating Committee Chair   | Board composition, governance             | Governance expertise         |
 
 ### Board Meeting Management
 
@@ -217,7 +217,7 @@ Best,
 
 Financial Highlights:
 • Revenue: $X (±Y% YoY)
-• Net Income: $X (±Y% YoY)  
+• Net Income: $X (±Y% YoY)
 • EPS: $X (±Y% YoY)
 • [Other key metric]
 
@@ -246,7 +246,7 @@ Contact:
 **CEO Opening (5 minutes)**
 
 ```
-Good [morning/afternoon], and welcome to [Company's] 
+Good [morning/afternoon], and welcome to [Company's]
 [Quarter] earnings call.
 
 Today I'll cover:
@@ -420,13 +420,13 @@ Now back to [CEO] for closing remarks...
 
 #### Key Filings
 
-| Form | Purpose | Timing |
-| ------ | --------- | -------- |
-| 10-K | Annual report | 60-90 days after FY end |
-| 10-Q | Quarterly report | 40-45 days after Q end |
-| 8-K | Material events | 4 business days |
-| DEF 14A | Proxy statement | Before annual meeting |
-| S-1/S-3 | Securities registration | As needed |
+| Form    | Purpose                 | Timing                  |
+| ------- | ----------------------- | ----------------------- |
+| 10-K    | Annual report           | 60-90 days after FY end |
+| 10-Q    | Quarterly report        | 40-45 days after Q end  |
+| 8-K     | Material events         | 4 business days         |
+| DEF 14A | Proxy statement         | Before annual meeting   |
+| S-1/S-3 | Securities registration | As needed               |
 
 #### Disclosure Requirements
 
@@ -543,9 +543,8 @@ Now back to [CEO] for closing remarks...
 
 ### Executive Session Management
 
-**Frequency**: Every board meeting
-**Duration**: 30-60 minutes
-**Participants**: Independent directors only
+**Frequency**: Every board meeting **Duration**: 30-60 minutes **Participants**:
+Independent directors only
 
 **Typical Topics**:
 

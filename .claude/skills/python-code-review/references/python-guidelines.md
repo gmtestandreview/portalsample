@@ -1,10 +1,10 @@
 # Python expert: conditional rules and examples
 
-Use this reference only for the relevant Python task. Examples target Python 3.10+.
-For older versions, use supported typing syntax and honor project constraints.
-Here **bad** examples intentionally illustrate failure; **good** examples
-demonstrate the supported pattern. Severity depends on actual behavior, not
-solely on which example looks similar.
+Use this reference only for the relevant Python task. Examples target Python
+3.10+. For older versions, use supported typing syntax and honor project
+constraints. Here **bad** examples intentionally illustrate failure; **good**
+examples demonstrate the supported pattern. Severity depends on actual behavior,
+not solely on which example looks similar.
 
 ## Mutable default arguments
 
@@ -31,7 +31,8 @@ def add_item(item: str, items: list[str] | None = None) -> list[str]:
 ```
 
 If `None` itself is meaningful input, use a dedicated sentinel instead. An
-intentional cache/shared state is a separate design decision and must be explicit.
+intentional cache/shared state is a separate design decision and must be
+explicit.
 
 ## Error handling
 
@@ -165,8 +166,8 @@ unnecessary and streaming semantics are appropriate.
 
 ## Context managers
 
-**Correctness/resource safety — high for deterministic release.**
-A `with` block closes a managed file even when an exception occurs.
+**Correctness/resource safety — high for deterministic release.** A `with` block
+closes a managed file even when an exception occurs.
 
 Bad:
 
@@ -223,14 +224,14 @@ class UserAccount:
     """Represent a user account."""
 ```
 
-Existing public names may be compatibility contracts: do not rename them
-without examining callers and planning any needed migration.
+Existing public names may be compatibility contracts: do not rename them without
+examining callers and planning any needed migration.
 
 ## Docstrings
 
-**Documentation — medium except for public contract ambiguity.**
-Document public APIs, side effects, error conditions, and non-obvious behavior.
-Avoid repetitive filler or claiming an exception that code never raises.
+**Documentation — medium except for public contract ambiguity.** Document public
+APIs, side effects, error conditions, and non-obvious behavior. Avoid repetitive
+filler or claiming an exception that code never raises.
 
 Bad:
 
@@ -270,8 +271,8 @@ requiring expansive docstrings for obvious private helpers.
 
 ## Duplicate example
 
-**Type contract gotcha.** `Counter` uses hashing: an unconstrained type
-variable would falsely suggest lists or other unhashable elements work.
+**Type contract gotcha.** `Counter` uses hashing: an unconstrained type variable
+would falsely suggest lists or other unhashable elements work.
 
 Good (requires hashable inputs; preserves first duplicate appearance):
 

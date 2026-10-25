@@ -1,11 +1,18 @@
 ---
 name: polyglot-test-agent
-description: 'Generates comprehensive, workable unit tests for any programming language using a multi-agent pipeline. Use when asked to generate tests, write unit tests, improve test coverage, add test coverage, create test files, or test a codebase. Supports C#, TypeScript, JavaScript, Python, Go, Rust, Java, and more. Orchestrates research, planning, and implementation phases to produce tests that compile, pass, and follow project conventions.'
+description:
+  'Generates comprehensive, workable unit tests for any programming language
+  using a multi-agent pipeline. Use when asked to generate tests, write unit
+  tests, improve test coverage, add test coverage, create test files, or test a
+  codebase. Supports C#, TypeScript, JavaScript, Python, Go, Rust, Java, and
+  more. Orchestrates research, planning, and implementation phases to produce
+  tests that compile, pass, and follow project conventions.'
 ---
 
 # Polyglot Test Generation Skill
 
-An AI-powered skill that generates comprehensive, workable unit tests for any programming language using a coordinated multi-agent pipeline.
+An AI-powered skill that generates comprehensive, workable unit tests for any
+programming language using a coordinated multi-agent pipeline.
 
 ## When to Use This Skill
 
@@ -19,7 +26,8 @@ Use this skill when you need to:
 
 ## How It Works
 
-This skill coordinates multiple specialized agents in a **Research → Plan → Implement** pipeline:
+This skill coordinates multiple specialized agents in a **Research → Plan →
+Implement** pipeline:
 
 ### Pipeline Overview
 
@@ -53,12 +61,17 @@ This skill coordinates multiple specialized agents in a **Research → Plan → 
 
 ### Step 1: Determine the User Request
 
-Make sure you understand what user is asking and for what scope.
-When the user does not express strong requirements for test style, coverage goals, or conventions, source the guidelines from [unit-test-generation.prompt.md](unit-test-generation.prompt.md). This prompt provides best practices for discovering conventions, parameterization strategies, coverage goals (aim for 80%), and language-specific patterns.
+Make sure you understand what user is asking and for what scope. When the user
+does not express strong requirements for test style, coverage goals, or
+conventions, source the guidelines from
+[unit-test-generation.prompt.md](unit-test-generation.prompt.md). This prompt
+provides best practices for discovering conventions, parameterization
+strategies, coverage goals (aim for 80%), and language-specific patterns.
 
 ### Step 2: Invoke the Test Generator
 
-Start by calling the `polyglot-test-generator` agent with your test generation request:
+Start by calling the `polyglot-test-generator` agent with your test generation
+request:
 
 ```
 Generate unit tests for [path or description of what to test], following the [unit-test-generation.prompt.md](unit-test-generation.prompt.md) guidelines
@@ -111,11 +124,11 @@ Each phase completes before the next begins, ensuring incremental progress.
 
 All pipeline state is stored in `.testagent/` folder:
 
-| File | Purpose |
-| ------ | --------- |
-| `.testagent/research.md` | Codebase analysis results |
-| `.testagent/plan.md` | Phased implementation plan |
-| `.testagent/status.md` | Progress tracking (optional) |
+| File                     | Purpose                      |
+| ------------------------ | ---------------------------- |
+| `.testagent/research.md` | Codebase analysis results    |
+| `.testagent/plan.md`     | Phased implementation plan   |
+| `.testagent/status.md`   | Progress tracking (optional) |
 
 ## Examples
 
@@ -139,16 +152,16 @@ Add tests for the authentication module with focus on edge cases
 
 ## Agent Reference
 
-| Agent | Purpose | Tools |
-| ------- | --------- | ------- |
-| `polyglot-test-generator` | Coordinates pipeline | runCommands, codebase, editFiles, search, runSubagent |
-| `polyglot-test-researcher` | Analyzes codebase | runCommands, codebase, editFiles, search, fetch, runSubagent |
-| `polyglot-test-planner` | Creates test plan | codebase, editFiles, search, runSubagent |
-| `polyglot-test-implementer` | Writes test files | runCommands, codebase, editFiles, search, runSubagent |
-| `polyglot-test-builder` | Compiles code | runCommands, codebase, search |
-| `polyglot-test-tester` | Runs tests | runCommands, codebase, search |
-| `polyglot-test-fixer` | Fixes errors | runCommands, codebase, editFiles, search |
-| `polyglot-test-linter` | Formats code | runCommands, codebase, search |
+| Agent                       | Purpose              | Tools                                                        |
+| --------------------------- | -------------------- | ------------------------------------------------------------ |
+| `polyglot-test-generator`   | Coordinates pipeline | runCommands, codebase, editFiles, search, runSubagent        |
+| `polyglot-test-researcher`  | Analyzes codebase    | runCommands, codebase, editFiles, search, fetch, runSubagent |
+| `polyglot-test-planner`     | Creates test plan    | codebase, editFiles, search, runSubagent                     |
+| `polyglot-test-implementer` | Writes test files    | runCommands, codebase, editFiles, search, runSubagent        |
+| `polyglot-test-builder`     | Compiles code        | runCommands, codebase, search                                |
+| `polyglot-test-tester`      | Runs tests           | runCommands, codebase, search                                |
+| `polyglot-test-fixer`       | Fixes errors         | runCommands, codebase, editFiles, search                     |
+| `polyglot-test-linter`      | Formats code         | runCommands, codebase, search                                |
 
 ## Requirements
 
@@ -160,12 +173,15 @@ Add tests for the authentication module with focus on edge cases
 
 ### Tests don't compile
 
-The `polyglot-test-fixer` agent will attempt to resolve compilation errors. Check `.testagent/plan.md` for the expected test structure.
+The `polyglot-test-fixer` agent will attempt to resolve compilation errors.
+Check `.testagent/plan.md` for the expected test structure.
 
 ### Tests fail
 
-Review the test output and adjust test expectations. Some tests may require mocking dependencies.
+Review the test output and adjust test expectations. Some tests may require
+mocking dependencies.
 
 ### Wrong testing framework detected
 
-Specify your preferred framework in the initial request: "Generate Jest tests for..."
+Specify your preferred framework in the initial request: "Generate Jest tests
+for..."

@@ -946,11 +946,10 @@ skills/<skill-id>/
         deployment-decision.yaml
 ```
 
-The existing `evals/activation`, `evals/red-green`,
-`evals/pressure`, `evals/reference`, and
-`evals/regression` folders can remain the **case-definition library**;
-executed campaign evidence should be stored separately so reusable scenarios are
-not overwritten by run results.
+The existing `evals/activation`, `evals/red-green`, `evals/pressure`,
+`evals/reference`, and `evals/regression` folders can remain the
+**case-definition library**; executed campaign evidence should be stored
+separately so reusable scenarios are not overwritten by run results.
 
 ---
 

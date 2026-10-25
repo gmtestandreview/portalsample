@@ -3,13 +3,9 @@
   "version": "1.0.0",
   "description": "Adds, refines, and validates educational inline comments in source code while preserving runnable behavior and repository commenting conventions.",
   "agent_file": ".github/agents/educational-code-commenting-agent/educational-code-commenting.agent.md",
-  "prompt_files": [
-    ".github/prompts/educational-code-commenting.prompt.md"
-  ],
+  "prompt_files": [".github/prompts/educational-code-commenting.prompt.md"],
   "primary_skill": "add-educational-comments",
-  "skill_files": [
-    ".github/skills/add-educational-comments/SKILL.md"
-  ],
+  "skill_files": [".github/skills/add-educational-comments/SKILL.md"],
   "instruction_files": [
     ".github/instructions/educational-code-commenting-agent.instructions.md",
     ".github/instructions/self-explanatory-code-commenting.instructions.md"

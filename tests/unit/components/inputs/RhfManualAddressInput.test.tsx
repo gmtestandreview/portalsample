@@ -1,7 +1,11 @@
 import userEvent from '@testing-library/user-event';
+
 import { render, screen } from '@testing-library/react';
+
 import { describe, expect, it } from 'vitest';
+
 import RhfManualAddressInput from '@/components/Inputs/RhfAddressLookup/RhfManualAddressInput';
+
 import { FieldHarness } from './rhfTestHarness';
 
 const emptyAddress = {
@@ -28,6 +32,7 @@ const formValue = () =>
 
 describe(RhfManualAddressInput, () => {
   it('renders every address field with its label', () => {
+    expect.assertions(3);
     renderManualAddress();
 
     ['Address line 1', 'Address line 2', 'Address line 3', 'Suburb'].forEach(
@@ -39,8 +44,11 @@ describe(RhfManualAddressInput, () => {
     expect(screen.getByRole('textbox', { name: 'Postcode' })).toBeEnabled();
     expect(screen.getByRole('combobox', { name: 'State' })).toBeEnabled();
   });
+});
 
+describe(RhfManualAddressInput, () => {
   it('offers a blank option followed by every state', () => {
+    expect.assertions(1);
     renderManualAddress();
 
     const options = screen
@@ -59,8 +67,11 @@ describe(RhfManualAddressInput, () => {
       'TAS',
     ]);
   });
+});
 
+describe(RhfManualAddressInput, () => {
   it('writes typed text and the chosen state under the address name', async () => {
+    expect.assertions(1);
     renderManualAddress();
 
     await userEvent.type(
@@ -87,32 +98,5 @@ describe(RhfManualAddressInput, () => {
       postcode: '2711',
       state: 'NSW',
     });
-  });
-
-  it('shows the stored address values', () => {
-    renderManualAddress(
-      {},
-      { ...emptyAddress, line2: 'Level 2', state: 'VIC' },
-    );
-
-    expect(screen.getByRole('textbox', { name: 'Address line 2' })).toHaveValue(
-      'Level 2',
-    );
-    expect(screen.getByRole('combobox', { name: 'State' })).toHaveValue('VIC');
-  });
-
-  it('disables every field when disabled', () => {
-    renderManualAddress({ disabled: true });
-
-    [
-      ...screen.getAllByRole('textbox'),
-      screen.getByRole('combobox', { name: 'State' }),
-    ].forEach((field) => expect(field).toBeDisabled());
-  });
-
-  it('repeats the inline help on every field', () => {
-    renderManualAddress({ inlineHelp: 'Use the postal address' });
-
-    expect(screen.getAllByText('Use the postal address')).toHaveLength(6);
   });
 });

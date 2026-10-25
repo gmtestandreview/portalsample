@@ -109,7 +109,7 @@ branch coverage.
 | `build-node24` | production Vite build + `storybook:verify:docs` |
 | `date-timezone` × 3 | the focused date suite under UTC, Australia/Sydney, America/Los_Angeles |
 | `e2e-node24` | both BDD suites (`npm run test:e2e`) |
-| `lower-bound-node24` | install on the exact Node 24.0.0 floor with `--strict-peer-deps`, plus dependency-security policy tests |
+| `lower-bound-node24` | install on the exact Node 24.21.0 floor with `--strict-peer-deps`, plus dependency-security policy tests |
 | `sonarcloud` | SonarCloud scan; `sonar.qualitygate.wait=true` makes a red gate block the merge |
 
 E2E artifacts are uploaded from `reports/playwright/**` and `reports/test-results/**` with

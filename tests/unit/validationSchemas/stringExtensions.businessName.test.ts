@@ -7,28 +7,33 @@ describe('yup stringExtensions — businessName', () => {
   const schema = Yup.string().businessName('Business name');
 
   it('accepts a valid ASIC-compliant business name', async () => {
+    expect.assertions(1);
     await expect(schema.validate('Test Pty Ltd & Co.')).resolves.toBe(
       'Test Pty Ltd & Co.',
     );
   });
 
   it("accepts characters from the ASIC allowed set: ! @ # $ % ^ & * ( ) ? ; : = _ - / . , '", async () => {
+    expect.assertions(1);
     await expect(
       schema.validate("O'Brien-Smith Pty Ltd"),
     ).resolves.toBeDefined();
   });
 
   it('rejects a name containing < or > (disallowed ASIC chars)', async () => {
+    expect.assertions(1);
     await expect(schema.validate('<script>bad</script>')).rejects.toThrow(
       'Business name contains invalid characters',
     );
   });
 
   it('allows empty string (required check is a separate concern)', async () => {
+    expect.assertions(1);
     await expect(schema.validate('')).resolves.toBeDefined();
   });
 
   it('yup.string() exposes .businessName as a function — declaration is present', () => {
+    expect.assertions(1);
     expect(Yup.string().businessName).toBeTypeOf('function');
   });
 });

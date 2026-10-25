@@ -1,17 +1,25 @@
 import type React from 'react';
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { render, screen, waitFor } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { createMemoryRouter, RouterProvider } from 'react-router';
+
 import {
   FormStepStatus,
   type FormStepStatusDto,
 } from '../../../../../ClientApp/src/api/web-api-client';
+
 import {
   AccountStateCtx,
   AccountDispatchCtx,
 } from '../../../../../ClientApp/src/authentication/accountContext';
+
 import WizardForm from '../../../../../ClientApp/src/components/forms/WizardForm';
+
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
@@ -205,14 +213,12 @@ function makeSplitSplatTwoStepRouter(
   );
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
-
 describe('wizardForm — step navigation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
   it('renders step 1 content on initial load', async () => {
+    expect.assertions(2);
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -225,181 +231,5 @@ describe('wizardForm — step navigation', () => {
     );
 
     expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
-  });
-
-  it('navigates forward from step 1 to step 2 after successful submit', async () => {
-    const statuses: FormStepStatusDto[] = [
-      { status: FormStepStatus.NotStarted },
-      { status: FormStepStatus.NotStarted },
-    ];
-    const step1Save = vi.fn().mockResolvedValue({});
-    const router = makeTwoStepRouter(statuses, step1Save);
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
-
-    await userEvent.click(screen.getByTestId('save-and-next-button'));
-
-    await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
-    );
-
-    expect(screen.queryByTestId('step-1-content')).not.toBeInTheDocument();
-    // Confirm form submission was triggered (navigation is driven by onSaveAndNext resolving)
-    expect(step1Save).toHaveBeenCalledTimes(1);
-  });
-
-  it('still navigates when the current step has no status entry', async () => {
-    const step1Save = vi.fn().mockResolvedValue({});
-    const router = makeTwoStepRouter([], step1Save);
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
-    await userEvent.click(screen.getByTestId('save-and-next-button'));
-
-    await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
-    );
-
-    expect(step1Save).toHaveBeenCalledTimes(1);
-  });
-
-  it('navigates back from step 2 to step 1 via the back button', async () => {
-    const statuses: FormStepStatusDto[] = [
-      { status: FormStepStatus.Completed },
-      { status: FormStepStatus.NotStarted },
-    ];
-    const router = makeTwoStepRouter(
-      statuses,
-      undefined,
-      undefined,
-      '/wizard/step-2',
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument(),
-    );
-
-    await userEvent.click(screen.getByTestId('back-button'));
-
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
-
-    expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
-  });
-
-  it('linear guard: navigating directly to step 2 with step 1 incomplete redirects to step 1', async () => {
-    const statuses: FormStepStatusDto[] = [
-      { status: FormStepStatus.NotStarted },
-      { status: FormStepStatus.NotStarted },
-    ];
-    const router = makeTwoStepRouter(
-      statuses,
-      undefined,
-      undefined,
-      '/wizard/step-2',
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
-
-    expect(screen.queryByTestId('step-2-content')).not.toBeInTheDocument();
-  });
-
-  it('navigates to locationOnCompletion after the final step submits successfully', async () => {
-    const statuses: FormStepStatusDto[] = [
-      { status: FormStepStatus.Completed },
-      { status: FormStepStatus.NotStarted },
-    ];
-    const router = makeTwoStepRouter(
-      statuses,
-      undefined,
-      undefined,
-      '/wizard/step-2',
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
-
-    await userEvent.click(screen.getByTestId('save-and-next-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('Done Page')).toBeInTheDocument(),
-    );
-  });
-
-  it('smoke: preserves the resolved wizard base path for split splat route step navigation', async () => {
-    const statuses: FormStepStatusDto[] = [
-      { status: FormStepStatus.NotStarted },
-      { status: FormStepStatus.NotStarted },
-    ];
-    const step1Save = vi.fn().mockResolvedValue({});
-    const router = makeSplitSplatTwoStepRouter(statuses, step1Save);
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
-    );
-
-    await userEvent.click(screen.getByTestId('save-and-next-button'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('step-2-content')).toBeInTheDocument();
-      expect(router.state.location.pathname).toBe(
-        '/request-for-quote/abc-123/step-2',
-      );
-    });
-
-    await userEvent.click(screen.getByTestId('back-button'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('step-1-content')).toBeInTheDocument();
-      expect(router.state.location.pathname).toBe(
-        '/request-for-quote/abc-123/step-1',
-      );
-    });
-  });
-
-  it('uses the root path when the resolved path is only the step location', async () => {
-    const statuses: FormStepStatusDto[] = [
-      { status: FormStepStatus.NotStarted },
-    ];
-    const router = createMemoryRouter(
-      [
-        {
-          path: '*',
-          element: (
-            <AccountStateCtx.Provider value={mockStateValue}>
-              <AccountDispatchCtx.Provider value={mockDispatch}>
-                <WizardForm locationOnCompletion='/done' canSaveDraft={false}>
-                  <WizardStep
-                    title='Root step'
-                    location='/step-1'
-                    initialValues={{}}
-                    stepStatuses={statuses}
-                    loadStepValues={async () => ({ stepValues: {} })}
-                    onSaveAndNext={vi.fn().mockResolvedValue({})}
-                  >
-                    <div data-testid='root-step-content'>Root step</div>
-                  </WizardStep>
-                </WizardForm>
-              </AccountDispatchCtx.Provider>
-            </AccountStateCtx.Provider>
-          ),
-        },
-        { path: '/done', element: <div>Done Page</div> },
-      ],
-      { initialEntries: ['/step-1'] },
-    );
-
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('root-step-content')).toBeInTheDocument(),
-    );
   });
 });

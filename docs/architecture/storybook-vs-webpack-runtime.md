@@ -12,23 +12,23 @@ loading behavior aligned.
 
 ## Canonical pipelines
 
-| Surface | Entry point | Purpose |
-| --- | --- | --- |
-| Application development | `npm run dev` / `npm start` | Vite dev server |
-| Application production | `npm run build` | Vite production bundle |
-| Storybook | `npm run storybook` | Component development and documentation |
-| Storybook tests | `npm run test:storybook` | Browser-mode story interaction tests |
-| Application E2E | `npm run test:e2e:app` | Real application workflows against the Vite server |
+| Surface                 | Entry point                 | Purpose                                            |
+| ----------------------- | --------------------------- | -------------------------------------------------- |
+| Application development | `npm run dev` / `npm start` | Vite dev server                                    |
+| Application production  | `npm run build`             | Vite production bundle                             |
+| Storybook               | `npm run storybook`         | Component development and documentation            |
+| Storybook tests         | `npm run test:storybook`    | Browser-mode story interaction tests               |
+| Application E2E         | `npm run test:e2e:app`      | Real application workflows against the Vite server |
 
 ## Shared build contract
 
-| Concern | Production application | Storybook and tests |
-| --- | --- | --- |
-| CSS/SCSS | Vite `css.preprocessorOptions` | Storybook Vite configuration |
-| Module aliases | `vite.config.mts` | `.storybook/main.ts` |
-| Static assets | Vite asset handling | Vite asset handling |
-| Runtime environment | `env.ts` reads injected `window.*` values | Test and Storybook harness stubs the same contract |
-| Code splitting | Vite-generated lazy chunks | Storybook exercises the component-level module graph |
+| Concern             | Production application                    | Storybook and tests                                  |
+| ------------------- | ----------------------------------------- | ---------------------------------------------------- |
+| CSS/SCSS            | Vite `css.preprocessorOptions`            | Storybook Vite configuration                         |
+| Module aliases      | `vite.config.mts`                         | `.storybook/main.ts`                                 |
+| Static assets       | Vite asset handling                       | Vite asset handling                                  |
+| Runtime environment | `env.ts` reads injected `window.*` values | Test and Storybook harness stubs the same contract   |
+| Code splitting      | Vite-generated lazy chunks                | Storybook exercises the component-level module graph |
 
 ## Verification checklist
 
@@ -54,9 +54,9 @@ the production build and runtime verifiers.
 
 ## Files involved
 
-| File | Role |
-| --- | --- |
-| `vite.config.mts` | Application development, production, Sass, alias, and runtime plugins |
-| `.storybook/main.ts` | Storybook Vite adapter and shared build settings |
-| `.storybook/preview.ts` | Global decorators and asset setup |
-| `ClientApp/src/storybook/storybookHarness.tsx` | MSAL and application-provider test context |
+| File                                           | Role                                                                  |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| `vite.config.mts`                              | Application development, production, Sass, alias, and runtime plugins |
+| `.storybook/main.ts`                           | Storybook Vite adapter and shared build settings                      |
+| `.storybook/preview.ts`                        | Global decorators and asset setup                                     |
+| `ClientApp/src/storybook/storybookHarness.tsx` | MSAL and application-provider test context                            |

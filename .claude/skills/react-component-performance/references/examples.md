@@ -2,7 +2,9 @@
 
 ## Isolate a ticking timer from a long list
 
-**Scenario:** A message list re-renders every second because a timer (`elapsedMs`) lives in the parent component. This causes visible jank on large lists.
+**Scenario:** A message list re-renders every second because a timer
+(`elapsedMs`) lives in the parent component. This causes visible jank on large
+lists.
 
 **Goal:** Keep UI identical but limit re-renders to the timer area.
 
@@ -79,7 +81,8 @@ function Messages({ items, isThinking, processingStartedAt }) {
 }
 ```
 
-**Why it helps:** Only the `WorkingIndicator` subtree re-renders every second. The list remains stable unless its props change.
+**Why it helps:** Only the `WorkingIndicator` subtree re-renders every second.
+The list remains stable unless its props change.
 
 **Optional follow-ups:**
 

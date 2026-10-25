@@ -51,55 +51,55 @@
 
 #### Code Quality
 
-| Metric | Formula | Target | Action if Below |
-| -------- | --------- | -------- | ----------------- |
-| Test Coverage | Tests / Total Code | >80% | Add unit tests |
-| Code Review Coverage | Reviewed PRs / Total PRs | 100% | Enforce review policy |
-| Technical Debt Ratio | Debt / Development Time | <10% | Dedicate debt sprints |
-| Cyclomatic Complexity | Per function/method | <10 | Refactor complex code |
-| Code Duplication | Duplicate Lines / Total | <5% | Extract common code |
+| Metric                | Formula                  | Target | Action if Below       |
+| --------------------- | ------------------------ | ------ | --------------------- |
+| Test Coverage         | Tests / Total Code       | >80%   | Add unit tests        |
+| Code Review Coverage  | Reviewed PRs / Total PRs | 100%   | Enforce review policy |
+| Technical Debt Ratio  | Debt / Development Time  | <10%   | Dedicate debt sprints |
+| Cyclomatic Complexity | Per function/method      | <10    | Refactor complex code |
+| Code Duplication      | Duplicate Lines / Total  | <5%    | Extract common code   |
 
 #### Development Velocity
 
-| Metric | Formula | Target | Action if Below |
-| -------- | --------- | -------- | ----------------- |
-| Sprint Velocity | Story Points / Sprint | Stable ±10% | Review estimation |
-| Cycle Time | Start to Done Time | <5 days | Reduce WIP |
-| PR Merge Time | Open to Merge | <24 hours | Smaller PRs |
-| Build Time | Code to Artifact | <10 minutes | Optimize pipeline |
-| Test Execution Time | Full Test Suite | <30 minutes | Parallelize tests |
+| Metric              | Formula               | Target      | Action if Below   |
+| ------------------- | --------------------- | ----------- | ----------------- |
+| Sprint Velocity     | Story Points / Sprint | Stable ±10% | Review estimation |
+| Cycle Time          | Start to Done Time    | <5 days     | Reduce WIP        |
+| PR Merge Time       | Open to Merge         | <24 hours   | Smaller PRs       |
+| Build Time          | Code to Artifact      | <10 minutes | Optimize pipeline |
+| Test Execution Time | Full Test Suite       | <30 minutes | Parallelize tests |
 
 #### Team Health
 
-| Metric | Formula | Target | Action if Below |
-| -------- | --------- | -------- | ----------------- |
-| On-call Incidents | Incidents / Week | <5 | Improve monitoring |
-| Bug Escape Rate | Prod Bugs / Release | <5% | Improve testing |
-| Unplanned Work | Unplanned / Total | <20% | Better planning |
-| Meeting Time | Meetings / Total Time | <20% | Reduce meetings |
-| Focus Time | Uninterrupted Hours | >4h/day | Block calendars |
+| Metric            | Formula               | Target  | Action if Below    |
+| ----------------- | --------------------- | ------- | ------------------ |
+| On-call Incidents | Incidents / Week      | <5      | Improve monitoring |
+| Bug Escape Rate   | Prod Bugs / Release   | <5%     | Improve testing    |
+| Unplanned Work    | Unplanned / Total     | <20%    | Better planning    |
+| Meeting Time      | Meetings / Total Time | <20%    | Reduce meetings    |
+| Focus Time        | Uninterrupted Hours   | >4h/day | Block calendars    |
 
 ### Business Impact Metrics
 
 #### System Performance
 
-| Metric | Description | Target | Business Impact |
-| -------- | ------------- | -------- | ----------------- |
-| Uptime | System availability | 99.9%+ | Revenue protection |
-| Page Load Time | Time to interactive | <3s | User retention |
-| API Response Time | P95 latency | <200ms | User experience |
-| Error Rate | Errors / Requests | <0.1% | Customer satisfaction |
-| Throughput | Requests / Second | Per requirement | Scalability |
+| Metric            | Description         | Target          | Business Impact       |
+| ----------------- | ------------------- | --------------- | --------------------- |
+| Uptime            | System availability | 99.9%+          | Revenue protection    |
+| Page Load Time    | Time to interactive | <3s             | User retention        |
+| API Response Time | P95 latency         | <200ms          | User experience       |
+| Error Rate        | Errors / Requests   | <0.1%           | Customer satisfaction |
+| Throughput        | Requests / Second   | Per requirement | Scalability           |
 
 #### Product Delivery
 
-| Metric | Description | Target | Business Impact |
-| -------- | ------------- | -------- | ----------------- |
-| Feature Delivery Rate | Features / Quarter | Per roadmap | Market competitiveness |
-| Time to Market | Idea to Production | <3 months | First mover advantage |
-| Customer Defect Rate | Customer Bugs / Month | <10 | Customer satisfaction |
-| Feature Adoption | Users / Feature | >50% | ROI validation |
-| NPS from Engineering | Customer Score | >50 | Product quality |
+| Metric                | Description           | Target      | Business Impact        |
+| --------------------- | --------------------- | ----------- | ---------------------- |
+| Feature Delivery Rate | Features / Quarter    | Per roadmap | Market competitiveness |
+| Time to Market        | Idea to Production    | <3 months   | First mover advantage  |
+| Customer Defect Rate  | Customer Bugs / Month | <10         | Customer satisfaction  |
+| Feature Adoption      | Users / Feature       | >50%        | ROI validation         |
+| NPS from Engineering  | Customer Score        | >50         | Product quality        |
 
 ## Metrics Dashboards
 
@@ -218,7 +218,7 @@
 ❌ **Hours Worked**: Promotes presenteeism  
 ❌ **Individual Velocity**: Creates competition  
 ❌ **Bug Count Without Context**: Discourages risk-taking  
-❌ **Commit Count**: Encourages tiny commits  
+❌ **Commit Count**: Encourages tiny commits
 
 ### Goodhart's Law
 
@@ -279,38 +279,44 @@
 # Engineering Report - [Month Year]
 
 ## Executive Summary
+
 - Key Achievement: [Highlight]
 - Main Challenge: [Issue and resolution]
 - Next Month Focus: [Priority]
 
 ## DORA Metrics
-| Metric | This Month | Last Month | Target | Status |
-|--------|------------|------------|--------|--------|
-| Deploy Frequency | X/day | Y/day | Z/day | ✓/⚠/✗ |
-| Lead Time | X hrs | Y hrs | <Z hrs | ✓/⚠/✗ |
-| MTTR | X min | Y min | <Z min | ✓/⚠/✗ |
-| Change Failure | X% | Y% | <Z% | ✓/⚠/✗ |
+
+| Metric           | This Month | Last Month | Target | Status |
+| ---------------- | ---------- | ---------- | ------ | ------ |
+| Deploy Frequency | X/day      | Y/day      | Z/day  | ✓/⚠/✗  |
+| Lead Time        | X hrs      | Y hrs      | <Z hrs | ✓/⚠/✗  |
+| MTTR             | X min      | Y min      | <Z min | ✓/⚠/✗  |
+| Change Failure   | X%         | Y%         | <Z%    | ✓/⚠/✗  |
 
 ## Team Performance
+
 - Velocity: X story points (Y% of plan)
 - Sprint Completion: X%
 - Unplanned Work: X%
 
 ## Quality Metrics
+
 - Test Coverage: X% (Δ Y%)
 - Customer Bugs: X (Δ Y)
 - Code Review Coverage: X%
 
 ## Highlights
+
 1. [Major feature or improvement]
 2. [Technical achievement]
 3. [Process improvement]
 
 ## Challenges & Solutions
-1. Challenge: [Issue]
-   Solution: [Action taken]
-   
+
+1. Challenge: [Issue] Solution: [Action taken]
+
 ## Next Month Priorities
+
 1. [Priority 1]
 2. [Priority 2]
 3. [Priority 3]
@@ -322,6 +328,7 @@
 # Engineering QBR - Q[X] [Year]
 
 ## Strategic Alignment
+
 - Business Goal: [Goal]
 - Engineering Contribution: [How engineering supported]
 - Impact: [Measurable outcome]
@@ -329,36 +336,43 @@
 ## Quarterly Metrics
 
 ### Delivery
+
 - Features Shipped: X of Y planned (Z%)
 - Major Releases: [List]
 - Technical Debt Reduced: X%
 
 ### Reliability
+
 - Uptime: X%
 - Incidents: X (PY critical, PZ major)
 - Customer Impact: [Description]
 
 ### Efficiency
+
 - Cost per Transaction: $X (Δ Y%)
 - Infrastructure Cost: $X (Δ Y%)
 - Engineering Cost per Feature: $X
 
 ## Team Growth
+
 - Headcount: Start: X → End: Y
 - Attrition: X%
 - Key Hires: [Roles]
 
 ## Innovation
+
 - Patents Filed: X
 - Open Source Contributions: X
 - Hackathon Projects: X
 
 ## Lessons Learned
+
 1. [What worked well]
 2. [What didn't work]
 3. [What we're changing]
 
 ## Next Quarter Focus
+
 1. [Strategic Initiative 1]
 2. [Strategic Initiative 2]
 3. [Strategic Initiative 3]
@@ -403,7 +417,7 @@
 ✓ Attrition <10% annually  
 ✓ On-time delivery >80%  
 ✓ Technical debt <15% of capacity  
-✓ Innovation time >20%  
+✓ Innovation time >20%
 
 ### Warning Signs
 
@@ -412,7 +426,7 @@
 ⚠️ Rising bug escape rate  
 ⚠️ Increasing unplanned work  
 ⚠️ Growing PR queue  
-⚠️ Decreasing test coverage  
+⚠️ Decreasing test coverage
 
 ### Crisis Indicators
 

@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { http, HttpResponse } from 'msw/http';
 import { expect, within } from 'storybook/test';

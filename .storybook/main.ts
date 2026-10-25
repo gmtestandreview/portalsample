@@ -2,37 +2,10 @@ import { defineMain } from '@storybook/react-vite/node';
 import remarkGfm from 'remark-gfm';
 import { clientDirectives } from './clientDirectives.ts';
 import { onLog } from './rollupOnLog.ts';
-
-const sassDeprecationsToSilence = [
-  'import',
-  'global-builtin',
-  'color-functions',
-  'if-function',
-];
-
-const applicationVendorGroups = [
-  {
-    name: 'react-runtime',
-    test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
-  },
-  {
-    name: 'auth',
-    test: /[\\/]node_modules[\\/]@azure[\\/]/,
-  },
-  {
-    name: 'forms',
-    test: /[\\/]node_modules[\\/](formik|yup)[\\/]/,
-  },
-  {
-    name: 'ui',
-    test: /[\\/]node_modules[\\/]react-bootstrap[\\/]/,
-  },
-  {
-    name: 'utilities',
-    // Lodash remains a transitive runtime dependency of Formik and Slate.
-    test: /[\\/]node_modules[\\/](lodash|date-fns)[\\/]/,
-  },
-];
+import {
+  APPLICATION_VENDOR_CHUNK_GROUPS,
+  SASS_PREPROCESSOR_OPTIONS,
+} from '../storybook-vite-policies.ts';
 
 // The Chromatic addon registers as a Storybook test provider. In development,
 // that makes the component-test runner start a remote Chromatic build as well,
@@ -111,8 +84,7 @@ export default defineMain({
       css: {
         preprocessorOptions: {
           scss: {
-            quietDeps: true,
-            silenceDeprecations: sassDeprecationsToSilence,
+            ...SASS_PREPROCESSOR_OPTIONS,
           },
         },
       },
@@ -136,7 +108,7 @@ export default defineMain({
             strictExecutionOrder: true,
             codeSplitting: {
               groups: [
-                ...applicationVendorGroups,
+                ...APPLICATION_VENDOR_CHUNK_GROUPS,
                 {
                   name: 'storybook-runtime',
                   test: /[\\/]node_modules[\\/]storybook[\\/]dist[\\/]preview[\\/]runtime\.js$/,

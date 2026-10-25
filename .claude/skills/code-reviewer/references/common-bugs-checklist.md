@@ -1,6 +1,8 @@
 # Common Bugs Checklist
 
-Quick-reference bug patterns organized by category. For detailed code examples, explanations, and comprehensive review checklists, see the dedicated language guides linked below.
+Quick-reference bug patterns organized by category. For detailed code examples,
+explanations, and comprehensive review checklists, see the dedicated language
+guides linked below.
 
 ## Universal Issues
 
@@ -71,7 +73,8 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] `useSuspenseQuery` with `enabled` option (not supported)
 - [ ] Mutation not invalidating related queries on success
 - [ ] Optimistic update missing rollback in `onError`
-- [ ] Using v4 array syntax (`useQuery(['key'], fn)`) instead of v5 object syntax
+- [ ] Using v4 array syntax (`useQuery(['key'], fn)`) instead of v5 object
+      syntax
 
 **Testing:**
 
@@ -85,7 +88,8 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 ## Vue 3
 
 - [ ] Destructuring `reactive()` object loses reactivity (use `toRefs`)
-- [ ] Passing `props.x` to composable instead of `() => props.x` or `toRef(props, 'x')`
+- [ ] Passing `props.x` to composable instead of `() => props.x` or
+      `toRef(props, 'x')`
 - [ ] `watch` with async callback missing `onCleanup` (race condition)
 - [ ] `computed` with side effects (mutations, API calls)
 - [ ] `v-for` using index as `:key` when list can reorder
@@ -163,11 +167,12 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 
 ## Java / Spring Boot
 
-- [ ] POJO/DTO with manual boilerplate instead of `record` *(Java 17+)*
-- [ ] Traditional switch missing `break` (use switch expressions) *(Java 14+)*
+- [ ] POJO/DTO with manual boilerplate instead of `record` _(Java 17+)_
+- [ ] Traditional switch missing `break` (use switch expressions) _(Java 14+)_
 - [ ] Field injection instead of constructor injection
 - [ ] JPA N+1 query (missing `fetch join` or `@EntityGraph`)
-- [ ] Incorrect `equals`/`hashCode` on JPA entities (avoid `@Data`; prefer stable business key or null-safe id - never all lazy fields)
+- [ ] Incorrect `equals`/`hashCode` on JPA entities (avoid `@Data`; prefer
+      stable business key or null-safe id - never all lazy fields)
 - [ ] `Optional.get()` without `isPresent()` check
 - [ ] Stream operations with side effects
 
@@ -204,25 +209,35 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 ## Ruby / Rails
 
 - [ ] Condition assumes `0`, `""`, or `[]` is falsey
-- [ ] Mutable Hash/Array default shared across entries (`Hash.new([])`, `Array.new(3, [])`)
+- [ ] Mutable Hash/Array default shared across entries (`Hash.new([])`,
+      `Array.new(3, [])`)
 - [ ] Bang method return value treated as the transformed object
 - [ ] Bare or broad `rescue` hides unrelated failures or exposes `error.message`
-- [ ] Dynamic `send`, `constantize`, `eval`, or SQL fragment controlled by user input
-- [ ] Untrusted data passed to `Marshal.load`, unsafe YAML loading, or an interpolated shell command
+- [ ] Dynamic `send`, `constantize`, `eval`, or SQL fragment controlled by user
+      input
+- [ ] Untrusted data passed to `Marshal.load`, unsafe YAML loading, or an
+      interpolated shell command
 - [ ] Strong parameters use `permit!`, `to_unsafe_h`, or an empty hash allowlist
-- [ ] Nested `params.expect` arrays use a flat shape instead of the required `[[...]]` form
+- [ ] Nested `params.expect` arrays use a flat shape instead of the required
+      `[[...]]` form
 - [ ] Active Record query interpolates values or dynamic identifiers into SQL
-- [ ] `Model.find(params[:id])` loads a record before ownership or policy scoping (IDOR)
-- [ ] `redirect_to` accepts a user-controlled URL with `allow_other_host: true` (open redirect)
-- [ ] Browser-authenticated state changes skip CSRF protection or use unsafe session cookie flags
+- [ ] `Model.find(params[:id])` loads a record before ownership or policy
+      scoping (IDOR)
+- [ ] `redirect_to` accepts a user-controlled URL with `allow_other_host: true`
+      (open redirect)
+- [ ] Browser-authenticated state changes skip CSRF protection or use unsafe
+      session cookie flags
 - [ ] Association access in a loop causes N+1 queries
-- [ ] Model validation lacks a matching database constraint for a critical invariant
+- [ ] Model validation lacks a matching database constraint for a critical
+      invariant
 - [ ] `update_all` / `delete_all` unexpectedly skips callbacks and validations
 - [ ] Bulk writes can drift a `counter_cache` without reconciliation
-- [ ] Active Job retry can duplicate a payment, email, or other external side effect
+- [ ] Active Job retry can duplicate a payment, email, or other external side
+      effect
 - [ ] GlobalID job argument can be deleted before deserialization
 - [ ] Transaction contains external side effects that cannot roll back
-- [ ] Retried create/payment request can duplicate committed work without an idempotency key
+- [ ] Retried create/payment request can duplicate committed work without an
+      idempotency key
 
 **Full guide:** Ruby and Rails review guide is not bundled with this skill.
 
@@ -232,7 +247,8 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Closure capturing `self` strongly without `[weak self]` (retain cycle)
 - [ ] Reference type (`class`) used where a value type (`struct`) is intended
 - [ ] Errors swallowed instead of propagated via `throws` / `Result`
-- [ ] Data race across concurrency boundaries (missing `Sendable`, `@MainActor`, actor isolation)
+- [ ] Data race across concurrency boundaries (missing `Sendable`, `@MainActor`,
+      actor isolation)
 - [ ] Fire-and-forget `Task {}` that is never cancelled or leaks
 - [ ] `@ObservedObject` used where `@StateObject` is required for ownership
 - [ ] Implicitly unwrapped optional (`var x: T!`) outside IBOutlets
@@ -242,17 +258,24 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 
 ## Dart / Flutter
 
-- [ ] Missing `const` on static widget subtrees, or `_buildFoo()` helpers instead of extracted widgets
+- [ ] Missing `const` on static widget subtrees, or `_buildFoo()` helpers
+      instead of extracted widgets
 - [ ] `!` / `as` / unconstrained `late` used to silence null safety
 - [ ] Heavy `jsonDecode` / image / crypto work on the UI isolate
 - [ ] `Future` or `Stream` created inside `build` (new instance every rebuild)
-- [ ] `setState` / `BuildContext` used after `await` without `mounted` / `context.mounted`
-- [ ] `ref.watch` / `context.watch` in a callback; `read` used in `build` (or the reverse)
-- [ ] `BlocProvider.value` / `ChangeNotifierProvider.value` given a new instance constructed in `build` (use `create`; `value` does not dispose)
-- [ ] `BlocProvider(create: ...)` captures a stale `id` - missing `ValueKey(id)` remount or `didUpdateWidget` reload (`UniqueKey()` remounts every rebuild)
+- [ ] `setState` / `BuildContext` used after `await` without `mounted` /
+      `context.mounted`
+- [ ] `ref.watch` / `context.watch` in a callback; `read` used in `build` (or
+      the reverse)
+- [ ] `BlocProvider.value` / `ChangeNotifierProvider.value` given a new instance
+      constructed in `build` (use `create`; `value` does not dispose)
+- [ ] `BlocProvider(create: ...)` captures a stale `id` - missing `ValueKey(id)`
+      remount or `didUpdateWidget` reload (`UniqueKey()` remounts every rebuild)
 - [ ] Platform channel `invokeMethod` without `PlatformException` handling
-- [ ] List children holding `State` missing a stable `ValueKey` (or using `UniqueKey()` in `build`)
-- [ ] `TextEditingController` / `AnimationController` / `StreamSubscription` not disposed
+- [ ] List children holding `State` missing a stable `ValueKey` (or using
+      `UniqueKey()` in `build`)
+- [ ] `TextEditingController` / `AnimationController` / `StreamSubscription` not
+      disposed
 
 **Full guide:** Dart / Flutter review guide is not bundled with this skill.
 
@@ -279,7 +302,8 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 
 ## SQL
 
-- [ ] String concatenation for queries (SQL injection risk) - use parameterized queries
+- [ ] String concatenation for queries (SQL injection risk) - use parameterized
+      queries
 - [ ] Missing indexes on filtered/joined columns
 - [ ] `SELECT *` instead of specific columns
 - [ ] N+1 query patterns
@@ -287,10 +311,13 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Not handling `NULL` comparisons correctly (`IS NULL` vs `= NULL`)
 - [ ] Missing transactions for related operations
 - [ ] Incorrect JOIN types
-- [ ] Collation / case sensitivity surprises across databases (MySQL vs Postgres defaults)
-- [ ] Date and timezone handling errors (naive timestamps, server-local `NOW()`, DST)
+- [ ] Collation / case sensitivity surprises across databases (MySQL vs Postgres
+      defaults)
+- [ ] Date and timezone handling errors (naive timestamps, server-local `NOW()`,
+      DST)
 
-**See also:** [Security Review Guide](security-review-guide.md) for SQL injection prevention
+**See also:** [Security Review Guide](security-review-guide.md) for SQL
+injection prevention
 
 ## API Design
 

@@ -30,13 +30,13 @@ const ajvDraft7 = addFormats(
   new Ajv({
     allErrors: true,
     strict: true,
-  })
+  }),
 );
 const ajvDraft2020 = addFormats(
   new Ajv2020({
     allErrors: true,
     strict: true,
-  })
+  }),
 );
 
 const toRelativePath = (filePath) => path.relative(root, filePath);
@@ -45,7 +45,7 @@ const shouldIgnorePath = (filePath) => {
   const relativePath = toRelativePath(filePath);
 
   return ignoredPathParts.some((ignoredPathPart) =>
-    relativePath.startsWith(ignoredPathPart)
+    relativePath.startsWith(ignoredPathPart),
   );
 };
 
@@ -74,7 +74,7 @@ const collectJsonFiles = async (directory) => {
 
         jsonFiles.push(path.join(directory, entry.name));
       }
-    })
+    }),
   );
 };
 
@@ -108,10 +108,10 @@ const parsedFiles = await Promise.all(
         return { filePath, parsed };
       } catch (error) {
         failures.push(
-          `${toRelativePath(filePath)}: invalid JSON (${error.message})`
+          `${toRelativePath(filePath)}: invalid JSON (${error.message})`,
         );
       }
-    })
+    }),
 );
 
 const schemaFiles = parsedFiles
@@ -123,7 +123,7 @@ for (const { filePath, parsed } of schemaFiles) {
     getAjvForSchema(parsed).compile(parsed);
   } catch (error) {
     failures.push(
-      `${toRelativePath(filePath)}: invalid JSON Schema (${error.message})`
+      `${toRelativePath(filePath)}: invalid JSON Schema (${error.message})`,
     );
   }
 }

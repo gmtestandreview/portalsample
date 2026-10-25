@@ -196,16 +196,16 @@ pinned.
 
 ## Summary Table
 
-| Category                        | Status      | Finding                                                           |
-| ------------------------------- | ----------- | ----------------------------------------------------------------- |
-| **Dependency Pinning Policy**   | ✓ PASS      | No loosening of exact pins; 3 new deps with caret ranges (normal) |
-| **CI Workflow Injection Risk**  | ✓ PASS      | SHA-pinned actions, safe guard, no inline secrets                 |
-| **GitHub Workflow Permissions** | ✓ PASS      | Reasonable scope for `@claude` mention-triggered agent            |
-| **Settings.json Tracking**      | ✓ PASS      | ADR 2026-09-09 accepts the decision; proper governance            |
-| **MCP Server Configuration**    | ✓ PASS      | No inline tokens; env-var references only; secrets cleaned        |
-| **File Claims Hygiene**         | ✓ PASS      | No active claims; COVERAGE-GATE-001 claims released               |
+| Category                        | Status     | Finding                                                           |
+| ------------------------------- | ---------- | ----------------------------------------------------------------- |
+| **Dependency Pinning Policy**   | ✓ PASS     | No loosening of exact pins; 3 new deps with caret ranges (normal) |
+| **CI Workflow Injection Risk**  | ✓ PASS     | SHA-pinned actions, safe guard, no inline secrets                 |
+| **GitHub Workflow Permissions** | ✓ PASS     | Reasonable scope for `@claude` mention-triggered agent            |
+| **Settings.json Tracking**      | ✓ PASS     | ADR 2026-09-09 accepts the decision; proper governance            |
+| **MCP Server Configuration**    | ✓ PASS     | No inline tokens; env-var references only; secrets cleaned        |
+| **File Claims Hygiene**         | ✓ PASS     | No active claims; COVERAGE-GATE-001 claims released               |
 | **Verification Evidence**       | ⚠ ADVISORY | No verification runs in this session; no task claims completion   |
-| **Gate Weakening**              | ✓ PASS      | No thresholds lowered, no policy relaxed                          |
+| **Gate Weakening**              | ✓ PASS     | No thresholds lowered, no policy relaxed                          |
 
 ---
 

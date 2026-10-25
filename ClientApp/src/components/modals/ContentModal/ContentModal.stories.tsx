@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';

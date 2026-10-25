@@ -1,11 +1,23 @@
 {
   "loaded_resources": [
-    {"path": "request.txt", "scope": "entire request"},
-    {"path": "input.json", "scope": "nine independent requests"},
-    {"path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/candidate/python-code-review/SKILL.md", "scope": "entire skill"},
-    {"path": "references/python-remediation-method.md", "scope": "heading inventory; artifact provenance and baseline, root causes, external data and sink tracing, numeric/metadata correctness, async/threads/subprocesses, differential remediation"},
-    {"path": "references/ruff-pyright-verification.md", "scope": "heading inventory; diagnostic provenance, analyzer evidence record, evidence rules, Pyright/Pylance/mypy, fresh verification"},
-    {"path": "references/review-reporting.md", "scope": "heading inventory; completion contract, pressure status and final assessment"}
+    { "path": "request.txt", "scope": "entire request" },
+    { "path": "input.json", "scope": "nine independent requests" },
+    {
+      "path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/candidate/python-code-review/SKILL.md",
+      "scope": "entire skill"
+    },
+    {
+      "path": "references/python-remediation-method.md",
+      "scope": "heading inventory; artifact provenance and baseline, root causes, external data and sink tracing, numeric/metadata correctness, async/threads/subprocesses, differential remediation"
+    },
+    {
+      "path": "references/ruff-pyright-verification.md",
+      "scope": "heading inventory; diagnostic provenance, analyzer evidence record, evidence rules, Pyright/Pylance/mypy, fresh verification"
+    },
+    {
+      "path": "references/review-reporting.md",
+      "scope": "heading inventory; completion contract, pressure status and final assessment"
+    }
   ],
   "decisions_actions": [
     "Classified each request independently; six scope matches and three near misses.",

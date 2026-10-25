@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { within, expect, fn, userEvent } from 'storybook/test';
 import type { AttachmentDto } from '../../../api/web-api-client';

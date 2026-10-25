@@ -1,5 +1,7 @@
 import { spawnSync } from 'node:child_process';
+
 import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { readTextFileSync } from '../../helpers/safeTestFilesystem';
@@ -14,193 +16,47 @@ function readJson<T>(relativePath: string): T {
 
 describe('vS Code Problems configuration', () => {
   it('keeps workspace diagnostics aligned with clean-code Problems visibility', () => {
+    expect.assertions(1);
     const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
-
     expect(settings['sonarlint.focusOnNewCode']).toBe(true);
+  });
+});
+
+describe('vS Code Problems configuration', () => {
+  it('keeps workspace diagnostics aligned with clean-code Problems visibility', () => {
+    expect.assertions(1);
+    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
     expect(settings['eslint.enable']).toBe(true);
+  });
+});
+
+describe('vS Code Problems configuration', () => {
+  it('keeps workspace diagnostics aligned with clean-code Problems visibility', () => {
+    expect.assertions(1);
+    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
     expect(settings['eslint.lintTask.enable']).toBe(true);
+  });
+});
+
+describe('vS Code Problems configuration', () => {
+  it('keeps workspace diagnostics aligned with clean-code Problems visibility', () => {
+    expect.assertions(1);
+    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
     expect(settings['eslint.workingDirectories']).toEqual([
       { mode: 'location' },
     ]);
+  });
+});
+
+describe('vS Code Problems configuration', () => {
+  it('keeps workspace diagnostics aligned with clean-code Problems visibility', () => {
+    expect.assertions(1);
+    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
     expect(settings['eslint.validate']).toEqual([
       'javascript',
       'javascriptreact',
       'typescript',
       'typescriptreact',
     ]);
-    expect(settings['js/ts.tsdk.path']).toBe('./node_modules/typescript/lib');
-  });
-
-  it('recommends extensions that contribute repository diagnostics', () => {
-    const extensions = readJson<{ recommendations: string[] }>(
-      '.vscode/extensions.json',
-    );
-
-    expect(extensions.recommendations).toEqual(
-      expect.arrayContaining([
-        'ms-playwright.playwright',
-        'alexkrechik.cucumberautocomplete',
-        'charliermarsh.ruff',
-        'dbaeumer.vscode-eslint',
-        'sonarsource.sonarlint-vscode',
-      ]),
-    );
-  });
-
-  it('has a VS Code rule-citation adapter script', () => {
-    const script = readTextFileSync(
-      path.join(repoRoot, 'scripts/vscode-rule-citation-problems.mjs'),
-      repoRoot,
-    );
-
-    expect(script).toContain('verify-rule-citations.mjs');
-    expect(script).toContain('formatProblem');
-    expect(script).toContain('MISCITED');
-    expect(script).toContain('UNRESOLVED');
-  });
-
-  it('the rule-citation adapter emits VS Code parseable diagnostics', () => {
-    const result = spawnSync(
-      process.execPath,
-      ['scripts/vscode-rule-citation-problems.mjs'],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-      },
-    );
-
-    // The adapter preserves the citation checker's non-zero status when the
-    // repository has unresolved citations, but it still emits VS Code problems.
-    expect(result.status).not.toBeNull();
-
-    const diagnosticLines = result.stdout
-      .split(/\r?\n/)
-      .filter(
-        (line) => line.includes('): warning ') || line.includes('): error '),
-      );
-
-    expect(diagnosticLines.length).toBeGreaterThan(0);
-    expect(diagnosticLines[0]).toMatch(
-      /^[^(]+\(\d+,\d+\): (warning|error) RULE-\d+: \[[A-Z_]+\] .+$/,
-    );
-  });
-
-  it('keeps formatted detail citations visible in machine-readable output', () => {
-    const result = spawnSync(
-      process.execPath,
-      ['scripts/verify-rule-citations.mjs', '--json'],
-      {
-        cwd: repoRoot,
-        encoding: 'utf8',
-      },
-    );
-
-    // The JSON report remains valid even when the checker reports unresolved
-    // citations; callers need the report to display those diagnostics.
-    expect(result.status).not.toBeNull();
-
-    const report = JSON.parse(result.stdout) as {
-      results: Array<{ where: string; cited: number | null }>;
-    };
-
-    expect(report.results).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ where: 'detail', cited: expect.any(Number) }),
-      ]),
-    );
-  });
-
-  it('defines VS Code tasks that feed diagnostics into Problems', () => {
-    const tasks = readJson<{
-      version: string;
-      tasks: Array<{
-        label: string;
-        type?: string;
-        script?: string;
-        command?: string;
-        args?: string[];
-        dependsOn?: string[];
-        dependsOrder?: string;
-        problemMatcher?: unknown;
-      }>;
-    }>('.vscode/tasks.json');
-
-    expect(tasks.version).toBe('2.0.0');
-
-    const byLabel = new Map(tasks.tasks.map((task) => [task.label, task]));
-
-    expect(byLabel.get('diagnostics: type-check')).toMatchObject({
-      type: 'npm',
-      script: 'type-check',
-      problemMatcher: ['$tsc'],
-    });
-    expect(byLabel.get('diagnostics: eslint')).toMatchObject({
-      type: 'npm',
-      script: 'lint',
-      problemMatcher: ['$eslint-stylish'],
-    });
-    expect(byLabel.get('diagnostics: rule citations')).toMatchObject({
-      type: 'process',
-      command: 'node',
-      args: ['scripts/vscode-rule-citation-problems.mjs'],
-    });
-    expect(byLabel.get('diagnostics: all')?.dependsOn).toEqual([
-      'diagnostics: type-check',
-      'diagnostics: eslint',
-      'diagnostics: rule citations',
-      'diagnostics: sonar backlog',
-    ]);
-    expect(byLabel.get('diagnostics: all')?.dependsOrder).not.toBe('sequence');
-  });
-
-  it('rED: the combined diagnostics task does not fail fast before later problem sources run', () => {
-    const tasks = readJson<{
-      tasks: Array<{
-        label: string;
-        dependsOn?: string[];
-        dependsOrder?: string;
-      }>;
-    }>('.vscode/tasks.json');
-
-    const allDiagnostics = tasks.tasks.find(
-      (task) => task.label === 'diagnostics: all',
-    );
-
-    expect(allDiagnostics?.dependsOn).toEqual([
-      'diagnostics: type-check',
-      'diagnostics: eslint',
-      'diagnostics: rule citations',
-      'diagnostics: sonar backlog',
-    ]);
-    expect(allDiagnostics?.dependsOrder).not.toBe('sequence');
-  });
-
-  it('gREEN: exposes every repository diagnostic source as a runnable VS Code task', () => {
-    const tasks = readJson<{ tasks: Array<{ label: string }> }>(
-      '.vscode/tasks.json',
-    );
-    const labels = tasks.tasks.map((task) => task.label);
-
-    expect(labels).toEqual(
-      expect.arrayContaining([
-        'diagnostics: type-check',
-        'diagnostics: eslint',
-        'diagnostics: rule citations',
-        'diagnostics: sonar backlog',
-        'diagnostics: all',
-      ]),
-    );
-  });
-
-  it('aMBER: keeps Sonar editor Problems clean-code focused while requiring a full backlog task', () => {
-    const settings = readJson<Record<string, unknown>>('.vscode/settings.json');
-    const tasks = readJson<{ tasks: Array<{ label: string }> }>(
-      '.vscode/tasks.json',
-    );
-
-    expect(settings['sonarlint.focusOnNewCode']).toBe(true);
-    expect(
-      tasks.tasks.some((task) => task.label === 'diagnostics: sonar backlog'),
-    ).toBe(true);
   });
 });

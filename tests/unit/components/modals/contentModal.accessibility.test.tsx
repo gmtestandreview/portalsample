@@ -41,6 +41,7 @@ const renderTwoOpenModals = () =>
 
 describe('contentModal accessibility', () => {
   it('names the dialog from the visible modal title', () => {
+    expect.assertions(1);
     render(
       <ContentModal
         showModal
@@ -61,6 +62,7 @@ describe('contentModal accessibility', () => {
   });
 
   it('gives each instance a distinct title id', () => {
+    expect.assertions(1);
     renderTwoOpenModals();
 
     const termsTitle = screen.getByRole('heading', { name: TERMS });
@@ -70,6 +72,7 @@ describe('contentModal accessibility', () => {
   });
 
   it('leaves no duplicate label id across concurrently open dialogs', () => {
+    expect.assertions(1);
     renderTwoOpenModals();
 
     const labelIds = screen
@@ -80,6 +83,7 @@ describe('contentModal accessibility', () => {
   });
 
   it('names each concurrently open dialog from its own title', () => {
+    expect.assertions(2);
     renderTwoOpenModals();
 
     expect(screen.getByRole('dialog', { name: TERMS })).toBeInTheDocument();

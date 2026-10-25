@@ -1,19 +1,27 @@
 ---
 name: dispatching-parallel-agents
-description: Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies. Dispatches one focused agent per problem domain, runs them concurrently, then integrates.
+description:
+  Use when facing 2+ independent tasks that can be worked on without shared
+  state or sequential dependencies. Dispatches one focused agent per problem
+  domain, runs them concurrently, then integrates.
 ---
+
 <!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Dispatching Parallel Agents
 
 ## Overview
 
-You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
+You delegate tasks to specialized agents with isolated context. By precisely
+crafting their instructions and context, you ensure they stay focused and
+succeed at their task. They should never inherit your session's context or
+history — you construct exactly what they need. This also preserves your own
+context for coordination work.
 
 ## Core Principle
 
-Dispatch one agent per independent problem domain. Let them work concurrently.
-3 problems solved in parallel = time of 1.
+Dispatch one agent per independent problem domain. Let them work concurrently. 3
+problems solved in parallel = time of 1.
 
 ## When to Use
 

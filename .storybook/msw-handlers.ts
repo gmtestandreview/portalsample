@@ -103,7 +103,7 @@ const applicationResponse = (applicationType: string | undefined) => {
       {
         error: `No Storybook fixture for applicationType=${applicationType ?? '(missing)'}`,
       },
-      { status: 501 }
+      { status: 501 },
     );
   }
 
@@ -112,7 +112,7 @@ const applicationResponse = (applicationType: string | undefined) => {
 
 const quoteDetailsResponse = (request: Request) => {
   const applicationType = new URL(request.url).searchParams.get(
-    'ApplicationType'
+    'ApplicationType',
   );
 
   if (
@@ -123,7 +123,7 @@ const quoteDetailsResponse = (request: Request) => {
       {
         error: `No Storybook fixture for ApplicationType=${applicationType ?? '(missing)'}`,
       },
-      { status: 501 }
+      { status: 501 },
     );
   }
 
@@ -147,40 +147,40 @@ export const lookupResponsesByType: Partial<
 export const mswHandlers = [
   http.get('/api/dashboard', () => HttpResponse.json([])),
   http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
-    HttpResponse.json(dashboardPageResponse)
+    HttpResponse.json(dashboardPageResponse),
   ),
   http.get('/api/dashboard/get-filtered-dashboard-drafts', () =>
-    HttpResponse.json(dashboardPageResponse)
+    HttpResponse.json(dashboardPageResponse),
   ),
   http.get('/api/dashboard/get-filtered-dashboard-artefacts', () =>
-    HttpResponse.json(dashboardPageResponse)
+    HttpResponse.json(dashboardPageResponse),
   ),
   http.get('/api/dashboard/get-dashboard-instrument-artefact-reports', () =>
-    HttpResponse.json(instrumentReportPageResponse)
+    HttpResponse.json(instrumentReportPageResponse),
   ),
   http.get('/api/dashboard/get-quote-offer-pdf', ({ request }) =>
-    pdfResponse(request, 'quote-offer.pdf')
+    pdfResponse(request, 'quote-offer.pdf'),
   ),
   http.get('/api/dashboard/get-quote-request-accepted-pdf', ({ request }) =>
-    pdfResponse(request, 'quote-request-accepted.pdf')
+    pdfResponse(request, 'quote-request-accepted.pdf'),
   ),
   http.get('/api/dashboard/get-quote-request-rejected-pdf', ({ request }) =>
-    pdfResponse(request, 'quote-request-rejected.pdf')
+    pdfResponse(request, 'quote-request-rejected.pdf'),
   ),
   http.get('/api/dashboard/get-quote-report-pdf', ({ request }) =>
-    pdfResponse(request, 'measurement-report.pdf')
+    pdfResponse(request, 'measurement-report.pdf'),
   ),
   http.get('/api/quote/get-quote-request-details-byrefid', ({ request }) =>
-    quoteDetailsResponse(request)
+    quoteDetailsResponse(request),
   ),
   http.get('/api/forms/accounts/branch', () =>
     HttpResponse.json({
       id: 1,
       stepValues: { ...accountStepValues, branchOrLocationName: '' },
-    })
+    }),
   ),
   http.get('/api/forms/accounts/create-account/new', () =>
-    HttpResponse.json({ id: 1, stepValues: accountStepValues })
+    HttpResponse.json({ id: 1, stepValues: accountStepValues }),
   ),
   http.get('/api/contact/usercontact', () => HttpResponse.json(contactForm)),
   http.post('/api/application', async ({ request }) => {
@@ -194,7 +194,7 @@ export const mswHandlers = [
   // and surfaces inside the story that needs the fixture.
   http.get('/api/lookup', ({ request }) => {
     const lookupType = new URL(request.url).searchParams.get(
-      'LookupType'
+      'LookupType',
     ) as CRMLookupTypes | null;
     const fixture =
       lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
@@ -207,7 +207,7 @@ export const mswHandlers = [
         {
           error: `No Storybook fixture for LookupType=${lookupType ?? '(missing)'}`,
         },
-        { status: 501 }
+        { status: 501 },
       );
     }
 

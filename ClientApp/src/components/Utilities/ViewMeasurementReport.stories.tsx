@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { within, expect, fn, userEvent, waitFor } from 'storybook/test';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';

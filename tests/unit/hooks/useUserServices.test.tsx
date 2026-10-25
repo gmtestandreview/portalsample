@@ -34,6 +34,7 @@ const ServicesProbe = () => {
 
 describe(useUserServices, () => {
   it('returns an empty service list when no account context is available', () => {
+    expect.assertions(1);
     render(<ServicesProbe />);
 
     expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent(
@@ -42,6 +43,7 @@ describe(useUserServices, () => {
   });
 
   it('returns services from the authenticated user profile', () => {
+    expect.assertions(1);
     const services = [
       { serviceName: 'Pattern approval' },
       { serviceName: 'Calibration' },
@@ -68,6 +70,7 @@ describe(useUserServices, () => {
   });
 
   it('returns an empty service list when the profile has no services', () => {
+    expect.assertions(1);
     const stateContext = {
       details: {
         userProfile: {},

@@ -217,7 +217,7 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE).then((cache) => {
       console.log('[SW] Pre-caching app shell');
       return cache.addAll(APP_SHELL);
-    })
+    }),
   );
   // Activate immediately without waiting for old SW to die
   self.skipWaiting();
@@ -237,9 +237,9 @@ self.addEventListener('activate', (event) => {
           .map((name) => {
             console.log('[SW] Deleting old cache:', name);
             return caches.delete(name);
-          })
+          }),
       );
-    })
+    }),
   );
   // Take control of all pages immediately
   self.clients.claim();
@@ -364,7 +364,7 @@ versioning automatically.
 ```javascript
 // With Workbox (via CDN for simplicity — use npm + bundler in production)
 importScripts(
-  'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js'
+  'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js',
 );
 
 const { registerRoute } = workbox.routing;
@@ -375,12 +375,12 @@ precacheAndRoute(self.__WB_MANIFEST || []); // Injected by build plugin
 
 registerRoute(
   ({ request }) => request.destination === 'image',
-  new CacheFirst()
+  new CacheFirst(),
 );
 registerRoute(({ request }) => request.mode === 'navigate', new NetworkFirst());
 registerRoute(
   ({ request }) => request.destination === 'script',
-  new StaleWhileRevalidate()
+  new StaleWhileRevalidate(),
 );
 ```
 

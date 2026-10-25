@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../.storybook/preview';
 import { expect, waitFor } from 'storybook/test';
 import ServicesWeOffer from './index';

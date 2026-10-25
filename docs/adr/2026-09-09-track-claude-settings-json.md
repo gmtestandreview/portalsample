@@ -1,8 +1,7 @@
 # ADR: Track `.claude/settings.json` in version control
 
-**Date:** 2026-09-09
-**Status:** Accepted
-**Deciders:** Portal rebuild team (gregm)
+**Date:** 2026-09-09 **Status:** Accepted **Deciders:** Portal rebuild team
+(gregm)
 
 ## Context
 
@@ -16,12 +15,12 @@ The A Team wiring review changes the forces:
 
 - Spec `.claude/docs/specs/2026-09-09-a-team-wiring-review-design.md` §4.5.4
   requires all 25 canonical A Team skills to resolve **by bare name with no
-  permission prompt**. That is delivered by 50 `Skill(<name>)` / `Skill(<name>:*)`
-  entries in `.claude/settings.json` (plan Task 4.2).
+  permission prompt**. That is delivered by 50 `Skill(<name>)` /
+  `Skill(<name>:*)` entries in `.claude/settings.json` (plan Task 4.2).
 - An **untracked** `settings.json` cannot carry that allow-list to other clones,
-  to CI, or to fresh agent sessions. Each new checkout would re-prompt for all 25
-  skills — the "un-prompted" requirement fails in exactly the automated contexts
-  that most need it.
+  to CI, or to fresh agent sessions. Each new checkout would re-prompt for all
+  25 skills — the "un-prompted" requirement fails in exactly the automated
+  contexts that most need it.
 - `.claude/settings.json` also carries project-level **enforcement**, not just
   preference: a `PreToolUse` security-gate hook (`scripts/pre_tool_use.py`), a
   `SessionStart` roster/watcher hook, `PostToolUse` review reminders, and a
@@ -112,11 +111,11 @@ This supersedes the `settings.json` half of audit finding B5; the
 
 ## Risks and Mitigations
 
-| Risk | Impact | Mitigation |
-| --- | --- | --- |
-| Broad committed grant slips through review | Elevated tool surface for all clones | ADR names the allow-list as review-sensitive; `.github/instructions/config-policy.instructions.md` already flags policy-sensitive files |
-| `watcher.py` background launch unwanted on a platform | Minor resource use / surprise | Documented here; overridable via `settings.local.json` or by removing the hook locally |
-| Contributor commits a machine-specific path to the shared file | Broken pre-approval for others | Machine-specific entries belong in the still-ignored `settings.local.json`; review catches absolute paths |
+| Risk                                                           | Impact                               | Mitigation                                                                                                                              |
+| -------------------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Broad committed grant slips through review                     | Elevated tool surface for all clones | ADR names the allow-list as review-sensitive; `.github/instructions/config-policy.instructions.md` already flags policy-sensitive files |
+| `watcher.py` background launch unwanted on a platform          | Minor resource use / surprise        | Documented here; overridable via `settings.local.json` or by removing the hook locally                                                  |
+| Contributor commits a machine-specific path to the shared file | Broken pre-approval for others       | Machine-specific entries belong in the still-ignored `settings.local.json`; review catches absolute paths                               |
 
 ## Validation
 
@@ -156,6 +155,7 @@ Revisit this ADR when any of:
 
 - Supersedes the `settings.json` half of: 2026-08-27 audit finding B5, commit
   `77101363` ("chore: keep Claude Code settings per-developer").
-- Spec: `.claude/docs/specs/2026-09-09-a-team-wiring-review-design.md` §4.5.2, §4.5.4.
+- Spec: `.claude/docs/specs/2026-09-09-a-team-wiring-review-design.md` §4.5.2,
+  §4.5.4.
 - Plan: `.claude/docs/plans/2026-09-09-a-team-wiring-review.md` Task 4.2.
 - Commit that first tracked the file: `6f55eb8`.

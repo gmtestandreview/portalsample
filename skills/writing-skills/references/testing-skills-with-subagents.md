@@ -21,9 +21,9 @@ representative evidence shows the problem and the skill materially reduces it.
 Not every skill needs the same test. Classify the skill first, then choose only
 the test types that match its execution model.
 
-This reference is self-contained for the skill-testing semantics it defines.
-If a package includes behavioral case definitions, keep them under `evals/` and
-do not treat case definitions as executed evidence.
+This reference is self-contained for the skill-testing semantics it defines. If
+a package includes behavioral case definitions, keep them under `evals/` and do
+not treat case definitions as executed evidence.
 
 ## Behavioral Eval Evidence Layout
 
@@ -41,8 +41,8 @@ evals/
 
 Map evidence by purpose:
 
-| Behavior                                                                                  | Evidence location           |
-| ----------------------------------------------------------------------------------------- | --------------------------- |
+| Behavior                                                                                  | Evidence location   |
+| ----------------------------------------------------------------------------------------- | ------------------- |
 | Trigger positives, indirect requests, and near-misses                                     | `evals/activation/` |
 | Without-skill baseline vs with-skill comparison                                           | `evals/red-green/`  |
 | Pressure, edge, counterexample, ambiguity, and safety cases                               | `evals/pressure/`   |

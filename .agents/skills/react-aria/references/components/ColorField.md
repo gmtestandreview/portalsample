@@ -106,7 +106,7 @@ export function ColorField({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex flex-col gap-1 font-sans'
+        'flex flex-col gap-1 font-sans',
       )}
     >
       {label && <Label>{label}</Label>}

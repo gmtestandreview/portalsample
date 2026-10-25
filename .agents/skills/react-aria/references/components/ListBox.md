@@ -54,7 +54,7 @@ export function ListBoxItem(props: ListBoxItemProps) {
           <Text slot='label'>{children}</Text>
         ) : (
           children
-        )
+        ),
       )}
     </AriaListBoxItem>
   );
@@ -504,7 +504,7 @@ export function ListBox<T>({ children, ...props }: ListBoxProps<T>) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'outline-0 p-1 w-[200px] bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg font-sans'
+        'outline-0 p-1 w-[200px] bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg font-sans',
       )}
     >
       {children}

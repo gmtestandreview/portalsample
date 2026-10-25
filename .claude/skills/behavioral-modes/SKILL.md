@@ -1,6 +1,8 @@
 ---
 name: behavioral-modes
-description: AI operational modes (brainstorm, implement, debug, review, teach, ship, orchestrate). Use to adapt behavior based on task type.
+description:
+  AI operational modes (brainstorm, implement, debug, review, teach, ship,
+  orchestrate). Use to adapt behavior based on task type.
 allowed-tools: Read, Glob, Grep
 ---
 
@@ -8,7 +10,9 @@ allowed-tools: Read, Glob, Grep
 
 ## Purpose
 
-This skill defines distinct behavioral modes that optimize AI performance for specific tasks. Modes change how the AI approaches problems, communicates, and prioritizes.
+This skill defines distinct behavioral modes that optimize AI performance for
+specific tasks. Modes change how the AI approaches problems, communicates, and
+prioritizes.
 
 ---
 
@@ -16,7 +20,8 @@ This skill defines distinct behavioral modes that optimize AI performance for sp
 
 ### 1. 🧠 BRAINSTORM Mode
 
-**When to use:** Early project planning, feature ideation, architecture decisions
+**When to use:** Early project planning, feature ideation, architecture
+decisions
 
 **Behavior:**
 
@@ -50,7 +55,8 @@ What resonates with you? Or should we explore a different direction?"
 
 **Behavior:**
 
-- **CRITICAL: Use `clean-code` skill standards** - concise, direct, no verbose explanations
+- **CRITICAL: Use `clean-code` skill standards** - concise, direct, no verbose
+  explanations
 - Fast execution - minimize questions
 - Use established patterns and best practices
 - Write complete, production-ready code
@@ -209,14 +215,14 @@ Run `npm run dev` to test."
 
 The AI should automatically detect the appropriate mode based on:
 
-| Trigger | Mode |
-| --------- | ------ |
-| "what if", "ideas", "options" | BRAINSTORM |
-| "build", "create", "add" | IMPLEMENT |
-| "not working", "error", "bug" | DEBUG |
-| "review", "check", "audit" | REVIEW |
-| "explain", "how does", "learn" | TEACH |
-| "deploy", "release", "production" | SHIP |
+| Trigger                           | Mode       |
+| --------------------------------- | ---------- |
+| "what if", "ideas", "options"     | BRAINSTORM |
+| "build", "create", "add"          | IMPLEMENT  |
+| "not working", "error", "bug"     | DEBUG      |
+| "review", "check", "audit"        | REVIEW     |
+| "explain", "how does", "learn"    | TEACH      |
+| "deploy", "release", "production" | SHIP       |
 
 ---
 
@@ -226,9 +232,9 @@ Modern architectures optimized for agent-to-agent collaboration:
 
 ### 1. 🔭 EXPLORE Mode
 
-**Role:** Discovery and Analysis (Explorer Agent)
-**Behavior:** Socratic questioning, deep-dive code reading, dependency mapping.
-**Output:** `discovery-report.json`, architectural visualization.
+**Role:** Discovery and Analysis (Explorer Agent) **Behavior:** Socratic
+questioning, deep-dive code reading, dependency mapping. **Output:**
+`discovery-report.json`, architectural visualization.
 
 ### 2. 🗺️ PLAN-EXECUTE-CRITIC (PEC)
 
@@ -236,11 +242,13 @@ Cyclic mode transitions for high-complexity tasks:
 
 1. **Planner:** Decomposes the task into atomic steps (`task.md`).
 2. **Executor:** Performs the actual coding (`IMPLEMENT`).
-3. **Critic:** Reviews the code, performs security and performance checks (`REVIEW`).
+3. **Critic:** Reviews the code, performs security and performance checks
+   (`REVIEW`).
 
 ### 3. 🧠 MENTAL MODEL SYNC
 
-Behavior for creating and loading "Mental Model" summaries to preserve context between sessions.
+Behavior for creating and loading "Mental Model" summaries to preserve context
+between sessions.
 
 ---
 

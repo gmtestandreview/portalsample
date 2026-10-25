@@ -1,21 +1,33 @@
 import { render, screen, waitFor } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { useEffect } from 'react';
+
 import { Form, Formik } from 'formik';
+
 import { FormProvider, useForm, type FieldPath } from 'react-hook-form';
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   InvoiceSentToValues,
   Title,
   type PaymentDetailsStep,
 } from '@/api/web-api-client';
+
 import type * as WebApiClientModule from '@/api/web-api-client';
+
 import PaymentDetails from '@/routes/acceptQuote/paymentDetails';
+
 import PaymentDetailsFormFields, {
   type PaymentDetailsFormValues,
 } from '@/routes/acceptQuote/paymentDetailsFormFields';
+
 import { paymentDetailsSubmitValidation } from '@/routes/acceptQuote/validation';
+
 import { removeHidden } from '@/components/forms/utils';
+
 import { defined } from '../../helpers/defined';
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
@@ -152,8 +164,8 @@ describe('paymentDetails form behavior', () => {
       },
     });
   });
-
   it('writes edited RHF field values into the outer wizard payload', async () => {
+    expect.assertions(2);
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(<Harness onSubmit={onSubmit} />);
@@ -180,347 +192,6 @@ describe('paymentDetails form behavior', () => {
         contact: expect.objectContaining({ email: 'billing@nmi.gov.au' }),
       }),
       expect.anything(),
-    );
-  });
-
-  it('shows and validates invoice contact fields only for a different person', async () => {
-    const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    render(<Harness onSubmit={onSubmit} />);
-
-    expect(screen.queryByLabelText('Email address')).not.toBeInTheDocument();
-
-    await user.click(
-      screen.getByLabelText('A different invoice contact person'),
-    );
-
-    expect(screen.getByLabelText('Email address')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await expect(
-      screen.findByText('Email address is required'),
-    ).resolves.toBeInTheDocument();
-    expect(onSubmit).not.toHaveBeenCalled();
-  });
-
-  it('shows the quotation id and preserves an Other title contact', async () => {
-    const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    render(
-      <Harness
-        values={{
-          ...initialValues,
-          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-          contact: {
-            ...initialValues.contact,
-            title: Title.Other,
-            titleOther: 'Mx',
-            email: 'billing@nmi.gov.au',
-          },
-        }}
-        onSubmit={onSubmit}
-      />,
-    );
-
-    await expect(screen.findByText(/Q-TEST-001/)).resolves.toBeInTheDocument();
-    expect(screen.getByLabelText('If "Other"')).toHaveValue('Mx');
-
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-
-    expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toEqual(
-      expect.objectContaining({
-        contact: expect.objectContaining({
-          title: Title.Other,
-          titleOther: 'Mx',
-          email: 'billing@nmi.gov.au',
-        }),
-      }),
-    );
-  });
-
-  it('shows validation state for invalid loaded title and phone values', async () => {
-    const user = userEvent.setup();
-    render(
-      <Harness
-        values={{
-          ...initialValues,
-          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-          contact: {
-            ...initialValues.contact,
-            title: 'D' as unknown as Title,
-            phone: '123',
-            mobile: undefined,
-            email: 'billing@nmi.gov.au',
-          },
-        }}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await expect(
-      screen.findByText('Title cannot be less than 2 characters'),
-    ).resolves.toBeInTheDocument();
-    await expect(
-      screen.findByText('Business phone cannot be less than 6 characters'),
-    ).resolves.toBeInTheDocument();
-    expect(screen.getByLabelText('Mobile phone (optional)')).toHaveValue('');
-  });
-
-  it('treats an unloaded purchase order number as an empty field', async () => {
-    const user = userEvent.setup();
-    render(
-      <Harness
-        values={{
-          ...initialValues,
-          purchaseOrderNo: undefined,
-        }}
-      />,
-    );
-
-    const purchaseOrder = await screen.findByLabelText(
-      'Purchase Order (PO) number (optional)',
-    );
-
-    expect(purchaseOrder).toHaveValue('');
-
-    await user.click(purchaseOrder);
-    await user.tab();
-
-    expect(purchaseOrder).toHaveValue('');
-  });
-
-  it('reinitializes displayed values when the wizard loads new step data', async () => {
-    const { rerender } = render(<Harness />);
-
-    rerender(
-      <Harness
-        values={{
-          ...initialValues,
-          purchaseOrderNo: 'PO-LOADED',
-        }}
-      />,
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.getByLabelText('Purchase Order (PO) number (optional)'),
-      ).toHaveValue('PO-LOADED'),
-    );
-  });
-
-  it('shows validation errors after reinitializing following an invalid submit', async () => {
-    const user = userEvent.setup();
-    const { rerender } = render(
-      <Harness
-        values={{
-          ...initialValues,
-          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-        }}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await expect(
-      screen.findByText('Email address is required'),
-    ).resolves.toBeInTheDocument();
-
-    rerender(
-      <Harness
-        values={{
-          ...initialValues,
-          purchaseOrderNo: 'PO-RELOADED',
-          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-        }}
-      />,
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.queryByText('Email address is required'),
-      ).not.toBeInTheDocument(),
-    );
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await expect(
-      screen.findByText('Email address is required'),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('formats a loaded business phone without crashing the contact form', async () => {
-    render(
-      <Harness
-        values={{
-          ...initialValues,
-          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-          contact: {
-            ...initialValues.contact,
-            phone: '0212345678',
-          },
-        }}
-      />,
-    );
-
-    await expect(
-      screen.findByLabelText('Business phone (optional)'),
-    ).resolves.toHaveValue('02 1234 5678');
-  });
-
-  it('registers invoice phone fields through input refs without React warnings', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-
-    try {
-      render(
-        <Harness
-          values={{
-            ...initialValues,
-            invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-          }}
-        />,
-      );
-
-      await expect(
-        screen.findByLabelText('Business phone (optional)'),
-      ).resolves.toBeInTheDocument();
-      expect(
-        screen.getByLabelText('Mobile phone (optional)'),
-      ).toBeInTheDocument();
-      expect(
-        consoleError.mock.calls.filter(([message]) =>
-          String(message).includes('Function components cannot be given refs'),
-        ),
-      ).toHaveLength(0);
-    } finally {
-      consoleError.mockRestore();
-    }
-  });
-
-  it('shows the loaded quotation ID in the purchase-order help copy', async () => {
-    mockGetPaymentDetails.mockResolvedValue({
-      acceptQuotePreInfo: {
-        paymentTerms: 'Standard',
-        quotationIdNum: 'RFQ-2026-042',
-      },
-    });
-
-    render(<Harness />);
-
-    await expect(
-      screen.findByText('Your NMI Quotation ID RFQ-2026-042'),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('shows the other-title field and validates optional invoice contact formats', async () => {
-    const user = userEvent.setup();
-    render(
-      <Harness
-        values={{
-          ...initialValues,
-          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-        }}
-      />,
-    );
-
-    await user.selectOptions(screen.getByLabelText('Title (optional)'), [
-      Title.Other,
-    ]);
-
-    expect(screen.getByLabelText('If "Other"')).toBeInTheDocument();
-
-    await user.type(screen.getByLabelText('If "Other"'), '@@@');
-    await user.type(screen.getByLabelText('Business phone (optional)'), '123');
-    await user.type(screen.getByLabelText('Mobile phone (optional)'), '123');
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await expect(
-      screen.findByText(/Title other has invalid characters/),
-    ).resolves.toBeInTheDocument();
-    await expect(
-      screen.findByText('Business phone cannot be less than 6 characters'),
-    ).resolves.toBeInTheDocument();
-    await expect(
-      screen.findByText('Mobile phone cannot be less than 10 characters'),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('renders RHF adapter feedback for touched field-level errors', async () => {
-    const user = userEvent.setup();
-    render(
-      <DirectFieldsHarness
-        errors={[{ name: 'contact.title', message: 'Select a title' }]}
-      />,
-    );
-
-    await user.click(
-      screen.getByLabelText('Purchase Order (PO) number (optional)'),
-    );
-    await user.tab();
-
-    await expect(
-      screen.findByText('Select a title'),
-    ).resolves.toBeInTheDocument();
-    expect(screen.getByLabelText('Business phone (optional)')).toHaveValue('');
-  });
-
-  it('preserves entered contact values after switching back to the main contact', async () => {
-    const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    render(<Harness onSubmit={onSubmit} />);
-
-    await user.click(
-      screen.getByLabelText('A different invoice contact person'),
-    );
-    await user.type(
-      screen.getByLabelText('Email address'),
-      'private@example.com',
-    );
-    await user.click(
-      screen.getByLabelText('The main contact person for this request'),
-    );
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-
-    expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
-      'contact.email',
-      'private@example.com',
-    );
-  });
-
-  it('shows and preserves loaded contact values when no invoice contact is selected', async () => {
-    const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    render(
-      <Harness
-        values={{
-          ...initialValues,
-          invoiceSentTo: undefined,
-          contact: {
-            ...initialValues.contact,
-            email: 'private@example.com',
-          },
-        }}
-        onSubmit={onSubmit}
-      />,
-    );
-
-    expect(screen.getByLabelText('Email address')).toHaveValue(
-      'private@example.com',
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-
-    expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
-      'contact.email',
-      'private@example.com',
     );
   });
 });

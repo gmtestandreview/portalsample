@@ -11,23 +11,24 @@ Use `npm`. Do not assume `pnpm` for this repository.
 
 ## Primary Commands
 
-| Purpose | Command |
-| --- | --- |
-| Install dependencies | `npm install` |
-| Type check | `npm run type-check` |
-| Lint editable app code | `npm run lint` |
-| Unit tests | `npm run test:unit` |
-| CI-style unit validation | `npm run test:ci` |
+| Purpose                  | Command                      |
+| ------------------------ | ---------------------------- |
+| Install dependencies     | `npm install`                |
+| Type check               | `npm run type-check`         |
+| Lint editable app code   | `npm run lint`               |
+| Unit tests               | `npm run test:unit`          |
+| CI-style unit validation | `npm run test:ci`            |
 | Unit tests with coverage | `npm run test:unit:coverage` |
-| Storybook dev server | `npm run storybook` |
-| Storybook static build | `npm run build-storybook` |
-| App production build | `npm run build` |
-| E2E tests | `npm run test:e2e` |
-| BDD tests | `npm run test:bdd` |
+| Storybook dev server     | `npm run storybook`          |
+| Storybook static build   | `npm run build-storybook`    |
+| App production build     | `npm run build`              |
+| E2E tests                | `npm run test:e2e`           |
+| BDD tests                | `npm run test:bdd`           |
 
 ## Snapshot Boundaries
 
-Even though the repo is tool-enabled, agents must still respect source boundaries.
+Even though the repo is tool-enabled, agents must still respect source
+boundaries.
 
 Editable:
 

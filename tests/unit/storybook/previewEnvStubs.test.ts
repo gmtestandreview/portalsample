@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 // live makes every story load reach out to js.monitor.azure.com.
 describe('storybook runtime env stubs', () => {
   it('disables Application Insights telemetry', async () => {
+    expect.assertions(3);
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     vi.resetModules();
 

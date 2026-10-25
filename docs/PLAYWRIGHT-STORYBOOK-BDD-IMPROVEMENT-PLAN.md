@@ -2,20 +2,25 @@
 
 ## Purpose
 
-This plan captures process improvements for the next Storybook plus Playwright-BDD cycle so coverage work is faster, less brittle, and easier to close with high confidence.
+This plan captures process improvements for the next Storybook plus
+Playwright-BDD cycle so coverage work is faster, less brittle, and easier to
+close with high confidence.
 
 ## Baseline and Target
 
 - Baseline achieved in this snapshot: full Storybook-tagged run passing.
-- Target for next cycle: keep full Storybook-tagged coverage green while reducing triage time and reducing story-ID and assertion drift.
+- Target for next cycle: keep full Storybook-tagged coverage green while
+  reducing triage time and reducing story-ID and assertion drift.
 
 ## Primary Risks Seen in the Last Cycle
 
-1. Story ID mismatches between feature files and actual Storybook manifest entries.
+1. Story ID mismatches between feature files and actual Storybook manifest
+   entries.
 2. Assertion brittleness when text rendering differs from expectation.
 3. Router/provider conflicts from nested or duplicated router wrappers.
 4. Missed portal rendering behavior where content is outside `#storybook-root`.
-5. Regeneration gaps when feature updates are made without immediate spec generation.
+5. Regeneration gaps when feature updates are made without immediate spec
+   generation.
 
 ## Improvement Actions by Workflow Stage
 
@@ -31,11 +36,14 @@ This plan captures process improvements for the next Storybook plus Playwright-B
 
 ### 2. Pre-Implementation Checks
 
-1. Build a story inventory from the current Storybook index before writing new scenarios.
-2. Confirm whether any changed stories require route context, auth context, or modal/portal behavior.
+1. Build a story inventory from the current Storybook index before writing new
+   scenarios.
+2. Confirm whether any changed stories require route context, auth context, or
+   modal/portal behavior.
 3. Confirm current shared wrapper behavior:
    - Global router decorator in `.storybook/preview.ts`
-   - Router-agnostic Storybook harness in `static/js/storybook/storybookHarness.tsx`
+   - Router-agnostic Storybook harness in
+     `static/js/storybook/storybookHarness.tsx`
 
 ### 3. Scenario Authoring Standards
 
@@ -62,7 +70,8 @@ Never treat scenario edits as valid until both commands complete successfully.
    - Harness/provider issue
    - Product behavior regression
 2. Fix one category at a time to avoid mixed-cause debugging.
-3. Re-run targeted scenarios first, then re-run full `@storybook` suite before closure.
+3. Re-run targeted scenarios first, then re-run full `@storybook` suite before
+   closure.
 
 ### 6. Remediation Standards
 
@@ -89,7 +98,8 @@ Required closure evidence:
 1. One owner for story inventory and ID validation.
 2. One owner for scenario authoring quality and assertion strategy.
 3. One owner for execution logs and closure evidence.
-4. Shared accountability to avoid merging feature updates without regenerated specs.
+4. Shared accountability to avoid merging feature updates without regenerated
+   specs.
 
 ## Metrics to Track
 

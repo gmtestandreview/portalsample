@@ -1,6 +1,7 @@
 # React 19 TypeScript Patterns
 
-React 19 introduces breaking changes and new APIs requiring updated TypeScript patterns.
+React 19 introduces breaking changes and new APIs requiring updated TypeScript
+patterns.
 
 ## ref as Prop (No More forwardRef)
 

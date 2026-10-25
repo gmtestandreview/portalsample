@@ -1027,9 +1027,7 @@
         "measurement_target": "runtime_activation",
         "observed_decision": "NHR. Correct prose is a behavior proxy and does not establish client selection/loading. blocked_by: unavailable client load-event telemetry; missing_evidence: client identity and actual selection/load event; required_follow_up: observable positive/near-miss runtime campaign in the intended client. Required NHR means hold.",
         "result": "NHR",
-        "source_points": [
-          "evals/evaluation-schema.md:112-126,165-182,223-226"
-        ],
+        "source_points": ["evals/evaluation-schema.md:112-126,165-182,223-226"],
         "evidence_method": "Independent reviewer actually applied the supplied current instructions to this exact task and recorded the decision. This is a document-application/selection proxy, not a target-client skill-load event.",
         "limitations": "No actual target-client activation telemetry is available to this independent review."
       },
@@ -1119,9 +1117,7 @@
         "measurement_target": "behavioral_application",
         "observed_decision": "Do not claim improvement. Retain the successful baseline and GREEN observations; use a separately declared preservation case or reassess the value claim. Do not manufacture RED failure or weaken the baseline criteria.",
         "result": "PASS",
-        "source_points": [
-          "evals/red-green/red-green-evals.md:39-41,143-144"
-        ],
+        "source_points": ["evals/red-green/red-green-evals.md:39-41,143-144"],
         "evidence_method": "Independent reviewer actually applied the supplied current instructions to this exact task and recorded the decision. This is a document-application/selection proxy, not a target-client skill-load event.",
         "limitations": "Current agent had already read package documents; selection decisions are not isolated frontmatter-only runtime trials."
       },

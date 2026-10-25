@@ -101,7 +101,7 @@ function validateIssuePayload(payload, source) {
       issue.key.length === 0
     ) {
       throw new Error(
-        `${source} contains invalid issue at index ${index}: expected an object with a non-empty key.`
+        `${source} contains invalid issue at index ${index}: expected an object with a non-empty key.`,
       );
     }
 
@@ -120,7 +120,7 @@ function validateIssuePayload(payload, source) {
     ]) {
       if (field in issue && typeof issue[field] !== 'string') {
         throw new Error(
-          `${source} contains invalid issue at index ${index}: ${field} must be a string.`
+          `${source} contains invalid issue at index ${index}: ${field} must be a string.`,
         );
       }
     }
@@ -132,14 +132,14 @@ function validateIssuePayload(payload, source) {
           issue[field].some((value) => typeof value !== 'string'))
       ) {
         throw new Error(
-          `${source} contains invalid issue at index ${index}: ${field} must be an array of strings.`
+          `${source} contains invalid issue at index ${index}: ${field} must be an array of strings.`,
         );
       }
     }
 
     if ('line' in issue && (!Number.isInteger(issue.line) || issue.line < 1)) {
       throw new Error(
-        `${source} contains invalid issue at index ${index}: line must be a positive integer.`
+        `${source} contains invalid issue at index ${index}: line must be a positive integer.`,
       );
     }
   });
@@ -177,11 +177,11 @@ function formatMarkdown(issues) {
       (a, b) =>
         priorityWeight(a.priority) - priorityWeight(b.priority) ||
         a.status.localeCompare(b.status) ||
-        a.key.localeCompare(b.key)
+        a.key.localeCompare(b.key),
     );
 
   const amberCount = rows.filter(
-    (issue) => issue.priority === 'Needs triage'
+    (issue) => issue.priority === 'Needs triage',
   ).length;
   const lines = [
     '# Sonar Issues Backlog',
@@ -197,7 +197,7 @@ function formatMarkdown(issues) {
 
   for (const issue of rows) {
     lines.push(
-      `| ${issue.priority} | ${issue.key} | ${issue.status} | ${issue.severity} | ${issue.quality} | ${issue.rule} | ${issue.path}:${issue.line} | ${issue.effort} | ${issue.message.replaceAll('|', MARKDOWN_PIPE_ESCAPE)} |`
+      `| ${issue.priority} | ${issue.key} | ${issue.status} | ${issue.severity} | ${issue.quality} | ${issue.rule} | ${issue.path}:${issue.line} | ${issue.effort} | ${issue.message.replaceAll('|', MARKDOWN_PIPE_ESCAPE)} |`,
     );
   }
 
@@ -216,7 +216,7 @@ function readFixtureIssues(fixtureDirectory) {
       } catch (error) {
         throw new Error(
           `${fixturePath} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
-          { cause: error }
+          { cause: error },
         );
       }
       return validateIssuePayload(payload, fixturePath);
@@ -228,15 +228,15 @@ function readFixtureIssues(fixtureDirectory) {
 async function fetchSonarPage(url, token) {
   const timeoutMs = positiveIntegerEnv(
     'SONAR_REQUEST_TIMEOUT_MS',
-    DEFAULT_REQUEST_TIMEOUT_MS
+    DEFAULT_REQUEST_TIMEOUT_MS,
   );
   const maxAttempts = positiveIntegerEnv(
     'SONAR_MAX_REQUEST_ATTEMPTS',
-    DEFAULT_MAX_REQUEST_ATTEMPTS
+    DEFAULT_MAX_REQUEST_ATTEMPTS,
   );
   const retryDelayMs = positiveIntegerEnv(
     'SONAR_RETRY_DELAY_MS',
-    DEFAULT_RETRY_DELAY_MS
+    DEFAULT_RETRY_DELAY_MS,
   );
   let lastError;
 
@@ -268,7 +268,7 @@ async function fetchSonarPage(url, token) {
     clearTimeout(timeout);
     if (!response.ok) {
       lastError = new Error(
-        `Sonar API request failed ${response.status}: ${responseBody}`
+        `Sonar API request failed ${response.status}: ${responseBody}`,
       );
       if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
         throw lastError;
@@ -282,7 +282,7 @@ async function fetchSonarPage(url, token) {
     } catch (error) {
       throw new Error(
         `Sonar API returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
-        { cause: error }
+        { cause: error },
       );
     }
   }
@@ -297,7 +297,7 @@ async function fetchLiveIssues() {
 
   if (!(host && token && projectKey)) {
     throw new Error(
-      'Set SONAR_HOST_URL, SONAR_TOKEN, and SONAR_PROJECT_KEY, or run with --fixture <dir>.'
+      'Set SONAR_HOST_URL, SONAR_TOKEN, and SONAR_PROJECT_KEY, or run with --fixture <dir>.',
     );
   }
 
@@ -317,13 +317,13 @@ async function fetchLiveIssues() {
 
     if (!Number.isInteger(nextTotal) || nextTotal < 0) {
       throw new Error(
-        `Sonar API page ${page} must include a non-negative integer total.`
+        `Sonar API page ${page} must include a non-negative integer total.`,
       );
     }
 
     if (pageIssues.length === 0 && issues.length < nextTotal) {
       throw new Error(
-        `Sonar API pagination made no progress on page ${page}: expected ${nextTotal} issue(s), received ${issues.length}.`
+        `Sonar API pagination made no progress on page ${page}: expected ${nextTotal} issue(s), received ${issues.length}.`,
       );
     }
 
@@ -336,7 +336,7 @@ async function fetchLiveIssues() {
     } catch (error) {
       throw new Error(
         `Sonar API pagination made no progress on page ${page - 1}: ${error instanceof Error ? error.message : String(error)}`,
-        { cause: error }
+        { cause: error },
       );
     }
   }
@@ -358,9 +358,9 @@ writeFileSync(outputPath, markdown, 'utf8');
 
 if (issues.some((issue) => rankIssue(issue) === 'Needs triage')) {
   process.stdout.write(
-    'analysis/sonar-issues-backlog.md(1,1): warning SONAR-BACKLOG: [AMBER] backlog contains Sonar issues with unknown severity/quality fields; triage them manually.\n'
+    'analysis/sonar-issues-backlog.md(1,1): warning SONAR-BACKLOG: [AMBER] backlog contains Sonar issues with unknown severity/quality fields; triage them manually.\n',
   );
 }
 process.stdout.write(
-  `Captured ${issues.length} Sonar issue(s) in ${outputPath}.\n`
+  `Captured ${issues.length} Sonar issue(s) in ${outputPath}.\n`,
 );

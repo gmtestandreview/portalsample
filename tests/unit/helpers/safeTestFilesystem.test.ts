@@ -8,6 +8,7 @@ import { readTextFile, writeTextFile } from '../../helpers/safeTestFilesystem';
 
 describe('safe test filesystem helpers', () => {
   it('permits files inside the declared root and rejects paths outside it', async () => {
+    expect.assertions(2);
     const root = await mkdtemp(path.join(os.tmpdir(), 'safe-test-filesystem-'));
     const file = path.join(root, 'fixture.txt');
 

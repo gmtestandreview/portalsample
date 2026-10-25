@@ -1,16 +1,20 @@
 ---
 name: 'Session Auto-Commit'
-description: 'Automatically commits and pushes changes when a Copilot coding agent session ends'
+description:
+  'Automatically commits and pushes changes when a Copilot coding agent session
+  ends'
 tags: ['automation', 'git', 'productivity']
 ---
 
 # Session Auto-Commit Hook
 
-Automatically commits and pushes changes when a GitHub Copilot coding agent session ends, ensuring your work is always saved and backed up.
+Automatically commits and pushes changes when a GitHub Copilot coding agent
+session ends, ensuring your work is always saved and backed up.
 
 ## Overview
 
-This hook runs at the end of each Copilot coding agent session and automatically:
+This hook runs at the end of each Copilot coding agent session and
+automatically:
 
 - Detects if there are uncommitted changes
 - Stages all changes
@@ -24,7 +28,8 @@ For agent discovery and logical grouping, use:
 - `AGENTS_INDEX.md`
 - `AGENT_REGISTRY.json`
 
-The separate `index.md` file in this folder is Learning Hub content, not the agent registry entrypoint.
+The separate `index.md` file in this folder is Learning Hub content, not the
+agent registry entrypoint.
 
 ## Features
 

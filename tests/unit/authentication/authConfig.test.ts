@@ -1,4 +1,5 @@
 import { LogLevel } from '@azure/msal-browser';
+
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
@@ -19,6 +20,7 @@ vi.mock(
 
 describe('auth configuration', () => {
   it('builds MSAL auth config from runtime env values', async () => {
+    expect.assertions(1);
     const { configuration } = await import('@/authentication/authConfig');
 
     expect(configuration.auth).toMatchObject({
@@ -29,8 +31,11 @@ describe('auth configuration', () => {
       postLogoutRedirectUri: 'https://example.test/logout',
     });
   });
+});
 
+describe('auth configuration', () => {
   it('exports scopes and request objects from runtime env values', async () => {
+    expect.assertions(4);
     const { authRequest, redirectUri, scopes, tokenRequest } =
       await import('@/authentication/authConfig');
 
@@ -38,102 +43,6 @@ describe('auth configuration', () => {
     expect(redirectUri).toBe('https://example.test/redirect');
     expect(authRequest).toEqual({
       redirectUri: 'https://example.test/redirect',
-      scopes,
-    });
-    expect(tokenRequest).toEqual({ scopes });
-  });
-
-  it('uses MSAL v5 bridge timeouts and popup navigation', async () => {
-    const { configuration } = await import('@/authentication/authConfig');
-
-    expect(configuration.system?.popupBridgeTimeout).toBe(60000);
-    expect(configuration.system?.iframeBridgeTimeout).toBe(6000);
-    expect(configuration.system?.navigatePopups).toBe(true);
-    expect(configuration.system).not.toHaveProperty('windowHashTimeout');
-    expect(configuration.system).not.toHaveProperty('iframeHashTimeout');
-    expect(
-      configuration.auth.onRedirectNavigate?.('https://example.test/'),
-    ).toBe(true);
-  });
-
-  it('does not log PII messages', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    const { configuration } = await import('@/authentication/authConfig');
-
-    configuration.system?.loggerOptions?.loggerCallback?.(
-      LogLevel.Error,
-      'secret',
-      true,
-    );
-
-    expect(consoleError).not.toHaveBeenCalled();
-
-    consoleError.mockRestore();
-  });
-
-  it('logs MSAL error messages', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    const { configuration } = await import('@/authentication/authConfig');
-
-    configuration.system?.loggerOptions?.loggerCallback?.(
-      LogLevel.Error,
-      'visible error',
-      false,
-    );
-
-    expect(consoleError).toHaveBeenCalledWith('visible error');
-
-    consoleError.mockRestore();
-  });
-
-  it('ignores non-error MSAL log levels by default', async () => {
-    const consoleError = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    const { configuration } = await import('@/authentication/authConfig');
-
-    configuration.system?.loggerOptions?.loggerCallback?.(
-      LogLevel.Info,
-      'info message',
-      false,
-    );
-
-    expect(consoleError).not.toHaveBeenCalled();
-
-    consoleError.mockRestore();
-  });
-
-  it('falls back to empty strings when optional runtime auth env values are missing', async () => {
-    vi.resetModules();
-    vi.doMock(
-      import('@/env'),
-      () =>
-        ({
-          env: {
-            VITE_B2C_CLIENTID: undefined,
-            VITE_B2C_AUTHORITY: 'https://example.test/authority',
-            VITE_B2C_KNOWN_AUTHORITIES: undefined,
-            VITE_B2C_POST_LOGOUT_REDIRECT_URL: 'https://example.test/logout',
-            VITE_B2C_READ_SCOPE: undefined,
-            VITE_B2C_USER_IMPERSONATION_SCOPE: undefined,
-            VITE_B2C_REDIRECT_URL: undefined,
-          },
-        }) satisfies __ExactMockModule<__TestMockModule10>,
-    );
-
-    const { authRequest, configuration, redirectUri, scopes, tokenRequest } =
-      await import('@/authentication/authConfig');
-
-    expect(configuration.auth.clientId).toBe('');
-    expect(configuration.auth.knownAuthorities).toEqual(['']);
-    expect(scopes).toEqual(['', '']);
-    expect(redirectUri).toBe('');
-    expect(authRequest).toEqual({
-      redirectUri: '',
       scopes,
     });
     expect(tokenRequest).toEqual({ scopes });

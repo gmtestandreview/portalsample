@@ -62,6 +62,7 @@ vi.mock(import('react-bootstrap/Modal'), () => {
 
 describe('routeLeavingGuard unblocked actions', () => {
   it('ignores close and confirm actions when navigation is not blocked', () => {
+    expect.assertions(2);
     render(
       <Formik initialValues={{}} onSubmit={vi.fn()}>
         <RouteLeavingGuard />

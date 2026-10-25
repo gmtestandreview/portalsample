@@ -35,6 +35,11 @@ export default defineConfig({
   optimizeDeps: {
     include: ['msw-storybook-addon/preview'],
   },
+  // Browser Mode serves optimized dependencies from Storybook's cache. Keep
+  // React and React DOM on one module instance or hooks lose their dispatcher.
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   test: {
     name: 'storybook',
     // Single run unless `--watch` is passed (see `test:storybook:watch`).

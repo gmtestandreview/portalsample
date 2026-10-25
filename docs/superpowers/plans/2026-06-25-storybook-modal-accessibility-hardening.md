@@ -250,7 +250,7 @@ const dialog = await screen.findByRole('dialog', {
 });
 await expect(dialog).toBeVisible();
 await expect(
-  screen.getByText(/Any changes made will not be saved/)
+  screen.getByText(/Any changes made will not be saved/),
 ).toBeVisible();
 ```
 
@@ -299,8 +299,8 @@ await expect(dialog).toBeVisible();
 await userEvent.click(screen.getByTestId('prompt-yes-button'));
 await waitFor(() =>
   expect(
-    screen.queryByRole('dialog', { name: /save and exit\?/i })
-  ).not.toBeInTheDocument()
+    screen.queryByRole('dialog', { name: /save and exit\?/i }),
+  ).not.toBeInTheDocument(),
 );
 ```
 

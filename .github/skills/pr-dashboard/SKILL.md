@@ -1,13 +1,19 @@
 ---
 name: pr-dashboard
-description: 'Open a GitHub PR dashboard in the browser. Use when the user asks to see their pull requests, open the PR dashboard, show PRs for a date range, or check PR status. Trigger phrases include "show my PRs", "open PR dashboard", "pull request dashboard".'
+description:
+  'Open a GitHub PR dashboard in the browser. Use when the user asks to see
+  their pull requests, open the PR dashboard, show PRs for a date range, or
+  check PR status. Trigger phrases include "show my PRs", "open PR dashboard",
+  "pull request dashboard".'
 ---
 
 # PR Dashboard
 
-Generates and opens a GitHub PR dashboard in the browser for a given date range and role filter.
+Generates and opens a GitHub PR dashboard in the browser for a given date range
+and role filter.
 
-**Prerequisites:** GitHub CLI (`gh`) must be installed and authenticated (`gh auth login`).
+**Prerequisites:** GitHub CLI (`gh`) must be installed and authenticated
+(`gh auth login`).
 
 ## What to do
 
@@ -19,19 +25,20 @@ node "$SKILL_SCRIPT" "<query>" "<role>"
 ```
 
 - `<query>`: the date range the user specified (default: `last 7 days`)
-- `<role>`: one of `Authored by me`, `Requested reviews`, `Assigned to me`, `All` (default: `Authored by me`)
+- `<role>`: one of `Authored by me`, `Requested reviews`, `Assigned to me`,
+  `All` (default: `Authored by me`)
 
 ## Parsing the user's request
 
 Extract the date range and role from the user's message. Examples:
 
-| User says | query | role |
-| --- | --- | --- |
-| show my PRs | `last 7 days` | `Authored by me` |
-| show my PRs last 2 weeks | `last 2 weeks` | `Authored by me` |
-| PR dashboard this month reviews | `this month` | `Requested reviews` |
-| PR dashboard march 2026 assigned | `march 2026` | `Assigned to me` |
-| show all PRs last 30 days | `last 30 days` | `All` |
+| User says                        | query          | role                |
+| -------------------------------- | -------------- | ------------------- |
+| show my PRs                      | `last 7 days`  | `Authored by me`    |
+| show my PRs last 2 weeks         | `last 2 weeks` | `Authored by me`    |
+| PR dashboard this month reviews  | `this month`   | `Requested reviews` |
+| PR dashboard march 2026 assigned | `march 2026`   | `Assigned to me`    |
+| show all PRs last 30 days        | `last 30 days` | `All`               |
 
 **Role keyword mapping:**
 
@@ -52,4 +59,6 @@ The script understands natural language — pass it through as-is:
 
 ## After running
 
-Tell the user the dashboard is opening in their browser. The script outputs progress to stdout. If it exits with an error, show the error output and suggest they run `gh auth login` if it's an auth issue.
+Tell the user the dashboard is opening in their browser. The script outputs
+progress to stdout. If it exits with an error, show the error output and suggest
+they run `gh auth login` if it's an auth issue.

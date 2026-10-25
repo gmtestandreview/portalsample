@@ -22,5 +22,6 @@ Create a structured implementation plan for a feature or refactor.
 - Risks and mitigations
 - Success criteria (checkboxes)
 
-**After the plan is approved**, use `/orchestrate morning` to dispatch it, or invoke
-`subagent-driven-development` skill to execute it immediately in this session.
+**After the plan is approved**, use `/orchestrate morning` to dispatch it, or
+invoke `subagent-driven-development` skill to execute it immediately in this
+session.

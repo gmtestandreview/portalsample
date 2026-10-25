@@ -3,10 +3,7 @@
   "$id": "evals.schema.json",
   "title": "Skill Creator Evals",
   "type": "object",
-  "required": [
-    "skill_name",
-    "evals"
-  ],
+  "required": ["skill_name", "evals"],
   "properties": {
     "skill_name": {
       "type": "string",
@@ -17,11 +14,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": [
-          "id",
-          "prompt",
-          "expected_output"
-        ],
+        "required": ["id", "prompt", "expected_output"],
         "properties": {
           "id": {
             "type": "integer",

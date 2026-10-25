@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import AutoSuggest from './index';

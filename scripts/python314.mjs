@@ -23,7 +23,7 @@ function findPython314() {
         '-c',
         'import sys; raise SystemExit(sys.version_info[:2] != (3, 14))',
       ],
-      { stdio: 'ignore', timeout: 3000, windowsHide: true }
+      { stdio: 'ignore', timeout: 3000, windowsHide: true },
     );
     if (!result.error && result.status === 0) return candidate;
   }
@@ -33,14 +33,14 @@ function findPython314() {
 function runPython314(argv) {
   if (!argv.length) {
     process.stderr.write(
-      'Usage: node scripts/python314.mjs <script> [arguments]\n'
+      'Usage: node scripts/python314.mjs <script> [arguments]\n',
     );
     return 1;
   }
   const interpreter = findPython314();
   if (!interpreter) {
     process.stderr.write(
-      '[A Team] Python 3.14 is required for hooks and watchers.\n'
+      '[A Team] Python 3.14 is required for hooks and watchers.\n',
     );
     return 1;
   }
@@ -48,7 +48,7 @@ function runPython314(argv) {
   const result = spawnSync(
     interpreter.command,
     [...interpreter.args, resolve(projectDir, argv[0]), ...argv.slice(1)],
-    { stdio: 'inherit', windowsHide: true }
+    { stdio: 'inherit', windowsHide: true },
   );
   if (result.error || result.status === null) {
     process.stderr.write('[A Team] Python 3.14 script failed to execute.\n');

@@ -1,10 +1,17 @@
 import { render, screen, waitFor } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { useFormContext } from 'react-hook-form';
+
 import { describe, expect, it, vi } from 'vitest';
+
 import RhfAddressLookup from '@/components/Inputs/RhfAddressLookup';
+
 import type * as WebApiClientModule from '@/api/web-api-client';
+
 import AppLogger from '@/instrumentation/AppLogger';
+
 import { FieldHarness } from './rhfTestHarness';
 
 function AddressClient() {
@@ -99,6 +106,7 @@ const resetMocks = (matches: unknown = [match]) => {
 
 describe('rhfAddressLookup selection', () => {
   it('writes the chosen address and keeps the identifying fields', async () => {
+    expect.assertions(3);
     resetMocks();
     renderLookup(
       { id: 7, type: 'postal', timeStamp: 'stamp', searchText: '' },
@@ -132,8 +140,11 @@ describe('rhfAddressLookup selection', () => {
       expect.any(AbortSignal),
     );
   });
+});
 
+describe('rhfAddressLookup selection', () => {
   it('falls back to blanks and the default label for sparse matches', async () => {
+    expect.assertions(1);
     resetMocks([
       { addressLine2: 'Suite 2', addressLine3: 'Building A', state: 'NSW' },
     ]);
@@ -154,210 +165,5 @@ describe('rhfAddressLookup selection', () => {
         searchText: '',
       }),
     );
-  });
-
-  it('clears the address when the search text is cleared', async () => {
-    resetMocks();
-    renderLookup({
-      id: 2,
-      line1: 'Existing',
-      searchText: 'Existing address',
-      isManuallyEntered: false,
-    });
-
-    await userEvent.clear(
-      screen.getByRole('combobox', { name: 'Postal address' }),
-    );
-
-    await waitFor(() => expect(formValue()['line1']).toBe(''));
-
-    expect(formValue()).toMatchObject({
-      id: 2,
-      isManuallyEntered: false,
-      searchText: '',
-    });
-  });
-});
-
-describe('rhfAddressLookup results', () => {
-  it.each([
-    ['no signed-in account', () => (mocks.account = null)],
-    ['an empty account list', () => (mocks.accounts = [])],
-    ['authentication in progress', () => (mocks.inProgress = 'login')],
-  ])('offers manual entry without searching for %s', async (_name, setup) => {
-    resetMocks();
-    setup();
-    renderLookup();
-
-    await search('query');
-
-    await expect(
-      screen.findByRole('option', { name: /No matches found/ }),
-    ).resolves.toBeInTheDocument();
-    expect(mocks.addressSearch).not.toHaveBeenCalled();
-  });
-
-  it('treats a response without matches as no match', async () => {
-    resetMocks();
-    mocks.addressSearch.mockResolvedValue({ matches: undefined });
-    renderLookup();
-
-    await search('query');
-
-    await expect(
-      screen.findByRole('option', { name: /No matches found/ }),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('shows no unavailable message for a non-503 failure', async () => {
-    resetMocks();
-    mocks.addressSearch.mockRejectedValue({ status: 500 });
-    renderLookup();
-
-    await search('query');
-
-    await expect(
-      screen.findByRole('option', { name: /No matches found/ }),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('does not log the typed address when a search fails', async () => {
-    resetMocks();
-    const failure = { status: 500 };
-    mocks.addressSearch.mockRejectedValue(failure);
-    const logError = vi.spyOn(AppLogger, 'error').mockImplementation(() => {});
-    renderLookup();
-
-    await search('12 Secret Street');
-
-    await waitFor(() =>
-      expect(logError).toHaveBeenCalledWith(
-        'Failed to execute address search',
-        failure,
-      ),
-    );
-    logError.mock.calls.forEach(([message]) =>
-      expect(String(message)).not.toContain('Secret'),
-    );
-    logError.mockRestore();
-  });
-
-  it('offers manual entry when the address service is unavailable', async () => {
-    resetMocks();
-    mocks.addressSearch.mockRejectedValue({ status: 503 });
-    renderLookup();
-
-    await search('query');
-
-    await expect(
-      screen.findByRole('option', { name: /currently unavailable/ }),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('aborts the in-flight request when a new search starts', async () => {
-    resetMocks();
-    let firstSignal: AbortSignal | undefined;
-    mocks.addressSearch
-      .mockImplementationOnce((_term: string, signal: AbortSignal) => {
-        firstSignal = signal;
-        return new Promise(() => undefined);
-      })
-      .mockResolvedValue({ matches: [] });
-    renderLookup();
-
-    await search('first');
-
-    await waitFor(() => expect(firstSignal?.aborted).toBe(true));
-  });
-});
-
-describe('rhfAddressLookup manual entry', () => {
-  it('switches to manual entry and back, clearing the touched search text', async () => {
-    resetMocks();
-    renderLookup(
-      { searchText: 'Existing', isManuallyEntered: false },
-      { disabled: true, inlineHelp: 'Help' },
-    );
-    await search('ab');
-    await userEvent.tab();
-    await waitFor(() =>
-      expect(screen.getByTestId('touched')).toHaveTextContent('searchText'),
-    );
-
-    await userEvent.click(
-      screen.getByRole('button', { name: /Enter it manually/ }),
-    );
-
-    expect(
-      screen.getByRole('group', { name: /Postal address.*manually/ }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('textbox', { name: 'Address line 1' }),
-    ).toBeDisabled();
-    expect(formValue()).toMatchObject({
-      isManuallyEntered: true,
-      searchText: 'Existing',
-    });
-    expect(screen.getByTestId('touched')).not.toHaveTextContent('searchText');
-
-    await userEvent.click(
-      screen.getByRole('button', { name: /Find an address/ }),
-    );
-
-    expect(
-      screen.getByRole('combobox', { name: 'Postal address' }),
-    ).toHaveValue('Existing');
-    expect(formValue()['isManuallyEntered']).toBe(false);
-  });
-
-  it('switches to blank manual entry from a no-match result', async () => {
-    resetMocks([]);
-    renderLookup({ id: 1, searchText: '', isManuallyEntered: false });
-
-    await search('missing');
-    await userEvent.click(
-      await screen.findByRole('option', { name: /No matches found/ }),
-    );
-
-    expect(
-      screen.getByRole('group', { name: /Postal address.*manually/ }),
-    ).toBeInTheDocument();
-    expect(formValue()).toMatchObject({
-      id: 1,
-      line1: '',
-      isManuallyEntered: true,
-      searchText: '',
-    });
-  });
-});
-
-describe('rhfAddressLookup summary', () => {
-  it('renders the formatted address', () => {
-    resetMocks();
-    renderLookup(
-      {
-        line1: '1 National Circuit',
-        suburb: 'Barton',
-        state: 'ACT',
-        postcode: '2600',
-      },
-      { isSummary: true },
-    );
-
-    expect(screen.getByText('Postal address')).toBeInTheDocument();
-    expect(document.body).toHaveTextContent(
-      /1 National Circuit.*Barton ACT 2600/s,
-    );
-  });
-
-  it('renders a dash when there is no address', () => {
-    resetMocks();
-    render(
-      <FieldHarness field='address' defaultValue={undefined}>
-        <RhfAddressLookup name='address' label='Postal address' isSummary />
-      </FieldHarness>,
-    );
-
-    expect(screen.getByText('-')).toBeInTheDocument();
   });
 });

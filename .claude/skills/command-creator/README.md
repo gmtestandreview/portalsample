@@ -1,6 +1,8 @@
 # Command Creator
 
-A comprehensive skill for creating optimized, agent-executable slash commands in Claude Code. This skill guides you through the entire process of designing, implementing, and testing reusable workflow automation commands.
+A comprehensive skill for creating optimized, agent-executable slash commands in
+Claude Code. This skill guides you through the entire process of designing,
+implementing, and testing reusable workflow automation commands.
 
 ## Table of Contents
 
@@ -20,9 +22,14 @@ A comprehensive skill for creating optimized, agent-executable slash commands in
 
 ## Overview
 
-The Command Creator skill helps you transform repetitive workflows into reusable slash commands that can be invoked with `/command-name` in Claude Code conversations. It provides expert guidance on command structure, agent optimization, and best practices to ensure your commands execute reliably and autonomously.
+The Command Creator skill helps you transform repetitive workflows into reusable
+slash commands that can be invoked with `/command-name` in Claude Code
+conversations. It provides expert guidance on command structure, agent
+optimization, and best practices to ensure your commands execute reliably and
+autonomously.
 
-**Purpose**: Create high-quality, agent-executable slash commands with proper structure, clear instructions, and optimal tool usage patterns.
+**Purpose**: Create high-quality, agent-executable slash commands with proper
+structure, clear instructions, and optimal tool usage patterns.
 
 **Target Users**: Developers who want to:
 
@@ -57,7 +64,9 @@ Invoke this skill when you need to:
 
 ## What Are Slash Commands?
 
-Slash commands are markdown files stored in `.claude/commands/` (project-level) or `~/.claude/commands/` (global/user-level) that get expanded into prompts when invoked.
+Slash commands are markdown files stored in `.claude/commands/` (project-level)
+or `~/.claude/commands/` (global/user-level) that get expanded into prompts when
+invoked.
 
 **Structure**:
 
@@ -80,8 +89,10 @@ argument-hint: <placeholder> (optional, if command takes arguments)
 
 **Storage Locations**:
 
-- **Project-level**: `.claude/commands/my-command.md` (only available in this project)
-- **Global/User-level**: `~/.claude/commands/my-command.md` (available everywhere)
+- **Project-level**: `.claude/commands/my-command.md` (only available in this
+  project)
+- **Global/User-level**: `~/.claude/commands/my-command.md` (available
+  everywhere)
 
 ---
 
@@ -89,7 +100,8 @@ argument-hint: <placeholder> (optional, if command takes arguments)
 
 ### 1. Intelligent Location Detection
 
-Automatically determines whether commands should be project-level or global based on:
+Automatically determines whether commands should be project-level or global
+based on:
 
 - Current directory git repository status
 - User explicit preferences
@@ -99,8 +111,10 @@ Automatically determines whether commands should be project-level or global base
 
 Guides you through proven command patterns:
 
-- **Workflow Automation**: Multi-step processes with analysis, action, and reporting
-- **Iterative Fixing**: Continuous improvement loops (run → parse → fix → repeat)
+- **Workflow Automation**: Multi-step processes with analysis, action, and
+  reporting
+- **Iterative Fixing**: Continuous improvement loops (run → parse → fix →
+  repeat)
 - **Agent Delegation**: Complex tasks broken into specialized agent work
 - **Simple Execution**: Direct tool or script execution with arguments
 
@@ -155,7 +169,8 @@ Present available command patterns to help frame the conversation:
 
 - **Workflow Automation**: Analyze → Act → Report (e.g., submit PR stack)
 - **Iterative Fixing**: Run → Parse → Fix → Repeat (e.g., ensure CI passes)
-- **Agent Delegation**: Context → Delegate → Iterate (e.g., create implementation plan)
+- **Agent Delegation**: Context → Delegate → Iterate (e.g., create
+  implementation plan)
 - **Simple Execution**: Run command with args (e.g., code review)
 
 User selects the closest pattern to their needs.
@@ -343,7 +358,8 @@ Create agent-executable instructions using:
 
 ## Bundled Resources
 
-This skill includes three comprehensive reference files in the `references/` directory:
+This skill includes three comprehensive reference files in the `references/`
+directory:
 
 ### references/patterns.md
 
@@ -398,7 +414,8 @@ This skill includes three comprehensive reference files in the `references/` dir
 
 ### Example 1: Create Project-Level CI Fixer
 
-**User Request**: "I keep fixing CI failures manually. Can we make a command for this?"
+**User Request**: "I keep fixing CI failures manually. Can we make a command for
+this?"
 
 **Skill Flow**:
 
@@ -432,7 +449,8 @@ This skill includes three comprehensive reference files in the `references/` dir
 
 ### Example 3: Create PR Submission Workflow
 
-**User Request**: "Make a command that analyzes my commits and creates a PR stack"
+**User Request**: "Make a command that analyzes my commits and creates a PR
+stack"
 
 **Skill Flow**:
 
@@ -486,7 +504,8 @@ This skill includes three comprehensive reference files in the `references/` dir
 
 **Include error handling**:
 
-- Correct: "If pytest fails, parse the output to identify failing tests, then fix each one"
+- Correct: "If pytest fails, parse the output to identify failing tests, then
+  fix each one"
 - Wrong: "Fix any test failures"
 
 ### Tool Restrictions
@@ -544,7 +563,10 @@ This skill includes three comprehensive reference files in the `references/` dir
 
 ## Summary
 
-The Command Creator skill provides a comprehensive, guided workflow for creating high-quality slash commands in Claude Code. By following proven patterns, gathering detailed requirements, and generating agent-optimized instructions, it ensures your commands are:
+The Command Creator skill provides a comprehensive, guided workflow for creating
+high-quality slash commands in Claude Code. By following proven patterns,
+gathering detailed requirements, and generating agent-optimized instructions, it
+ensures your commands are:
 
 - **Reliable**: Execute autonomously without manual intervention
 - **Maintainable**: Clear structure and documentation

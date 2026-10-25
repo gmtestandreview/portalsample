@@ -172,7 +172,7 @@ export function DateField<T extends DateValue>({
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex flex-col gap-1'
+        'flex flex-col gap-1',
       )}
     >
       {label && <Label>{label}</Label>}
@@ -282,7 +282,7 @@ import { DateField } from 'vanilla-starter/DateField';
 <I18nProvider>
   <DateField
     defaultValue={parseZonedDateTime(
-      '2025-02-03T08:45:00[America/Los_Angeles]'
+      '2025-02-03T08:45:00[America/Los_Angeles]',
     )}
   />
 </I18nProvider>;

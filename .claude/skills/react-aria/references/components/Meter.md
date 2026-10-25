@@ -121,7 +121,7 @@ export function Meter({ label, ...props }: MeterProps) {
       {...props}
       className={composeTailwindRenderProps(
         props.className,
-        'flex flex-col gap-2 font-sans max-w-full'
+        'flex flex-col gap-2 font-sans max-w-full',
       )}
     >
       {({ percentage, valueText }) => (

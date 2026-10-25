@@ -1,7 +1,10 @@
 ---
 name: clean-code
-description: Pragmatic coding standards for AI agents. Enforces concise, direct, solution-focused code with no over-engineering or unnecessary comments. Includes naming conventions, function rules, code structure patterns, and mandatory verification scripts for quality assurance.
-  unnecessary comments
+description:
+  Pragmatic coding standards for AI agents. Enforces concise, direct,
+  solution-focused code with no over-engineering or unnecessary comments.
+  Includes naming conventions, function rules, code structure patterns, and
+  mandatory verification scripts for quality assurance. unnecessary comments
 allowed-tools: Read, Write, Edit
 version: 2.0
 priority: CRITICAL

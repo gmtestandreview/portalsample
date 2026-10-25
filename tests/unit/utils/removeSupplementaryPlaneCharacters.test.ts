@@ -7,12 +7,14 @@ describe(removeSupplementaryPlaneCharacters, () => {
   });
 
   it('preserves BMP characters and removes supplementary-plane characters', () => {
+    expect.assertions(1);
     expect(removeSupplementaryPlaneCharacters('NMI 😀 portal')).toBe(
       'NMI  portal',
     );
   });
 
   it('preserves a character when codePointAt unexpectedly returns undefined', () => {
+    expect.assertions(1);
     vi.spyOn(String.prototype, 'codePointAt').mockReturnValue(undefined);
 
     expect(removeSupplementaryPlaneCharacters('A')).toBe('A');

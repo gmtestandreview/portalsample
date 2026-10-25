@@ -490,13 +490,13 @@ flags have zero code impact on this codebase and are deferred to Task 2.
             </PreConditions>
           }
         />
-      </>
+      </>,
     ),
     {
       future: {
         v7_relativeSplatPath: true,
       },
-    }
+    },
   );
   ```
 

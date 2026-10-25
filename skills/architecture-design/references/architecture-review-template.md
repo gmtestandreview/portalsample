@@ -1,4 +1,5 @@
 <!-- markdownlint-disable-next-line MD033 -->
+
 # Architecture Recommendation: <Title>
 
 Use this full template only for the **Full** response mode — a consequential
@@ -51,8 +52,8 @@ Describe the proposed design.
 ## Component Responsibilities
 
 | Component | Responsibility | Inputs / Outputs | Notes |
-| --- | --- | --- | --- |
-| | | | |
+| --------- | -------------- | ---------------- | ----- |
+|           |                |                  |       |
 
 ## Data Ownership and Flow
 
@@ -77,8 +78,8 @@ Describe:
 ## Key Decisions
 
 | Decision | Recommendation | Rationale | Risk | Validation |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| -------- | -------------- | --------- | ---- | ---------- |
+|          |                |           |      |            |
 
 ## Trade-Offs
 

@@ -3,12 +3,7 @@
   "$id": "benchmark.schema.json",
   "title": "Skill Creator Benchmark",
   "type": "object",
-  "required": [
-    "metadata",
-    "runs",
-    "run_summary",
-    "notes"
-  ],
+  "required": ["metadata", "runs", "run_summary", "notes"],
   "properties": {
     "metadata": {
       "type": "object",
@@ -97,12 +92,7 @@
           },
           "result": {
             "type": "object",
-            "required": [
-              "pass_rate",
-              "passed",
-              "failed",
-              "total"
-            ],
+            "required": ["pass_rate", "passed", "failed", "total"],
             "properties": {
               "pass_rate": {
                 "type": "number",
@@ -176,24 +166,16 @@
       "additionalProperties": false,
       "anyOf": [
         {
-          "required": [
-            "with_skill"
-          ]
+          "required": ["with_skill"]
         },
         {
-          "required": [
-            "without_skill"
-          ]
+          "required": ["without_skill"]
         },
         {
-          "required": [
-            "new_skill"
-          ]
+          "required": ["new_skill"]
         },
         {
-          "required": [
-            "old_skill"
-          ]
+          "required": ["old_skill"]
         }
       ]
     },
@@ -207,9 +189,7 @@
   "$defs": {
     "configSummary": {
       "type": "object",
-      "required": [
-        "pass_rate"
-      ],
+      "required": ["pass_rate"],
       "properties": {
         "pass_rate": {
           "$ref": "common.schema.json#/$defs/stats"
@@ -234,22 +214,13 @@
       "type": "object",
       "properties": {
         "pass_rate": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "time_seconds": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "tokens": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         }
       },
       "additionalProperties": false

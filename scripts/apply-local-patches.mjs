@@ -35,13 +35,13 @@ function runGit(root, args) {
       env: gitEnvironment,
       stdio: ['ignore', 'pipe', 'pipe'],
       windowsHide: true,
-    }
+    },
   );
 }
 
 function wasSkipped(result) {
   return `${result.stdout ?? ''}\n${result.stderr ?? ''}`.includes(
-    'Skipped patch'
+    'Skipped patch',
   );
 }
 
@@ -58,7 +58,7 @@ function assertGitSucceeded(result, action, patchPath) {
 }
 
 export function applyLocalPatches(
-  root = process.env.NMI_PATCH_ROOT ?? projectRoot
+  root = process.env.NMI_PATCH_ROOT ?? projectRoot,
 ) {
   const patchRoot = resolve(root);
 
@@ -117,7 +117,7 @@ export function applyLocalPatches(
       .trim();
     const errorDetails = details ? `\n${details}` : '';
     throw new Error(
-      `Local patch is neither applicable nor already applied: ${relativePatchPath}${errorDetails}`
+      `Local patch is neither applicable nor already applied: ${relativePatchPath}${errorDetails}`,
     );
   }
 }

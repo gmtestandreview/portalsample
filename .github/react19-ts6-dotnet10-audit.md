@@ -1,15 +1,15 @@
 # React 19 + TypeScript 6 + .NET 10 Migration Audit
 
-Date: 2026-05-17
-Scope: `static/js/**` editable frontend source only
-Source reports:
+Date: 2026-05-17 Scope: `static/js/**` editable frontend source only Source
+reports:
 
 - `.github/react18-audit.md`
 - `.github/react19-audit.md`
 
 ## Purpose
 
-This document merges the React 18 and React 19 audits into a single migration baseline for a target environment of:
+This document merges the React 18 and React 19 audits into a single migration
+baseline for a target environment of:
 
 - React 19
 - TypeScript 6
@@ -17,10 +17,14 @@ This document merges the React 18 and React 19 audits into a single migration ba
 
 ## Execution Limits
 
-- This workspace is a source-map capture snapshot, not a normal application repository.
-- There is no root `package.json`, lockfile, `tsconfig.json`, solution file, project file, or runnable script surface at repository root.
-- The audit is therefore limited to static inspection of the downloaded frontend source under `static/js/`.
-- Dependency upgrades, builds, tests, type-checks, and .NET runtime integration could not be executed here.
+- This workspace is a source-map capture snapshot, not a normal application
+  repository.
+- There is no root `package.json`, lockfile, `tsconfig.json`, solution file,
+  project file, or runnable script surface at repository root.
+- The audit is therefore limited to static inspection of the downloaded frontend
+  source under `static/js/`.
+- Dependency upgrades, builds, tests, type-checks, and .NET runtime integration
+  could not be executed here.
 
 ## Target-State Summary
 
@@ -28,7 +32,9 @@ This document merges the React 18 and React 19 audits into a single migration ba
 
 - React root bootstrap is already on `createRoot`.
 - React Router is already on the modern data-router API.
-- No editable-source hits for legacy lifecycle methods, legacy context, string refs, `findDOMNode`, `ReactDOM.render`, `ReactDOM.hydrate`, or `unmountComponentAtNode`.
+- No editable-source hits for legacy lifecycle methods, legacy context, string
+  refs, `findDOMNode`, `ReactDOM.render`, `ReactDOM.hydrate`, or
+  `unmountComponentAtNode`.
 
 ### Still blocking a clean migration baseline
 
@@ -36,25 +42,27 @@ This document merges the React 18 and React 19 audits into a single migration ba
 2. Broken notification focus selector in both routes
 3. Loading-state churn in `quotation`
 4. `useRef()` without `null` initializer in `mailingLabel`
-5. Timeout-driven UI flows that need interactive validation under modern batching / StrictMode
+5. Timeout-driven UI flows that need interactive validation under modern
+   batching / StrictMode
 
 ## Consolidated Issue Inventory
 
-| Category | Count | Migration Relevance |
-| --- | ---: | --- |
-| Render-phase side effects | 2 components | High |
-| Broken alert selector | 2 locations | High |
-| Async loading state churn | 1 route, 8 lines | Medium |
-| `useRef()` without initializer | 1 location | Medium |
-| Timeout-driven batching-sensitive flows | 6 locations | Medium |
-| Class components | 1 | Low, not a blocker by itself |
-| `forwardRef` asset wrappers | 3 | Optional only |
+| Category                                |            Count | Migration Relevance          |
+| --------------------------------------- | ---------------: | ---------------------------- |
+| Render-phase side effects               |     2 components | High                         |
+| Broken alert selector                   |      2 locations | High                         |
+| Async loading state churn               | 1 route, 8 lines | Medium                       |
+| `useRef()` without initializer          |       1 location | Medium                       |
+| Timeout-driven batching-sensitive flows |      6 locations | Medium                       |
+| Class components                        |                1 | Low, not a blocker by itself |
+| `forwardRef` asset wrappers             |                3 | Optional only                |
 
 ## Merged Findings
 
 ### 1. Render-phase side effects in `dashboard` and `quotation`
 
-These are the highest-signal issues across both audits. The components perform imperative writes during render instead of in effects.
+These are the highest-signal issues across both audits. The components perform
+imperative writes during render instead of in effects.
 
 Locations:
 
@@ -77,7 +85,8 @@ Migration action:
 
 ### 2. Notification focus selector is malformed
 
-Both routes query for IDs beginning with `#notif-`, which is not how DOM IDs are stored.
+Both routes query for IDs beginning with `#notif-`, which is not how DOM IDs are
+stored.
 
 Locations:
 
@@ -146,7 +155,8 @@ Migration action:
 
 ### 5. Timeout-driven UI flows need interactive validation
 
-These are not guaranteed bugs, but they are migration hotspots because React 18+ batches async updates consistently and React 19 keeps that model.
+These are not guaranteed bugs, but they are migration hotspots because React 18+
+batches async updates consistently and React 19 keeps that model.
 
 Locations:
 
@@ -170,9 +180,11 @@ Migration action:
 ## React 19-Specific Non-Issues Confirmed
 
 - `createRoot` is already in use.
-- No active function-component `defaultProps` assignments were found in editable source.
+- No active function-component `defaultProps` assignments were found in editable
+  source.
 - No editable-source hits for `unmountComponentAtNode`.
-- `forwardRef` appears only in SVG asset wrappers and is optional per the workflow guidance.
+- `forwardRef` appears only in SVG asset wrappers and is optional per the
+  workflow guidance.
 
 ## TypeScript 6 Readiness Notes
 
@@ -181,8 +193,10 @@ These are bounded by snapshot visibility only.
 ### Confirmed from local source
 
 - The source is already TypeScript/TSX-based.
-- Most issues found are compatibility and correctness issues, not syntax blockers.
-- The `useRef()` cast pattern in `mailingLabel.tsx` is the clearest candidate to tighten before moving to a stricter TS environment.
+- Most issues found are compatibility and correctness issues, not syntax
+  blockers.
+- The `useRef()` cast pattern in `mailingLabel.tsx` is the clearest candidate to
+  tighten before moving to a stricter TS environment.
 
 ### Not verifiable here
 
@@ -194,7 +208,8 @@ These are bounded by snapshot visibility only.
 
 ## .NET 10 Readiness Notes
 
-This frontend snapshot contains no visible .NET solution or application host surface, so .NET 10 readiness cannot be audited directly here.
+This frontend snapshot contains no visible .NET solution or application host
+surface, so .NET 10 readiness cannot be audited directly here.
 
 ### Not verifiable here
 
@@ -208,7 +223,8 @@ This frontend snapshot contains no visible .NET solution or application host sur
 ### Practical implication
 
 - Treat this document as the frontend migration baseline only.
-- .NET 10 work will require the actual host repository, project files, and build pipeline.
+- .NET 10 work will require the actual host repository, project files, and build
+  pipeline.
 
 ## Recommended Migration Order
 
@@ -216,7 +232,8 @@ This frontend snapshot contains no visible .NET solution or application host sur
 2. Fix the malformed notification selector.
 3. Normalize `quotation` loading-state handling.
 4. Replace `useRef()` with explicit nullable refs.
-5. Run a real React 19 + TypeScript 6 install/build/test cycle in the actual application repository.
+5. Run a real React 19 + TypeScript 6 install/build/test cycle in the actual
+   application repository.
 6. Validate timeout-driven accessibility and focus flows manually.
 7. Perform .NET 10 integration checks in the real host repo.
 

@@ -2,15 +2,18 @@
 
 ## Ambassador Pattern
 
-**Problem**: Services need proxy functionality for network requests (logging, monitoring, routing, security).
+**Problem**: Services need proxy functionality for network requests (logging,
+monitoring, routing, security).
 
-**Solution**: Create helper services that send network requests on behalf of a consumer service or application.
+**Solution**: Create helper services that send network requests on behalf of a
+consumer service or application.
 
 **When to Use**:
 
 - Offloading common client connectivity tasks (monitoring, logging, routing)
 - Supporting legacy applications that can't be easily modified
-- Implementing retry logic, circuit breakers, or timeout handling for remote services
+- Implementing retry logic, circuit breakers, or timeout handling for remote
+  services
 
 **Implementation Considerations**:
 
@@ -20,9 +23,11 @@
 
 ## Bulkhead Pattern
 
-**Problem**: A failure in one component can cascade and affect the entire system.
+**Problem**: A failure in one component can cascade and affect the entire
+system.
 
-**Solution**: Isolate elements of an application into pools so that if one fails, the others continue to function.
+**Solution**: Isolate elements of an application into pools so that if one
+fails, the others continue to function.
 
 **When to Use**:
 
@@ -39,9 +44,12 @@
 
 ## Circuit Breaker Pattern
 
-**Problem**: Applications can waste resources attempting operations that are likely to fail.
+**Problem**: Applications can waste resources attempting operations that are
+likely to fail.
 
-**Solution**: Prevent an application from repeatedly trying to execute an operation that's likely to fail, allowing it to continue without waiting for the fault to be fixed.
+**Solution**: Prevent an application from repeatedly trying to execute an
+operation that's likely to fail, allowing it to continue without waiting for the
+fault to be fixed.
 
 **When to Use**:
 
@@ -59,9 +67,11 @@
 
 ## Compensating Transaction Pattern
 
-**Problem**: Distributed transactions are difficult to implement and may not be supported.
+**Problem**: Distributed transactions are difficult to implement and may not be
+supported.
 
-**Solution**: Undo the work performed by a sequence of steps that collectively form an eventually consistent operation.
+**Solution**: Undo the work performed by a sequence of steps that collectively
+form an eventually consistent operation.
 
 **When to Use**:
 
@@ -80,7 +90,8 @@
 
 **Problem**: Transient failures are common in distributed systems.
 
-**Solution**: Enable applications to handle anticipated temporary failures by retrying failed operations.
+**Solution**: Enable applications to handle anticipated temporary failures by
+retrying failed operations.
 
 **When to Use**:
 
@@ -100,7 +111,8 @@
 
 **Problem**: External tools need to verify system health and availability.
 
-**Solution**: Implement functional checks in an application that external tools can access through exposed endpoints at regular intervals.
+**Solution**: Implement functional checks in an application that external tools
+can access through exposed endpoints at regular intervals.
 
 **When to Use**:
 
@@ -120,7 +132,8 @@
 
 **Problem**: Distributed tasks need coordination through a single instance.
 
-**Solution**: Coordinate actions in a distributed application by electing one instance as the leader that manages collaborating task instances.
+**Solution**: Coordinate actions in a distributed application by electing one
+instance as the leader that manages collaborating task instances.
 
 **When to Use**:
 
@@ -137,9 +150,11 @@
 
 ## Saga Pattern
 
-**Problem**: Maintaining data consistency across microservices without distributed transactions.
+**Problem**: Maintaining data consistency across microservices without
+distributed transactions.
 
-**Solution**: Manage data consistency across microservices in distributed transaction scenarios using a sequence of local transactions.
+**Solution**: Manage data consistency across microservices in distributed
+transaction scenarios using a sequence of local transactions.
 
 **When to Use**:
 
@@ -157,9 +172,11 @@
 
 ## Sequential Convoy Pattern
 
-**Problem**: Process related messages in order without blocking independent message groups.
+**Problem**: Process related messages in order without blocking independent
+message groups.
 
-**Solution**: Process a set of related messages in a defined order without blocking other message groups.
+**Solution**: Process a set of related messages in a defined order without
+blocking other message groups.
 
 **When to Use**:
 

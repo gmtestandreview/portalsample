@@ -1,6 +1,7 @@
 # File Organization
 
-Proper file and directory structure for maintainable, scalable frontend code in the the application.
+Proper file and directory structure for maintainable, scalable frontend code in
+the the application.
 
 ---
 
@@ -141,14 +142,14 @@ features/
 import apiClient from '@/lib/apiClient';
 
 export const myFeatureApi = {
-    getItem: async (id: number) => {
-        const { data } = await apiClient.get(`/blog/items/${id}`);
-        return data;
-    },
-    createItem: async (payload) => {
-        const { data } = await apiClient.post('/blog/items', payload);
-        return data;
-    },
+  getItem: async (id: number) => {
+    const { data } = await apiClient.get(`/blog/items/${id}`);
+    return data;
+  },
+  createItem: async (payload) => {
+    const { data } = await apiClient.post('/blog/items', payload);
+    return data;
+  },
 };
 ```
 
@@ -231,12 +232,12 @@ types/
 
 From `vite.config.ts` lines 180-185:
 
-| Alias | Resolves To | Use For |
-| ------- | ------------- | --------- |
-| `@/` | `src/` | Absolute imports from src root |
-| `~types` | `src/types` | Shared TypeScript types |
-| `~components` | `src/components` | Reusable components |
-| `~features` | `src/features` | Feature imports |
+| Alias         | Resolves To      | Use For                        |
+| ------------- | ---------------- | ------------------------------ |
+| `@/`          | `src/`           | Absolute imports from src root |
+| `~types`      | `src/types`      | Shared TypeScript types        |
+| `~components` | `src/components` | Reusable components            |
+| `~features`   | `src/features`   | Feature imports                |
 
 ### Usage Examples
 

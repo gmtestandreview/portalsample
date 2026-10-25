@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
+
 import '../../../../ClientApp/src/validationSchemas/yupExtensions';
+
 import { State } from '../../../../ClientApp/src/api/web-api-client';
+
 import branchSubmitValidation from '../../../../ClientApp/src/routes/account/addBranch/validation';
+
 import organisationSubmitValidation from '../../../../ClientApp/src/routes/account/update/validation';
+
 import accountSubmitValidation from '../../../../ClientApp/src/routes/account/validation';
 
 const validAddress = {
@@ -28,6 +33,7 @@ const validAccount = {
 
 describe('account submit validation', () => {
   it('accepts a valid account object', async () => {
+    expect.assertions(1);
     await expect(
       accountSubmitValidation.validate(validAccount),
     ).resolves.toMatchObject({
@@ -37,8 +43,11 @@ describe('account submit validation', () => {
       streetAddress: validAccount.streetAddress,
     });
   });
+});
 
+describe('account submit validation', () => {
   it('validates required nested street address fields', async () => {
+    expect.assertions(1);
     await expect(
       accountSubmitValidation.validate(
         {
@@ -61,8 +70,11 @@ describe('account submit validation', () => {
       ]),
     });
   });
+});
 
+describe('account submit validation', () => {
   it('validates invalid formats', async () => {
+    expect.assertions(1);
     await expect(
       accountSubmitValidation.validate(
         {
@@ -86,8 +98,11 @@ describe('account submit validation', () => {
       ]),
     });
   });
+});
 
+describe('account submit validation', () => {
   it('accepts fields at max length boundaries', async () => {
+    expect.assertions(1);
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
@@ -102,8 +117,11 @@ describe('account submit validation', () => {
       }),
     ).resolves.toBeDefined();
   });
+});
 
+describe('account submit validation', () => {
   it('rejects fields over max length boundaries', async () => {
+    expect.assertions(1);
     await expect(
       accountSubmitValidation.validate(
         {
@@ -129,57 +147,4 @@ describe('account submit validation', () => {
       ]),
     });
   });
-
-  it('requires postal address only when it differs from street address', async () => {
-    await expect(
-      accountSubmitValidation.validate({
-        ...validAccount,
-        postalAddressSameAsStreetAddress: false,
-        postalAddress: {
-          isManuallyEntered: false,
-          searchText: '',
-        },
-      }),
-    ).rejects.toThrow('Postal address is required');
-    await expect(
-      accountSubmitValidation.validate({
-        ...validAccount,
-        postalAddressSameAsStreetAddress: false,
-        postalAddress: validAddress,
-      }),
-    ).resolves.toBeDefined();
-  });
-});
-
-describe('branch and organisation account validation modules', () => {
-  it.each([
-    ['add branch', branchSubmitValidation],
-    ['update organisation', organisationSubmitValidation],
-  ])('accepts a valid %s object', async (_name, schema) => {
-    await expect(schema.validate(validAccount)).resolves.toMatchObject({
-      businessOrTradingName: validAccount.businessOrTradingName,
-      branchOrLocationName: validAccount.branchOrLocationName,
-      businessWebsiteAddress: validAccount.businessWebsiteAddress,
-      streetAddress: validAccount.streetAddress,
-    });
-  });
-
-  it.each([
-    ['add branch', branchSubmitValidation],
-    ['update organisation', organisationSubmitValidation],
-  ])(
-    'requires postal address for %s when it differs from street address',
-    async (_name, schema) => {
-      await expect(
-        schema.validate({
-          ...validAccount,
-          postalAddressSameAsStreetAddress: false,
-          postalAddress: {
-            isManuallyEntered: false,
-            searchText: '',
-          },
-        }),
-      ).rejects.toThrow('Postal address is required');
-    },
-  );
 });

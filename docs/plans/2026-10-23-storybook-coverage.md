@@ -4,15 +4,23 @@
 
 ### ROLE
 
-Act as a principal Node.js security engineer, TypeScript/JavaScript architect, code-quality specialist, and evidence-integrity auditor.
+Act as a principal Node.js security engineer, TypeScript/JavaScript architect,
+code-quality specialist, and evidence-integrity auditor.
 
-Apply atomic decomposition, Graph-of-Thought dependency analysis, bounded iterative remediation, and test-driven verification to resolve the supplied findings.
+Apply atomic decomposition, Graph-of-Thought dependency analysis, bounded
+iterative remediation, and test-driven verification to resolve the supplied
+findings.
 
-Your objective is to remediate the reported **17 Critical and 119 High findings across the Storybook evidence pipeline**, alongside all 16 documented atomic-audit findings, while preserving existing intended functionality.
+Your objective is to remediate the reported **17 Critical and 119 High findings
+across the Storybook evidence pipeline**, alongside all 16 documented
+atomic-audit findings, while preserving existing intended functionality.
 
-These totals are provisional until reconciled with the individual scanner records and current repository state.
+These totals are provisional until reconciled with the individual scanner
+records and current repository state.
 
-This is an implementation task when authorised repository editing and testing capabilities are available. Otherwise, provide actionable patches and explicitly label verification limitations.
+This is an implementation task when authorised repository editing and testing
+capabilities are available. Otherwise, provide actionable patches and explicitly
+label verification limitations.
 
 ---
 
@@ -41,11 +49,13 @@ Read the complete versions of:
 - `storybook-coverage.mjs` findings: 13 Critical, 48 High.
 - `storybook-coverage-worklist.mjs` findings: 3 High.
 
-Inspect `package.json`, `tsconfig.json`, relevant Storybook configuration, source manifests, and existing tests when available.
+Inspect `package.json`, `tsconfig.json`, relevant Storybook configuration,
+source manifests, and existing tests when available.
 
 Do not assume that the audit's historical line numbers remain current.
 
-Treat the scanned source, audit observations, and current runtime results as distinct evidence classes.
+Treat the scanned source, audit observations, and current runtime results as
+distinct evidence classes.
 
 ---
 
@@ -62,11 +72,15 @@ Success requires:
 5. No incomplete or forged MCP evidence can qualify as complete.
 6. Frozen-input identity remains valid throughout the closure workflow.
 7. ACL and process cleanup are truthful and recoverable.
-8. Public CLI and validation contracts remain compatible unless a necessary security change is documented.
-9. All four maintained scripts are included in appropriate static-quality checks.
-10. Final verification clearly distinguishes passing tests from unexecuted tests.
+8. Public CLI and validation contracts remain compatible unless a necessary
+   security change is documented.
+9. All four maintained scripts are included in appropriate static-quality
+   checks.
+10. Final verification clearly distinguishes passing tests from unexecuted
+    tests.
 
-Do not fabricate results, weaken checks, or claim completion before sufficient evidence exists.
+Do not fabricate results, weaken checks, or claim completion before sufficient
+evidence exists.
 
 ---
 
@@ -76,15 +90,18 @@ Before editing any file:
 
 - Confirm the current checkout and working-tree state.
 - Read the supplied scanner reports completely.
-- Enumerate every reported finding by severity, file, rule, line, and occurrence.
+- Enumerate every reported finding by severity, file, rule, line, and
+  occurrence.
 - Reconcile the reported totals of 17 Critical and 119 High.
-- Resolve the previous discrepancy between four reported Critical closure findings and three explicitly visible entries.
+- Resolve the previous discrepancy between four reported Critical closure
+  findings and three explicitly visible entries.
 - Identify duplicate scanner warnings associated with one underlying defect.
 - Cross-reference findings with F-01 through F-16.
 - Verify whether a scanner finding remains applicable to the current source.
 - Preserve baseline results, commands, and relevant outputs.
 
-The 16 audit findings are additional correctness obligations, not 16 extra scanner occurrences.
+The 16 audit findings are additional correctness obligations, not 16 extra
+scanner occurrences.
 
 Never invent a missing finding.
 
@@ -100,7 +117,9 @@ Classify each finding as:
 
 ### Historical baseline
 
-The audit recorded 193 focused tests passing with an extended timeout, successful Storybook build, successful explicit linting, and five source-mode evidence diagnostics.
+The audit recorded 193 focused tests passing with an extended timeout,
+successful Storybook build, successful explicit linting, and five source-mode
+evidence diagnostics.
 
 Managed closure, live MCP, BDD, and accessibility testing were not performed.
 
@@ -132,13 +151,16 @@ For every atom, identify:
 
 Create a directed dependency graph with:
 
-`DEPENDS_ON`, `PRODUCES`, `VALIDATES`, `SHARES_CONTRACT`, `SECURITY_BOUNDARY`, `BLOCKS`, `VERIFIED_BY`, and `OVERLAPS_FINDING` relationships.
+`DEPENDS_ON`, `PRODUCES`, `VALIDATES`, `SHARES_CONTRACT`, `SECURITY_BOUNDARY`,
+`BLOCKS`, `VERIFIED_BY`, and `OVERLAPS_FINDING` relationships.
 
 Determine a dependency-safe remediation order.
 
-Identify strongly connected or tightly coupled contracts that should be updated together.
+Identify strongly connected or tightly coupled contracts that should be updated
+together.
 
-Do not use speculative graph relationships as proof of a defect. Confirm dependencies against source.
+Do not use speculative graph relationships as proof of a defect. Confirm
+dependencies against source.
 
 ---
 
@@ -164,7 +186,8 @@ Before broad refactoring, stabilise the contracts used across scripts.
 
 ### Paths and ownership
 
-- Define explicit authorised roots for input files, reports, ACL backups, receipts, and generated artifacts.
+- Define explicit authorised roots for input files, reports, ACL backups,
+  receipts, and generated artifacts.
 - Use path-aware containment checks.
 - Resolve symlinks safely.
 - Handle missing paths and platform-specific behaviour correctly.
@@ -174,7 +197,8 @@ Before broad refactoring, stabilise the contracts used across scripts.
 
 ### Identity and provenance
 
-- Bind producer identity, input digest, freeze ID, MCP endpoint, and child observation consistently.
+- Bind producer identity, input digest, freeze ID, MCP endpoint, and child
+  observation consistently.
 - Verify observations independently.
 - Reject stale or inconsistent evidence.
 
@@ -186,7 +210,8 @@ Keep shared contracts narrowly scoped rather than introducing a large framework.
 
 ### 6.1 `storybook-closure.mjs`
 
-Address all Critical findings, including the reported excessive length of `runClosure`, unsafe HTTP use, and any additional confirmed Critical findings.
+Address all Critical findings, including the reported excessive length of
+`runClosure`, unsafe HTTP use, and any additional confirmed Critical findings.
 
 Refactor complex functions into cohesive units preserving:
 
@@ -203,11 +228,13 @@ For HTTP/SSRF risks:
 
 - Validate permitted URL schemes and hosts.
 - Distinguish authorised local targets from prohibited destinations.
-- Assess DNS resolution, redirects, private/link-local destinations, and rebinding.
+- Assess DNS resolution, redirects, private/link-local destinations, and
+  rebinding.
 - Use appropriate request timeouts.
 - Apply the destination policy consistently across readiness and MCP calls.
 
-Do not break authorised Storybook local-development workflows merely to satisfy a generic rule.
+Do not break authorised Storybook local-development workflows merely to satisfy
+a generic rule.
 
 ### 6.2 `storybook-coverage.mjs`
 
@@ -227,24 +254,29 @@ Investigate and remediate each individual occurrence.
 
 #### Dynamic regular expressions
 
-The `markdownSectionEntries` function constructs a `RegExp` using an escaped heading.
+The `markdownSectionEntries` function constructs a `RegExp` using an escaped
+heading.
 
-Prefer a simpler bounded parser using line iteration or exact heading comparison if it preserves the intended behaviour.
+Prefer a simpler bounded parser using line iteration or exact heading comparison
+if it preserves the intended behaviour.
 
-- Avoid dynamically constructing regex patterns from untrusted values where unnecessary.
+- Avoid dynamically constructing regex patterns from untrusted values where
+  unnecessary.
 - Preserve markdown section semantics.
 - Handle CRLF/LF and Unicode correctly.
 - Test long and adversarial inputs.
 - Apply `u` where compatible.
 - Verify scanner findings are actually resolved.
 
-The same source line may have multiple scanner findings. Preserve one ledger row for each occurrence while linking them to the common repair.
+The same source line may have multiple scanner findings. Preserve one ledger row
+for each occurrence while linking them to the common repair.
 
 #### JSON parser
 
 Review `assertUniqueJsonKeys`, `parseJsonString`, and `parseValue`.
 
-Refactor the parser for readability and controlled complexity without weakening duplicate-key detection.
+Refactor the parser for readability and controlled complexity without weakening
+duplicate-key detection.
 
 Prefer a well-tested, bounded implementation.
 
@@ -260,17 +292,21 @@ Validate:
 - Excessive nesting and input length.
 - Property names that can affect prototypes.
 
-Avoid implementing an incomplete JSON parser merely to eliminate complexity findings.
+Avoid implementing an incomplete JSON parser merely to eliminate complexity
+findings.
 
-If a project-compatible, audited parser is already available, evaluate its suitability before introducing a new dependency.
+If a project-compatible, audited parser is already available, evaluate its
+suitability before introducing a new dependency.
 
 #### MCP receipt and closure validators
 
-Refactor `normalizeMcpReceipt`, `validateProducerIdentity`, `validateState`, `validateStoryEvidence`, and `validateClosure`.
+Refactor `normalizeMcpReceipt`, `validateProducerIdentity`, `validateState`,
+`validateStoryEvidence`, and `validateClosure`.
 
 Extract focused validation helpers with stable error contracts.
 
-The extracted helpers must not merely conceal complexity through delegation. Each should have one understandable responsibility.
+The extracted helpers must not merely conceal complexity through delegation.
+Each should have one understandable responsibility.
 
 Preserve:
 
@@ -287,13 +323,16 @@ Do not change a validator from fail-closed to fail-open.
 
 #### HTTP header-injection scanner finding
 
-The reported location near `const importClause = statement.importClause` is TypeScript AST parsing code, not an obvious HTTP response-header operation.
+The reported location near `const importClause = statement.importClause` is
+TypeScript AST parsing code, not an obvious HTTP response-header operation.
 
 Perform source-to-sink analysis.
 
-If no HTTP header sink exists, document the scanner rule, inspected data flow, and evidence supporting a false-positive disposition.
+If no HTTP header sink exists, document the scanner rule, inspected data flow,
+and evidence supporting a false-positive disposition.
 
-Do not add unrelated HTTP sanitisation or alter AST parsing solely to silence this diagnostic.
+Do not add unrelated HTTP sanitisation or alter AST parsing solely to silence
+this diagnostic.
 
 ---
 
@@ -306,8 +345,10 @@ Address each original scanner item, including:
 **Object injection**
 
 - Validate indexed access and property keys.
-- Inspect `text[index]`, canonical JSON property access, producer and receipt field lookups, digest-key indexing, and inventory-region indexing.
-- Distinguish ordinary bounded array/string access from dangerous object-key assignment.
+- Inspect `text[index]`, canonical JSON property access, producer and receipt
+  field lookups, digest-key indexing, and inventory-region indexing.
+- Distinguish ordinary bounded array/string access from dangerous object-key
+  assignment.
 - Use controlled key sets, Maps, or null-prototype structures where appropriate.
 - Protect against prototype manipulation without unnecessary interface changes.
 
@@ -320,7 +361,8 @@ Address each original scanner item, including:
 
 **Runtime globals**
 
-- Resolve reported `Buffer`, `TextDecoder`, `process`, and `console` diagnostics using the correct Node.js runtime and lint configuration.
+- Resolve reported `Buffer`, `TextDecoder`, `process`, and `console` diagnostics
+  using the correct Node.js runtime and lint configuration.
 - Consider explicit built-in imports where beneficial.
 - Verify supported runtime versions.
 - Do not add needless polyfills.
@@ -328,7 +370,8 @@ Address each original scanner item, including:
 **Deterministic object handling**
 
 - Validate stable canonical ordering.
-- Avoid relying on insertion order where the persistence or digest contract requires sorted keys.
+- Avoid relying on insertion order where the persistence or digest contract
+  requires sorted keys.
 
 **Use-before-definition**
 
@@ -338,7 +381,8 @@ Address each original scanner item, including:
 
 **Iterator callbacks**
 
-- Review direct references such as `.filter(nonEmptyString)` and `.map(inventoryRow)`.
+- Review direct references such as `.filter(nonEmptyString)` and
+  `.map(inventoryRow)`.
 - Use explicit callbacks where required without changing argument semantics.
 
 **Filesystem access**
@@ -367,16 +411,20 @@ Location: approximately line 125.
 Required correction:
 
 - Define the legitimate report output root.
-- Validate `--out`, `--summary`, and `--source-root` according to their different read/write privileges.
+- Validate `--out`, `--summary`, and `--source-root` according to their
+  different read/write privileges.
 - Prevent traversal and symlink escapes.
-- Restrict generated output to authorised destinations unless explicitly permitted by existing policy.
-- Consider existing file and directory symlinks, parent-directory races, and safe replacement.
+- Restrict generated output to authorised destinations unless explicitly
+  permitted by existing policy.
+- Consider existing file and directory symlinks, parent-directory races, and
+  safe replacement.
 - Prefer safe temporary-file/atomic-replacement semantics where suitable.
 - Preserve deterministic JSON output and newline behaviour.
 - Avoid partial output claiming successful worklist generation.
 - Preserve intended CLI defaults and exit codes.
 
-Do not simply replace `mkdirSync`/`writeFileSync` with `mkdir`/`writeFile` and assume the security issue is fixed.
+Do not simply replace `mkdirSync`/`writeFileSync` with `mkdir`/`writeFile` and
+assume the security issue is fixed.
 
 Do not hard-code a path without verifying repository conventions.
 
@@ -408,13 +456,17 @@ It omits `storybook-coverage-worklist.mjs`.
 
 Add the worklist script to the intended task-scoped rule coverage.
 
-Check configuration ordering, `@eslint/js` recommendations, Node globals, and any inherited overrides.
+Check configuration ordering, `@eslint/js` recommendations, Node globals, and
+any inherited overrides.
 
-Ensure the normal package quality path runs this configuration for all intended maintained scripts.
+Ensure the normal package quality path runs this configuration for all intended
+maintained scripts.
 
-Preserve the existing console policy allowing `warn` and `error` if it remains appropriate.
+Preserve the existing console policy allowing `warn` and `error` if it remains
+appropriate.
 
-Confirm effective configuration using actual ESLint commands instead of assuming the config applies.
+Confirm effective configuration using actual ESLint commands instead of assuming
+the config applies.
 
 ### 7.4 Closure script: 68 High
 
@@ -427,7 +479,8 @@ Complete every original item, including:
 - Promise executor issues.
 - Other error-prone diagnostics.
 
-Preserve each finding in the ledger even when one common code change addresses multiple occurrences.
+Preserve each finding in the ledger even when one common code change addresses
+multiple occurrences.
 
 ---
 
@@ -439,19 +492,24 @@ Resolve F-01 through F-16 as first-class requirements.
 
 **F-01:** Define the missing `INPUT_STALE` failure code.
 
-**F-02:** Correct default export discovery so `export default function X(){}` does not incorrectly emit both `X` and `default`.
+**F-02:** Correct default export discovery so `export default function X(){}`
+does not incorrectly emit both `X` and `default`.
 
 **F-03:** Freeze or revalidate all digest-covered root inputs.
 
-**F-04:** Never conceal ACL restoration failures or discard recovery backups prematurely.
+**F-04:** Never conceal ACL restoration failures or discard recovery backups
+prematurely.
 
-**F-05:** Independently observe child provenance rather than copying producer metadata.
+**F-05:** Independently observe child provenance rather than copying producer
+metadata.
 
 **F-06:** Add the required post-build references gate.
 
-**F-07:** Require receipts covering the complete executable final-index story set.
+**F-07:** Require receipts covering the complete executable final-index story
+set.
 
-**F-08:** Integrate all audited scripts into normal quality gates and correct worklist provenance/classification gaps.
+**F-08:** Integrate all audited scripts into normal quality gates and correct
+worklist provenance/classification gaps.
 
 ### P2 — Contract hardening
 
@@ -459,21 +517,26 @@ Resolve F-01 through F-16 as first-class requirements.
 
 **F-10:** Use duplicate-key-aware parsing for CLI JSON inputs.
 
-**F-11:** Require assertion-shaped evidence, not arbitrary matching string literals.
+**F-11:** Require assertion-shaped evidence, not arbitrary matching string
+literals.
 
 **F-12:** Enforce valid MCP JSON-RPC/SSE envelopes and result structure.
 
 **F-13:** Differentiate permission denials from unrelated I/O probe errors.
 
-**F-14:** Track and terminate owned managed-server process descendants appropriately.
+**F-14:** Track and terminate owned managed-server process descendants
+appropriately.
 
-**F-15:** Establish meaningful type-safety coverage for the maintained `.mjs` scripts.
+**F-15:** Establish meaningful type-safety coverage for the maintained `.mjs`
+scripts.
 
 ### P3 — Determinism
 
-**F-16:** Sort caller-provided excluded candidates inside the exported worklist builder.
+**F-16:** Sort caller-provided excluded candidates inside the exported worklist
+builder.
 
-Also ensure consumer/forwarding classifications are based on actual discovery provenance.
+Also ensure consumer/forwarding classifications are based on actual discovery
+provenance.
 
 Do not invent provenance where it cannot be established.
 
@@ -507,7 +570,8 @@ For every group:
 - Add or update relevant tests.
 - Recheck downstream dependencies.
 
-A root-cause grouping does not eliminate the need to individually account for each reported scanner finding.
+A root-cause grouping does not eliminate the need to individually account for
+each reported scanner finding.
 
 ---
 
@@ -577,9 +641,11 @@ Use the following work packages.
 - Final closure.
 - ACL and process cleanup.
 
-These packages express logical sequencing. Reorder or combine closely coupled corrections when the dependency graph demonstrates that doing so is safer.
+These packages express logical sequencing. Reorder or combine closely coupled
+corrections when the dependency graph demonstrates that doing so is safer.
 
-Do not run the stateful stages without appropriate authorisation and test isolation.
+Do not run the stateful stages without appropriate authorisation and test
+isolation.
 
 ---
 
@@ -662,13 +728,15 @@ For each work package:
 4. Run focused tests.
 5. Recheck affected graph nodes.
 6. Investigate failed checks and adjust.
-7. Stop after three substantial remediation/review iterations per package and report unresolved blockers if necessary.
+7. Stop after three substantial remediation/review iterations per package and
+   report unresolved blockers if necessary.
 
 Do not run unbounded loops.
 
 Do not broadly refactor unrelated application code.
 
-Avoid premature extraction of additional modules unless correctness or maintainability clearly benefits.
+Avoid premature extraction of additional modules unless correctness or
+maintainability clearly benefits.
 
 ---
 
@@ -689,30 +757,33 @@ Report:
 ### B. Atomic dependency graph
 
 | Atom | Dependencies | Scanner findings | Audit findings | Contract | Verification |
-|---|---|---|---|---|---|
+| ---- | ------------ | ---------------- | -------------- | -------- | ------------ |
 
 ### C. Root-cause remediation ledger
 
 | Root cause | Affected files | Related findings | Remediation | Regression risk |
-|---|---|---|---|---|
+| ---------- | -------------- | ---------------- | ----------- | --------------- |
 
 ### D. Full finding traceability
 
 | Original finding ID | Severity | Location | Root cause | Change | Verification | Status |
-|---|---|---|---|---|---|---|
+| ------------------- | -------- | -------- | ---------- | ------ | ------------ | ------ |
 
-Account individually for every scanner finding and all F-01 through F-16 findings.
+Account individually for every scanner finding and all F-01 through F-16
+findings.
 
 ### E. Implementation evidence
 
-Provide changed files and patch summary, including security-sensitive behaviour changes.
+Provide changed files and patch summary, including security-sensitive behaviour
+changes.
 
-When edits are unavailable, provide applicable patches instead of claiming implementation.
+When edits are unavailable, provide applicable patches instead of claiming
+implementation.
 
 ### F. Test and scanner ledger
 
 | Command/check | Executed? | Result | Evidence | Limitations |
-|---|---|---|---|---|
+| ------------- | --------- | ------ | -------- | ----------- |
 
 Never report unexecuted tests as passed.
 
@@ -731,11 +802,14 @@ Identify any remaining:
 
 ## 14. COMPLETION AND STOP RULES
 
-The target is zero unresolved verified Critical and High defects, without introducing new ones.
+The target is zero unresolved verified Critical and High defects, without
+introducing new ones.
 
-A scanner count of zero is not sufficient if evidence-integrity or recovery defects remain.
+A scanner count of zero is not sufficient if evidence-integrity or recovery
+defects remain.
 
-If a scanner finding is a false positive, preserve it in the ledger with direct technical justification and the appropriate approved review disposition.
+If a scanner finding is a false positive, preserve it in the ledger with direct
+technical justification and the appropriate approved review disposition.
 
 Stop unsafe actions when:
 
@@ -752,11 +826,14 @@ Do not weaken invariants or fabricate evidence to reach numerical targets.
 
 Start with complete baseline reconciliation.
 
-Construct the 31-atom graph and map the reported 136 scanner findings and 16 audit findings onto it.
+Construct the 31-atom graph and map the reported 136 scanner findings and 16
+audit findings onto it.
 
-Repair root causes in dependency order, preserving the existing four-script architecture unless tested changes justify a narrower extraction.
+Repair root causes in dependency order, preserving the existing four-script
+architecture unless tested changes justify a narrower extraction.
 
-Validate changes with focused tests, then available integration and scanner checks.
+Validate changes with focused tests, then available integration and scanner
+checks.
 
 Finish with an evidence-based remediation ledger.
 
@@ -768,4 +845,6 @@ Explicitly distinguish:
 - Evidence completeness.
 - Release readiness.
 
-Never declare the Storybook evidence pipeline trustworthy until its required identity, receipt completeness, recovery, and verification contracts have actually been demonstrated.
+Never declare the Storybook evidence pipeline trustworthy until its required
+identity, receipt completeness, recovery, and verification contracts have
+actually been demonstrated.

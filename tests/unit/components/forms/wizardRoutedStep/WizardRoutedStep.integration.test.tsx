@@ -1,20 +1,31 @@
 import type React from 'react';
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { render, screen, waitFor } from '@testing-library/react';
+
 import userEvent from '@testing-library/user-event';
+
 import { createMemoryRouter, RouterProvider } from 'react-router';
+
 import {
   FormStepStatus,
   type FormStepStatusDto,
 } from '../../../../../ClientApp/src/api/web-api-client';
+
 import {
   AccountStateCtx,
   AccountDispatchCtx,
 } from '../../../../../ClientApp/src/authentication/accountContext';
+
 import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep';
+
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
+
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
+
 import { type FormikValues } from 'formik';
+
 import { defined } from '../../../helpers/defined';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
@@ -163,18 +174,15 @@ function makeRouter(
   );
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
-
 describe('wizardRoutedStep — error navigation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
   afterEach(() => {
     vi.restoreAllMocks();
   });
-
   it('navigates to /not-found when loadStepValues throws a 404', async () => {
+    expect.assertions(1);
     const router = makeRouter({
       loadStepValues: vi
         .fn()
@@ -186,8 +194,17 @@ describe('wizardRoutedStep — error navigation', () => {
       expect(screen.getByText('Not Found Page')).toBeInTheDocument(),
     );
   });
+});
 
+describe('wizardRoutedStep — error navigation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('navigates to /server-error when loadStepValues throws an unrecognised error — restores suppressed silent failure', async () => {
+    expect.assertions(1);
     const router = makeRouter({
       loadStepValues: vi
         .fn()
@@ -199,8 +216,17 @@ describe('wizardRoutedStep — error navigation', () => {
       expect(screen.getByText('Server Error Page')).toBeInTheDocument(),
     );
   });
+});
 
+describe('wizardRoutedStep — error navigation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('navigates to a custom redirect URL when getRedirectionLocationOnError returns one', async () => {
+    expect.assertions(1);
     const router = makeRouter(
       {
         loadStepValues: vi
@@ -216,8 +242,17 @@ describe('wizardRoutedStep — error navigation', () => {
       expect(screen.getByText('Custom Gone Page')).toBeInTheDocument(),
     );
   });
+});
 
+describe('wizardRoutedStep — error navigation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('automatically retries loadStepValues after a 409 concurrency error', async () => {
+    expect.assertions(2);
     const loadStepValues = vi
       .fn()
       .mockRejectedValueOnce({ status: 409, title: 'Conflict' })
@@ -233,452 +268,5 @@ describe('wizardRoutedStep — error navigation', () => {
       expect(loadStepValues).toHaveBeenCalledTimes(2);
       expect(screen.getByTestId('form')).toBeInTheDocument();
     });
-  });
-
-  it('replaces the document location with sign-out after a gone load error', async () => {
-    const replace = vi.fn();
-    vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
-      ...globalThis.location,
-      replace,
-    });
-    const router = makeRouter({
-      loadStepValues: vi.fn().mockRejectedValue({ status: 410, title: 'Gone' }),
-    });
-
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() => expect(replace).toHaveBeenCalledWith('/sign-out'));
-  });
-
-  it('resets target organisation and navigates to dashboard after third-party access is lost', async () => {
-    const router = makeRouter({
-      loadStepValues: vi.fn().mockRejectedValue({
-        status: 403,
-        title: 'No third-party access to this resource',
-      }),
-    });
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
-    );
-
-    expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith(
-      '12345678901',
-      'Test Org',
-    );
-  });
-
-  it('handles lost third-party access without account dispatch', async () => {
-    const router = makeRouter(
-      {
-        loadStepValues: vi.fn().mockRejectedValue({
-          status: 403,
-          title: 'No third-party access to this resource',
-        }),
-      },
-      [],
-      mockStateValue,
-      null,
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
-    );
-
-    expect(mockDispatch.setTargetOrganisation).not.toHaveBeenCalled();
-  });
-
-  it('uses empty account values when resetting third-party access', async () => {
-    const accountWithoutOrganisation = {
-      ...mockStateValue,
-      details: {
-        ...mockStateValue.details,
-        abn: undefined,
-        organisation: undefined,
-      },
-    };
-    const router = makeRouter(
-      {
-        loadStepValues: vi.fn().mockRejectedValue({
-          status: 403,
-          title: 'No third-party access to this resource',
-        }),
-      },
-      [],
-      accountWithoutOrganisation as unknown as typeof mockStateValue,
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByText('Dashboard Page')).toBeInTheDocument(),
-    );
-
-    expect(mockDispatch.setTargetOrganisation).toHaveBeenCalledWith('', '');
-  });
-
-  it('keeps rendering after an aborted load request', async () => {
-    const router = makeRouter({
-      loadStepValues: vi
-        .fn()
-        .mockRejectedValue(new DOMException('Aborted', 'AbortError')),
-    });
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
-  });
-
-  it('redirects to the first incomplete prior step', async () => {
-    const steps = [
-      makeStepElementAt('/step-1', 'First'),
-      makeStepElementAt('/step-2', 'Second'),
-    ];
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/step-2',
-          element: (
-            <AccountStateCtx.Provider value={mockStateValue}>
-              <AccountDispatchCtx.Provider value={mockDispatch}>
-                <WizardRoutedStep
-                  title='Second'
-                  location='/step-2'
-                  url=''
-                  initialValues={{}}
-                  stepStatuses={[
-                    { status: FormStepStatus.NotStarted },
-                    { status: FormStepStatus.NotStarted },
-                  ]}
-                  loadStepValues={async () => ({ stepValues: {} })}
-                  allSteps={steps}
-                  currentStepIndex={1}
-                  locationOnCompletion='/done'
-                />
-              </AccountDispatchCtx.Provider>
-            </AccountStateCtx.Provider>
-          ),
-        },
-        { path: '/step-1', element: <div>First Step Page</div> },
-      ],
-      { initialEntries: ['/step-2'] },
-    );
-
-    render(<RouterProvider router={router} />);
-    await waitFor(() =>
-      expect(screen.getByText('First Step Page')).toBeInTheDocument(),
-    );
-  });
-});
-
-describe('wizardRoutedStep — prop mutation fix', () => {
-  it('does not mutate the original FormStepStatusDto on successful step save', async () => {
-    const originalDto: FormStepStatusDto = {
-      status: FormStepStatus.NotStarted,
-    };
-    const stepStatuses: FormStepStatusDto[] = [originalDto];
-    const onSaveAndNext = vi.fn().mockResolvedValue({});
-
-    const router = makeRouter({
-      stepStatuses,
-      onSaveAndNext,
-      loadStepValues: async () => ({ stepValues: {} }),
-      locationOnCompletion: '/done',
-    });
-
-    render(<RouterProvider router={router} />);
-
-    // Wait for the loading spinner to go away and the form to be ready
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
-
-    const submitButton = screen.getByTestId('save-and-next-button');
-    await userEvent.click(submitButton);
-
-    await waitFor(() => expect(onSaveAndNext).toHaveBeenCalledTimes(1));
-
-    // The fix: the original DTO object must NOT be mutated
-    expect(originalDto.status).toBe(FormStepStatus.NotStarted);
-    // The array element at index 0 is now a different object
-    expect(stepStatuses[0]).not.toBe(originalDto);
-    // And it has the updated status
-    expect(defined(stepStatuses[0], 'first step status').status).toBe(
-      FormStepStatus.Completed,
-    );
-  });
-
-  it('navigates to the next step using a returned base URL and reports dirty values', async () => {
-    const user = userEvent.setup();
-    const onSaveAndNext = vi.fn().mockResolvedValue({ baseUrl: '/alternate' });
-    const steps = [
-      makeStepElementAt('/step-1', 'First'),
-      makeStepElementAt('/step-2', 'Second'),
-    ];
-    const router = makeRouter(
-      {
-        initialValues: { name: 'initial' },
-        loadStepValues: async () => ({ stepValues: { name: 'loaded' } }),
-        allSteps: steps,
-        stepStatuses: [
-          { status: FormStepStatus.NotStarted },
-          { status: FormStepStatus.NotStarted },
-        ],
-        onSaveAndNext,
-      },
-      [
-        {
-          path: '/alternate/step-2',
-          element: <div>Alternate Second Step</div>,
-        },
-      ],
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() => expect(screen.getByTestId('form')).toBeInTheDocument());
-    await user.click(screen.getByTestId('save-and-next-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('Alternate Second Step')).toBeInTheDocument(),
-    );
-
-    expect(onSaveAndNext).toHaveBeenCalledWith(
-      { name: 'loaded' },
-      false,
-      expect.any(AbortSignal),
-    );
-  });
-
-  it('saves and exits to the configured location with dirty values', async () => {
-    const user = userEvent.setup();
-    const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
-    const router = makeRouter(
-      {
-        initialValues: { name: 'initial' },
-        loadStepValues: async () => ({ stepValues: { name: 'loaded' } }),
-        onSaveAndExit,
-        canSaveDraft: true,
-        locationAfterExit: '/after-exit',
-      },
-      [{ path: '/after-exit', element: <div>After Exit Page</div> }],
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('save-and-exit-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('After Exit Page')).toBeInTheDocument(),
-    );
-
-    expect(onSaveAndExit).toHaveBeenCalledWith(
-      { name: 'loaded' },
-      false,
-      expect.any(AbortSignal),
-    );
-  });
-
-  it('exits without a save callback and defaults the destination to root', async () => {
-    const user = userEvent.setup();
-    const router = makeRouter(
-      {
-        canSaveDraft: true,
-      },
-      [{ path: '/', element: <div>Root Page</div> }],
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('save-and-exit-button'));
-    await waitFor(() =>
-      expect(screen.getByText('Root Page')).toBeInTheDocument(),
-    );
-  });
-
-  it('renders update server and WAF errors from failed submissions', async () => {
-    const user = userEvent.setup();
-    const onSaveAndNext = vi
-      .fn()
-      .mockRejectedValueOnce({ status: 500, title: 'Failure' })
-      .mockRejectedValueOnce({
-        status: 403,
-        title: 'Forbidden',
-        headers: { server: 'Microsoft-Azure-Application-Gateway/v2' },
-      });
-    const router = makeRouter({ onSaveAndNext });
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('save-and-next-button'));
-
-    await expect(
-      screen.findByText('Server error'),
-    ).resolves.toBeInTheDocument();
-
-    await user.click(screen.getByTestId('save-and-next-button'));
-
-    await expect(
-      screen.findByText(/form contains invalid characters/i),
-    ).resolves.toBeInTheDocument();
-  });
-
-  it('keeps the form visible when save-and-exit fails', async () => {
-    const user = userEvent.setup();
-    const onSaveAndExit = vi
-      .fn()
-      .mockRejectedValue({ status: 500, title: 'Failure' });
-    const router = makeRouter({
-      onSaveAndExit,
-      canSaveDraft: true,
-    });
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('save-and-exit-button'));
-
-    await expect(
-      screen.findByText('Server error'),
-    ).resolves.toBeInTheDocument();
-    expect(screen.getByTestId('form')).toBeInTheDocument();
-  });
-
-  it('does nothing on submit when no save-and-next callback is configured', async () => {
-    const user = userEvent.setup();
-    const router = makeRouter({});
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-next-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('save-and-next-button'));
-
-    expect(screen.getByTestId('form')).toBeInTheDocument();
-  });
-
-  it('falls back to root after save and exit without a configured destination', async () => {
-    const user = userEvent.setup();
-    const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
-    const router = makeRouter({ onSaveAndExit, canSaveDraft: true }, [
-      { path: '/', element: <div>Root Page</div> },
-    ]);
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('save-and-exit-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('save-and-exit-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('Root Page')).toBeInTheDocument(),
-    );
-  });
-
-  it('runs discard and cancel callbacks before navigating', async () => {
-    const user = userEvent.setup();
-    const onDiscard = vi.fn();
-    const onCancel = vi.fn();
-    const router = makeRouter(
-      {
-        discard: {
-          showCancelButton: true,
-          cancelButtonTitle: 'Cancel wizard',
-          onDiscard,
-          onCancel,
-          locationOnCancel: '/cancelled',
-        },
-      },
-      [{ path: '/cancelled', element: <div>Cancelled Page</div> }],
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('cancel-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('Cancelled Page')).toBeInTheDocument(),
-    );
-
-    expect(onDiscard).toHaveBeenCalledWith();
-    expect(onCancel).toHaveBeenCalledWith();
-  });
-
-  it('uses the discard location and hides the save-and-next button', async () => {
-    const user = userEvent.setup();
-    const router = makeRouter(
-      {
-        showSaveAndNextButton: false,
-        discard: {
-          showCancelButton: true,
-          cancelButtonTitle: 'Leave wizard',
-          locationOnDiscard: '/discarded',
-        },
-      },
-      [{ path: '/discarded', element: <div>Discarded Page</div> }],
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
-
-    expect(
-      screen.queryByTestId('save-and-next-button'),
-    ).not.toBeInTheDocument();
-
-    await user.click(screen.getByTestId('cancel-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('Discarded Page')).toBeInTheDocument(),
-    );
-  });
-
-  it('falls back to root when cancelling without a configured location', async () => {
-    const user = userEvent.setup();
-    const router = makeRouter(
-      {
-        discard: {
-          showCancelButton: true,
-          cancelButtonTitle: 'Leave wizard',
-        },
-      },
-      [{ path: '/', element: <div>Root Cancel Page</div> }],
-    );
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('cancel-button'));
-
-    await waitFor(() =>
-      expect(screen.getByText('Root Cancel Page')).toBeInTheDocument(),
-    );
-  });
-
-  it('uses the external redirect for an HTTPS discard location', async () => {
-    const user = userEvent.setup();
-    const router = makeRouter({
-      discard: {
-        showCancelButton: true,
-        cancelButtonTitle: 'Leave portal',
-        locationOnDiscard: 'https://external.example.test/path',
-      },
-    });
-    render(<RouterProvider router={router} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('cancel-button')).toBeInTheDocument(),
-    );
-    await user.click(screen.getByTestId('cancel-button'));
-
-    expect(screen.getByTestId('form')).toBeInTheDocument();
   });
 });

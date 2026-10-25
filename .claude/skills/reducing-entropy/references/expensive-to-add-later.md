@@ -1,24 +1,34 @@
 ---
-description: Some things you Probably Are Gonna Need - know when YAGNI doesn't apply because retrofitting is dramatically more expensive than building it in from the start.
+description:
+  Some things you Probably Are Gonna Need - know when YAGNI doesn't apply
+  because retrofitting is dramatically more expensive than building it in from
+  the start.
 ---
 
 # PAGNI: Probably Are Gonna Need It
 
 ## The Core Insight
 
-> "When should you override YAGNI? When the cost of adding something later is so dramatically expensive compared with the cost of adding it early on that it's worth taking the risk."
+> "When should you override YAGNI? When the cost of adding something later is so
+> dramatically expensive compared with the cost of adding it early on that it's
+> worth taking the risk."
 
-YAGNI is a good default. But some things are genuinely cheaper to build in from the start than to retrofit later. Know the difference.
+YAGNI is a good default. But some things are genuinely cheaper to build in from
+the start than to retrofit later. Know the difference.
 
 ## Why This Matters
 
 Ruthless YAGNI application can backfire when:
 
-- Adding it later requires touching everything (logging, timestamps, audit trails)
-- You can't add it retroactively at all (API versioning, mobile app kill switches)
-- The cost of not having it is catastrophic (security fundamentals, data you threw away)
+- Adding it later requires touching everything (logging, timestamps, audit
+  trails)
+- You can't add it retroactively at all (API versioning, mobile app kill
+  switches)
+- The cost of not having it is catastrophic (security fundamentals, data you
+  threw away)
 
-The avoiding-complexity skill pushes toward less. This mindset identifies the exceptions where "add it now" beats "add it later."
+The avoiding-complexity skill pushes toward less. This mindset identifies the
+exceptions where "add it now" beats "add it later."
 
 ## Common PAGNIs
 
@@ -53,12 +63,16 @@ If yes to all three, it's a PAGNI. Otherwise, YAGNI still applies.
 
 ## The Balance
 
-PAGNI is not an escape hatch for over-engineering. It's a small, specific list of exceptions learned from painful experience. When in doubt, YAGNI wins.
+PAGNI is not an escape hatch for over-engineering. It's a small, specific list
+of exceptions learned from painful experience. When in doubt, YAGNI wins.
 
 **Most features: YAGNI. Infrastructure and data collection: probably PAGNI.**
 
 ## External References
 
-- [PAGNIs: Probably Are Gonna Need Its](https://simonwillison.net/2021/Jul/1/pagnis/) - Simon Willison
-- [YAGNI Exceptions](https://lukeplant.me.uk/blog/posts/yagni-exceptions/) - Luke Plant
-- [Application Security PAGNIs](https://jacobian.org/2021/jul/8/appsec-pagnis/) - Jacob Kaplan-Moss
+- [PAGNIs: Probably Are Gonna Need Its](https://simonwillison.net/2021/Jul/1/pagnis/) -
+  Simon Willison
+- [YAGNI Exceptions](https://lukeplant.me.uk/blog/posts/yagni-exceptions/) -
+  Luke Plant
+- [Application Security PAGNIs](https://jacobian.org/2021/jul/8/appsec-pagnis/) -
+  Jacob Kaplan-Moss

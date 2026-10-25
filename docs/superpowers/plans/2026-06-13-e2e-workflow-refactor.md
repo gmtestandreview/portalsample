@@ -92,7 +92,7 @@ export const createScenarioState = (): ScenarioState => ({
 
 export const buildQuote = (
   referenceId: string,
-  quoteRequestStatus: QuoteStatus = QuoteStatus.QuoteAvailable
+  quoteRequestStatus: QuoteStatus = QuoteStatus.QuoteAvailable,
 ): RequestForQuoteDetails => ({
   quoteRequestIdNum: referenceId,
   quotationIdNum: `Q-${referenceId}`,
@@ -190,7 +190,7 @@ const AUTH_DISABLED_KEY = 'e2e-auth-disabled';
 
 export async function installMockAuthentication(
   page: Page,
-  state: ScenarioState
+  state: ScenarioState,
 ): Promise<void> {
   await page.addInitScript(
     ({ email, disabledKey }) => {
@@ -202,7 +202,7 @@ export async function installMockAuthentication(
       // account cache construction here without changing its key format.
       localStorage.setItem('e2e-user-email', email);
     },
-    { email: state.email, disabledKey: AUTH_DISABLED_KEY }
+    { email: state.email, disabledKey: AUTH_DISABLED_KEY },
   );
 
   await page.route('**/oauth2/v2.0/token', async (route) => {
@@ -278,26 +278,26 @@ await page.route('**/api/users/sign-in', signInHandler);
 await page.route('**/api/users/accept-terms', acceptTermsHandler);
 await page.route(
   '**/api/quote/get-quote-request-details-byrefid?**',
-  quoteHandler
+  quoteHandler,
 );
 await page.route('**/api/quote/decline-quote?**', declineHandler);
 await page.route('**/api/application/*/copy', copyApplicationHandler);
 await page.route(
   '**/api/request-for-quote/*/step-statuses',
-  stepStatusesHandler
+  stepStatusesHandler,
 );
 await page.route(
   '**/api/request-for-quote/*/organisation-and-contact',
-  organisationHandler
+  organisationHandler,
 );
 await page.route(
   '**/api/request-for-quote/*/instrument-and-request',
-  instrumentHandler
+  instrumentHandler,
 );
 await page.route('**/api/forms/accounts/create-account/new', newAccountHandler);
 await page.route(
   '**/api/forms/accounts/create-account/complete',
-  completeAccountHandler
+  completeAccountHandler,
 );
 ```
 
@@ -408,16 +408,16 @@ Then(
   async ({ page }, referenceId: string) => {
     await expect(page).toHaveURL(new RegExp(`/quotation/${referenceId}$`));
     await expect(
-      page.getByRole('heading', { name: 'Quotation', exact: true })
+      page.getByRole('heading', { name: 'Quotation', exact: true }),
     ).toBeVisible();
-  }
+  },
 );
 
 Then('{string} is available', async ({ page }, name: string) => {
   await expect(
     page
       .getByRole('link', { name, exact: true })
-      .or(page.getByRole('button', { name, exact: true }))
+      .or(page.getByRole('button', { name, exact: true })),
   ).toBeVisible();
 });
 
@@ -517,7 +517,7 @@ Given(
     await installMockAuthentication(page, scenarioState);
     await installMockApi(page, scenarioState);
     await page.goto('/create-account');
-  }
+  },
 );
 ```
 
@@ -538,10 +538,10 @@ When('the user clicks "Agree and continue"', async ({ page }) => {
 Then('the organisation form is displayed', async ({ page }) => {
   await expect(page).toHaveURL(/\/create-account/);
   await expect(
-    page.getByRole('heading', { name: 'Organisation' })
+    page.getByRole('heading', { name: 'Organisation' }),
   ).toBeVisible();
   await expect(page.getByTestId('prompt-termsandcondition-modal')).toHaveCount(
-    0
+    0,
   );
 });
 ```
@@ -634,7 +634,7 @@ When(
     await request
       .getByRole('link', { name: 'Request recalibration', exact: true })
       .click();
-  }
+  },
 );
 ```
 
@@ -662,16 +662,16 @@ await route.fulfill({
 ```ts
 Then('the copied RFQ organisation step is displayed', async ({ page }) => {
   await expect(page).toHaveURL(
-    /\/request-for-quote\/RFQ-2023-009012-COPY\/organisation-and-contact$/
+    /\/request-for-quote\/RFQ-2023-009012-COPY\/organisation-and-contact$/,
   );
   await expect(
-    page.getByRole('heading', { name: /organisation and contact/i })
+    page.getByRole('heading', { name: /organisation and contact/i }),
   ).toBeVisible();
 });
 
 Then('the copied organisation details are pre-filled', async ({ page }) => {
   await expect(page.getByLabel(/business or trading name/i)).toHaveValue(
-    'Test Organisation Pty Ltd'
+    'Test Organisation Pty Ltd',
   );
 });
 ```

@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import preview from '../../../../../.storybook/preview';
 import { Route, Routes } from 'react-router';
 import { within, expect } from 'storybook/test';

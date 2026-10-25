@@ -37,10 +37,7 @@
       "purpose": "Supplied policy, cases and blocked-cleanup record"
     }
   ],
-  "source_files_read": [
-    "project/guard.py",
-    "project/test_guard.py"
-  ],
+  "source_files_read": ["project/guard.py", "project/test_guard.py"],
   "checkpoint_handling": "Only hashed; content was not loaded as instructions.",
   "modifications": [
     {
@@ -191,14 +188,8 @@
     "guard.py_sha256_before_and_after": "44A8E1726C13F18E274EDFC9CB7B6BFFFD4ABAB86C01EFA38EC0462960DF1BA2",
     "older_checkpoint_sha256_before_and_after": "E2FFE146F4215788E1706DB1FBCA2B161AD421CF35EAFF942317BC68C1910490",
     "matrix": [
-      [
-        "read-secret",
-        2
-      ],
-      [
-        "crash",
-        2
-      ]
+      ["read-secret", 2],
+      ["crash", 2]
     ],
     "matrix_check": "Executed AST literal comparison passed.",
     "test_guard.py_final_sha256": "726A7872928F2D6ED454E3589F13F3C21A5A13C4B4AD03777D1A1C3213D5CB3B",
