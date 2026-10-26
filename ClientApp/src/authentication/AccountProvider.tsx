@@ -83,7 +83,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   }, []);
 
   const setUserProfile = useCallback(
-    (profile: UserProfileDto): Promise<boolean> => {
+    (profile: UserProfileDto | undefined): Promise<boolean> => {
       if (profile !== undefined) {
         setUserProfileDetails((prev) => ({ ...prev, ...profile }));
         setAccountDetails((prev) => {

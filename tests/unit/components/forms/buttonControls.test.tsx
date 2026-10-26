@@ -1,10 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useFormikContext } from 'formik';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import SubmitFormButton from '@/components/forms/SubmitFormButton';
 import { FormikWrapper } from '../../helpers/formik';
+
+type ButtonFormValues = {
+  saveAndExit: boolean;
+  saveAndExitClick?: boolean;
+  submitClick?: boolean;
+};
+
+type ButtonSubmit = (values: ButtonFormValues) => void | Promise<void>;
 
 function ValuesProbe() {
   const { values } = useFormikContext<Record<string, unknown>>();
@@ -13,7 +21,8 @@ function ValuesProbe() {
 
 describe('form button controls', () => {
   it('renders SaveAndExitButton default text and submits after click', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: false, saveAndExitClick: false }}
@@ -40,7 +49,8 @@ describe('form button controls', () => {
   });
 
   it('renders SaveAndExitButton via render prop', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: false, saveAndExitClick: false }}
@@ -62,7 +72,8 @@ describe('form button controls', () => {
   });
 
   it('renders SubmitFormButton default text and submits after click', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: true, submitClick: false }}
@@ -89,7 +100,8 @@ describe('form button controls', () => {
   });
 
   it('renders SubmitFormButton via render prop', async () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
         initialValues={{ saveAndExit: false, submitClick: false }}

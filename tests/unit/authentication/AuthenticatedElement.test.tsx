@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import type { ComponentType, ReactNode } from 'react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { IPublicClientApplication } from '@azure/msal-browser';
+import { describe, expect, it, vi } from 'vitest';
 
 const authElementMocks = vi.hoisted(() => ({
-  isRouteErrorResponse: vi.fn(),
+  isRouteErrorResponse: vi.fn<(error: unknown) => boolean>(),
   msalTemplateMode: 'children' satisfies 'children' | 'loading' | 'error',
   msalTemplateProps: undefined as
     | {
@@ -14,7 +15,7 @@ const authElementMocks = vi.hoisted(() => ({
       }
     | undefined,
   routeError: undefined as unknown,
-  setActiveAccount: vi.fn(),
+  setActiveAccount: vi.fn<IPublicClientApplication['setActiveAccount']>(),
 }));
 
 vi.mock(
@@ -103,7 +104,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/ErrorBoundary'),
+  '../../../ClientApp/src/components/ErrorBoundary',
   () =>
     ({
       default: ({
@@ -124,7 +125,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/BlockUISpinner'),
+  '../../../ClientApp/src/components/BlockUISpinner',
   () =>
     ({
       default: ({ children }: { children: ReactNode }) => (
@@ -144,7 +145,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       authRequest: {
@@ -155,15 +156,18 @@ vi.mock(
 );
 
 describe('authenticatedElement', () => {
-  afterEach(() => {
+  const resetAuthElementMocks = () => {
     vi.clearAllMocks();
     authElementMocks.isRouteErrorResponse.mockReset();
     authElementMocks.msalTemplateMode = 'children';
     authElementMocks.msalTemplateProps = undefined;
     authElementMocks.routeError = undefined;
-  });
+  };
 
   it('wraps children in preconditions, MSAL authentication, and an error boundary', async () => {
+    expect.hasAssertions();
+    resetAuthElementMocks();
+
     const { default: AuthenticatedElement } =
       await import('../../../ClientApp/src/authentication/AuthenticatedElement');
 
@@ -193,6 +197,9 @@ describe('authenticatedElement', () => {
   });
 
   it('passes displayHeaderAndFooter as true by default', async () => {
+    expect.hasAssertions();
+    resetAuthElementMocks();
+
     const { default: AuthenticatedElement } =
       await import('../../../ClientApp/src/authentication/AuthenticatedElement');
 
@@ -205,6 +212,9 @@ describe('authenticatedElement', () => {
   });
 
   it('renders the logging in loading component for MSAL loading state', async () => {
+    expect.hasAssertions();
+    resetAuthElementMocks();
+
     authElementMocks.msalTemplateMode = 'loading';
     const { default: AuthenticatedElement } =
       await import('../../../ClientApp/src/authentication/AuthenticatedElement');
@@ -215,6 +225,9 @@ describe('authenticatedElement', () => {
   });
 
   it('redirects 404 route errors to the not found route', async () => {
+    expect.hasAssertions();
+    resetAuthElementMocks();
+
     authElementMocks.msalTemplateMode = 'error';
     authElementMocks.routeError = { status: 404 };
     authElementMocks.isRouteErrorResponse.mockReturnValue(true);
@@ -228,6 +241,9 @@ describe('authenticatedElement', () => {
   });
 
   it('redirects non-404 route errors to the server error route', async () => {
+    expect.hasAssertions();
+    resetAuthElementMocks();
+
     authElementMocks.msalTemplateMode = 'error';
     authElementMocks.routeError = { status: 500 };
     authElementMocks.isRouteErrorResponse.mockReturnValue(true);
@@ -241,6 +257,9 @@ describe('authenticatedElement', () => {
   });
 
   it('redirects non-route errors to the home route', async () => {
+    expect.hasAssertions();
+    resetAuthElementMocks();
+
     authElementMocks.msalTemplateMode = 'error';
     authElementMocks.routeError = new Error('Auth failed');
     authElementMocks.isRouteErrorResponse.mockReturnValue(false);

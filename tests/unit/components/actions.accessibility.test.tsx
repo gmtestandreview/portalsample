@@ -15,6 +15,7 @@ const renderActions = (ui: React.ReactNode) =>
 
 describe('actions accessibility', () => {
   it('opens the text action menu from a named button and exposes actions as menuitems', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderActions(<Actions id='request-actions' dropDownActions={actions} />);
 
@@ -30,19 +31,28 @@ describe('actions accessibility', () => {
 
     expect(viewDetails).toHaveAttribute('href', '/quotation/Q-2024-000456');
 
+    await user.keyboard('{Escape}');
+
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('keeps non-navigation actions visible without links', async () => {
+    expect.hasAssertions();
+    const user = userEvent.setup();
+    renderActions(<Actions id='request-actions' dropDownActions={actions} />);
+
+    await user.click(screen.getByRole('button', { name: 'Actions' }));
+
     const recalibrationAction = screen.getByRole('menuitem', {
       name: 'Request recalibration',
     });
 
     expect(recalibrationAction).toBeVisible();
     expect(recalibrationAction).not.toHaveAttribute('href');
-
-    await user.keyboard('{Escape}');
-
-    expect(trigger).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('gives icon-only action buttons a combined accessible name', () => {
+    expect.hasAssertions();
     renderActions(
       <Actions
         id='icon-actions'

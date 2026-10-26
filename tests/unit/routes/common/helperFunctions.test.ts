@@ -156,6 +156,8 @@ describe('route common helper functions', () => {
   ])(
     'routes dashboard file downloads for %s',
     async (status, methodName, expectedArgs) => {
+      expect.hasAssertions();
+
       await getFileDetails(
         'access-token',
         { ...baseRequest, quoteRequestStatus: status },
@@ -171,6 +173,8 @@ describe('route common helper functions', () => {
   );
 
   it('routes report-issued dashboard downloads differently for quotation and measurement tabs', async () => {
+    expect.hasAssertions();
+
     await getFileDetails(
       'token',
       { ...baseRequest, quoteRequestStatus: QuoteStatus.ReportIssued },
@@ -194,6 +198,8 @@ describe('route common helper functions', () => {
   });
 
   it('resolves to undefined for statuses without downloadable files', async () => {
+    expect.hasAssertions();
+
     await expect(
       getFileDetails(
         'token',
@@ -220,6 +226,8 @@ describe('route common helper functions', () => {
     [QuoteStatus.QuoteAvailable, 'getQuoteOfferPDFByQuoteID'],
     [QuoteStatus.QuoteClosed, 'getQuoteOfferPDFByQuoteID'],
   ])('routes quotation file downloads for %s', async (status, methodName) => {
+    expect.hasAssertions();
+
     await getQuotationFileDetails(
       'access-token',
       { ...baseRequest, quoteRequestStatus: status },
@@ -238,6 +246,8 @@ describe('route common helper functions', () => {
   });
 
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {
+    expect.hasAssertions();
+
     expect(
       getMakeModelDetails({
         quoteRequestStatus: QuoteStatus.ReportInProgress,
@@ -310,6 +320,8 @@ describe('route common helper functions', () => {
   });
 
   it('formats account and organisation display names across optional trading and branch names', () => {
+    expect.hasAssertions();
+
     const details = (overrides: Partial<AccountDetails>): AccountDetails =>
       ({
         organisation: 'National Measurement Institute',
@@ -358,6 +370,8 @@ describe('route common helper functions', () => {
   });
 
   it('treats an undefined trading or branch name as empty', () => {
+    expect.hasAssertions();
+
     expect(formatTradingBranchFromStrings(undefined, undefined)).toBe('');
     expect(formatTradingBranchFromStrings('Trading', undefined)).toBe(
       'Trading',
@@ -366,6 +380,8 @@ describe('route common helper functions', () => {
   });
 
   it('creates file URLs, delegates secure open helpers, and triggers downloads', () => {
+    expect.hasAssertions();
+
     const createObjectUrl = vi
       .spyOn(URL, 'createObjectURL')
       .mockReturnValue('blob:unit-test');
@@ -396,6 +412,8 @@ describe('route common helper functions', () => {
   });
 
   it('sets dashboard notifications for report and unexpected errors', () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const notification = document.createElement('button');
     notification.id = '#notif-test';
@@ -445,6 +463,8 @@ describe('route common helper functions', () => {
     ['portal.uat.example', Environment.UAT],
     ['portal.example', ''],
   ])('detects the %s environment', (hostname, expected) => {
+    expect.hasAssertions();
+
     vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
       ...globalThis.location,
       hostname,
@@ -454,6 +474,8 @@ describe('route common helper functions', () => {
   });
 
   it('sends redacted GA events for PII fields and optional page views', () => {
+    expect.hasAssertions();
+
     globalThis.history.pushState({}, '', '/dashboard');
     document.body.innerHTML = `
             <span data-pii="contactName">Greg</span>
@@ -486,6 +508,8 @@ describe('route common helper functions', () => {
   });
 
   it('sorts lists and moves the matching final item to the end', () => {
+    expect.hasAssertions();
+
     const options = [
       { value: 'b', displayText: 'Beta' },
       { value: 'z', displayText: 'Zed' },
@@ -544,6 +568,8 @@ describe('route common helper functions', () => {
   });
 
   it('covers empty address lines and unusual optional organisation fields', () => {
+    expect.hasAssertions();
+
     expect(
       getFormattedAddress({
         line1: null as unknown as string,
@@ -573,6 +599,8 @@ describe('route common helper functions', () => {
   });
 
   it('classifies empty and syntactically valid GUID values', () => {
+    expect.hasAssertions();
+
     expect(isEmptyGuid(undefined)).toBe(true);
     expect(isEmptyGuid('00000000-0000-0000-0000-000000000000')).toBe(true);
     expect(isEmptyGuid('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(false);
@@ -583,12 +611,16 @@ describe('route common helper functions', () => {
   });
 
   it('sanitises unsafe markup before returning HTML', () => {
+    expect.hasAssertions();
+
     expect(
       sanitiseHtml('<img src="x" onerror="alert(1)"><p>Safe copy</p>'),
     ).toBe('<img src="x"><p>Safe copy</p>');
   });
 
   it('opens downloaded file URLs in a secure new tab', () => {
+    expect.hasAssertions();
+
     downloadFileFromUrl(
       'https://example.test/report.pdf',
       {},

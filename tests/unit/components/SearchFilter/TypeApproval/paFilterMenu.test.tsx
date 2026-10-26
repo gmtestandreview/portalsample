@@ -1,14 +1,18 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { Dispatch, SetStateAction } from 'react';
 import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import { PatternApprovalStatusEnumDto } from '@/api/web-api-client';
+import type { AccountDispatchContext } from '@/authentication/accountContext';
 import { DashboardTab } from '@/components/SearchFilter/types';
 import PaFilterMenu from '@/components/SearchFilter/TypeApproval/paFilterMenu';
+import type { FieldHookConfig } from 'formik';
+import type { RadioButtonGroupProps } from '@/components/Inputs/RadioButtonGroup/types';
 
 const mocks = vi.hoisted(() => ({
-  setUserProfile: vi.fn(),
-  trackGAEvent: vi.fn(),
+  setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
+  trackGAEvent: vi.fn<(label: string, evtCategory?: string) => void>(),
 }));
 
 vi.mock(
@@ -22,7 +26,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@/analytics/GoogleAnalytics'),
+  '@/analytics/GoogleAnalytics',
   () =>
     ({
       trackGAEvent: mocks.trackGAEvent,
@@ -33,28 +37,24 @@ vi.mock(
   '@/components/Inputs/RadioButtonGroup',
   () =>
     ({
-      default: ({
+      default: <T,>({
         legend,
         name,
         options,
         onChange,
         disabled,
-      }: {
-        legend: string;
-        name: string;
-        options: { id?: string; label: string; value: string }[];
-        onChange: React.ChangeEventHandler<HTMLInputElement>;
-        disabled?: boolean;
-      }) => (
+      }: Readonly<
+        RadioButtonGroupProps<T> & FieldHookConfig<T> & { disabled?: boolean }
+      >) => (
         <fieldset>
           <legend>{legend}</legend>
           {options.map((option) => (
-            <label key={option.value} htmlFor={option.id}>
+            <label key={String(option.value)} htmlFor={option.id}>
               <input
                 id={option.id}
                 type='radio'
                 name={name}
-                value={option.value}
+                value={String(option.value)}
                 disabled={disabled}
                 onChange={onChange}
               />
@@ -68,8 +68,10 @@ vi.mock(
 
 const renderMenu = (
   initialFilters: PatternApprovalDashboardDto | undefined,
-  setInitialFilters = vi.fn(),
-  setCurrentPage = vi.fn(),
+  setInitialFilters = vi.fn<
+    Dispatch<SetStateAction<PatternApprovalDashboardDto | undefined>>
+  >(),
+  setCurrentPage = vi.fn<Dispatch<SetStateAction<number>>>(),
 ) => {
   render(
     <PaFilterMenu
@@ -89,13 +91,22 @@ const openMenu = async () => {
   return user;
 };
 
-describe(PaFilterMenu, () => {
-  beforeEach(() => {
+const expectTrackedEvents = (events: readonly string[]) => {
+  for (const event of events) {
+    expect(mocks.trackGAEvent).toHaveBeenCalledWith(event);
+  }
+};
+
+describe('PaFilterMenu', () => {
+  const resetMocks = () => {
     mocks.setUserProfile.mockReset();
     mocks.trackGAEvent.mockReset();
-  });
+  };
 
   it('shows no applied filters when the initial filters are undefined', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     renderMenu(undefined);
 
     const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
@@ -113,6 +124,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('counts changed year, status, and sort filters in the toggle title', () => {
+    expect.hasAssertions();
+    resetMocks();
+
     renderMenu({
       filterYearType: 'withintwoyears',
       filterStatusType: PatternApprovalStatusEnumDto.OnHold,
@@ -127,6 +141,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('applies changed filters, resets paging, and saves the pattern approval dashboard profile', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     const initialFilters: PatternApprovalDashboardDto = {
       filterYearType: 'allYears',
       filterStatusType: 'allStatuses',
@@ -159,12 +176,13 @@ describe(PaFilterMenu, () => {
     expect(mocks.setUserProfile).toHaveBeenCalledWith({
       patternApprovalDashboard: expectedFilters,
     });
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith('FilterStatusType');
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith('Filteryeartype');
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith('ApplyFilter');
+    expectTrackedEvents(['FilterStatusType', 'Filteryeartype', 'ApplyFilter']);
   });
 
   it('counts nothing when the changed flag is set but every value is still the default', () => {
+    expect.hasAssertions();
+    resetMocks();
+
     // Filters changed and then changed back leave the flag set while the values match the
     // defaults again, so the count has to compare each value rather than just check it is set.
     renderMenu({
@@ -181,6 +199,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('treats a year-only change as a change even with the status left alone', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     // The applied flag is an either-or: leaving the status at its default must not mask a
     // year that did change.
     const initialFilters: PatternApprovalDashboardDto = {
@@ -207,6 +228,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('resets filters to defaults while preserving the active tab and search text', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     const initialFilters: PatternApprovalDashboardDto = {
       filterYearType: 'olderthantwoyears',
       filterStatusType: PatternApprovalStatusEnumDto.Completed,
@@ -238,6 +262,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('closes without applying filters when cancel is selected', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     const { setInitialFilters, setCurrentPage } = renderMenu({
       filterYearType: 'olderthantwoyears',
       filterStatusType: PatternApprovalStatusEnumDto.Completed,
@@ -254,6 +281,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('discards unapplied edits when the menu is dismissed', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     // Dismissing the dropdown routes through onToggle, which clicks the hidden close button so
     // the same teardown runs however the menu was left - otherwise edits made and abandoned
     // would still be sitting there the next time it opens.
@@ -271,6 +301,9 @@ describe(PaFilterMenu, () => {
   });
 
   it('disables status options for draft pattern approval dashboard filters', async () => {
+    expect.hasAssertions();
+    resetMocks();
+
     renderMenu({
       filterYearType: 'allYears',
       filterStatusType: 'allStatuses',

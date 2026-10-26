@@ -1,9 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
-import { Form, Formik, type FormikProps } from 'formik';
+import { Form, Formik, type FormikConfig, type FormikProps } from 'formik';
 import { MemoryRouter } from 'react-router';
 import { afterEach, vi, describe, beforeEach, it, expect } from 'vitest';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { HttpStatusCode } from '@/types';
+
+type EmptyFormikSubmit = FormikConfig<Record<string, never>>['onSubmit'];
+type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
 
 afterEach(() => {
   vi.useRealTimers();
@@ -19,6 +22,7 @@ describe(ErrorSummary, () => {
   });
 
   it('normalizes validation error keys and renders linked errors', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary
@@ -40,6 +44,7 @@ describe(ErrorSummary, () => {
   });
 
   it('renders non-linked validation errors when disableLinkedError is true', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary
@@ -61,6 +66,7 @@ describe(ErrorSummary, () => {
   });
 
   it('renders the WAF violation message', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary isWafViolation />
@@ -76,6 +82,7 @@ describe(ErrorSummary, () => {
   });
 
   it('renders the unprocessable entity server error branch', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary
@@ -93,6 +100,7 @@ describe(ErrorSummary, () => {
   });
 
   it('handles validation errors without a prefix and preserves empty arrays', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary
@@ -115,6 +123,7 @@ describe(ErrorSummary, () => {
   });
 
   it('formats camel-case and separator-based validation keys as sentences', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary
@@ -139,6 +148,7 @@ describe(ErrorSummary, () => {
   });
 
   it('renders a key whose segment reduces to an empty label after stripping separators', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
         <ErrorSummary
@@ -159,9 +169,10 @@ describe(ErrorSummary, () => {
   });
 
   it('falls through when validation problem details has no errors collection', () => {
+    expect.hasAssertions();
     render(
       <TestRouter>
-        <Formik initialValues={{}} onSubmit={vi.fn()}>
+        <Formik initialValues={{}} onSubmit={vi.fn<EmptyFormikSubmit>()}>
           <ErrorSummary serverErrors={{ errors: undefined } as any} />
         </Formik>
       </TestRouter>,
@@ -171,6 +182,7 @@ describe(ErrorSummary, () => {
   });
 
   it('calls scrollIntoView on the error summary element when handleAlertScroll fires after the timeout', () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
     // disableLinkedError=true triggers handleAlertScroll inside renderErrorListItem;
     // the rendered Alert has id="form-error-summary" so the querySelector finds it.
@@ -200,6 +212,7 @@ describe(ErrorSummary, () => {
   });
 
   it('does not call scrollIntoView when the error summary element cannot be found when handleAlertScroll fires', () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
     render(
       <TestRouter>
@@ -226,6 +239,7 @@ describe(ErrorSummary, () => {
   });
 
   it('skips undefined error entries in sanitizeErrorData (line 140 else-if false branch)', async () => {
+    expect.hasAssertions();
     let formikInstance: FormikProps<{ name: string }> | null = null;
 
     render(
@@ -233,7 +247,7 @@ describe(ErrorSummary, () => {
         <Formik
           initialValues={{ name: '' }}
           validate={() => ({ name: undefined as any, extra: 'Shown' as any })}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<NameFormikSubmit>()}
           innerRef={(instance) => {
             formikInstance = instance;
           }}
@@ -255,6 +269,7 @@ describe(ErrorSummary, () => {
   });
 
   it('scrolls and focuses the summary after a failed submit settles', async () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
 
     let formikInstance: FormikProps<{ name: string }> | null = null;
@@ -264,7 +279,7 @@ describe(ErrorSummary, () => {
         <Formik
           initialValues={{ name: '' }}
           validate={(values) => (values.name ? {} : { name: 'Required' })}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<NameFormikSubmit>()}
           innerRef={(instance) => {
             formikInstance = instance;
           }}

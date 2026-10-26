@@ -79,7 +79,7 @@ function Harness({
       {...(initialErrors === undefined ? {} : { initialErrors })}
       {...(initialTouched === undefined ? {} : { initialTouched })}
       initialValues={initialValues}
-      onSubmit={vi.fn()}
+      onSubmit={vi.fn<() => void>()}
     >
       <Form>
         {children}
@@ -99,8 +99,13 @@ function ValuesProbe() {
   );
 }
 
+const expectClearedDueDate = () => {
+  expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null');
+};
+
 describe('datePicker wrapper', () => {
-  it('parses initial Formik values, forwards validation state, and normalizes date changes', async () => {
+  it('parses initial Formik values and normalizes valid date changes', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     render(
@@ -134,6 +139,17 @@ describe('datePicker wrapper', () => {
         '"dueDate":"2026-07-13T00:00:00+00:00"',
       ),
     );
+  });
+
+  it('normalizes invalid and cleared date values', async () => {
+    expect.hasAssertions();
+    const user = userEvent.setup();
+
+    render(
+      <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
+        <DatePicker name='dueDate' label='Due date' placeholder='dd/mm/yyyy' />
+      </Harness>,
+    );
 
     await user.click(
       screen.getByRole('button', { name: 'Pick invalid string' }),
@@ -147,17 +163,14 @@ describe('datePicker wrapper', () => {
     await user.click(
       screen.getByRole('button', { name: 'Pick invalid date object' }),
     );
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
-    );
+    await waitFor(expectClearedDueDate);
 
     await user.click(screen.getByRole('button', { name: 'Clear date' }));
-    await waitFor(() =>
-      expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'),
-    );
+    await waitFor(expectClearedDueDate);
   });
 
   it('normalizes blur values only when the input value changed and marks the field touched', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     render(
@@ -180,6 +193,7 @@ describe('datePicker wrapper', () => {
   });
 
   it('keeps invalid initial values unparsed', () => {
+    expect.hasAssertions();
     render(
       <Harness initialValues={{ dueDate: 'not a date' }}>
         <DatePicker name='dueDate' label='Due date' />
@@ -193,6 +207,7 @@ describe('datePicker wrapper', () => {
   });
 
   it('skips normalization on an unchanged empty blur', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     render(
@@ -212,6 +227,7 @@ describe('datePicker wrapper', () => {
   });
 
   it('normalizes a cleared non-empty date to null on blur', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     render(
@@ -230,6 +246,7 @@ describe('datePicker wrapper', () => {
   });
 
   it('renders summary values for string, Date, and empty inputs', () => {
+    expect.hasAssertions();
     const { rerender } = render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' isSummary />

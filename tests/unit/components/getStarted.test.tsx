@@ -14,7 +14,7 @@ vi.mock(
   import('@azure/msal-react'),
   () =>
     ({
-      useIsAuthenticated: vi.fn(),
+      useIsAuthenticated: vi.fn<typeof useIsAuthenticated>(),
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
@@ -41,6 +41,7 @@ describe(GetStarted, () => {
   });
 
   it('renders the unauthenticated entry content and pathway links', () => {
+    expect.hasAssertions();
     renderGetStarted();
 
     expect(
@@ -52,22 +53,30 @@ describe(GetStarted, () => {
     expect(
       screen.getByText(/request, receive and accept quotes/i),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /How to set up access/i }),
-    ).toHaveAttribute('href', '/help-guide/how-to-setup-access');
-    expect(screen.getByRole('link', { name: /Log in/i })).toHaveAttribute(
-      'href',
-      '/dashboard',
-    );
-    expect(screen.getByRole('link', { name: /^Digital ID/i })).toHaveAttribute(
-      'href',
-      'https://www.digitalidsystem.gov.au',
-    );
-    expect(document.title).toBe('NMI Services portal | NMI');
-    expect(document.body).toHaveClass('home');
+    expect({
+      howToSetUpAccess: screen
+        .getByRole('link', { name: /How to set up access/i })
+        .getAttribute('href'),
+      login: screen.getByRole('link', { name: /Log in/i }).getAttribute('href'),
+      digitalId: screen
+        .getByRole('link', { name: /^Digital ID/i })
+        .getAttribute('href'),
+    }).toEqual({
+      howToSetUpAccess: '/help-guide/how-to-setup-access',
+      login: '/dashboard',
+      digitalId: 'https://www.digitalidsystem.gov.au',
+    });
+    expect({
+      title: document.title,
+      bodyHasHomeClass: document.body.classList.contains('home'),
+    }).toEqual({
+      title: 'NMI Services portal | NMI',
+      bodyHasHomeClass: true,
+    });
   });
 
   it('renders and clears a stored get-started notification', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     setGetStartedNotification({
       severity: NotificationSeverity.Information,
@@ -90,6 +99,7 @@ describe(GetStarted, () => {
   });
 
   it('redirects authenticated users to the dashboard', () => {
+    expect.hasAssertions();
     vi.mocked(useIsAuthenticated).mockReturnValue(true);
 
     renderGetStarted();

@@ -1,7 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import AutoSuggest from '@/components/Inputs/AutoSuggest';
-import type { AutoSuggestOption } from '@/components/Inputs/AutoSuggest/types';
+import type {
+  AutoSuggestOption,
+  AutoSuggestProps,
+} from '@/components/Inputs/AutoSuggest/types';
+
+type SelectedOption = AutoSuggestProps<string>['onSelectedOption'];
 
 const containerState = vi.hoisted(() => ({
   props: undefined as any,
@@ -32,7 +37,7 @@ const renderAutoSuggest = (
   getOptions = vi
     .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
     .mockResolvedValue([]),
-  onSelectedOption = vi.fn(),
+  onSelectedOption = vi.fn<SelectedOption>(),
   selectedOption?: string,
 ) => {
   render(
@@ -50,7 +55,10 @@ const renderAutoSuggest = (
 
 describe('autoSuggest parent state', () => {
   it('clears a selected option when the search term is emptied', async () => {
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
+    expect.hasAssertions();
+    const onSelectedOption = vi
+      .fn<SelectedOption>()
+      .mockResolvedValue(undefined);
     renderAutoSuggest(undefined, onSelectedOption, 'Sydney');
 
     await act(async () => {
@@ -65,6 +73,7 @@ describe('autoSuggest parent state', () => {
   });
 
   it('reports a failed search and clears the previous suggestions', async () => {
+    expect.hasAssertions();
     // The stale-response tests below cover a rejection arriving after the field moved on. This
     // is the live one: the search that is still current failed, so the user is told rather than
     // left looking at suggestions from an earlier term.
@@ -92,6 +101,7 @@ describe('autoSuggest parent state', () => {
   });
 
   it('ignores a stale successful search response after cancel resets the field', async () => {
+    expect.hasAssertions();
     let resolveSearch: (
       options: AutoSuggestOption<string>[],
     ) => void = () => {};
@@ -110,26 +120,37 @@ describe('autoSuggest parent state', () => {
       searchPromise = containerState.props.onSearchTermChange('Sydney');
     });
 
-    expect(screen.getByTestId('loading')).toHaveTextContent('true');
+    expect({
+      loading: screen.getByTestId('loading').textContent,
+    }).toEqual({ loading: 'true' });
 
     await act(async () => {
       containerState.props.onCancel();
     });
 
-    expect(screen.getByTestId('search-term')).toHaveTextContent('Original');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
+    expect({
+      searchTerm: screen.getByTestId('search-term').textContent,
+      loading: screen.getByTestId('loading').textContent,
+    }).toEqual({ searchTerm: 'Original', loading: 'false' });
 
     await act(async () => {
       resolveSearch([{ id: 'syd', displayText: 'Sydney', value: 'syd' }]);
       await searchPromise;
     });
 
-    expect(screen.getByTestId('search-term')).toHaveTextContent('Original');
-    expect(screen.getByTestId('option-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('no-result')).toHaveTextContent('false');
+    expect({
+      searchTerm: screen.getByTestId('search-term').textContent,
+      optionCount: screen.getByTestId('option-count').textContent,
+      noResult: screen.getByTestId('no-result').textContent,
+    }).toEqual({
+      searchTerm: 'Original',
+      optionCount: '0',
+      noResult: 'false',
+    });
   });
 
   it('ignores a stale failed search response after cancel resets the field', async () => {
+    expect.hasAssertions();
     let rejectSearch: (error: Error) => void = () => {};
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
@@ -155,8 +176,10 @@ describe('autoSuggest parent state', () => {
       await searchPromise;
     });
 
-    expect(screen.getByTestId('error')).toHaveTextContent('false');
-    expect(screen.getByTestId('option-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
+    expect({
+      error: screen.getByTestId('error').textContent,
+      optionCount: screen.getByTestId('option-count').textContent,
+      loading: screen.getByTestId('loading').textContent,
+    }).toEqual({ error: 'false', optionCount: '0', loading: 'false' });
   });
 });

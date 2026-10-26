@@ -10,10 +10,17 @@ import userEvent from '@testing-library/user-event';
 import { Form, useFormikContext } from 'formik';
 import { MemoryRouter } from 'react-router';
 import FormikForm from '@/components/forms/FormikForm';
+import type { FormikFormProps } from '@/components/forms/FormikForm/types';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import ContactDetailsInput from '@/components/forms/CommonForms/ContactDetails';
 import { HttpStatusCode } from '@/types';
 import * as Yup from 'yup';
+
+type TestValues = Record<string, unknown>;
+type SubmitResult = ReturnType<FormikFormProps<TestValues>['onSubmit']>;
+type Submit = () => SubmitResult;
+type AsyncSubmit = () => Promise<void>;
+type Validate = (values: TestValues) => Record<string, unknown>;
 
 vi.mock(
   import('@/components/forms/UnsavedFormPrompt'),
@@ -58,10 +65,11 @@ describe('form shell behavior slice', () => {
   });
 
   it('formikForm validates hard, renders function children, and submits normalized values', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const onSubmit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
     const validateHard = vi
-      .fn()
+      .fn<Validate>()
       .mockReturnValueOnce({ firstName: 'First name is required' })
       .mockReturnValue({});
 
@@ -114,10 +122,11 @@ describe('form shell behavior slice', () => {
   });
 
   it('formikForm uses soft validation and onSaveAndExit for draft saves', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
-    const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
-    const validateSoft = vi.fn().mockReturnValue({});
+    const onSubmit = vi.fn<Submit>();
+    const onSaveAndExit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
+    const validateSoft = vi.fn<Validate>().mockReturnValue({});
 
     render(
       <MemoryRouter>
@@ -157,11 +166,12 @@ describe('form shell behavior slice', () => {
   });
 
   it('formikForm shows loading and custom banner branches', () => {
+    expect.hasAssertions();
     render(
       <MemoryRouter>
         <FormikForm
           initialValues={{}}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           isLoading
           banner={<div>Custom banner</div>}
           promptPath='/loading'
@@ -179,6 +189,7 @@ describe('form shell behavior slice', () => {
   });
 
   it('formikForm validates soft and hard Yup schemas and supports empty children', async () => {
+    expect.hasAssertions();
     const softSchema = Yup.object({
       draftName: Yup.string().required('Draft name required'),
     });
@@ -191,7 +202,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ saveAndExit: true, draftName: '' }}
           validateSoft={softSchema}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ errors, validateForm }) => (
@@ -216,7 +227,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ saveAndExit: false, finalName: '' }}
           validateHard={hardSchema}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ errors, validateForm }) => (
@@ -238,7 +249,11 @@ describe('form shell behavior slice', () => {
 
     rerender(
       <MemoryRouter>
-        <FormikForm initialValues={{}} onSubmit={vi.fn()} showBanner={false}>
+        <FormikForm
+          initialValues={{}}
+          onSubmit={vi.fn<Submit>()}
+          showBanner={false}
+        >
           {null}
         </FormikForm>
       </MemoryRouter>,
@@ -248,6 +263,7 @@ describe('form shell behavior slice', () => {
   });
 
   it('formikForm renders the saving spinner while submission is pending', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     render(
       <MemoryRouter>
@@ -274,6 +290,7 @@ describe('form shell behavior slice', () => {
   });
 
   it('errorSummary renders remaining server error branches and Formik nested errors', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
@@ -310,7 +327,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ contacts: [{ firstName: '' }] }}
           validateHard={() => ({ contacts: [{ firstName: 'Required' }] })}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ handleSubmit }) => (
@@ -334,8 +351,9 @@ describe('form shell behavior slice', () => {
   });
 
   it('errorSummary ignores empty nested errors instead of stringifying them', async () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
-    const scrollIntoView = vi.fn();
+    const scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
       configurable: true,
       value: scrollIntoView,
@@ -346,7 +364,7 @@ describe('form shell behavior slice', () => {
         <FormikForm
           initialValues={{ group: {} }}
           validateHard={() => ({ group: {} })}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           {({ handleSubmit }) => (
@@ -381,6 +399,7 @@ describe('form shell behavior slice', () => {
   });
 
   it('contactDetails renders editable labels and summary fallback/details branches', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
@@ -399,7 +418,7 @@ describe('form shell behavior slice', () => {
               },
             },
           }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           <Form>
@@ -425,10 +444,7 @@ describe('form shell behavior slice', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent(
-        '"firstName":"Priya"',
-      );
-      expect(screen.getByTestId('values')).toHaveTextContent(
-        '"phone":"02 9999 8888"',
+        /"firstName":"Priya"[\s\S]*"phone":"02 9999 8888"/,
       );
     });
 
@@ -448,7 +464,7 @@ describe('form shell behavior slice', () => {
               },
             },
           }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           <ContactDetailsInput
@@ -459,16 +475,23 @@ describe('form shell behavior slice', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('First name')).toBeInTheDocument();
-    expect(screen.getByText('Priya')).toBeInTheDocument();
-    expect(screen.getByText('Business phone')).toBeInTheDocument();
-    expect(screen.getByText('02 9999 8888')).toBeInTheDocument();
+    expect({
+      firstNameLabel: screen.getByText('First name').textContent,
+      firstName: screen.getByText('Priya').textContent,
+      businessPhoneLabel: screen.getByText('Business phone').textContent,
+      businessPhone: screen.getByText('02 9999 8888').textContent,
+    }).toMatchObject({
+      firstNameLabel: 'First name',
+      firstName: 'Priya',
+      businessPhoneLabel: 'Business phone',
+      businessPhone: '02 9999 8888',
+    });
 
     rerender(
       <MemoryRouter>
         <FormikForm
           initialValues={{ organisationAndContact: { contact: '' } }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<Submit>()}
           showBanner={false}
         >
           <ContactDetailsInput

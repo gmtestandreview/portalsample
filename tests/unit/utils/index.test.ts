@@ -3,6 +3,8 @@ import * as utils from '../../../ClientApp/src/utils';
 
 describe('utils exports', () => {
   it('exports each runtime utility function', () => {
+    expect.hasAssertions();
+
     expect(utils.sleep).toBeTypeOf('function');
     expect(utils.removeAllWhitespaces).toBeTypeOf('function');
     expect(utils.containsWhitespace).toBeTypeOf('function');
@@ -29,10 +31,14 @@ describe('utils exports', () => {
 
 describe('string helpers', () => {
   it('removes spaces, tabs, and newlines from a string', () => {
+    expect.hasAssertions();
+
     expect(utils.removeAllWhitespaces(' A b\tc \n d ')).toBe('Abcd');
   });
 
   it('detects whitespace in strings', () => {
+    expect.hasAssertions();
+
     expect(utils.containsWhitespace('has space')).toBe(true);
     expect(utils.containsWhitespace('nospace')).toBe(false);
   });
@@ -40,6 +46,8 @@ describe('string helpers', () => {
 
 describe('object and array helpers', () => {
   it('removes null, undefined, empty, and trimmed-empty values recursively', () => {
+    expect.hasAssertions();
+
     const result = utils.removeEmptyKeys({
       keep: 'value',
       blank: '',
@@ -76,6 +84,8 @@ describe('object and array helpers', () => {
   });
 
   it('applies the optional key-value filter after empty values are removed', () => {
+    expect.hasAssertions();
+
     const result = utils.removeEmptyKeys(
       {
         keep: 'value',
@@ -89,6 +99,8 @@ describe('object and array helpers', () => {
   });
 
   it('returns the head item and tail portion of an array', () => {
+    expect.hasAssertions();
+
     expect(utils.tail([1, 2, 3])).toEqual([2, 3]);
     expect(utils.head([1, 2, 3])).toBe(1);
     expect(utils.tail([])).toEqual([]);
@@ -96,6 +108,8 @@ describe('object and array helpers', () => {
   });
 
   it('returns typed property names and prefixed property names', () => {
+    expect.hasAssertions();
+
     type Example = {
       child: string;
     };
@@ -107,6 +121,8 @@ describe('object and array helpers', () => {
   });
 
   it('converts null and undefined properties to empty strings recursively', () => {
+    expect.hasAssertions();
+
     const result = utils.nullOrUndefinedToEmpty({
       keep: 'value',
       nil: null,
@@ -145,6 +161,8 @@ describe('object and array helpers', () => {
 
 describe('date helpers', () => {
   it('parses dd/MM/yyyy strings and normalizes time to local midnight', () => {
+    expect.hasAssertions();
+
     const parsed = utils.parseDate('10/05/2024');
 
     expect(parsed).toBeInstanceOf(Date);
@@ -158,6 +176,8 @@ describe('date helpers', () => {
   });
 
   it('parses ISO-like local date-time strings and Date objects', () => {
+    expect.hasAssertions();
+
     const parsedString = utils.parseDate('2024-05-10T15:30:45+10:00');
     const parsedDate = utils.parseDate(new Date(2024, 4, 10, 15, 30, 45, 250));
 
@@ -170,12 +190,16 @@ describe('date helpers', () => {
   });
 
   it('returns undefined for invalid parsed dates', () => {
+    expect.hasAssertions();
+
     expect(utils.parseDate('not-a-date')).toBeUndefined();
     expect(utils.parseDateUTC('not-a-date')).toBeUndefined();
     expect(utils.parseDateUTC(0 as unknown as Date)).toBeUndefined();
   });
 
   it('parses UTC-format date-time values and normalizes time to local midnight', () => {
+    expect.hasAssertions();
+
     const parsedString = utils.parseDateUTC('2024-05-10T15:30:45+10:00');
     const parsedDate = utils.parseDateUTC(
       new Date(2024, 4, 10, 15, 30, 45, 250),
@@ -190,6 +214,8 @@ describe('date helpers', () => {
   });
 
   it('parses date-time values without normalizing the time portion', () => {
+    expect.hasAssertions();
+
     const parsedShortDate = utils.parseDateWithTime('10/05/2024');
     const dateValue = new Date(2024, 4, 10, 15, 30, 45, 250);
     const parsedDate = utils.parseDateWithTime(dateValue);
@@ -204,6 +230,8 @@ describe('date helpers', () => {
   });
 
   it('validates non-empty dates only', () => {
+    expect.hasAssertions();
+
     expect(utils.isDateValid(null)).toBe(false);
     expect(utils.isDateValid(undefined)).toBe(false);
     expect(utils.isDateValid('   ')).toBe(false);
@@ -213,6 +241,8 @@ describe('date helpers', () => {
   });
 
   it('formats valid dates to local offset date-time strings or null for invalid input', () => {
+    expect.hasAssertions();
+
     expect(utils.formatDateToUTC(null)).toBeNull();
     expect(utils.formatDateToUTC('not-a-date')).toBeNull();
     expect(utils.formatDateToUTC(0 as unknown as Date)).toBeNull();
@@ -222,6 +252,8 @@ describe('date helpers', () => {
   });
 
   it('formats date strings as UTC Date objects and returns undefined for empty input', () => {
+    expect.hasAssertions();
+
     const localDate = new Date(2024, 4, 10);
 
     expect(utils.formatDateStringToUTC()).toBeUndefined();
@@ -231,6 +263,8 @@ describe('date helpers', () => {
   });
 
   it('formats Date objects with default and custom date-fns patterns', () => {
+    expect.hasAssertions();
+
     const date = new Date(2024, 4, 10);
 
     expect(utils.formatDate(null)).toBe('');
@@ -240,6 +274,8 @@ describe('date helpers', () => {
   });
 
   it('formats dates to strings or null for null, undefined, and invalid values', () => {
+    expect.hasAssertions();
+
     const date = new Date(2024, 4, 10);
 
     expect(utils.formatDateToString(null)).toBeNull();
@@ -254,6 +290,8 @@ describe('date helpers', () => {
   });
 
   it('formats date-time values with time or returns null for invalid input', () => {
+    expect.hasAssertions();
+
     const date = new Date(2024, 4, 10, 15, 30);
 
     expect(utils.formatDateTimeToString(null)).toBeNull();
@@ -281,6 +319,8 @@ describe('date helpers', () => {
 
 describe('formatting helpers', () => {
   it('formats bytes with zero, default decimals, and negative decimal inputs', () => {
+    expect.hasAssertions();
+
     expect(utils.formatBytes(0)).toBe('0 Bytes');
     expect(utils.formatBytes(1024)).toBe('1 kb');
     expect(utils.formatBytes(1536)).toBe('1.5 kb');
@@ -288,11 +328,15 @@ describe('formatting helpers', () => {
   });
 
   it('formats calendar and financial reporting periods', () => {
+    expect.hasAssertions();
+
     expect(utils.formatReportingPeriod('CY 2024')).toBe('2024');
     expect(utils.formatReportingPeriod('FY 2021-2022')).toBe('2021-22');
   });
 
   it('splits PascalCase words using lower, sentence, and upper/default casing', () => {
+    expect.hasAssertions();
+
     expect(utils.splitPascalCase('MeasurementReportStatus', 'lower')).toBe(
       'measurement report status',
     );
@@ -308,6 +352,8 @@ describe('formatting helpers', () => {
   });
 
   it('converts base64 data to a Blob with the requested type and slice size', async () => {
+    expect.hasAssertions();
+
     const blob = utils.base64toBlob(btoa('hello world'), 'text/plain', 4);
 
     expect(blob.type).toBe('text/plain');
@@ -316,6 +362,8 @@ describe('formatting helpers', () => {
   });
 
   it('uses the default base64 Blob slice size when none is provided', async () => {
+    expect.hasAssertions();
+
     const blob = utils.base64toBlob(btoa('default slice'), 'text/plain');
 
     expect(blob.type).toBe('text/plain');
@@ -324,6 +372,8 @@ describe('formatting helpers', () => {
   });
 
   it('substitutes 0 when codePointAt returns undefined for a code unit', async () => {
+    expect.hasAssertions();
+
     const spy = vi
       .spyOn(String.prototype, 'codePointAt')
       .mockReturnValueOnce(undefined);
@@ -335,6 +385,8 @@ describe('formatting helpers', () => {
   });
 
   it('formats currency amounts and returns null for absent values', () => {
+    expect.hasAssertions();
+
     expect(utils.formatCurrencyAmount(undefined)).toBeNull();
     expect(utils.formatCurrencyAmount(null as unknown as number)).toBeNull();
     expect(utils.formatCurrencyAmount(1234.5)).toBe('$1,234.50');
@@ -347,6 +399,8 @@ describe('async helpers', () => {
   });
 
   it('resolves sleep after the requested delay', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const resolved = vi.fn();
 

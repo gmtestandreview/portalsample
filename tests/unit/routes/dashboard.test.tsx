@@ -526,7 +526,7 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => {
-      expect(mockGetDrafts).toHaveBeenCalledWith();
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
     });
 
     // SEC-010: every call — not just the first — must use the correct org GUID
@@ -543,7 +543,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
@@ -559,7 +561,7 @@ describe('dashboard', () => {
     });
 
     // Verify ordering: setAuthToken must precede getDashboardDraftsByPortalID
-    expect(mockGetDrafts).toHaveBeenCalledWith();
+    expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
 
     const setTokenOrder = mockSetAuthToken.mock.invocationCallOrder[0];
     const getDraftsOrder = mockGetDrafts.mock.invocationCallOrder[0];
@@ -663,7 +665,7 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => {
-      expect(mockGetDrafts).toHaveBeenCalledWith();
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0);
     });
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
@@ -689,7 +691,7 @@ describe('dashboard', () => {
 
       fireEvent.click(await screen.findByRole('tab', { name: accessibleName }));
 
-      await waitFor(() => expect(apiMock).toHaveBeenCalledWith());
+      await waitFor(() => expect(apiMock.mock.calls.length).toBeGreaterThan(0));
 
       expect(mockTrackGAEvent).toHaveBeenCalledWith(tabValue);
       expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -706,7 +708,9 @@ describe('dashboard', () => {
     renderDashboard(Dashboard);
 
     fireEvent.click(await screen.findByRole('tab', { name: 'Requests' }));
-    await waitFor(() => expect(mockGetQuotes).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetQuotes.mock.calls.length).toBeGreaterThan(0),
+    );
 
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
@@ -805,7 +809,9 @@ describe('dashboard', () => {
 
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(screen.getByTestId('welcome')).toBeInTheDocument();
     expect(screen.queryByTestId('error-page')).not.toBeInTheDocument();
@@ -826,7 +832,9 @@ describe('dashboard', () => {
     expect(mockSetShowBranchSelector).toHaveBeenCalledWith(true);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Instrument/artefacts' }));
-    await waitFor(() => expect(mockGetArtefacts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetArtefacts.mock.calls.length).toBeGreaterThan(0),
+    );
     fireEvent.click(defined(screen.getAllByTestId('pagination')[2]));
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('Instrument/pagechange');
@@ -904,7 +912,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(screen.getAllByTestId('notification-message')).toHaveLength(2);
     expect(screen.getByText(/Trading name/)).toBeInTheDocument();
@@ -978,7 +988,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBe('2025');
     expect(mockGetDrafts.mock.calls.at(-1)?.[2]).toBe('Open');
@@ -1094,7 +1106,9 @@ describe('dashboard', () => {
   it('does not replace initial filters when the saved profile changes', async () => {
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
     mockMapToUserProfile.mockClear();
 
     mockAccountDetails = {
@@ -1114,7 +1128,9 @@ describe('dashboard', () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() => expect(mockMapToUserProfile).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockMapToUserProfile.mock.calls.length).toBeGreaterThan(0),
+    );
   });
 
   it('seeds initial filters when the saved profile arrives after mount', async () => {
@@ -1153,7 +1169,9 @@ describe('dashboard', () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
@@ -1200,7 +1218,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockSetUserProfile.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
@@ -1222,7 +1242,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(mockGetDrafts.mock.calls.at(-1)?.[1]).toBeUndefined();
     expect(mockGetDrafts.mock.calls.at(-1)?.[5]).toBe(1);
@@ -1233,7 +1255,9 @@ describe('dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
     await waitFor(() =>
       expect(screen.getByTestId('welcome').parentElement).not.toHaveAttribute(
         'aria-live',

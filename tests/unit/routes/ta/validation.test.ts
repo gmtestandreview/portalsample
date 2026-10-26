@@ -52,12 +52,16 @@ const contactDetails = {
 
 describe('organisation and contact submit validation', () => {
   it('requires the organisation type', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {});
 
     expect(errors).toContain('Organisation type is a required field');
   });
 
   it('rejects an organisation type outside the Yes/No options', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: 'Maybe',
     });
@@ -66,6 +70,8 @@ describe('organisation and contact submit validation', () => {
   });
 
   it('requires manufacturer details when the organisation is not the manufacturer', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.No,
     });
@@ -75,6 +81,8 @@ describe('organisation and contact submit validation', () => {
   });
 
   it('does not require manufacturer details when the organisation is the manufacturer', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
     });
@@ -84,6 +92,8 @@ describe('organisation and contact submit validation', () => {
   });
 
   it('validates a nominated contact when the user is not the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
       isPrincipalContact: YesNo.No,
@@ -94,6 +104,8 @@ describe('organisation and contact submit validation', () => {
   });
 
   it('skips contact validation when the user is the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
       isPrincipalContact: YesNo.Yes,
@@ -104,6 +116,8 @@ describe('organisation and contact submit validation', () => {
   });
 
   it('rejects a malformed business website address', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSubmitValidation, {
       isManufacturer: YesNo.Yes,
       businessWebsiteAddress: 'not a website',
@@ -117,6 +131,8 @@ describe('organisation and contact submit validation', () => {
 
 describe('organisation and contact save validation', () => {
   it('applies the soft contact schema when the user is not the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       isPrincipalContact: YesNo.No,
       contact: contactDetails,
@@ -126,6 +142,8 @@ describe('organisation and contact save validation', () => {
   });
 
   it('skips contact validation when the user is the principal contact', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       isPrincipalContact: YesNo.Yes,
       contact: {},
@@ -135,6 +153,8 @@ describe('organisation and contact save validation', () => {
   });
 
   it('still rejects a malformed website address on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(organisationAndContactSaveValidation, {
       businessWebsiteAddress: 'not a website',
     });
@@ -147,6 +167,8 @@ describe('organisation and contact save validation', () => {
 
 describe('supportingDocs validation', () => {
   it('accepts an incomplete document list on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSaveValidation, {
       form: { documents: [{ attachmentCategory: null }] },
     });
@@ -155,6 +177,8 @@ describe('supportingDocs validation', () => {
   });
 
   it('requires at least one document on submit', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: { documents: [] },
     });
@@ -163,6 +187,8 @@ describe('supportingDocs validation', () => {
   });
 
   it('requires every document to be categorised on submit', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: {
         documents: [
@@ -176,6 +202,8 @@ describe('supportingDocs validation', () => {
   });
 
   it('accepts a fully categorised document list', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: { documents: [{ attachmentCategory: 'Manual' }] },
     });
@@ -184,6 +212,8 @@ describe('supportingDocs validation', () => {
   });
 
   it('skips the category check when no document array is present', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(supportingDocsSubmitValidation, {
       form: {},
     });
@@ -212,6 +242,8 @@ const allPrincipal = {
 
 describe('pattern approval organisation and contact submit validation', () => {
   it('skips every nominated party when the principal is used throughout', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
       allPrincipal,
@@ -221,6 +253,8 @@ describe('pattern approval organisation and contact submit validation', () => {
   });
 
   it('validates the contact, invoice contact and authorised agent separately', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSubmitValidation,
       allNominated,
@@ -237,6 +271,8 @@ describe('pattern approval organisation and contact submit validation', () => {
 
 describe('pattern approval organisation and contact save validation', () => {
   it('skips every nominated party when the principal is used throughout', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
       allPrincipal,
@@ -246,6 +282,8 @@ describe('pattern approval organisation and contact save validation', () => {
   });
 
   it('accepts empty nominated parties because save uses the soft schemas', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(
       patternApprovalOrgAndContactSaveValidation,
       allNominated,
@@ -261,6 +299,8 @@ describe('application and instrument submit validation', () => {
   };
 
   it('requires at least one new-certificate sub-option', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: [],
@@ -272,6 +312,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('requires the instrument category and type for a new certificate', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -282,6 +324,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('leaves make and model optional for a new certificate', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -294,6 +338,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('requires a variation sub-option and certificate number for a variation', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Variation,
       varSubOptions: [],
@@ -306,6 +352,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('requires at least one other-approval sub-option', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: [],
@@ -318,6 +366,8 @@ describe('application and instrument submit validation', () => {
   it.each([['ReviewofApproval'], ['ProvisionalCertificate']])(
     'rejects certificate cancellation combined with %s',
     async (conflicting) => {
+      expect.hasAssertions();
+
       const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         othSubOptions: ['CertificateCancellation', conflicting],
@@ -329,6 +379,8 @@ describe('application and instrument submit validation', () => {
   );
 
   it('reports the required rule when no options array is supplied', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       summary: 'A valid summary',
@@ -339,6 +391,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('skips the mutual-exclusion check for a non-array options value', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: 'CertificateCancellation',
@@ -351,6 +405,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('treats the mutual-exclusion custom test as passing for non-array values', () => {
+    expect.hasAssertions();
+
     type ConditionalArraySchema = {
       resolve(options: { parent: unknown; value: unknown }): {
         tests: Array<{
@@ -382,6 +438,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('accepts certificate cancellation on its own', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: ['CertificateCancellation'],
@@ -392,6 +450,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('accepts a review of approval on its own', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
       othSubOptions: ['ReviewofApproval'],
@@ -402,6 +462,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('requires a summary once an instrument category is chosen', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -416,6 +478,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('does not require a summary for a new certificate with no instrument chosen', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       ...newCertificate,
       newSubOptions: ['OIMLCertificate'],
@@ -429,6 +493,8 @@ describe('application and instrument submit validation', () => {
   it.each([['°'], [';'], ['\\'], ['|']])(
     'rejects the invalid summary character %s',
     async (character) => {
+      expect.hasAssertions();
+
       const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         othSubOptions: ['ReviewofApproval'],
@@ -440,6 +506,8 @@ describe('application and instrument submit validation', () => {
   );
 
   it('skips the character check for a blank summary', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Amendment,
       summary: '   ',
@@ -449,6 +517,8 @@ describe('application and instrument submit validation', () => {
   });
 
   it('rejects a summary longer than 500 characters', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Amendment,
       summary: 'a'.repeat(501),
@@ -460,6 +530,8 @@ describe('application and instrument submit validation', () => {
 
 describe('application and instrument save validation', () => {
   it('allows empty instrument details for a new certificate', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
       instrumentCategory: null,
@@ -472,6 +544,8 @@ describe('application and instrument save validation', () => {
   });
 
   it('allows an empty certificate number for a variation', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Variation,
       certificateNumber: null,
@@ -481,6 +555,8 @@ describe('application and instrument save validation', () => {
   });
 
   it('allows an empty certificate number for other approval types', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       patternApprovalType: PatternApprovalRequiredValues.Amendment,
       certificateNumber: null,
@@ -490,6 +566,8 @@ describe('application and instrument save validation', () => {
   });
 
   it('still rejects invalid summary characters on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       summary: 'Summary ; text',
     });
@@ -498,6 +576,8 @@ describe('application and instrument save validation', () => {
   });
 
   it('skips the character check for a blank summary on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(applicationAndInstrumentSaveValidation, {
       summary: '',
     });
@@ -512,6 +592,8 @@ describe('summary and submit validation', () => {
     ['acceptTermsAndConditions', 'terms and conditions'],
     ['acceptDeclaration', 'declaration'],
   ])('requires %s to be accepted', async (field, message) => {
+    expect.hasAssertions();
+
     const allAccepted = {
       acceptNMIP106: true,
       acceptTermsAndConditions: true,
@@ -526,6 +608,8 @@ describe('summary and submit validation', () => {
   });
 
   it('accepts the declaration set when every box is ticked', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(summaryAndSubmitValidation, {
       acceptNMIP106: true,
       acceptTermsAndConditions: true,
@@ -538,6 +622,8 @@ describe('summary and submit validation', () => {
 
 describe('summary and save validation', () => {
   it('accepts an unfinished declaration on save', async () => {
+    expect.hasAssertions();
+
     const errors = await errorsFor(summaryAndSaveValidation, {
       acceptNMIP106: false,
     });

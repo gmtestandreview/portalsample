@@ -11,14 +11,14 @@ vi.mock(
   import('@/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 const modalDispatch = {
-  setShowBranchSelector: vi.fn(),
-  setShowRFQDeleteModal: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setShowBranchSelector: vi.fn<() => void>(),
+  setShowRFQDeleteModal: vi.fn<() => void>(),
+  setShowRFQSelectModal: vi.fn<() => void>(),
 };
 
 const renderDashboardItem = (children: React.ReactNode) =>
@@ -92,6 +92,7 @@ const instrumentRequest: DashboardItemDto = {
 
 describe('requestList accessibility', () => {
   it('keeps RequestItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
+    expect.hasAssertions();
     const { container } = renderDashboardItem(
       <RequestItem request={reportIssuedRequest} />,
     );
@@ -120,6 +121,7 @@ describe('requestList accessibility', () => {
   });
 
   it('keeps InstrumentItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
+    expect.hasAssertions();
     const { container } = renderDashboardItem(
       <InstrumentItem request={instrumentRequest} />,
     );

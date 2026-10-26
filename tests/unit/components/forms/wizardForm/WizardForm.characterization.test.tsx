@@ -12,10 +12,15 @@ import {
 import {
   AccountStateCtx,
   AccountDispatchCtx,
+  type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
 import WizardForm from '../../../../../ClientApp/src/components/forms/WizardForm';
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
+import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
+
+type AppLogger = typeof AppLoggerModule;
+type SaveStepFn = (values: unknown, isDirty: boolean) => Promise<object>;
 
 // Characterisation of the Formik wizard across steps and navigation, recorded
 // before the React Hook Form shell exists. Pins what happens today; it does not
@@ -25,7 +30,11 @@ vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+      default: {
+        verbose: vi.fn<AppLogger['verbose']>(),
+        error: vi.fn<AppLogger['error']>(),
+        trace: vi.fn<AppLogger['trace']>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -85,15 +94,20 @@ const accountState = {
 };
 
 const accountDispatch = {
-  setAgree: vi.fn(),
-  setCompleted: vi.fn(),
-  setContactCompleted: vi.fn(),
-  setDefaultOrganisationId: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  setOrganisationAndBranch: vi.fn(),
-  setUserProfile: vi.fn(),
-  setShowBranchSelector: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setAgree: vi.fn<AccountDispatchContext['setAgree']>(),
+  setCompleted: vi.fn<AccountDispatchContext['setCompleted']>(),
+  setContactCompleted: vi.fn<AccountDispatchContext['setContactCompleted']>(),
+  setDefaultOrganisationId:
+    vi.fn<AccountDispatchContext['setDefaultOrganisationId']>(),
+  setTargetOrganisation:
+    vi.fn<AccountDispatchContext['setTargetOrganisation']>(),
+  setOrganisationAndBranch:
+    vi.fn<AccountDispatchContext['setOrganisationAndBranch']>(),
+  setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
+  setShowBranchSelector:
+    vi.fn<AccountDispatchContext['setShowBranchSelector']>(),
+  setShowRFQSelectModal:
+    vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
 };
 
 const requiredName = Yup.object({
@@ -103,7 +117,7 @@ const requiredOther = Yup.object({
   other: Yup.string().required('Other is required'),
 });
 
-type SaveStep = Mock<(values: unknown, isDirty: boolean) => Promise<object>>;
+type SaveStep = Mock<SaveStepFn>;
 
 interface Saves {
   step1: SaveStep;
@@ -194,12 +208,13 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   beforeEach(() => {
     vi.clearAllMocks();
     saves = {
-      step1: vi.fn(async () => ({})),
-      step2: vi.fn(async () => ({})),
+      step1: vi.fn<SaveStepFn>(async () => ({})),
+      step2: vi.fn<SaveStepFn>(async () => ({})),
     };
   });
 
   it('starts the next step clean and without errors after a valid submit', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderWizard(saves);
 
@@ -215,6 +230,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   });
 
   it('shows the unsaved prompt on Back after an invalid submit on the next step', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderWizard(saves);
 
@@ -231,6 +247,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   });
 
   it('submits once on Enter when valid and shows errors on Enter when invalid', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderWizard(saves);
 
@@ -251,6 +268,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   });
 
   it('lets a clean form navigate away without a prompt', async () => {
+    expect.hasAssertions();
     const router = renderWizard(saves);
     await screen.findByLabelText('Name one');
 
@@ -263,6 +281,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   });
 
   it('blocks a dirty form and stays on the step when Cancel is chosen', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const router = renderWizard(saves);
     await user.type(await screen.findByLabelText('Name one'), 'abc');
@@ -282,6 +301,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   });
 
   it('blocks a dirty form and leaves when Discard is chosen', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const router = renderWizard(saves);
     await user.type(await screen.findByLabelText('Name one'), 'abc');

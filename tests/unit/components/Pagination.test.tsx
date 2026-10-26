@@ -1,6 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import CustomPagination from '@/components/Pagination';
 
 const originalInnerWidth = Object.getOwnPropertyDescriptor(
@@ -16,24 +16,24 @@ const setViewportWidth = (width: number) => {
   });
 };
 
-describe(CustomPagination, () => {
-  beforeEach(() => {
-    setViewportWidth(1200);
-  });
-
-  afterEach(() => {
+describe('CustomPagination', () => {
+  const resetPaginationState = () => {
     vi.useRealTimers();
     if (originalInnerWidth) {
       Object.defineProperty(globalThis, 'innerWidth', originalInnerWidth);
     }
-  });
+  };
 
   it('hides the navigation when there is only one page', () => {
+    expect.hasAssertions();
+    resetPaginationState();
+    setViewportWidth(1200);
+
     render(
       <CustomPagination
         currentPage={1}
         totalPages={1}
-        onPageChange={vi.fn()}
+        onPageChange={vi.fn<() => void>()}
       />,
     );
 
@@ -44,8 +44,12 @@ describe(CustomPagination, () => {
   });
 
   it('calls page change callbacks for numbered, previous, next, first, and last controls', async () => {
+    expect.hasAssertions();
+    resetPaginationState();
+    setViewportWidth(1200);
+
     const user = userEvent.setup();
-    const onPageChange = vi.fn();
+    const onPageChange = vi.fn<(page: number) => void>();
 
     render(
       <CustomPagination
@@ -69,8 +73,12 @@ describe(CustomPagination, () => {
   });
 
   it('does not call page change for previous or next controls outside page bounds', async () => {
+    expect.hasAssertions();
+    resetPaginationState();
+    setViewportWidth(1200);
+
     const user = userEvent.setup();
-    const onPageChange = vi.fn();
+    const onPageChange = vi.fn<(page: number) => void>();
 
     const firstPage = render(
       <CustomPagination
@@ -95,32 +103,43 @@ describe(CustomPagination, () => {
   });
 
   it('keeps the visible page range anchored near the start and end', () => {
+    expect.hasAssertions();
+    resetPaginationState();
+    setViewportWidth(1200);
+
     const { rerender } = render(
       <CustomPagination
         currentPage={2}
         totalPages={20}
-        onPageChange={vi.fn()}
+        onPageChange={vi.fn<() => void>()}
       />,
     );
 
-    expect(screen.getByLabelText('Page 1')).toBeInTheDocument();
-    expect(screen.getByLabelText('Page 10')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Page 11')).not.toBeInTheDocument();
+    expect({
+      page1: screen.queryByLabelText('Page 1') !== null,
+      page10: screen.queryByLabelText('Page 10') !== null,
+      page11: screen.queryByLabelText('Page 11') !== null,
+    }).toEqual({ page1: true, page10: true, page11: false });
 
     rerender(
       <CustomPagination
         currentPage={19}
         totalPages={20}
-        onPageChange={vi.fn()}
+        onPageChange={vi.fn<() => void>()}
       />,
     );
 
-    expect(screen.queryByLabelText('Page 10')).not.toBeInTheDocument();
-    expect(screen.getByLabelText('Page 11')).toBeInTheDocument();
-    expect(screen.getByLabelText('Page 20')).toBeInTheDocument();
+    expect({
+      page10: screen.queryByLabelText('Page 10') !== null,
+      page11: screen.queryByLabelText('Page 11') !== null,
+      page20: screen.queryByLabelText('Page 20') !== null,
+    }).toEqual({ page10: false, page11: true, page20: true });
   });
 
   it('updates the visible page range after a debounced responsive resize', () => {
+    expect.hasAssertions();
+    resetPaginationState();
+
     vi.useFakeTimers();
     setViewportWidth(1200);
 
@@ -128,12 +147,14 @@ describe(CustomPagination, () => {
       <CustomPagination
         currentPage={6}
         totalPages={20}
-        onPageChange={vi.fn()}
+        onPageChange={vi.fn<() => void>()}
       />,
     );
 
-    expect(screen.getByLabelText('Page 1')).toBeInTheDocument();
-    expect(screen.getByLabelText('Page 11')).toBeInTheDocument();
+    expect({
+      page1: screen.queryByLabelText('Page 1') !== null,
+      page11: screen.queryByLabelText('Page 11') !== null,
+    }).toEqual({ page1: true, page11: true });
 
     setViewportWidth(500);
     act(() => {
@@ -141,16 +162,18 @@ describe(CustomPagination, () => {
       vi.advanceTimersByTime(499);
     });
 
-    expect(screen.getByLabelText('Page 1')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Page 1')).not.toBeNull();
 
     act(() => {
       vi.advanceTimersByTime(1);
     });
 
-    expect(screen.queryByLabelText('Page 1')).not.toBeInTheDocument();
-    expect(screen.getByLabelText('Page 5')).toBeInTheDocument();
-    expect(screen.getByLabelText('Page 6')).toBeInTheDocument();
-    expect(screen.getByLabelText('Page 7')).toBeInTheDocument();
+    expect({
+      page1: screen.queryByLabelText('Page 1') !== null,
+      page5: screen.queryByLabelText('Page 5') !== null,
+      page6: screen.queryByLabelText('Page 6') !== null,
+      page7: screen.queryByLabelText('Page 7') !== null,
+    }).toEqual({ page1: false, page5: true, page6: true, page7: true });
   });
 
   it.each([
@@ -159,13 +182,16 @@ describe(CustomPagination, () => {
   ])(
     'uses the matching initial page range for a %i px viewport',
     (width, visibleLabels, hiddenLabels) => {
+      expect.hasAssertions();
+      resetPaginationState();
+
       setViewportWidth(width);
 
       render(
         <CustomPagination
           currentPage={6}
           totalPages={20}
-          onPageChange={vi.fn()}
+          onPageChange={vi.fn<() => void>()}
         />,
       );
 

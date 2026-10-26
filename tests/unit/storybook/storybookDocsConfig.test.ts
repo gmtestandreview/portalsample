@@ -142,6 +142,8 @@ const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
 
 describe('storybook documentation architecture', () => {
   it('keeps AutoSuggest ownership and Loading controls truthful', () => {
+    expect.hasAssertions();
+
     const autoSuggestStory = readFileSync(
       'ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx',
       'utf8',
@@ -162,6 +164,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('exposes AcceptQuote step APIs as peers without changing legacy stories', () => {
+    expect.hasAssertions();
+
     const acceptQuoteStory = readFileSync(
       'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx',
       'utf8',
@@ -183,6 +187,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('validates the approved T4 contract packet before story execution', () => {
+    expect.hasAssertions();
+
     expect(existsSync('.storybook/undocumented-component-contracts.mdx')).toBe(
       true,
     );
@@ -299,6 +305,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('presents RouteLeavingGuard types and quoted defaults separately', () => {
+    expect.hasAssertions();
+
     const guardStory = readFileSync(
       'ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx',
       'utf8',
@@ -316,6 +324,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('records Storybook 10.6.3 provenance and upstream wording ownership', () => {
+    expect.hasAssertions();
+
     expect(componentDocsGuide).toContain('Storybook 10.6.3');
     expect(componentDocsGuide).toContain('Storybook 9 Essential Changes');
     expect(componentDocsGuide).toContain('upstream');
@@ -325,6 +335,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('keeps main.ts syntactically valid', () => {
+    expect.hasAssertions();
+
     const result = ts.transpileModule(main, {
       compilerOptions: {
         module: ts.ModuleKind.ESNext,
@@ -345,6 +357,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('uses the audited latest stable Storybook package set', () => {
+    expect.hasAssertions();
+
     const storybookPackages = [
       'storybook',
       '@storybook/react-vite',
@@ -365,6 +379,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('uses React Vite without obsolete or unused Storybook addons', () => {
+    expect.hasAssertions();
+
     expect(main).toMatch(/framework:\s*["']@storybook\/react-vite["']/);
     expect(main).not.toContain('@storybook/addon-styling-webpack');
     expect(allDependencies).not.toHaveProperty(
@@ -375,11 +391,15 @@ describe('storybook documentation architecture', () => {
   });
 
   it('enables agentic review for direct Storybook MCP clients', () => {
+    expect.hasAssertions();
+
     expect(main).toMatch(/features:\s*\{[\s\S]*experimentalReview:\s*true/);
     expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
   });
 
   it('preserves Sass compatibility and the size budget while splitting the preview runtime', async () => {
+    expect.hasAssertions();
+
     const viteFinal = storybookConfig.viteFinal;
     if (!viteFinal) {
       throw new Error('Storybook viteFinal configuration is required');
@@ -418,6 +438,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('uses non-overlapping canonical story and MDX globs', () => {
+    expect.hasAssertions();
+
     expect(main).toMatch(/["']\.\.\/\.storybook\/\*\.mdx["']/);
     expect(main).toMatch(/["']\.\.\/ClientApp\/src\/\*\*\/\*\.mdx["']/);
     expect(main).toMatch(
@@ -429,6 +451,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('owns generated docs naming and docs mode in main.ts', () => {
+    expect.hasAssertions();
+
     expect(main).toMatch(
       /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
     );
@@ -440,22 +464,30 @@ describe('storybook documentation architecture', () => {
   });
 
   it('does not use Webpack-only TypeScript checking in React Vite', () => {
+    expect.hasAssertions();
+
     expect(main).not.toMatch(/typescript:\s*\{[\s\S]{0,200}check:\s*true/);
   });
 
   it('configures GFM support for MDX tables', () => {
+    expect.hasAssertions();
+
     expect(allDependencies).toHaveProperty('remark-gfm');
     expect(main).toMatch(/import\s+remarkGfm\s+from\s+['"]remark-gfm['"]/);
     expect(main).toMatch(/remarkPlugins:\s*\[\s*remarkGfm\s*\]/);
   });
 
   it('enables Autodocs once at project level', () => {
+    expect.hasAssertions();
+
     expect(preview).toMatch(/tags:\s*\[\s*['"]autodocs['"]\s*\]/);
     expect(preview).not.toContain('expectedAddonDocsConfig');
     expect(preview).not.toMatch(/docs:\s*\{[\s\S]{0,120}autodocs:/);
   });
 
   it('does not repeat inherited Autodocs or obsolete docs tags in stories', () => {
+    expect.hasAssertions();
+
     const invalidStoryTags = storyFiles.flatMap(({ path, contents }) => {
       const matches = contents.matchAll(/tags:\s*\[([^\]]*)\]/g);
 
@@ -471,6 +503,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('enables Code Panel and shares automatic source configuration', () => {
+    expect.hasAssertions();
+
     expect(preview).toMatch(/codePanel:\s*true/);
     expect(preview).toMatch(/excludeDecorators:\s*true/);
     expect(preview).toMatch(/type:\s*['"]auto['"]/);
@@ -479,6 +513,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('uses the current MSW preview addon without legacy parameters', () => {
+    expect.hasAssertions();
+
     expect(main).not.toMatch(/['"]msw-storybook-addon['"]/);
     expect(preview).toMatch(
       /import\s+addonMsw\s+from\s+['"]msw-storybook-addon['"]/,
@@ -497,12 +533,16 @@ describe('storybook documentation architecture', () => {
   });
 
   it('references public font assets at Vite root URLs', () => {
+    expect.hasAssertions();
+
     expect(previewHead).toContain('href="/fonts/fonts.css"');
     expect(previewHead).toContain('href="/fonts/nmi-iconfonts.css"');
     expect(preview).not.toContain('ClientApp/public/fonts');
   });
 
   it('composes the Docs preview annotations required by definePreview', () => {
+    expect.hasAssertions();
+
     expect(preview).toMatch(
       /import\s+addonDocs\s+from\s+['"]@storybook\/addon-docs['"]/,
     );
@@ -510,22 +550,30 @@ describe('storybook documentation architecture', () => {
   });
 
   it('keeps preview mocks in the canonical portal harness', () => {
+    expect.hasAssertions();
+
     expect(preview).not.toContain('storybookMocks');
     expect(existsSync('.storybook/storybookMocks.ts')).toBe(false);
   });
 
   it('does not replace inferred component descriptions globally', () => {
+    expect.hasAssertions();
+
     expect(preview).not.toContain(
       'Component documentation generated from JSDoc comments and Storybook autodocs.',
     );
   });
 
   it('does not clone Storybook default Autodocs template', () => {
+    expect.hasAssertions();
+
     expect(preview).not.toContain('autoDocsTemplate');
     expect(existsSync('.storybook/preview-docs.ts')).toBe(false);
   });
 
   it('teaches the correct Autodocs tag and opt-out mechanism', () => {
+    expect.hasAssertions();
+
     expect(componentDocsGuide).not.toMatch(
       /(?:add|added|adding)\s+the\s+['"]docs['"]\s+tag.*autodocs/i,
     );
@@ -535,6 +583,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('detects the singular stale docs-tag instruction', () => {
+    expect.hasAssertions();
+
     expect(
       removedArchitecturePatterns[0]?.pattern.test(
         "Add the 'docs' tag to enable Autodocs.",
@@ -543,6 +593,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('keeps every standing guidance document free of removed architecture', () => {
+    expect.hasAssertions();
+
     const offences = standingGuidanceDocuments.flatMap(({ path, contents }) => {
       return removedArchitecturePatterns
         .filter(({ pattern }) => pattern.test(contents))
@@ -553,6 +605,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('documents the Storybook metadata responsibilities', () => {
+    expect.hasAssertions();
+
     expect(componentDocsGuide).toMatch(/\bArgs\b/);
     expect(componentDocsGuide).toMatch(/\bArgTypes\b/);
     expect(componentDocsGuide).toMatch(/\bParameters\b/);
@@ -562,6 +616,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('documents configuration ownership, current MSW setup, and exact gates', () => {
+    expect.hasAssertions();
+
     expect(componentDocsGuide).toContain('definePreview');
     expect(componentDocsGuide).toContain('addonMsw');
     expect(componentDocsGuide).toContain('beforeEach');
@@ -572,6 +628,8 @@ describe('storybook documentation architecture', () => {
   });
 
   it('limits strict docgen verification to reusable component stories', () => {
+    expect.hasAssertions();
+
     expect(docsVerifier).toContain('./ClientApp/src/components/');
     expect(docsVerifier).toContain('reusableComponents');
     expect(docsVerifier).toContain('staleAcceptedDocgenExceptions');
@@ -582,11 +640,15 @@ describe('storybook documentation architecture', () => {
   });
 
   it('keeps status guidance independent of transient test totals', () => {
+    expect.hasAssertions();
+
     expect(introduction).not.toMatch(/\b\d+\s+passed\b/i);
     expect(introduction).toContain('npm run test:storybook');
   });
 
   it('keeps documented NMI brand colours aligned with SCSS tokens', () => {
+    expect.hasAssertions();
+
     const colourTokens = [
       {
         token: 'nmi-primary',

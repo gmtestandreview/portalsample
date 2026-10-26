@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   AddressClient,
   ApplicationClient,
@@ -16,12 +16,15 @@ function transport(response: Response) {
   };
 }
 
-beforeEach(() => {
+const resetSessionStorage = () => {
   globalThis.sessionStorage.clear();
-});
+};
 
 describe('web-api-client GREEN: successful requests', () => {
   it('encodes the search and forwards auth, organisation and cancellation without losing Accept', async () => {
+    expect.hasAssertions();
+    resetSessionStorage();
+
     globalThis.sessionStorage.setItem(
       'targetOrganisation',
       '{"targetOrganisationAbn":"11111111111"}',
@@ -33,7 +36,7 @@ describe('web-api-client GREEN: successful requests', () => {
     client.setAuthToken('test-token');
     const { signal } = new AbortController();
 
-    await expect(client.search('Main & First', signal)).resolves.toEqual({
+    await expect(client.search('Main & First', signal)).resolves.toStrictEqual({
       matches: [{ displayText: '1 Main St' }],
     });
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
@@ -51,6 +54,9 @@ describe('web-api-client GREEN: successful requests', () => {
   });
 
   it('serializes application commands without changing the wire contract', async () => {
+    expect.hasAssertions();
+    resetSessionStorage();
+
     const http = transport(Response.json({ id: 42, referenceId: 'RFQ-42' }));
     const client = new ApplicationClient('', http);
 
@@ -59,7 +65,7 @@ describe('web-api-client GREEN: successful requests', () => {
         applicationType: ApplicationType.QuoteRequest,
         referenceId: 'RFQ-42',
       }),
-    ).resolves.toEqual({ id: 42, referenceId: 'RFQ-42' });
+    ).resolves.toStrictEqual({ id: 42, referenceId: 'RFQ-42' });
     expect(http.fetch).toHaveBeenCalledExactlyOnceWith('/api/application', {
       method: 'POST',
       signal: undefined,
@@ -72,6 +78,9 @@ describe('web-api-client GREEN: successful requests', () => {
   });
 
   it('accepts a successful void response', async () => {
+    expect.hasAssertions();
+    resetSessionStorage();
+
     const http = transport(new Response(null, { status: 200 }));
 
     await expect(
@@ -93,6 +102,9 @@ describe('web-api-client RED: rejected requests', () => {
   it.each([400, 409, 412])(
     'preserves the raw problem payload for form error handling (%i)',
     async (status) => {
+      expect.hasAssertions();
+      resetSessionStorage();
+
       const problem = {
         status,
         title: 'Cannot save',
@@ -102,11 +114,14 @@ describe('web-api-client RED: rejected requests', () => {
 
       await expect(
         new ContactClient('', http).saveContactDetails({}),
-      ).rejects.toEqual(problem);
+      ).rejects.toStrictEqual(problem);
     },
   );
 
   it('preserves unexpected error status, body and response headers', async () => {
+    expect.hasAssertions();
+    resetSessionStorage();
+
     const http = transport(
       new Response('Service unavailable', {
         status: 503,
@@ -127,6 +142,9 @@ describe('web-api-client RED: rejected requests', () => {
     new TypeError('Network unavailable'),
     new DOMException('Cancelled', 'AbortError'),
   ])('propagates transport failure: $name', async (error) => {
+    expect.hasAssertions();
+    resetSessionStorage();
+
     const http = transport(new Response());
     http.fetch.mockRejectedValue(error);
 
@@ -137,6 +155,9 @@ describe('web-api-client RED: rejected requests', () => {
   });
 
   it('rejects malformed JSON rather than returning a successful empty result', async () => {
+    expect.hasAssertions();
+    resetSessionStorage();
+
     const http = transport(new Response('not-json', { status: 200 }));
 
     await expect(
@@ -149,11 +170,14 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
   it.each([null, undefined])(
     'omits an absent search parameter (%s) and auth headers',
     async (keyword) => {
+      expect.hasAssertions();
+      resetSessionStorage();
+
       const http = transport(Response.json({ matches: [] }));
 
       await expect(
         new AddressClient('', http).search(keyword),
-      ).resolves.toEqual({ matches: [] });
+      ).resolves.toStrictEqual({ matches: [] });
       expect(http.fetch).toHaveBeenCalledExactlyOnceWith(
         '/api/address/search',
         {
@@ -168,6 +192,9 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
   it.each([200, 204])(
     'preserves a null result for an empty %i response despite the generated non-null signature',
     async (status) => {
+      expect.hasAssertions();
+      resetSessionStorage();
+
       const http = transport(new Response(null, { status }));
 
       await expect(
@@ -190,6 +217,9 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
   ])(
     'returns binary content and filename for status $status',
     async ({ status, disposition, name }) => {
+      expect.hasAssertions();
+      resetSessionStorage();
+
       const http = transport(
         new Response('pdf-content', {
           status,

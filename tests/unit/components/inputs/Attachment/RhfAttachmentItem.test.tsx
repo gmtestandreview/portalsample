@@ -1,10 +1,20 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import type { ComponentProps } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import RhfAttachmentItem from '@/components/Inputs/RhfAttachment/RhfAttachmentItem';
+
+type AttachmentItemProps = ComponentProps<typeof RhfAttachmentItem>;
+type CategoryUpdate = NonNullable<AttachmentItemProps['onCategoryUpdate']>;
+type CategoryError = NonNullable<AttachmentItemProps['onCategoryError']>;
+type RemoveItem = NonNullable<AttachmentItemProps['onRemoveItem']>;
+type UnhandledRejectionHandler = (
+  reason: unknown,
+  promise: Promise<unknown>,
+) => void;
 
 const attachment = {
   id: 'doc-1',
@@ -82,6 +92,7 @@ const renderItem = (
 
 describe(RhfAttachmentItem, () => {
   it('renders the file link, file size, category options, and validation message', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderItem();
     await user.click(screen.getByRole('combobox', { name: 'Category' }));
@@ -89,23 +100,34 @@ describe(RhfAttachmentItem, () => {
 
     const fileLink = screen.getByRole('link', { name: 'manual.pdf' });
 
-    expect(fileLink).toHaveAttribute('download', 'manual.pdf');
-    expect(fileLink.getAttribute('href')).toMatch(/^blob:/);
-    expect(screen.getByText('2 kb')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveClass(
-      'is-invalid',
-    );
-    expect(
-      screen.getByText('Select a category that best describes this document.'),
-    ).toBeInTheDocument();
+    expect({
+      download: fileLink.getAttribute('download'),
+      hrefIsBlob: fileLink.getAttribute('href')?.startsWith('blob:'),
+      fileSize: screen.getByText('2 kb').textContent,
+      categoryInvalid: screen
+        .getByRole('combobox', { name: 'Category' })
+        .classList.contains('is-invalid'),
+      validationMessage: screen.getByText(
+        'Select a category that best describes this document.',
+      ).textContent,
+    }).toEqual({
+      download: 'manual.pdf',
+      hrefIsBlob: true,
+      fileSize: '2 kb',
+      categoryInvalid: true,
+      validationMessage: 'Select a category that best describes this document.',
+    });
     expect(
       screen.getByRole('option', { name: 'Photos or diagrams' }),
     ).toHaveValue('Photos or diagrams');
   });
 
   it('updates the category field and calls the persisted-category callback when a document id is present', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
     renderItem({ onCategoryUpdate });
 
     await user.selectOptions(
@@ -130,11 +152,12 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('reports a failed category save and puts the previous category back', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const onCategoryUpdate = vi
-      .fn()
+      .fn<CategoryUpdate>()
       .mockRejectedValue(new Error('token abc123 expired'));
-    const onCategoryError = vi.fn();
+    const onCategoryError = vi.fn<CategoryError>();
     renderItem(
       { onCategoryUpdate, onCategoryError },
       { ...attachment, attachmentCategory: 'Manuals' },
@@ -165,10 +188,13 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('survives a failed category save when no error handler is given', async () => {
-    const unhandled = vi.fn();
+    expect.hasAssertions();
+    const unhandled = vi.fn<UnhandledRejectionHandler>();
     process.on('unhandledRejection', unhandled);
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('boom'));
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('boom'));
     renderItem({ onCategoryUpdate });
 
     await user.selectOptions(
@@ -209,11 +235,12 @@ describe(RhfAttachmentItem, () => {
     };
 
     it('ends at the saved category when two saves in a row both fail', async () => {
+      expect.hasAssertions();
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
       const onCategoryUpdate = vi
-        .fn()
+        .fn<CategoryUpdate>()
         .mockReturnValueOnce(first.promise)
         .mockReturnValueOnce(second.promise);
       renderItem({ onCategoryUpdate }, saved);
@@ -231,14 +258,15 @@ describe(RhfAttachmentItem, () => {
     });
 
     it('keeps a later successful save when an earlier one fails afterwards', async () => {
+      expect.hasAssertions();
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
       const onCategoryUpdate = vi
-        .fn()
+        .fn<CategoryUpdate>()
         .mockReturnValueOnce(first.promise)
         .mockReturnValueOnce(second.promise);
-      const onCategoryError = vi.fn();
+      const onCategoryError = vi.fn<CategoryError>();
       renderItem({ onCategoryUpdate, onCategoryError }, saved);
 
       await pick(user, 'Certificate');
@@ -258,12 +286,13 @@ describe(RhfAttachmentItem, () => {
     });
 
     it('keeps the newest saved category when an older save succeeds late', async () => {
+      expect.hasAssertions();
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
       const third = deferred();
       const onCategoryUpdate = vi
-        .fn()
+        .fn<CategoryUpdate>()
         .mockReturnValueOnce(first.promise)
         .mockReturnValueOnce(second.promise)
         .mockReturnValueOnce(third.promise);
@@ -284,9 +313,12 @@ describe(RhfAttachmentItem, () => {
     });
 
     it('reverts to an empty category when the document never had one', async () => {
+      expect.hasAssertions();
       const user = userEvent.setup();
       const failing = deferred();
-      const onCategoryUpdate = vi.fn().mockReturnValue(failing.promise);
+      const onCategoryUpdate = vi
+        .fn<CategoryUpdate>()
+        .mockReturnValue(failing.promise);
       const { id, attachmentName, attachmentSize, documentBytes } = attachment;
       renderItem(
         { onCategoryUpdate },
@@ -306,9 +338,12 @@ describe(RhfAttachmentItem, () => {
     it.each([[[]], [null]])(
       'leaves the form alone when the list no longer holds the document (%j)',
       async (replacement) => {
+        expect.hasAssertions();
         const user = userEvent.setup();
         const pending = deferred();
-        const onCategoryUpdate = vi.fn().mockReturnValue(pending.promise);
+        const onCategoryUpdate = vi
+          .fn<CategoryUpdate>()
+          .mockReturnValue(pending.promise);
         renderItem({ onCategoryUpdate }, saved);
 
         await pick(user, 'Certificate');
@@ -324,9 +359,12 @@ describe(RhfAttachmentItem, () => {
     );
 
     it('writes nothing to the form when the row has gone before the save fails', async () => {
+      expect.hasAssertions();
       const user = userEvent.setup();
       const pending = deferred();
-      const onCategoryUpdate = vi.fn().mockReturnValue(pending.promise);
+      const onCategoryUpdate = vi
+        .fn<CategoryUpdate>()
+        .mockReturnValue(pending.promise);
       const { unmount } = renderItem({ onCategoryUpdate }, saved);
 
       await pick(user, 'Certificate');
@@ -340,9 +378,12 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('does not report an error when the category saves', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
-    const onCategoryError = vi.fn();
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
+    const onCategoryError = vi.fn<CategoryError>();
     renderItem({ onCategoryUpdate, onCategoryError });
 
     await user.selectOptions(
@@ -361,8 +402,11 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('updates the category locally when no persisted document id is available', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
     const withoutId: AttachmentDto = {
       ...attachment,
       attachmentSize: undefined,
@@ -386,6 +430,7 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
+    expect.hasAssertions();
     renderItem(
       {
         canRemove: false,
@@ -406,8 +451,9 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('opens and closes the delete confirmation without removing the file', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onRemoveItem = vi.fn();
+    const onRemoveItem = vi.fn<RemoveItem>();
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
@@ -428,8 +474,9 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('confirms deletion with the current attachment value', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onRemoveItem = vi.fn().mockResolvedValue(undefined);
+    const onRemoveItem = vi.fn<RemoveItem>().mockResolvedValue(undefined);
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
@@ -445,6 +492,7 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('names each delete button after its file', () => {
+    expect.hasAssertions();
     renderItem();
 
     expect(
@@ -453,6 +501,7 @@ describe(RhfAttachmentItem, () => {
   });
 
   it('creates one object URL per document and revokes it when the row goes', () => {
+    expect.hasAssertions();
     const create = vi.spyOn(URL, 'createObjectURL');
     const revoke = vi.spyOn(URL, 'revokeObjectURL');
     const { rerender, unmount } = renderItem();

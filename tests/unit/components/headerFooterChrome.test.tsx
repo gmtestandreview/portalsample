@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import type { ComponentProps } from 'react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
@@ -16,8 +17,13 @@ import HeaderIntroText from '@/components/HeaderIntroText';
 import ExternalLinkIcon from '@/components/Icons/ExternalLinkIcon';
 import { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import { useAccountState } from '@/authentication/hooks';
-import { useModalDispatch } from '@/components/modals/ModalContext';
+import {
+  useModalDispatch,
+  type ModalDispatch,
+} from '@/components/modals/ModalContext';
 import { getEnvironment } from '@/routes/common/helperFunctions';
+
+type ActionClick = NonNullable<ComponentProps<typeof Actions>['onItemClick']>;
 
 const msalState = vi.hoisted(() => ({
   authenticated: false,
@@ -38,7 +44,7 @@ vi.mock(
   import('@/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<typeof trackGAEvent>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
@@ -46,7 +52,7 @@ vi.mock(
   import('@/authentication/hooks'),
   () =>
     ({
-      useAccountState: vi.fn(),
+      useAccountState: vi.fn<typeof useAccountState>(),
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
@@ -54,7 +60,7 @@ vi.mock(
   import('@/components/modals/ModalContext'),
   () =>
     ({
-      useModalDispatch: vi.fn(),
+      useModalDispatch: vi.fn<typeof useModalDispatch>(),
     }) satisfies __ExactMockModule<__TestMockModule27>,
 );
 
@@ -62,7 +68,7 @@ vi.mock(
   import('@/routes/common/helperFunctions'),
   () =>
     ({
-      getEnvironment: vi.fn(),
+      getEnvironment: vi.fn<typeof getEnvironment>(),
     }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
@@ -123,13 +129,14 @@ describe('header chrome', () => {
     vi.mocked(trackGAEvent).mockClear();
     vi.mocked(useAccountState).mockReturnValue(null);
     vi.mocked(useModalDispatch).mockReturnValue({
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<ModalDispatch['setShowBranchSelector']>(),
+      setShowRFQDeleteModal: vi.fn<ModalDispatch['setShowRFQDeleteModal']>(),
+      setShowRFQSelectModal: vi.fn<ModalDispatch['setShowRFQSelectModal']>(),
     });
   });
 
   it('renders the public header brand, feedback message, and unauthenticated exit link', () => {
+    expect.hasAssertions();
     renderWithRouter(<Header />);
 
     expect(
@@ -147,19 +154,24 @@ describe('header chrome', () => {
       'href',
       'https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu',
     );
-    expect(screen.getByRole('link', { name: /Exit/i })).toHaveAttribute(
-      'href',
-      'https://measurement.gov.au',
-    );
-    expect(screen.queryByTestId('user-menu-dropdown')).not.toBeInTheDocument();
+    expect({
+      exitHref: screen
+        .getByRole('link', { name: /Exit/i })
+        .getAttribute('href'),
+      userMenu: screen.queryByTestId('user-menu-dropdown'),
+    }).toEqual({
+      exitHref: 'https://measurement.gov.au',
+      userMenu: null,
+    });
   });
 
   it('renders authenticated user menu items and tracks account-management clicks', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const modalDispatch = {
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<ModalDispatch['setShowBranchSelector']>(),
+      setShowRFQDeleteModal: vi.fn<ModalDispatch['setShowRFQDeleteModal']>(),
+      setShowRFQSelectModal: vi.fn<ModalDispatch['setShowRFQSelectModal']>(),
     };
     msalState.authenticated = true;
     vi.mocked(getEnvironment).mockReturnValue('TEST');
@@ -170,33 +182,40 @@ describe('header chrome', () => {
 
     renderWithRouter(<Header />);
 
-    expect(screen.getByTestId('header-environment')).toHaveTextContent(
-      'Environment:TEST',
-    );
-    expect(
-      screen.getByRole('button', { name: /Current user settings menu/i }),
-    ).toHaveTextContent('Alex Citizen');
-    expect(screen.getByText('Precision Labs - Canberra')).toBeInTheDocument();
-    expect(screen.getByText('Measurement Pty Ltd')).toBeInTheDocument();
+    expect({
+      environment: screen.getByTestId('header-environment').textContent,
+      user: screen.getByRole('button', { name: /Current user settings menu/i })
+        .textContent,
+      precision: screen.getByText('Precision Labs - Canberra').textContent,
+      measurement: screen.getByText('Measurement Pty Ltd').textContent,
+    }).toEqual({
+      environment: 'Environment:TEST',
+      user: expect.stringContaining('Alex Citizen'),
+      precision: 'Precision Labs - Canberra',
+      measurement: 'Measurement Pty Ltd',
+    });
 
     await user.click(
       screen.getByRole('button', { name: /Current user settings menu/i }),
     );
 
-    expect(
-      screen.getByRole('link', { name: 'Manage organisation' }),
-    ).toHaveAttribute('href', '/update-organisation/org-123');
-    expect(
-      screen.getByRole('link', { name: 'My contact details' }),
-    ).toHaveAttribute('href', '/update-contact');
-    expect(screen.getByRole('link', { name: 'Log out' })).toHaveAttribute(
-      'href',
-      '/sign-out',
-    );
+    expect({
+      manageOrganisation: screen
+        .getByRole('link', { name: 'Manage organisation' })
+        .getAttribute('href'),
+      contactDetails: screen
+        .getByRole('link', { name: 'My contact details' })
+        .getAttribute('href'),
+      logOut: screen
+        .getByRole('link', { name: 'Log out' })
+        .getAttribute('href'),
+    }).toEqual({
+      manageOrganisation: '/update-organisation/org-123',
+      contactDetails: '/update-contact',
+      logOut: '/sign-out',
+    });
 
     await user.click(screen.getByRole('link', { name: 'Manage organisation' }));
-
-    expect(trackGAEvent).toHaveBeenCalledWith('Manage organisation');
 
     await user.click(
       screen.getByRole('button', { name: /Current user settings menu/i }),
@@ -205,25 +224,32 @@ describe('header chrome', () => {
       screen.getByRole('link', { name: 'Add or manage branch/location' }),
     );
 
-    expect(modalDispatch.setShowBranchSelector).toHaveBeenCalledWith(true);
-    expect(trackGAEvent).toHaveBeenCalledWith('Manage branch/location');
-
     await user.click(
       screen.getByRole('button', { name: /Current user settings menu/i }),
     );
     await user.click(screen.getByRole('link', { name: 'My contact details' }));
-
-    expect(trackGAEvent).toHaveBeenCalledWith('Manage contact');
 
     await user.click(
       screen.getByRole('button', { name: /Current user settings menu/i }),
     );
     await user.click(screen.getByRole('link', { name: 'Log out' }));
 
-    expect(trackGAEvent).toHaveBeenCalledWith('sign out');
+    expect({
+      trackEvents: vi.mocked(trackGAEvent).mock.calls,
+      branchSelector: modalDispatch.setShowBranchSelector.mock.calls,
+    }).toEqual({
+      trackEvents: [
+        ['Manage organisation'],
+        ['Manage branch/location'],
+        ['Manage contact'],
+        ['sign out'],
+      ],
+      branchSelector: [[true]],
+    });
   });
 
   it('does not render authenticated menu content until account email is available', () => {
+    expect.hasAssertions();
     vi.mocked(useAccountState).mockReturnValue({
       details: { givenName: 'Alex' },
     } as ReturnType<typeof useAccountState>);
@@ -234,12 +260,14 @@ describe('header chrome', () => {
   });
 
   it('hides the environment label when no environment marker is detected', () => {
+    expect.hasAssertions();
     const { container } = render(<NavbarEnvironment />);
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders the feedback message as a new-tab survey link', () => {
+    expect.hasAssertions();
     render(<NavbarMessage />);
 
     const survey = screen.getByRole('link', {
@@ -253,6 +281,7 @@ describe('header chrome', () => {
 
 describe('footer chrome', () => {
   it('renders static footer landmarks, links, and government crest', () => {
+    expect.hasAssertions();
     renderWithRouter(<Footer />);
 
     expect(screen.getByTestId('nmi-footer')).toHaveTextContent(
@@ -268,6 +297,7 @@ describe('footer chrome', () => {
   });
 
   it('opens each footer content modal and closes it through the modal callback', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderWithRouter(<Footer />);
 
@@ -305,39 +335,47 @@ describe('footer chrome', () => {
   });
 
   it('renders footer static content with key headings and external links', () => {
+    expect.hasAssertions();
     const { rerender } = render(<TermsOfUse />);
 
-    expect(
-      screen.getByRole('heading', { name: '1. General' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('9 July, 2024')).toBeInTheDocument();
+    expect({
+      heading: screen.getByRole('heading', { name: '1. General' }).textContent,
+      date: screen.getByText('9 July, 2024').textContent,
+    }).toEqual({
+      heading: '1. General',
+      date: expect.stringContaining('9 July, 2024'),
+    });
 
     rerender(<Privacy />);
 
-    expect(
-      screen.getByRole('heading', {
+    expect({
+      heading: screen.getByRole('heading', {
         name: 'Types of personal information collected',
-      }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: 'privacy@industry.gov.au' }),
-    ).toHaveAttribute('href', 'mailto:privacy@industry.gov.au');
+      }).textContent,
+      privacyHref: screen
+        .getByRole('link', { name: 'privacy@industry.gov.au' })
+        .getAttribute('href'),
+    }).toEqual({
+      heading: 'Types of personal information collected',
+      privacyHref: 'mailto:privacy@industry.gov.au',
+    });
 
     rerender(<Accessibility />);
 
-    expect(
-      screen.getByRole('heading', { name: 'JavaScript' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', {
-        name: /Web Content Accessibility Guidelines.*Opens in a new tab/i,
-      }),
-    ).toHaveAttribute('target', '_blank');
+    expect({
+      heading: screen.getByRole('heading', { name: 'JavaScript' }).textContent,
+      target: screen
+        .getByRole('link', {
+          name: /Web Content Accessibility Guidelines.*Opens in a new tab/i,
+        })
+        .getAttribute('target'),
+    }).toEqual({ heading: 'JavaScript', target: '_blank' });
   });
 });
 
 describe('small static display components', () => {
   it('applies the stable display classes for intro and body text wrappers', () => {
+    expect.hasAssertions();
     const { rerender } = render(
       <HeaderIntroText className='mb-4'>Intro copy</HeaderIntroText>,
     );
@@ -356,6 +394,7 @@ describe('small static display components', () => {
   });
 
   it('renders the external link icon as decorative SVG with optional classes', () => {
+    expect.hasAssertions();
     const { container } = render(<ExternalLinkIcon className='ms-1' />);
 
     const icon = container.querySelector('svg');
@@ -368,9 +407,10 @@ describe('small static display components', () => {
 
 describe('actions callback behavior', () => {
   it('uses item-specific click handlers before falling back to the shared item handler', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const itemClick = vi.fn();
-    const sharedClick = vi.fn();
+    const itemClick = vi.fn<ActionClick>();
+    const sharedClick = vi.fn<ActionClick>();
     renderWithRouter(
       <Actions
         id='callback-actions'

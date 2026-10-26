@@ -8,11 +8,18 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import type { Resolver, UseFormReturn } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import AttachmentNew from '@/components/Inputs/RhfAttachment';
+
+type AttachmentProps = ComponentProps<typeof AttachmentNew>;
+type UploadFiles = NonNullable<AttachmentProps['onUploadFiles']>;
+type DeleteFile = NonNullable<AttachmentProps['onDeleteFile']>;
+type CancelFile = NonNullable<AttachmentProps['handleCancelFile']>;
+type CategoryUpdate = NonNullable<AttachmentProps['onCategoryUpdate']>;
 import { FileStatus } from '@/routes/ta/types';
 
 interface AttachmentHarnessProps {
@@ -128,7 +135,9 @@ const renderAttachment = (
   );
 
 describe('rhfAttachment', () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
+  it('renders upload controls with help text and disabled state', () => {
+    expect.hasAssertions();
+
     renderAttachment([], {
       className: 'drop-target',
       containerClassName: 'attachment-container',
@@ -146,16 +155,31 @@ describe('rhfAttachment', () => {
       screen.getByTestId('drag-upload-supporting-documents'),
     ).toBeDisabled();
     expect(screen.getByTestId('supporting-documents')).toBeDisabled();
-    expect(screen.getByText('.pdf, .jpg')).toBeInTheDocument();
-    expect(
-      screen.getByText(
+  });
+
+  it('renders upload file constraints', () => {
+    expect.hasAssertions();
+    renderAttachment([], {
+      className: 'drop-target',
+      containerClassName: 'attachment-container',
+      disableUpload: true,
+    });
+
+    expect({
+      fileTypes: screen.getByText('.pdf, .jpg').textContent,
+      maximumSize: screen.getByText(
         (_, element) =>
           element?.textContent === 'Maximum size for each file: 1MB each',
-      ),
-    ).toBeInTheDocument();
+      ).textContent,
+    }).toEqual({
+      fileTypes: '.pdf, .jpg',
+      maximumSize: 'Maximum size for each file: 1MB each',
+    });
   });
 
   it('uses default upload button labels and forwards browse clicks to the file input', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const inputClick = vi.spyOn(HTMLInputElement.prototype, 'click');
     renderAttachment([], undefined, true);
@@ -173,6 +197,8 @@ describe('rhfAttachment', () => {
   });
 
   it('prevents default browser handling when the file label is clicked', () => {
+    expect.hasAssertions();
+
     renderAttachment([]);
     const clickEvent = new MouseEvent('click', {
       bubbles: true,
@@ -188,7 +214,9 @@ describe('rhfAttachment', () => {
   });
 
   it('ignores a change event that carries no file list', () => {
-    const onUploadFiles = vi.fn();
+    expect.hasAssertions();
+
+    const onUploadFiles = vi.fn<UploadFiles>();
     renderAttachment([], { onUploadFiles });
     const input = screen.getByTestId('drag-upload-supporting-documents');
 
@@ -203,6 +231,8 @@ describe('rhfAttachment', () => {
   });
 
   it('renders summary attachments or a no-details fallback', () => {
+    expect.hasAssertions();
+
     const { rerender } = renderAttachment([], { isSummary: true });
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -221,7 +251,11 @@ describe('rhfAttachment', () => {
   });
 
   it('reports invalid extensions and too many selected files without uploading', async () => {
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    expect.hasAssertions();
+
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], {
       maxFiles: 1,
       onUploadFiles,
@@ -244,7 +278,11 @@ describe('rhfAttachment', () => {
   });
 
   it('reports a missing extension with singular file and allowed-type wording', () => {
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    expect.hasAssertions();
+
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], {
       allowedTypes: '.pdf',
       onUploadFiles,
@@ -259,8 +297,12 @@ describe('rhfAttachment', () => {
   });
 
   it('reports a single oversized file without uploading it', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue(uploadedAttachment);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue(uploadedAttachment);
     renderAttachment(null, {
       allowMultiple: false,
       allowedTypes: '.pdf',
@@ -280,8 +322,12 @@ describe('rhfAttachment', () => {
   });
 
   it('uploads one valid file into the attachment list', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], { onUploadFiles });
 
     await user.upload(
@@ -302,6 +348,8 @@ describe('rhfAttachment', () => {
   });
 
   it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const result = [
       {
@@ -310,7 +358,7 @@ describe('rhfAttachment', () => {
         attachmentName: 'diagram.jpg',
       },
     ] satisfies AttachmentDto[];
-    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    const onUploadFiles = vi.fn<UploadFiles>().mockResolvedValue(result);
     renderAttachment([uploadedAttachment], {
       onUploadFiles,
     });
@@ -338,6 +386,8 @@ describe('rhfAttachment', () => {
   });
 
   it('reports oversized files in a batch and uploads the files within the size limit', async () => {
+    expect.hasAssertions();
+
     const result = [
       {
         ...uploadedAttachment,
@@ -345,7 +395,7 @@ describe('rhfAttachment', () => {
         attachmentName: 'small.pdf',
       },
     ] satisfies AttachmentDto[];
-    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    const onUploadFiles = vi.fn<UploadFiles>().mockResolvedValue(result);
     renderAttachment([], { onUploadFiles });
 
     changeFileInput([
@@ -373,8 +423,12 @@ describe('rhfAttachment', () => {
   it('stores a single-file upload as a one-item list while progress is still running', async () => {
     // Single-file mode used to store a lone object here, which AttachmentItemNew could not read
     // because it addresses its field as `name[index]`. The field is always a list now.
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment(null, {
       allowMultiple: false,
       onUploadFiles,
@@ -406,6 +460,8 @@ describe('rhfAttachment', () => {
   it('points the control at its validation message once the form is submitted', async () => {
     // Until the form is submitted the control is described by its help text; afterwards the
     // error takes over, so assistive tech announces the problem rather than the hint.
+    expect.hasAssertions();
+
     render(
       <AttachmentHarness
         initialAttachmentValue={[]}
@@ -438,6 +494,8 @@ describe('rhfAttachment', () => {
   });
 
   it('shows the missing-category message on every row after a submit attempt', async () => {
+    expect.hasAssertions();
+
     renderAttachment([{ ...uploadedAttachment, attachmentCategory: '' }]);
 
     expect(
@@ -456,6 +514,8 @@ describe('rhfAttachment', () => {
   });
 
   it('keeps describing the control with its help text when the form is valid', async () => {
+    expect.hasAssertions();
+
     renderAttachment([]);
 
     await act(async () => {
@@ -469,8 +529,10 @@ describe('rhfAttachment', () => {
   });
 
   it('reports server validation errors from a failed upload', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockRejectedValue({
+    const onUploadFiles = vi.fn<UploadFiles>().mockRejectedValue({
       errors: {
         first: 'Virus scan failed',
         second: 'Document could not be stored',
@@ -492,11 +554,13 @@ describe('rhfAttachment', () => {
   });
 
   it('recovers without listing errors when a failed upload has no errors collection', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     // A rejection whose problem details carry no `errors` map exercises the
     // `?? {}` fallback: Object.values({}).flat() yields nothing to display.
     const onUploadFiles = vi
-      .fn()
+      .fn<UploadFiles>()
       .mockRejectedValue({ title: 'Server exploded' });
     renderAttachment([], { onUploadFiles });
 
@@ -517,8 +581,10 @@ describe('rhfAttachment', () => {
   });
 
   it('renders active upload progress with cancellable file rows', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const handleCancelFile = vi.fn().mockResolvedValue(undefined);
+    const handleCancelFile = vi.fn<CancelFile>().mockResolvedValue(undefined);
     renderAttachment([], {
       handleCancelFile,
       progress: {
@@ -551,6 +617,8 @@ describe('rhfAttachment', () => {
   });
 
   it('shows uploaded attachments once progress is complete', () => {
+    expect.hasAssertions();
+
     renderAttachment([uploadedAttachment], {
       progress: {
         status: 'Completed',
@@ -573,8 +641,10 @@ describe('rhfAttachment', () => {
   });
 
   it('deletes an existing attachment and removes it from the field value', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+    const onDeleteFile = vi.fn<DeleteFile>().mockResolvedValue(undefined);
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
@@ -590,10 +660,12 @@ describe('rhfAttachment', () => {
   });
 
   it('does not call delete when the selected attachment has no id', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi.spyOn(console, 'error');
     try {
       const user = userEvent.setup();
-      const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+      const onDeleteFile = vi.fn<DeleteFile>().mockResolvedValue(undefined);
       renderAttachment(
         [
           {
@@ -618,8 +690,10 @@ describe('rhfAttachment', () => {
   });
 
   it('reports delete failures without removing the attachment', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDeleteFile = vi.fn().mockRejectedValue('Delete failed');
+    const onDeleteFile = vi.fn<DeleteFile>().mockRejectedValue('Delete failed');
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
     await user.click(screen.getByRole('button', { name: /^Delete / }));
@@ -634,6 +708,8 @@ describe('rhfAttachment', () => {
   });
 
   it('keeps a locked attachment in summary mode without delete controls', () => {
+    expect.hasAssertions();
+
     renderAttachment([
       {
         ...uploadedAttachment,
@@ -654,6 +730,8 @@ describe('rhfAttachment', () => {
   });
 
   it('shows uploaded attachments when progress completed with errors', () => {
+    expect.hasAssertions();
+
     renderAttachment([uploadedAttachment], {
       progress: {
         status: 'CompletedWithErrors',
@@ -675,6 +753,8 @@ describe('rhfAttachment', () => {
   it('treats a field holding a single object as empty rather than throwing', () => {
     // A form is free to hand over a bare object; the item addresses its field as
     // `name.index.attachmentCategory`, so the control normalises to a list first.
+    expect.hasAssertions();
+
     renderAttachment(uploadedAttachment);
 
     expect(screen.queryByText('manual.pdf')).not.toBeInTheDocument();
@@ -682,8 +762,10 @@ describe('rhfAttachment', () => {
   });
 
   it('survives an upload that finishes after the control has gone', async () => {
+    expect.hasAssertions();
+
     let finishUpload: (value: AttachmentDto[]) => void = () => {};
-    const onUploadFiles = vi.fn(
+    const onUploadFiles = vi.fn<UploadFiles>(
       () =>
         new Promise<AttachmentDto[]>((resolve) => {
           finishUpload = resolve;
@@ -707,8 +789,10 @@ describe('rhfAttachment', () => {
   });
 
   it('survives a delete that finishes after the control has gone', async () => {
+    expect.hasAssertions();
+
     let finishDelete: () => void = () => {};
-    const onDeleteFile = vi.fn(
+    const onDeleteFile = vi.fn<DeleteFile>(
       () =>
         new Promise<void>((resolve) => {
           finishDelete = resolve;
@@ -731,8 +815,12 @@ describe('rhfAttachment', () => {
   });
 
   it('shows an error and keeps the saved category when a category update fails', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('offline'));
     renderAttachment([uploadedAttachment], { onCategoryUpdate });
 
     await user.selectOptions(
@@ -751,6 +839,8 @@ describe('rhfAttachment', () => {
   });
 
   it('keeps the remaining category when an earlier attachment is deleted', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const second = {
       ...uploadedAttachment,
@@ -806,6 +896,8 @@ describe('rhfAttachment', () => {
     };
 
     it('shows no error on an untouched row that moves up after a touched row is deleted', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderAttachment([
         uncategorised('doc-1', 'first.pdf'),
@@ -827,9 +919,11 @@ describe('rhfAttachment', () => {
     });
 
     it('shows no stale error on a different document that replaces a touched one on re-upload', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const onUploadFiles = vi
-        .fn()
+        .fn<UploadFiles>()
         .mockResolvedValue([uncategorised('doc-2', 'second.pdf')]);
       renderAttachment([uncategorised('doc-1', 'first.pdf')], {
         onUploadFiles,
@@ -853,6 +947,8 @@ describe('rhfAttachment', () => {
     });
 
     it('keeps the error on a touched row that moves up, and not on the row behind it', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderAttachment([
         uncategorised('doc-1', 'first.pdf'),
@@ -872,6 +968,8 @@ describe('rhfAttachment', () => {
     });
 
     it('still shows the error on every category-less row after a submit attempt', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderAttachment([
         uncategorised('doc-1', 'first.pdf'),
@@ -889,6 +987,8 @@ describe('rhfAttachment', () => {
   });
 
   it('reverts the right document when an earlier row is deleted mid-save', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const second = {
       ...uploadedAttachment,
@@ -900,7 +1000,9 @@ describe('rhfAttachment', () => {
     const savePromise = new Promise<void>((_, reject) => {
       rejectSave = () => reject(new Error('offline'));
     });
-    const onCategoryUpdate = vi.fn().mockReturnValue(savePromise);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockReturnValue(savePromise);
     renderAttachment([uploadedAttachment, second], { onCategoryUpdate });
 
     const secondRow = screen.getByText('second.pdf').closest('.attachment')!;
@@ -937,8 +1039,12 @@ describe('rhfAttachment', () => {
   });
 
   it('lists the same category-save failure once when it repeats', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockRejectedValue(new Error('offline'));
     renderAttachment([uploadedAttachment], { onCategoryUpdate });
     const select = screen.getByRole('combobox', { name: 'Category' });
 

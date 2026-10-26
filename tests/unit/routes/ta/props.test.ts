@@ -131,6 +131,8 @@ describe('pattern approval wizard prop factories', () => {
   });
 
   it('loads and saves application/instrument details while stripping lookup-only values', async () => {
+    expect.hasAssertions();
+
     const props = applicationAndInstrumentProps(
       'PA-1',
       accounts,
@@ -255,6 +257,8 @@ describe('pattern approval wizard prop factories', () => {
   });
 
   it('loads and saves organisation/contact details with all hide branches', async () => {
+    expect.hasAssertions();
+
     const props = organisationAndContactProps(
       'PA-2',
       accounts,
@@ -368,6 +372,8 @@ describe('pattern approval wizard prop factories', () => {
   });
 
   it('loads and saves supporting documents with document-list branches', async () => {
+    expect.hasAssertions();
+
     const props = supportingDocumentsProps(
       'PA-3',
       accounts,
@@ -430,6 +436,8 @@ describe('pattern approval wizard prop factories', () => {
   });
 
   it('loads and submits summary values with lookup-enriched application details', async () => {
+    expect.hasAssertions();
+
     const props = summaryAndSubmitProps(
       'PA-4',
       accounts,
@@ -602,6 +610,8 @@ describe('pattern approval wizard prop factories', () => {
   });
 
   it('logs and rethrows client failures from each async prop helper', async () => {
+    expect.hasAssertions();
+
     const abortSignal = new AbortController().signal;
     mocks.getApplicationAndInstrument.mockRejectedValueOnce(
       new Error('load application failed'),
@@ -765,6 +775,8 @@ describe('pattern approval wizard prop factories', () => {
   });
 
   it('throws account-availability errors before making client calls', async () => {
+    expect.hasAssertions();
+
     const appProps = applicationAndInstrumentProps(
       'PA-13',
       emptyAccounts,

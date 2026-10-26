@@ -1,20 +1,36 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type {
+  AuthenticationResult,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
 import type { RequestForQuoteDetails } from '@/api/web-api-client';
+import type {
+  getFileSize,
+  getFileUrlFromBase64,
+  getQuotationFileDetails,
+  openInNewTab,
+} from '@/routes/common/helperFunctions';
+import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
+import type AppLogger from '@/instrumentation/AppLogger';
 import ViewPdfQuote from '@/components/Utilities/ViewPdfQuote';
+import type { ViewPdfQuoteProps } from '@/components/Utilities/ViewPdfQuote';
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const helperMocks = vi.hoisted(() => ({
-  getQuotationFileDetails: vi.fn(),
-  getFileUrlFromBase64: vi.fn(() => 'blob:test-url'),
-  getFileSize: vi.fn(() => '1.2 MB'),
-  openInNewTab: vi.fn(),
+  getQuotationFileDetails: vi.fn<typeof getQuotationFileDetails>(),
+  getFileUrlFromBase64: vi.fn<typeof getFileUrlFromBase64>(
+    () => 'blob:test-url',
+  ),
+  getFileSize: vi.fn<typeof getFileSize>(() => '1.2 MB'),
+  openInNewTab: vi.fn<typeof openInNewTab>(),
 }));
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
-  const acquireTokenSilentMock = vi.fn();
+  const acquireTokenSilentMock =
+    vi.fn<IPublicClientApplication['acquireTokenSilent']>();
   // Stable object reference: prevents useEffect from re-firing due to
   // new object identity on every useMsal() call (see dashboard.test.tsx pattern)
   const msalContext = {
@@ -43,7 +59,7 @@ vi.mock(
   import('@/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<typeof trackGAEvent>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
@@ -51,7 +67,10 @@ vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn() },
+      default: {
+        verbose: vi.fn<typeof AppLogger.verbose>(),
+        error: vi.fn<typeof AppLogger.error>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -65,8 +84,31 @@ const mockQuotationData = {
 const defaultProps = {
   text: 'Download Quote',
   quotationData: mockQuotationData,
-  setFileError: vi.fn(),
-  setIsLoading: vi.fn(),
+  setFileError: vi.fn<ViewPdfQuoteProps['setFileError']>(),
+  setIsLoading: vi.fn<ViewPdfQuoteProps['setIsLoading']>(),
+};
+
+const mockTokenResult = {
+  authority: 'https://login.microsoftonline.com/test-tenant',
+  uniqueId: 'test-unique-id',
+  tenantId: 'test-tenant',
+  scopes: ['openid'],
+  account: {
+    homeAccountId: 'test-account',
+    environment: 'login.microsoftonline.com',
+    tenantId: 'test-tenant',
+    username: 'test@example.com',
+    localAccountId: 'test-local-account',
+  },
+  idToken: 'test-id-token',
+  idTokenClaims: {},
+  accessToken: 'test-token',
+  fromCache: false,
+  expiresOn: new Date('2026-01-01T00:00:00.000Z'),
+  tokenType: 'Bearer',
+  correlationId: 'test-correlation-id',
+} satisfies AuthenticationResult & {
+  account: NonNullable<AuthenticationResult['account']>;
 };
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -75,7 +117,7 @@ describe(ViewPdfQuote, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Restore after clearAllMocks resets implementations (Vitest 4 behaviour)
-    acquireTokenSilentMock.mockResolvedValue({ accessToken: 'test-token' });
+    acquireTokenSilentMock.mockResolvedValue(mockTokenResult);
     msalContext.instance.acquireTokenSilent = acquireTokenSilentMock;
     helperMocks.getQuotationFileDetails.mockResolvedValue({
       fileSizeBytes: 1234567,
@@ -88,6 +130,7 @@ describe(ViewPdfQuote, () => {
   });
 
   it('shows the loading spinner while the file size is being fetched', () => {
+    expect.hasAssertions();
     acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
     render(<ViewPdfQuote {...defaultProps} />);
@@ -97,6 +140,7 @@ describe(ViewPdfQuote, () => {
   });
 
   it('shows the download button with the file size after a successful mount fetch', async () => {
+    expect.hasAssertions();
     render(<ViewPdfQuote {...defaultProps} />);
 
     await waitFor(() => {
@@ -116,7 +160,8 @@ describe(ViewPdfQuote, () => {
   });
 
   it('sets a file error and removes the spinner when the size fetch throws', async () => {
-    const setFileError = vi.fn();
+    expect.hasAssertions();
+    const setFileError = vi.fn<ViewPdfQuoteProps['setFileError']>();
     acquireTokenSilentMock.mockRejectedValue(new Error('Token expired'));
 
     render(<ViewPdfQuote {...defaultProps} setFileError={setFileError} />);
@@ -128,6 +173,7 @@ describe(ViewPdfQuote, () => {
   });
 
   it('skips setting file size when the response has no fileSizeBytes', async () => {
+    expect.hasAssertions();
     helperMocks.getQuotationFileDetails.mockResolvedValue({});
 
     render(<ViewPdfQuote {...defaultProps} />);
@@ -140,8 +186,9 @@ describe(ViewPdfQuote, () => {
   });
 
   it('fetches and opens the full PDF in a new tab when the button is clicked', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const setIsLoading = vi.fn();
+    const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
 
     render(<ViewPdfQuote {...defaultProps} setIsLoading={setIsLoading} />);
     await waitFor(() =>
@@ -166,9 +213,10 @@ describe(ViewPdfQuote, () => {
   });
 
   it('sets a file error when the PDF download throws', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<ViewPdfQuoteProps['setFileError']>();
+    const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
 
     render(
       <ViewPdfQuote
@@ -192,6 +240,7 @@ describe(ViewPdfQuote, () => {
   });
 
   it('skips opening the PDF when the file response is missing required fields', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     helperMocks.getQuotationFileDetails
@@ -211,11 +260,12 @@ describe(ViewPdfQuote, () => {
   });
 
   it('calls the latest setFileError when quotationData changes and the setter reference has changed', async () => {
+    expect.hasAssertions();
     // Regression for exhaustive-deps fix: without setFileError in the dep array,
     // re-running the effect (triggered by a quotationData change) would call the
     // stale firstSetter even though secondSetter is now the active prop.
-    const firstSetter = vi.fn();
-    const secondSetter = vi.fn();
+    const firstSetter = vi.fn<ViewPdfQuoteProps['setFileError']>();
+    const secondSetter = vi.fn<ViewPdfQuoteProps['setFileError']>();
     const updatedQuotationData = {
       ...mockQuotationData,
       crmQuoteRequestId: 'Q-002',

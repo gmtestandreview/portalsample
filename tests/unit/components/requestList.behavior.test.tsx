@@ -15,14 +15,14 @@ vi.mock(
   import('@/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
 const modalDispatch = {
-  setShowBranchSelector: vi.fn(),
-  setShowRFQDeleteModal: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setShowBranchSelector: vi.fn<() => void>(),
+  setShowRFQDeleteModal: vi.fn<() => void>(),
+  setShowRFQSelectModal: vi.fn<() => void>(),
 };
 
 const LocationDisplay = () => {
@@ -100,12 +100,68 @@ const instrumentRequest: DashboardItemDto = {
   },
 };
 
+const expectRequestReportDetails = () => {
+  expect(
+    screen.getByRole('heading', {
+      name: /mettler toledo xpe205 analytical balance/i,
+    }),
+  ).toBeInTheDocument();
+  expect(screen.getByText('RFQ-2023-009012')).toBeInTheDocument();
+  expect(
+    screen.getByText(DashboardItemStatus.ReportIssued),
+  ).toBeInTheDocument();
+  expect(screen.getByText('INV-2023-009012')).toBeInTheDocument();
+};
+
+const expectAcceptedQuoteDetails = () => {
+  expect(screen.getByRole('tooltip')).toHaveTextContent('RFQ-2022-000001');
+  expect(
+    screen.getByLabelText(
+      'Info note: This request was copied from previous Ref ID RFQ-2022-000001',
+    ),
+  ).toBeInTheDocument();
+};
+
+const expectQuoteAvailableDetails = () => {
+  expect(
+    screen.getByRole('heading', { name: /mettler toledo xpe205/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByText('Q-2023-007777')).toBeInTheDocument();
+};
+
+const renderInstrumentQuoteAvailableAndAssert = async (
+  user: ReturnType<typeof userEvent.setup>,
+) => {
+  renderInDashboardList(
+    <InstrumentItem
+      request={{
+        ...instrumentRequest,
+        status: DashboardItemStatus.QuoteAvailable,
+        artefact: undefined,
+        report: undefined,
+      }}
+    />,
+  );
+
+  await user.click(screen.getByRole('button', { name: 'Actions' }));
+  const quotation = await screen.findByRole('menuitem', {
+    name: 'View/accept quotation',
+  });
+
+  expect(quotation).toHaveAttribute('href', '/quotation/RFQ-2023-009012');
+
+  await user.click(quotation);
+
+  expect(trackGAEvent).toHaveBeenCalledWith('View/accept quotation');
+};
+
 describe('requestList behavior', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders the no requests empty state with a create request link', () => {
+    expect.hasAssertions();
     render(
       <MemoryRouter>
         <NoRequests />
@@ -122,19 +178,11 @@ describe('requestList behavior', () => {
   });
 
   it('renders RequestItem report details and navigates from the report action button', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(<RequestItem request={baseRequest} />);
 
-    expect(
-      screen.getByRole('heading', {
-        name: /mettler toledo xpe205 analytical balance/i,
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('RFQ-2023-009012')).toBeInTheDocument();
-    expect(
-      screen.getByText(DashboardItemStatus.ReportIssued),
-    ).toBeInTheDocument();
-    expect(screen.getByText('INV-2023-009012')).toBeInTheDocument();
+    expectRequestReportDetails();
 
     await user.click(screen.getByRole('button', { name: 'View report' }));
 
@@ -154,6 +202,7 @@ describe('requestList behavior', () => {
   });
 
   it('runs RequestItem tab and issued-report action callbacks', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(<RequestItem request={baseRequest} />);
 
@@ -179,6 +228,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders RequestItem quote-available details and navigates by reference id', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -190,10 +240,7 @@ describe('requestList behavior', () => {
       />,
     );
 
-    expect(
-      screen.getByRole('heading', { name: /mettler toledo xpe205/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Q-2023-007777')).toBeInTheDocument();
+    expectQuoteAvailableDetails();
 
     await user.click(screen.getByRole('button', { name: 'View quotation' }));
 
@@ -221,6 +268,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders RequestItem accepted quote navigation by quotation id and clone tooltip', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -239,12 +287,7 @@ describe('requestList behavior', () => {
       />,
     );
 
-    expect(screen.getByRole('tooltip')).toHaveTextContent('RFQ-2022-000001');
-    expect(
-      screen.getByLabelText(
-        'Info note: This request was copied from previous Ref ID RFQ-2022-000001',
-      ),
-    ).toBeInTheDocument();
+    expectAcceptedQuoteDetails();
 
     await user.click(screen.getByRole('button', { name: 'View quotation' }));
 
@@ -261,6 +304,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders withdrawn RequestItem report content and runs every withdrawn action', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -295,6 +339,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders sparse RequestItem content and the default non-draft action', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -333,6 +378,7 @@ describe('requestList behavior', () => {
   });
 
   it('opens draft RequestItem actions and dispatches the delete modal', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -372,6 +418,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders RequestItem draft fallback heading when manufacturer is absent', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -406,6 +453,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders RequestItem headings when the model or artefact name is absent', () => {
+    expect.hasAssertions();
     const { unmount } = renderInDashboardList(
       <RequestItem
         request={{
@@ -445,6 +493,7 @@ describe('requestList behavior', () => {
   });
 
   it('does not render a RequestItem card when the item is hidden from the dashboard', () => {
+    expect.hasAssertions();
     renderInDashboardList(
       <RequestItem
         request={{
@@ -466,6 +515,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders InstrumentItem report history links and navigates from the latest report button', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(<InstrumentItem request={instrumentRequest} />);
 
@@ -490,6 +540,7 @@ describe('requestList behavior', () => {
   });
 
   it('runs InstrumentItem tab and issued-report action callbacks', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(<InstrumentItem request={instrumentRequest} />);
 
@@ -511,6 +562,7 @@ describe('requestList behavior', () => {
   });
 
   it('hides InstrumentItem latest report actions for withdrawn reports but keeps recalibration available', () => {
+    expect.hasAssertions();
     renderInDashboardList(
       <InstrumentItem
         request={{
@@ -536,6 +588,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders InstrumentItem draft and quote-available action states', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const { unmount } = renderInDashboardList(
       <InstrumentItem
@@ -577,30 +630,11 @@ describe('requestList behavior', () => {
 
     unmount();
 
-    renderInDashboardList(
-      <InstrumentItem
-        request={{
-          ...instrumentRequest,
-          status: DashboardItemStatus.QuoteAvailable,
-          artefact: undefined,
-          report: undefined,
-        }}
-      />,
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Actions' }));
-    const quotation = await screen.findByRole('menuitem', {
-      name: 'View/accept quotation',
-    });
-
-    expect(quotation).toHaveAttribute('href', '/quotation/RFQ-2023-009012');
-
-    await user.click(quotation);
-
-    expect(trackGAEvent).toHaveBeenCalledWith('View/accept quotation');
+    await renderInstrumentQuoteAvailableAndAssert(user);
   });
 
   it('renders InstrumentItem headings when the model or artefact name is absent', () => {
+    expect.hasAssertions();
     const { unmount } = renderInDashboardList(
       <InstrumentItem
         request={{
@@ -637,6 +671,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders InstrumentItem in-progress report recalibration action without latest report link', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <InstrumentItem
@@ -670,6 +705,7 @@ describe('requestList behavior', () => {
   });
 
   it('renders sparse InstrumentItem details, missing report date, and default actions', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderInDashboardList(
       <InstrumentItem

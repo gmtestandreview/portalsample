@@ -12,6 +12,7 @@ import HidableField from '@/components/forms/HidableField';
 import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
 import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
+import type { ValidationSchema } from '@/components/forms/types';
 
 vi.mock(
   '@/components/RouteLeavingGuard',
@@ -80,6 +81,7 @@ function LocationProbe() {
 
 describe('form helper components', () => {
   it('renders Details as a native disclosure with supplied help content', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     render(
       <Details
@@ -101,8 +103,9 @@ describe('form helper components', () => {
   });
 
   it('renders FormBanner title metadata and navigates after discard callback', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onDiscard = vi.fn();
+    const onDiscard = vi.fn<() => void>();
 
     render(
       <MemoryRouter initialEntries={['/quote/edit']}>
@@ -131,6 +134,7 @@ describe('form helper components', () => {
   });
 
   it('renders FormBanner dashboard action without optional title metadata', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
@@ -170,6 +174,7 @@ describe('form helper components', () => {
   });
 
   it('shows and hides HidableField based on form status rules', async () => {
+    expect.hasAssertions();
     const { rerender } = render(
       <FormikHarness
         initialValues={{ account: { type: 'business', abn: '123' } }}
@@ -210,6 +215,7 @@ describe('form helper components', () => {
   });
 
   it('passes create-account logout wording to UnsavedFormPrompt when dirty and unsubmitted', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     render(
@@ -233,6 +239,7 @@ describe('form helper components', () => {
   });
 
   it('uses logout wording for create-contact paths', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
 
     render(
@@ -252,6 +259,7 @@ describe('form helper components', () => {
   });
 
   it('blocks UnsavedFormPrompt for server rejected clean forms and allows clean valid forms', async () => {
+    expect.hasAssertions();
     const { rerender, unmount } = render(
       <FormikHarness initialValues={{ name: '' }}>
         <UnsavedFormPrompt />
@@ -306,6 +314,7 @@ function AutoSubmit() {
 
 describe('form utility helpers', () => {
   it('counts top-level Formik error keys only when the value is object-like', () => {
+    expect.hasAssertions();
     expect(countOfErrors({ firstName: 'Required', lastName: 'Required' })).toBe(
       2,
     );
@@ -313,6 +322,7 @@ describe('form utility helpers', () => {
   });
 
   it('detects hidden fields from direct, group, ancestor, and callback rules', () => {
+    expect.hasAssertions();
     const values = { applicant: { sameAddress: true } };
     const hidden = {
       applicant: {
@@ -331,6 +341,7 @@ describe('form utility helpers', () => {
   });
 
   it('removes hidden object fields while preserving visible array entries', () => {
+    expect.hasAssertions();
     const values = {
       applicant: {
         name: 'Alex',
@@ -362,6 +373,7 @@ describe('form utility helpers', () => {
   });
 
   it('validates forms and filters Yup errors for hidden fields', async () => {
+    expect.hasAssertions();
     const schema = Yup.object({
       name: Yup.string().required('Name is required'),
       phone: Yup.string().required('Phone is required'),
@@ -376,9 +388,10 @@ describe('form utility helpers', () => {
   });
 
   it('maps a single Yup validation error when the field is visible', async () => {
+    expect.hasAssertions();
     const error = new Yup.ValidationError('Name is required', '', 'name');
     const schema = {
-      validate: vi.fn().mockRejectedValue(error),
+      validate: vi.fn<ValidationSchema['validate']>().mockRejectedValue(error),
     };
 
     await expect(validateForm(schema, {})({ name: '' })).resolves.toEqual({
@@ -387,12 +400,15 @@ describe('form utility helpers', () => {
   });
 
   it('returns no errors without a schema and rethrows non-validation failures', async () => {
+    expect.hasAssertions();
     await expect(validateForm(undefined, {})({ name: '' })).resolves.toEqual(
       {},
     );
 
     const schema = {
-      validate: vi.fn().mockRejectedValue(new Error('Network failed')),
+      validate: vi
+        .fn<ValidationSchema['validate']>()
+        .mockRejectedValue(new Error('Network failed')),
     };
 
     await expect(validateForm(schema, {})({ name: '' })).rejects.toThrow(
@@ -401,8 +417,9 @@ describe('form utility helpers', () => {
   });
 
   it('returns no errors for ValidationError-shaped failures without inner errors', async () => {
+    expect.hasAssertions();
     const noInner = {
-      validate: vi.fn().mockRejectedValue({
+      validate: vi.fn<ValidationSchema['validate']>().mockRejectedValue({
         name: 'ValidationError',
         message: 'Invalid',
         path: 'name',
@@ -410,7 +427,7 @@ describe('form utility helpers', () => {
       }),
     };
     const emptyInnerWithoutPath = {
-      validate: vi.fn().mockRejectedValue({
+      validate: vi.fn<ValidationSchema['validate']>().mockRejectedValue({
         name: 'ValidationError',
         message: 'Invalid',
         path: undefined,

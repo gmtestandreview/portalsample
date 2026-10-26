@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createLintReport } from './lint-diagnostics.mjs';
+import { ESLint } from 'eslint';
+
+import { createLintReport, main } from './lint-diagnostics.mjs';
 
 test('groups diagnostics by rule ID and file', () => {
   const report = createLintReport({
@@ -80,4 +82,27 @@ test('groups diagnostics by rule ID and file', () => {
     'fixture-a.ts': 1,
     'fixture-b.ts': 1,
   });
+});
+
+test('fails when --fail-on-warnings sees a warning-only report', async () => {
+  const originalLintFiles = ESLint.prototype.lintFiles;
+  ESLint.prototype.lintFiles = async () => [
+    {
+      filePath: 'fixture.ts',
+      messages: [
+        {
+          severity: 1,
+          ruleId: 'demo/warning',
+          message: 'warning',
+        },
+      ],
+    },
+  ];
+
+  try {
+    const exitCode = await main(['--fail-on-warnings']);
+    assert.equal(exitCode, 1);
+  } finally {
+    ESLint.prototype.lintFiles = originalLintFiles;
+  }
 });

@@ -1,8 +1,13 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { Formik, useFormikContext } from 'formik';
+import { Formik, type FormikConfig, useFormikContext } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import UnsavedChangesPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt/UnsavedChangesPrompt';
 import UnsavedFormPrompt from '../../../../ClientApp/src/components/forms/UnsavedFormPrompt';
+
+type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
+type Proceed = NonNullable<
+  React.ComponentProps<typeof UnsavedChangesPrompt>['onProceed']
+>;
 
 const guardProps = vi.hoisted(() => ({
   last: undefined as undefined | { when?: boolean; onProceed?: () => void },
@@ -49,13 +54,15 @@ describe(UnsavedChangesPrompt, () => {
       'false',
     ],
   ])('when %s the guard is %s', (_name, state, expected) => {
+    expect.hasAssertions();
     render(<UnsavedChangesPrompt {...state} />);
 
     expect(whenOf()).toBe(expected);
   });
 
   it('passes onProceed to the guard on both wordings', () => {
-    const onProceed = vi.fn();
+    expect.hasAssertions();
+    const onProceed = vi.fn<Proceed>();
     const { rerender } = render(
       <UnsavedChangesPrompt {...base} onProceed={onProceed} />,
     );
@@ -81,11 +88,12 @@ describe('unsavedFormPrompt (Formik)', () => {
   };
 
   it('clears Formik errors when the guard confirms leaving', async () => {
+    expect.hasAssertions();
     render(
       <Formik
         initialValues={{ name: '' }}
         initialErrors={{ name: 'Required' }}
-        onSubmit={vi.fn()}
+        onSubmit={vi.fn<NameFormikSubmit>()}
       >
         <>
           <UnsavedFormPrompt />

@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import RhfRadioButtonGroup from '@/components/Inputs/RhfRadioButtonGroup';
@@ -60,8 +60,24 @@ const Submittable = ({
   );
 };
 
+const expectRadioGroupInitialState = (
+  group: HTMLElement,
+  inlineHelp: string | undefined,
+  describedByBefore: string | null,
+) => {
+  expect(group).toBe(screen.getByTestId('fs-q-status'));
+  expect(group.tagName).toBe('FIELDSET');
+  expect(group.getAttribute('aria-describedby')).toBe(describedByBefore);
+  expect(group.getAttribute('aria-invalid')).toBeNull();
+
+  if (inlineHelp) {
+    expect(screen.getByText(inlineHelp)).toHaveAttribute('id', 'help-q-status');
+  }
+};
+
 describe(RhfRadioButtonGroup, () => {
   it('checks the option matching the form value', () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue='open'>
         <RhfRadioButtonGroup name='status' legend='Status' options={options} />
@@ -73,7 +89,11 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('updates the form value and calls onChange when an option is chosen', async () => {
-    const onChange = vi.fn();
+    expect.hasAssertions();
+    const onChange =
+      vi.fn<
+        NonNullable<ComponentProps<typeof RhfRadioButtonGroup>['onChange']>
+      >();
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -93,6 +113,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('keeps the typed value of boolean options', async () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue={false}>
         <RhfRadioButtonGroup
@@ -115,6 +136,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('disables every option when the group is disabled', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -131,6 +153,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('shows the validation message only after the group has been touched', async () => {
+    expect.hasAssertions();
     const Invalid = () => {
       const methods = useForm<Values>({ defaultValues: { status: '' } });
       return (
@@ -172,6 +195,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('renders the selected label as a summary when isSummary is set', () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue='open'>
         <RhfRadioButtonGroup
@@ -188,6 +212,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('renders nothing in summary mode when no value is selected', () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue=''>
         <RhfRadioButtonGroup
@@ -203,6 +228,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('renders descriptors and linked sub-fields beside their option', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -232,6 +258,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('lays options out horizontally when requested', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -248,6 +275,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('puts titled help inside a details control', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -265,6 +293,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('falls back to a placeholder when the summary value matches no option', () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue='archived'>
         <RhfRadioButtonGroup
@@ -280,6 +309,7 @@ describe(RhfRadioButtonGroup, () => {
   });
 
   it('leaves every option unchecked when the form has no value yet', () => {
+    expect.hasAssertions();
     const Empty = () => {
       const methods = useForm<Partial<Values>>();
       return (
@@ -332,21 +362,12 @@ describe(RhfRadioButtonGroup, () => {
       describedByAfter,
       invalidAfter,
     }) => {
+      expect.hasAssertions();
       render(<Submittable inlineHelp={inlineHelp} required={required} />);
       const group = screen.getByRole('radiogroup', { name: 'Status' });
       const radios = screen.getAllByRole('radio');
 
-      expect(group).toBe(screen.getByTestId('fs-q-status'));
-      expect(group.tagName).toBe('FIELDSET');
-      expect(group.getAttribute('aria-describedby')).toBe(describedByBefore);
-      expect(group.getAttribute('aria-invalid')).toBeNull();
-
-      if (inlineHelp) {
-        expect(screen.getByText(inlineHelp)).toHaveAttribute(
-          'id',
-          'help-q-status',
-        );
-      }
+      expectRadioGroupInitialState(group, inlineHelp, describedByBefore);
 
       await userEvent.click(screen.getByText('submit'));
 

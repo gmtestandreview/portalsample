@@ -1,6 +1,12 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { AuthenticationResult } from '@azure/msal-browser';
+import {
+  ReportAddressTypeValues,
+  ReturnAddressTypeValues,
+  State,
+} from '../../../ClientApp/src/api/web-api-client';
 import {
   accountDetails,
   basePreInfo,
@@ -15,8 +21,31 @@ describe('workflow step components', () => {
     vi.clearAllMocks();
     mocks.msalAccounts.splice(0, mocks.msalAccounts.length, {
       homeAccountId: 'account-1',
+      environment: 'login.microsoftonline.com',
+      tenantId: 'tenant-id',
+      username: 'user@example.test',
+      localAccountId: 'local-account-1',
     });
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+    mocks.acquireTokenSilent.mockResolvedValue({
+      authority: 'https://login.microsoftonline.com/tenant-id',
+      uniqueId: 'unique-id',
+      tenantId: 'tenant-id',
+      scopes: ['scope'],
+      account: {
+        homeAccountId: 'account-1',
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'user@example.test',
+        localAccountId: 'local-account-1',
+      },
+      idToken: 'id-token',
+      idTokenClaims: {},
+      accessToken: 'access-token',
+      fromCache: false,
+      expiresOn: null,
+      tokenType: 'Bearer',
+      correlationId: 'correlation-id',
+    } satisfies AuthenticationResult);
     mocks.useAccountState.mockReturnValue({ details: accountDetails });
     mocks.dashboardNotification = null;
     mocks.inputChangeHandlers.clear();
@@ -50,7 +79,7 @@ describe('workflow step components', () => {
         },
       ]);
     mocks.getReportRecipient.mockResolvedValue({
-      reportAddressType: 'BusinessAddress',
+      reportAddressType: ReportAddressTypeValues.BusinessAddress,
       acceptQuotePreInfo: basePreInfo,
       rfqOrganisation: {
         streetAddress,
@@ -58,7 +87,7 @@ describe('workflow step components', () => {
         postalAddress: {
           line1: 'PO Box 1',
           suburb: 'Canberra',
-          state: 'ACT',
+          state: State.ACT,
           postcode: '2601',
         },
       },
@@ -71,7 +100,7 @@ describe('workflow step components', () => {
         postalAddress: {
           line1: 'PO Box 1',
           suburb: 'Canberra',
-          state: 'ACT',
+          state: State.ACT,
           postcode: '2601',
         },
       },
@@ -282,7 +311,7 @@ describe('workflow step components', () => {
         { id: 'no-measurement', label: 'No measurement' },
       ])
       .mockResolvedValueOnce([
-        { id: undefined, parentId: 'measurement-1', label: undefined },
+        { parentId: 'measurement-1', label: undefined },
         {
           id: 'no-instrument',
           parentId: 'no-measurement',
@@ -419,7 +448,7 @@ describe('workflow step components', () => {
     unmount();
 
     mocks.getReportRecipient.mockResolvedValueOnce({
-      reportAddressType: 'Other',
+      reportAddressType: ReportAddressTypeValues.Other,
       rfqOrganisation: {
         streetAddress,
         postalAddressSameAsStreetAddress: true,
@@ -502,9 +531,9 @@ describe('workflow step components', () => {
   });
 
   it.each([
-    ['BusinessAddress', '1 National Circuit'],
-    ['PostalAddress', 'PO Box 1'],
-    ['Other', '9 Return Road'],
+    [ReturnAddressTypeValues.BusinessAddress, '1 National Circuit'],
+    [ReturnAddressTypeValues.PostalAddress, 'PO Box 1'],
+    [ReturnAddressTypeValues.Other, '9 Return Road'],
   ])(
     'renders the %s return address summary',
     async (returnAddressType, expectedAddress) => {
@@ -513,7 +542,7 @@ describe('workflow step components', () => {
         returnAddress: {
           line1: '9 Return Road',
           suburb: 'Canberra',
-          state: 'ACT',
+          state: State.ACT,
           postcode: '2602',
         },
         rfqOrganisation: {
@@ -522,7 +551,7 @@ describe('workflow step components', () => {
           postalAddress: {
             line1: 'PO Box 1',
             suburb: 'Canberra',
-            state: 'ACT',
+            state: State.ACT,
             postcode: '2601',
           },
         },
@@ -547,7 +576,7 @@ describe('workflow step components', () => {
 
   it('renders a return organisation name in the delivery summary', async () => {
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
-      returnAddressType: 'BusinessAddress',
+      returnAddressType: ReturnAddressTypeValues.BusinessAddress,
       returnOrganisationName: 'Return Organisation',
       rfqOrganisation: { streetAddress },
     });
@@ -686,14 +715,14 @@ describe('workflow step components', () => {
 
   it('uses separate postal address details for report recipients', async () => {
     mocks.getReportRecipient.mockResolvedValueOnce({
-      reportAddressType: 'PostalAddress',
+      reportAddressType: ReportAddressTypeValues.PostalAddress,
       rfqOrganisation: {
         streetAddress,
         postalAddressSameAsStreetAddress: false,
         postalAddress: {
           line1: 'PO Box 44',
           suburb: 'Canberra',
-          state: 'ACT',
+          state: State.ACT,
           postcode: '2601',
         },
       },
@@ -715,7 +744,7 @@ describe('workflow step components', () => {
 
   it('uses the street address as the delivery postal address when configured', async () => {
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
-      returnAddressType: 'PostalAddress',
+      returnAddressType: ReturnAddressTypeValues.PostalAddress,
       rfqOrganisation: {
         streetAddress,
         postalAddressSameAsStreetAddress: true,
@@ -858,7 +887,7 @@ describe('workflow step components', () => {
           line2: 'Level 2',
           line3: 'Building A',
           suburb: 'Canberra',
-          state: 'ACT',
+          state: State.ACT,
           postcode: '2600',
         },
       },

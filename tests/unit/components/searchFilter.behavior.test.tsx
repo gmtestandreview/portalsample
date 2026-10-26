@@ -1,4 +1,5 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import type { Dispatch, SetStateAction } from 'react';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchFilter from '@/components/SearchFilter';
@@ -10,9 +11,18 @@ import {
 } from '@/components/SearchFilter/types';
 import { StatusEnumDto } from '@/api/web-api-client';
 import { defined } from '../helpers/defined';
+import type * as GoogleAnalyticsModule from '@/analytics/GoogleAnalytics';
+
+type FilterStateSetter = Dispatch<SetStateAction<UserProfile | undefined>>;
+type PageStateSetter = Dispatch<SetStateAction<number>>;
+type SearchSubmit = (value: string | undefined) => void;
+type DashboardProfile = { testingCalibrationDashboard: UserProfile };
+type FilterUpdater = (
+  previous: UserProfile | undefined,
+) => UserProfile | undefined;
 
 const accountDispatchMock = vi.hoisted(() => ({
-  setUserProfile: vi.fn(),
+  setUserProfile: vi.fn<(profile: DashboardProfile) => void>(),
 }));
 
 vi.mock(
@@ -27,7 +37,7 @@ vi.mock(
   import('@/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<typeof GoogleAnalyticsModule.trackGAEvent>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
@@ -47,8 +57,10 @@ describe('searchFilter behavior', () => {
   });
 
   it('submits and clears SearchBox keywords through the public callback', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSearchSubmit = vi.fn();
+    const onSearchSubmit = vi.fn<SearchSubmit>();
     render(
       <SearchBox
         onSearchSubmit={onSearchSubmit}
@@ -78,8 +90,13 @@ describe('searchFilter behavior', () => {
   });
 
   it('renders the leading search icon as decorative markup without a presentation role', () => {
+    expect.hasAssertions();
+
     const { container } = render(
-      <SearchBox onSearchSubmit={vi.fn()} placeholder='Search requests' />,
+      <SearchBox
+        onSearchSubmit={vi.fn<SearchSubmit>()}
+        placeholder='Search requests'
+      />,
     );
 
     const searchIcon = container.querySelector('#search-icon i');
@@ -90,9 +107,11 @@ describe('searchFilter behavior', () => {
   });
 
   it('opens FilterMenu, applies selected options, and persists the profile', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setInitialFilters = vi.fn();
-    const setCurrentPage = vi.fn();
+    const setInitialFilters = vi.fn<FilterStateSetter>();
+    const setCurrentPage = vi.fn<PageStateSetter>();
     render(
       <FilterMenu
         initialFilters={defaultFilters}
@@ -130,9 +149,11 @@ describe('searchFilter behavior', () => {
   });
 
   it('resets FilterMenu to default status and year while preserving active tab and search text', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setInitialFilters = vi.fn();
-    const setCurrentPage = vi.fn();
+    const setInitialFilters = vi.fn<FilterStateSetter>();
+    const setCurrentPage = vi.fn<PageStateSetter>();
     const changedFilters: UserProfile = {
       ...defaultFilters,
       filterYearType: '2024',
@@ -169,13 +190,15 @@ describe('searchFilter behavior', () => {
   });
 
   it('closes FilterMenu without applying cancelled radio changes', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setInitialFilters = vi.fn();
+    const setInitialFilters = vi.fn<FilterStateSetter>();
     render(
       <FilterMenu
         initialFilters={defaultFilters}
         setInitialFilters={setInitialFilters}
-        setCurrentPage={vi.fn()}
+        setCurrentPage={vi.fn<PageStateSetter>()}
       />,
     );
 
@@ -191,6 +214,8 @@ describe('searchFilter behavior', () => {
   });
 
   it('closes FilterMenu from its close control and counts a changed sort order', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <FilterMenu
@@ -201,8 +226,8 @@ describe('searchFilter behavior', () => {
           filterSortOrder: 'ascending',
           filtersChanged: true,
         }}
-        setInitialFilters={vi.fn()}
-        setCurrentPage={vi.fn()}
+        setInitialFilters={vi.fn<FilterStateSetter>()}
+        setCurrentPage={vi.fn<PageStateSetter>()}
       />,
     );
 
@@ -217,6 +242,8 @@ describe('searchFilter behavior', () => {
   });
 
   it('counts only a changed sort order and closes when the toggle is pressed again', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <FilterMenu
@@ -225,8 +252,8 @@ describe('searchFilter behavior', () => {
           filterSortOrder: 'ascending',
           filtersChanged: true,
         }}
-        setInitialFilters={vi.fn()}
-        setCurrentPage={vi.fn()}
+        setInitialFilters={vi.fn<FilterStateSetter>()}
+        setCurrentPage={vi.fn<PageStateSetter>()}
       />,
     );
 
@@ -241,13 +268,15 @@ describe('searchFilter behavior', () => {
   });
 
   it('falls back to default filter values when no initial profile is supplied', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setInitialFilters = vi.fn();
+    const setInitialFilters = vi.fn<FilterStateSetter>();
     render(
       <FilterMenu
         initialFilters={undefined}
         setInitialFilters={setInitialFilters}
-        setCurrentPage={vi.fn()}
+        setCurrentPage={vi.fn<PageStateSetter>()}
       />,
     );
 
@@ -264,6 +293,8 @@ describe('searchFilter behavior', () => {
   });
 
   it('disables status choices when filtering the instruments tab', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <FilterMenu
@@ -271,8 +302,8 @@ describe('searchFilter behavior', () => {
           ...defaultFilters,
           filterActiveTab: DashboardTab.Instruments,
         }}
-        setInitialFilters={vi.fn()}
-        setCurrentPage={vi.fn()}
+        setInitialFilters={vi.fn<FilterStateSetter>()}
+        setCurrentPage={vi.fn<PageStateSetter>()}
       />,
     );
 
@@ -284,9 +315,11 @@ describe('searchFilter behavior', () => {
   });
 
   it('searchFilter submits search text by resetting page and updating filters through the state updater', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setCurrentPage = vi.fn();
-    const setInitialFilters = vi.fn();
+    const setCurrentPage = vi.fn<PageStateSetter>();
+    const setInitialFilters = vi.fn<FilterStateSetter>();
     render(
       <SearchFilter
         initialFilters={{ ...defaultFilters, filterCurrentPage: 4 }}
@@ -305,8 +338,16 @@ describe('searchFilter behavior', () => {
 
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expect.any(Function));
+
+    const filterUpdate = defined(
+      setInitialFilters.mock.calls[0],
+      'setInitialFilters call',
+    )[0];
+
+    expect(filterUpdate).toBeTypeOf('function');
+
     expect(
-      defined(setInitialFilters.mock.calls[0], 'setInitialFilters call')[0]({
+      (filterUpdate as FilterUpdater)({
         ...defaultFilters,
         filterCurrentPage: 4,
       }),

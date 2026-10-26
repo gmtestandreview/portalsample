@@ -7,7 +7,9 @@ Output: single line of text. Always exits 0.
 Usage: python status.py
 Called from: Claude Code statusLine.command, platform SessionStart hooks.
 """
+
 import json
+import re
 import sys
 from contextlib import suppress
 from datetime import datetime, timezone
@@ -24,17 +26,29 @@ def count_agents(base_dir: Path) -> int | None:
     if not team_file.exists():
         return None
     count = 0
-    with open(team_file, encoding="utf-8") as f:
-        for line in f:
-            stripped = line.strip()
-            if (
-                stripped.startswith("| ")
-                and not stripped.startswith("| Agent")
-                and not stripped.startswith("| ---")
-                and "---" not in stripped
-                and stripped != "|"
-            ):
-                count += 1
+    in_active_agents_section = False
+    try:
+        with open(team_file, encoding="utf-8") as f:
+            for line in f:
+                stripped = line.strip()
+                if re.match(r"^#{1,6}(?:\s|$)", stripped):
+                    in_active_agents_section = bool(
+                        re.fullmatch(r"## Active Agents \(\d+\)", stripped)
+                    )
+                    continue
+                if not in_active_agents_section:
+                    continue
+                if not stripped.startswith("|"):
+                    continue
+                cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+                if (
+                    len(cells) >= 2
+                    and cells[0] not in {"", "Agent"}
+                    and not re.fullmatch(r":?-+:?", cells[0])
+                ):
+                    count += 1
+    except (OSError, UnicodeError):
+        return None
     return count if count > 0 else None
 
 

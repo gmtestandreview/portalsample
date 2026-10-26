@@ -2,9 +2,13 @@ import { describe, afterEach, it, expect } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
+import type { FormikConfig } from 'formik';
 import AutoSuggest from '@/components/Inputs/AutoSuggest';
 import AutoSuggestContainer from '@/components/Inputs/AutoSuggest/AutoSuggestContainer';
-import type { AutoSuggestContainerProps } from '@/components/Inputs/AutoSuggest/types';
+import type {
+  AutoSuggestContainerProps,
+  AutoSuggestProps,
+} from '@/components/Inputs/AutoSuggest/types';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
 
@@ -47,7 +51,7 @@ const renderWithFormik = (
       {...(fieldState.initialTouched === undefined
         ? {}
         : { initialTouched: fieldState.initialTouched })}
-      onSubmit={vi.fn()}
+      onSubmit={vi.fn<FormikConfig<Record<string, unknown>>['onSubmit']>()}
     >
       {children}
     </Formik>,
@@ -63,9 +67,35 @@ const baseSuburbProps: AutoSuggestContainerProps<string> = {
   label: 'Suburb',
   options: [],
   searchTerm: 'Syd',
-  onSearchTermChange: vi.fn(),
-  onCancel: vi.fn(),
-  onSelectedOption: vi.fn(),
+  onSearchTermChange:
+    vi.fn<AutoSuggestContainerProps<string>['onSearchTermChange']>(),
+  onCancel: vi.fn<AutoSuggestContainerProps<string>['onCancel']>(),
+  onSelectedOption:
+    vi.fn<AutoSuggestContainerProps<string>['onSelectedOption']>(),
+};
+
+const expectComboboxResults = () => {
+  expect(screen.getByRole('combobox', { name: 'Suburb' })).toHaveAttribute(
+    'aria-controls',
+    'suburb-options',
+  );
+  expect(
+    screen.getByRole('listbox', { name: 'Suggestions Suburb' }),
+  ).toHaveClass('suggestion-options');
+  expect(screen.getAllByRole('option')).toHaveLength(2);
+  expect(screen.getByRole('combobox', { name: 'Suburb' })).toHaveAttribute(
+    'aria-activedescendant',
+    'suburb-options-option-suburb-option-sydney',
+  );
+  expect(
+    screen.getByRole('option', { name: /Sydney NSW \(1 of 2\)/ }),
+  ).toHaveClass('highlighted');
+};
+
+const expectCancelledCombobox = (combobox: HTMLElement) => {
+  expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  expect(combobox).toHaveValue('');
+  expect(reactAriaLabelText(combobox)).toBe('Suburb');
 };
 
 describe('combobox accessibility', () => {
@@ -79,6 +109,7 @@ describe('combobox accessibility', () => {
   afterEach(cleanup);
 
   it('exposes AutoSuggest as a labelled input with keyboard navigation and listbox options', async () => {
+    expect.hasAssertions();
     renderWithFormik(
       <AutoSuggestContainer
         name='suburb'
@@ -96,9 +127,13 @@ describe('combobox accessibility', () => {
           },
         ]}
         searchTerm='Syd'
-        onSearchTermChange={vi.fn()}
-        onCancel={vi.fn()}
-        onSelectedOption={vi.fn()}
+        onSearchTermChange={vi.fn<
+          AutoSuggestContainerProps<string>['onSearchTermChange']
+        >()}
+        onCancel={vi.fn<AutoSuggestContainerProps<string>['onCancel']>()}
+        onSelectedOption={vi.fn<
+          AutoSuggestContainerProps<string>['onSelectedOption']
+        >()}
       />,
       { suburb: 'Syd' },
     );
@@ -117,25 +152,11 @@ describe('combobox accessibility', () => {
       expect(combobox).toHaveAttribute('aria-expanded', 'true');
     });
 
-    expect(combobox).toHaveAttribute('aria-controls', 'suburb-options');
-    // React Aria names the popup with its own `listboxLabel` string followed
-    // by the ComboBox's `Label`. Reintroducing an `aria-label` on the
-    // ListBox would prepend the Formik field name ("suburb Suburb"), and
-    // dropping the `Label` would leave only "Suggestions".
-    expect(
-      screen.getByRole('listbox', { name: 'Suggestions Suburb' }),
-    ).toHaveClass('suggestion-options');
-    expect(screen.getAllByRole('option')).toHaveLength(2);
-    expect(combobox).toHaveAttribute(
-      'aria-activedescendant',
-      'suburb-options-option-suburb-option-sydney',
-    );
-    expect(
-      screen.getByRole('option', { name: /Sydney NSW \(1 of 2\)/ }),
-    ).toHaveClass('highlighted');
+    expectComboboxResults();
   });
 
   it('exposes OrganisationNameLookup as a labelled input combobox with active-descendant navigation', async () => {
+    expect.hasAssertions();
     renderWithFormik(
       <OrganisationNameLookup
         name='organisationName'
@@ -197,6 +218,7 @@ describe('combobox accessibility', () => {
   ])(
     'names the AutoSuggest combobox through React Aria while $state',
     ({ overrides, visibleMarker }) => {
+      expect.hasAssertions();
       renderWithFormik(
         <AutoSuggestContainer<string> {...baseSuburbProps} {...overrides} />,
         { suburb: 'Syd' },
@@ -211,14 +233,19 @@ describe('combobox accessibility', () => {
   );
 
   it('keeps the React Aria label through manual entry, results and cancellation', async () => {
-    const getOptions = vi.fn().mockResolvedValue(suburbOptions);
+    expect.hasAssertions();
+    const getOptions = vi
+      .fn<NonNullable<AutoSuggestProps<string>['getOptions']>>()
+      .mockResolvedValue(suburbOptions);
 
     renderWithFormik(
       <AutoSuggest<string>
         name='suburb'
         label='Suburb'
         getOptions={getOptions}
-        onSelectedOption={vi.fn()}
+        onSelectedOption={vi.fn<
+          NonNullable<AutoSuggestProps<string>['onSelectedOption']>
+        >()}
       />,
       { suburb: '' },
     );
@@ -241,11 +268,11 @@ describe('combobox accessibility', () => {
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     });
 
-    expect(combobox).toHaveValue('');
-    expect(reactAriaLabelText(combobox)).toBe('Suburb');
+    expectCancelledCombobox(combobox);
   });
 
   it('keeps the React Aria label while the field carries a validation error', () => {
+    expect.hasAssertions();
     renderWithFormik(
       <AutoSuggestContainer<string>
         {...baseSuburbProps}

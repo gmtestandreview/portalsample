@@ -1,9 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import ViewPdfButton from '@/components/Utilities/ViewPdfButton';
+import type { ViewPdfButtonProps } from '@/components/Utilities/ViewPdfButton';
 
-const trackGAEventMock = vi.hoisted(() => vi.fn());
+const trackGAEventMock = vi.hoisted(() => vi.fn<typeof trackGAEvent>());
 
 vi.mock(
   import('@/analytics/GoogleAnalytics'),
@@ -19,12 +21,13 @@ describe(ViewPdfButton, () => {
   });
 
   it('shows the download button and file size note when loaded', () => {
+    expect.hasAssertions();
     render(
       <ViewPdfButton
         text='Download PDF'
         fileSize='1.2 MB'
         isLoaded
-        getPdf={vi.fn()}
+        getPdf={vi.fn<ViewPdfButtonProps['getPdf']>()}
         gaLabel='Quote'
       />,
     );
@@ -39,11 +42,12 @@ describe(ViewPdfButton, () => {
   });
 
   it('shows the loading spinner and hides the button while not loaded', () => {
+    expect.hasAssertions();
     render(
       <ViewPdfButton
         fileSize='1.2 MB'
         isLoaded={false}
-        getPdf={vi.fn()}
+        getPdf={vi.fn<ViewPdfButtonProps['getPdf']>()}
         gaLabel='Quote'
       />,
     );
@@ -56,8 +60,9 @@ describe(ViewPdfButton, () => {
   });
 
   it('calls getPdf and tracks a GA event when the button is clicked', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const getPdf = vi.fn();
+    const getPdf = vi.fn<ViewPdfButtonProps['getPdf']>();
 
     render(
       <ViewPdfButton
@@ -76,11 +81,12 @@ describe(ViewPdfButton, () => {
   });
 
   it('renders the button without label text when text prop is omitted', () => {
+    expect.hasAssertions();
     render(
       <ViewPdfButton
         fileSize='500 KB'
         isLoaded
-        getPdf={vi.fn()}
+        getPdf={vi.fn<ViewPdfButtonProps['getPdf']>()}
         gaLabel='TestLabel'
       />,
     );

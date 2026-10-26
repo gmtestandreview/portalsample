@@ -15,6 +15,7 @@ describe(createSaveAwareYupResolver, () => {
   );
 
   it('runs the soft schema when saveAndExit is true and the hard schema otherwise, for the same values', async () => {
+    expect.hasAssertions();
     const values = {
       returnMethod: ReturnMethodValues.ClientWillProvide,
       saveAndExit: true,
@@ -33,6 +34,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('resolves both branches of a .when() conditional keyed on a sibling field', async () => {
+    expect.hasAssertions();
     const conditionTrue = await resolver(
       { returnMethod: ReturnMethodValues.ClientWillProvide },
       undefined,
@@ -49,6 +51,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('surfaces multiple simultaneous errors under abortEarly: false', async () => {
+    expect.hasAssertions();
     const result = await resolver(
       { returnMethod: ReturnMethodValues.ClientWillProvide },
       undefined,
@@ -63,6 +66,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('keeps the first Yup error when one field fails multiple rules', async () => {
+    expect.hasAssertions();
     const values = { saveAndExit: false, carrierName: '!' };
     const firstError = new Yup.ValidationError(
       'carrierName is too short',
@@ -91,6 +95,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('returns empty errors and passes the values through for a fully valid object', async () => {
+    expect.hasAssertions();
     const values = { returnMethod: ReturnMethodValues.ClientToArrange };
 
     const result = await resolver(values, undefined, {} as never);
@@ -100,6 +105,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('returns empty errors without validating when the active mode has no schema', async () => {
+    expect.hasAssertions();
     const softOnlyResolver = createSaveAwareYupResolver(
       undefined,
       deliveryAndReturnSubmitValidation,
@@ -115,6 +121,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('maps a validation error with no inner errors to its own path', async () => {
+    expect.hasAssertions();
     const values = { saveAndExit: false };
     const topLevelError = new Yup.ValidationError(
       'carrierName is required',
@@ -134,6 +141,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('falls back to no inner errors when the validation error has no inner array', async () => {
+    expect.hasAssertions();
     const values = { saveAndExit: false };
     const errorWithoutInner = {
       name: 'ValidationError',
@@ -153,6 +161,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('skips inner errors that have no path', async () => {
+    expect.hasAssertions();
     const values = { saveAndExit: false };
     const errorWithPathlessInner = {
       name: 'ValidationError',
@@ -178,6 +187,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('returns no field errors when the validation error has neither inner errors nor a path', async () => {
+    expect.hasAssertions();
     const values = { saveAndExit: false };
     const pathlessError = {
       name: 'ValidationError',
@@ -203,6 +213,7 @@ describe(createSaveAwareYupResolver, () => {
   });
 
   it('rethrows a non-validation error raised during schema validation', async () => {
+    expect.hasAssertions();
     const values = { saveAndExit: false };
     const thrownError = new TypeError('unexpected failure');
     const schema: ValidationSchema = {

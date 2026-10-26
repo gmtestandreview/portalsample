@@ -15,6 +15,7 @@ describe(RouteAccessibleNavigation, () => {
   });
 
   it('announces a non-root route after the navigation delay and clears the pending timer on unmount', () => {
+    expect.hasAssertions();
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
 
     const { unmount } = render(
@@ -39,6 +40,7 @@ describe(RouteAccessibleNavigation, () => {
   });
 
   it('announces the root route immediately with the current document title', () => {
+    expect.hasAssertions();
     render(
       <MemoryRouter initialEntries={['/']}>
         <RouteAccessibleNavigation />
@@ -51,6 +53,7 @@ describe(RouteAccessibleNavigation, () => {
   });
 
   it('announces the root route when document title is empty without scheduling a timer', () => {
+    expect.hasAssertions();
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
     document.title = '';
 

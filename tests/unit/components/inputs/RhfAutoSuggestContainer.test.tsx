@@ -1,5 +1,11 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+
+type ComboBoxOpen = (
+  focusStrategy?: 'first' | 'last' | null,
+  trigger?: string,
+) => void;
+type ComboBoxClose = () => void;
 import type { Resolver } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import RhfAutoSuggestContainer from '@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer';
@@ -10,10 +16,14 @@ import type {
 import { FieldHarness, createFormHandle } from './rhfTestHarness';
 import type { FormHandle } from './rhfTestHarness';
 
+type SearchTermChange = AutoSuggestContainerProps<string>['onSearchTermChange'];
+type Cancel = AutoSuggestContainerProps<string>['onCancel'];
+type SelectedOption = AutoSuggestContainerProps<string>['onSelectedOption'];
+
 const comboState = vi.hoisted(() => ({
   isFocused: true,
-  open: vi.fn(),
-  close: vi.fn(),
+  open: vi.fn<ComboBoxOpen>(),
+  close: vi.fn<ComboBoxClose>(),
   onChange: undefined as ((key: string | null) => void) | undefined,
   onInputChange: undefined as ((value: string) => void) | undefined,
   onOpenChange: undefined as ((isOpen: boolean) => void) | undefined,
@@ -101,9 +111,9 @@ const renderContainer = (
     name: 'suburb',
     label: 'Suburb',
     options: [],
-    onSearchTermChange: vi.fn().mockResolvedValue(undefined),
-    onCancel: vi.fn(),
-    onSelectedOption: vi.fn().mockResolvedValue(undefined),
+    onSearchTermChange: vi.fn<SearchTermChange>().mockResolvedValue(undefined),
+    onCancel: vi.fn<Cancel>(),
+    onSelectedOption: vi.fn<SelectedOption>().mockResolvedValue(undefined),
   };
 
   return render(
@@ -127,11 +137,16 @@ const failingResolver = async () => ({
 
 describe(RhfAutoSuggestContainer, () => {
   it('renders options, help, loading state and handles input actions', async () => {
+    expect.hasAssertions();
     comboState.open.mockClear();
     comboState.close.mockClear();
-    const onSearchTermChange = vi.fn().mockResolvedValue(undefined);
-    const onCancel = vi.fn();
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
+    const onSearchTermChange = vi
+      .fn<SearchTermChange>()
+      .mockResolvedValue(undefined);
+    const onCancel = vi.fn<Cancel>();
+    const onSelectedOption = vi
+      .fn<SelectedOption>()
+      .mockResolvedValue(undefined);
 
     const { rerender } = renderContainer({
       id: 'suburb-input',
@@ -145,21 +160,30 @@ describe(RhfAutoSuggestContainer, () => {
       placeholder: 'Start typing',
     });
 
-    expect(screen.getByRole('textbox', { name: 'Suburb' })).toHaveAttribute(
-      'placeholder',
-      'Start typing',
-    );
-    expect(screen.getByText('Use your suburb')).toBeInTheDocument();
-    expect(screen.getByText('Searching')).toBeInTheDocument();
-    expect(screen.getByTestId('options')).toBeInTheDocument();
-    expect(comboState.open).toHaveBeenCalledWith(null, 'input');
+    expect({
+      placeholder: screen
+        .getByRole('textbox', { name: 'Suburb' })
+        .getAttribute('placeholder'),
+      inlineHelp: screen.getByText('Use your suburb').textContent,
+      loadingMessage: screen.getByText('Searching').textContent,
+      optionsRendered: Boolean(screen.getByTestId('options')),
+      openCalls: comboState.open.mock.calls,
+    }).toEqual({
+      placeholder: 'Start typing',
+      inlineHelp: 'Use your suburb',
+      loadingMessage: 'Searching',
+      optionsRendered: true,
+      openCalls: [[null, 'input']],
+    });
 
     const input = screen.getByRole('textbox', { name: 'Suburb' });
     await act(async () => {
       comboState.onInputChange?.('syd');
     });
 
-    expect(onSearchTermChange).toHaveBeenCalledWith('syd');
+    expect({ searchTermChangeCalls: onSearchTermChange.mock.calls }).toEqual({
+      searchTermChangeCalls: [['syd']],
+    });
 
     await act(async () => {
       comboState.onOpenChange?.(true);
@@ -167,15 +191,23 @@ describe(RhfAutoSuggestContainer, () => {
       fireEvent.keyDown(input, { key: 'Escape' });
     });
 
-    expect(onCancel).toHaveBeenCalledWith();
-    expect(screen.getByText(/2 suggestions displayed/)).toBeInTheDocument();
+    expect({
+      cancelCalls: onCancel.mock.calls,
+      suggestionSummary: screen.getByText(/2 suggestions displayed/)
+        .textContent,
+    }).toEqual({
+      cancelCalls: [[]],
+      suggestionSummary: expect.stringContaining('2 suggestions displayed'),
+    });
 
     await act(async () => {
       comboState.onChange?.(null);
       comboState.onChange?.('sydney');
     });
 
-    expect(onSelectedOption).toHaveBeenCalledWith(options[0]);
+    expect({ selectedOptionCalls: onSelectedOption.mock.calls }).toEqual({
+      selectedOptionCalls: [[options[0]]],
+    });
 
     rerender(
       <FieldHarness<Values> field='suburb' defaultValue=''>
@@ -190,11 +222,14 @@ describe(RhfAutoSuggestContainer, () => {
       </FieldHarness>,
     );
 
-    expect(comboState.close).toHaveBeenCalledWith();
-    expect(screen.getByTestId('combo-box')).toBeInTheDocument();
+    expect({
+      closeCalls: comboState.close.mock.calls,
+      comboBoxRendered: Boolean(screen.getByTestId('combo-box')),
+    }).toEqual({ closeCalls: [[]], comboBoxRendered: true });
   });
 
   it('renders no-result and lookup-error messages with defaults and overrides', () => {
+    expect.hasAssertions();
     renderContainer({
       noResult: true,
       noResultMessage: 'No suburb matches',
@@ -220,6 +255,7 @@ describe(RhfAutoSuggestContainer, () => {
   });
 
   it('shows field validation only after the form is submitted', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     renderContainer({ inlineHelp: 'Choose a suburb' }, form, failingResolver);
 

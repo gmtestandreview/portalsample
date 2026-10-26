@@ -61,8 +61,19 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule45>,
 );
 
+const expectLayoutNavigationChrome = () => {
+  expect(screen.getByRole('status')).toHaveClass('visually-hidden');
+  expect(
+    screen.getByRole('link', { name: 'Skip to main content' }),
+  ).toHaveAttribute('href', '#main');
+  expect(
+    screen.getByRole('navigation', { name: 'Back to top' }),
+  ).toBeInTheDocument();
+};
+
 describe(Layout, () => {
   it('renders page chrome, main content, and the route announcement region', () => {
+    expect.hasAssertions();
     render(
       <MemoryRouter>
         <Layout>
@@ -77,12 +88,6 @@ describe(Layout, () => {
     expect(screen.getByRole('status')).toHaveTextContent(
       'Navigated to Dashboard page.',
     );
-    expect(screen.getByRole('status')).toHaveClass('visually-hidden');
-    expect(
-      screen.getByRole('link', { name: 'Skip to main content' }),
-    ).toHaveAttribute('href', '#main');
-    expect(
-      screen.getByRole('navigation', { name: 'Back to top' }),
-    ).toBeInTheDocument();
+    expectLayoutNavigationChrome();
   });
 });

@@ -22,20 +22,24 @@ const account = {
 
 describe('silentRequestFor', () => {
   it('combines the token scopes with the signed-in account', async () => {
+    expect.hasAssertions();
+
     const { silentRequestFor } = await import('@/authentication/silentRequest');
 
-    expect(silentRequestFor(account)).toEqual({
+    expect(silentRequestFor(account)).toStrictEqual({
       scopes: ['read', 'user_impersonation'],
       account,
     });
   });
 
   it('omits the account key when nobody is signed in', async () => {
+    expect.hasAssertions();
+
     const { silentRequestFor } = await import('@/authentication/silentRequest');
 
     const request = silentRequestFor(undefined);
 
-    expect(request).toEqual({ scopes: ['read', 'user_impersonation'] });
+    expect(request).toStrictEqual({ scopes: ['read', 'user_impersonation'] });
     expect(Object.hasOwn(request, 'account')).toBe(false);
   });
 });

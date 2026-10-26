@@ -1,21 +1,24 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const bridgeMocks = vi.hoisted(() => ({
-  broadcastResponseToMainFrame: vi.fn(),
+  broadcastResponseToMainFrame: vi.fn<() => Promise<void>>(),
 }));
 
 vi.mock(
-  import('@azure/msal-browser/redirect-bridge'),
+  '@azure/msal-browser/redirect-bridge',
   () => bridgeMocks satisfies __ExactMockModule<__TestMockModule16>,
 );
 
 describe('mSAL redirect bridge entry', () => {
-  beforeEach(() => {
+  const resetModules = () => {
     vi.resetModules();
     vi.clearAllMocks();
-  });
+  };
 
   it('broadcasts the authentication response', async () => {
+    expect.hasAssertions();
+    resetModules();
+
     bridgeMocks.broadcastResponseToMainFrame.mockResolvedValue(undefined);
 
     await import('../../../ClientApp/src/authentication/redirectBridge');
@@ -24,6 +27,9 @@ describe('mSAL redirect bridge entry', () => {
   });
 
   it('reports a sanitized constant when broadcasting fails', async () => {
+    expect.hasAssertions();
+    resetModules();
+
     bridgeMocks.broadcastResponseToMainFrame.mockRejectedValue(
       new Error('token=must-not-be-logged'),
     );

@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import type { Dispatch, SetStateAction } from 'react';
 import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import PaSearchFilter from '@/components/SearchFilter/TypeApproval/paSearchFilter';
 
@@ -14,8 +15,10 @@ vi.mock(
         setInitialFilters,
       }: {
         initialFilters: PatternApprovalDashboardDto;
-        setCurrentPage: (page: number) => void;
-        setInitialFilters: (filters: PatternApprovalDashboardDto) => void;
+        setCurrentPage: Dispatch<SetStateAction<number>>;
+        setInitialFilters: Dispatch<
+          SetStateAction<PatternApprovalDashboardDto | undefined>
+        >;
       }) => (
         <button
           type='button'
@@ -30,15 +33,19 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule53>,
 );
 
-describe(PaSearchFilter, () => {
+describe('PaSearchFilter', () => {
   it('renders the filter menu with default Bootstrap layout classes', () => {
+    expect.hasAssertions();
+
     const initialFilters = { currentPage: 3 } as PatternApprovalDashboardDto;
 
     render(
       <PaSearchFilter
         initialFilters={initialFilters}
-        setInitialFilters={vi.fn()}
-        setCurrentPage={vi.fn()}
+        setInitialFilters={vi.fn<
+          Dispatch<SetStateAction<PatternApprovalDashboardDto | undefined>>
+        >()}
+        setCurrentPage={vi.fn<Dispatch<SetStateAction<number>>>()}
       />,
     );
 
@@ -63,10 +70,15 @@ describe(PaSearchFilter, () => {
   });
 
   it('forwards custom classes and filter state callbacks to the menu', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const initialFilters = { currentPage: 4 } as PatternApprovalDashboardDto;
-    const setInitialFilters = vi.fn();
-    const setCurrentPage = vi.fn();
+    const setInitialFilters =
+      vi.fn<
+        Dispatch<SetStateAction<PatternApprovalDashboardDto | undefined>>
+      >();
+    const setCurrentPage = vi.fn<Dispatch<SetStateAction<number>>>();
 
     render(
       <PaSearchFilter

@@ -10,6 +10,9 @@ import {
 } from '@/components/SlateEditor/SlateEditor';
 import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
 
+type SetValue = (value: CustomElement[]) => void;
+type Submit = () => void;
+
 /**
  * Slate builds its document as a plain JavaScript model and only mirrors it into the DOM. Driving
  * the component through the DOM would need `beforeinput` plus a live Selection, neither of which
@@ -79,6 +82,7 @@ const paragraph = (text: string): CustomElement[] => [
 
 describe('slateEditor helpers', () => {
   it('serializes paragraph text with inline mark formatting', () => {
+    expect.hasAssertions();
     const html = serializeToHtml([
       {
         type: 'paragraph',
@@ -97,6 +101,7 @@ describe('slateEditor helpers', () => {
   });
 
   it('serializes unknown block types as their child content', () => {
+    expect.hasAssertions();
     const html = serializeToHtml([
       {
         type: 'heading',
@@ -115,6 +120,7 @@ describe('slateEditor helpers', () => {
     ['plain text', false],
     ['<br', false],
   ])('classifies break tag %s as %s', (value, expected) => {
+    expect.hasAssertions();
     expect(isBreakTag(value)).toBe(expected);
   });
 
@@ -125,16 +131,18 @@ describe('slateEditor helpers', () => {
     ['<br', false],
     ['visible text', false],
   ])('classifies paragraph content %j as empty=%s', (content, expected) => {
+    expect.hasAssertions();
     expect(isEmptyParagraphContent(content)).toBe(expected);
   });
 });
 
 describe(SlateEditor, () => {
   it('renders toolbar controls, placeholder label, and the configured character limit', () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={paragraph('Hello')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         placeholder='Reply to NMI'
         maxCharacters={25}
       />,
@@ -159,12 +167,13 @@ describe(SlateEditor, () => {
   });
 
   it('prevents submitting empty or whitespace-only messages', () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<Submit>();
 
     render(
       <SlateEditor
         value={paragraph('   ')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         onSubmit={onSubmit}
       />,
     );
@@ -178,12 +187,13 @@ describe(SlateEditor, () => {
   });
 
   it('prevents submitting messages that exceed the configured character limit', () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<Submit>();
 
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         onSubmit={onSubmit}
         maxCharacters={5}
       />,
@@ -200,12 +210,13 @@ describe(SlateEditor, () => {
   });
 
   it('submits valid messages and supports toolbar mouse interactions', () => {
-    const onSubmit = vi.fn();
+    expect.hasAssertions();
+    const onSubmit = vi.fn<Submit>();
 
     render(
       <SlateEditor
         value={paragraph('ready')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         onSubmit={onSubmit}
       />,
     );
@@ -219,6 +230,7 @@ describe(SlateEditor, () => {
   });
 
   it('renders bold, italic and underline marks in the editor body', () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={[
@@ -232,8 +244,8 @@ describe(SlateEditor, () => {
             ],
           },
         ]}
-        setValue={vi.fn()}
-        onSubmit={vi.fn()}
+        setValue={vi.fn<SetValue>()}
+        onSubmit={vi.fn<Submit>()}
       />,
     );
 
@@ -244,11 +256,12 @@ describe(SlateEditor, () => {
   });
 
   it('does not stack the same error when send is pressed repeatedly', () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={paragraph('   ')}
-        setValue={vi.fn()}
-        onSubmit={vi.fn()}
+        setValue={vi.fn<SetValue>()}
+        onSubmit={vi.fn<Submit>()}
       />,
     );
 
@@ -263,11 +276,12 @@ describe(SlateEditor, () => {
   });
 
   it('does not stack the length error when send is pressed repeatedly', () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
-        onSubmit={vi.fn()}
+        setValue={vi.fn<SetValue>()}
+        onSubmit={vi.fn<Submit>()}
         maxCharacters={5}
       />,
     );
@@ -290,7 +304,8 @@ describe('slateEditor document changes', () => {
   });
 
   it('pushes edits back to the caller and updates the live character count', async () => {
-    const setValue = vi.fn();
+    expect.hasAssertions();
+    const setValue = vi.fn<SetValue>();
 
     render(
       <SlateEditor
@@ -308,17 +323,18 @@ describe('slateEditor document changes', () => {
 
     const [lastValue] = setValue.mock.calls.at(-1) ?? [];
 
-    expect(serializeToHtml(lastValue)).toBe('<p>Hello there</p>');
+    expect(serializeToHtml(lastValue ?? [])).toBe('<p>Hello there</p>');
     // Counted over the serialized HTML, not the visible text: the limit exists to bound what
     // gets sent, and the markup travels with it.
     expect(document.querySelector('.text-muted')).toHaveTextContent('18 /1000');
   });
 
   it('reports a message that grows past the limit while it is being typed', async () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         maxCharacters={5}
       />,
     );
@@ -337,10 +353,11 @@ describe('slateEditor document changes', () => {
   });
 
   it('does not stack the length error as typing continues past the limit', async () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         maxCharacters={5}
       />,
     );
@@ -362,10 +379,11 @@ describe('slateEditor document changes', () => {
   });
 
   it('clears the length error once the message fits again', async () => {
+    expect.hasAssertions();
     render(
       <SlateEditor
         value={paragraph('abcdefghijkl')}
-        setValue={vi.fn()}
+        setValue={vi.fn<SetValue>()}
         maxCharacters={20}
       />,
     );
@@ -399,7 +417,10 @@ describe('slateEditor document changes', () => {
   });
 
   it('turns a mark off again when the toolbar button is pressed twice', async () => {
-    render(<SlateEditor value={paragraph('ready')} setValue={vi.fn()} />);
+    expect.hasAssertions();
+    render(
+      <SlateEditor value={paragraph('ready')} setValue={vi.fn<SetValue>()} />,
+    );
 
     const editor = currentEditor();
     // Slate drops marks when there is no selection, so the toolbar is inert until the caret is

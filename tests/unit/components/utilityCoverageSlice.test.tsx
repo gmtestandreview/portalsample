@@ -26,10 +26,14 @@ import {
   openPdfPageInNewTab,
 } from '../../../ClientApp/src/routes/common/helperFunctions';
 import { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
+import type * as NotificationModule from '../../../ClientApp/src/storage/notification';
+
+type BooleanSetter = (value: boolean) => void;
 
 const mocks = vi.hoisted(() => {
-  const acquireTokenSilent = vi.fn();
-  const getQuoteReportPDFByID = vi.fn();
+  const acquireTokenSilent = vi.fn<() => Promise<{ accessToken: string }>>();
+  const getQuoteReportPDFByID =
+    vi.fn<DashboardClient['getQuoteReportPDFByID']>();
 
   return {
     acquireTokenSilent,
@@ -54,7 +58,7 @@ vi.mock(
   import('../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<typeof trackGAEvent>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
@@ -62,7 +66,8 @@ vi.mock(
   import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
-      clearDashboardNotification: vi.fn(),
+      clearDashboardNotification:
+        vi.fn<typeof NotificationModule.clearDashboardNotification>(),
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
@@ -71,8 +76,11 @@ vi.mock(
   () =>
     ({
       default: {
-        verbose: vi.fn(),
-        error: vi.fn(),
+        verbose: vi.fn<(message: string, properties?: unknown) => void>(),
+        error:
+          vi.fn<
+            (message: string, error: Error, properties?: unknown) => void
+          >(),
       },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
@@ -81,13 +89,11 @@ vi.mock(
   '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
-      DashboardClient: vi.fn(function (this: {
+      DashboardClient: vi.fn<() => void>(function (this: {
         setAuthToken: ReturnType<typeof vi.fn>;
         getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
       }) {
-        vi.spyOn(this, 'setAuthToken').mockImplementation(
-          (_token: string) => undefined,
-        );
+        this.setAuthToken = vi.fn<DashboardClient['setAuthToken']>();
         this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
       }),
     }) satisfies __ExactMockModule<__TestMockModule4>,
@@ -97,13 +103,17 @@ vi.mock(
   import('../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
-      getFileSize: vi.fn((bytes: number) => `${bytes} bytes`),
-      getFileUrlFromBase64: vi.fn((fileData: string) => `blob:${fileData}`),
-      getQuotationFileDetails: vi.fn(),
-      getQuoteOfferPageNumber: vi.fn(() => '5'),
-      handleReportFileError: vi.fn(),
-      openInNewTab: vi.fn(),
-      openPdfPageInNewTab: vi.fn(),
+      getFileSize: vi.fn<typeof getFileSize>(
+        (bytes: number) => `${bytes} bytes`,
+      ),
+      getFileUrlFromBase64: vi.fn<typeof getFileUrlFromBase64>(
+        (fileData: string) => `blob:${fileData}`,
+      ),
+      getQuotationFileDetails: vi.fn<typeof getQuotationFileDetails>(),
+      getQuoteOfferPageNumber: vi.fn<typeof getQuoteOfferPageNumber>(() => '5'),
+      handleReportFileError: vi.fn<typeof handleReportFileError>(),
+      openInNewTab: vi.fn<typeof openInNewTab>(),
+      openPdfPageInNewTab: vi.fn<typeof openPdfPageInNewTab>(),
     }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
@@ -159,6 +169,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('finds an ancestor by id and returns false for null or missing ancestors', () => {
+    expect.hasAssertions();
+
     const wrapper = document.createElement('section');
     wrapper.id = 'wrapper-id';
     const child = document.createElement('div');
@@ -172,6 +184,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('scrolls and focuses a hash target without an accordion delay', () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const target = document.createElement('h2');
     target.id = 'target-section';
@@ -195,6 +209,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('expands a collapsed accordion before scrolling to a hash target', () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     document.body.innerHTML = `
             <div class="accordion-item">
@@ -230,6 +246,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('scrolls to the top and focuses page title after route changes', () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(<RouteHarness showTitle />);
     const title = document.querySelector('#page-title') as HTMLElement;
@@ -243,6 +261,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('focuses page top when the route has no page title', () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     render(<RouteHarness showTitle={false} />);
     const pageTop = document.querySelector('#page-top') as HTMLElement;
@@ -255,10 +275,14 @@ describe('utility component coverage slice', () => {
   });
 
   it('prints, copies and can hide mailing label actions', async () => {
+    expect.hasAssertions();
+
     const print = vi
       .spyOn(globalThis, 'print')
       .mockImplementation(() => undefined);
-    const writeText = vi.fn().mockResolvedValue(undefined);
+    const writeText = vi
+      .fn<(text: string) => Promise<void>>()
+      .mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText },
@@ -308,7 +332,11 @@ describe('utility component coverage slice', () => {
   });
 
   it('leaves the mailing label copy action available when clipboard copy fails', async () => {
-    const writeText = vi.fn().mockRejectedValue(new Error('copy failed'));
+    expect.hasAssertions();
+
+    const writeText = vi
+      .fn<(text: string) => Promise<void>>()
+      .mockRejectedValue(new Error('copy failed'));
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
@@ -338,7 +366,9 @@ describe('utility component coverage slice', () => {
   });
 
   it('renders loaded PDF buttons and tracks downloads', () => {
-    const getPdf = vi.fn();
+    expect.hasAssertions();
+
+    const getPdf = vi.fn<() => void>();
 
     render(
       <ViewPdfButton
@@ -357,12 +387,14 @@ describe('utility component coverage slice', () => {
   });
 
   it('renders loading state before a PDF button is loaded', () => {
+    expect.hasAssertions();
+
     render(
       <ViewPdfButton
         text='Download PDF'
         fileSize=''
         isLoaded={false}
-        getPdf={vi.fn()}
+        getPdf={vi.fn<() => void>()}
         gaLabel='report'
       />,
     );
@@ -374,6 +406,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('loads and opens an offered quote PDF', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockImplementation(
       (_token, _data, getFile) =>
         Promise.resolve(
@@ -386,8 +420,8 @@ describe('utility component coverage slice', () => {
             : ({ fileSizeBytes: 4096 } as any),
         ),
     );
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewPdfQuote
@@ -412,17 +446,19 @@ describe('utility component coverage slice', () => {
   });
 
   it('reports an offered quote PDF size load failure', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockRejectedValueOnce(
       new Error('size failed'),
     );
-    const setFileError = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
 
     render(
       <ViewPdfQuote
         text='View quote'
         quotationData={quotationData as any}
         setFileError={setFileError}
-        setIsLoading={vi.fn()}
+        setIsLoading={vi.fn<BooleanSetter>()}
       />,
     );
 
@@ -432,14 +468,16 @@ describe('utility component coverage slice', () => {
   });
 
   it('reports an offered quote PDF download failure', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockImplementation(
       (_token, _data, getFile) =>
         getFile
           ? Promise.reject(new Error('download failed'))
           : Promise.resolve({ fileSizeBytes: 4096 } as any),
     );
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewPdfQuote
@@ -459,20 +497,21 @@ describe('utility component coverage slice', () => {
   });
 
   it('loads and opens a measurement report PDF', async () => {
-    mocks.getQuoteReportPDFByID.mockImplementation(
-      (_id: string, getFile: boolean) =>
-        Promise.resolve(
-          getFile
-            ? {
-                fileData: 'report-data',
-                mimeType: 'application/pdf',
-                filename: 'report.pdf',
-              }
-            : { fileSizeBytes: 8192 },
-        ),
+    expect.hasAssertions();
+
+    mocks.getQuoteReportPDFByID.mockImplementation((_id, getFile) =>
+      Promise.resolve(
+        getFile
+          ? {
+              fileData: 'report-data',
+              mimeType: 'application/pdf',
+              filename: 'report.pdf',
+            }
+          : { fileSizeBytes: 8192 },
+      ),
     );
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewMeasurementReport
@@ -503,14 +542,15 @@ describe('utility component coverage slice', () => {
   });
 
   it('handles measurement report PDF download failures', async () => {
-    mocks.getQuoteReportPDFByID.mockImplementation(
-      (_id: string, getFile: boolean) =>
-        getFile
-          ? Promise.reject(new Error('download failed'))
-          : Promise.resolve({ fileSizeBytes: 8192 }),
+    expect.hasAssertions();
+
+    mocks.getQuoteReportPDFByID.mockImplementation((_id, getFile) =>
+      getFile
+        ? Promise.reject(new Error('download failed'))
+        : Promise.resolve({ fileSizeBytes: 8192 }),
     );
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewMeasurementReport
@@ -531,15 +571,17 @@ describe('utility component coverage slice', () => {
   });
 
   it('handles measurement report PDF size load failures', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteReportPDFByID.mockRejectedValueOnce(new Error('size failed'));
-    const setFileError = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
 
     render(
       <ViewMeasurementReport
         text='View report'
         quotationData={quotationData as any}
         setFileError={setFileError}
-        setIsLoading={vi.fn()}
+        setIsLoading={vi.fn<BooleanSetter>()}
       />,
     );
 
@@ -550,9 +592,11 @@ describe('utility component coverage slice', () => {
   });
 
   it('handles missing measurement report metadata and absent quotation data', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteReportPDFByID.mockResolvedValue({});
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     const { rerender } = render(
       <ViewMeasurementReport
@@ -590,8 +634,10 @@ describe('utility component coverage slice', () => {
   });
 
   it('does not request measurement report PDFs when the report id is missing', async () => {
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    expect.hasAssertions();
+
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewMeasurementReport
@@ -612,14 +658,16 @@ describe('utility component coverage slice', () => {
   });
 
   it('does not open quote PDFs when file metadata is incomplete', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockResolvedValue({} as any);
 
     render(
       <ViewPdfQuote
         text='View quote'
         quotationData={quotationData as any}
-        setFileError={vi.fn()}
-        setIsLoading={vi.fn()}
+        setFileError={vi.fn<BooleanSetter>()}
+        setIsLoading={vi.fn<BooleanSetter>()}
       />,
     );
 
@@ -638,13 +686,15 @@ describe('utility component coverage slice', () => {
   });
 
   it('opens quote terms at the computed PDF page and tracks the click', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockResolvedValueOnce({
       fileData: 'terms-data',
       mimeType: 'application/pdf',
       filename: 'quote.pdf',
     } as any);
     vi.mocked(getQuoteOfferPageNumber).mockReturnValueOnce('3');
-    const setIsLoading = vi.fn();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewPdfQuoteTerms
@@ -653,7 +703,7 @@ describe('utility component coverage slice', () => {
         quotationData={
           { ...quotationData, quoteRequestStatus: 'QuoteDeclined' } as any
         }
-        setFileError={vi.fn()}
+        setFileError={vi.fn<BooleanSetter>()}
         setIsLoading={setIsLoading}
       />,
     );
@@ -670,11 +720,13 @@ describe('utility component coverage slice', () => {
   });
 
   it('sets a file error when quote terms cannot be downloaded', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockRejectedValueOnce(
       new Error('terms failed'),
     );
-    const setFileError = vi.fn();
-    const setIsLoading = vi.fn();
+    const setFileError = vi.fn<BooleanSetter>();
+    const setIsLoading = vi.fn<BooleanSetter>();
 
     render(
       <ViewPdfQuoteTerms
@@ -694,6 +746,8 @@ describe('utility component coverage slice', () => {
   });
 
   it('does not open quote terms when file metadata is incomplete', async () => {
+    expect.hasAssertions();
+
     vi.mocked(getQuotationFileDetails).mockResolvedValueOnce({} as any);
 
     render(
@@ -701,8 +755,8 @@ describe('utility component coverage slice', () => {
         prefixText='Read the '
         suffixText=' before continuing.'
         quotationData={quotationData as any}
-        setFileError={vi.fn()}
-        setIsLoading={vi.fn()}
+        setFileError={vi.fn<BooleanSetter>()}
+        setIsLoading={vi.fn<BooleanSetter>()}
       />,
     );
 

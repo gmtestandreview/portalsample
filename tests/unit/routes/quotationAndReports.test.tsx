@@ -537,6 +537,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('loads quotation details and declines a quote through the confirmation modal', async () => {
+    expect.hasAssertions();
+
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
 
@@ -570,6 +572,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('shows a file error notification when declining a quote fails', async () => {
+    expect.hasAssertions();
+
     mocks.declineQuote.mockRejectedValueOnce(new Error('decline failed'));
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
@@ -600,6 +604,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('closes the decline confirmation without submitting', async () => {
+    expect.hasAssertions();
+
     const Quotation = (await import('../../../ClientApp/src/routes/quotation'))
       .default;
     renderRoute('/quotation/RFQ-100', <Quotation />, '/quotation/:id');
@@ -616,6 +622,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('normalises a newly accepted quotation from session storage', async () => {
+    expect.hasAssertions();
+
     mocks.sessionGetItem.mockReturnValue('RFQ-100');
     const quotation = {
       ...quoteDetails,
@@ -636,6 +644,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('removes the session storage ID but leaves the status unchanged when IDs do not match', async () => {
+    expect.hasAssertions();
+
     mocks.sessionGetItem.mockReturnValue('RFQ-OTHER');
     const quotation = {
       ...quoteDetails,
@@ -656,6 +666,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('ignores a resolved load response after the quotation component unmounts', async () => {
+    expect.hasAssertions();
+
     let resolveLoad!: (value: any) => void;
     mocks.getQuoteRequestDetailsByRefId.mockReturnValueOnce(
       new Promise((resolve) => {
@@ -679,6 +691,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('ignores a rejected load response after the quotation component unmounts', async () => {
+    expect.hasAssertions();
+
     let rejectLoad!: (reason: any) => void;
     mocks.getQuoteRequestDetailsByRefId.mockReturnValueOnce(
       new Promise((_, reject) => {
@@ -702,6 +716,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('navigates quotation to not found when detail loading fails', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteRequestDetailsByRefId.mockRejectedValueOnce(
       new Error('load failed'),
     );
@@ -720,6 +736,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders quote details notification, view-request action, and no-delivery branch', async () => {
+    expect.hasAssertions();
+
     const QuoteDetails = (
       await import('../../../ClientApp/src/routes/quotation/quoteDetails')
     ).default;
@@ -751,6 +769,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('loads a measurement report route and renders report PDF action', async () => {
+    expect.hasAssertions();
+
     const MeasurementReport = (
       await import('../../../ClientApp/src/routes/measurementReport')
     ).default;
@@ -774,6 +794,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('navigates measurement report to not found when loading fails', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteRequestDetailsByRefId.mockRejectedValueOnce(
       new Error('load failed'),
     );
@@ -791,6 +813,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('waits to load measurement reports until account and MSAL prerequisites are available', async () => {
+    expect.hasAssertions();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     mocks.getDashboardInfoNotification.mockReturnValue(null);
     mocks.useAccountState.mockReturnValue(undefined);
@@ -818,6 +842,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('loads measurement report history and updates pagination', async () => {
+    expect.hasAssertions();
+
     const InstrMeasurementReport = (
       await import('../../../ClientApp/src/routes/measurementReport/indexList')
     ).default;
@@ -851,6 +877,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('handles measurement report history load failures', async () => {
+    expect.hasAssertions();
+
     mocks.getDashboardInstrumentReports.mockRejectedValueOnce(
       new Error('history failed'),
     );
@@ -872,6 +900,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('waits to load report history until organisation and MSAL prerequisites are available', async () => {
+    expect.hasAssertions();
+
     mocks.useAccountState.mockReturnValue({
       details: { ...accountDetails, organisationCRMGuid: undefined },
     });
@@ -896,6 +926,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders report details notification and view-request action', async () => {
+    expect.hasAssertions();
+
     const ReportDetails = (
       await import('../../../ClientApp/src/routes/measurementReport/reportDetails')
     ).default;
@@ -922,6 +954,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders sparse quote details in summary mode without optional notifications or request links', async () => {
+    expect.hasAssertions();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     const QuoteDetails = (
       await import('../../../ClientApp/src/routes/quotation/quoteDetails')
@@ -953,6 +987,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders summary no-delivery details and valid quote status outcomes', async () => {
+    expect.hasAssertions();
+
     const QuoteDetails = (
       await import('../../../ClientApp/src/routes/quotation/quoteDetails')
     ).default;
@@ -1003,6 +1039,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders sparse report details without a notification or request id', async () => {
+    expect.hasAssertions();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     const ReportDetails = (
       await import('../../../ClientApp/src/routes/measurementReport/reportDetails')
@@ -1024,6 +1062,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('renders quotation without dashboard notifications and skips decline when CRM id is absent', async () => {
+    expect.hasAssertions();
+
     mocks.getDashboardNotification.mockReturnValue(null);
     mocks.getDashboardInfoNotification.mockReturnValue(null);
     mocks.getQuoteRequestDetailsByRefId.mockResolvedValue({
@@ -1049,6 +1089,8 @@ describe('quotation and measurement report routes', () => {
   });
 
   it('handles quotation prerequisite alternatives and shows the accepted-status back action', async () => {
+    expect.hasAssertions();
+
     mocks.useAccountState.mockReturnValue({
       details: { ...accountDetails, targetOrganisation: undefined },
     });

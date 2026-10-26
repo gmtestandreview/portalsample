@@ -1,22 +1,62 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import type {
+  AccountInfo,
+  AuthenticationResult,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
 import AccountProvider from '../../../ClientApp/src/authentication/AccountProvider';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import type { UsersClient } from '../../../ClientApp/src/api/web-api-client';
+import { vi, describe, it, expect } from 'vitest';
+import type * as TargetOrganisationModule from '../../../ClientApp/src/storage/targetOrganisation';
 
 // ── Mock setup ────────────────────────────────────────────────────────────────
 
 const mockInstance = {
-  acquireTokenSilent: vi.fn().mockResolvedValue({ accessToken: 'test-token' }),
-  handleRedirectPromise: vi.fn().mockResolvedValue(null),
-  logoutRedirect: vi.fn().mockResolvedValue(undefined),
-  getActiveAccount: vi.fn().mockReturnValue(null),
+  acquireTokenSilent: vi
+    .fn<IPublicClientApplication['acquireTokenSilent']>()
+    .mockResolvedValue({
+      authority: 'https://login.microsoftonline.com/tenant-id',
+      uniqueId: 'unique-id',
+      tenantId: 'tenant-id',
+      scopes: ['scope'],
+      account: {
+        homeAccountId: 'account-id',
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'test@example.com',
+        localAccountId: 'local-account-id',
+      } satisfies AccountInfo,
+      idToken: 'id-token',
+      idTokenClaims: {},
+      accessToken: 'test-token',
+      fromCache: false,
+      expiresOn: null,
+      tokenType: 'Bearer',
+      correlationId: 'correlation-id',
+    } satisfies AuthenticationResult & { account: AccountInfo }),
+  handleRedirectPromise: vi
+    .fn<IPublicClientApplication['handleRedirectPromise']>()
+    .mockResolvedValue(null),
+  logoutRedirect: vi
+    .fn<IPublicClientApplication['logoutRedirect']>()
+    .mockResolvedValue(undefined),
+  getActiveAccount: vi
+    .fn<IPublicClientApplication['getActiveAccount']>()
+    .mockReturnValue(null),
 };
 
 vi.mock(
   '@azure/msal-react',
   () =>
     ({
-      useMsal: vi.fn(() => ({
+      useMsal: vi.fn<
+        () => {
+          inProgress: string;
+          accounts: object[];
+          instance: typeof mockInstance;
+        }
+      >(() => ({
         inProgress: 'none',
         accounts: [
           {
@@ -42,14 +82,16 @@ vi.mock(
 );
 
 // signIn mock — created once and reused
-const mockSignIn = vi.fn().mockRejectedValue(new Error('Network error'));
+const mockSignIn = vi
+  .fn<UsersClient['signIn']>()
+  .mockRejectedValue(new Error('Network error'));
 
 vi.mock('../../../ClientApp/src/api/web-api-client', () => {
   return {
     UsersClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<UsersClient['setAuthToken']>();
       signIn = mockSignIn;
-      setUserProfile = vi.fn();
+      setUserProfile = vi.fn<UsersClient['setUserProfile']>();
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
@@ -58,21 +100,27 @@ vi.mock(
   '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+      default: {
+        verbose: vi.fn<(message: string, ...args: unknown[]) => void>(),
+        error: vi.fn<(message: string, ...args: unknown[]) => void>(),
+        trace: vi.fn<(message: string, ...args: unknown[]) => void>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 vi.mock(
-  import('../../../ClientApp/src/storage/targetOrganisation'),
+  '../../../ClientApp/src/storage/targetOrganisation',
   () =>
     ({
-      default: vi.fn(),
-      getTargetOrganisation: vi.fn().mockReturnValue(null),
+      default: vi.fn<typeof TargetOrganisationModule.default>(),
+      getTargetOrganisation: vi
+        .fn<typeof TargetOrganisationModule.getTargetOrganisation>()
+        .mockReturnValue(undefined),
     }) satisfies __ExactMockModule<__TestMockModule6>,
 );
 
 vi.mock(
-  import('../../../ClientApp/src/terms-config.json'),
+  '../../../ClientApp/src/terms-config.json',
   () =>
     ({
       default: { TermsVersion: '1' },
@@ -80,15 +128,15 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
+  '../../../ClientApp/src/routes/common/helperFunctions',
   () =>
     ({
-      mapToUserProfile: vi.fn().mockReturnValue(undefined),
+      mapToUserProfile: vi.fn<() => undefined>().mockReturnValue(undefined),
     }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  '../../../ClientApp/src/authentication/authConfig',
   () =>
     ({
       tokenRequest: { scopes: [] },
@@ -98,14 +146,17 @@ vi.mock(
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('accountProvider — errored state', () => {
-  beforeEach(() => {
+  const resetErroredMocks = () => {
     // Clear all mock call histories
     vi.clearAllMocks();
     // Reset signIn to reject by default
     mockSignIn.mockClear().mockRejectedValue(new Error('Network error'));
-  });
+  };
 
   it('renders children when account loads successfully', async () => {
+    expect.hasAssertions();
+    resetErroredMocks();
+
     // Override signIn to succeed for this test
     mockSignIn.mockResolvedValue({
       organisation: {
@@ -115,7 +166,7 @@ describe('accountProvider — errored state', () => {
       },
       contact: { isCompleted: true },
       acceptedTerms: true,
-      termsVersion: '1',
+      termsVersion: 1,
       defaultOrganisationId: 1,
       employerAbn: '12345678901',
       contactId: 1,
@@ -131,11 +182,13 @@ describe('accountProvider — errored state', () => {
       expect(screen.getByTestId('protected-content')).toBeInTheDocument(),
     );
 
-    expect(mockSignIn).toHaveBeenCalledWith();
     expect(mockSignIn).toHaveBeenCalledWith({});
   });
 
   it('shows an error message and does NOT render children when account load fails', async () => {
+    expect.hasAssertions();
+    resetErroredMocks();
+
     render(
       <AccountProvider>
         <div data-testid='protected-content'>Protected content</div>
@@ -165,6 +218,9 @@ describe('accountProvider — errored state', () => {
   });
 
   it('still requests logout when redirect response handling fails', async () => {
+    expect.hasAssertions();
+    resetErroredMocks();
+
     mockInstance.handleRedirectPromise.mockRejectedValueOnce(
       new Error('redirect response failed'),
     );
@@ -188,6 +244,9 @@ describe('accountProvider — errored state', () => {
   });
 
   it('keeps the recoverable error state when logout redirect rejects', async () => {
+    expect.hasAssertions();
+    resetErroredMocks();
+
     mockInstance.logoutRedirect.mockRejectedValueOnce(
       new Error('logout redirect failed'),
     );

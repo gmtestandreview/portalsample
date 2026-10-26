@@ -96,6 +96,8 @@ describe('request for quote wizard prop factories', () => {
   });
 
   it('loads and saves instrument/request values with date normalization and hiding rules', async () => {
+    expect.hasAssertions();
+
     const props = instrumentAndRequestProps(
       'APP-1',
       accounts,
@@ -170,6 +172,8 @@ describe('request for quote wizard prop factories', () => {
   it('sends an unparseable availability date through unchanged', async () => {
     // The date is normalised to the API's calendar form when it can be read. When it cannot,
     // the original value is forwarded rather than silently dropped, so the server decides.
+    expect.hasAssertions();
+
     const props = instrumentAndRequestProps(
       'APP-1',
       accounts,
@@ -204,6 +208,8 @@ describe('request for quote wizard prop factories', () => {
   });
 
   it('loads and saves organisation/contact values and reports not-found redirects', async () => {
+    expect.hasAssertions();
+
     const props = organisationAndContactProps(
       'APP-2',
       accounts,
@@ -263,6 +269,8 @@ describe('request for quote wizard prop factories', () => {
   });
 
   it('loads, submits, and logs request-for-quote summary failures', async () => {
+    expect.hasAssertions();
+
     const props = requestForQuoteSummaryProps(
       'APP-3',
       accounts,
@@ -337,6 +345,8 @@ describe('request for quote wizard prop factories', () => {
   });
 
   it('loads and submits the submitted summary view', async () => {
+    expect.hasAssertions();
+
     const props = viewRequestForQuoteSummaryProps(
       'APP-4',
       accounts,
@@ -388,6 +398,8 @@ describe('request for quote wizard prop factories', () => {
   });
 
   it('throws load/save errors when no account is available', async () => {
+    expect.hasAssertions();
+
     const instrumentProps = instrumentAndRequestProps(
       'APP-5',
       emptyAccounts,

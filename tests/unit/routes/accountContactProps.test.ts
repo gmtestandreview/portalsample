@@ -122,6 +122,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('loads and completes create-account details with account context updates', async () => {
+    expect.hasAssertions();
+
     const props = createAccountProps(
       accounts,
       instance,
@@ -180,6 +182,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('loads and completes update-account details with success and error notifications', async () => {
+    expect.hasAssertions();
+
     const props = updateAccountProps(
       accounts,
       instance,
@@ -264,6 +268,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('loads and completes add-branch details with branch selector side effects', async () => {
+    expect.hasAssertions();
+
     const onShowBranchSelector = vi.fn();
     const props = addBranchProps(
       accounts,
@@ -360,6 +366,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('loads and saves create/update contact details with notifications and title hiding', async () => {
+    expect.hasAssertions();
+
     const createProps = createContactProps(
       accounts,
       instance,
@@ -482,6 +490,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('throws load/save errors when account or contact users are missing', async () => {
+    expect.hasAssertions();
+
     const createAccount = createAccountProps(
       emptyAccounts,
       instance,
@@ -550,6 +560,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('handles optional account context and organisation values', async () => {
+    expect.hasAssertions();
+
     const createProps = createAccountProps(accounts, instance, statuses, null);
     const updateProps = updateAccountProps(
       accounts,
@@ -618,6 +630,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('preserves defined trading and branch names in account context updates', async () => {
+    expect.hasAssertions();
+
     const createProps = createAccountProps(
       accounts,
       instance,
@@ -663,6 +677,8 @@ describe('account and contact wizard prop factories', () => {
   });
 
   it('ignores falsy caught account and contact errors', async () => {
+    expect.hasAssertions();
+
     const updateProps = updateAccountProps(
       accounts,
       instance,

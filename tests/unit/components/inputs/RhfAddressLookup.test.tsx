@@ -1,23 +1,33 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import type { IPublicClientApplication } from '@azure/msal-browser';
 import userEvent from '@testing-library/user-event';
 import { useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import RhfAddressLookup from '@/components/Inputs/RhfAddressLookup';
+import { State } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import AppLogger from '@/instrumentation/AppLogger';
 import { FieldHarness } from './rhfTestHarness';
+
+type AcquireTokenSilent = IPublicClientApplication['acquireTokenSilent'];
+type AddressClientInstance = InstanceType<
+  typeof WebApiClientModule.AddressClient
+>;
+type AddressSearch = AddressClientInstance['search'];
+type SetAuthToken = AddressClientInstance['setAuthToken'];
+type MatchedAddress = WebApiClientModule.MatchedAddress;
 
 function AddressClient() {
   return { setAuthToken: mocks.setAuthToken, search: mocks.addressSearch };
 }
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
+  acquireTokenSilent: vi.fn<AcquireTokenSilent>(),
   account: { homeAccountId: 'account-1' } as { homeAccountId: string } | null,
   accounts: [{ homeAccountId: 'account-1' }] as { homeAccountId: string }[],
-  addressSearch: vi.fn(),
+  addressSearch: vi.fn<AddressSearch>(),
   inProgress: 'none',
-  setAuthToken: vi.fn(),
+  setAuthToken: vi.fn<SetAuthToken>(),
 }));
 
 vi.mock(
@@ -42,7 +52,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
-const match = {
+const match: MatchedAddress = {
   displayText: '1 National Circuit, Barton ACT 2600',
   unqiueId: 'address-1',
   addressLine1: '1 National Circuit',
@@ -50,7 +60,28 @@ const match = {
   addressLine3: '',
   suburb: 'Barton',
   postCode: '2600',
-  state: 'ACT',
+  state: State.ACT,
+};
+
+const tokenResult: Awaited<ReturnType<AcquireTokenSilent>> = {
+  authority: 'https://unit.test',
+  uniqueId: 'unit-id',
+  tenantId: 'unit-tenant',
+  scopes: [],
+  account: {
+    homeAccountId: 'account-1',
+    environment: 'unit.test',
+    tenantId: 'unit-tenant',
+    username: 'unit@example.test',
+    localAccountId: 'local-1',
+  },
+  idToken: '',
+  idTokenClaims: {},
+  accessToken: 'unit-token',
+  fromCache: false,
+  expiresOn: null,
+  tokenType: 'Bearer',
+  correlationId: 'unit-correlation',
 };
 
 const TouchedProbe = () => {
@@ -88,17 +119,18 @@ const search = (text: string) =>
     text,
   );
 
-const resetMocks = (matches: unknown = [match]) => {
+const resetMocks = (matches: MatchedAddress[] | undefined = [match]) => {
   vi.clearAllMocks();
   mocks.account = { homeAccountId: 'account-1' };
   mocks.accounts = [{ homeAccountId: 'account-1' }];
   mocks.inProgress = 'none';
-  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'unit-token' });
+  mocks.acquireTokenSilent.mockResolvedValue(tokenResult);
   mocks.addressSearch.mockResolvedValue({ matches });
 };
 
 describe('rhfAddressLookup selection', () => {
   it('writes the chosen address and keeps the identifying fields', async () => {
+    expect.hasAssertions();
     resetMocks();
     renderLookup(
       { id: 7, type: 'postal', timeStamp: 'stamp', searchText: '' },
@@ -134,8 +166,13 @@ describe('rhfAddressLookup selection', () => {
   });
 
   it('falls back to blanks and the default label for sparse matches', async () => {
+    expect.hasAssertions();
     resetMocks([
-      { addressLine2: 'Suite 2', addressLine3: 'Building A', state: 'NSW' },
+      {
+        addressLine2: 'Suite 2',
+        addressLine3: 'Building A',
+        state: State.NSW,
+      },
     ]);
     renderLookup(undefined, { label: undefined });
 
@@ -157,6 +194,7 @@ describe('rhfAddressLookup selection', () => {
   });
 
   it('clears the address when the search text is cleared', async () => {
+    expect.hasAssertions();
     resetMocks();
     renderLookup({
       id: 2,
@@ -185,6 +223,7 @@ describe('rhfAddressLookup results', () => {
     ['an empty account list', () => (mocks.accounts = [])],
     ['authentication in progress', () => (mocks.inProgress = 'login')],
   ])('offers manual entry without searching for %s', async (_name, setup) => {
+    expect.hasAssertions();
     resetMocks();
     setup();
     renderLookup();
@@ -198,6 +237,7 @@ describe('rhfAddressLookup results', () => {
   });
 
   it('treats a response without matches as no match', async () => {
+    expect.hasAssertions();
     resetMocks();
     mocks.addressSearch.mockResolvedValue({ matches: undefined });
     renderLookup();
@@ -210,6 +250,7 @@ describe('rhfAddressLookup results', () => {
   });
 
   it('shows no unavailable message for a non-503 failure', async () => {
+    expect.hasAssertions();
     resetMocks();
     mocks.addressSearch.mockRejectedValue({ status: 500 });
     renderLookup();
@@ -222,6 +263,7 @@ describe('rhfAddressLookup results', () => {
   });
 
   it('does not log the typed address when a search fails', async () => {
+    expect.hasAssertions();
     resetMocks();
     const failure = { status: 500 };
     mocks.addressSearch.mockRejectedValue(failure);
@@ -243,6 +285,7 @@ describe('rhfAddressLookup results', () => {
   });
 
   it('offers manual entry when the address service is unavailable', async () => {
+    expect.hasAssertions();
     resetMocks();
     mocks.addressSearch.mockRejectedValue({ status: 503 });
     renderLookup();
@@ -255,13 +298,16 @@ describe('rhfAddressLookup results', () => {
   });
 
   it('aborts the in-flight request when a new search starts', async () => {
+    expect.hasAssertions();
     resetMocks();
     let firstSignal: AbortSignal | undefined;
     mocks.addressSearch
-      .mockImplementationOnce((_term: string, signal: AbortSignal) => {
-        firstSignal = signal;
-        return new Promise(() => undefined);
-      })
+      .mockImplementationOnce(
+        (_term: string | null | undefined, signal?: AbortSignal) => {
+          firstSignal = signal;
+          return new Promise(() => undefined);
+        },
+      )
       .mockResolvedValue({ matches: [] });
     renderLookup();
 
@@ -273,6 +319,7 @@ describe('rhfAddressLookup results', () => {
 
 describe('rhfAddressLookup manual entry', () => {
   it('switches to manual entry and back, clearing the touched search text', async () => {
+    expect.hasAssertions();
     resetMocks();
     renderLookup(
       { searchText: 'Existing', isManuallyEntered: false },
@@ -299,6 +346,12 @@ describe('rhfAddressLookup manual entry', () => {
       searchText: 'Existing',
     });
     expect(screen.getByTestId('touched')).not.toHaveTextContent('searchText');
+  });
+
+  it('switches back to lookup mode with the existing search text', async () => {
+    expect.hasAssertions();
+    resetMocks();
+    renderLookup({ searchText: 'Existing', isManuallyEntered: true });
 
     await userEvent.click(
       screen.getByRole('button', { name: /Find an address/ }),
@@ -311,6 +364,7 @@ describe('rhfAddressLookup manual entry', () => {
   });
 
   it('switches to blank manual entry from a no-match result', async () => {
+    expect.hasAssertions();
     resetMocks([]);
     renderLookup({ id: 1, searchText: '', isManuallyEntered: false });
 
@@ -333,6 +387,7 @@ describe('rhfAddressLookup manual entry', () => {
 
 describe('rhfAddressLookup summary', () => {
   it('renders the formatted address', () => {
+    expect.hasAssertions();
     resetMocks();
     renderLookup(
       {
@@ -351,6 +406,7 @@ describe('rhfAddressLookup summary', () => {
   });
 
   it('renders a dash when there is no address', () => {
+    expect.hasAssertions();
     resetMocks();
     render(
       <FieldHarness field='address' defaultValue={undefined}>

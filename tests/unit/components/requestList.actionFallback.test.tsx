@@ -7,6 +7,7 @@ import InstrumentItem from '@/components/RequestList/instrumentItem';
 import RequestItem from '@/components/RequestList/requestItem';
 import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import { DashboardItemStatus } from '@/routes/common/enums';
+import type { ModalDispatch } from '@/components/modals/ModalContext';
 
 vi.mock(
   import('@/components/Actions'),
@@ -25,9 +26,9 @@ vi.mock(
 );
 
 const modalDispatch = {
-  setShowBranchSelector: vi.fn(),
-  setShowRFQDeleteModal: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setShowBranchSelector: vi.fn<ModalDispatch['setShowBranchSelector']>(),
+  setShowRFQDeleteModal: vi.fn<ModalDispatch['setShowRFQDeleteModal']>(),
+  setShowRFQSelectModal: vi.fn<ModalDispatch['setShowRFQSelectModal']>(),
 };
 
 const request: DashboardItemDto = {
@@ -64,6 +65,7 @@ describe('requestList fallback action wiring', () => {
   ])(
     'opens the delete modal from %s when Actions invokes its fallback callback',
     async (_name, item) => {
+      expect.hasAssertions();
       const user = userEvent.setup();
       renderItem(item);
 

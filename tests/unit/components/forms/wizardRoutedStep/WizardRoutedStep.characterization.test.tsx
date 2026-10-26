@@ -8,11 +8,19 @@ import { FormStepStatus } from '../../../../../ClientApp/src/api/web-api-client'
 import {
   AccountStateCtx,
   AccountDispatchCtx,
+  type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
 import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep';
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
 import TextInput from '../../../../../ClientApp/src/components/Inputs/TextInput';
 import type { FormikValues } from 'formik';
+import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
+
+type AppLogger = typeof AppLoggerModule;
+type SaveHandler = NonNullable<
+  WizardRoutedStepProps<FormikValues>['onSaveAndNext']
+>;
+type LoadStepHandler = WizardRoutedStepProps<FormikValues>['loadStepValues'];
 
 // Characterisation of the Formik wizard shell, recorded before the React Hook
 // Form shell exists. These assertions pin what the shell does today; they are
@@ -23,7 +31,11 @@ vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+      default: {
+        verbose: vi.fn<AppLogger['verbose']>(),
+        error: vi.fn<AppLogger['error']>(),
+        trace: vi.fn<AppLogger['trace']>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -76,15 +88,20 @@ const accountState = {
 };
 
 const accountDispatch = {
-  setAgree: vi.fn(),
-  setCompleted: vi.fn(),
-  setContactCompleted: vi.fn(),
-  setDefaultOrganisationId: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  setOrganisationAndBranch: vi.fn(),
-  setUserProfile: vi.fn(),
-  setShowBranchSelector: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setAgree: vi.fn<AccountDispatchContext['setAgree']>(),
+  setCompleted: vi.fn<AccountDispatchContext['setCompleted']>(),
+  setContactCompleted: vi.fn<AccountDispatchContext['setContactCompleted']>(),
+  setDefaultOrganisationId:
+    vi.fn<AccountDispatchContext['setDefaultOrganisationId']>(),
+  setTargetOrganisation:
+    vi.fn<AccountDispatchContext['setTargetOrganisation']>(),
+  setOrganisationAndBranch:
+    vi.fn<AccountDispatchContext['setOrganisationAndBranch']>(),
+  setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
+  setShowBranchSelector:
+    vi.fn<AccountDispatchContext['setShowBranchSelector']>(),
+  setShowRFQSelectModal:
+    vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
 };
 
 const schema = Yup.object({ name: Yup.string().required('Name is required') });
@@ -139,10 +156,11 @@ describe('formik wizard shell characterisation', () => {
   });
 
   it('moves focus to the error summary and scrolls it into view after an invalid submit', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const scrollIntoView = vi.fn();
+    const scrollIntoView = vi.fn<typeof HTMLElement.prototype.scrollIntoView>();
     HTMLElement.prototype.scrollIntoView = scrollIntoView;
-    renderStep({ onSaveAndNext: vi.fn() });
+    renderStep({ onSaveAndNext: vi.fn<SaveHandler>() });
     await screen.findByLabelText('Name');
 
     await user.click(await screen.findByTestId(NEXT));
@@ -155,11 +173,12 @@ describe('formik wizard shell characterisation', () => {
   });
 
   it('focuses the summary again on each further failed submit', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
       () => {},
     );
-    renderStep({ onSaveAndNext: vi.fn() });
+    renderStep({ onSaveAndNext: vi.fn<SaveHandler>() });
     await screen.findByLabelText('Name');
 
     await user.click(await screen.findByTestId(NEXT));
@@ -177,13 +196,14 @@ describe('formik wizard shell characterisation', () => {
   });
 
   it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     let loads = 0;
-    const loadStepValues = vi.fn(async () => {
+    const loadStepValues = vi.fn<LoadStepHandler>(async () => {
       loads += 1;
       return { stepValues: { name: loads === 1 ? '' : 'from server' } };
     });
-    const onSaveAndNext = vi.fn(async () => {
+    const onSaveAndNext = vi.fn<SaveHandler>(async () => {
       throw { status: 409 };
     });
     renderStep({ loadStepValues, onSaveAndNext, validateHard: undefined });
@@ -206,11 +226,14 @@ describe('formik wizard shell characterisation', () => {
   });
 
   it('save and exit skips hard validation and navigates to the exit location', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn(async (_values: FormikValues) => undefined);
+    const onSaveAndExit = vi.fn<SaveHandler>(
+      async (_values: FormikValues) => undefined,
+    );
     renderStep({
       onSaveAndExit,
-      onSaveAndNext: vi.fn(),
+      onSaveAndNext: vi.fn<SaveHandler>(),
       locationAfterExit: '/done',
     });
     await screen.findByLabelText('Name');
@@ -224,10 +247,11 @@ describe('formik wizard shell characterisation', () => {
   });
 
   it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderStep({
-      onSaveAndExit: vi.fn(),
-      onSaveAndNext: vi.fn(),
+      onSaveAndExit: vi.fn<SaveHandler>(),
+      onSaveAndNext: vi.fn<SaveHandler>(),
       validateSoft: Yup.object({}),
     });
     const input = await screen.findByLabelText('Name');
@@ -242,13 +266,14 @@ describe('formik wizard shell characterisation', () => {
   });
 
   it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn(async () => {
+    const onSaveAndExit = vi.fn<SaveHandler>(async () => {
       throw { status: 500 };
     });
     renderStep({
       onSaveAndExit,
-      onSaveAndNext: vi.fn(),
+      onSaveAndNext: vi.fn<SaveHandler>(),
       validateSoft: Yup.object({}),
     });
     const input = await screen.findByLabelText('Name');

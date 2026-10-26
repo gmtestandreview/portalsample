@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import type React from 'react';
 import { MemoryRouter } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import CustomBreadcrumb from '@/components/Breadcrumb';
 
 const ariaLinkMockState = vi.hoisted(() => ({
@@ -58,17 +58,23 @@ vi.mock(
 );
 
 describe('customBreadcrumb React Aria render fallback', () => {
-  afterEach(() => {
+  const resetMockState = () => {
     ariaLinkMockState.includeHref = false;
-  });
+  };
 
   it('renders nothing when no breadcrumbs are provided', () => {
+    expect.hasAssertions();
+    resetMockState();
+
     const { container } = render(<CustomBreadcrumb breadcrumbs={[]} />);
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it('throws when a non-current breadcrumb has no destination', () => {
+    expect.hasAssertions();
+    resetMockState();
+
     expect(() =>
       CustomBreadcrumb({
         breadcrumbs: [{ text: 'Missing link' }, { text: 'Current page' }],
@@ -79,6 +85,9 @@ describe('customBreadcrumb React Aria render fallback', () => {
   });
 
   it('renders previous breadcrumb content as a span when React Aria props do not include an href', () => {
+    expect.hasAssertions();
+    resetMockState();
+
     render(
       <MemoryRouter>
         <CustomBreadcrumb
@@ -100,6 +109,9 @@ describe('customBreadcrumb React Aria render fallback', () => {
   });
 
   it('renders previous breadcrumb content as a router link when React Aria props include an href', () => {
+    expect.hasAssertions();
+    resetMockState();
+
     ariaLinkMockState.includeHref = true;
 
     render(

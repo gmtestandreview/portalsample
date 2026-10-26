@@ -537,7 +537,7 @@ describe('workflow route wrappers', () => {
     );
 
     await waitFor(() =>
-      expect(mocks.acquireTokenSilent).toHaveBeenCalledWith(),
+      expect(mocks.acquireTokenSilent.mock.calls.length).toBeGreaterThan(0),
     );
     unmount();
 

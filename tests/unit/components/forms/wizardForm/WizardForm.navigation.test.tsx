@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
+import type { FormikValues } from 'formik';
 import {
   FormStepStatus,
   type FormStepStatusDto,
@@ -10,9 +11,15 @@ import {
 import {
   AccountStateCtx,
   AccountDispatchCtx,
+  type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
 import WizardForm from '../../../../../ClientApp/src/components/forms/WizardForm';
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
+import type { WizardStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
+import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
+
+type AppLogger = typeof AppLoggerModule;
+type SaveStepFn = NonNullable<WizardStepProps<FormikValues>['onSaveAndNext']>;
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -20,7 +27,11 @@ vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+      default: {
+        verbose: vi.fn<AppLogger['verbose']>(),
+        error: vi.fn<AppLogger['error']>(),
+        trace: vi.fn<AppLogger['trace']>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -81,23 +92,28 @@ const mockStateValue = {
 };
 
 const mockDispatch = {
-  setAgree: vi.fn(),
-  setCompleted: vi.fn(),
-  setContactCompleted: vi.fn(),
-  setDefaultOrganisationId: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  setOrganisationAndBranch: vi.fn(),
-  setUserProfile: vi.fn(),
-  setShowBranchSelector: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setAgree: vi.fn<AccountDispatchContext['setAgree']>(),
+  setCompleted: vi.fn<AccountDispatchContext['setCompleted']>(),
+  setContactCompleted: vi.fn<AccountDispatchContext['setContactCompleted']>(),
+  setDefaultOrganisationId:
+    vi.fn<AccountDispatchContext['setDefaultOrganisationId']>(),
+  setTargetOrganisation:
+    vi.fn<AccountDispatchContext['setTargetOrganisation']>(),
+  setOrganisationAndBranch:
+    vi.fn<AccountDispatchContext['setOrganisationAndBranch']>(),
+  setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
+  setShowBranchSelector:
+    vi.fn<AccountDispatchContext['setShowBranchSelector']>(),
+  setShowRFQSelectModal:
+    vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
 };
 
 // ── Router factory ────────────────────────────────────────────────────────────
 
 function makeTwoStepRouter(
   statuses: FormStepStatusDto[],
-  step1Save = vi.fn().mockResolvedValue({}),
-  step2Save = vi.fn().mockResolvedValue({}),
+  step1Save = vi.fn<SaveStepFn>().mockResolvedValue({}),
+  step2Save = vi.fn<SaveStepFn>().mockResolvedValue({}),
   initialPath = '/wizard/step-1',
 ) {
   return createMemoryRouter(
@@ -150,7 +166,7 @@ function makeTwoStepRouter(
 
 function makeSplitSplatTwoStepRouter(
   statuses: FormStepStatusDto[],
-  step1Save = vi.fn().mockResolvedValue({}),
+  step1Save = vi.fn<SaveStepFn>().mockResolvedValue({}),
 ) {
   return createMemoryRouter(
     [
@@ -180,7 +196,7 @@ function makeSplitSplatTwoStepRouter(
                       initialValues={{}}
                       stepStatuses={statuses}
                       loadStepValues={async () => ({ stepValues: {} })}
-                      onSaveAndNext={vi.fn().mockResolvedValue({})}
+                      onSaveAndNext={vi.fn<SaveStepFn>().mockResolvedValue({})}
                       bannerTitle='Test Wizard'
                     >
                       <div data-testid='step-2-content'>Step 2 Content</div>
@@ -213,6 +229,7 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('renders step 1 content on initial load', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -228,11 +245,12 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('navigates forward from step 1 to step 2 after successful submit', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
     ];
-    const step1Save = vi.fn().mockResolvedValue({});
+    const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({});
     const router = makeTwoStepRouter(statuses, step1Save);
     render(<RouterProvider router={router} />);
 
@@ -250,7 +268,8 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('still navigates when the current step has no status entry', async () => {
-    const step1Save = vi.fn().mockResolvedValue({});
+    expect.hasAssertions();
+    const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({});
     const router = makeTwoStepRouter([], step1Save);
     render(<RouterProvider router={router} />);
 
@@ -265,6 +284,7 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('navigates back from step 2 to step 1 via the back button', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.Completed },
       { status: FormStepStatus.NotStarted },
@@ -291,6 +311,7 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('linear guard: navigating directly to step 2 with step 1 incomplete redirects to step 1', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -311,6 +332,7 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('navigates to locationOnCompletion after the final step submits successfully', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.Completed },
       { status: FormStepStatus.NotStarted },
@@ -333,11 +355,12 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('smoke: preserves the resolved wizard base path for split splat route step navigation', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
     ];
-    const step1Save = vi.fn().mockResolvedValue({});
+    const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({});
     const router = makeSplitSplatTwoStepRouter(statuses, step1Save);
     render(<RouterProvider router={router} />);
 
@@ -365,6 +388,7 @@ describe('wizardForm — step navigation', () => {
   });
 
   it('uses the root path when the resolved path is only the step location', async () => {
+    expect.hasAssertions();
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
     ];
@@ -382,7 +406,7 @@ describe('wizardForm — step navigation', () => {
                     initialValues={{}}
                     stepStatuses={statuses}
                     loadStepValues={async () => ({ stepValues: {} })}
-                    onSaveAndNext={vi.fn().mockResolvedValue({})}
+                    onSaveAndNext={vi.fn<SaveStepFn>().mockResolvedValue({})}
                   >
                     <div data-testid='root-step-content'>Root step</div>
                   </WizardStep>

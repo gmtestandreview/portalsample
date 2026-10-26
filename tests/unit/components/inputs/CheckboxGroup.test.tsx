@@ -4,6 +4,9 @@ import { Form, Formik } from 'formik';
 import type { FormikConfig, FormikValues } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import CheckboxGroup from '@/components/Inputs/CheckboxGroup';
+import type { CheckboxGroupProps } from '@/components/Inputs/CheckboxGroup/types';
+
+type CheckboxChange = NonNullable<CheckboxGroupProps<unknown>['onChange']>;
 import { defined } from '../../helpers/defined';
 
 interface FormikHarnessProps<TValues extends FormikValues> {
@@ -38,6 +41,7 @@ const contactOptions = [
 
 describe(CheckboxGroup, () => {
   it('renders vertical options with plain inline help and validation feedback', () => {
+    expect.hasAssertions();
     render(
       <FormikHarness
         initialValues={{ contactMethod: '' }}
@@ -63,29 +67,44 @@ describe(CheckboxGroup, () => {
       'aria-describedby',
       'contactMethod-validation-msg',
     );
-    expect(screen.getByText('Select every method we can use')).toHaveAttribute(
-      'id',
-      'help-contactMethod',
-    );
-    expect(screen.getAllByText('Choose at least one method')).toHaveLength(3);
-    expect(screen.getAllByText('Choose at least one method')[0]).toHaveClass(
-      'form-validation-message',
-    );
+    expect({
+      helpId: screen.getByText('Select every method we can use').id,
+      errorCount: screen.getAllByText('Choose at least one method').length,
+      errorClass: screen
+        .getAllByText('Choose at least one method')[0]
+        ?.classList.contains('form-validation-message'),
+    }).toEqual({
+      helpId: 'help-contactMethod',
+      errorCount: 3,
+      errorClass: true,
+    });
     expect(screen.getByRole('group', { name: 'Contact method' })).toBe(
       fieldset,
     );
-    expect(screen.getByText('Contact method')).toHaveClass('contact-legend');
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    expect(screen.getByText('Email').closest('.checkbox')).toHaveClass(
-      'contact-checkbox',
-    );
-    expect(screen.getByText('SMS')).toBeInTheDocument();
-    expect(document.querySelector('.contact-container')).toBeInTheDocument();
+    expect({
+      legendClass: screen
+        .getByText('Contact method')
+        .classList.contains('contact-legend'),
+      checkboxCount: screen.getAllByRole('checkbox').length,
+      emailClass: screen
+        .getByText('Email')
+        .closest('.checkbox')
+        ?.classList.contains('contact-checkbox'),
+      smsText: screen.getByText('SMS').textContent,
+      containerPresent: document.querySelector('.contact-container') !== null,
+    }).toEqual({
+      legendClass: true,
+      checkboxCount: 2,
+      emailClass: true,
+      smsText: 'SMS',
+      containerPresent: true,
+    });
   });
 
   it('renders titled help, horizontal options, and forwards option changes', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onChange = vi.fn<CheckboxChange>();
 
     render(
       <FormikHarness initialValues={{ contactMethod: '' }}>
@@ -122,6 +141,7 @@ describe(CheckboxGroup, () => {
   });
 
   it('omits describedby when there is no inline help or validation message', () => {
+    expect.hasAssertions();
     render(
       <FormikHarness initialValues={{ contactMethod: '' }}>
         <CheckboxGroup
@@ -138,6 +158,7 @@ describe(CheckboxGroup, () => {
   });
 
   it('renders the selected option label in summary mode', () => {
+    expect.hasAssertions();
     render(
       <FormikHarness initialValues={{ contactMethod: 'sms' }}>
         <CheckboxGroup
@@ -157,6 +178,7 @@ describe(CheckboxGroup, () => {
   });
 
   it('renders nothing in summary mode when the field is empty', () => {
+    expect.hasAssertions();
     const { container } = render(
       <FormikHarness initialValues={{ contactMethod: '' }}>
         <CheckboxGroup
@@ -173,6 +195,7 @@ describe(CheckboxGroup, () => {
   });
 
   it('renders nothing in summary mode when the selected field value is unmatched', () => {
+    expect.hasAssertions();
     const { container } = render(
       <FormikHarness initialValues={{ contactMethod: 'fax' }}>
         <CheckboxGroup

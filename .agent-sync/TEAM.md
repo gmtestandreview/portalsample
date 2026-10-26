@@ -3,7 +3,7 @@
 Generated: 2026-09-02 Source: `INIT.md` (root, authoritative) · A Team plugin
 v1.4.0 (RBraga01, MIT) Install method: official "Adding A Team to an Existing
 Project" — `cp -rn` (no-clobber) from `a-team/`, which was then **deleted**.
-Root is now the sole source of truth. Roster: **18 of 26 agents active** · **19
+Root is now the sole source of truth. Roster: **17 of 26 agents active** · **19
 of 20 skills active**
 
 ---
@@ -42,7 +42,7 @@ delete the clone again.
 
 ---
 
-## Active Agents (18)
+## Active Agents (17)
 
 | Agent                  | Reason kept                                                                                                               |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -59,13 +59,12 @@ delete the clone again.
 | `planner`              | Same.                                                                                                                     |
 | `doc-updater`          | 959 tracked `.md` files; governed Master Change Record + Open Items Backlog.                                              |
 | `orchestrator`         | Infrastructure.                                                                                                           |
-| `chief-of-staff`       | Infrastructure. GitHub and Notion are the declared collaboration tools.                                                   |
 | `harness-optimizer`    | Always keep (plugin rule).                                                                                                |
 | `python-reviewer`      | **Scoped: tooling only.** See Scope Restrictions.                                                                         |
 | `performance-profiler` | **Keep, low priority.** No performance budget or SLA is declared — `INIT.md` flags that absence as a gap, not a decision. |
 | `infra-reviewer`       | **Keep, CI/CD scope only — corrected at init.** See Scope Restrictions and Deviations.                                    |
 
-## Pruned Agents (8)
+## Pruned Agents (9)
 
 | Agent               | Reason removed                                                                                                                  |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
@@ -77,6 +76,9 @@ delete the clone again.
 | `flutter-reviewer`  | Flutter / Dart is not present.                                                                                                  |
 | `ai-reviewer`       | No LLM SDK is a dependency. Nothing reaches an LLM at runtime; LLM use is development-loop only.                                |
 | `loop-operator`     | No autonomous loops. No cron or routine definitions; all agent work is human-initiated.                                         |
+
+| `chief-of-staff` | Communications role was pruned because email, Slack, and
+messaging workflows are not active in this repository. |
 
 Restore any of these with
 `cp .agent-sync/pruned/agents/<name>.md .claude/agents/`.
@@ -135,7 +137,7 @@ Restore with `cp -r .agent-sync/pruned/skills/data-migration skills/`.
 | --------------------- | ------------------------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `infra-reviewer`      | Keep if Terraform / Docker / K8s **or CI/CD** in stack | **Kept, CI/CD-scoped**                                          | `INIT.md` originally said prune, citing only the absence of Terraform/Docker/K8s. But the repo owns `.github/workflows/{pr,release,chromatic}.yml`, 8 required statuses and a blocking SonarCloud gate, and CI is the only reviewer. Human decision at init 2026-09-02; `INIT.md` row corrected. |
 | `compliance-reviewer` | Keep only if GDPR / COPPA / PCI-DSS / SOC2 / HIPAA     | **Kept, WCAG-scoped**                                           | None of the five listed regimes applies, but WCAG 2.2 AA is documented and gated. Project doc overrides the generic list.                                                                                                                                                                        |
-| `chief-of-staff`      | Keep if email / Slack / comms tools listed             | **Kept**                                                        | Slack, Linear and email are pruned surfaces, but GitHub and Notion are declared in use.                                                                                                                                                                                                          |
+| `chief-of-staff`      | Keep if email / Slack / comms tools listed             | **Pruned 2026-09-09**                                           | Slack, Linear and email are pruned surfaces; `INIT.md` is authoritative and removes this agent.                                                                                                                                                                                                  |
 | Pruning mechanism     | `rm` from `.claude/agents/` and `skills/`              | **Applied to the root copies; `a-team/` then deleted entirely** | The official existing-project install copies to root, and options B/C/D end in `rm -rf a-team`. Pruning at root keeps the decision re-appliable after any future plugin update.                                                                                                                  |
 | Skill deletion        | Delete skills failing their rule                       | **Only `data-migration` deleted**                               | Deliberately conservative — the official guidance is to review this file and restore anything wrongly pruned.                                                                                                                                                                                    |
 

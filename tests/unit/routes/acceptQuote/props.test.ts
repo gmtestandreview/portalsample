@@ -126,6 +126,8 @@ describe('accept quote wizard prop factories', () => {
   });
 
   it('loads, saves, hides, and redirects delivery/return branches', async () => {
+    expect.hasAssertions();
+
     const props = deliveryAndReturnProps(
       'Q-1',
       accounts,
@@ -211,6 +213,8 @@ describe('accept quote wizard prop factories', () => {
   });
 
   it('loads and saves payment details while logging load and save failures', async () => {
+    expect.hasAssertions();
+
     const props = paymentDetailsProps(
       'Q-2',
       accounts,
@@ -297,6 +301,8 @@ describe('accept quote wizard prop factories', () => {
   });
 
   it('loads and saves report recipient details with custom discard and error logging', async () => {
+    expect.hasAssertions();
+
     const props = reportRecipientProps(
       'Q-3',
       'RFQ-3',
@@ -374,6 +380,8 @@ describe('accept quote wizard prop factories', () => {
   });
 
   it('loads, saves, completes, and hides summary/accept sections', async () => {
+    expect.hasAssertions();
+
     const props = summaryAndAcceptProps(
       'Q-4',
       accounts,
@@ -483,6 +491,8 @@ describe('accept quote wizard prop factories', () => {
   });
 
   it('throws load/save errors when no account is available', async () => {
+    expect.hasAssertions();
+
     const deliveryProps = deliveryAndReturnProps(
       'Q-5',
       emptyAccounts,

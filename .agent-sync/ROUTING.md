@@ -1,6 +1,6 @@
 # Task Routing — nmi-portal
 
-Generated: 2026-09-02 by `/orchestrate init` Roster: `.agent-sync/TEAM.md` (18
+Generated: 2026-09-02 by `/orchestrate init` Roster: `.agent-sync/TEAM.md` (17
 agents, 19 skills) Scope source: `INIT.md` (root, authoritative)
 
 ---
@@ -58,7 +58,7 @@ regression with nobody left to catch it.
 
 ### 0.4 Authoritative agent source
 
-Root `.claude/agents/` (18, pruned) and root `skills/` (19, pruned) are the
+Root `.claude/agents/` (17, pruned) and root `skills/` (19, pruned) are the
 **sole** source of truth. The vendored `a-team/` plugin directory **was deleted
 in commit `95dc32e` (2026-09-02, 137 files)** once the install was verified — it
 was installer payload, never a runtime path. Claude Code loads agents only from

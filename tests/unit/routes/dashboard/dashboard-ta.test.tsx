@@ -507,7 +507,9 @@ describe('pattern/type approval dashboard', () => {
   it('applies non-default year, status, and search filters to the request', async () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'Apply filters' }));
 
@@ -528,11 +530,15 @@ describe('pattern/type approval dashboard', () => {
   it('loads applications, persists the selected tab after the debounce, and records analytics', async () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     fireEvent.click(screen.getByRole('tab', { name: 'Applications' }));
 
-    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0),
+    );
     await waitFor(
       () =>
         expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -551,11 +557,15 @@ describe('pattern/type approval dashboard', () => {
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0),
+    );
 
     fireEvent.click(screen.getByRole('tab', { name: 'Drafts' }));
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(screen.getByRole('tab', { name: 'Drafts' })).toHaveAttribute(
       'aria-selected',
@@ -569,7 +579,9 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetApplications).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetApplications.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(screen.getByRole('tab', { name: 'Applications' })).toHaveAttribute(
       'aria-selected',
@@ -581,7 +593,9 @@ describe('pattern/type approval dashboard', () => {
   it('persists page changes, scrolls to the title, and records analytics', async () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
@@ -659,7 +673,9 @@ describe('pattern/type approval dashboard', () => {
     mockSetUserProfile.mockRejectedValueOnce(saveError);
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
@@ -846,7 +862,9 @@ describe('pattern/type approval dashboard', () => {
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
-    await waitFor(() => expect(mockGetDrafts).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mockGetDrafts.mock.calls.length).toBeGreaterThan(0),
+    );
 
     expect(screen.queryByText('TA-HIDDEN')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('no-requests').length).toBeGreaterThan(0);

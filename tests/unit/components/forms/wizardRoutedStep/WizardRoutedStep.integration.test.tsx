@@ -10,11 +10,23 @@ import {
 import {
   AccountStateCtx,
   AccountDispatchCtx,
+  type AccountDispatchContext,
 } from '../../../../../ClientApp/src/authentication/accountContext';
 import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep';
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
+import type { DiscardProps } from '../../../../../ClientApp/src/components/forms/types';
+import type AppLoggerModule from '../../../../../ClientApp/src/instrumentation/AppLogger';
 import { type FormikValues } from 'formik';
+
+type AppLogger = typeof AppLoggerModule;
+type SaveHandler = NonNullable<
+  WizardRoutedStepProps<FormikValues>['onSaveAndNext']
+>;
+type ExitHandler = NonNullable<
+  WizardRoutedStepProps<FormikValues>['onSaveAndExit']
+>;
+type LoadStepHandler = WizardRoutedStepProps<FormikValues>['loadStepValues'];
 import { defined } from '../../../helpers/defined';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
@@ -23,7 +35,11 @@ vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
+      default: {
+        verbose: vi.fn<AppLogger['verbose']>(),
+        error: vi.fn<AppLogger['error']>(),
+        trace: vi.fn<AppLogger['trace']>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -78,15 +94,20 @@ const mockStateValue = {
 };
 
 const mockDispatch = {
-  setAgree: vi.fn(),
-  setCompleted: vi.fn(),
-  setContactCompleted: vi.fn(),
-  setDefaultOrganisationId: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  setOrganisationAndBranch: vi.fn(),
-  setUserProfile: vi.fn(),
-  setShowBranchSelector: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setAgree: vi.fn<AccountDispatchContext['setAgree']>(),
+  setCompleted: vi.fn<AccountDispatchContext['setCompleted']>(),
+  setContactCompleted: vi.fn<AccountDispatchContext['setContactCompleted']>(),
+  setDefaultOrganisationId:
+    vi.fn<AccountDispatchContext['setDefaultOrganisationId']>(),
+  setTargetOrganisation:
+    vi.fn<AccountDispatchContext['setTargetOrganisation']>(),
+  setOrganisationAndBranch:
+    vi.fn<AccountDispatchContext['setOrganisationAndBranch']>(),
+  setUserProfile: vi.fn<AccountDispatchContext['setUserProfile']>(),
+  setShowBranchSelector:
+    vi.fn<AccountDispatchContext['setShowBranchSelector']>(),
+  setShowRFQSelectModal:
+    vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
 };
 
 function makeStepElement() {
@@ -175,9 +196,11 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('navigates to /not-found when loadStepValues throws a 404', async () => {
+    expect.hasAssertions();
+
     const router = makeRouter({
       loadStepValues: vi
-        .fn()
+        .fn<LoadStepHandler>()
         .mockRejectedValue({ status: 404, title: 'Not Found' }),
     });
     render(<RouterProvider router={router} />);
@@ -188,9 +211,11 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('navigates to /server-error when loadStepValues throws an unrecognised error — restores suppressed silent failure', async () => {
+    expect.hasAssertions();
+
     const router = makeRouter({
       loadStepValues: vi
-        .fn()
+        .fn<LoadStepHandler>()
         .mockRejectedValue({ status: 500, title: 'Internal Server Error' }),
     });
     render(<RouterProvider router={router} />);
@@ -201,10 +226,12 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('navigates to a custom redirect URL when getRedirectionLocationOnError returns one', async () => {
+    expect.hasAssertions();
+
     const router = makeRouter(
       {
         loadStepValues: vi
-          .fn()
+          .fn<LoadStepHandler>()
           .mockRejectedValue({ status: 404, title: 'Not Found' }),
         getRedirectionLocationOnError: () => '/custom-gone',
       },
@@ -218,8 +245,10 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('automatically retries loadStepValues after a 409 concurrency error', async () => {
+    expect.hasAssertions();
+
     const loadStepValues = vi
-      .fn()
+      .fn<LoadStepHandler>()
       .mockRejectedValueOnce({ status: 409, title: 'Conflict' })
       .mockResolvedValue({ stepValues: {} });
 
@@ -236,13 +265,17 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('replaces the document location with sign-out after a gone load error', async () => {
-    const replace = vi.fn();
+    expect.hasAssertions();
+
+    const replace = vi.fn<Location['replace']>();
     vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
       ...globalThis.location,
       replace,
     });
     const router = makeRouter({
-      loadStepValues: vi.fn().mockRejectedValue({ status: 410, title: 'Gone' }),
+      loadStepValues: vi
+        .fn<LoadStepHandler>()
+        .mockRejectedValue({ status: 410, title: 'Gone' }),
     });
 
     render(<RouterProvider router={router} />);
@@ -251,8 +284,10 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('resets target organisation and navigates to dashboard after third-party access is lost', async () => {
+    expect.hasAssertions();
+
     const router = makeRouter({
-      loadStepValues: vi.fn().mockRejectedValue({
+      loadStepValues: vi.fn<LoadStepHandler>().mockRejectedValue({
         status: 403,
         title: 'No third-party access to this resource',
       }),
@@ -270,9 +305,11 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('handles lost third-party access without account dispatch', async () => {
+    expect.hasAssertions();
+
     const router = makeRouter(
       {
-        loadStepValues: vi.fn().mockRejectedValue({
+        loadStepValues: vi.fn<LoadStepHandler>().mockRejectedValue({
           status: 403,
           title: 'No third-party access to this resource',
         }),
@@ -291,6 +328,8 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('uses empty account values when resetting third-party access', async () => {
+    expect.hasAssertions();
+
     const accountWithoutOrganisation = {
       ...mockStateValue,
       details: {
@@ -301,7 +340,7 @@ describe('wizardRoutedStep — error navigation', () => {
     };
     const router = makeRouter(
       {
-        loadStepValues: vi.fn().mockRejectedValue({
+        loadStepValues: vi.fn<LoadStepHandler>().mockRejectedValue({
           status: 403,
           title: 'No third-party access to this resource',
         }),
@@ -319,9 +358,11 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('keeps rendering after an aborted load request', async () => {
+    expect.hasAssertions();
+
     const router = makeRouter({
       loadStepValues: vi
-        .fn()
+        .fn<LoadStepHandler>()
         .mockRejectedValue(new DOMException('Aborted', 'AbortError')),
     });
     render(<RouterProvider router={router} />);
@@ -330,6 +371,8 @@ describe('wizardRoutedStep — error navigation', () => {
   });
 
   it('redirects to the first incomplete prior step', async () => {
+    expect.hasAssertions();
+
     const steps = [
       makeStepElementAt('/step-1', 'First'),
       makeStepElementAt('/step-2', 'Second'),
@@ -373,11 +416,13 @@ describe('wizardRoutedStep — error navigation', () => {
 
 describe('wizardRoutedStep — prop mutation fix', () => {
   it('does not mutate the original FormStepStatusDto on successful step save', async () => {
+    expect.hasAssertions();
+
     const originalDto: FormStepStatusDto = {
       status: FormStepStatus.NotStarted,
     };
     const stepStatuses: FormStepStatusDto[] = [originalDto];
-    const onSaveAndNext = vi.fn().mockResolvedValue({});
+    const onSaveAndNext = vi.fn<SaveHandler>().mockResolvedValue({});
 
     const router = makeRouter({
       stepStatuses,
@@ -407,8 +452,12 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('navigates to the next step using a returned base URL and reports dirty values', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSaveAndNext = vi.fn().mockResolvedValue({ baseUrl: '/alternate' });
+    const onSaveAndNext = vi
+      .fn<SaveHandler>()
+      .mockResolvedValue({ baseUrl: '/alternate' });
     const steps = [
       makeStepElementAt('/step-1', 'First'),
       makeStepElementAt('/step-2', 'Second'),
@@ -448,8 +497,10 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('saves and exits to the configured location with dirty values', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
+    const onSaveAndExit = vi.fn<ExitHandler>().mockResolvedValue(undefined);
     const router = makeRouter(
       {
         initialValues: { name: 'initial' },
@@ -479,6 +530,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('exits without a save callback and defaults the destination to root', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = makeRouter(
       {
@@ -498,9 +551,11 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('renders update server and WAF errors from failed submissions', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSaveAndNext = vi
-      .fn()
+      .fn<SaveHandler>()
       .mockRejectedValueOnce({ status: 500, title: 'Failure' })
       .mockRejectedValueOnce({
         status: 403,
@@ -527,9 +582,11 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('keeps the form visible when save-and-exit fails', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSaveAndExit = vi
-      .fn()
+      .fn<ExitHandler>()
       .mockRejectedValue({ status: 500, title: 'Failure' });
     const router = makeRouter({
       onSaveAndExit,
@@ -549,6 +606,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('does nothing on submit when no save-and-next callback is configured', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = makeRouter({});
     render(<RouterProvider router={router} />);
@@ -562,8 +621,10 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('falls back to root after save and exit without a configured destination', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
+    const onSaveAndExit = vi.fn<ExitHandler>().mockResolvedValue(undefined);
     const router = makeRouter({ onSaveAndExit, canSaveDraft: true }, [
       { path: '/', element: <div>Root Page</div> },
     ]);
@@ -580,9 +641,11 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('runs discard and cancel callbacks before navigating', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDiscard = vi.fn();
-    const onCancel = vi.fn();
+    const onDiscard = vi.fn<NonNullable<DiscardProps['onDiscard']>>();
+    const onCancel = vi.fn<NonNullable<DiscardProps['onCancel']>>();
     const router = makeRouter(
       {
         discard: {
@@ -611,6 +674,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('uses the discard location and hides the save-and-next button', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = makeRouter(
       {
@@ -641,6 +706,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('falls back to root when cancelling without a configured location', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = makeRouter(
       {
@@ -664,6 +731,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   });
 
   it('uses the external redirect for an HTTPS discard location', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = makeRouter({
       discard: {

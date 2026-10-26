@@ -28,6 +28,7 @@ const formValue = () =>
 
 describe(RhfManualAddressInput, () => {
   it('renders every address field with its label', () => {
+    expect.hasAssertions();
     renderManualAddress();
 
     ['Address line 1', 'Address line 2', 'Address line 3', 'Suburb'].forEach(
@@ -41,6 +42,7 @@ describe(RhfManualAddressInput, () => {
   });
 
   it('offers a blank option followed by every state', () => {
+    expect.hasAssertions();
     renderManualAddress();
 
     const options = screen
@@ -61,6 +63,7 @@ describe(RhfManualAddressInput, () => {
   });
 
   it('writes typed text and the chosen state under the address name', async () => {
+    expect.hasAssertions();
     renderManualAddress();
 
     await userEvent.type(
@@ -90,6 +93,7 @@ describe(RhfManualAddressInput, () => {
   });
 
   it('shows the stored address values', () => {
+    expect.hasAssertions();
     renderManualAddress(
       {},
       { ...emptyAddress, line2: 'Level 2', state: 'VIC' },
@@ -102,6 +106,7 @@ describe(RhfManualAddressInput, () => {
   });
 
   it('disables every field when disabled', () => {
+    expect.hasAssertions();
     renderManualAddress({ disabled: true });
 
     [
@@ -111,6 +116,7 @@ describe(RhfManualAddressInput, () => {
   });
 
   it('repeats the inline help on every field', () => {
+    expect.hasAssertions();
     renderManualAddress({ inlineHelp: 'Use the postal address' });
 
     expect(screen.getAllByText('Use the postal address')).toHaveLength(6);

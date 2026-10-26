@@ -1,7 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import RhfAutoSuggest from '@/components/Inputs/RhfAutoSuggest';
-import type { AutoSuggestOption } from '@/components/Inputs/AutoSuggest/types';
+
+type SelectedOption = AutoSuggestProps<string>['onSelectedOption'];
+import type {
+  AutoSuggestOption,
+  AutoSuggestProps,
+} from '@/components/Inputs/AutoSuggest/types';
 
 interface MockContainerProps {
   onCancel: () => void;
@@ -47,7 +52,7 @@ const renderAutoSuggest = (
   getOptions = vi
     .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
     .mockResolvedValue([]),
-  onSelectedOption = vi.fn(),
+  onSelectedOption = vi.fn<SelectedOption>(),
   selectedOption?: string,
 ) => {
   render(
@@ -65,6 +70,7 @@ const renderAutoSuggest = (
 
 describe('rhfAutoSuggest parent state', () => {
   it('loads options, reports no results and reports lookup failures', async () => {
+    expect.hasAssertions();
     const getOptions = vi
       .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
       .mockResolvedValueOnce(options)
@@ -76,26 +82,35 @@ describe('rhfAutoSuggest parent state', () => {
       await containerState.props?.onSearchTermChange('syd');
     });
 
-    expect(screen.getByTestId('option-count')).toHaveTextContent('1');
-    expect(screen.getByTestId('no-result')).toHaveTextContent('false');
+    expect({
+      optionCount: screen.getByTestId('option-count').textContent,
+      noResult: screen.getByTestId('no-result').textContent,
+    }).toEqual({ optionCount: '1', noResult: 'false' });
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('sydney');
     });
 
-    expect(screen.getByTestId('option-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('no-result')).toHaveTextContent('true');
+    expect({
+      optionCount: screen.getByTestId('option-count').textContent,
+      noResult: screen.getByTestId('no-result').textContent,
+    }).toEqual({ optionCount: '0', noResult: 'true' });
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('sydney nsw');
     });
 
-    expect(screen.getByTestId('error')).toHaveTextContent('true');
-    expect(screen.getByTestId('loading')).toHaveTextContent('false');
+    expect({
+      error: screen.getByTestId('error').textContent,
+      loading: screen.getByTestId('loading').textContent,
+    }).toEqual({ error: 'true', loading: 'false' });
   });
 
   it('does not search short terms and clears the selected option for an empty term', async () => {
-    const onSelectedOption = vi.fn().mockResolvedValue(undefined);
+    expect.hasAssertions();
+    const onSelectedOption = vi
+      .fn<SelectedOption>()
+      .mockResolvedValue(undefined);
     const { getOptions } = renderAutoSuggest(
       undefined,
       onSelectedOption,
@@ -119,6 +134,7 @@ describe('rhfAutoSuggest parent state', () => {
   });
 
   it('ignores stale responses after cancellation and restores the selected value', async () => {
+    expect.hasAssertions();
     let resolveSearch: (
       options: AutoSuggestOption<string>[],
     ) => void = () => {};
@@ -150,6 +166,7 @@ describe('rhfAutoSuggest parent state', () => {
   });
 
   it('ignores a stale failed response after cancellation', async () => {
+    expect.hasAssertions();
     let rejectSearch: (error: Error) => void = () => {};
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
@@ -178,8 +195,9 @@ describe('rhfAutoSuggest parent state', () => {
   });
 
   it('updates loading around selection and reflects selectedOption changes', async () => {
+    expect.hasAssertions();
     let resolveSelection: () => void = () => {};
-    const onSelectedOption = vi.fn(
+    const onSelectedOption = vi.fn<SelectedOption>(
       () => new Promise<void>((resolve) => (resolveSelection = resolve)),
     );
     renderAutoSuggest(undefined, onSelectedOption);

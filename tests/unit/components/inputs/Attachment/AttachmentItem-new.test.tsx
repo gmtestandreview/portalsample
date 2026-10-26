@@ -2,9 +2,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
 import type { FormikConfig, FormikValues } from 'formik';
+import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import AttachmentItemNew from '@/components/Inputs/Attachment/AttachmentItem-new';
+
+type AttachmentItemProps = ComponentProps<typeof AttachmentItemNew>;
+type CategoryUpdate = NonNullable<AttachmentItemProps['onCategoryUpdate']>;
+type RemoveItem = NonNullable<AttachmentItemProps['onRemoveItem']>;
 
 interface FormikHarnessProps<TValues extends FormikValues> {
   readonly children: React.ReactNode;
@@ -76,7 +81,8 @@ const renderItem = (
   );
 
 describe(AttachmentItemNew, () => {
-  it('renders the file link, file size, category options, and validation message', () => {
+  it('renders the file link, file size, and invalid category state', () => {
+    expect.hasAssertions();
     renderItem({}, { attachments: [{ attachmentCategory: true }] });
 
     const fileLink = screen.getByRole('link', { name: 'manual.pdf' });
@@ -87,6 +93,12 @@ describe(AttachmentItemNew, () => {
     expect(screen.getByRole('combobox', { name: 'Category' })).toHaveClass(
       'is-invalid',
     );
+  });
+
+  it('renders the category validation message and options', () => {
+    expect.hasAssertions();
+    renderItem({}, { attachments: [{ attachmentCategory: true }] });
+
     expect(
       screen.getByText('Select a category that best describes this document.'),
     ).toBeInTheDocument();
@@ -96,8 +108,11 @@ describe(AttachmentItemNew, () => {
   });
 
   it('updates the category field and calls the persisted-category callback when a document id is present', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
     renderItem({ onCategoryUpdate });
 
     await user.selectOptions(
@@ -120,8 +135,11 @@ describe(AttachmentItemNew, () => {
   });
 
   it('updates the category locally when no persisted document id is available', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryUpdate = vi
+      .fn<CategoryUpdate>()
+      .mockResolvedValue(undefined);
     renderItem(
       { onCategoryUpdate },
       undefined,
@@ -148,6 +166,7 @@ describe(AttachmentItemNew, () => {
   });
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
+    expect.hasAssertions();
     renderItem({
       canRemove: false,
       fileBytes: undefined,
@@ -166,8 +185,9 @@ describe(AttachmentItemNew, () => {
   });
 
   it('opens and closes the delete confirmation without removing the file', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onRemoveItem = vi.fn();
+    const onRemoveItem = vi.fn<RemoveItem>();
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: 'Delete' }));
@@ -188,8 +208,9 @@ describe(AttachmentItemNew, () => {
   });
 
   it('confirms deletion with the current attachment value', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const onRemoveItem = vi.fn().mockResolvedValue(undefined);
+    const onRemoveItem = vi.fn<RemoveItem>().mockResolvedValue(undefined);
     renderItem({ onRemoveItem });
 
     await user.click(screen.getByRole('button', { name: 'Delete' }));

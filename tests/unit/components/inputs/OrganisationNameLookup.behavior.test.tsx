@@ -1,8 +1,17 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Profiler } from 'react';
+import type { ProfilerOnRenderCallback } from 'react';
 import { Formik } from 'formik';
+import type { FormikConfig } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
+
+type LookupValues = {
+  orgName: string;
+  orgNameOptions: unknown[];
+  parentField: string;
+};
+type SubmitHandler = FormikConfig<LookupValues>['onSubmit'];
 
 vi.mock(
   import('@/components/Inputs/TextInput'),
@@ -36,9 +45,9 @@ const renderLookup = (
   props: Partial<React.ComponentProps<typeof OrganisationNameLookup>> = {},
 ) =>
   render(
-    <Formik
+    <Formik<LookupValues>
       initialValues={{ orgName: '', orgNameOptions: [], parentField: '' }}
-      onSubmit={vi.fn()}
+      onSubmit={vi.fn<SubmitHandler>()}
     >
       <OrganisationNameLookup name='orgName' label='Organisation' {...props} />
     </Formik>,
@@ -46,6 +55,7 @@ const renderLookup = (
 
 describe(OrganisationNameLookup, () => {
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
     renderLookup();
 
@@ -76,13 +86,14 @@ describe(OrganisationNameLookup, () => {
    * of the render itself rather than the absence of the warning.
    */
   it('does not re-render when the debounce fires with an empty input', async () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
-    const onRender = vi.fn();
+    const onRender = vi.fn<ProfilerOnRenderCallback>();
     render(
       <Profiler id='lookup' onRender={onRender}>
-        <Formik
+        <Formik<LookupValues>
           initialValues={{ orgName: '', orgNameOptions: [], parentField: '' }}
-          onSubmit={vi.fn()}
+          onSubmit={vi.fn<SubmitHandler>()}
         >
           <OrganisationNameLookup
             name='orgName'
@@ -104,6 +115,7 @@ describe(OrganisationNameLookup, () => {
   });
 
   it('falls back to typed input if the active suggestion is unexpectedly absent', async () => {
+    expect.hasAssertions();
     vi.useFakeTimers();
     const originalAt = Array.prototype.at;
     const atSpy = vi.spyOn(Array.prototype, 'at').mockImplementation(function (
@@ -117,13 +129,13 @@ describe(OrganisationNameLookup, () => {
     });
 
     render(
-      <Formik
+      <Formik<LookupValues>
         initialValues={{
           orgName: '',
           orgNameOptions: [{ name: 'Alpha Labs' }, { name: 'Beta Labs' }],
           parentField: '',
         }}
-        onSubmit={vi.fn()}
+        onSubmit={vi.fn<SubmitHandler>()}
       >
         <OrganisationNameLookup
           name='orgName'

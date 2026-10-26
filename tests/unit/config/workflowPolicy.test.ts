@@ -171,12 +171,16 @@ const evidenceJobs = [
 
 describe('pR workflow runs each test environment as its own partition', () => {
   it('declares the partition matrix without fail-fast', () => {
+    expect.hasAssertions();
+
     expect(occurrences('fail-fast: false')).toBeGreaterThanOrEqual(1);
   });
 
   it.each(testCommands)(
     'invokes $command exactly once through the PR gate',
     ({ command }) => {
+      expect.hasAssertions();
+
       expect(occurrences(command)).toBe(1);
     },
   );
@@ -184,6 +188,8 @@ describe('pR workflow runs each test environment as its own partition', () => {
   it.each(testCommands)(
     'writes the $name JUnit report to its own path exactly once',
     ({ name }) => {
+      expect.hasAssertions();
+
       expect(occurrences(`reports/vitest/${name}-junit.xml`)).toBe(1);
     },
   );
@@ -194,22 +200,30 @@ describe('pR workflow runs each test environment as its own partition', () => {
   ])(
     'no longer runs the monolithic aggregate in the %s workflow',
     (_name, contents) => {
+      expect.hasAssertions();
+
       expect(contents).not.toMatch(/run: npm run test:ci\s*$/m);
       expect(contents).not.toContain('npm run test:ci\n');
     },
   );
 
   it('does not route CI coverage through the aggregate root config', () => {
+    expect.hasAssertions();
+
     expect(workflow).not.toContain('reports/vitest/junit.xml');
   });
 });
 
 describe('the PR workflow keeps slow surfaces independently named', () => {
   it.each(declaredJobs)('declares the %s job', (jobId) => {
+    expect.hasAssertions();
+
     expect(workflow).toContain(`\n  ${jobId}:\n`);
   });
 
   it('renders the long-running vitest statuses from the retained matrix', () => {
+    expect.hasAssertions();
+
     expect(jobBlock(workflow, 'vitest')).toContain(
       'name: vitest-${{ matrix.partition.name }}',
     );
@@ -230,22 +244,30 @@ describe('the PR workflow keeps slow surfaces independently named', () => {
     'dependency-security-node20',
     'lower-bound-node22',
   ])('retains no superseded %s identifier', (jobId) => {
+    expect.hasAssertions();
+
     expect(workflow).not.toContain(`\n  ${jobId}:\n`);
   });
 
   it('gives every job an explicit timeout', () => {
+    expect.hasAssertions();
+
     expect(occurrences('timeout-minutes:')).toBe(declaredJobs.length);
   });
 
   it('pipes step output through a shell that fails on a broken pipe', () => {
     // GitHub's default runner shell is `bash -e`, which has no pipefail; an
     // explicit `shell: bash` restores it so `| tee` cannot mask a failure.
+    expect.hasAssertions();
+
     expect(workflow).toContain('shell: bash');
   });
 });
 
 describe('a new push supersedes the in-flight PR run', () => {
   it('scopes a cancel-in-progress concurrency group to the ref', () => {
+    expect.hasAssertions();
+
     expect(workflow).toContain(
       'group: ${{ github.workflow }}-${{ github.ref }}',
     );
@@ -258,6 +280,8 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   const quality = jobBlock(workflow, 'quality-node24');
 
   it("classifies the PR's changed files against the merge base", () => {
+    expect.hasAssertions();
+
     expect(detect).toContain('fetch-depth: 0');
     expect(detect).toContain(
       'git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD',
@@ -265,6 +289,8 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   });
 
   it('exposes one boolean output per gated job', () => {
+    expect.hasAssertions();
+
     expect(detect).toContain(
       'agent-tooling: ${{ steps.scope.outputs.agent-tooling }}',
     );
@@ -275,6 +301,8 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   });
 
   it('runs the agent-orchestration checks only when their trees change', () => {
+    expect.hasAssertions();
+
     expect(quality).toContain('needs: detect-changes');
     expect(quality).toContain(
       "needs.detect-changes.outputs.agent-tooling == 'true'",
@@ -284,11 +312,15 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   });
 
   it('does not create skipped helper statuses for scoped checks', () => {
+    expect.hasAssertions();
+
     expect(workflow).not.toContain('\n  agent-tooling:\n');
     expect(workflow).not.toContain('\n  date-timezone:\n');
   });
 
   it('keeps the classifier and consolidated quality job bounded', () => {
+    expect.hasAssertions();
+
     expect(detect).toContain('timeout-minutes:');
     expect(quality).toContain('timeout-minutes:');
   });
@@ -309,6 +341,8 @@ describe('workflows pin every action to an immutable commit', () => {
   it.each(pinnedActionWorkflows)(
     'pins checkout in the %s workflow',
     (_name, contents) => {
+      expect.hasAssertions();
+
       expect(contents).toContain(`uses: ${CHECKOUT_PIN} # v7`);
     },
   );
@@ -316,6 +350,8 @@ describe('workflows pin every action to an immutable commit', () => {
   it.each(nodeWorkflows)(
     'pins setup-node in the %s workflow',
     (_name, contents) => {
+      expect.hasAssertions();
+
       expect(contents).toContain(`uses: ${SETUP_NODE_PIN} # v7`);
     },
   );
@@ -323,6 +359,8 @@ describe('workflows pin every action to an immutable commit', () => {
   it.each(pinnedActionWorkflows)(
     'pins every remote action in the %s workflow to a full commit SHA',
     (_name, contents) => {
+      expect.hasAssertions();
+
       const actionRefs = [
         ...contents.matchAll(/uses:\s*[^\s#]+@([^\s#]+)/g),
       ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
@@ -335,6 +373,8 @@ describe('workflows pin every action to an immutable commit', () => {
   );
 
   it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
+    expect.hasAssertions();
+
     expect(codeqlWorkflow).toContain(
       `uses: github/codeql-action/init@${CODEQL_ACTION_SHA} # v4`,
     );
@@ -347,6 +387,8 @@ describe('workflows pin every action to an immutable commit', () => {
   it('keeps explicit npm cache ownership on every setup-node', () => {
     // setup-node v7 auto-detects a package manager; the explicit input keeps
     // cache ownership where A1 put it rather than letting the major change it.
+    expect.hasAssertions();
+
     expect(occurrences(`uses: ${SETUP_NODE_PIN}`)).toBe(
       occurrences("cache: 'npm'"),
     );
@@ -364,6 +406,8 @@ describe('every partition reports its evidence unconditionally', () => {
   );
 
   it('pins upload-artifact to an immutable commit rather than a floating tag', () => {
+    expect.hasAssertions();
+
     expect(artifactUploads.length).toBeGreaterThanOrEqual(2);
     expect(
       artifactUploads.every((step) =>
@@ -374,11 +418,15 @@ describe('every partition reports its evidence unconditionally', () => {
   });
 
   it('uploads evidence even when the partition failed', () => {
+    expect.hasAssertions();
+
     expect(evidenceUploads.length).toBeGreaterThan(0);
     expect(evidenceUploads.every(hasAlwaysGuard)).toBe(true);
   });
 
   it('fails the job when an expected artifact is missing', () => {
+    expect.hasAssertions();
+
     expect(
       evidenceUploads.every((step) =>
         /if-no-files-found:\s*error\b/.test(step),
@@ -387,17 +435,23 @@ describe('every partition reports its evidence unconditionally', () => {
   });
 
   it('retains evidence for 14 days', () => {
+    expect.hasAssertions();
+
     expect(
       evidenceUploads.every((step) => /retention-days:\s*14\b/.test(step)),
     ).toBe(true);
   });
 
   it('uploads the matrix report and unit coverage as separate evidence', () => {
+    expect.hasAssertions();
+
     expect(workflow).toContain('${{ matrix.partition.report }}');
     expect(workflow).toContain('reports/coverage/unit');
   });
 
   it.each(evidenceJobs)('uploads evidence from the %s job', (jobId) => {
+    expect.hasAssertions();
+
     expect(jobBlock(workflow, jobId)).toContain(`uses: ${UPLOAD_ARTIFACT_PIN}`);
   });
 });
@@ -410,12 +464,16 @@ describe('the scoped date-timezone step re-runs the focused date suite off UTC',
     // (UTC). This leg adds the "east of UTC, date already rolled over" edge for
     // dateOnly.ts's deliberate local/UTC split - one zone, not a matrix, and set
     // through job env rather than a shell-specific script.
+    expect.hasAssertions();
+
     expect(block).toContain('TZ: Australia/Sydney');
     expect(block).not.toContain('matrix');
     expect(packageJson.scripts).not.toHaveProperty('test:tz');
   });
 
   it('is path-gated, not run on every PR', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('needs: detect-changes');
     expect(block).toContain(
       "needs.detect-changes.outputs.date-logic == 'true'",
@@ -423,12 +481,16 @@ describe('the scoped date-timezone step re-runs the focused date suite off UTC',
   });
 
   it('writes a single JUnit report for the Sydney run', () => {
+    expect.hasAssertions();
+
     expect(block).toContain(
       '--outputFile.junit=reports/vitest/date-sydney-junit.xml',
     );
   });
 
   it('runs the focused date files rather than the whole unit partition', () => {
+    expect.hasAssertions();
+
     expect(block).toContain(
       'tests/unit/components/inputs/datePickerWrapper.test.tsx',
     );
@@ -445,24 +507,34 @@ describe('the e2e job runs the full Playwright contract', () => {
   const block = jobBlock(workflow, 'e2e-node24');
 
   it('runs the aggregate e2e script', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('npm run test:e2e');
   });
 
   it('covers both the app and Storybook projects through that script', () => {
+    expect.hasAssertions();
+
     expect(packageJson.scripts['test:e2e']).toContain('test:e2e:app');
     expect(packageJson.scripts['test:e2e']).toContain('test:e2e:storybook');
   });
 
   it('installs Chromium, which a fresh runner does not provide', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('playwright install --with-deps chromium');
   });
 
   it('reports a failed diagnostic deny-ACL application distinctly', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('ACL_DENY_APPLY_FAILED:');
     expect(block).toContain('if ($denyExitCode -ne 0)');
   });
 
   it('uploads the HTML report, traces, and screenshots', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('reports/playwright');
     expect(block).toContain('reports/test-results');
   });
@@ -475,19 +547,27 @@ describe('the lower-bound job proves the declared Node floor', () => {
     // The floor-install result is a property of the dependency tree and the CI
     // install path, not the app source, so it is path-gated rather than run on
     // every PR.
+    expect.hasAssertions();
+
     expect(block).toContain('needs: detect-changes');
     expect(block).toContain("if: needs.detect-changes.outputs.deps == 'true'");
   });
 
   it('installs on the exact floor rather than the latest 24', () => {
+    expect.hasAssertions();
+
     expect(block).toContain("node-version: '24.21.0'");
   });
 
   it('refuses to silently resolve a conflicting peer', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('ci --strict-peer-deps');
   });
 
   it('runs the policy, lint, type-check, and build gates', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('tests/unit/config/dependencySecurity.test.ts');
     expect(block).toContain('npm run lint');
     expect(block).toContain('npm run type-check');
@@ -495,6 +575,8 @@ describe('the lower-bound job proves the declared Node floor', () => {
   });
 
   it('keeps browser suites out of the floor job', () => {
+    expect.hasAssertions();
+
     expect(block).not.toContain('playwright install');
   });
 });
@@ -509,6 +591,8 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
     // SonarCloud decides what counts as new code from SCM blame dates. A
     // shallow clone leaves it no history to read, so the new-code period -
     // and every quality gate condition built on it - becomes meaningless.
+    expect.hasAssertions();
+
     expect(block).toContain('fetch-depth: 0');
   });
 
@@ -516,12 +600,16 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
     // Each test environment runs exactly once, through the matrix. Re-running
     // the unit suite here would duplicate several minutes per PR and could
     // report a different result than the partition that owns that status.
+    expect.hasAssertions();
+
     expect(block).toContain(`uses: ${DOWNLOAD_ARTIFACT_PIN}`);
     expect(block).toContain('release-unit-coverage');
     expect(block).not.toContain('npm run test:ci:unit');
   });
 
   it('restores coverage before the scan rather than scanning bare', () => {
+    expect.hasAssertions();
+
     const download = block.indexOf(DOWNLOAD_ARTIFACT_PIN);
     const scan = block.indexOf('uses: SonarSource/sonarqube-scan-action@');
 
@@ -530,14 +618,20 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   });
 
   it('waits for the partition that produces the coverage it consumes', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('needs: quality-gate');
   });
 
   it('uploads its evidence via the shared upload-artifact pin', () => {
+    expect.hasAssertions();
+
     expect(block).toContain(`uses: ${UPLOAD_ARTIFACT_PIN}`);
   });
 
   it('uses the official scanner action at the intended immutable commit', () => {
+    expect.hasAssertions();
+
     const scannerReferences = [
       ...block.matchAll(
         /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm,
@@ -554,6 +648,8 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   });
 
   it('does not execute the scanner through runtime npm resolution', () => {
+    expect.hasAssertions();
+
     const scannerRunSteps = stepBlocks(block).filter((step) =>
       (() => {
         const lines = withoutComments(step).split('\n');
@@ -569,6 +665,8 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   });
 
   it('authenticates from a secret, never an inline token', () => {
+    expect.hasAssertions();
+
     expect(block).toContain('SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}');
     expect(block).not.toMatch(/sonar\.token=/);
   });
@@ -576,17 +674,23 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   it('waits for the quality gate so a red gate fails the build', () => {
     // Without this the scanner uploads and exits 0 whatever the verdict, and
     // the gate can never block a merge.
+    expect.hasAssertions();
+
     expect(block).toContain('sonar.qualitygate.wait=true');
   });
 });
 
 describe('no partition may mask a failure', () => {
   it('never uses continue-on-error', () => {
+    expect.hasAssertions();
+
     expect(workflow).not.toContain('continue-on-error');
     expect(releaseWorkflow).not.toContain('continue-on-error');
   });
 
   it('keeps the Chromium install that a fresh runner requires', () => {
+    expect.hasAssertions();
+
     expect(workflow).toContain('playwright install');
   });
 
@@ -595,6 +699,8 @@ describe('no partition may mask a failure', () => {
     // for the sonarcloud job, in a step that holds SONAR_TOKEN. corepack
     // resolves the version from package.json's packageManager field instead, and
     // must not stall on its download prompt in CI.
+    expect.hasAssertions();
+
     for (const contents of [workflow, releaseWorkflow]) {
       expect(contents).not.toMatch(/npx\s+--yes\s+npm@/);
       expect(contents).toContain('run: corepack enable');
@@ -606,6 +712,8 @@ describe('no partition may mask a failure', () => {
   });
 
   it('invokes the installed Playwright binary directly, not via npx', () => {
+    expect.hasAssertions();
+
     for (const contents of [workflow, releaseWorkflow]) {
       expect(contents).not.toContain('npx playwright');
       expect(contents).toContain(
@@ -618,6 +726,8 @@ describe('no partition may mask a failure', () => {
     // Deduplicated from seven inline copies into a local composite action. Every
     // job that installs dependencies calls it, and the action still
     // force-reinstalls the exact binding the lockfile pins.
+    expect.hasAssertions();
+
     const action = readFileSync(
       '.github/actions/verify-rolldown-binding/action.yml',
       'utf8',
@@ -640,6 +750,8 @@ describe('storybook documentation is a CI quality gate', () => {
     ['pull request', workflow],
     ['release', releaseWorkflow],
   ])('verifies docs structure in the %s workflow', (_name, contents) => {
+    expect.hasAssertions();
+
     expect(contents).toContain('npm run storybook:verify:docs');
   });
 
@@ -647,12 +759,16 @@ describe('storybook documentation is a CI quality gate', () => {
     ['pull request', workflow],
     ['release', releaseWorkflow],
   ])('runs Storybook BDD in the %s workflow', (_name, contents) => {
+    expect.hasAssertions();
+
     expect(contents).toContain('npm run test:e2e');
   });
 });
 
 describe("cI uses the repository's enforced Node runtime", () => {
   it('keeps engines and devEngines on the same Node 24 floor', () => {
+    expect.hasAssertions();
+
     expect(packageJson.engines.node).toBe('>=24.21.0');
     expect(packageJson.devEngines.runtime.version).toBe('>=24.21.0');
     expect(packageJson.devEngines.runtime.onFail).toBe('error');
@@ -662,6 +778,8 @@ describe("cI uses the repository's enforced Node runtime", () => {
     ['pull request', workflow],
     ['release', releaseWorkflow],
   ])('runs every %s job on Node 24', (_name, contents) => {
+    expect.hasAssertions();
+
     const configuredVersions = nodeVersions(contents);
 
     expect(configuredVersions.length).toBeGreaterThan(0);
@@ -676,6 +794,8 @@ describe("cI uses the repository's enforced Node runtime", () => {
   ])(
     'retains no retired Node 20 runtime in the %s workflow',
     (_name, contents) => {
+      expect.hasAssertions();
+
       expect(contents).not.toMatch(/node-version:\s*["']?20/);
       expect(contents).not.toContain('node20');
       expect(contents).not.toContain('20.19');
@@ -693,11 +813,15 @@ describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
   ] as const;
 
   it.each(workflows)('pins %s jobs to Ubuntu 26.04', (_name, contents) => {
+    expect.hasAssertions();
+
     expect(contents).toContain('runs-on: ubuntu-26.04');
     expect(contents).not.toContain('runs-on: ubuntu-latest');
   });
 
   it('runs CodeQL only for the configured repository languages', () => {
+    expect.hasAssertions();
+
     expect(codeqlWorkflow).toContain('language: actions');
     expect(codeqlWorkflow).toContain('language: javascript-typescript');
     expect(codeqlWorkflow).toContain('language: python');
@@ -705,10 +829,14 @@ describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
   });
 
   it('does not enable dependency caching for the configured CodeQL matrix', () => {
+    expect.hasAssertions();
+
     expect(codeqlWorkflow).not.toContain('dependency-caching');
   });
 
   it('grants CodeQL only the permissions required to upload code scanning results', () => {
+    expect.hasAssertions();
+
     expect(codeqlWorkflow).toContain('contents: read');
     expect(codeqlWorkflow).toContain('actions: read');
     expect(codeqlWorkflow).toContain('security-events: write');
@@ -718,10 +846,14 @@ describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
 
 describe('dependabot owns the lint cohort as one reviewable group', () => {
   it('keeps the weekly GitHub Actions ecosystem entry', () => {
+    expect.hasAssertions();
+
     expect(dependabot).toContain('package-ecosystem: github-actions');
   });
 
   it('groups the whole ESLint family into a single pull request', () => {
+    expect.hasAssertions();
+
     expect(dependabot).toContain('eslint-family:');
 
     for (const pattern of [
@@ -738,21 +870,29 @@ describe('dependabot owns the lint cohort as one reviewable group', () => {
   });
 
   it('keeps npm major upgrades review-only', () => {
+    expect.hasAssertions();
+
     expect(dependabot).toContain("'version-update:semver-major'");
   });
 });
 
 describe('chromatic publishing reports asynchronously through GitHub', () => {
   it('publishes every pushed branch with complete Git history', () => {
+    expect.hasAssertions();
+
     expect(chromaticWorkflow).toContain('push:');
     expect(chromaticWorkflow).toContain('fetch-depth: 0');
   });
 
   it("uses the repository's enforced Node 24 runtime", () => {
+    expect.hasAssertions();
+
     expect(nodeVersions(chromaticWorkflow)).toEqual(['24.21.0']);
   });
 
   it('provisions npm through corepack before installing dependencies', () => {
+    expect.hasAssertions();
+
     const corepack = chromaticWorkflow.indexOf('run: corepack enable');
     const install = chromaticWorkflow.indexOf('run: npm ci');
 
@@ -762,6 +902,8 @@ describe('chromatic publishing reports asynchronously through GitHub', () => {
   });
 
   it('pins the Chromatic action and reads its protected repository secret', () => {
+    expect.hasAssertions();
+
     expect(chromaticWorkflow).toContain(`uses: ${CHROMATIC_ACTION_PIN}`);
     expect(chromaticWorkflow).toContain(
       'projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}',
@@ -770,6 +912,8 @@ describe('chromatic publishing reports asynchronously through GitHub', () => {
   });
 
   it('exits after upload instead of waiting for cloud test results', () => {
+    expect.hasAssertions();
+
     expect(chromaticWorkflow).toContain('exitOnceUploaded: true');
   });
 });

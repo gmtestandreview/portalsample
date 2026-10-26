@@ -6,6 +6,14 @@ import CustomDatePicker from '@/components/Inputs/DatePicker/CustomDatePicker';
 
 const mockDate = new Date('2026-05-18T00:00:00.000Z');
 
+const expectDatePickerOffsetsAfterReopen = (nextDate: Date) => {
+  expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
+  expect(screen.getByTestId('top-offset')).toHaveTextContent('-45');
+  expect(screen.getByTestId('selected-date')).toHaveTextContent(
+    nextDate.toISOString(),
+  );
+};
+
 vi.mock(
   '@/components/Inputs/DatePicker/CustomDateInput',
   () =>
@@ -83,14 +91,19 @@ vi.mock('react-datepicker', () => {
         <button
           type='button'
           onClick={() =>
-            props.onKeyDown({ key: 'Enter', preventDefault: vi.fn() })
+            props.onKeyDown({
+              key: 'Enter',
+              preventDefault: vi.fn<() => void>(),
+            })
           }
         >
           Input Enter trigger
         </button>
         <button
           type='button'
-          onClick={() => props.onKeyDown({ key: ' ', preventDefault: vi.fn() })}
+          onClick={() =>
+            props.onKeyDown({ key: ' ', preventDefault: vi.fn<() => void>() })
+          }
         >
           Input Space trigger
         </button>
@@ -102,7 +115,10 @@ vi.mock('react-datepicker', () => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({ key: 'Escape', preventDefault: vi.fn() })
+                props.onKeyDown({
+                  key: 'Escape',
+                  preventDefault: vi.fn<() => void>(),
+                })
               }
             >
               Escape
@@ -119,7 +135,10 @@ vi.mock('react-datepicker', () => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({ key: 'Enter', preventDefault: vi.fn() })
+                props.onKeyDown({
+                  key: 'Enter',
+                  preventDefault: vi.fn<() => void>(),
+                })
               }
             >
               Enter key
@@ -127,7 +146,10 @@ vi.mock('react-datepicker', () => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({ key: ' ', preventDefault: vi.fn() })
+                props.onKeyDown({
+                  key: ' ',
+                  preventDefault: vi.fn<() => void>(),
+                })
               }
             >
               Space key
@@ -135,7 +157,10 @@ vi.mock('react-datepicker', () => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({ key: 'Other', preventDefault: vi.fn() })
+                props.onKeyDown({
+                  key: 'Other',
+                  preventDefault: vi.fn<() => void>(),
+                })
               }
             >
               Other key
@@ -183,8 +208,9 @@ vi.mock('react-datepicker', () => {
 
 describe(CustomDatePicker, () => {
   it('opens, selects a date, and closes the calendar', async () => {
-    const dateOnChange = vi.fn();
-    const dateOnBlur = vi.fn();
+    expect.hasAssertions();
+    const dateOnChange = vi.fn<() => void>();
+    const dateOnBlur = vi.fn<() => void>();
 
     render(
       <CustomDatePicker
@@ -213,10 +239,11 @@ describe(CustomDatePicker, () => {
   });
 
   it('supports an omitted calendar button title', () => {
+    expect.hasAssertions();
     render(
       <CustomDatePicker
-        dateOnBlur={vi.fn()}
-        dateOnChange={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
         name='untitledDate'
       />,
     );
@@ -227,12 +254,13 @@ describe(CustomDatePicker, () => {
   });
 
   it('supports the Today action through the current open/close flow', async () => {
-    const dateOnChange = vi.fn();
+    expect.hasAssertions();
+    const dateOnChange = vi.fn<() => void>();
 
     render(
       <CustomDatePicker
         calendarButtonTitle='Date'
-        dateOnBlur={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
         dateOnChange={dateOnChange}
         name='todayDate'
         label='Pick a date'
@@ -253,14 +281,15 @@ describe(CustomDatePicker, () => {
   });
 
   it('handles blur, outside click, escape, and calendar keyboard controls', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
-    const dateOnBlur = vi.fn();
+    const dateOnBlur = vi.fn<() => void>();
 
     render(
       <CustomDatePicker
         calendarButtonTitle='Date'
         dateOnBlur={dateOnBlur}
-        dateOnChange={vi.fn()}
+        dateOnChange={vi.fn<() => void>()}
         name='keyboardDate'
       />,
     );
@@ -299,12 +328,13 @@ describe(CustomDatePicker, () => {
   });
 
   it('opens from Enter and Space unless read-only, while disabled read-only follows the component condition', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const { rerender } = render(
       <CustomDatePicker
         calendarButtonTitle='Date'
-        dateOnBlur={vi.fn()}
-        dateOnChange={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
         name='inputKeyboardDate'
       />,
     );
@@ -330,8 +360,8 @@ describe(CustomDatePicker, () => {
     rerender(
       <CustomDatePicker
         calendarButtonTitle='Date'
-        dateOnBlur={vi.fn()}
-        dateOnChange={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
         name='inputKeyboardDate'
         readOnly
       />,
@@ -348,8 +378,8 @@ describe(CustomDatePicker, () => {
     rerender(
       <CustomDatePicker
         calendarButtonTitle='Date'
-        dateOnBlur={vi.fn()}
-        dateOnChange={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
         disabled
         name='inputKeyboardDate'
         readOnly
@@ -365,6 +395,7 @@ describe(CustomDatePicker, () => {
   });
 
   it('synchronizes current dates and calculates bottom, top, and neutral offsets', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     const currentDate = new Date('2026-06-01T00:00:00.000Z');
     const nextDate = new Date('2026-06-02T00:00:00.000Z');
@@ -372,8 +403,8 @@ describe(CustomDatePicker, () => {
       <CustomDatePicker
         calendarButtonTitle='Date'
         currentDate={currentDate}
-        dateOnBlur={vi.fn()}
-        dateOnChange={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
         hasError
         inlineHelp='Date help'
         name='offsetDate'
@@ -395,21 +426,16 @@ describe(CustomDatePicker, () => {
     await user.click(screen.getByRole('button', { name: 'Pick date' }));
     await user.click(screen.getByRole('button', { name: 'Open calendar' }));
 
-    expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
-    expect(screen.getByTestId('top-offset')).toHaveTextContent('-45');
-
     rerender(
       <CustomDatePicker
         calendarButtonTitle='Date'
         currentDate={nextDate}
-        dateOnBlur={vi.fn()}
-        dateOnChange={vi.fn()}
+        dateOnBlur={vi.fn<() => void>()}
+        dateOnChange={vi.fn<() => void>()}
         name='offsetDate'
       />,
     );
 
-    expect(screen.getByTestId('selected-date')).toHaveTextContent(
-      nextDate.toISOString(),
-    );
+    expectDatePickerOffsetsAfterReopen(nextDate);
   });
 });

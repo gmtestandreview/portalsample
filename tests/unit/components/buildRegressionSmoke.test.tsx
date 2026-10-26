@@ -3,6 +3,7 @@ import * as yup from 'yup';
 
 describe('build regression smoke coverage', () => {
   it('imports App with the root stylesheet path resolved', async () => {
+    expect.hasAssertions();
     const module = await import('@/App');
 
     expect(module.default).toBeDefined();
@@ -16,6 +17,7 @@ describe('build regression smoke coverage', () => {
   ])(
     'imports utility module %s with the print stylesheet path resolved',
     async (modulePath) => {
+      expect.hasAssertions();
       const module = await import(modulePath);
 
       expect(module.default).toBeDefined();
@@ -30,6 +32,7 @@ describe('build regression smoke coverage', () => {
   ])(
     'imports validation module %s through the yup extension barrel',
     async (modulePath) => {
+      expect.hasAssertions();
       vi.resetModules();
 
       const module = await import(modulePath);

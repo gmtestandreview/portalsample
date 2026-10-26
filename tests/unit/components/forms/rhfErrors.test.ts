@@ -14,6 +14,7 @@ const guardedLeaf = (message: unknown, type = 'required') => {
 
 describe(flattenRhfErrors, () => {
   it('returns messages by dotted path without reading any ref', () => {
+    expect.hasAssertions();
     const errors = {
       name: guardedLeaf('Name is required'),
       contacts: [{ firstName: guardedLeaf('First name is required') }],
@@ -28,6 +29,7 @@ describe(flattenRhfErrors, () => {
   });
 
   it('keeps a DOM node out of the result', () => {
+    expect.hasAssertions();
     const input = document.createElement('input');
     const result = flattenRhfErrors({
       name: { type: 'required', message: 'Required', ref: input },
@@ -38,6 +40,7 @@ describe(flattenRhfErrors, () => {
   });
 
   it('skips leaves without a message and non-object input', () => {
+    expect.hasAssertions();
     expect(flattenRhfErrors(undefined)).toEqual({});
     expect(flattenRhfErrors('x')).toEqual({});
     expect(
@@ -51,6 +54,7 @@ describe(flattenRhfErrors, () => {
   });
 
   it('treats a nested field named type as a group, not a leaf', () => {
+    expect.hasAssertions();
     expect(
       flattenRhfErrors({ type: { type: 'required', message: 'Pick a type' } }),
     ).toEqual({ type: 'Pick a type' });

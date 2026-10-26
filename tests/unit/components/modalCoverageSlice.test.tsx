@@ -13,13 +13,35 @@ import {
 import RFQDeleteModal from '../../../ClientApp/src/components/modals/RFQDeleteModal';
 import { trackGAEvent } from '../../../ClientApp/src/analytics/GoogleAnalytics';
 import { setDashboardNotification } from '../../../ClientApp/src/storage/notification';
+import type { DeleteApplicationCommand } from '../../../ClientApp/src/api/web-api-client';
+import type { SilentRequest } from '@azure/msal-browser';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  deleteApplication: vi.fn(),
-  setAuthToken: vi.fn(),
-  navigate: vi.fn(),
+  acquireTokenSilent:
+    vi.fn<(request: SilentRequest) => Promise<{ accessToken: string }>>(),
+  deleteApplication:
+    vi.fn<
+      (
+        referenceId: string,
+        command: DeleteApplicationCommand,
+        signal?: AbortSignal,
+      ) => Promise<void>
+    >(),
+  setAuthToken: vi.fn<(token: string) => void>(),
+  navigate: vi.fn<() => void>(),
 }));
+
+const expectSuccessfulRfqDeleteSideEffects = (dispatch: {
+  setShowRFQDeleteModal: ReturnType<typeof vi.fn>;
+}) => {
+  expect(setDashboardNotification).toHaveBeenCalledWith({
+    message: 'The draft request has been successfully deleted',
+    severity: 'success',
+  });
+  expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
+  expect(trackGAEvent).toHaveBeenCalledWith('Save RFQ Delete Modal');
+  expect(mocks.navigate).toHaveBeenCalledWith('/');
+};
 
 vi.mock(
   '@azure/msal-react',
@@ -49,7 +71,7 @@ vi.mock(
       ApplicationType: {
         QuoteRequest: 'QuoteRequest',
       },
-      ApplicationClient: vi.fn(function (this: {
+      ApplicationClient: vi.fn<() => void>(function (this: {
         setAuthToken: ReturnType<typeof vi.fn>;
         deleteApplication: ReturnType<typeof vi.fn>;
       }) {
@@ -71,7 +93,7 @@ vi.mock(
   import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
-      setDashboardNotification: vi.fn(),
+      setDashboardNotification: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
@@ -90,7 +112,7 @@ vi.mock(
   () =>
     ({
       default: {
-        error: vi.fn(),
+        error: vi.fn<() => void>(),
       },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
@@ -99,7 +121,7 @@ vi.mock(
   import('../../../ClientApp/src/analytics/GoogleAnalytics'),
   () =>
     ({
-      trackGAEvent: vi.fn(),
+      trackGAEvent: vi.fn<() => void>(),
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
@@ -127,9 +149,9 @@ const defaultModalState: ModalState = {
 };
 
 const defaultModalDispatch: ModalDispatch = {
-  setShowBranchSelector: vi.fn(),
-  setShowRFQDeleteModal: vi.fn(),
-  setShowRFQSelectModal: vi.fn(),
+  setShowBranchSelector: vi.fn<ModalDispatch['setShowBranchSelector']>(),
+  setShowRFQDeleteModal: vi.fn<ModalDispatch['setShowRFQDeleteModal']>(),
+  setShowRFQSelectModal: vi.fn<ModalDispatch['setShowRFQSelectModal']>(),
 };
 
 const renderRFQDeleteModal = (
@@ -154,10 +176,12 @@ describe('modal coverage slice', () => {
   });
 
   it('exposes modal state and dispatch through providers', () => {
+    expect.hasAssertions();
+
     const dispatch = {
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<() => void>(),
+      setShowRFQDeleteModal: vi.fn<() => void>(),
+      setShowRFQSelectModal: vi.fn<() => void>(),
     };
 
     render(
@@ -182,6 +206,8 @@ describe('modal coverage slice', () => {
   });
 
   it('returns null modal contexts when no provider is present', () => {
+    expect.hasAssertions();
+
     render(<ModalConsumer />);
 
     expect(
@@ -190,10 +216,12 @@ describe('modal coverage slice', () => {
   });
 
   it('closes confirmation modal before yes and no callbacks', () => {
+    expect.hasAssertions();
+
     const calls: string[] = [];
-    const closeModal = vi.fn(() => calls.push('close'));
-    const onModalYes = vi.fn(() => calls.push('yes'));
-    const onModalNo = vi.fn(() => calls.push('no'));
+    const closeModal = vi.fn<() => number>(() => calls.push('close'));
+    const onModalYes = vi.fn<() => number>(() => calls.push('yes'));
+    const onModalNo = vi.fn<() => number>(() => calls.push('no'));
 
     render(
       <ConfirmationModal
@@ -219,10 +247,12 @@ describe('modal coverage slice', () => {
   });
 
   it('cancels RFQ deletion by closing the modal and tracking the event', () => {
+    expect.hasAssertions();
+
     const dispatch = {
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<() => void>(),
+      setShowRFQDeleteModal: vi.fn<() => void>(),
+      setShowRFQSelectModal: vi.fn<() => void>(),
     };
     renderRFQDeleteModal(undefined, dispatch);
 
@@ -234,10 +264,12 @@ describe('modal coverage slice', () => {
   });
 
   it('deletes an RFQ, shows the dashboard notification, closes, tracks and navigates home', async () => {
+    expect.hasAssertions();
+
     const dispatch = {
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<() => void>(),
+      setShowRFQDeleteModal: vi.fn<() => void>(),
+      setShowRFQSelectModal: vi.fn<() => void>(),
     };
     renderRFQDeleteModal(undefined, dispatch);
 
@@ -250,21 +282,17 @@ describe('modal coverage slice', () => {
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
-    expect(setDashboardNotification).toHaveBeenCalledWith({
-      message: 'The draft request has been successfully deleted',
-      severity: 'success',
-    });
-    expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, '');
-    expect(trackGAEvent).toHaveBeenCalledWith('Save RFQ Delete Modal');
-    expect(mocks.navigate).toHaveBeenCalledWith('/');
+    expectSuccessfulRfqDeleteSideEffects(dispatch);
   });
 
   it('still closes and navigates when RFQ deletion fails', async () => {
+    expect.hasAssertions();
+
     mocks.deleteApplication.mockRejectedValueOnce(new Error('delete failed'));
     const dispatch = {
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<() => void>(),
+      setShowRFQDeleteModal: vi.fn<() => void>(),
+      setShowRFQSelectModal: vi.fn<() => void>(),
     };
     renderRFQDeleteModal(undefined, dispatch);
 
@@ -277,10 +305,12 @@ describe('modal coverage slice', () => {
   });
 
   it('closes and navigates without deleting when RFQ id is missing', async () => {
+    expect.hasAssertions();
+
     const dispatch = {
-      setShowBranchSelector: vi.fn(),
-      setShowRFQDeleteModal: vi.fn(),
-      setShowRFQSelectModal: vi.fn(),
+      setShowBranchSelector: vi.fn<() => void>(),
+      setShowRFQDeleteModal: vi.fn<() => void>(),
+      setShowRFQSelectModal: vi.fn<() => void>(),
     };
     renderRFQDeleteModal(
       { showBranchSelector: false, showRFQDeleteModal: true },

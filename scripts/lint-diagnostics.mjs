@@ -132,6 +132,7 @@ function parseOutputPath(args) {
 
 export async function main(args = process.argv.slice(2)) {
   let outputPath;
+  const failOnWarnings = args.includes('--fail-on-warnings');
   try {
     outputPath = parseOutputPath(args);
   } catch (error) {
@@ -155,7 +156,10 @@ export async function main(args = process.argv.slice(2)) {
     process.stdout.write(serialized);
   }
 
-  return report.counts.errors > 0 ? 1 : 0;
+  return report.counts.errors > 0 ||
+    (failOnWarnings && report.counts.warnings > 0)
+    ? 1
+    : 0;
 }
 
 if (

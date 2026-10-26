@@ -60,7 +60,7 @@ export interface AccountDispatchContext {
     rfqId: string,
     callingPath: string,
   ) => void;
-  setUserProfile: (userProfile: UserProfileDto) => Promise<boolean>;
+  setUserProfile: (userProfile: UserProfileDto | undefined) => Promise<boolean>;
 }
 
 // Combined type kept for Props helper functions that need both state and dispatch.

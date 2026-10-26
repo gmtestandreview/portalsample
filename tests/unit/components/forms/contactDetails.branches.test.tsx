@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 import ContactDetails from '@/components/forms/CommonForms/ContactDetails';
@@ -13,8 +13,25 @@ const customLabels = {
   emailAddressLabel: 'Work email',
 };
 
+type ContactFormValues = {
+  contact: {
+    title: string;
+    titleOther: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    phone: string;
+    mobile: string;
+    email: string;
+  };
+  organisationAndContact: { contact: { title: string } };
+};
+
+type ContactSubmit = (values: ContactFormValues) => void | Promise<void>;
+
 describe('contactDetails branch coverage', () => {
   it('renders all supplied labels in edit mode', () => {
+    expect.hasAssertions();
     render(
       <Formik
         initialValues={{
@@ -31,7 +48,7 @@ describe('contactDetails branch coverage', () => {
           organisationAndContact: { contact: { title: '' } },
         }}
         initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn()}
+        onSubmit={vi.fn<ContactSubmit>()}
       >
         <ContactDetails name='contact' {...customLabels} />
       </Formik>,
@@ -43,6 +60,7 @@ describe('contactDetails branch coverage', () => {
   });
 
   it('omits the empty-title fallback when a summary has a title', () => {
+    expect.hasAssertions();
     render(
       <Formik
         initialValues={{
@@ -59,7 +77,7 @@ describe('contactDetails branch coverage', () => {
           organisationAndContact: { contact: { title: 'Dr' } },
         }}
         initialStatus={{ hidden: {} }}
-        onSubmit={vi.fn()}
+        onSubmit={vi.fn<ContactSubmit>()}
       >
         <ContactDetails name='contact' isSummary {...customLabels} />
       </Formik>,

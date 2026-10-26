@@ -141,26 +141,36 @@ afterAll(() => {
 
 describe('vite config', () => {
   it('makes the root base and output cleanup explicit', () => {
+    expect.hasAssertions();
+
     expect(config.base).toBe('/');
     expect(config.build.outDir).toBe('dist');
     expect(config.build.emptyOutDir).toBe(true);
   });
 
   it('defines the Vite environment contract for application code', () => {
+    expect.hasAssertions();
+
     expect(config.define['import.meta.env.VITE_ENVIRONMENT']).toBe(
       JSON.stringify('development'),
     );
   });
 
   it('serves static assets from ClientApp/public', () => {
+    expect.hasAssertions();
+
     expect(config.publicDir).toBe('ClientApp/public');
   });
 
   it('resolves the @ alias to ClientApp/src', () => {
+    expect.hasAssertions();
+
     expect(config.resolve.alias['@']).toMatch(/ClientApp[\\/]src$/);
   });
 
   it('blocks legacy generated and vendor paths from application imports', () => {
+    expect.hasAssertions();
+
     const blockedPathsPlugin = config.plugins.find(
       (plugin) => plugin.name === 'blocked-generated-paths',
     );
@@ -181,6 +191,8 @@ describe('vite config', () => {
   });
 
   it('preserves the TypeScript exclusion policy for generated and vendored code', () => {
+    expect.hasAssertions();
+
     expect(tsconfig.exclude).toEqual([
       'ClientApp/src/api/web-api-client.ts',
       'ClientApp/src/parent/node_modules',
@@ -195,6 +207,8 @@ describe('vite config', () => {
   });
 
   it('configures SCSS with deprecation silencing and node_modules load path', () => {
+    expect.hasAssertions();
+
     const scss = config.css.preprocessorOptions.scss;
 
     expect(scss.quietDeps).toBe(true);
@@ -208,6 +222,8 @@ describe('vite config', () => {
   });
 
   it('defines both HTML entry points for multi-page build', () => {
+    expect.hasAssertions();
+
     const input = config.build.rolldownOptions.input;
 
     expect(input['main']).toMatch(/index\.html$/);
@@ -215,6 +231,8 @@ describe('vite config', () => {
   });
 
   it('keeps the redirect entry as a separate hashed output contract', () => {
+    expect.hasAssertions();
+
     const { input, output } = config.build.rolldownOptions;
 
     expect(Object.keys(input)).toEqual(['main', 'redirect']);
@@ -224,6 +242,8 @@ describe('vite config', () => {
   });
 
   it('produces hashed output in the js/ and assets/ directories', () => {
+    expect.hasAssertions();
+
     const output = config.build.rolldownOptions.output;
 
     expect(output.entryFileNames).toContain('[hash');
@@ -232,6 +252,8 @@ describe('vite config', () => {
   });
 
   it('routes generated assets to compatibility directories', () => {
+    expect.hasAssertions();
+
     const assetFileNames = config.build.rolldownOptions.output.assetFileNames;
 
     expect(assetFileNames({ name: 'main.css' })).toBe(
@@ -247,10 +269,14 @@ describe('vite config', () => {
   });
 
   it('generates source maps for production builds', () => {
+    expect.hasAssertions();
+
     expect(config.build.sourcemap).toBe(true);
   });
 
   it('splits vendor dependencies into focused Rolldown groups', () => {
+    expect.hasAssertions();
+
     const output = config.build.rolldownOptions.output;
     const groups = output.codeSplitting.groups;
 
@@ -290,6 +316,8 @@ describe('vite config', () => {
   });
 
   it('keeps the complete legacy-to-Vite mapping synchronized with the design', () => {
+    expect.hasAssertions();
+
     expect(legacyToViteMapping).toEqual([
       { legacyName: 'REACT_APP_B2C_CLIENTID', viteName: 'VITE_B2C_CLIENTID' },
       { legacyName: 'REACT_APP_B2C_AUTHORITY', viteName: 'VITE_B2C_AUTHORITY' },
@@ -339,6 +367,8 @@ describe('vite config', () => {
   });
 
   it('includes the env template plugin for EJS variable injection', () => {
+    expect.hasAssertions();
+
     const envPlugin = config.plugins.find(
       (plugin) => plugin.name === 'env-template',
     );
@@ -353,6 +383,8 @@ describe('vite config', () => {
   });
 
   it('includes the MSAL redirect CSP plugin for dev server', () => {
+    expect.hasAssertions();
+
     const cspPlugin = config.plugins.find(
       (plugin) => plugin.name === 'msal-redirect-csp',
     );
@@ -362,6 +394,8 @@ describe('vite config', () => {
   });
 
   it('passes configured environment variables through the template plugin', () => {
+    expect.hasAssertions();
+
     const envPlugin = config.plugins.find(
       (plugin) => plugin.name === 'env-template',
     );
@@ -384,6 +418,8 @@ describe('vite config', () => {
   });
 
   it('preserves explicit environment values for PoC builds', () => {
+    expect.hasAssertions();
+
     const buildConfig = configFn({
       command: 'build',
       mode: 'production',
@@ -398,6 +434,8 @@ describe('vite config', () => {
   });
 
   it('substitutes VITE_ENVIRONMENT and defaults it for development serve mode', () => {
+    expect.hasAssertions();
+
     const serveConfig = configFn({ command: 'serve', mode: 'development' });
     const envPlugin = serveConfig.plugins.find(
       (plugin) => plugin.name === 'env-template',
@@ -421,6 +459,8 @@ describe('vite config', () => {
   });
 
   it('uses development defaults only for serve mode and requires production environment input', () => {
+    expect.hasAssertions();
+
     const requiredKeys = Object.keys(TEST_ENVIRONMENT);
     const previous = new Map(requiredKeys.map((key) => [key, readEnv(key)]));
 
@@ -463,6 +503,8 @@ describe('vite config', () => {
   });
 
   it('sets the MSAL redirect bridge CSP headers for redirect.html requests', () => {
+    expect.hasAssertions();
+
     const cspPlugin = config.plugins.find(
       (plugin) => plugin.name === 'msal-redirect-csp',
     );

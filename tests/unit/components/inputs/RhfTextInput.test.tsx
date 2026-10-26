@@ -39,8 +39,14 @@ const failingResolver: Resolver<Values> = async () => ({
   },
 });
 
+const expectTextInputOptionalAttributes = (input: HTMLElement) => {
+  expect(input).toHaveAttribute('readonly');
+  expect(input.closest('.form-field-container')).toHaveClass('wrap');
+};
+
 describe(RhfTextInput, () => {
   it('renders a labelled text box showing the form value', () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue='Acme'>
         <RhfTextInput name='organisationName' label='Organisation' />
@@ -55,6 +61,7 @@ describe(RhfTextInput, () => {
   });
 
   it('shows an empty box for nullish form values', () => {
+    expect.hasAssertions();
     const { unmount } = render(
       <Harness defaultValue={null}>
         <RhfTextInput name='organisationName' label='Organisation' />
@@ -75,6 +82,7 @@ describe(RhfTextInput, () => {
   });
 
   it('applies id, class names and optional attributes', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfTextInput
@@ -98,12 +106,12 @@ describe(RhfTextInput, () => {
     expect(input).toHaveAttribute('placeholder', 'Name');
     expect(input).toHaveAttribute('autocomplete', 'organization');
     expect(input).toBeDisabled();
-    expect(input).toHaveAttribute('readonly');
-    expect(input.closest('.form-field-container')).toHaveClass('wrap');
+    expectTextInputOptionalAttributes(input);
   });
 
   it('stores typed text and calls onChange with the new text', async () => {
-    const onChange = vi.fn();
+    expect.hasAssertions();
+    const onChange = vi.fn<() => void>();
     render(
       <Harness>
         <RhfTextInput
@@ -121,6 +129,7 @@ describe(RhfTextInput, () => {
   });
 
   it('updates the form value without an onChange callback', async () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfTextInput name='organisationName' label='Organisation' />
@@ -133,7 +142,8 @@ describe(RhfTextInput, () => {
   });
 
   it('trims surrounding whitespace when the field loses focus', async () => {
-    const onBlur = vi.fn();
+    expect.hasAssertions();
+    const onBlur = vi.fn<() => void>();
     render(
       <Harness>
         <RhfTextInput
@@ -153,6 +163,7 @@ describe(RhfTextInput, () => {
   });
 
   it('leaves an already trimmed or nullish value untouched on blur', async () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue={null}>
         <RhfTextInput name='organisationName' label='Organisation' />
@@ -166,6 +177,7 @@ describe(RhfTextInput, () => {
   });
 
   it('shows the inline help and links it to the input', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfTextInput
@@ -187,6 +199,7 @@ describe(RhfTextInput, () => {
   });
 
   it('shows the inline help inside a titled details disclosure', () => {
+    expect.hasAssertions();
     render(
       <Harness>
         <RhfTextInput
@@ -203,6 +216,7 @@ describe(RhfTextInput, () => {
   });
 
   it('shows the validation message only after a submit attempt', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -227,6 +241,7 @@ describe(RhfTextInput, () => {
   });
 
   it('shows the validation message once the field has been touched', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -242,6 +257,7 @@ describe(RhfTextInput, () => {
   });
 
   it('describes the input by both the help and the validation message', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -265,6 +281,7 @@ describe(RhfTextInput, () => {
   });
 
   it('describes the input by the titled details id and the validation message', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     const { container } = render(
       <Harness form={form} resolver={failingResolver}>
@@ -290,6 +307,7 @@ describe(RhfTextInput, () => {
   });
 
   it('is not marked invalid while the error is hidden', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -305,6 +323,7 @@ describe(RhfTextInput, () => {
   });
 
   it('focuses the invalid input when a submit attempt fails', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -318,6 +337,7 @@ describe(RhfTextInput, () => {
   });
 
   it('suppresses field level messages when asked', async () => {
+    expect.hasAssertions();
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -341,6 +361,7 @@ describe(RhfTextInput, () => {
   });
 
   it('renders a summary line instead of an input', () => {
+    expect.hasAssertions();
     render(
       <Harness defaultValue='Acme'>
         <RhfTextInput name='organisationName' label='Organisation' isSummary />

@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 import {
   fireEvent,
   render,
@@ -10,6 +10,17 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
 import type * as NotificationModule from '@/storage/notification';
 import type * as WebApiClientModule from '@/api/web-api-client';
+import type {
+  AccountInfo,
+  AuthenticationResult,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
+import type * as MsalReactModule from '@azure/msal-react';
+import type { ApplicationClient } from '@/api/web-api-client';
+import type AppLogger from '@/instrumentation/AppLogger';
+import type * as GoogleAnalyticsModule from '@/analytics/GoogleAnalytics';
+import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
+import type * as AppLoggerModule from '@/instrumentation/AppLogger';
 import {
   ApplicationType,
   type PatternApprovalDashboardDetailsDto,
@@ -20,46 +31,48 @@ import { PaDashboardItemStatus } from '@/routes/common/enums';
 import { NotificationSeverity } from '@/storage/types';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  deleteApplication: vi.fn(),
-  setAuthToken: vi.fn(),
-  setDashboardNotification: vi.fn(),
-  trackGAEvent: vi.fn(),
-  loggerError: vi.fn(),
+  acquireTokenSilent: vi.fn<IPublicClientApplication['acquireTokenSilent']>(),
+  deleteApplication: vi.fn<ApplicationClient['deleteApplication']>(),
+  setAuthToken: vi.fn<ApplicationClient['setAuthToken']>(),
+  setDashboardNotification:
+    vi.fn<typeof NotificationModule.setDashboardNotification>(),
+  trackGAEvent: vi.fn<typeof trackGAEvent>(),
+  loggerError: vi.fn<typeof AppLogger.error>(),
 }));
 
-vi.mock(
-  '@azure/msal-react',
-  () =>
-    ({
-      useMsal: () => ({
-        accounts: [{ homeAccountId: 'account-id' }],
-        instance: {
-          acquireTokenSilent: mocks.acquireTokenSilent,
-        },
-      }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
-);
+vi.mock('@azure/msal-react', async (importOriginal) => {
+  const actual = await importOriginal<typeof MsalReactModule>();
 
-vi.mock(
-  import('@/analytics/GoogleAnalytics'),
-  () =>
-    ({
-      trackGAEvent: mocks.trackGAEvent,
-    }) satisfies __ExactMockModule<__TestMockModule22>,
-);
-
-vi.mock(
-  '@/instrumentation/AppLogger',
-  () =>
-    ({
-      default: {
-        error: mocks.loggerError,
+  return {
+    ...actual,
+    useMsal: () => ({
+      accounts: [{ homeAccountId: 'account-id' }],
+      instance: {
+        acquireTokenSilent: mocks.acquireTokenSilent,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
-);
+    }),
+  } satisfies __ExactMockModule<__TestMockModule2>;
+});
 
-vi.mock(import('@/storage/notification'), async (importOriginal) => {
+vi.mock('@/analytics/GoogleAnalytics', async (importOriginal) => {
+  const actual = await importOriginal<typeof GoogleAnalyticsModule>();
+
+  return {
+    ...actual,
+    trackGAEvent: mocks.trackGAEvent,
+  } satisfies __ExactMockModule<__TestMockModule22>;
+});
+
+vi.mock('@/instrumentation/AppLogger', async (importOriginal) => {
+  const actual = await importOriginal<typeof AppLoggerModule>();
+
+  return {
+    ...actual,
+    default: { ...actual.default, error: mocks.loggerError },
+  } satisfies __ExactMockModule<__TestMockModule5>;
+});
+
+vi.mock('@/storage/notification', async (importOriginal) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
@@ -72,12 +85,10 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
 
   return {
     ...actual,
-    ApplicationClient: vi.fn(function ApplicationClientMock() {
-      return {
-        deleteApplication: mocks.deleteApplication,
-        setAuthToken: mocks.setAuthToken,
-      };
-    }),
+    ApplicationClient: class extends actual.ApplicationClient {
+      override deleteApplication = mocks.deleteApplication;
+      override setAuthToken = mocks.setAuthToken;
+    },
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
@@ -108,7 +119,7 @@ const baseRequest: PatternApprovalDashboardDetailsDto = {
 const renderPaRequestItem = (
   request: PatternApprovalDashboardDetailsDto,
   tab = DashboardTab.Requests,
-  setDeleteSuccess = vi.fn(),
+  setDeleteSuccess = vi.fn<(success: boolean) => void>(),
 ) =>
   render(
     <MemoryRouter initialEntries={['/dashboard']}>
@@ -124,20 +135,48 @@ const renderPaRequestItem = (
 describe(PaRequestItem, () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+    mocks.acquireTokenSilent.mockResolvedValue({
+      authority: 'https://login.microsoftonline.com/tenant-id',
+      uniqueId: 'unique-id',
+      tenantId: 'tenant-id',
+      scopes: ['scope'],
+      account: {
+        homeAccountId: 'account-id',
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'test@example.com',
+        localAccountId: 'local-account-id',
+      } satisfies AccountInfo,
+      idToken: 'id-token',
+      idTokenClaims: {},
+      accessToken: 'access-token',
+      fromCache: false,
+      expiresOn: null,
+      tokenType: 'Bearer',
+      correlationId: 'correlation-id',
+    } satisfies AuthenticationResult & { account: AccountInfo });
     mocks.deleteApplication.mockResolvedValue(undefined);
   });
 
   it('routes submitted applications to details and messages with unread message context', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderPaRequestItem(baseRequest);
 
-    expect(
-      screen.getByRole('heading', { name: 'Pattern approval for flow meter' }),
-    ).toBeInTheDocument();
-    expect(screen.getByText('NMI-PA-2024-001')).toBeInTheDocument();
-    expect(screen.getByText('15 Mar 2024')).toBeInTheDocument();
-    expect(screen.getByTitle('2 unread messages')).toBeInTheDocument();
+    expect({
+      heading: screen.getByRole('heading', {
+        name: 'Pattern approval for flow meter',
+      }),
+      reference: screen.getByText('NMI-PA-2024-001'),
+      date: screen.getByText('15 Mar 2024'),
+      unreadTitle: screen.getByTitle('2 unread messages'),
+    }).toMatchObject({
+      heading: expect.anything(),
+      reference: expect.anything(),
+      date: expect.anything(),
+      unreadTitle: expect.anything(),
+    });
     expect(
       within(screen.getByTitle('2 unread messages')).getByText('2'),
     ).toHaveRole('status');
@@ -146,33 +185,41 @@ describe(PaRequestItem, () => {
       screen.getByRole('button', { name: 'View application details' }),
     );
 
-    expect(
-      screen.getByRole('status', { name: 'Current route' }),
-    ).toHaveTextContent('/ta/PA-2024-0001/manage');
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith(
-      'Application item/view details',
-    );
+    expect({
+      route: screen.getByRole('status', { name: 'Current route' }).textContent,
+      event: mocks.trackGAEvent.mock.calls.at(-1)?.[0],
+    }).toStrictEqual({
+      route: '/ta/PA-2024-0001/manage',
+      event: 'Application item/view details',
+    });
 
     await user.click(screen.getByRole('button', { name: /messages/i }));
 
-    expect(
-      screen.getByRole('status', { name: 'Current route' }),
-    ).toHaveTextContent('/ta/PA-2024-0001/manage?tab=messages');
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith(
-      'Application item/view messages',
-    );
+    expect({
+      route: screen.getByRole('status', { name: 'Current route' }).textContent,
+      event: mocks.trackGAEvent.mock.calls.at(-1)?.[0],
+    }).toStrictEqual({
+      route: '/ta/PA-2024-0001/manage?tab=messages',
+      event: 'Application item/view messages',
+    });
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
 
-    await expect(
-      screen.findByRole('menuitem', { name: 'View application details' }),
-    ).resolves.toHaveAttribute('href', '/ta/PA-2024-0001/manage');
+    const detailsMenuItem = await screen.findByRole('menuitem', {
+      name: 'View application details',
+    });
 
     await user.click(
       screen.getByRole('menuitem', { name: 'View application details' }),
     );
 
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith('Viewapplicationdetails');
+    expect({
+      menuHref: detailsMenuItem.getAttribute('href'),
+      event: mocks.trackGAEvent.mock.calls.at(-1)?.[0],
+    }).toStrictEqual({
+      menuHref: '/ta/PA-2024-0001/manage',
+      event: 'Viewapplicationdetails',
+    });
   });
 
   it.each([
@@ -183,6 +230,8 @@ describe(PaRequestItem, () => {
   ])(
     'offers details and messages actions for %s applications',
     async (status) => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       renderPaRequestItem({
         ...baseRequest,
@@ -204,8 +253,10 @@ describe(PaRequestItem, () => {
   );
 
   it('resumes draft applications and deletes them after confirmation', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setDeleteSuccess = vi.fn();
+    const setDeleteSuccess = vi.fn<(success: boolean) => void>();
     const {
       title: _title,
       lastUpdated: _lastUpdated,
@@ -222,69 +273,87 @@ describe(PaRequestItem, () => {
       setDeleteSuccess,
     );
 
-    expect(
-      screen.getByRole('heading', { name: 'Draft request for Quote' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /messages/i }),
-    ).not.toBeInTheDocument();
+    expect({
+      heading: screen.getByRole('heading', { name: 'Draft request for Quote' }),
+      messagesButton: screen.queryByRole('button', { name: /messages/i }),
+    }).toMatchObject({
+      heading: expect.anything(),
+      messagesButton: null,
+    });
 
     await user.click(
       screen.getByRole('button', { name: 'Resume application' }),
     );
 
-    expect(
-      screen.getByRole('status', { name: 'Current route' }),
-    ).toHaveTextContent('/ta/PA-2024-0001');
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith(
-      'Application item/resume application',
-    );
+    expect({
+      route: screen.getByRole('status', { name: 'Current route' }).textContent,
+      event: mocks.trackGAEvent.mock.calls.at(-1)?.[0],
+    }).toStrictEqual({
+      route: '/ta/PA-2024-0001',
+      event: 'Application item/resume application',
+    });
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     const resumeAction = await screen.findByRole('menuitem', {
       name: 'Resume application',
     });
 
-    expect(resumeAction).toHaveAttribute('href', '/ta/PA-2024-0001');
-
     await user.click(resumeAction);
-
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith('Editapplication');
+    const editEvent = mocks.trackGAEvent.mock.calls.at(-1)?.[0];
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
       screen.getByRole('menuitem', { name: 'Delete application' }),
     );
 
-    expect(
-      screen.getByRole('dialog', { name: 'Confirm deletion' }),
-    ).toHaveTextContent('PA-2024-0001');
+    const confirmationDialog = screen.getByRole('dialog', {
+      name: 'Confirm deletion',
+    });
 
     await user.click(
       screen.getByRole('button', { name: 'Yes, delete application' }),
     );
 
-    await waitFor(() => expect(setDeleteSuccess).toHaveBeenCalledWith(true));
-
-    expect(mocks.acquireTokenSilent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        account: { homeAccountId: 'account-id' },
+    await waitFor(() =>
+      expect({
+        deleteSuccess: setDeleteSuccess.mock.calls.at(-1)?.[0],
+        tokenAccount: mocks.acquireTokenSilent.mock.calls.at(-1)?.[0].account,
+        authToken: mocks.setAuthToken.mock.calls.at(-1)?.[0],
+        deleteApplication: mocks.deleteApplication.mock.calls.at(-1),
+        notification: mocks.setDashboardNotification.mock.calls.at(-1)?.[0],
+        deleteEvent: mocks.trackGAEvent.mock.calls.at(-1)?.[0],
+      }).toMatchObject({
+        deleteSuccess: true,
+        tokenAccount: expect.objectContaining({ homeAccountId: 'account-id' }),
+        authToken: 'access-token',
+        deleteApplication: [
+          'PA-2024-0001',
+          { applicationType: ApplicationType.PatternApproval },
+        ],
+        notification: {
+          message: 'The draft request has been successfully deleted',
+          severity: NotificationSeverity.Success,
+        },
+        deleteEvent: 'Deleteapplication',
       }),
     );
-    expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks.deleteApplication).toHaveBeenCalledWith('PA-2024-0001', {
-      applicationType: ApplicationType.PatternApproval,
+
+    expect({
+      resumeHref: resumeAction.getAttribute('href'),
+      editEvent,
+      dialogText: confirmationDialog.textContent,
+    }).toMatchObject({
+      resumeHref: '/ta/PA-2024-0001',
+      editEvent: 'Editapplication',
+      dialogText: expect.stringContaining('PA-2024-0001'),
     });
-    expect(mocks.setDashboardNotification).toHaveBeenCalledWith({
-      message: 'The draft request has been successfully deleted',
-      severity: NotificationSeverity.Success,
-    });
-    expect(mocks.trackGAEvent).toHaveBeenCalledWith('Deleteapplication');
   });
 
   it('logs and closes the confirmation modal when draft deletion fails', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const setDeleteSuccess = vi.fn();
+    const setDeleteSuccess = vi.fn<(success: boolean) => void>();
     const deleteError = new Error('delete failed');
     mocks.deleteApplication.mockRejectedValue(deleteError);
 
@@ -328,6 +397,8 @@ describe(PaRequestItem, () => {
   it.each([undefined, ''])(
     'does not open draft deletion confirmation without a reference ID (%s)',
     async (portalReferenceId) => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const {
         portalReferenceId: _basePortalReferenceId,
@@ -357,6 +428,8 @@ describe(PaRequestItem, () => {
   );
 
   it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { container } = renderPaRequestItem({
       ...baseRequest,
@@ -365,10 +438,15 @@ describe(PaRequestItem, () => {
     });
     const card = container.querySelector('#RefId-PA-2024-0001');
 
-    expect(card).toHaveAttribute(
-      'aria-labelledby',
-      'card-summary-PA-2024-0001',
-    );
+    expect({
+      initialLabel: card?.getAttribute('aria-labelledby'),
+      unreadTitle: screen.getByTitle('0 unread messages'),
+      unreadStatus: screen.queryByRole('status', { name: '0' }),
+    }).toMatchObject({
+      initialLabel: 'card-summary-PA-2024-0001',
+      unreadTitle: expect.anything(),
+      unreadStatus: null,
+    });
 
     fireEvent.focus(card as HTMLElement);
     await waitFor(() => expect(card).toHaveAttribute('aria-labelledby', ''));
@@ -380,9 +458,6 @@ describe(PaRequestItem, () => {
       ),
     );
 
-    expect(screen.getByTitle('0 unread messages')).toBeInTheDocument();
-    expect(screen.queryByRole('status', { name: '0' })).not.toBeInTheDocument();
-
     await user.click(
       screen.getByRole('button', { name: 'Resume application' }),
     );
@@ -393,11 +468,13 @@ describe(PaRequestItem, () => {
 
     await user.click(screen.getByRole('button', { name: 'Actions' }));
 
-    expect(
-      screen.queryByRole('menuitem', { name: 'View application details' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('menuitem', { name: 'Delete application' }),
-    ).not.toBeInTheDocument();
+    expect({
+      viewDetails: screen.queryByRole('menuitem', {
+        name: 'View application details',
+      }),
+      deleteApplication: screen.queryByRole('menuitem', {
+        name: 'Delete application',
+      }),
+    }).toStrictEqual({ viewDetails: null, deleteApplication: null });
   });
 });

@@ -104,6 +104,7 @@ const renderDetails = (
 
 describe('rhfContactDetails edit mode', () => {
   it('renders the default labels and the "Other" title field', () => {
+    expect.hasAssertions();
     renderDetails(EMPTY_CONTACT);
 
     for (const label of [
@@ -123,6 +124,7 @@ describe('rhfContactDetails edit mode', () => {
   });
 
   it('renders every supplied label', () => {
+    expect.hasAssertions();
     renderDetails(EMPTY_CONTACT, CUSTOM_LABELS);
 
     for (const label of Object.values(CUSTOM_LABELS)) {
@@ -133,6 +135,7 @@ describe('rhfContactDetails edit mode', () => {
   });
 
   it('offers a blank option then every title with spaced display text', () => {
+    expect.hasAssertions();
     renderDetails(EMPTY_CONTACT);
 
     const options = screen
@@ -149,6 +152,7 @@ describe('rhfContactDetails edit mode', () => {
   });
 
   it('writes typed and chosen values into the form', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderDetails(EMPTY_CONTACT);
 
@@ -174,6 +178,7 @@ describe('rhfContactDetails edit mode', () => {
   });
 
   it('shows the "Other" title field only while the hide rule allows it', async () => {
+    expect.hasAssertions();
     const user = userEvent.setup();
     renderDetails(EMPTY_CONTACT, {}, hideTitleOtherUnlessOther);
 
@@ -190,6 +195,7 @@ describe('rhfContactDetails edit mode', () => {
 
 describe('rhfContactDetails summary mode', () => {
   it('shows a placeholder when no contact has been added', () => {
+    expect.hasAssertions();
     renderDetails('', { isSummary: true });
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -197,6 +203,7 @@ describe('rhfContactDetails summary mode', () => {
   });
 
   it('renders each label with its value and no inputs', () => {
+    expect.hasAssertions();
     renderDetails(FILLED_CONTACT, { isSummary: true });
 
     for (const label of [
@@ -220,6 +227,7 @@ describe('rhfContactDetails summary mode', () => {
   });
 
   it('renders the supplied labels and the "Other" title label', () => {
+    expect.hasAssertions();
     renderDetails(
       { ...FILLED_CONTACT, title: 'Other', titleOther: 'Chief' },
       { isSummary: true, ...CUSTOM_LABELS },
@@ -234,6 +242,7 @@ describe('rhfContactDetails summary mode', () => {
   });
 
   it('falls back to a title row when the title is empty', () => {
+    expect.hasAssertions();
     renderDetails({ ...FILLED_CONTACT, title: '' }, { isSummary: true });
 
     // An empty title hides the select row, so the fallback is the only
@@ -244,6 +253,7 @@ describe('rhfContactDetails summary mode', () => {
   });
 
   it('keys the title fallback off the supplied name', () => {
+    expect.hasAssertions();
     const Other = () => {
       const methods = useForm({
         defaultValues: { applicant: { ...FILLED_CONTACT, title: '' } },
@@ -264,6 +274,7 @@ describe('rhfContactDetails summary mode', () => {
   });
 
   it('omits the title fallback row when a title is set', () => {
+    expect.hasAssertions();
     renderDetails(FILLED_CONTACT, { isSummary: true });
 
     expect(screen.getAllByText('Title (optional)')).toHaveLength(1);

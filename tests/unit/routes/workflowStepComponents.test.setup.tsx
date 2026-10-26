@@ -1,65 +1,159 @@
 import { render } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { vi } from 'vitest';
-import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
+import type {
+  AccountInfo,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
+import type { FormikProps } from 'formik';
+import { vi, type Mock } from 'vitest';
+import type {
+  AccountDetails,
+  AccountDispatchContext,
+  AccountStateContext,
+} from '../../../ClientApp/src/authentication/accountContext';
+import {
+  State,
+  type AddressDetailsDto,
+} from '../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import type * as AppLoggerModule from '../../../ClientApp/src/instrumentation/AppLogger';
+import type * as NotificationModule from '../../../ClientApp/src/storage/notification';
 
 type InputChangeEvent = { target: { value: string | null } };
 type InputChangeHandler = (event: InputChangeEvent) => void;
 
 const mocks: {
-  acquireTokenSilent: ReturnType<typeof vi.fn>;
-  instance: { acquireTokenSilent: ReturnType<typeof vi.fn> };
-  msalAccounts: Array<{ homeAccountId: string }>;
-  setAuthToken: ReturnType<typeof vi.fn>;
-  getLookup: ReturnType<typeof vi.fn>;
-  getReportRecipient: ReturnType<typeof vi.fn>;
-  getDeliveryAndReturn: ReturnType<typeof vi.fn>;
-  getPaymentDetails: ReturnType<typeof vi.fn>;
-  getSummaryAndAccept: ReturnType<typeof vi.fn>;
-  getQuoteOfferPDFByQuoteID: ReturnType<typeof vi.fn>;
-  appLoggerError: ReturnType<typeof vi.fn>;
-  appLoggerVerbose: ReturnType<typeof vi.fn>;
-  useAccountState: ReturnType<typeof vi.fn>;
-  setShowRFQSelectModal: ReturnType<typeof vi.fn>;
+  acquireTokenSilent: Mock<IPublicClientApplication['acquireTokenSilent']>;
+  instance: Pick<IPublicClientApplication, 'acquireTokenSilent'>;
+  msalAccounts: AccountInfo[];
+  setAuthToken: Mock<
+    InstanceType<typeof WebApiClientModule.LookupClient>['setAuthToken']
+  >;
+  getLookup: Mock<
+    InstanceType<typeof WebApiClientModule.LookupClient>['getLookup']
+  >;
+  getReportRecipient: Mock<
+    InstanceType<
+      typeof WebApiClientModule.AcceptQuoteClient
+    >['getReportRecipient']
+  >;
+  getDeliveryAndReturn: Mock<
+    InstanceType<
+      typeof WebApiClientModule.AcceptQuoteClient
+    >['getDeliveryAndReturn']
+  >;
+  getPaymentDetails: Mock<
+    InstanceType<
+      typeof WebApiClientModule.AcceptQuoteClient
+    >['getPaymentDetails']
+  >;
+  getSummaryAndAccept: Mock<
+    InstanceType<
+      typeof WebApiClientModule.AcceptQuoteClient
+    >['getSummaryAndAccept']
+  >;
+  getQuoteOfferPDFByQuoteID: Mock<
+    InstanceType<
+      typeof WebApiClientModule.DashboardClient
+    >['getQuoteOfferPDFByQuoteID']
+  >;
+  appLoggerError: Mock<typeof AppLoggerModule.default.error>;
+  appLoggerVerbose: Mock<typeof AppLoggerModule.default.verbose>;
+  useAccountState: Mock<() => AccountStateContext>;
+  setShowRFQSelectModal: Mock<AccountDispatchContext['setShowRFQSelectModal']>;
   formikValues: Record<string, unknown>;
-  setFieldValue: ReturnType<typeof vi.fn>;
-  setFieldTouched: ReturnType<typeof vi.fn>;
+  setFieldValue: Mock<FormikProps<Record<string, unknown>>['setFieldValue']>;
+  setFieldTouched: Mock<
+    FormikProps<Record<string, unknown>>['setFieldTouched']
+  >;
   inputChangeHandlers: Map<string, InputChangeHandler>;
   dashboardNotification: { message: string; severity: string } | null;
-  setDashboardNotification: ReturnType<typeof vi.fn>;
-  clearDashboardNotification: ReturnType<typeof vi.fn>;
-  clearDashboardInfoNotification: ReturnType<typeof vi.fn>;
-  openPdfPageInNewTab: ReturnType<typeof vi.fn>;
+  setDashboardNotification: Mock<
+    typeof NotificationModule.setDashboardNotification
+  >;
+  clearDashboardNotification: Mock<
+    typeof NotificationModule.clearDashboardNotification
+  >;
+  clearDashboardInfoNotification: Mock<
+    typeof NotificationModule.clearDashboardInfoNotification
+  >;
+  openPdfPageInNewTab: Mock<typeof HelperFunctionsModule.openPdfPageInNewTab>;
 } = vi.hoisted(() => {
-  const acquireTokenSilent = vi.fn();
+  const acquireTokenSilent =
+    vi.fn<IPublicClientApplication['acquireTokenSilent']>();
   const instance = { acquireTokenSilent };
   return {
     acquireTokenSilent,
     instance,
-    msalAccounts: [{ homeAccountId: 'account-1' }],
-    setAuthToken: vi.fn(),
-    getLookup: vi.fn(),
-    getReportRecipient: vi.fn(),
-    getDeliveryAndReturn: vi.fn(),
-    getPaymentDetails: vi.fn(),
-    getSummaryAndAccept: vi.fn(),
-    getQuoteOfferPDFByQuoteID: vi.fn(),
-    appLoggerError: vi.fn(),
-    appLoggerVerbose: vi.fn(),
-    useAccountState: vi.fn(),
-    setShowRFQSelectModal: vi.fn(),
+    msalAccounts: [
+      {
+        homeAccountId: 'account-1',
+        environment: 'login.microsoftonline.com',
+        tenantId: 'tenant-id',
+        username: 'user@example.test',
+        localAccountId: 'local-account-1',
+      },
+    ],
+    setAuthToken:
+      vi.fn<
+        InstanceType<typeof WebApiClientModule.LookupClient>['setAuthToken']
+      >(),
+    getLookup:
+      vi.fn<
+        InstanceType<typeof WebApiClientModule.LookupClient>['getLookup']
+      >(),
+    getReportRecipient:
+      vi.fn<
+        InstanceType<
+          typeof WebApiClientModule.AcceptQuoteClient
+        >['getReportRecipient']
+      >(),
+    getDeliveryAndReturn:
+      vi.fn<
+        InstanceType<
+          typeof WebApiClientModule.AcceptQuoteClient
+        >['getDeliveryAndReturn']
+      >(),
+    getPaymentDetails:
+      vi.fn<
+        InstanceType<
+          typeof WebApiClientModule.AcceptQuoteClient
+        >['getPaymentDetails']
+      >(),
+    getSummaryAndAccept:
+      vi.fn<
+        InstanceType<
+          typeof WebApiClientModule.AcceptQuoteClient
+        >['getSummaryAndAccept']
+      >(),
+    getQuoteOfferPDFByQuoteID:
+      vi.fn<
+        InstanceType<
+          typeof WebApiClientModule.DashboardClient
+        >['getQuoteOfferPDFByQuoteID']
+      >(),
+    appLoggerError: vi.fn<typeof AppLoggerModule.default.error>(),
+    appLoggerVerbose: vi.fn<typeof AppLoggerModule.default.verbose>(),
+    useAccountState: vi.fn<() => AccountStateContext>(),
+    setShowRFQSelectModal:
+      vi.fn<AccountDispatchContext['setShowRFQSelectModal']>(),
     formikValues: {},
-    setFieldValue: vi.fn(),
-    setFieldTouched: vi.fn(),
+    setFieldValue:
+      vi.fn<FormikProps<Record<string, unknown>>['setFieldValue']>(),
+    setFieldTouched:
+      vi.fn<FormikProps<Record<string, unknown>>['setFieldTouched']>(),
     inputChangeHandlers: new Map<string, InputChangeHandler>(),
     dashboardNotification: null as { message: string; severity: string } | null,
-    setDashboardNotification: vi.fn(),
-    clearDashboardNotification: vi.fn(),
-    clearDashboardInfoNotification: vi.fn(),
-    openPdfPageInNewTab: vi.fn(),
+    setDashboardNotification:
+      vi.fn<typeof NotificationModule.setDashboardNotification>(),
+    clearDashboardNotification:
+      vi.fn<typeof NotificationModule.clearDashboardNotification>(),
+    clearDashboardInfoNotification:
+      vi.fn<typeof NotificationModule.clearDashboardInfoNotification>(),
+    openPdfPageInNewTab:
+      vi.fn<typeof HelperFunctionsModule.openPdfPageInNewTab>(),
   };
 });
 
@@ -100,10 +194,24 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
       TCPortalMeasurementCategory: 'TCPortalMeasurementCategory',
       TCArtefactTypePortalCategory: 'TCArtefactTypePortalCategory',
     },
-    LookupClient: vi.fn(function LookupClientMock() {
+    LookupClient: vi.fn<
+      () => Pick<
+        InstanceType<typeof WebApiClientModule.LookupClient>,
+        'setAuthToken' | 'getLookup'
+      >
+    >(function LookupClientMock() {
       return { setAuthToken: mocks.setAuthToken, getLookup: mocks.getLookup };
     }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+    AcceptQuoteClient: vi.fn<
+      () => Pick<
+        InstanceType<typeof WebApiClientModule.AcceptQuoteClient>,
+        | 'setAuthToken'
+        | 'getReportRecipient'
+        | 'getDeliveryAndReturn'
+        | 'getPaymentDetails'
+        | 'getSummaryAndAccept'
+      >
+    >(function AcceptQuoteClientMock() {
       return {
         setAuthToken: mocks.setAuthToken,
         getReportRecipient: mocks.getReportRecipient,
@@ -112,10 +220,20 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
         getSummaryAndAccept: mocks.getSummaryAndAccept,
       };
     }),
-    AccountsClient: vi.fn(function AccountsClientMock() {
+    AccountsClient: vi.fn<
+      () => Pick<
+        InstanceType<typeof WebApiClientModule.AccountsClient>,
+        'setAuthToken'
+      >
+    >(function AccountsClientMock() {
       return { setAuthToken: mocks.setAuthToken };
     }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
+    DashboardClient: vi.fn<
+      () => Pick<
+        InstanceType<typeof WebApiClientModule.DashboardClient>,
+        'setAuthToken' | 'getQuoteOfferPDFByQuoteID'
+      >
+    >(function DashboardClientMock() {
       return {
         setAuthToken: mocks.setAuthToken,
         getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
@@ -531,10 +649,10 @@ export const accountDetails = {
   familyName: 'Tester',
 } as AccountDetails;
 
-export const streetAddress = {
+export const streetAddress: AddressDetailsDto = {
   line1: '1 National Circuit',
   suburb: 'Canberra',
-  state: 'ACT',
+  state: State.ACT,
   postcode: '2600',
 };
 

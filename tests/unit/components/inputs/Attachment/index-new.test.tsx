@@ -9,9 +9,15 @@ import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
 import type { FormikConfig, FormikValues } from 'formik';
 import { useState } from 'react';
+import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import type { AttachmentDto } from '@/api/web-api-client';
 import AttachmentNew from '@/components/Inputs/Attachment/index-new';
+
+type AttachmentProps = ComponentProps<typeof AttachmentNew>;
+type UploadFiles = NonNullable<AttachmentProps['onUploadFiles']>;
+type DeleteFile = NonNullable<AttachmentProps['onDeleteFile']>;
+type CancelFile = NonNullable<AttachmentProps['handleCancelFile']>;
 import { FileStatus } from '@/routes/ta/types';
 
 interface FormikHarnessProps<TValues extends FormikValues> {
@@ -128,7 +134,9 @@ const renderAttachment = (
   );
 
 describe(AttachmentNew, () => {
-  it('renders upload controls with help text, disabled state, and file constraints', () => {
+  it('renders upload controls with help text and disabled state', () => {
+    expect.hasAssertions();
+
     renderAttachment([], {
       className: 'drop-target',
       containerClassName: 'attachment-container',
@@ -146,16 +154,31 @@ describe(AttachmentNew, () => {
       screen.getByTestId('drag-upload-supporting-documents'),
     ).toBeDisabled();
     expect(screen.getByTestId('supporting-documents')).toBeDisabled();
-    expect(screen.getByText('.pdf, .jpg')).toBeInTheDocument();
-    expect(
-      screen.getByText(
+  });
+
+  it('renders upload file constraints', () => {
+    expect.hasAssertions();
+    renderAttachment([], {
+      className: 'drop-target',
+      containerClassName: 'attachment-container',
+      disableUpload: true,
+    });
+
+    expect({
+      fileTypes: screen.getByText('.pdf, .jpg').textContent,
+      maximumSize: screen.getByText(
         (_, element) =>
           element?.textContent === 'Maximum size for each file: 1MB each',
-      ),
-    ).toBeInTheDocument();
+      ).textContent,
+    }).toEqual({
+      fileTypes: '.pdf, .jpg',
+      maximumSize: 'Maximum size for each file: 1MB each',
+    });
   });
 
   it('uses default upload button labels and forwards browse clicks to the file input', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const inputClick = vi.spyOn(HTMLInputElement.prototype, 'click');
     renderAttachment([], undefined, true);
@@ -173,6 +196,8 @@ describe(AttachmentNew, () => {
   });
 
   it('prevents default browser handling when the file label is clicked', () => {
+    expect.hasAssertions();
+
     renderAttachment([]);
     const clickEvent = new MouseEvent('click', {
       bubbles: true,
@@ -188,7 +213,9 @@ describe(AttachmentNew, () => {
   });
 
   it('ignores null-valued and null-file input changes', () => {
-    const onUploadFiles = vi.fn();
+    expect.hasAssertions();
+
+    const onUploadFiles = vi.fn<UploadFiles>();
     renderAttachment([], { onUploadFiles });
     const input = screen.getByTestId('drag-upload-supporting-documents');
 
@@ -213,6 +240,8 @@ describe(AttachmentNew, () => {
   });
 
   it('renders summary attachments or a no-details fallback', () => {
+    expect.hasAssertions();
+
     const { rerender } = renderAttachment([], { isSummary: true });
 
     expect(screen.getByText('No details added')).toBeInTheDocument();
@@ -231,7 +260,11 @@ describe(AttachmentNew, () => {
   });
 
   it('reports invalid extensions and too many selected files without uploading', async () => {
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    expect.hasAssertions();
+
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], {
       maxFiles: 1,
       onUploadFiles,
@@ -254,7 +287,11 @@ describe(AttachmentNew, () => {
   });
 
   it('reports a missing extension with singular file and allowed-type wording', () => {
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    expect.hasAssertions();
+
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], {
       allowedTypes: '.pdf',
       onUploadFiles,
@@ -269,8 +306,12 @@ describe(AttachmentNew, () => {
   });
 
   it('reports a single oversized file without uploading it', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue(uploadedAttachment);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue(uploadedAttachment);
     renderAttachment(null, {
       allowMultiple: false,
       allowedTypes: '.pdf',
@@ -290,8 +331,12 @@ describe(AttachmentNew, () => {
   });
 
   it('uploads one valid file into the attachment list', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment([], { onUploadFiles });
 
     await user.upload(
@@ -312,6 +357,8 @@ describe(AttachmentNew, () => {
   });
 
   it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const result = [
       {
@@ -320,7 +367,7 @@ describe(AttachmentNew, () => {
         attachmentName: 'diagram.jpg',
       },
     ] satisfies AttachmentDto[];
-    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    const onUploadFiles = vi.fn<UploadFiles>().mockResolvedValue(result);
     renderAttachment([uploadedAttachment], {
       onUploadFiles,
     });
@@ -348,6 +395,8 @@ describe(AttachmentNew, () => {
   });
 
   it('reports oversized files in a batch and uploads the files within the size limit', async () => {
+    expect.hasAssertions();
+
     const result = [
       {
         ...uploadedAttachment,
@@ -355,7 +404,7 @@ describe(AttachmentNew, () => {
         attachmentName: 'small.pdf',
       },
     ] satisfies AttachmentDto[];
-    const onUploadFiles = vi.fn().mockResolvedValue(result);
+    const onUploadFiles = vi.fn<UploadFiles>().mockResolvedValue(result);
     renderAttachment([], { onUploadFiles });
 
     changeFileInput([
@@ -383,8 +432,12 @@ describe(AttachmentNew, () => {
   it('stores a single-file upload as a one-item list while progress is still running', async () => {
     // Single-file mode used to store a lone object here, which AttachmentItemNew could not read
     // because it addresses its field as `name[index]`. The field is always a list now.
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue([uploadedAttachment]);
     renderAttachment(null, {
       allowMultiple: false,
       onUploadFiles,
@@ -416,6 +469,8 @@ describe(AttachmentNew, () => {
   it('points the control at its validation message once the field is touched', () => {
     // Until the field is touched the control is described by its help text; afterwards the
     // error takes over, so assistive tech announces the problem rather than the hint.
+    expect.hasAssertions();
+
     render(
       <FormikHarness
         initialValues={{ attachments: [] }}
@@ -448,8 +503,10 @@ describe(AttachmentNew, () => {
   });
 
   it('reports server validation errors from a failed upload', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onUploadFiles = vi.fn().mockRejectedValue({
+    const onUploadFiles = vi.fn<UploadFiles>().mockRejectedValue({
       errors: {
         first: 'Virus scan failed',
         second: 'Document could not be stored',
@@ -471,8 +528,10 @@ describe(AttachmentNew, () => {
   });
 
   it('renders active upload progress with cancellable file rows', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const handleCancelFile = vi.fn().mockResolvedValue(undefined);
+    const handleCancelFile = vi.fn<CancelFile>().mockResolvedValue(undefined);
     renderAttachment([], {
       handleCancelFile,
       progress: {
@@ -505,6 +564,8 @@ describe(AttachmentNew, () => {
   });
 
   it('shows uploaded attachments once progress is complete', () => {
+    expect.hasAssertions();
+
     renderAttachment([uploadedAttachment], {
       progress: {
         status: 'Completed',
@@ -527,8 +588,10 @@ describe(AttachmentNew, () => {
   });
 
   it('deletes an existing attachment and removes it from the field value', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+    const onDeleteFile = vi.fn<DeleteFile>().mockResolvedValue(undefined);
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
     await user.click(screen.getByRole('button', { name: 'Delete' }));
@@ -544,10 +607,12 @@ describe(AttachmentNew, () => {
   });
 
   it('does not call delete when the selected attachment has no id', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi.spyOn(console, 'error');
     try {
       const user = userEvent.setup();
-      const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+      const onDeleteFile = vi.fn<DeleteFile>().mockResolvedValue(undefined);
       renderAttachment(
         [
           {
@@ -572,8 +637,10 @@ describe(AttachmentNew, () => {
   });
 
   it('reports delete failures without removing the attachment', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onDeleteFile = vi.fn().mockRejectedValue('Delete failed');
+    const onDeleteFile = vi.fn<DeleteFile>().mockRejectedValue('Delete failed');
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
     await user.click(screen.getByRole('button', { name: 'Delete' }));
@@ -588,6 +655,8 @@ describe(AttachmentNew, () => {
   });
 
   it('keeps a locked attachment in summary mode without delete controls', () => {
+    expect.hasAssertions();
+
     renderAttachment([
       {
         ...uploadedAttachment,
@@ -608,6 +677,8 @@ describe(AttachmentNew, () => {
   });
 
   it('shows uploaded attachments when progress completed with errors', () => {
+    expect.hasAssertions();
+
     renderAttachment([uploadedAttachment], {
       progress: {
         status: 'CompletedWithErrors',
