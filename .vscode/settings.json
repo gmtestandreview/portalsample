@@ -71,7 +71,11 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
-    "editor.quickSuggestions": true,
+    "editor.quickSuggestions": {
+      "comments": "on",
+      "strings": "on",
+      "other": "on"
+    },
     "editor.wordBasedSuggestions": "allDocuments",
     "editor.tabSize": 2,
     "editor.suggest.showSnippets": false
