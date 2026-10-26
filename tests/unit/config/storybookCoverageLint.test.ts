@@ -14,6 +14,8 @@ const createLinter = () =>
 
 describe('storybook coverage script lint contract', () => {
   it('loads the task-scoped ESM lint configuration for coverage scripts', async () => {
+    expect.hasAssertions();
+
     const linter = createLinter();
     const [result] = await linter.lintText(
       'const value = 1;\nconsole.error(value);\n',
@@ -22,10 +24,12 @@ describe('storybook coverage script lint contract', () => {
 
     if (!result) throw new Error('ESLint returned no result');
 
-    expect(result.messages).toEqual([]);
+    expect(result.messages).toStrictEqual([]);
   });
 
   it('reports undefined identifiers instead of silently accepting them', async () => {
+    expect.hasAssertions();
+
     const linter = createLinter();
     const [result] = await linter.lintText('console.error(unknownValue);', {
       filePath: 'scripts/storybook-closure.mjs',
@@ -37,6 +41,8 @@ describe('storybook coverage script lint contract', () => {
   });
 
   it('lints every maintained Storybook evidence script with Node globals', async () => {
+    expect.hasAssertions();
+
     const linter = createLinter();
     const results = await linter.lintFiles([
       'scripts/storybook-coverage.mjs',

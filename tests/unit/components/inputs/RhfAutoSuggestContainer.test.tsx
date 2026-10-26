@@ -138,6 +138,7 @@ const failingResolver = async () => ({
 describe(RhfAutoSuggestContainer, () => {
   it('renders options, help, loading state and handles input actions', async () => {
     expect.hasAssertions();
+
     comboState.open.mockClear();
     comboState.close.mockClear();
     const onSearchTermChange = vi
@@ -230,6 +231,7 @@ describe(RhfAutoSuggestContainer, () => {
 
   it('renders no-result and lookup-error messages with defaults and overrides', () => {
     expect.hasAssertions();
+
     renderContainer({
       noResult: true,
       noResultMessage: 'No suburb matches',
@@ -256,6 +258,7 @@ describe(RhfAutoSuggestContainer, () => {
 
   it('shows field validation only after the form is submitted', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     renderContainer({ inlineHelp: 'Choose a suburb' }, form, failingResolver);
 

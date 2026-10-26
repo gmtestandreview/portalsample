@@ -10,6 +10,8 @@ import {
 
 describe('generated API client harness', () => {
   it('returns one instance however many times the client is constructed', () => {
+    expect.hasAssertions();
+
     const client = createClientMockFor('getStepStatuses');
 
     const first = new (client.constructor as unknown as new () => unknown)();
@@ -23,6 +25,8 @@ describe('generated API client harness', () => {
   });
 
   it('records the auth token the component sets', () => {
+    expect.hasAssertions();
+
     const client = createClientMockFor('getStepStatuses');
 
     client.instance.setAuthToken('access-token');
@@ -31,25 +35,31 @@ describe('generated API client harness', () => {
   });
 
   it('exposes each named method as an independently configurable mock', async () => {
+    expect.hasAssertions();
+
     const client = createClientMockFor('getStepStatuses', 'getDocuments');
 
     client.methods.getStepStatuses.mockResolvedValue([{ name: 'step' }]);
     client.methods.getDocuments.mockRejectedValue(new Error('nope'));
 
-    await expect(client.instance.getStepStatuses()).resolves.toEqual([
+    await expect(client.instance.getStepStatuses()).resolves.toStrictEqual([
       { name: 'step' },
     ]);
     await expect(client.instance.getDocuments()).rejects.toThrow('nope');
   });
 
   it('accepts pre-built method mocks', () => {
-    const getStepStatuses = vi.fn().mockReturnValue('value');
+    expect.hasAssertions();
+
+    const getStepStatuses = vi.fn<() => string>().mockReturnValue('value');
     const client = createClientMock({ getStepStatuses });
 
     expect(client.instance.getStepStatuses()).toBe('value');
   });
 
   it('keeps every non-client export in place when building the module mock', () => {
+    expect.hasAssertions();
+
     const original = {
       ApplicationType: { QuoteRequest: 'QuoteRequest' },
       ApplicationClient: class Real {},
@@ -63,13 +73,15 @@ describe('generated API client harness', () => {
     // The generated module also exports the enums components compare against. Replacing the
     // whole module with a bare object turns those into undefined, and the component then fails
     // an equality check for a reason that looks nothing like the cause.
-    expect(moduleMock.ApplicationType).toEqual({
+    expect(moduleMock.ApplicationType).toStrictEqual({
       QuoteRequest: 'QuoteRequest',
     });
     expect(moduleMock.ApplicationClient).toBe(client.constructor);
   });
 
   it('clears constructor, token and method records on reset', () => {
+    expect.hasAssertions();
+
     const client = createClientMockFor('getStepStatuses');
 
     new (client.constructor as unknown as new () => unknown)();

@@ -16,7 +16,7 @@ const setViewportWidth = (width: number) => {
   });
 };
 
-describe('CustomPagination', () => {
+describe(CustomPagination, () => {
   const resetPaginationState = () => {
     vi.useRealTimers();
     if (originalInnerWidth) {
@@ -26,6 +26,7 @@ describe('CustomPagination', () => {
 
   it('hides the navigation when there is only one page', () => {
     expect.hasAssertions();
+
     resetPaginationState();
     setViewportWidth(1200);
 
@@ -45,6 +46,7 @@ describe('CustomPagination', () => {
 
   it('calls page change callbacks for numbered, previous, next, first, and last controls', async () => {
     expect.hasAssertions();
+
     resetPaginationState();
     setViewportWidth(1200);
 
@@ -74,6 +76,7 @@ describe('CustomPagination', () => {
 
   it('does not call page change for previous or next controls outside page bounds', async () => {
     expect.hasAssertions();
+
     resetPaginationState();
     setViewportWidth(1200);
 
@@ -104,6 +107,7 @@ describe('CustomPagination', () => {
 
   it('keeps the visible page range anchored near the start and end', () => {
     expect.hasAssertions();
+
     resetPaginationState();
     setViewportWidth(1200);
 
@@ -138,6 +142,7 @@ describe('CustomPagination', () => {
 
   it('updates the visible page range after a debounced responsive resize', () => {
     expect.hasAssertions();
+
     resetPaginationState();
 
     vi.useFakeTimers();
@@ -183,6 +188,7 @@ describe('CustomPagination', () => {
     'uses the matching initial page range for a %i px viewport',
     (width, visibleLabels, hiddenLabels) => {
       expect.hasAssertions();
+
       resetPaginationState();
 
       setViewportWidth(width);

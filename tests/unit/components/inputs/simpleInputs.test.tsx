@@ -100,6 +100,7 @@ const expectTextReadOnlySummary = () => {
 describe('simple Formik input components', () => {
   it('associates Checkbox label/help text and updates the form value', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -136,6 +137,7 @@ describe('simple Formik input components', () => {
 
   it('renders Checkbox validation feedback when touched and not suppressed', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness
         initialValues={{ accepted: false }}
@@ -177,6 +179,7 @@ describe('simple Formik input components', () => {
 
   it('renders Checkbox summary and subform content branches', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness initialValues={{ accepted: true }}>
         <Checkbox name='accepted' label='Declaration accepted' isSummary />
@@ -201,6 +204,7 @@ describe('simple Formik input components', () => {
 
   it('renders RadioButton descriptor/subfield wiring and calls a custom change handler', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onChange = vi.fn<() => void>();
 
@@ -232,6 +236,7 @@ describe('simple Formik input components', () => {
 
   it('renders RadioButtonGroup options, help details, error feedback, and summary label', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const options = [
       { id: 'contact-email', label: 'Email', value: 'email' },
@@ -293,6 +298,7 @@ describe('simple Formik input components', () => {
 
   it('renders RadioButtonGroup inline help, horizontal layout, custom class summary, and summary fallbacks', () => {
     expect.hasAssertions();
+
     const options = [
       { id: 'delivery-post', label: 'Post', value: 'post' },
       { id: 'delivery-pickup', label: 'Pickup', value: 'pickup' },
@@ -359,6 +365,7 @@ describe('simple Formik input components', () => {
 
   it('renders SelectInput options and calls both custom and Formik change handlers', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onChange = vi.fn<() => void>();
 
@@ -401,6 +408,7 @@ describe('simple Formik input components', () => {
 
   it('renders SelectInput default option, inline help details, disabled state, hidden option, and empty summary branch', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const options = [
       { value: 'standard', displayText: 'Standard' },
@@ -458,6 +466,7 @@ describe('simple Formik input components', () => {
 
   it('renders SelectInput validation, read-only value, horizontal layout, and summary value', () => {
     expect.hasAssertions();
+
     const options = [
       { value: 'act', displayText: 'ACT' },
       { value: 'nsw', displayText: 'NSW' },
@@ -504,6 +513,7 @@ describe('simple Formik input components', () => {
 
   it('renders horizontal SelectInput details, validation, unmatched read-only value, and unmatched summary fallback', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const options = [{ value: 'act', displayText: 'ACT' }];
     const { rerender } = render(
@@ -559,6 +569,7 @@ describe('simple Formik input components', () => {
 
   it('uses an explicit SelectInput id for validation and supports missing options', () => {
     expect.hasAssertions();
+
     render(
       <FormikHarness
         initialValues={{ state: '' }}
@@ -592,6 +603,7 @@ describe('simple Formik input components', () => {
 
   it('updates, trims, counts, and sanitises TextAreaInput values', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -634,6 +646,7 @@ describe('simple Formik input components', () => {
 
   it('renders TextAreaInput validation with counter context and summary value', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness
         initialValues={{ notes: 'abcdef' }}
@@ -661,6 +674,7 @@ describe('simple Formik input components', () => {
 
   it('renders TextAreaInput without help, rows, counter, or string trimming', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -683,6 +697,7 @@ describe('simple Formik input components', () => {
 
   it('handles TextInput labels, events, blur trimming, date formatting, and summary dates', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onChange = vi.fn<() => void>();
     const onBlur = vi.fn<() => void>();
@@ -744,6 +759,7 @@ describe('simple Formik input components', () => {
 
   it('renders TextInput validation and disabled/read-only states', () => {
     expect.hasAssertions();
+
     render(
       <FormikHarness
         initialValues={{ firstName: '' }}
@@ -766,6 +782,7 @@ describe('simple Formik input components', () => {
 
   it('renders TextInput defaults, aria passthrough, date blur formatting, and summary fallback', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <FormikHarness initialValues={{ dueDate: '2026-06-11T00:00:00.000Z' }}>
@@ -804,6 +821,7 @@ describe('simple Formik input components', () => {
 
   it('renders TextReadOnly supplied and Formik values plus summary formatting', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <FormikHarness initialValues={{ reference: 'FORMIK-REF' }}>
         <TextReadOnly

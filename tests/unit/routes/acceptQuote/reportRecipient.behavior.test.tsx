@@ -16,17 +16,18 @@ import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' });
   return {
     acquireTokenSilent,
-    getReportRecipient: vi.fn(),
-    error: vi.fn(),
+    getReportRecipient: vi.fn<(...args: unknown[]) => unknown>(),
+    error: vi.fn<(...args: unknown[]) => unknown>(),
     accounts: [{ homeAccountId: 'mock-id' }],
     instance: { acquireTokenSilent },
   };
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -40,6 +41,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/authentication/hooks',
   () =>
@@ -51,28 +53,34 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AcceptQuoteClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
       getReportRecipient = mocks.getReportRecipient;
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: mocks.error },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: mocks.error,
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
 // The edit form renders the RHF twin; the summary branch keeps the Formik one.
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/AddressLookup',
   () =>
@@ -82,6 +90,7 @@ vi.mock(
       ),
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/Inputs/RhfAddressLookup',
   () =>
@@ -120,7 +129,7 @@ interface StepHarnessProps {
 function StepHarness({
   values = {},
   isSummary,
-  onSubmit = vi.fn(),
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
   return (
     <Formik<ReportRecipientStep & { saveAndExit?: boolean }>
@@ -166,6 +175,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('describes the street and postal address options from the loaded organisation', async () => {
+    expect.hasAssertions();
+
     renderStep({});
 
     await expect(
@@ -176,6 +187,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('describes the postal option with the street address when they are the same', async () => {
+    expect.hasAssertions();
+
     mocks.getReportRecipient.mockResolvedValue({
       rfqOrganisation: {
         streetAddress,
@@ -193,6 +206,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('shows the address lookup only when Other is selected', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep({});
     await screen.findByText(/1 Street Road/);
@@ -211,8 +226,10 @@ describe('reportRecipient behavior', () => {
   });
 
   it('submits the organisation name and strips the hidden address', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: {
         reportAddressType: ReportAddressTypeValues.BusinessAddress,
@@ -238,8 +255,10 @@ describe('reportRecipient behavior', () => {
   });
 
   it('rejects an organisation name longer than 400 characters', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: { organisationName: 'x'.repeat(401) },
       onSubmit,
@@ -253,6 +272,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('holds back the validation message until the form is submitted', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep({ values: { organisationName: 'x'.repeat(401) } });
     await screen.findByText(/1 Street Road/);
@@ -269,6 +290,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('hides the address lookup again for the postal address option', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep({
       values: { reportAddressType: ReportAddressTypeValues.Other },
@@ -285,8 +308,10 @@ describe('reportRecipient behavior', () => {
   });
 
   it('submits the chosen address type to the outer form', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({ onSubmit });
     await screen.findByText(/1 Street Road/);
 
@@ -303,8 +328,10 @@ describe('reportRecipient behavior', () => {
   });
 
   it('applies the soft schema to save and exit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: { organisationName: 'x'.repeat(401) },
       onSubmit,
@@ -319,6 +346,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
+    expect.hasAssertions();
+
     const { rerender } = renderStep({ values: { organisationName: 'Old' } });
     await screen.findByText(/1 Street Road/);
 
@@ -332,6 +361,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('shows validation again after reinitializing following an invalid submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = renderStep({
       values: { organisationName: 'x'.repeat(401) },
@@ -352,6 +383,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('keeps rendering the form and logs when the recipient fails to load', async () => {
+    expect.hasAssertions();
+
     mocks.getReportRecipient.mockRejectedValue(new Error('boom'));
     renderStep({});
 
@@ -363,6 +396,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('shows the formatted postal address read-only in summary mode', async () => {
+    expect.hasAssertions();
+
     mocks.getReportRecipient.mockResolvedValue({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
       rfqOrganisation: { streetAddress, postalAddress },
@@ -373,6 +408,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('shows the entered address in summary mode for the Other address type', async () => {
+    expect.hasAssertions();
+
     mocks.getReportRecipient.mockResolvedValue({
       reportAddressType: ReportAddressTypeValues.Other,
       rfqOrganisation: { streetAddress, postalAddress },
@@ -385,6 +422,8 @@ describe('reportRecipient behavior', () => {
   });
 
   it('shows the formatted business address read-only in summary mode', async () => {
+    expect.hasAssertions();
+
     mocks.getReportRecipient.mockResolvedValue({
       reportAddressType: ReportAddressTypeValues.BusinessAddress,
       rfqOrganisation: { streetAddress, postalAddress },

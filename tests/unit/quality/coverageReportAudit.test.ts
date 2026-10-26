@@ -13,6 +13,8 @@ const cleanReport = Object.fromEntries([
 
 describe('storybook coverage report audit', () => {
   it('passes a report containing only executable application source', () => {
+    expect.hasAssertions();
+
     const audit = auditCoverageReport(cleanReport, 3, repositoryRoot);
 
     expect(audit.nonExecutableEntries).toEqual([]);
@@ -21,6 +23,8 @@ describe('storybook coverage report audit', () => {
   });
 
   it('names any non-executable asset that reached the remapper', () => {
+    expect.hasAssertions();
+
     const report = Object.fromEntries([
       ...Object.entries(cleanReport),
       entry('C:/repo/ClientApp/src/terms-config.json?import'),
@@ -35,6 +39,8 @@ describe('storybook coverage report audit', () => {
   });
 
   it('fails when coverage has been gutted rather than narrowed', () => {
+    expect.hasAssertions();
+
     // Excluding the JSON asset must not be achievable by excluding the
     // application source that imports it.
     const audit = auditCoverageReport(
@@ -48,6 +54,8 @@ describe('storybook coverage report audit', () => {
   });
 
   it('does not count outside, generated, test, story, or Storybook-support entries', () => {
+    expect.hasAssertions();
+
     const report = Object.fromEntries([
       ...Object.entries(cleanReport),
       entry('C:/outside-repository/src/unrelated.ts'),

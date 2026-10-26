@@ -26,33 +26,36 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getLookup'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
+
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
+
+  clients.lookup = createClientMockFor('getLookup');
+
+  return webApiClientModuleMock(original, {
+    LookupClient: clients.lookup,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
-
-    clients.lookup = createClientMockFor('getLookup');
-
-    return webApiClientModuleMock(original, {
-      LookupClient: clients.lookup,
-    }) satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
-
-vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
-      default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: {
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const REQUEST_ID = 'RFQ-1';
@@ -128,19 +131,25 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('shows both sections with the values held by Formik', async () => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
     );
 
-    expect(screen.getByText('Acme Pty Ltd')).toBeInTheDocument();
-    expect(screen.getByText(/Acme Trading/)).toBeInTheDocument();
-    expect(screen.getByText('Ada')).toBeInTheDocument();
-    expect(screen.getByText('Mettler')).toBeInTheDocument();
-    expect(screen.getByText('SN-0042')).toBeInTheDocument();
-    expect(screen.getByText('Balance')).toBeInTheDocument();
+    expect([
+      screen.getByText('Acme Pty Ltd'),
+      screen.getByText(/Acme Trading/),
+      screen.getByText('Ada'),
+      screen.getByText('Mettler'),
+      screen.getByText('SN-0042'),
+      screen.getByText('Balance'),
+    ]).toHaveLength(6);
   });
 
   it('honours the wizard hiding rule for an empty branch name', async () => {
+    expect.hasAssertions();
+
     await renderPage(fixtureValues('no branch or location name'));
 
     expect(screen.getByText('Acme Trading')).toBeInTheDocument();
@@ -148,6 +157,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('shows the contact details unless principalContactHide says otherwise', async () => {
+    expect.hasAssertions();
+
     const values = fixtureValues('fully populated with the principal contact');
     await renderPage(values, {
       status: {
@@ -162,6 +173,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('copes with a Formik status that carries no hiding rules', async () => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
@@ -173,6 +186,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('describes the signed-in account holder under "Use my contact details"', async () => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
@@ -191,6 +206,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('leaves the account holder out when the account has no name or email', async () => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       { account: { givenName: 'Margaret' } },
@@ -200,6 +217,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('hides the serial number row when no serial number is available', async () => {
+    expect.hasAssertions();
+
     const values = fixtureValues('no serial number');
     await renderPage({
       ...values,
@@ -213,6 +232,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('offers review guidance and no back button while editable', async () => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
     );
@@ -227,6 +248,8 @@ describe(RequestForQuoteSummary, () => {
     [0, 'organisation-and-contact'],
     [1, 'instrument-and-request'],
   ])('edit button %i leads to %s while editable', async (index, step) => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
     );
@@ -245,6 +268,8 @@ describe(RequestForQuoteSummary, () => {
   });
 
   it('swaps guidance and Edit links for a back button once submitted', async () => {
+    expect.hasAssertions();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {

@@ -16,8 +16,18 @@ const LocationProbe = () => {
 };
 
 describe(renderWithProviders, () => {
+  const renderWithRoute = renderWithProviders as unknown as (
+    ui: ReactNode,
+    options: {
+      route: string;
+      wrapper?: (props: { children: ReactNode }) => ReactNode;
+    },
+  ) => void;
+
   it('renders components inside a memory router', () => {
-    renderWithProviders(<LocationProbe />, { route: '/start' });
+    expect.hasAssertions();
+
+    renderWithRoute(<LocationProbe />, { route: '/start' });
 
     expect(screen.getByTestId('pathname')).toHaveTextContent('/start');
     expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute(
@@ -27,14 +37,16 @@ describe(renderWithProviders, () => {
   });
 
   it('keeps the memory router wrapper when render options include a wrapper', () => {
+    expect.hasAssertions();
+
     const NoRouterWrapper = ({ children }: { children: ReactNode }) => (
       <>{children}</>
     );
 
-    renderWithProviders(<LocationProbe />, {
+    renderWithRoute(<LocationProbe />, {
       route: '/protected',
       wrapper: NoRouterWrapper,
-    } as unknown as Parameters<typeof renderWithProviders>[1]);
+    });
 
     expect(screen.getByTestId('pathname')).toHaveTextContent('/protected');
   });

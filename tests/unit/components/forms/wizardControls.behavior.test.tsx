@@ -89,6 +89,7 @@ const step = (location: string) => (
 describe('wizard control behavior', () => {
   it('validates before opening final confirmation, closes it, then submits on confirmation', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<Submit>();
     render(
@@ -138,6 +139,7 @@ describe('wizard control behavior', () => {
 
   it('submits directly when final-step validation already has errors', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<Submit>();
     render(
@@ -164,6 +166,7 @@ describe('wizard control behavior', () => {
 
   it('runs submitForm when modal validation returns errors after a clean initial render', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const validate = vi.fn<Validate>().mockReturnValue({ name: 'Required' });
     render(
@@ -192,6 +195,7 @@ describe('wizard control behavior', () => {
 
   it('uses an empty confirmation title when no title variant is supplied', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Formik
@@ -217,6 +221,7 @@ describe('wizard control behavior', () => {
 
   it('handles previous-step absence and custom links', () => {
     expect.hasAssertions();
+
     const steps = [step('/first'), step('/second')];
     const { rerender } = render(
       <MemoryRouter>
@@ -259,6 +264,7 @@ describe('wizard control behavior', () => {
 
   it('rejects invalid WizardForm children', () => {
     expect.hasAssertions();
+
     const preventError = (event: ErrorEvent) => event.preventDefault();
     globalThis.addEventListener('error', preventError);
     const consoleError = vi
@@ -283,6 +289,7 @@ describe('wizard control behavior', () => {
 
   it('renders the real WizardStep through analytics and error-boundary wrappers', () => {
     expect.hasAssertions();
+
     render(
       <WizardStep
         title='Wrapped'

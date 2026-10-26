@@ -22,6 +22,8 @@ describe('storybook coverage drift', () => {
   const coverageDoc = readTextFileSync(coverageMatrixPath, repoRoot);
 
   it('every route family directory is registered in CoverageMatrix.docs.mdx', () => {
+    expect.hasAssertions();
+
     const routesDir = path.join(sourceRoot, 'routes');
     const families = readDirs(routesDir);
     const unregistered = families.filter((f) => !coverageDoc.includes(f));
@@ -33,6 +35,8 @@ describe('storybook coverage drift', () => {
   });
 
   it('every component family directory is registered in CoverageMatrix.docs.mdx', () => {
+    expect.hasAssertions();
+
     const componentsDir = path.join(sourceRoot, 'components');
     const families = readDirs(componentsDir);
     const unregistered = families.filter((f) => !coverageDoc.includes(f));
@@ -44,11 +48,14 @@ describe('storybook coverage drift', () => {
   });
 
   it('phase 4 remains open until closure evidence passes', () => {
+    expect.hasAssertions();
     expect(coverageDoc).toContain('Phase 4: Closure');
     expect(coverageDoc).toMatch(/'Phase 4: Closure',\s*'Open'/);
   });
 
   it('routeLeavingGuard is registered with a non-Docs-only status', () => {
+    expect.hasAssertions();
+
     const guardRow = coverageDoc
       .split('\n')
       .find((l) => l.includes('RouteLeavingGuard'));

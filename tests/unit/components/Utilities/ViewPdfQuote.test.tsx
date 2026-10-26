@@ -131,6 +131,7 @@ describe(ViewPdfQuote, () => {
 
   it('shows the loading spinner while the file size is being fetched', () => {
     expect.hasAssertions();
+
     acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
     render(<ViewPdfQuote {...defaultProps} />);
@@ -141,6 +142,7 @@ describe(ViewPdfQuote, () => {
 
   it('shows the download button with the file size after a successful mount fetch', async () => {
     expect.hasAssertions();
+
     render(<ViewPdfQuote {...defaultProps} />);
 
     await waitFor(() => {
@@ -161,6 +163,7 @@ describe(ViewPdfQuote, () => {
 
   it('sets a file error and removes the spinner when the size fetch throws', async () => {
     expect.hasAssertions();
+
     const setFileError = vi.fn<ViewPdfQuoteProps['setFileError']>();
     acquireTokenSilentMock.mockRejectedValue(new Error('Token expired'));
 
@@ -174,6 +177,7 @@ describe(ViewPdfQuote, () => {
 
   it('skips setting file size when the response has no fileSizeBytes', async () => {
     expect.hasAssertions();
+
     helperMocks.getQuotationFileDetails.mockResolvedValue({});
 
     render(<ViewPdfQuote {...defaultProps} />);
@@ -187,6 +191,7 @@ describe(ViewPdfQuote, () => {
 
   it('fetches and opens the full PDF in a new tab when the button is clicked', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
 
@@ -214,6 +219,7 @@ describe(ViewPdfQuote, () => {
 
   it('sets a file error when the PDF download throws', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const setFileError = vi.fn<ViewPdfQuoteProps['setFileError']>();
     const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
@@ -241,6 +247,7 @@ describe(ViewPdfQuote, () => {
 
   it('skips opening the PDF when the file response is missing required fields', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     helperMocks.getQuotationFileDetails
@@ -261,6 +268,7 @@ describe(ViewPdfQuote, () => {
 
   it('calls the latest setFileError when quotationData changes and the setter reference has changed', async () => {
     expect.hasAssertions();
+
     // Regression for exhaustive-deps fix: without setFileError in the dep array,
     // re-running the effect (triggered by a quotationData change) would call the
     // stale firstSetter even though secondSetter is now the active prop.

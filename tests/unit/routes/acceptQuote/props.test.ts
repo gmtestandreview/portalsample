@@ -27,40 +27,43 @@ import {
 import { stepStatuses } from '../testFixtures';
 
 const mocks = vi.hoisted(() => ({
-  setAuthToken: vi.fn(),
-  getDeliveryAndReturn: vi.fn(),
-  saveDeliveryAndReturn: vi.fn(),
-  getPaymentDetails: vi.fn(),
-  savePaymentDetails: vi.fn(),
-  getReportRecipient: vi.fn(),
-  saveReportRecipient: vi.fn(),
-  getSummaryAndAccept: vi.fn(),
-  saveSummaryAndAccept: vi.fn(),
-  acquireTokenSilent: vi.fn(),
-  setDashboardNotification: vi.fn(),
-  appLoggerError: vi.fn(),
-  sessionSetItem: vi.fn(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getDeliveryAndReturn: vi.fn<(...args: unknown[]) => unknown>(),
+  saveDeliveryAndReturn: vi.fn<(...args: unknown[]) => unknown>(),
+  getPaymentDetails: vi.fn<(...args: unknown[]) => unknown>(),
+  savePaymentDetails: vi.fn<(...args: unknown[]) => unknown>(),
+  getReportRecipient: vi.fn<(...args: unknown[]) => unknown>(),
+  saveReportRecipient: vi.fn<(...args: unknown[]) => unknown>(),
+  getSummaryAndAccept: vi.fn<(...args: unknown[]) => unknown>(),
+  saveSummaryAndAccept: vi.fn<(...args: unknown[]) => unknown>(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  setDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  sessionSetItem: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
       ...actual,
-      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getDeliveryAndReturn: mocks.getDeliveryAndReturn,
-          saveDeliveryAndReturn: mocks.saveDeliveryAndReturn,
-          getPaymentDetails: mocks.getPaymentDetails,
-          savePaymentDetails: mocks.savePaymentDetails,
-          getReportRecipient: mocks.getReportRecipient,
-          saveReportRecipient: mocks.saveReportRecipient,
-          getSummaryAndAccept: mocks.getSummaryAndAccept,
-          saveSummaryAndAccept: mocks.saveSummaryAndAccept,
-        };
-      }),
+      AcceptQuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+        function AcceptQuoteClientMock() {
+          return {
+            setAuthToken: mocks.setAuthToken,
+            getDeliveryAndReturn: mocks.getDeliveryAndReturn,
+            saveDeliveryAndReturn: mocks.saveDeliveryAndReturn,
+            getPaymentDetails: mocks.getPaymentDetails,
+            savePaymentDetails: mocks.savePaymentDetails,
+            getReportRecipient: mocks.getReportRecipient,
+            saveReportRecipient: mocks.saveReportRecipient,
+            getSummaryAndAccept: mocks.getSummaryAndAccept,
+            saveSummaryAndAccept: mocks.saveSummaryAndAccept,
+          };
+        },
+      ),
     } satisfies __ExactMockModule<__TestMockModule4>;
   },
 );
@@ -81,6 +84,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -91,6 +95,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -138,36 +143,35 @@ describe('accept quote wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { returnContactType: 'SamePerson' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      loadCalls: mocks.getDeliveryAndReturn.mock.calls,
+      hidden: [
+        props.hidingFields?.contactHide?.({
+          returnContactType: ReturnContactTypeValues.SamePerson,
+        }),
+        props.hidingFields?.contactHide?.({
+          returnContactType: ReturnContactTypeValues.DifferentPerson,
+        }),
+        props.hidingFields?.contact?.titleOther?.({
+          contact: { title: Title.Other },
+        }),
+        props.hidingFields?.returnAddress?.({
+          returnAddressType: ReturnAddressTypeValues.Other,
+        }),
+        props.hidingFields?.carrierHide?.({
+          returnMethod: ReturnMethodValues.ClientWillProvide,
+        }),
+      ],
+      bannerRefTitle: props.bannerRefTitle,
+    }).toStrictEqual({
+      loaded: { stepValues: { returnContactType: 'SamePerson' } },
+      loadCalls: [['Q-1', abortSignal]],
+      hidden: [true, false, false, false, false],
+      bannerRefTitle: 'Quotation ID: Q-1',
     });
-    expect(mocks.getDeliveryAndReturn).toHaveBeenCalledWith('Q-1', abortSignal);
-    expect(
-      props.hidingFields?.contactHide?.({
-        returnContactType: ReturnContactTypeValues.SamePerson,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.contactHide?.({
-        returnContactType: ReturnContactTypeValues.DifferentPerson,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.contact?.titleOther?.({
-        contact: { title: Title.Other },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.returnAddress?.({
-        returnAddressType: ReturnAddressTypeValues.Other,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.carrierHide?.({
-        returnMethod: ReturnMethodValues.ClientWillProvide,
-      }),
-    ).toBe(false);
-    expect(props.bannerRefTitle).toBe('Quotation ID: Q-1');
 
     await props.onSaveAndNext?.(
       { returnContactType: ReturnContactTypeValues.SamePerson },
@@ -175,41 +179,46 @@ describe('accept quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveDeliveryAndReturn).toHaveBeenCalledWith(
-      'Q-1',
-      {
-        applicationId: 'Q-1',
-        formStep: { returnContactType: 'SamePerson' },
-        isCompletingStep: true,
-      },
-      abortSignal,
-    );
-
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.PreconditionFailed,
-        ErrorType.Load,
-      ),
-    ).toBe('/accept-quote/Q-1/view-summary');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.NotFound,
-        ErrorType.Update,
-      ),
-    ).toBe('/');
-    expect(setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining(
-          'Another person has deleted this request',
+    expect({
+      saveCalls: mocks.saveDeliveryAndReturn.mock.calls,
+      redirects: [
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.PreconditionFailed,
+          ErrorType.Load,
         ),
-      }),
-    );
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.InternalServerError,
-        ErrorType.Update,
-      ),
-    ).toBeUndefined();
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.NotFound,
+          ErrorType.Update,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.InternalServerError,
+          ErrorType.Update,
+        ),
+      ],
+      notificationCalls: vi.mocked(setDashboardNotification).mock.calls,
+    }).toMatchObject({
+      saveCalls: [
+        [
+          'Q-1',
+          {
+            applicationId: 'Q-1',
+            formStep: { returnContactType: 'SamePerson' },
+            isCompletingStep: true,
+          },
+          abortSignal,
+        ],
+      ],
+      redirects: ['/accept-quote/Q-1/view-summary', '/', undefined],
+      notificationCalls: [
+        [
+          expect.objectContaining({
+            message: expect.stringContaining(
+              'Another person has deleted this request',
+            ),
+          }),
+        ],
+      ],
+    });
   });
 
   it('loads and saves payment details while logging load and save failures', async () => {
@@ -225,79 +234,97 @@ describe('accept quote wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { invoiceSentTo: 'SamePerson' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      hidden: [
+        props.hidingFields?.contactHide?.({
+          invoiceSentTo: InvoiceSentToValues.SamePerson,
+        }),
+        props.hidingFields?.contactHide?.({
+          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+        }),
+        props.hidingFields?.contact?.titleOther?.({
+          contact: { title: Title.Dr },
+        }),
+      ],
+      redirects: [
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.PreconditionFailed,
+          ErrorType.Load,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.NotFound,
+          ErrorType.Update,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.InternalServerError,
+          ErrorType.Update,
+        ),
+      ],
+    }).toStrictEqual({
+      loaded: { stepValues: { invoiceSentTo: 'SamePerson' } },
+      hidden: [true, false, true],
+      redirects: ['/accept-quote/Q-2/view-summary', '/', undefined],
     });
-    expect(
-      props.hidingFields?.contactHide?.({
-        invoiceSentTo: InvoiceSentToValues.SamePerson,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.contactHide?.({
-        invoiceSentTo: InvoiceSentToValues.DifferentPerson,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.contact?.titleOther?.({
-        contact: { title: Title.Dr },
-      }),
-    ).toBe(true);
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.PreconditionFailed,
-        ErrorType.Load,
-      ),
-    ).toBe('/accept-quote/Q-2/view-summary');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.NotFound,
-        ErrorType.Update,
-      ),
-    ).toBe('/');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.InternalServerError,
-        ErrorType.Update,
-      ),
-    ).toBeUndefined();
 
     const paymentValues: PaymentDetailsStep = {
       invoiceSentTo: InvoiceSentToValues.DifferentPerson,
     };
     await props.onSaveAndExit?.(paymentValues, false, abortSignal);
 
-    expect(mocks.savePaymentDetails).toHaveBeenCalledWith(
-      'Q-2',
-      {
-        applicationId: 'Q-2',
-        formStep: { invoiceSentTo: InvoiceSentToValues.DifferentPerson },
-        isCompletingStep: false,
-      },
-      abortSignal,
-    );
+    expect(mocks.savePaymentDetails.mock.calls).toStrictEqual([
+      [
+        'Q-2',
+        {
+          applicationId: 'Q-2',
+          formStep: { invoiceSentTo: InvoiceSentToValues.DifferentPerson },
+          isCompletingStep: false,
+        },
+        abortSignal,
+      ],
+    ]);
 
     mocks.savePaymentDetails.mockRejectedValueOnce(new Error('save failed'));
 
-    await expect(
+    const captureError = async (invoke: () => unknown) => {
+      try {
+        await invoke();
+        return undefined;
+      } catch (error) {
+        return error instanceof Error ? error.message : String(error);
+      }
+    };
+    const saveError = await captureError(() =>
       props.onSaveAndNext?.(paymentValues, true, abortSignal),
-    ).rejects.toThrow('save failed');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to save payment details:',
-      expect.any(Error),
-      { ApplicationId: 'Q-2' },
     );
 
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('load failed'));
 
-    await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
-      'There was an error retrieving your details.',
+    const loadError = await captureError(() =>
+      props.loadStepValues?.(abortSignal),
     );
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load payment details',
-      expect.any(Error),
-      { Id: 'Q-2' },
-    );
+
+    expect({
+      saveError,
+      saveLog: mocks.appLoggerError.mock.calls[0],
+      loadError,
+      loadLog: mocks.appLoggerError.mock.calls[1],
+    }).toMatchObject({
+      saveError: 'save failed',
+      saveLog: [
+        'Failed to save payment details:',
+        expect.any(Error),
+        { ApplicationId: 'Q-2' },
+      ],
+      loadError: 'There was an error retrieving your details.',
+      loadLog: [
+        'Failed to load payment details',
+        expect.any(Error),
+        { Id: 'Q-2' },
+      ],
+    });
   });
 
   it('loads and saves report recipient details with custom discard and error logging', async () => {
@@ -314,69 +341,85 @@ describe('accept quote wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { reportAddressType: 'Other' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      hidden: [
+        props.hidingFields?.contact?.titleOther?.({
+          contact: { title: Title.Other },
+        }),
+        props.hidingFields?.businessStreetAddress?.({
+          reportAddressType: ReportAddressTypeValues.Other,
+        }),
+        props.hidingFields?.businessStreetAddress?.({
+          reportAddressType: ReportAddressTypeValues.BusinessAddress,
+        }),
+      ],
+      discard: props.discard?.locationOnCancel,
+      redirects: [
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.PreconditionFailed,
+          ErrorType.Load,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.NotFound,
+          ErrorType.Update,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.InternalServerError,
+          ErrorType.Update,
+        ),
+      ],
+    }).toStrictEqual({
+      loaded: { stepValues: { reportAddressType: 'Other' } },
+      hidden: [false, false, true],
+      discard: '/quotation/RFQ-3',
+      redirects: ['/accept-quote/Q-3/view-summary', '/', undefined],
     });
-    expect(
-      props.hidingFields?.contact?.titleOther?.({
-        contact: { title: Title.Other },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.businessStreetAddress?.({
-        reportAddressType: ReportAddressTypeValues.Other,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.businessStreetAddress?.({
-        reportAddressType: ReportAddressTypeValues.BusinessAddress,
-      }),
-    ).toBe(true);
-    expect(props.discard?.locationOnCancel).toBe('/quotation/RFQ-3');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.PreconditionFailed,
-        ErrorType.Load,
-      ),
-    ).toBe('/accept-quote/Q-3/view-summary');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.NotFound,
-        ErrorType.Update,
-      ),
-    ).toBe('/');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.InternalServerError,
-        ErrorType.Update,
-      ),
-    ).toBeUndefined();
 
     const recipientValues: ReportRecipientStep = {
       reportAddressType: ReportAddressTypeValues.Other,
     };
     await props.onSaveAndNext?.(recipientValues, true, abortSignal);
 
-    expect(mocks.saveReportRecipient).toHaveBeenCalledWith(
-      'Q-3',
-      {
-        applicationId: 'Q-3',
-        formStep: { reportAddressType: 'Other' },
-        isCompletingStep: true,
-      },
-      abortSignal,
-    );
+    expect(mocks.saveReportRecipient.mock.calls).toStrictEqual([
+      [
+        'Q-3',
+        {
+          applicationId: 'Q-3',
+          formStep: { reportAddressType: 'Other' },
+          isCompletingStep: true,
+        },
+        abortSignal,
+      ],
+    ]);
 
     mocks.saveReportRecipient.mockRejectedValueOnce(new Error('save failed'));
 
-    await expect(
+    const captureError = async (invoke: () => unknown) => {
+      try {
+        await invoke();
+        return undefined;
+      } catch (error) {
+        return error instanceof Error ? error.message : String(error);
+      }
+    };
+    const saveError = await captureError(() =>
       props.onSaveAndExit?.(recipientValues, false, abortSignal),
-    ).rejects.toThrow('save failed');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to save payment report recipient',
-      expect.any(Error),
-      { Id: 'Q-3' },
     );
+
+    expect({
+      saveError,
+      loggerCall: mocks.appLoggerError.mock.calls.at(-1),
+    }).toMatchObject({
+      saveError: 'save failed',
+      loggerCall: [
+        'Failed to save payment report recipient',
+        expect.any(Error),
+        { Id: 'Q-3' },
+      ],
+    });
   });
 
   it('loads, saves, completes, and hides summary/accept sections', async () => {
@@ -412,82 +455,86 @@ describe('accept quote wizard prop factories', () => {
       },
     } satisfies SummaryAndAcceptStep;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { associatedDisputes: 'No' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      hidden: [
+        props.hidingFields?.associatedDispute?.(summary),
+        props.hidingFields?.reportRecipient?.rfqHide?.(summary),
+        props.hidingFields?.reportRecipient?.organisationNameHide?.(summary),
+        props.hidingFields?.reportRecipient?.contact?.titleOther?.(summary),
+        props.hidingFields?.reportRecipient?.recipientMailingAddress?.(summary),
+        props.hidingFields?.deliveryAndReturn?.rfqHide?.(summary),
+        props.hidingFields?.deliveryAndReturn?.contactHide?.(summary),
+        props.hidingFields?.deliveryAndReturn?.contact?.titleOther?.(summary),
+        props.hidingFields?.paymentDetails?.rfqHide?.(summary),
+        props.hidingFields?.paymentDetails?.contactHide?.(summary),
+        props.hidingFields?.paymentDetails?.contact?.titleOther?.(summary),
+        props.hidingFields?.requestForQuote?.contact?.titleOther?.(summary),
+      ],
+    }).toStrictEqual({
+      loaded: { stepValues: { associatedDisputes: 'No' } },
+      hidden: [
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+      ],
     });
-    expect(props.hidingFields?.associatedDispute?.(summary)).toBe(true);
-    expect(props.hidingFields?.reportRecipient?.rfqHide?.(summary)).toBe(false);
-    expect(
-      props.hidingFields?.reportRecipient?.organisationNameHide?.(summary),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.reportRecipient?.contact?.titleOther?.(summary),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.reportRecipient?.recipientMailingAddress?.(summary),
-    ).toBe(true);
-    expect(props.hidingFields?.deliveryAndReturn?.rfqHide?.(summary)).toBe(
-      false,
-    );
-    expect(props.hidingFields?.deliveryAndReturn?.contactHide?.(summary)).toBe(
-      true,
-    );
-    expect(
-      props.hidingFields?.deliveryAndReturn?.contact?.titleOther?.(summary),
-    ).toBe(true);
-    expect(props.hidingFields?.paymentDetails?.rfqHide?.(summary)).toBe(true);
-    expect(props.hidingFields?.paymentDetails?.contactHide?.(summary)).toBe(
-      false,
-    );
-    expect(
-      props.hidingFields?.paymentDetails?.contact?.titleOther?.(summary),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.requestForQuote?.contact?.titleOther?.(summary),
-    ).toBe(true);
 
     await props.onSaveAndExit?.(summary, false, abortSignal);
 
-    expect(mocks.sessionSetItem).not.toHaveBeenCalled();
+    expect(mocks.sessionSetItem.mock.calls).toStrictEqual([]);
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
 
-    expect(mocks.saveSummaryAndAccept).toHaveBeenLastCalledWith(
-      'Q-4',
-      {
-        applicationId: 'Q-4',
-        formStep: summary,
-        isCompletingStep: true,
-      },
-      abortSignal,
-    );
-    expect(mocks.sessionSetItem).toHaveBeenCalledWith(
-      'RFQ-NUM-4',
-      'accepted-quote-id',
-    );
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.PreconditionFailed,
-        ErrorType.Load,
-      ),
-    ).toBe('/request-for-quote/Q-4/view-summary');
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.NotFound,
-        ErrorType.Update,
-      ),
-    ).toBe('/');
-    expect(setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: expect.stringContaining('already been deleted'),
-      }),
-    );
-    expect(
-      props.getRedirectionLocationOnError?.(
-        HttpStatusCode.InternalServerError,
-        ErrorType.Update,
-      ),
-    ).toBeUndefined();
+    expect({
+      saveCall: mocks.saveSummaryAndAccept.mock.calls.at(-1),
+      sessionCalls: mocks.sessionSetItem.mock.calls,
+      redirects: [
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.PreconditionFailed,
+          ErrorType.Load,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.NotFound,
+          ErrorType.Update,
+        ),
+        props.getRedirectionLocationOnError?.(
+          HttpStatusCode.InternalServerError,
+          ErrorType.Update,
+        ),
+      ],
+      notificationCalls: vi.mocked(setDashboardNotification).mock.calls,
+    }).toMatchObject({
+      saveCall: [
+        'Q-4',
+        {
+          applicationId: 'Q-4',
+          formStep: summary,
+          isCompletingStep: true,
+        },
+        abortSignal,
+      ],
+      sessionCalls: [['RFQ-NUM-4', 'accepted-quote-id']],
+      redirects: ['/request-for-quote/Q-4/view-summary', '/', undefined],
+      notificationCalls: [
+        [
+          expect.objectContaining({
+            message: expect.stringContaining('already been deleted'),
+          }),
+        ],
+      ],
+    });
   });
 
   it('throws load/save errors when no account is available', async () => {
@@ -527,29 +574,35 @@ describe('accept quote wizard prop factories', () => {
       'Accept quote',
     );
 
-    await expect(deliveryProps.loadStepValues?.()).rejects.toThrow(
+    const rejectionMessage = async (invoke: () => unknown) => {
+      try {
+        await invoke();
+        return undefined;
+      } catch (error) {
+        return error instanceof Error ? error.message : String(error);
+      }
+    };
+
+    await expect(
+      Promise.all([
+        rejectionMessage(() => deliveryProps.loadStepValues?.()),
+        rejectionMessage(() => deliveryProps.onSaveAndExit?.({}, false)),
+        rejectionMessage(() => paymentProps.loadStepValues?.()),
+        rejectionMessage(() => paymentProps.onSaveAndExit?.({}, false)),
+        rejectionMessage(() => recipientProps.loadStepValues?.()),
+        rejectionMessage(() => recipientProps.onSaveAndExit?.({}, false)),
+        rejectionMessage(() => summaryProps.loadStepValues?.()),
+        rejectionMessage(() => summaryProps.onSaveAndExit?.({}, false)),
+      ]),
+    ).resolves.toStrictEqual([
       'There was an error retrieving your details.',
-    );
-    await expect(deliveryProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'No authenticated account available to save form.',
-    );
-    await expect(paymentProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.',
-    );
-    await expect(paymentProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'No authenticated account available to save form.',
-    );
-    await expect(recipientProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.',
-    );
-    await expect(recipientProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'No authenticated account available to save form.',
-    );
-    await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.',
-    );
-    await expect(summaryProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'No authenticated account available to save form.',
-    );
+    ]);
   });
 });

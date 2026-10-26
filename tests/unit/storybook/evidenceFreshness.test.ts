@@ -68,6 +68,8 @@ const referenceManifest = {
 
 describe('computeInputDigest', () => {
   it('keeps digest ordering independent of the process locale', () => {
+    expect.hasAssertions();
+
     const originalLocaleCompare = String.prototype.localeCompare;
     String.prototype.localeCompare = function localeCompare(
       this: string,
@@ -92,6 +94,8 @@ describe('computeInputDigest', () => {
   });
 
   it('canonicalizes manifest object-key order and ignores reviewedSourceDigest refreshes', () => {
+    expect.hasAssertions();
+
     const [appFile, manifestFile] = files;
     if (appFile === undefined || manifestFile === undefined) {
       throw new Error('digest fixture is incomplete');
@@ -121,6 +125,8 @@ describe('computeInputDigest', () => {
   });
 
   it('accepts byte input for the canonical coverage manifest', () => {
+    expect.hasAssertions();
+
     const byteFiles = files.map((file) => ({
       ...file,
       content: file.path.endsWith('coverageManifest.json')
@@ -134,6 +140,8 @@ describe('computeInputDigest', () => {
   });
 
   it('requires docs and story references to resolve to generated index entries', () => {
+    expect.hasAssertions();
+
     const index = {
       entries: {
         docs: { id: 'components-app--docs', type: 'docs' },
@@ -158,6 +166,8 @@ describe('computeInputDigest', () => {
   });
 
   it('changes when array order or ordinary source bytes change', () => {
+    expect.hasAssertions();
+
     const reorderedManifest = JSON.stringify({
       schemaVersion: 1,
       records: [{ export: 'Other' }, { export: 'App' }],
@@ -182,6 +192,7 @@ describe('computeInputDigest', () => {
   });
 
   it('requires the canonical coverage manifest to be included', () => {
+    expect.hasAssertions();
     expect(() =>
       moduleUnderTest.computeInputDigest({
         files: [{ path: 'ClientApp/src/App.tsx', content: 'source' }],
@@ -201,6 +212,7 @@ describe('computeInputDigest', () => {
       ],
     ],
   ])('rejects %s', (_name, invalidFiles) => {
+    expect.hasAssertions();
     expect(() =>
       moduleUnderTest.computeInputDigest({ files: invalidFiles }),
     ).toThrow();

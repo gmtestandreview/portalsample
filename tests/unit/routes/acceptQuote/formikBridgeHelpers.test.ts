@@ -7,11 +7,13 @@ import {
 
 describe('formikBridgeHelpers', () => {
   it('exposes an empty hidden-rules object', () => {
-    expect(NO_HIDDEN_RULES).toEqual({});
+    expect.hasAssertions();
+    expect(NO_HIDDEN_RULES).toStrictEqual({});
   });
 
   it('prefixes every address leaf path', () => {
-    expect(addressTouchPaths('returnAddress')).toEqual([
+    expect.hasAssertions();
+    expect(addressTouchPaths('returnAddress')).toStrictEqual([
       'returnAddress.line1',
       'returnAddress.line2',
       'returnAddress.line3',
@@ -23,6 +25,8 @@ describe('formikBridgeHelpers', () => {
   });
 
   it('matches exact names only when no prefixes are given', () => {
+    expect.hasAssertions();
+
     const isBridged = createBridgedNamePredicate({ names: ['a', 'b'] });
 
     expect(isBridged('a')).toBe(true);
@@ -32,6 +36,8 @@ describe('formikBridgeHelpers', () => {
   });
 
   it('matches every sub-path of a prefix but not the bare parent', () => {
+    expect.hasAssertions();
+
     const isBridged = createBridgedNamePredicate({
       names: ['a'],
       prefixes: ['contact.', 'address.'],

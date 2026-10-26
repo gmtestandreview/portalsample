@@ -33,6 +33,8 @@ const NavigateProbe = () => {
 
 describe('renderWithRouter harness', () => {
   it('resolves route params, which a bare MemoryRouter does not', async () => {
+    expect.hasAssertions();
+
     renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/type-approval/APP-1',
@@ -44,6 +46,8 @@ describe('renderWithRouter harness', () => {
   });
 
   it('runs a route loader', async () => {
+    expect.hasAssertions();
+
     renderWithRouter(<LoaderProbe />, {
       path: '/type-approval/:id',
       initialPath: '/type-approval/APP-2',
@@ -56,6 +60,8 @@ describe('renderWithRouter harness', () => {
   });
 
   it('exposes the real navigation rather than a mocked navigate', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { currentPath } = renderWithRouter(<NavigateProbe />, {
       path: '/type-approval/:id',
@@ -72,6 +78,8 @@ describe('renderWithRouter harness', () => {
   });
 
   it('distinguishes a redirect to /not-found from matching nothing', async () => {
+    expect.hasAssertions();
+
     const { currentPath } = renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/somewhere-else',
@@ -86,6 +94,8 @@ describe('renderWithRouter harness', () => {
   });
 
   it('mounts extra destination routes so a redirect target is assertable', async () => {
+    expect.hasAssertions();
+
     renderWithRouter(<ParamProbe />, {
       path: '/type-approval/:id',
       initialPath: '/dashboard',

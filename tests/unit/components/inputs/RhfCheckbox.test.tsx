@@ -46,6 +46,7 @@ const failingResolver: Resolver<Values> = async () => ({
 describe(RhfCheckbox, () => {
   it('renders a labelled checkbox reflecting the form value', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue>
         <RhfCheckbox name='accepted' label='I accept' />
@@ -60,6 +61,7 @@ describe(RhfCheckbox, () => {
 
   it('is unchecked for nullish form values', () => {
     expect.hasAssertions();
+
     const { unmount } = render(
       <Harness defaultValue={null}>
         <RhfCheckbox name='accepted' label='I accept' />
@@ -81,6 +83,7 @@ describe(RhfCheckbox, () => {
 
   it('applies id, class names, descriptor and disabled state', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfCheckbox
@@ -106,6 +109,7 @@ describe(RhfCheckbox, () => {
 
   it('stores a boolean and calls onChange with it', async () => {
     expect.hasAssertions();
+
     const onChange = vi.fn<ChangeHandler>();
     render(
       <Harness>
@@ -126,6 +130,7 @@ describe(RhfCheckbox, () => {
 
   it('updates the form value without an onChange callback', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfCheckbox name='accepted' label='I accept' />
@@ -139,6 +144,7 @@ describe(RhfCheckbox, () => {
 
   it('shows inline help and links it to the checkbox', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfCheckbox name='accepted' label='I accept' inlineHelp='Required' />
@@ -154,6 +160,7 @@ describe(RhfCheckbox, () => {
 
   it('renders the sub form field', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfCheckbox
@@ -169,6 +176,7 @@ describe(RhfCheckbox, () => {
 
   it('shows the validation message only after a submit attempt', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -190,6 +198,7 @@ describe(RhfCheckbox, () => {
 
   it('shows the validation message once the field has been touched', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -206,6 +215,7 @@ describe(RhfCheckbox, () => {
 
   it('suppresses field level messages when asked', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -227,6 +237,7 @@ describe(RhfCheckbox, () => {
 
   it('marks the checkbox invalid and describes it by help and error', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -248,6 +259,7 @@ describe(RhfCheckbox, () => {
 
   it('is not marked invalid while the error is hidden', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -266,6 +278,7 @@ describe(RhfCheckbox, () => {
 
   it('focuses the invalid checkbox when a submit attempt fails', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -280,6 +293,7 @@ describe(RhfCheckbox, () => {
 
   it('renders Yes or No in summary mode', () => {
     expect.hasAssertions();
+
     const { unmount } = render(
       <Harness defaultValue>
         <RhfCheckbox name='accepted' label='I accept' isSummary />

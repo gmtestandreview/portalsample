@@ -56,6 +56,7 @@ const renderAutoSuggest = (
 describe('autoSuggest parent state', () => {
   it('clears a selected option when the search term is emptied', async () => {
     expect.hasAssertions();
+
     const onSelectedOption = vi
       .fn<SelectedOption>()
       .mockResolvedValue(undefined);
@@ -74,6 +75,7 @@ describe('autoSuggest parent state', () => {
 
   it('reports a failed search and clears the previous suggestions', async () => {
     expect.hasAssertions();
+
     // The stale-response tests below cover a rejection arriving after the field moved on. This
     // is the live one: the search that is still current failed, so the user is told rather than
     // left looking at suggestions from an earlier term.
@@ -102,6 +104,7 @@ describe('autoSuggest parent state', () => {
 
   it('ignores a stale successful search response after cancel resets the field', async () => {
     expect.hasAssertions();
+
     let resolveSearch: (
       options: AutoSuggestOption<string>[],
     ) => void = () => {};
@@ -151,6 +154,7 @@ describe('autoSuggest parent state', () => {
 
   it('ignores a stale failed search response after cancel resets the field', async () => {
     expect.hasAssertions();
+
     let rejectSearch: (error: Error) => void = () => {};
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>

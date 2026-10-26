@@ -11,7 +11,7 @@ import PaymentDetails from '@/routes/acceptQuote/paymentDetails';
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
-  const acquireTokenSilentMock = vi.fn();
+  const acquireTokenSilentMock = vi.fn<(...args: unknown[]) => unknown>();
   // Stable object prevents useEffect re-firing due to new object identity on every useMsal() call
   const msalContext = {
     accounts: [{ homeAccountId: 'test-account' }],
@@ -20,10 +20,13 @@ const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
   return { acquireTokenSilentMock, msalContext };
 });
 
-const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
+const mockGetPaymentDetails = vi.hoisted(() =>
+  vi.fn<(...args: unknown[]) => unknown>(),
+);
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -32,11 +35,12 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
-    AcceptQuoteClient: vi.fn(function (this: {
+    AcceptQuoteClient: vi.fn<(...args: unknown[]) => unknown>(function (this: {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
@@ -48,11 +52,15 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn() },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -83,6 +91,7 @@ vi.mock(
       ),
     }) satisfies __ExactMockModule<__TestMockModule52>,
 );
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/components/forms/HidableField',
   () =>
@@ -158,6 +167,8 @@ describe(PaymentDetails, () => {
 
   describe('info Alert visibility', () => {
     it('renders the info Alert in non-summary mode', () => {
+      expect.hasAssertions();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails();
 
@@ -165,6 +176,8 @@ describe(PaymentDetails, () => {
     });
 
     it('does not render the info Alert in summary mode', () => {
+      expect.hasAssertions();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
@@ -174,6 +187,8 @@ describe(PaymentDetails, () => {
 
   describe('payment-terms conditional copy', () => {
     it('shows the 30-day invoice warning when paymentTerms is not Prepaid', async () => {
+      expect.hasAssertions();
+
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Standard'));
       renderPaymentDetails();
 
@@ -187,6 +202,8 @@ describe(PaymentDetails, () => {
     });
 
     it('shows the prepayment required notice when paymentTerms is Prepaid', async () => {
+      expect.hasAssertions();
+
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Prepaid'));
       renderPaymentDetails();
 
@@ -202,6 +219,8 @@ describe(PaymentDetails, () => {
 
   describe('loading spinner', () => {
     it('shows the spinner during the API fetch in non-summary mode', () => {
+      expect.hasAssertions();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
       renderPaymentDetails();
@@ -210,6 +229,8 @@ describe(PaymentDetails, () => {
     });
 
     it('does not show the spinner in summary mode even while loading', () => {
+      expect.hasAssertions();
+
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
 
       renderPaymentDetails({ ...defaultProps, isSummary: true });
@@ -220,6 +241,8 @@ describe(PaymentDetails, () => {
 
   describe('field name prefixing (getNameForUse)', () => {
     it('passes raw key names to inputs in non-summary mode', async () => {
+      expect.hasAssertions();
+
       renderPaymentDetails({ ...defaultProps, isSummary: false });
 
       await waitFor(() => {
@@ -235,6 +258,8 @@ describe(PaymentDetails, () => {
     });
 
     it('prefixes key names with paymentDetails. in summary mode', async () => {
+      expect.hasAssertions();
+
       mockGetPaymentDetails.mockResolvedValue(
         makePreInfo('Standard', 'Q-SUMMARY-001'),
       );
@@ -254,6 +279,8 @@ describe(PaymentDetails, () => {
     });
 
     it('includes the loaded quotation ID in summary help copy', async () => {
+      expect.hasAssertions();
+
       mockGetPaymentDetails.mockResolvedValue(
         makePreInfo('Standard', 'RFQ-2026-042'),
       );
@@ -268,6 +295,8 @@ describe(PaymentDetails, () => {
 
   describe('aPI error handling', () => {
     it('logs an error and remains rendered when the API call fails', async () => {
+      expect.hasAssertions();
+
       const AppLogger = (await import('@/instrumentation/AppLogger')).default;
       acquireTokenSilentMock.mockRejectedValue(new Error('Token failed'));
 

@@ -26,7 +26,11 @@ vi.mock(
   '../../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
+      default: {
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -185,6 +189,8 @@ describe('form-free TA summary parity with the Formik summary', () => {
   it.each(Object.entries(fixtures))(
     'renders the same markup for %s',
     async (_name, values) => {
+      expect.hasAssertions();
+
       const legacy = await renderLegacy(values);
       document.body.innerHTML = '';
       const summary = renderSummary(values);
@@ -194,6 +200,8 @@ describe('form-free TA summary parity with the Formik summary', () => {
   );
 
   it('shows the chosen sub-options that the Formik summary leaves blank', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <ApplicationSummary
         values={fixtures['new certificate by a manufacturer']!}

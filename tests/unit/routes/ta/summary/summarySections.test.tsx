@@ -28,6 +28,8 @@ const renderApplication = (
 
 describe(ContactSummary, () => {
   it('prints a dash for every field of a missing contact', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <ContactSummary name='contact' contact={undefined} />,
     );
@@ -37,6 +39,8 @@ describe(ContactSummary, () => {
   });
 
   it('prints the title row with a dash when the title is the empty string', () => {
+    expect.hasAssertions();
+
     render(
       <ContactSummary
         name='contact'
@@ -48,12 +52,16 @@ describe(ContactSummary, () => {
   });
 
   it('omits the title row when no title was chosen', () => {
+    expect.hasAssertions();
+
     render(<ContactSummary name='contact' contact={{ firstName: 'Ada' }} />);
 
     expect(screen.queryByText('Title (optional)')).not.toBeInTheDocument();
   });
 
   it('spells out a compound title and shows the Other text', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <ContactSummary
         name='contact'
@@ -74,6 +82,8 @@ describe(ContactSummary, () => {
   });
 
   it('shows a dash for an Other title with no text and ignores an unknown title', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <ContactSummary name='contact' contact={{ title: Title.Other }} />,
     );
@@ -93,6 +103,8 @@ describe(ContactSummary, () => {
 
 describe(OrganisationSummary, () => {
   it('renders nothing for answers that were never given', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({});
 
     expect(screen.queryByText('Organisation type')).not.toBeInTheDocument();
@@ -101,6 +113,8 @@ describe(OrganisationSummary, () => {
   });
 
   it('falls back to a message for an answer that matches no option', () => {
+    expect.hasAssertions();
+
     const container = renderOrganisation({
       organisationAndContact: { isManufacturer: 'Maybe' as unknown as YesNo },
     });
@@ -111,6 +125,8 @@ describe(OrganisationSummary, () => {
   });
 
   it('shows the authorised agent when the rules do not hide it', () => {
+    expect.hasAssertions();
+
     renderOrganisation({
       organisationAndContact: {
         isManufacturer: YesNo.No,
@@ -123,6 +139,8 @@ describe(OrganisationSummary, () => {
   });
 
   it('hides the sections a rule hides', () => {
+    expect.hasAssertions();
+
     renderOrganisation(
       { organisationAndContact: { isManufacturer: YesNo.Yes } },
       {
@@ -143,12 +161,16 @@ describe(OrganisationSummary, () => {
 
 describe(ApplicationSummary, () => {
   it('reports no type and no sub-options for an empty application', () => {
+    expect.hasAssertions();
+
     renderApplication({});
 
     expect(screen.getByText('Not selected')).toBeInTheDocument();
   });
 
   it('lists a single selected sub-option given as a string', () => {
+    expect.hasAssertions();
+
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.Variation,
@@ -161,6 +183,8 @@ describe(ApplicationSummary, () => {
   });
 
   it('says Not selected when the sub-options are empty or unknown', () => {
+    expect.hasAssertions();
+
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
@@ -172,6 +196,8 @@ describe(ApplicationSummary, () => {
   });
 
   it('shows a category without a type, and ignores a type under another category', () => {
+    expect.hasAssertions();
+
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
@@ -189,6 +215,8 @@ describe(ApplicationSummary, () => {
   });
 
   it('shows a type when no category is recorded', () => {
+    expect.hasAssertions();
+
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
@@ -201,6 +229,8 @@ describe(ApplicationSummary, () => {
   });
 
   it('copes with missing lookups', () => {
+    expect.hasAssertions();
+
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
@@ -213,6 +243,8 @@ describe(ApplicationSummary, () => {
   });
 
   it('prints a dash for an absent certificate number', () => {
+    expect.hasAssertions();
+
     renderApplication({
       applicationAndInstrument: {
         patternApprovalType: PatternApprovalRequiredValues.Variation,

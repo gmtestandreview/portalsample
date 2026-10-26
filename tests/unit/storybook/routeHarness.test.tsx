@@ -14,6 +14,8 @@ const Destination = () => {
 
 describe(PortalStoryRouter, () => {
   it('matches an exact destination ahead of the story wildcard and reports destination params', async () => {
+    expect.hasAssertions();
+
     const observations: PortalLocationObservation[] = [];
 
     render(
@@ -43,7 +45,10 @@ describe(PortalStoryRouter, () => {
   });
 
   it('keeps one router and renders current story args across rerenders', async () => {
-    const observeLocation = vi.fn();
+    expect.hasAssertions();
+
+    const observeLocation =
+      vi.fn<(location: PortalLocationObservation) => void>();
     const firstStory = () => <p>Current value: first</p>;
     const secondStory = () => <p>Current value: second</p>;
     const view = render(
@@ -85,7 +90,10 @@ describe(PortalStoryRouter, () => {
   });
 
   it('falls back to the story wildcard when no destination route matches', async () => {
-    const observeLocation = vi.fn();
+    expect.hasAssertions();
+
+    const observeLocation =
+      vi.fn<(location: PortalLocationObservation) => void>();
 
     render(
       <PortalStoryRouter

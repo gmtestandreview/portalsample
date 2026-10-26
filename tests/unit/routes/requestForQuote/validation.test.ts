@@ -27,6 +27,7 @@ const validInstrument = {
 
 describe('organisationAndContact validation', () => {
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSubmitValidation.validate({
         businessWebsiteAddress: 'https://measurement.gov.au',
@@ -43,6 +44,7 @@ describe('organisationAndContact validation', () => {
   });
 
   it('requires conditional contact and branch confirmation on submit', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSubmitValidation.validate(
         {
@@ -65,6 +67,7 @@ describe('organisationAndContact validation', () => {
   });
 
   it('validates website format and length', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSubmitValidation.validate({
         businessWebsiteAddress: 'not a website',
@@ -84,6 +87,7 @@ describe('organisationAndContact validation', () => {
   });
 
   it('uses soft contact validation for saves when principal contact differs', async () => {
+    expect.hasAssertions();
     await expect(
       organisationAndContactSaveValidation.validate({
         isPrincipalContact: YesNo.No,
@@ -97,6 +101,7 @@ describe('organisationAndContact validation', () => {
 
 describe('instrumentAndRequest validation', () => {
   it('accepts a valid submit object', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate(validInstrument),
     ).resolves.toMatchObject({
@@ -105,6 +110,8 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('validates RFQ availability dates as calendar dates rather than timezone-shifted instants', async () => {
+    expect.hasAssertions();
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const year = tomorrow.getFullYear();
@@ -122,6 +129,7 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('requires missing submit fields', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate({}, { abortEarly: false }),
     ).rejects.toMatchObject({
@@ -139,6 +147,7 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('validates invalid formats and conditional serial number', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate(
         {
@@ -178,6 +187,7 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('allows whitespace-only optional custom text checks after required validation passes', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate({
         ...validInstrument,
@@ -188,6 +198,7 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('accepts max length boundaries and rejects over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSubmitValidation.validate({
         ...validInstrument,
@@ -228,6 +239,7 @@ describe('instrumentAndRequest validation', () => {
   });
 
   it('allows sparse saves but validates populated save fields', async () => {
+    expect.hasAssertions();
     await expect(
       instrumentAndRequestSaveValidation.validate({
         numberOfItems: Number.NaN,

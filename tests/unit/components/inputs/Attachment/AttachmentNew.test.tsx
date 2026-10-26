@@ -83,6 +83,7 @@ const baseProps = {
 describe(AttachmentNew, () => {
   it('treats a field holding a single object as empty rather than throwing', () => {
     expect.hasAssertions();
+
     // The field is typed `AttachmentDto[] | AttachmentDto | null`, so a form is free to hand
     // over a bare object. AttachmentItemNew addresses its field as `name[index]`, which reads
     // undefined against an object - so the control normalises to a list before rendering.
@@ -101,6 +102,7 @@ describe(AttachmentNew, () => {
 
   it('points the browse button at the validation message once the field is touched and invalid', () => {
     expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ files: [] as AttachmentDto[] }}
@@ -125,6 +127,7 @@ describe(AttachmentNew, () => {
 
   it('describes the browse button with the inline help while the field is untouched', () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ files: [] as AttachmentDto[] }}>
         <AttachmentNew
@@ -143,6 +146,7 @@ describe(AttachmentNew, () => {
 
   it('survives an upload that finishes after the control has gone', async () => {
     expect.hasAssertions();
+
     let finishUpload: (value: AttachmentDto[]) => void = () => {};
     const onUploadFiles = vi.fn<UploadFiles>(
       () =>
@@ -175,6 +179,7 @@ describe(AttachmentNew, () => {
 
   it('survives a delete that finishes after the control has gone', async () => {
     expect.hasAssertions();
+
     let finishDelete: () => void = () => {};
     const onDeleteFile = vi.fn<DeleteFile>(
       () =>

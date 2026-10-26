@@ -69,6 +69,7 @@ const expectCalendarChangeCallbacks = (
 describe('customDateInput accessibility', () => {
   it('keeps the calendar picker button in the keyboard tab order', () => {
     expect.hasAssertions();
+
     renderInput();
 
     const calendarButton = screen.getByRole('button', {
@@ -80,6 +81,7 @@ describe('customDateInput accessibility', () => {
 
   it('renders the calendar icon as decorative hidden markup without a presentation role', () => {
     expect.hasAssertions();
+
     renderInput();
 
     const calendarButton = screen.getByRole('button', {
@@ -93,6 +95,7 @@ describe('customDateInput accessibility', () => {
 
   it('coordinates focus, blur, calendar opening, help, and validation feedback', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const handleEnsureCalendarClosed = vi.fn<() => void>();
     const handleOpenCalendar = vi.fn<() => void>();
@@ -157,6 +160,7 @@ describe('customDateInput accessibility', () => {
 
   it('disables the calendar button for disabled and read-only inputs', () => {
     expect.hasAssertions();
+
     const { rerender } = renderInput({ disabled: true });
 
     expect(
@@ -191,6 +195,7 @@ describe('customDateInput accessibility', () => {
 
   it('uses Formik touched errors to mark the text control invalid', () => {
     expect.hasAssertions();
+
     render(
       <Formik
         initialErrors={{ calibrationDate: 'Required' }}

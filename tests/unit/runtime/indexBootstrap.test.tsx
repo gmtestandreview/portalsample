@@ -1,20 +1,22 @@
 import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import type { createStandardPublicClientApplication as CreateStandardPublicClientApplication } from '@azure/msal-browser';
+import type { createRoot as CreateRoot } from 'react-dom/client';
 
 const mocks = vi.hoisted(() => ({
-  createRoot: vi.fn(),
-  render: vi.fn(),
+  createRoot: vi.fn<(...args: unknown[]) => unknown>(),
+  render: vi.fn<(...args: unknown[]) => unknown>(),
   createStandardPublicClientApplication: vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ client: 'pca' }),
-  createTrustedTypePolicy: vi.fn(),
+  createTrustedTypePolicy: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
   import('react-dom/client'),
   () =>
     ({
-      createRoot: mocks.createRoot,
+      createRoot: mocks.createRoot as unknown as typeof CreateRoot,
     }) satisfies __ExactMockModule<__TestMockModule154>,
 );
 
@@ -23,7 +25,7 @@ vi.mock(
   () =>
     ({
       createStandardPublicClientApplication:
-        mocks.createStandardPublicClientApplication,
+        mocks.createStandardPublicClientApplication as unknown as typeof CreateStandardPublicClientApplication,
     }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
@@ -103,6 +105,8 @@ vi.mock(
 
 describe('application bootstrap', () => {
   it('creates the root, initializes MSAL, installs Trusted Types, and renders providers', async () => {
+    expect.hasAssertions();
+
     vi.resetModules();
     document.body.innerHTML = '<div id="root"></div>';
     mocks.createRoot.mockReturnValue({ render: mocks.render });
@@ -120,6 +124,8 @@ describe('application bootstrap', () => {
   });
 
   it('wraps the entire application in React Strict Mode', async () => {
+    expect.hasAssertions();
+
     vi.resetModules();
     document.body.innerHTML = '<div id="root"></div>';
     mocks.createRoot.mockReturnValue({ render: mocks.render });

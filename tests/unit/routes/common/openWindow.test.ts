@@ -14,8 +14,12 @@ describe('openWindow helpers', () => {
   });
 
   it('opens internal routes with noopener,noreferrer and clears opener fallback', () => {
+    expect.hasAssertions();
+
     const openedWindow = { opener: {} } as Window;
-    const open = vi.fn().mockReturnValue(openedWindow);
+    const open = vi
+      .fn<(...args: unknown[]) => unknown>()
+      .mockReturnValue(openedWindow);
     globalThis.open = open as typeof globalThis.open;
 
     openInternalRouteInNewTab('/request-for-quote/123/view-summary');
@@ -29,7 +33,9 @@ describe('openWindow helpers', () => {
   });
 
   it('does not open external or protocol-relative routes through internal route helper', () => {
-    const open = vi.fn();
+    expect.hasAssertions();
+
+    const open = vi.fn<(...args: unknown[]) => unknown>();
     globalThis.open = open as typeof globalThis.open;
 
     openInternalRouteInNewTab('https://example.test/request');
@@ -40,7 +46,9 @@ describe('openWindow helpers', () => {
   });
 
   it('encodes PDF page fragments before opening the URL', () => {
-    const open = vi.fn().mockReturnValue(null);
+    expect.hasAssertions();
+
+    const open = vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
 
     openPdfPageInSecureNewTab(
@@ -56,7 +64,9 @@ describe('openWindow helpers', () => {
   });
 
   it('opens blob URLs with secure features', () => {
-    const open = vi.fn().mockReturnValue(null);
+    expect.hasAssertions();
+
+    const open = vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
 
     openUrlInSecureNewTab('blob:https://portal.measurement.gov.au/pdf-id');

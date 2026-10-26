@@ -209,6 +209,7 @@ vi.mock('react-datepicker', () => {
 describe(CustomDatePicker, () => {
   it('opens, selects a date, and closes the calendar', async () => {
     expect.hasAssertions();
+
     const dateOnChange = vi.fn<() => void>();
     const dateOnBlur = vi.fn<() => void>();
 
@@ -240,6 +241,7 @@ describe(CustomDatePicker, () => {
 
   it('supports an omitted calendar button title', () => {
     expect.hasAssertions();
+
     render(
       <CustomDatePicker
         dateOnBlur={vi.fn<() => void>()}
@@ -255,6 +257,7 @@ describe(CustomDatePicker, () => {
 
   it('supports the Today action through the current open/close flow', async () => {
     expect.hasAssertions();
+
     const dateOnChange = vi.fn<() => void>();
 
     render(
@@ -282,6 +285,7 @@ describe(CustomDatePicker, () => {
 
   it('handles blur, outside click, escape, and calendar keyboard controls', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const dateOnBlur = vi.fn<() => void>();
 
@@ -329,6 +333,7 @@ describe(CustomDatePicker, () => {
 
   it('opens from Enter and Space unless read-only, while disabled read-only follows the component condition', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <CustomDatePicker
@@ -396,6 +401,7 @@ describe(CustomDatePicker, () => {
 
   it('synchronizes current dates and calculates bottom, top, and neutral offsets', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const currentDate = new Date('2026-06-01T00:00:00.000Z');
     const nextDate = new Date('2026-06-02T00:00:00.000Z');

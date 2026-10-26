@@ -131,6 +131,7 @@ const resetMocks = (matches: MatchedAddress[] | undefined = [match]) => {
 describe('rhfAddressLookup selection', () => {
   it('writes the chosen address and keeps the identifying fields', async () => {
     expect.hasAssertions();
+
     resetMocks();
     renderLookup(
       { id: 7, type: 'postal', timeStamp: 'stamp', searchText: '' },
@@ -167,6 +168,7 @@ describe('rhfAddressLookup selection', () => {
 
   it('falls back to blanks and the default label for sparse matches', async () => {
     expect.hasAssertions();
+
     resetMocks([
       {
         addressLine2: 'Suite 2',
@@ -195,6 +197,7 @@ describe('rhfAddressLookup selection', () => {
 
   it('clears the address when the search text is cleared', async () => {
     expect.hasAssertions();
+
     resetMocks();
     renderLookup({
       id: 2,
@@ -224,6 +227,7 @@ describe('rhfAddressLookup results', () => {
     ['authentication in progress', () => (mocks.inProgress = 'login')],
   ])('offers manual entry without searching for %s', async (_name, setup) => {
     expect.hasAssertions();
+
     resetMocks();
     setup();
     renderLookup();
@@ -238,6 +242,7 @@ describe('rhfAddressLookup results', () => {
 
   it('treats a response without matches as no match', async () => {
     expect.hasAssertions();
+
     resetMocks();
     mocks.addressSearch.mockResolvedValue({ matches: undefined });
     renderLookup();
@@ -251,6 +256,7 @@ describe('rhfAddressLookup results', () => {
 
   it('shows no unavailable message for a non-503 failure', async () => {
     expect.hasAssertions();
+
     resetMocks();
     mocks.addressSearch.mockRejectedValue({ status: 500 });
     renderLookup();
@@ -264,6 +270,7 @@ describe('rhfAddressLookup results', () => {
 
   it('does not log the typed address when a search fails', async () => {
     expect.hasAssertions();
+
     resetMocks();
     const failure = { status: 500 };
     mocks.addressSearch.mockRejectedValue(failure);
@@ -286,6 +293,7 @@ describe('rhfAddressLookup results', () => {
 
   it('offers manual entry when the address service is unavailable', async () => {
     expect.hasAssertions();
+
     resetMocks();
     mocks.addressSearch.mockRejectedValue({ status: 503 });
     renderLookup();
@@ -299,6 +307,7 @@ describe('rhfAddressLookup results', () => {
 
   it('aborts the in-flight request when a new search starts', async () => {
     expect.hasAssertions();
+
     resetMocks();
     let firstSignal: AbortSignal | undefined;
     mocks.addressSearch
@@ -320,6 +329,7 @@ describe('rhfAddressLookup results', () => {
 describe('rhfAddressLookup manual entry', () => {
   it('switches to manual entry and back, clearing the touched search text', async () => {
     expect.hasAssertions();
+
     resetMocks();
     renderLookup(
       { searchText: 'Existing', isManuallyEntered: false },
@@ -350,6 +360,7 @@ describe('rhfAddressLookup manual entry', () => {
 
   it('switches back to lookup mode with the existing search text', async () => {
     expect.hasAssertions();
+
     resetMocks();
     renderLookup({ searchText: 'Existing', isManuallyEntered: true });
 
@@ -365,6 +376,7 @@ describe('rhfAddressLookup manual entry', () => {
 
   it('switches to blank manual entry from a no-match result', async () => {
     expect.hasAssertions();
+
     resetMocks([]);
     renderLookup({ id: 1, searchText: '', isManuallyEntered: false });
 
@@ -388,6 +400,7 @@ describe('rhfAddressLookup manual entry', () => {
 describe('rhfAddressLookup summary', () => {
   it('renders the formatted address', () => {
     expect.hasAssertions();
+
     resetMocks();
     renderLookup(
       {
@@ -407,6 +420,7 @@ describe('rhfAddressLookup summary', () => {
 
   it('renders a dash when there is no address', () => {
     expect.hasAssertions();
+
     resetMocks();
     render(
       <FieldHarness field='address' defaultValue={undefined}>

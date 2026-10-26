@@ -15,12 +15,14 @@ const validContact = {
 
 describe('contact submit validation', () => {
   it('accepts a valid contact object', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate({ contact: validContact }),
     ).resolves.toMatchObject({ contact: validContact });
   });
 
   it('requires missing hard contact fields', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate({ contact: {} }, { abortEarly: false }),
     ).rejects.toMatchObject({
@@ -36,6 +38,7 @@ describe('contact submit validation', () => {
   });
 
   it('validates invalid formats', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate(
         {
@@ -60,6 +63,7 @@ describe('contact submit validation', () => {
   });
 
   it('accepts max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate({
         contact: {
@@ -74,6 +78,7 @@ describe('contact submit validation', () => {
   });
 
   it('rejects values over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       contactSubmitValidation.validate(
         {

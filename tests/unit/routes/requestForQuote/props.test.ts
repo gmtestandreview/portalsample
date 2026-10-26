@@ -16,28 +16,29 @@ import {
 import { stepStatuses } from '../testFixtures';
 
 const mocks = vi.hoisted(() => ({
-  setAuthToken: vi.fn(),
-  getInstrumentAndRequest: vi.fn(),
-  saveInstrumentAndRequest: vi.fn(),
-  getOrganisationAndContact: vi.fn(),
-  saveOrganisationAndContact: vi.fn(),
-  getSummary: vi.fn(),
-  getSubmittedSummary: vi.fn(),
-  submit: vi.fn(),
-  acquireTokenSilent: vi.fn(),
-  appLoggerError: vi.fn(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getInstrumentAndRequest: vi.fn<(...args: unknown[]) => unknown>(),
+  saveInstrumentAndRequest: vi.fn<(...args: unknown[]) => unknown>(),
+  getOrganisationAndContact: vi.fn<(...args: unknown[]) => unknown>(),
+  saveOrganisationAndContact: vi.fn<(...args: unknown[]) => unknown>(),
+  getSummary: vi.fn<(...args: unknown[]) => unknown>(),
+  getSubmittedSummary: vi.fn<(...args: unknown[]) => unknown>(),
+  submit: vi.fn<(...args: unknown[]) => unknown>(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const actual = await importOriginal();
-    if (typeof actual !== 'object' || actual === null) {
-      throw new TypeError('Expected module exports object');
-    }
-    return {
-      ...actual,
-      RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const actual = await importOriginal();
+  if (typeof actual !== 'object' || actual === null) {
+    throw new TypeError('Expected module exports object');
+  }
+  return {
+    ...actual,
+    RequestForQuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+      function RequestForQuoteClientMock() {
         return {
           setAuthToken: mocks.setAuthToken,
           getInstrumentAndRequest: mocks.getInstrumentAndRequest,
@@ -48,27 +49,27 @@ vi.mock(
           getSubmittedSummary: mocks.getSubmittedSummary,
           submit: mocks.submit,
         };
-      }),
-    } satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+      },
+    ),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         error: mocks.appLoggerError,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -108,24 +109,26 @@ describe('request for quote wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { instrument: 'Balance' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      setAuthTokenCalls: mocks.setAuthToken.mock.calls,
+      loadCalls: mocks.getInstrumentAndRequest.mock.calls,
+      serialNumberHidden: [
+        props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.No }),
+        props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.Yes }),
+      ],
+      bannerRefTitle: props.bannerRefTitle,
+      bannerSubTitle: props.bannerSubTitle,
+    }).toEqual({
+      loaded: { stepValues: { instrument: 'Balance' } },
+      setAuthTokenCalls: [['access-token']],
+      loadCalls: [['APP-1', abortSignal]],
+      serialNumberHidden: [true, false],
+      bannerRefTitle: 'Ref ID: APP-1',
+      bannerSubTitle: 'Trading - Branch - National Measurement Institute',
     });
-    expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks.getInstrumentAndRequest).toHaveBeenCalledWith(
-      'APP-1',
-      abortSignal,
-    );
-    expect(
-      props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.No }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.Yes }),
-    ).toBe(false);
-    expect(props.bannerRefTitle).toBe('Ref ID: APP-1');
-    expect(props.bannerSubTitle).toBe(
-      'Trading - Branch - National Measurement Institute',
-    );
 
     await props.onSaveAndNext?.(
       {
@@ -138,7 +141,7 @@ describe('request for quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveInstrumentAndRequest).toHaveBeenCalledWith(
+    expect(mocks.saveInstrumentAndRequest.mock.calls[0]).toEqual([
       'APP-1',
       {
         applicationId: 'APP-1',
@@ -150,7 +153,7 @@ describe('request for quote wizard prop factories', () => {
         isCompletingStep: true,
       },
       abortSignal,
-    );
+    ]);
 
     await props.onSaveAndExit?.(
       { hasSerialNumber: YesNo.No },
@@ -158,7 +161,7 @@ describe('request for quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith(
+    expect(mocks.saveInstrumentAndRequest.mock.calls.at(-1)).toEqual([
       'APP-1',
       {
         applicationId: 'APP-1',
@@ -166,7 +169,7 @@ describe('request for quote wizard prop factories', () => {
         isCompletingStep: false,
       },
       abortSignal,
-    );
+    ]);
   });
 
   it('sends an unparseable availability date through unchanged', async () => {
@@ -220,36 +223,32 @@ describe('request for quote wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { isPrincipalContact: YesNo.No },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      loadCalls: mocks.getOrganisationAndContact.mock.calls,
+      hidden: [
+        props.hidingFields?.businessOrTradingName?.({}),
+        props.hidingFields?.branchOrLocationName?.({}),
+        props.hidingFields?.principalContactHide?.({
+          isPrincipalContact: YesNo.Yes,
+        }),
+        props.hidingFields?.principalContactHide?.({
+          isPrincipalContact: YesNo.No,
+        }),
+        props.hidingFields?.contact?.titleOther?.({
+          contact: { title: 'Other' },
+        }),
+        props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
+      ],
+      redirect: props.getRedirectionLocationOnError?.(500, ErrorType.Load),
+    }).toEqual({
+      loaded: { stepValues: { isPrincipalContact: YesNo.No } },
+      loadCalls: [['APP-2', abortSignal]],
+      hidden: [false, false, true, false, false, true],
+      redirect: '/not-found',
     });
-    expect(mocks.getOrganisationAndContact).toHaveBeenCalledWith(
-      'APP-2',
-      abortSignal,
-    );
-    expect(props.hidingFields?.businessOrTradingName?.({})).toBe(false);
-    expect(props.hidingFields?.branchOrLocationName?.({})).toBe(false);
-    expect(
-      props.hidingFields?.principalContactHide?.({
-        isPrincipalContact: YesNo.Yes,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.principalContactHide?.({
-        isPrincipalContact: YesNo.No,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.contact?.titleOther?.({
-        contact: { title: 'Other' },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
-    ).toBe(true);
-    expect(props.getRedirectionLocationOnError?.(500, ErrorType.Load)).toBe(
-      '/not-found',
-    );
 
     await props.onSaveAndExit?.(
       { isPrincipalContact: YesNo.No },
@@ -257,7 +256,7 @@ describe('request for quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveOrganisationAndContact).toHaveBeenCalledWith(
+    expect(mocks.saveOrganisationAndContact.mock.calls.at(-1)).toEqual([
       'APP-2',
       {
         applicationId: 'APP-2',
@@ -265,7 +264,7 @@ describe('request for quote wizard prop factories', () => {
         isCompletingStep: false,
       },
       abortSignal,
-    );
+    ]);
   });
 
   it('loads, submits, and logs request-for-quote summary failures', async () => {
@@ -286,32 +285,33 @@ describe('request for quote wizard prop factories', () => {
       },
     } as RequestForQuoteSummary;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { referenceId: 'RFQ-1' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      loadCalls: mocks.getSummary.mock.calls,
+      hidden: [
+        props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
+          summary,
+        ),
+        props.hidingFields?.organisationAndContact?.principalContactHide?.(
+          summary,
+        ),
+        props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
+          summary,
+        ),
+      ],
+      redirect: props.getRedirectionLocationOnError?.(404, ErrorType.Load),
+    }).toEqual({
+      loaded: { stepValues: { referenceId: 'RFQ-1' } },
+      loadCalls: [['APP-3', abortSignal]],
+      hidden: [true, false, true],
+      redirect: '/not-found',
     });
-    expect(mocks.getSummary).toHaveBeenCalledWith('APP-3', abortSignal);
-    expect(
-      props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
-        summary,
-      ),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.principalContactHide?.(
-        summary,
-      ),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
-        summary,
-      ),
-    ).toBe(true);
-    expect(props.getRedirectionLocationOnError?.(404, ErrorType.Load)).toBe(
-      '/not-found',
-    );
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
 
-    expect(mocks.submit).toHaveBeenCalledWith(
+    expect(mocks.submit.mock.calls.at(-1)).toEqual([
       'APP-3',
       {
         applicationId: 'APP-3',
@@ -319,29 +319,47 @@ describe('request for quote wizard prop factories', () => {
         isCompletingStep: true,
       },
       abortSignal,
-    );
+    ]);
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
 
-    await expect(
-      props.onSaveAndNext?.(summary, true, abortSignal),
-    ).resolves.toBeUndefined();
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'failoed to submit form',
-      expect.any(Error),
-      { Id: 'APP-3' },
+    const submitFailure = await props.onSaveAndNext?.(
+      summary,
+      true,
+      abortSignal,
     );
+
+    expect({
+      result: submitFailure,
+      loggerCall: mocks.appLoggerError.mock.calls.at(-1),
+    }).toEqual({
+      result: undefined,
+      loggerCall: [
+        'failoed to submit form',
+        expect.any(Error),
+        { Id: 'APP-3' },
+      ],
+    });
 
     mocks.getSummary.mockRejectedValueOnce(new Error('load failed'));
 
-    await expect(props.loadStepValues?.(abortSignal)).rejects.toThrow(
-      'There was an error retrieving your details.',
-    );
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load summary',
-      expect.any(Error),
-      { Id: 'APP-3' },
-    );
+    const loadFailure = await Promise.resolve(
+      props.loadStepValues?.(abortSignal),
+    ).catch((error: unknown) => error);
+
+    expect({
+      error: loadFailure,
+      loggerCall: mocks.appLoggerError.mock.calls.at(-1),
+    }).toEqual({
+      error: expect.objectContaining({
+        message: 'There was an error retrieving your details.',
+      }),
+      loggerCall: [
+        'Failed to load summary',
+        expect.any(Error),
+        { Id: 'APP-3' },
+      ],
+    });
   });
 
   it('loads and submits the submitted summary view', async () => {
@@ -363,30 +381,30 @@ describe('request for quote wizard prop factories', () => {
       },
     } as RequestForQuoteSummary;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
-      stepValues: { referenceId: 'RFQ-2' },
+    const loaded = await props.loadStepValues?.(abortSignal);
+
+    expect({
+      loaded,
+      loadCalls: mocks.getSubmittedSummary.mock.calls,
+      hidden: [
+        props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
+          summary,
+        ),
+        props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
+          summary,
+        ),
+      ],
+      redirect: props.getRedirectionLocationOnError?.(404, ErrorType.Load),
+    }).toEqual({
+      loaded: { stepValues: { referenceId: 'RFQ-2' } },
+      loadCalls: [['APP-4', abortSignal]],
+      hidden: [false, false],
+      redirect: '/not-found',
     });
-    expect(mocks.getSubmittedSummary).toHaveBeenCalledWith(
-      'APP-4',
-      abortSignal,
-    );
-    expect(
-      props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
-        summary,
-      ),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
-        summary,
-      ),
-    ).toBe(false);
-    expect(props.getRedirectionLocationOnError?.(404, ErrorType.Load)).toBe(
-      '/not-found',
-    );
 
     await props.onSaveAndNext?.(summary, false, abortSignal);
 
-    expect(mocks.submit).toHaveBeenCalledWith(
+    expect(mocks.submit.mock.calls.at(-1)).toEqual([
       'APP-4',
       {
         applicationId: 'APP-4',
@@ -394,7 +412,7 @@ describe('request for quote wizard prop factories', () => {
         isCompletingStep: true,
       },
       abortSignal,
-    );
+    ]);
   });
 
   it('throws load/save errors when no account is available', async () => {
@@ -433,29 +451,33 @@ describe('request for quote wizard prop factories', () => {
       'Request quote',
     );
 
-    await expect(instrumentProps.loadStepValues?.()).rejects.toThrow(
+    const failures = await Promise.all(
+      [
+        Promise.resolve(instrumentProps.loadStepValues?.()),
+        Promise.resolve(instrumentProps.onSaveAndExit?.({}, false)),
+        Promise.resolve(organisationProps.loadStepValues?.()),
+        Promise.resolve(organisationProps.onSaveAndExit?.({}, false)),
+        Promise.resolve(summaryProps.loadStepValues?.()),
+        Promise.resolve(summaryProps.onSaveAndNext?.({}, false)),
+        Promise.resolve(viewSummaryProps.loadStepValues?.()),
+        Promise.resolve(viewSummaryProps.onSaveAndNext?.({}, false)),
+      ].map((promise) =>
+        promise.then(
+          () => undefined,
+          (error: unknown) => error,
+        ),
+      ),
+    );
+
+    expect(failures.map((error) => (error as Error).message)).toEqual([
       'There was an error retrieving your details.',
-    );
-    await expect(instrumentProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'error',
-    );
-    await expect(organisationProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.',
-    );
-    await expect(organisationProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'error',
-    );
-    await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.',
-    );
-    await expect(summaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
       'error',
-    );
-    await expect(viewSummaryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.',
-    );
-    await expect(viewSummaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
       'error',
-    );
+    ]);
   });
 });

@@ -171,6 +171,7 @@ describe(TermsAndConditionModal, () => {
 
   it('renders the modal when userAcceptedTermsOfUse is false', () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
         givenName: 'Alice',
@@ -188,6 +189,7 @@ describe(TermsAndConditionModal, () => {
 
   it('does not render the modal when userAcceptedTermsOfUse is true', () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
         userAcceptedTermsOfUse: true,
@@ -205,6 +207,7 @@ describe(TermsAndConditionModal, () => {
 
   it('dispatches setAgree after successful ToU acceptance', async () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
         givenName: 'Bob',
@@ -224,6 +227,7 @@ describe(TermsAndConditionModal, () => {
 
   it('sends the auth token and configured terms version when accepting terms', async () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
         givenName: 'Bob',
@@ -246,6 +250,7 @@ describe(TermsAndConditionModal, () => {
 
   it('uses the family name only when the given name is not available', () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({ familyName: 'Solo' }),
     );
@@ -259,6 +264,7 @@ describe(TermsAndConditionModal, () => {
 
   it('renders the exit portal link', () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
         givenName: 'Alice',
@@ -275,6 +281,7 @@ describe(TermsAndConditionModal, () => {
 
   it('does not call the API while MSAL is in progress', async () => {
     expect.hasAssertions();
+
     mockMsal.inProgress = 'login';
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -295,6 +302,7 @@ describe(TermsAndConditionModal, () => {
 
   it('does not call the API when there is no MSAL account', async () => {
     expect.hasAssertions();
+
     mockMsal.accounts = [];
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -315,6 +323,7 @@ describe(TermsAndConditionModal, () => {
 
   it('accepts terms without dispatching when account dispatch is unavailable', async () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountDispatch).mockReturnValue(null);
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -339,6 +348,7 @@ describe(TermsAndConditionModal, () => {
 
   it('shows the error alert when acceptTermsAndCondition API call fails', async () => {
     expect.hasAssertions();
+
     mockAcceptTermsAndCondition.mockRejectedValueOnce(
       new Error('Network error'),
     );

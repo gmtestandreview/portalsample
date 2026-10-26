@@ -84,6 +84,7 @@ describe('notification storage wrappers', () => {
   ])(
     'sets, gets, and clears the %s notification',
     (_name, setNotification, getNotification, clearNotification, key) => {
+      expect.hasAssertions();
       expect(getNotification()).toBeUndefined();
 
       setNotification(notification);
@@ -105,6 +106,8 @@ describe('target organisation storage wrapper', () => {
   });
 
   it('sets, gets, and clears the target organisation', () => {
+    expect.hasAssertions();
+
     const targetOrganisation = {
       targetOrganisationAbn: '12345678901',
       targetOrganisationName: 'Acme Pty Ltd',

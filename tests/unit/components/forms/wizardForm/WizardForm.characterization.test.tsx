@@ -215,6 +215,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('starts the next step clean and without errors after a valid submit', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderWizard(saves);
 
@@ -231,6 +232,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('shows the unsaved prompt on Back after an invalid submit on the next step', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderWizard(saves);
 
@@ -248,6 +250,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('submits once on Enter when valid and shows errors on Enter when invalid', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderWizard(saves);
 
@@ -269,6 +272,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('lets a clean form navigate away without a prompt', async () => {
     expect.hasAssertions();
+
     const router = renderWizard(saves);
     await screen.findByLabelText('Name one');
 
@@ -282,6 +286,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('blocks a dirty form and stays on the step when Cancel is chosen', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = renderWizard(saves);
     await user.type(await screen.findByLabelText('Name one'), 'abc');
@@ -302,6 +307,7 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('blocks a dirty form and leaves when Discard is chosen', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const router = renderWizard(saves);
     await user.type(await screen.findByLabelText('Name one'), 'abc');

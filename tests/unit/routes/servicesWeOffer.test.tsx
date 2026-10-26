@@ -22,10 +22,10 @@ import { renderWithRouter } from '../helpers/renderWithRouter';
 import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  accountContext: vi.fn(),
-  setUserProfile: vi.fn(),
-  appLoggerError: vi.fn(),
-  appLoggerInfo: vi.fn(),
+  accountContext: vi.fn<(...args: unknown[]) => unknown>(),
+  setUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerInfo: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 /** Filled in by the module-mock factory below, so the test can drive the same client instance. */
@@ -33,53 +33,52 @@ const clients = vi.hoisted(() => ({
   lookup: undefined as unknown as ClientMockOf<'getServices'>,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock(
-  import('../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
+vi.mock(import('../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
 
-    clients.lookup = createClientMockFor('getServices');
+  clients.lookup = createClientMockFor('getServices');
 
-    // Spreading the original keeps ServiceType a real enum. The component compares
-    // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
-    // every branch down the default arm and the redirect tests would pass for the wrong reason.
-    return webApiClientModuleMock(original, {
-      LookupClient: clients.lookup,
-    }) satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+  // Spreading the original keeps ServiceType a real enum. The component compares
+  // `originalDefaultService === ServiceType.TestingCalibration`, so an undefined enum would send
+  // every branch down the default arm and the redirect tests would pass for the wrong reason.
+  return webApiClientModuleMock(original, {
+    LookupClient: clients.lookup,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['api://services/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
-  () =>
+  import('../../../ClientApp/src/authentication/hooks'),
+  (() =>
     ({
       default: () => mocks.accountContext(),
       useAccountDispatch: () => ({ setUserProfile: mocks.setUserProfile }),
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: { error: mocks.appLoggerError, info: mocks.appLoggerInfo },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const serviceDtos: ServiceDto[] = [
@@ -152,6 +151,8 @@ describe('services we offer', () => {
 
   describe('loading services', () => {
     it('acquires a token and renders every service returned', async () => {
+      expect.hasAssertions();
+
       await renderRoute();
 
       await waitFor(() =>
@@ -169,6 +170,8 @@ describe('services we offer', () => {
     });
 
     it('hydrates the checkboxes from the stored profile', async () => {
+      expect.hasAssertions();
+
       await renderRoute();
 
       await waitFor(() =>
@@ -184,6 +187,8 @@ describe('services we offer', () => {
     });
 
     it('marks the stored default service as the selected radio', async () => {
+      expect.hasAssertions();
+
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
@@ -208,6 +213,8 @@ describe('services we offer', () => {
     });
 
     it('shows a loading state while the services request is in flight', async () => {
+      expect.hasAssertions();
+
       let releaseServices: (value: ServiceDto[]) => void = () => undefined;
       clients.lookup.methods.getServices.mockReturnValue(
         new Promise<ServiceDto[]>((resolve) => {
@@ -231,6 +238,8 @@ describe('services we offer', () => {
     });
 
     it('shows a loading state while the token is still pending', async () => {
+      expect.hasAssertions();
+
       // Regression guard. `setIsDataLoading(true)` used to run AFTER
       // `await acquireTokenSilent`, so for the whole token round trip the user was shown the
       // selector with an empty service list and no indication anything was happening - which
@@ -253,6 +262,8 @@ describe('services we offer', () => {
     });
 
     it('logs and stops loading when the lookup fails', async () => {
+      expect.hasAssertions();
+
       clients.lookup.methods.getServices.mockRejectedValue(
         new Error('lookup down'),
       );
@@ -270,6 +281,8 @@ describe('services we offer', () => {
     });
 
     it('logs when the token itself is rejected', async () => {
+      expect.hasAssertions();
+
       rejectToken(new Error('interaction_required'));
 
       await renderRoute();
@@ -285,6 +298,8 @@ describe('services we offer', () => {
     });
 
     it('does not call the lookup when no account is signed in', async () => {
+      expect.hasAssertions();
+
       signOut();
 
       await renderRoute('/services-we-offer?mode=manage');
@@ -301,6 +316,8 @@ describe('services we offer', () => {
     });
 
     it('leaves a service unticked when the profile has no entry for it', async () => {
+      expect.hasAssertions();
+
       // The lookup is the source of which services exist; the profile only says which ones
       // this account holds. A service present in one and absent from the other must not throw
       // or tick itself on.
@@ -328,6 +345,8 @@ describe('services we offer', () => {
     });
 
     it('renders the lookup services when the profile carries no services list at all', async () => {
+      expect.hasAssertions();
+
       // A profile that exists but has never been given a services array. Manage mode is what
       // gets past the pre-render gate, so the effect still runs and has to cope with the
       // list being absent rather than merely empty.
@@ -348,6 +367,8 @@ describe('services we offer', () => {
     });
 
     it('waits on a spinner until assigned services are known', async () => {
+      expect.hasAssertions();
+
       mocks.accountContext.mockReturnValue({ details: undefined });
 
       await renderRoute();
@@ -361,6 +382,8 @@ describe('services we offer', () => {
 
   describe('redirecting an account that already chose a default', () => {
     it('sends a testing and calibration user to the main dashboard', async () => {
+      expect.hasAssertions();
+
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
@@ -377,6 +400,8 @@ describe('services we offer', () => {
     });
 
     it('sends a pattern approval user to the type approval dashboard', async () => {
+      expect.hasAssertions();
+
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
@@ -393,6 +418,8 @@ describe('services we offer', () => {
     });
 
     it('falls back to the services page for a default service it does not recognise', async () => {
+      expect.hasAssertions();
+
       // The API can return a service the client build predates. The switch has a default arm
       // for exactly that, and without it the user would be stranded on a blank page.
       mocks.accountContext.mockReturnValue(
@@ -416,6 +443,8 @@ describe('services we offer', () => {
     });
 
     it('stays on the page in manage mode even with a default already set', async () => {
+      expect.hasAssertions();
+
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
@@ -440,6 +469,8 @@ describe('services we offer', () => {
 
   describe('choosing services', () => {
     it('ticks the matching checkbox when a service is set as default', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -462,6 +493,8 @@ describe('services we offer', () => {
     });
 
     it('clears the default when its own checkbox is unticked', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -484,6 +517,8 @@ describe('services we offer', () => {
     });
 
     it('leaves the default alone when a different service is unticked', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -509,6 +544,8 @@ describe('services we offer', () => {
 
   describe('saving', () => {
     it('refuses to save with no service selected at all', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       mocks.accountContext.mockReturnValue(
         accountWith([
@@ -537,6 +574,8 @@ describe('services we offer', () => {
     });
 
     it('refuses to save a ticked service with no default chosen', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -553,6 +592,8 @@ describe('services we offer', () => {
     });
 
     it('saves the selection and routes to the chosen dashboard', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       const { currentPath } = await renderRoute();
 
@@ -589,6 +630,8 @@ describe('services we offer', () => {
     });
 
     it('logs and stays put when the profile save fails', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       mocks.setUserProfile.mockRejectedValue(new Error('save failed'));
       const { currentPath } = await renderRoute();
@@ -614,6 +657,8 @@ describe('services we offer', () => {
 
   describe('cancelling', () => {
     it('returns to the dashboard of the previously saved default', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       mocks.accountContext.mockReturnValue(
         accountWith([
@@ -638,6 +683,8 @@ describe('services we offer', () => {
     });
 
     it('stays put when the saved default maps to no dashboard, and falls back to a default icon', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       // A service the client build does not recognise, delivered without an icon. Both of the
       // component's last two fallbacks - the routeToDashboard default arm and the
@@ -680,6 +727,8 @@ describe('services we offer', () => {
     });
 
     it('shows the error summary when there is no saved default to return to', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
 

@@ -13,6 +13,7 @@ const renderTextAreaInput = () =>
 describe(TextAreaInput, () => {
   it('preserves pasted multiline content', async () => {
     expect.hasAssertions();
+
     renderTextAreaInput();
 
     const input = screen.getByLabelText('Notes');
@@ -29,6 +30,7 @@ describe(TextAreaInput, () => {
 
   it('normalizes a nullish value to an empty string on blur', async () => {
     expect.hasAssertions();
+
     render(
       <Formik initialValues={{ notes: null }} onSubmit={() => undefined}>
         <TextAreaInput label='Notes' name='notes' />

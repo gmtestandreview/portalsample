@@ -193,7 +193,7 @@ describe('vite config', () => {
   it('preserves the TypeScript exclusion policy for generated and vendored code', () => {
     expect.hasAssertions();
 
-    expect(tsconfig.exclude).toEqual([
+    expect(tsconfig.exclude).toStrictEqual([
       'ClientApp/src/api/web-api-client.ts',
       'ClientApp/src/parent/node_modules',
       'ClientApp/src/parent/packages',
@@ -212,13 +212,15 @@ describe('vite config', () => {
     const scss = config.css.preprocessorOptions.scss;
 
     expect(scss.quietDeps).toBe(true);
-    expect(scss.silenceDeprecations).toEqual([
+    expect(scss.silenceDeprecations).toStrictEqual([
       'import',
       'global-builtin',
       'color-functions',
       'if-function',
     ]);
-    expect(scss.loadPaths).toEqual([expect.stringContaining('node_modules')]);
+    expect(scss.loadPaths).toStrictEqual([
+      expect.stringContaining('node_modules'),
+    ]);
   });
 
   it('defines both HTML entry points for multi-page build', () => {
@@ -235,7 +237,7 @@ describe('vite config', () => {
 
     const { input, output } = config.build.rolldownOptions;
 
-    expect(Object.keys(input)).toEqual(['main', 'redirect']);
+    expect(Object.keys(input)).toStrictEqual(['main', 'redirect']);
     expect(input['redirect']).toMatch(/redirect\.html$/);
     expect(output.entryFileNames).toBe('js/[name].[hash:8].js');
     expect(output.chunkFileNames).toBe('js/[name].[hash:8].js');
@@ -292,33 +294,38 @@ describe('vite config', () => {
     const matches = (groupName: string, moduleId: string) =>
       groups.find(({ name }) => name === groupName)?.test.test(moduleId);
 
-    expect(matches('react-runtime', '/node_modules/react/index.js')).toBe(true);
-    expect(matches('react-runtime', '/node_modules/react-dom/client.js')).toBe(
-      true,
-    );
-    expect(
+    expect([
+      matches('react-runtime', '/node_modules/react/index.js'),
+      matches('react-runtime', '/node_modules/react-dom/client.js'),
       matches('react-runtime', '/node_modules/react-router/index.js'),
-    ).toBe(true);
-    expect(matches('auth', '/node_modules/@azure/msal-react/index.js')).toBe(
-      true,
-    );
-    expect(matches('forms', '/node_modules/formik/index.js')).toBe(true);
-    expect(matches('forms', '/node_modules/yup/index.js')).toBe(true);
-    expect(matches('ui', '/node_modules/react-bootstrap/index.js')).toBe(true);
-    expect(matches('utilities', '/node_modules/lodash/get.js')).toBe(true);
-    expect(matches('utilities', '/node_modules/date-fns/index.js')).toBe(true);
-    expect(
+      matches('auth', '/node_modules/@azure/msal-react/index.js'),
+      matches('forms', '/node_modules/formik/index.js'),
+      matches('forms', '/node_modules/yup/index.js'),
+      matches('ui', '/node_modules/react-bootstrap/index.js'),
+      matches('utilities', '/node_modules/lodash/get.js'),
+      matches('utilities', '/node_modules/date-fns/index.js'),
       matches(
         'react-runtime',
         '/ClientApp/src/authentication/redirectBridge.ts',
       ),
-    ).toBe(false);
+    ]).toStrictEqual([
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+    ]);
   });
 
   it('keeps the complete legacy-to-Vite mapping synchronized with the design', () => {
     expect.hasAssertions();
 
-    expect(legacyToViteMapping).toEqual([
+    expect(legacyToViteMapping).toStrictEqual([
       { legacyName: 'REACT_APP_B2C_CLIENTID', viteName: 'VITE_B2C_CLIENTID' },
       { legacyName: 'REACT_APP_B2C_AUTHORITY', viteName: 'VITE_B2C_AUTHORITY' },
       {
@@ -374,7 +381,7 @@ describe('vite config', () => {
     );
 
     expect(envPlugin).toBeDefined();
-    expect(envPlugin?.transformIndexHtml).toEqual(expect.any(Function));
+    expect(envPlugin?.transformIndexHtml).toStrictEqual(expect.any(Function));
 
     const result = envPlugin?.transformIndexHtml?.('<%= VITE_B2C_CLIENTID %>');
 
@@ -390,7 +397,7 @@ describe('vite config', () => {
     );
 
     expect(cspPlugin).toBeDefined();
-    expect(cspPlugin?.configureServer).toEqual(expect.any(Function));
+    expect(cspPlugin?.configureServer).toStrictEqual(expect.any(Function));
   });
 
   it('passes configured environment variables through the template plugin', () => {
@@ -509,21 +516,21 @@ describe('vite config', () => {
       (plugin) => plugin.name === 'msal-redirect-csp',
     );
 
-    const setHeader = vi.fn();
+    const setHeader = vi.fn<(name: string, value: string) => void>();
     const response = {
       setHeader,
-      removeHeader: vi.fn(),
+      removeHeader: vi.fn<(name: string) => void>(),
     };
-    const next = vi.fn();
+    const next = vi.fn<() => void>();
 
     const middlewares = {
-      use: vi.fn(),
+      use: vi.fn<(middleware: unknown) => void>(),
     };
     const server = { middlewares };
 
     const postConfigure = cspPlugin?.configureServer?.(server);
 
-    expect(postConfigure).toEqual(expect.any(Function));
+    expect(postConfigure).toStrictEqual(expect.any(Function));
 
     postConfigure?.();
 
@@ -539,24 +546,35 @@ describe('vite config', () => {
 
     response.setHeader('Cache-Control', 'no-cache');
 
-    expect(setHeader).toHaveBeenCalledWith('Cache-Control', 'no-store');
-    expect(setHeader.mock.lastCall).toEqual(['Cache-Control', 'no-store']);
-    expect(setHeader).toHaveBeenCalledWith(
-      'Content-Security-Policy',
-      "default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'",
-    );
-    expect(response.removeHeader).toHaveBeenCalledWith(
-      'Cross-Origin-Opener-Policy',
-    );
-    expect(next).toHaveBeenCalledWith();
+    expect({
+      setHeader: setHeader.mock.calls.slice(0, 2),
+      removeHeader: response.removeHeader.mock.calls,
+      next: next.mock.calls,
+    }).toStrictEqual({
+      setHeader: [
+        ['Cache-Control', 'no-store'],
+        [
+          'Content-Security-Policy',
+          "default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'",
+        ],
+      ],
+      removeHeader: [['Cross-Origin-Opener-Policy']],
+      next: [[]],
+    });
 
     setHeader.mockClear();
     response.removeHeader.mockClear();
     next.mockClear();
     middleware({ url: '/index.html' }, response, next);
 
-    expect(setHeader).not.toHaveBeenCalled();
-    expect(response.removeHeader).not.toHaveBeenCalled();
-    expect(next).toHaveBeenCalledTimes(1);
+    expect({
+      setHeader: setHeader.mock.calls,
+      removeHeader: response.removeHeader.mock.calls,
+      next: next.mock.calls,
+    }).toStrictEqual({
+      setHeader: [],
+      removeHeader: [],
+      next: [[]],
+    });
   });
 });

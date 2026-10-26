@@ -106,6 +106,7 @@ const expectClearedDueDate = () => {
 describe('datePicker wrapper', () => {
   it('parses initial Formik values and normalizes valid date changes', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -143,6 +144,7 @@ describe('datePicker wrapper', () => {
 
   it('normalizes invalid and cleared date values', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -171,6 +173,7 @@ describe('datePicker wrapper', () => {
 
   it('normalizes blur values only when the input value changed and marks the field touched', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -194,6 +197,7 @@ describe('datePicker wrapper', () => {
 
   it('keeps invalid initial values unparsed', () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ dueDate: 'not a date' }}>
         <DatePicker name='dueDate' label='Due date' />
@@ -208,6 +212,7 @@ describe('datePicker wrapper', () => {
 
   it('skips normalization on an unchanged empty blur', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -228,6 +233,7 @@ describe('datePicker wrapper', () => {
 
   it('normalizes a cleared non-empty date to null on blur', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
 
     render(
@@ -247,6 +253,7 @@ describe('datePicker wrapper', () => {
 
   it('renders summary values for string, Date, and empty inputs', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <Harness initialValues={{ dueDate: '2026-06-11T00:00:00+10:00' }}>
         <DatePicker name='dueDate' label='Due date' isSummary />

@@ -2,13 +2,15 @@ import { Form, Formik } from 'formik';
 import { render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as ReactRouterModule from 'react-router';
+import type * as HelperFunctionsModule from '../../../../ClientApp/src/routes/common/helperFunctions';
+import type * as NotificationModule from '../../../../ClientApp/src/storage/notification';
 import SummaryAndAccept from '../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept';
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' });
-  const getSummaryAndAccept = vi.fn();
+  const getSummaryAndAccept = vi.fn<(...args: unknown[]) => unknown>();
   const route = { id: 'quote-1' };
 
   return {
@@ -20,6 +22,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -31,6 +34,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
 
@@ -49,6 +53,7 @@ vi.mock('react-router', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/authentication/hooks',
   () =>
@@ -62,26 +67,31 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   () =>
     ({
       AcceptQuoteClient: class {
-        setAuthToken = vi.fn();
+        setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
 
         getSummaryAndAccept = mocks.getSummaryAndAccept;
       },
       DashboardClient: class {
-        setAuthToken = vi.fn();
+        setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
       },
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn() },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -89,13 +99,19 @@ vi.mock(
   import('../../../../ClientApp/src/storage/notification'),
   () =>
     ({
-      getDashboardNotification: vi.fn(() => undefined),
-      clearDashboardNotification: vi.fn(),
-      setDashboardNotification: vi.fn(),
-      clearDashboardInfoNotification: vi.fn(),
+      getDashboardNotification: vi.fn<
+        typeof NotificationModule.getDashboardNotification
+      >(() => undefined),
+      clearDashboardNotification:
+        vi.fn<typeof NotificationModule.clearDashboardNotification>(),
+      setDashboardNotification:
+        vi.fn<typeof NotificationModule.setDashboardNotification>(),
+      clearDashboardInfoNotification:
+        vi.fn<typeof NotificationModule.clearDashboardInfoNotification>(),
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Accordion',
   () =>
@@ -159,6 +175,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule63>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/InTextLink',
   () =>
@@ -195,6 +212,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
@@ -215,8 +233,10 @@ vi.mock(
   import('../../../../ClientApp/src/routes/common/helperFunctions'),
   () =>
     ({
-      getFileUrlFromBase64: vi.fn(),
-      openPdfPageInNewTab: vi.fn(),
+      getFileUrlFromBase64:
+        vi.fn<typeof HelperFunctionsModule.getFileUrlFromBase64>(),
+      openPdfPageInNewTab:
+        vi.fn<typeof HelperFunctionsModule.openPdfPageInNewTab>(),
     }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
@@ -242,6 +262,8 @@ describe(SummaryAndAccept, () => {
   });
 
   it('skips the API call when no MSAL accounts are available', async () => {
+    expect.hasAssertions();
+
     mocks.accounts = [];
     renderComponent();
 
@@ -255,6 +277,8 @@ describe(SummaryAndAccept, () => {
   });
 
   it('re-fetches summary data when the route id changes', async () => {
+    expect.hasAssertions();
+
     const { rerender } = renderComponent();
 
     await waitFor(() => {

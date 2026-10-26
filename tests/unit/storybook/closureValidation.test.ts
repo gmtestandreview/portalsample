@@ -90,6 +90,7 @@ const receipt = {
 
 describe('closure evidence validation', () => {
   it('derives only executable story entries and reports skipped entries separately', () => {
+    expect.hasAssertions();
     expect(
       moduleUnderTest.deriveExecutableStorySet({ index: fullIndex }),
     ).toEqual({
@@ -108,6 +109,7 @@ describe('closure evidence validation', () => {
   });
 
   it('accepts current full/docs indexes and exact passing receipts', () => {
+    expect.hasAssertions();
     expect(
       moduleUnderTest.validateClosure({
         manifest,
@@ -133,6 +135,8 @@ describe('closure evidence validation', () => {
   });
 
   it('rejects a receipt that omits a required execution or a11y result', () => {
+    expect.hasAssertions();
+
     const invalidReceipt = {
       ...receipt,
       a11yStatuses: [],
@@ -162,6 +166,8 @@ describe('closure evidence validation', () => {
   });
 
   it('rejects duplicate or failed status entries even when a passing duplicate is present', () => {
+    expect.hasAssertions();
+
     const invalidReceipt = {
       ...receipt,
       componentTestStatuses: [
@@ -196,6 +202,8 @@ describe('closure evidence validation', () => {
   });
 
   it('rejects an executable final-index story without a passing receipt', () => {
+    expect.hasAssertions();
+
     const extraStoryIndex = {
       ...fullIndex,
       entries: {

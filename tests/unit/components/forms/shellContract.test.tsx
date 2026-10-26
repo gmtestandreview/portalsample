@@ -168,6 +168,7 @@ describe.each(['formik', 'rhf'] as const)(
     describe('error summary', () => {
       it('stays hidden until the first submit, even with a field error', async () => {
         expect.hasAssertions();
+
         const { user } = await renderShell(kind);
         const input = screen.getByLabelText('name');
 
@@ -181,6 +182,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('lists the message with a link to the field after an invalid submit', async () => {
         expect.hasAssertions();
+
         const { user, onSubmit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('submit-button'));
@@ -196,6 +198,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('takes focus after an invalid submit and leaves the field unfocused', async () => {
         expect.hasAssertions();
+
         const { user } = await renderShell(kind);
 
         await user.click(screen.getByTestId('submit-button'));
@@ -209,6 +212,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('clears once the field is corrected and the form is submitted', async () => {
         expect.hasAssertions();
+
         const { user, onSubmit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('submit-button'));
@@ -228,6 +232,7 @@ describe.each(['formik', 'rhf'] as const)(
     describe('save and submit buttons', () => {
       it('submits with the hard schema and the default labels', async () => {
         expect.hasAssertions();
+
         const { user, onSubmit, onSaveAndExit } = await renderShell(kind);
 
         expect(screen.getByTestId('submit-button')).toHaveTextContent('Submit');
@@ -245,6 +250,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('save and exit uses the soft schema, calls its handler and sends no mode flags', async () => {
         expect.hasAssertions();
+
         const { user, onSubmit, onSaveAndExit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('save-and-exit-button'));
@@ -264,6 +270,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('a submit after a save and exit is validated with the hard schema again', async () => {
         expect.hasAssertions();
+
         const { user, onSubmit } = await renderShell(kind);
 
         await user.click(screen.getByTestId('save-and-exit-button'));
@@ -279,6 +286,7 @@ describe.each(['formik', 'rhf'] as const)(
     describe('unsaved route-leaving prompt', () => {
       it('lets a clean form leave', async () => {
         expect.hasAssertions();
+
         const { leave, currentPath } = await renderShell(kind);
 
         await leave();
@@ -288,6 +296,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('blocks a dirty form, stays on cancel and leaves on discard', async () => {
         expect.hasAssertions();
+
         const { user, leave, currentPath } = await renderShell(kind);
         await user.type(screen.getByLabelText('name'), 'x');
         // Blur now, inside user-event's act: the modal would otherwise take
@@ -323,6 +332,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('lets a dirty form leave once a valid submit has succeeded', async () => {
         expect.hasAssertions();
+
         const { user, onSubmit, leave, currentPath } = await renderShell(kind);
         await user.type(screen.getByLabelText('name'), 'Alex');
         await user.click(screen.getByTestId('submit-button'));
@@ -335,6 +345,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('blocks a clean form whose last submit was rejected', async () => {
         expect.hasAssertions();
+
         const { user, leave, currentPath } = await renderShell(kind);
         await user.click(screen.getByTestId('submit-button'));
         await screen.findByTestId('form-error-summary');
@@ -351,6 +362,7 @@ describe.each(['formik', 'rhf'] as const)(
     describe('banner slot', () => {
       it('renders nothing unless asked', async () => {
         expect.hasAssertions();
+
         await renderShell(kind, { showButtons: false });
 
         expect(
@@ -360,6 +372,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('renders the title and a Save and exit that runs the shell save', async () => {
         expect.hasAssertions();
+
         const { user, onSaveAndExit } = await renderShell(kind, {
           showButtons: false,
           banner: { showBanner: true, bannerTitle: 'Accept quote' },
@@ -374,6 +387,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('renders a caller-supplied banner instead of the standard one', async () => {
         expect.hasAssertions();
+
         await renderShell(kind, {
           showButtons: false,
           banner: { showBanner: true, banner: <div>Custom banner</div> },
@@ -387,6 +401,7 @@ describe.each(['formik', 'rhf'] as const)(
 
       it('discard navigates to its location', async () => {
         expect.hasAssertions();
+
         const { user, currentPath } = await renderShell(kind, {
           showButtons: false,
           banner: {
@@ -406,6 +421,7 @@ describe.each(['formik', 'rhf'] as const)(
 describe('rHF summary sanitisation', () => {
   it('renders messages only: no DOM ref text reaches the summary', async () => {
     expect.hasAssertions();
+
     const { user, container } = await renderShell('rhf');
 
     await user.click(screen.getByTestId('submit-button'));

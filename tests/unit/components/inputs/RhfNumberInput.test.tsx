@@ -54,6 +54,7 @@ const expectNumberInputSubmittedErrorState = (input: HTMLElement) => {
 describe(RhfNumberInput, () => {
   it('renders a labelled text box showing the form value', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='123'>
         <RhfNumberInput name='amount' label='Amount' />
@@ -68,6 +69,7 @@ describe(RhfNumberInput, () => {
 
   it('shows an empty box for nullish values and renders without a label', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfNumberInput name='amount' />
@@ -79,6 +81,7 @@ describe(RhfNumberInput, () => {
 
   it('applies id, classes, placeholder, disabled and readonly', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput
@@ -101,11 +104,13 @@ describe(RhfNumberInput, () => {
     expect(input).toHaveAttribute('placeholder', '0.00');
     expect(input).toHaveAttribute('maxlength', '5');
     expect(input).toBeDisabled();
+
     expectNumberInputOptionalAttributes(input);
   });
 
   it('stores the fixed-pattern formatted text as typed', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Mobile' format='#### ### ###' />
@@ -119,6 +124,7 @@ describe(RhfNumberInput, () => {
 
   it('picks the phone pattern from the typed digits with checkPhoneFormat', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Phone' format='checkPhoneFormat' />
@@ -131,6 +137,7 @@ describe(RhfNumberInput, () => {
 
   it('formats numbers with separators, decimals and a prepend', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput
@@ -159,6 +166,7 @@ describe(RhfNumberInput, () => {
 
   it('blocks a negative sign when negatives are not allowed', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Value' allowNegative={false} />
@@ -171,6 +179,7 @@ describe(RhfNumberInput, () => {
 
   it('does not reformat the stored value on blur', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput name='amount' label='Amount' format='#### ### ###' />
@@ -189,6 +198,7 @@ describe(RhfNumberInput, () => {
 
   it('shows the inline help and links it to the input', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput
@@ -211,6 +221,7 @@ describe(RhfNumberInput, () => {
 
   it('hides the error until submit, then wires it up and focuses the input', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -234,11 +245,13 @@ describe(RhfNumberInput, () => {
       'amount-validation-msg',
     );
     expect(input).toHaveClass('is-invalid');
+
     expectNumberInputSubmittedErrorState(input);
   });
 
   it('shows the error once touched', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -254,6 +267,7 @@ describe(RhfNumberInput, () => {
 
   it('suppresses field level messages when asked', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -272,6 +286,7 @@ describe(RhfNumberInput, () => {
 
   it('renders a formatted summary instead of an input', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='0412345678'>
         <RhfNumberInput
@@ -290,6 +305,7 @@ describe(RhfNumberInput, () => {
 
   it('renders a plain summary for a number without a format', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='1,234.50'>
         <RhfNumberInput name='amount' label='Value' prepend='AUD$' isSummary />
@@ -301,6 +317,7 @@ describe(RhfNumberInput, () => {
 
   it('with format and valueIsNumericString still stores the formatted text (legacy parity)', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfNumberInput

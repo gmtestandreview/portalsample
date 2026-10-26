@@ -57,6 +57,7 @@ describe('residual input branches', () => {
 
   it('renders SelectInput horizontal plain help without validation', () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ state: '' }}>
         <SelectInput
@@ -77,6 +78,7 @@ describe('residual input branches', () => {
 
   it('covers SelectInput partial validation states in both layouts', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <Harness initialValues={{ state: '' }} initialTouched={{ state: true }}>
         <SelectInput name='state' label='State' options={[]} />
@@ -107,6 +109,7 @@ describe('residual input branches', () => {
 
   it('uses field-name validation ids for SelectInput and RadioButtonGroup', () => {
     expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ state: '', delivery: '' }}
@@ -134,6 +137,7 @@ describe('residual input branches', () => {
 
   it('prefers an explicit id for RadioButtonGroup validation ids', () => {
     expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ delivery: '' }}
@@ -157,6 +161,7 @@ describe('residual input branches', () => {
 
   it('leaves the radio group description unset without help or validation', () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ delivery: '' }}>
         <RadioButtonGroup
@@ -174,6 +179,7 @@ describe('residual input branches', () => {
 
   it('uses the NumberInput field name for pattern validation feedback', () => {
     expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{ phone: '' }}
@@ -192,6 +198,7 @@ describe('residual input branches', () => {
 
   it('renders the false Checkbox summary value', () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ accepted: false }}>
         <Checkbox name='accepted' label='Accepted' isSummary />
@@ -203,6 +210,7 @@ describe('residual input branches', () => {
 
   it('renders SelectInput summary values when the selected option value is zero', () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ priority: 0 }}>
         <SelectInput
@@ -222,6 +230,7 @@ describe('residual input branches', () => {
 
   it('handles non-string TextAreaInput and Date-valued TextInput fields', () => {
     expect.hasAssertions();
+
     render(
       <Harness
         initialValues={{
@@ -240,6 +249,7 @@ describe('residual input branches', () => {
 
   it('normalizes a nullish TextInput value to an empty string on blur', async () => {
     expect.hasAssertions();
+
     render(
       <Harness initialValues={{ nickname: null }}>
         <TextInput name='nickname' label='Nickname' />
@@ -256,6 +266,7 @@ describe('residual input branches', () => {
 
   it('keeps AutoSuggest keyboard movement inert while closed and uses fallback ids', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCancel = vi.fn<() => void>();
     render(
@@ -287,6 +298,7 @@ describe('residual input branches', () => {
 
   it('focuses the first AutoSuggest option when ArrowUp opens the popup', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness initialValues={{ suburb: '' }}>
@@ -314,6 +326,7 @@ describe('residual input branches', () => {
 
   it('uses OrganisationNameLookup fallback options, explicit help id, Escape, and validation', async () => {
     expect.hasAssertions();
+
     vi.useFakeTimers();
     const firstRender = render(
       <Harness
@@ -375,6 +388,7 @@ describe('residual input branches', () => {
 
   it('uses OrganisationNameLookup name-based help and validation ids and ignores other keys', async () => {
     expect.hasAssertions();
+
     vi.useFakeTimers();
     const { unmount } = render(
       <Harness

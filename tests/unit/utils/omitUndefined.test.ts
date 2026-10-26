@@ -3,6 +3,8 @@ import { omitUndefined } from '../../../ClientApp/src/utils/omitUndefined';
 
 describe(omitUndefined, () => {
   it('removes undefined values while preserving other values', () => {
+    expect.hasAssertions();
+
     const input = {
       empty: '',
       falseValue: false,
@@ -23,20 +25,34 @@ describe(omitUndefined, () => {
   });
 
   it('does not mutate the input and only removes top-level values', () => {
+    expect.hasAssertions();
+
     const nested = { keep: 'value', missing: undefined };
     const input = Object.freeze({ nested, missing: undefined });
     const result = omitUndefined(input);
 
-    expect(result).toStrictEqual({ nested });
-    expect(result).not.toBe(input);
-    expect(result.nested).toBe(nested);
-    expect(Object.hasOwn(result, 'missing')).toBe(false);
-    expect(input).toStrictEqual({ nested, missing: undefined });
-    expect(Object.hasOwn(input, 'missing')).toBe(true);
-    expect(nested).toStrictEqual({ keep: 'value', missing: undefined });
+    expect({
+      result,
+      isNewObject: result !== input,
+      nestedIsShared: result.nested === nested,
+      resultHasMissing: Object.hasOwn(result, 'missing'),
+      input,
+      inputHasMissing: Object.hasOwn(input, 'missing'),
+      nested,
+    }).toStrictEqual({
+      result: { nested },
+      isNewObject: true,
+      nestedIsShared: true,
+      resultHasMissing: false,
+      input: { nested, missing: undefined },
+      inputHasMissing: true,
+      nested: { keep: 'value', missing: undefined },
+    });
   });
 
   it('preserves defined enumerable symbols and removes undefined symbols', () => {
+    expect.hasAssertions();
+
     const symbol = Symbol('profile');
     const missingSymbol = Symbol('missing');
     const input = { [symbol]: 'value', [missingSymbol]: undefined };
@@ -48,6 +64,8 @@ describe(omitUndefined, () => {
   });
 
   it('excludes non-enumerable string and symbol properties without reading them', () => {
+    expect.hasAssertions();
+
     const symbol = Symbol('hidden');
     const input = { keep: 'value' };
     Object.defineProperty(input, 'hidden', {
@@ -71,6 +89,8 @@ describe(omitUndefined, () => {
   });
 
   it('reads each enumerable getter once', () => {
+    expect.hasAssertions();
+
     let definedReads = 0;
     let undefinedReads = 0;
     const input = {
@@ -93,6 +113,8 @@ describe(omitUndefined, () => {
   });
 
   it('accepts null-prototype inputs and returns a plain object', () => {
+    expect.hasAssertions();
+
     const input = { keep: 'value', missing: undefined };
     Object.setPrototypeOf(input, null);
 
@@ -105,6 +127,8 @@ describe(omitUndefined, () => {
   });
 
   it('copies an own __proto__ key without changing the result prototype', () => {
+    expect.hasAssertions();
+
     const input = {
       ['__proto__']: { marker: 'value' },
       missing: undefined,
@@ -119,10 +143,14 @@ describe(omitUndefined, () => {
   });
 
   it('rejects arrays instead of returning a non-array object', () => {
+    expect.hasAssertions();
+
     expect(() => omitUndefined([1, undefined])).toThrow(TypeError);
   });
 
   it('rejects class instances whose prototype properties are not enumerable entries', () => {
+    expect.hasAssertions();
+
     class Profile {
       readonly name = 'Taylor';
     }

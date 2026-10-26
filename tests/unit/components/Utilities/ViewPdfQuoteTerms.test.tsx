@@ -120,6 +120,7 @@ describe(ViewPdfQuoteTerms, () => {
 
   it('renders the Note label, prefix text, Terms link, and suffix text', () => {
     expect.hasAssertions();
+
     const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);
 
     expect(screen.getByText('Note:')).toBeInTheDocument();
@@ -130,6 +131,7 @@ describe(ViewPdfQuoteTerms, () => {
 
   it('opens the PDF at the correct page and tracks a GA event on click', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const setIsLoading = vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>();
     const { container } = render(
@@ -171,6 +173,7 @@ describe(ViewPdfQuoteTerms, () => {
 
   it('sets a file error and clears loading when the token request fails', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const setFileError = vi.fn<ViewPdfQuoteTermsProps['setFileError']>();
     const setIsLoading = vi.fn<ViewPdfQuoteTermsProps['setIsLoading']>();
@@ -194,6 +197,7 @@ describe(ViewPdfQuoteTerms, () => {
 
   it('skips opening the PDF when the file response is incomplete', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     helperMocks.getQuotationFileDetails.mockResolvedValue(undefined);
     const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);

@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  sanitize: vi.fn((value: string) => `sanitized:${value}`),
+  sanitize: vi.fn<(value: string) => string>(
+    (value: string) => `sanitized:${value}`,
+  ),
 }));
 
 vi.mock(
@@ -22,7 +24,22 @@ describe('trustedTypes', () => {
   });
 
   it('creates a default trusted types policy that sanitizes HTML and script URLs', async () => {
-    const createPolicy = vi.fn();
+    expect.hasAssertions();
+
+    const createPolicy = vi.fn<
+      (
+        name: string,
+        policy: {
+          createScriptURL: (value: string) => string;
+          createHTML: (value: string) => string;
+          createScript: () => never;
+        },
+      ) => {
+        createScriptURL: (value: string) => string;
+        createHTML: (value: string) => string;
+        createScript: () => never;
+      }
+    >();
     (
       globalThis as { trustedTypes?: { createPolicy: typeof createPolicy } }
     ).trustedTypes = { createPolicy };
@@ -49,6 +66,8 @@ describe('trustedTypes', () => {
   });
 
   it('does nothing when trusted types are unavailable', async () => {
+    expect.hasAssertions();
+
     const { TrustedTypes } =
       await import('../../../ClientApp/src/trustedtypes');
 

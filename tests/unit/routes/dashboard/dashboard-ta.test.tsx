@@ -10,6 +10,7 @@ import '@testing-library/jest-dom/vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
+import type * as NotificationModule from '../../../../ClientApp/src/storage/notification';
 import {
   ServiceType,
   type ServicesOffered,
@@ -41,30 +42,36 @@ const {
   mockMsalContext,
 } = vi.hoisted(() => ({
   mockAcquireTokenSilent: vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' }),
   mockAccountContextState: { value: null as Record<string, unknown> | null },
   mockAccountDispatchState: { value: null as Record<string, unknown> | null },
-  mockAppLoggerError: vi.fn(),
-  mockAppLoggerInfo: vi.fn(),
-  mockClearDashboardInfoNotification: vi.fn(),
-  mockClearDashboardNotification: vi.fn(),
-  mockGetApplications: vi.fn(),
-  mockGetDashboardInfoNotification: vi.fn(),
-  mockGetDashboardNotification: vi.fn(),
-  mockGetDrafts: vi.fn(),
-  mockScrollIntoView: vi.fn(),
+  mockAppLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  mockAppLoggerInfo: vi.fn<(...args: unknown[]) => unknown>(),
+  mockClearDashboardInfoNotification:
+    vi.fn<typeof NotificationModule.clearDashboardInfoNotification>(),
+  mockClearDashboardNotification:
+    vi.fn<typeof NotificationModule.clearDashboardNotification>(),
+  mockGetApplications: vi.fn<(...args: unknown[]) => unknown>(),
+  mockGetDashboardInfoNotification:
+    vi.fn<typeof NotificationModule.getDashboardInfoNotification>(),
+  mockGetDashboardNotification:
+    vi.fn<typeof NotificationModule.getDashboardNotification>(),
+  mockGetDrafts: vi.fn<(...args: unknown[]) => unknown>(),
+  mockScrollIntoView: vi.fn<(...args: unknown[]) => unknown>(),
   mockServicesState: { value: [] as ServicesOffered[] },
-  mockSessionGetItem: vi.fn(),
-  mockSessionRemoveItem: vi.fn(),
-  mockSetAuthToken: vi.fn(),
-  mockSetDashboardInfoNotification: vi.fn(),
-  mockSetDashboardNotification: vi.fn(),
-  mockSetTargetOrganisation: vi.fn(),
-  mockSetUserProfile: vi.fn(),
-  mockTrackGAEvent: vi.fn(),
+  mockSessionGetItem: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSessionRemoveItem: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetDashboardInfoNotification:
+    vi.fn<typeof NotificationModule.setDashboardInfoNotification>(),
+  mockSetDashboardNotification:
+    vi.fn<typeof NotificationModule.setDashboardNotification>(),
+  mockSetTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
+  mockTrackGAEvent: vi.fn<(...args: unknown[]) => unknown>(),
   mockMsalContext: {
-    instance: { acquireTokenSilent: vi.fn() },
+    instance: { acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>() },
     accounts: [{ homeAccountId: 'account-id' }],
     inProgress: 'none',
   },
@@ -72,17 +79,18 @@ const {
 
 let mockAccountDetails: AccountDetails | null;
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   () =>
     ({
-      PatternApprovalClient: vi.fn().mockImplementation(function (
-        this: Record<string, unknown>,
-      ) {
-        this['setAuthToken'] = mockSetAuthToken;
-        this['getPatternApprovalApplicationDrafts'] = mockGetDrafts;
-        this['getPatternApprovalApplications'] = mockGetApplications;
-      }),
+      PatternApprovalClient: vi
+        .fn<(...args: unknown[]) => unknown>()
+        .mockImplementation(function (this: Record<string, unknown>) {
+          this['setAuthToken'] = mockSetAuthToken;
+          this['getPatternApprovalApplicationDrafts'] = mockGetDrafts;
+          this['getPatternApprovalApplications'] = mockGetApplications;
+        }),
       ServiceType: {
         TestingCalibration: 'TestingCalibration',
         PatternApproval: 'PatternApproval',
@@ -90,6 +98,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -98,6 +107,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-browser',
   () =>
@@ -106,6 +116,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/authentication/hooks',
   () =>
@@ -149,6 +160,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule14>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/Alert/NotificationMessage',
   () =>
@@ -183,6 +195,7 @@ vi.mock(
       default: () => {},
     }) satisfies __ExactMockModule<__TestMockModule59>,
 );
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/components/tiles/StandardPathway',
   () =>
@@ -281,6 +294,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule99>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
@@ -288,11 +302,12 @@ vi.mock(
       default: {
         error: mockAppLoggerError,
         info: mockAppLoggerInfo,
-        verbose: vi.fn(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
       },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/routes/common/errorRoutes',
   () =>
@@ -301,6 +316,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule100>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
@@ -335,6 +351,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -354,6 +371,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   'react-number-format',
   () =>
@@ -443,8 +461,16 @@ describe('pattern/type approval dashboard', () => {
     mockMsalContext.inProgress = 'none';
     mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
     mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
+    mockGetDashboardNotification.mockReturnValue(
+      null as unknown as ReturnType<
+        typeof NotificationModule.getDashboardNotification
+      >,
+    );
+    mockGetDashboardInfoNotification.mockReturnValue(
+      null as unknown as ReturnType<
+        typeof NotificationModule.getDashboardInfoNotification
+      >,
+    );
     mockSessionGetItem.mockReturnValue(null);
     mockSetUserProfile.mockResolvedValue(true);
     mockAccountDetails = { ...BASE_ACCOUNT };
@@ -464,6 +490,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockResolvedValue({
       currentPage: 2,
       items: [{ referenceId: 'TA-1001' }],
@@ -490,21 +518,20 @@ describe('pattern/type approval dashboard', () => {
       10,
       undefined,
     );
-    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
-      'data-current',
-      '2',
-    );
-    expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute(
-      'data-total',
-      '3',
-    );
-    expect(screen.getAllByTestId('pagination-header')[0]).toHaveAttribute(
-      'data-total',
-      '24',
-    );
+
+    const pagination = screen.getAllByTestId('pagination')[0];
+    const paginationHeader = screen.getAllByTestId('pagination-header')[0];
+
+    expect({
+      current: pagination?.getAttribute('data-current'),
+      total: pagination?.getAttribute('data-total'),
+      headerTotal: paginationHeader?.getAttribute('data-total'),
+    }).toStrictEqual({ current: '2', total: '3', headerTotal: '24' });
   });
 
   it('applies non-default year, status, and search filters to the request', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
     await waitFor(() =>
@@ -528,6 +555,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('loads applications, persists the selected tab after the debounce, and records analytics', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
     await waitFor(() =>
@@ -554,6 +583,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('returns to Drafts and records the selection', async () => {
+    expect.hasAssertions();
+
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -575,6 +606,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('restores a saved tab from session storage and removes the one-shot override', async () => {
+    expect.hasAssertions();
+
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -591,6 +624,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('persists page changes, scrolls to the title, and records analytics', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
     await waitFor(() =>
@@ -616,6 +651,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('resets the saved page once when a different organisation branch is selected', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       branchSelectionModalMode: 'SelectAndEditOrg',
@@ -669,6 +706,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('reports a rejected profile update without disrupting the dashboard', async () => {
+    expect.hasAssertions();
+
     const saveError = new Error('profile unavailable');
     mockSetUserProfile.mockRejectedValueOnce(saveError);
     const Dashboard = await importDashboard();
@@ -690,6 +729,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('redirects users who do not have active Pattern Approval service', async () => {
+    expect.hasAssertions();
+
     mockServicesState.value = [
       { service: ServiceType.PatternApproval, isActive: false },
     ];
@@ -756,6 +797,8 @@ describe('pattern/type approval dashboard', () => {
   ])(
     'does not request dashboard data without %s',
     async (_condition, arrange) => {
+      expect.hasAssertions();
+
       arrange();
       const Dashboard = await importDashboard();
       renderDashboard(Dashboard);
@@ -768,6 +811,8 @@ describe('pattern/type approval dashboard', () => {
   );
 
   it('routes fatal API failures using the returned status', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockRejectedValueOnce({ status: 500, title: 'Server Error' });
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -782,6 +827,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('publishes a forbidden notification without leaving the dashboard', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockRejectedValueOnce({ status: 403, title: 'Forbidden' });
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -797,6 +844,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('resets third-party organisation selection after an access failure', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockRejectedValueOnce({
       status: 403,
       title: 'No third-party access for organisation',
@@ -818,6 +867,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('uses empty organisation values when third-party account data is absent', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       abn: undefined,
@@ -846,6 +897,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('renders empty state instead of requests before terms are accepted and marks content inert', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       userAcceptedTermsOfUse: false,
@@ -872,14 +925,20 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('renders persisted notifications and clears them from their controls and on unmount', async () => {
+    expect.hasAssertions();
+
     mockGetDashboardNotification.mockReturnValue({
       message: 'saved',
       severity: 'success',
-    });
+    } as unknown as ReturnType<
+      typeof NotificationModule.getDashboardNotification
+    >);
     mockGetDashboardInfoNotification.mockReturnValue({
       message: 'information',
       severity: 'info',
-    });
+    } as unknown as ReturnType<
+      typeof NotificationModule.getDashboardInfoNotification
+    >);
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
 
@@ -895,6 +954,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('cancels a pending tab-profile save when unmounted', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
@@ -914,6 +975,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('reloads after a request deletion and sends the current tab to request items', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockResolvedValue({
       ...EMPTY_RESPONSE,
       items: [{ referenceId: 'TA-DELETE' }],
@@ -937,6 +1000,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('retains the active tab while cleared filters suspend request loading', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockResolvedValue({
       ...EMPTY_RESPONSE,
       items: [{ referenceId: 'TA-CLEAR' }],
@@ -955,6 +1020,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('renders organisation identity, service-management affordance, and navigation analytics', async () => {
+    expect.hasAssertions();
+
     mockServicesState.value = [
       { service: ServiceType.PatternApproval, isActive: true },
       { service: ServiceType.TestingCalibration, isActive: true },
@@ -977,6 +1044,8 @@ describe('pattern/type approval dashboard', () => {
   });
 
   it('converts an unsupported restored tab into the standard error route', async () => {
+    expect.hasAssertions();
+
     mockSessionGetItem.mockReturnValue('instruments');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);

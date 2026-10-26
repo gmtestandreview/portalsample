@@ -137,6 +137,7 @@ describe('header chrome', () => {
 
   it('renders the public header brand, feedback message, and unauthenticated exit link', () => {
     expect.hasAssertions();
+
     renderWithRouter(<Header />);
 
     expect(
@@ -167,6 +168,7 @@ describe('header chrome', () => {
 
   it('renders authenticated user menu items and tracks account-management clicks', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const modalDispatch = {
       setShowBranchSelector: vi.fn<ModalDispatch['setShowBranchSelector']>(),
@@ -250,6 +252,7 @@ describe('header chrome', () => {
 
   it('does not render authenticated menu content until account email is available', () => {
     expect.hasAssertions();
+
     vi.mocked(useAccountState).mockReturnValue({
       details: { givenName: 'Alex' },
     } as ReturnType<typeof useAccountState>);
@@ -261,6 +264,7 @@ describe('header chrome', () => {
 
   it('hides the environment label when no environment marker is detected', () => {
     expect.hasAssertions();
+
     const { container } = render(<NavbarEnvironment />);
 
     expect(container).toBeEmptyDOMElement();
@@ -268,6 +272,7 @@ describe('header chrome', () => {
 
   it('renders the feedback message as a new-tab survey link', () => {
     expect.hasAssertions();
+
     render(<NavbarMessage />);
 
     const survey = screen.getByRole('link', {
@@ -282,6 +287,7 @@ describe('header chrome', () => {
 describe('footer chrome', () => {
   it('renders static footer landmarks, links, and government crest', () => {
     expect.hasAssertions();
+
     renderWithRouter(<Footer />);
 
     expect(screen.getByTestId('nmi-footer')).toHaveTextContent(
@@ -298,6 +304,7 @@ describe('footer chrome', () => {
 
   it('opens each footer content modal and closes it through the modal callback', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderWithRouter(<Footer />);
 
@@ -336,6 +343,7 @@ describe('footer chrome', () => {
 
   it('renders footer static content with key headings and external links', () => {
     expect.hasAssertions();
+
     const { rerender } = render(<TermsOfUse />);
 
     expect({
@@ -376,6 +384,7 @@ describe('footer chrome', () => {
 describe('small static display components', () => {
   it('applies the stable display classes for intro and body text wrappers', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <HeaderIntroText className='mb-4'>Intro copy</HeaderIntroText>,
     );
@@ -395,6 +404,7 @@ describe('small static display components', () => {
 
   it('renders the external link icon as decorative SVG with optional classes', () => {
     expect.hasAssertions();
+
     const { container } = render(<ExternalLinkIcon className='ms-1' />);
 
     const icon = container.querySelector('svg');
@@ -408,6 +418,7 @@ describe('small static display components', () => {
 describe('actions callback behavior', () => {
   it('uses item-specific click handlers before falling back to the shared item handler', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const itemClick = vi.fn<ActionClick>();
     const sharedClick = vi.fn<ActionClick>();

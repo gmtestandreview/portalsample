@@ -34,6 +34,7 @@ const required = Yup.object({
 describe(createWizardYupResolver, () => {
   it('passes values through when the mode has no schema', async () => {
     expect.hasAssertions();
+
     const result = await resolve({ hard: undefined });
 
     expect(result).toEqual({ values: { name: '' }, errors: {} });
@@ -41,6 +42,7 @@ describe(createWizardYupResolver, () => {
 
   it('uses the soft schema for saveAndExit and the hard schema for next', async () => {
     expect.hasAssertions();
+
     const soft = Yup.object({});
 
     expect(
@@ -55,6 +57,7 @@ describe(createWizardYupResolver, () => {
 
   it('keeps only the first message per path', async () => {
     expect.hasAssertions();
+
     const twoRules = Yup.object({
       name: Yup.string().min(3, 'Too short').matches(/^x/, 'Must start with x'),
     });
@@ -68,6 +71,7 @@ describe(createWizardYupResolver, () => {
 
   it('maps a ValidationError that has no inner errors by its own path', async () => {
     expect.hasAssertions();
+
     const throwing = {
       validate: async () => {
         throw new Yup.ValidationError('Bad value', 'v', 'name');
@@ -80,6 +84,7 @@ describe(createWizardYupResolver, () => {
 
   it('treats a validation error without an inner list as a single error', async () => {
     expect.hasAssertions();
+
     const throwing = {
       validate: async () => {
         throw Object.assign(new Error('Odd error'), {
@@ -95,6 +100,7 @@ describe(createWizardYupResolver, () => {
 
   it('ignores a pathless error with no inner errors', async () => {
     expect.hasAssertions();
+
     const throwing = {
       validate: async () => {
         throw new Yup.ValidationError('No path');
@@ -109,6 +115,7 @@ describe(createWizardYupResolver, () => {
 
   it('drops errors on hidden fields, and passes when only hidden fields fail', async () => {
     expect.hasAssertions();
+
     const result = await resolve(
       { hard: required },
       { hidden: { name: true } },
@@ -119,6 +126,7 @@ describe(createWizardYupResolver, () => {
 
   it('rethrows failures that are not validation errors', async () => {
     expect.hasAssertions();
+
     const broken = {
       validate: async () => {
         throw new TypeError('schema bug');
@@ -132,6 +140,7 @@ describe(createWizardYupResolver, () => {
 describe('rhfForm api', () => {
   it('throws when the api hook is used outside the form', () => {
     expect.hasAssertions();
+
     const expectedError = 'useRhfFormApi must be used inside RhfForm';
     const expectedReactError =
       'The above error occurred in the <Probe> component:';
@@ -187,6 +196,7 @@ describe('rhfForm api', () => {
 
   it('hands the api to a render-prop child', () => {
     expect.hasAssertions();
+
     render(
       <RhfForm initialValues={{}} onSubmit={() => undefined}>
         {(api) => (

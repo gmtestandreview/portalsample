@@ -4,6 +4,7 @@ import { getFilteredSuggestions } from '@/components/Inputs/OrganisationNameLook
 describe(getFilteredSuggestions, () => {
   it('sorts matching suggestions with a case-insensitive comparator and removes duplicates', () => {
     expect.hasAssertions();
+
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
@@ -47,6 +48,7 @@ describe(getFilteredSuggestions, () => {
 
   it('returns empty when parentValue is set but parentOptionsName is not provided', () => {
     expect.hasAssertions();
+
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',
@@ -59,6 +61,7 @@ describe(getFilteredSuggestions, () => {
 
   it('applies the same ordering when parent filtering is enabled', () => {
     expect.hasAssertions();
+
     const suggestions = getFilteredSuggestions({
       inputValue: 'pty',
       optionsFieldName: 'name',

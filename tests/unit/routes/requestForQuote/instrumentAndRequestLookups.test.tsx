@@ -8,14 +8,16 @@ import { useInstrumentAndRequestLookups } from '@/routes/requestForQuote/instrum
 // runs, so measurementCategories stays undefined and the options builder has to
 // use its empty-list fallback.
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => ({
         accounts: [],
-        instance: { acquireTokenSilent: vi.fn() },
+        instance: {
+          acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+        },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 const wrapper = ({ children }: { readonly children: ReactNode }) => (
@@ -26,6 +28,8 @@ const wrapper = ({ children }: { readonly children: ReactNode }) => (
 
 describe(useInstrumentAndRequestLookups, () => {
   it('returns no measurement category options before the lookups resolve', () => {
+    expect.hasAssertions();
+
     const { result } = renderHook(() => useInstrumentAndRequestLookups(), {
       wrapper,
     });

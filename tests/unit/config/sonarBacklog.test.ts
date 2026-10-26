@@ -120,14 +120,18 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'rED: keeps every Sonar issue returned by every fixture page',
     () => {
+      expect.hasAssertions();
+
       const { result, output } = runBacklog();
 
-      expect(result.status, result.stderr).toBe(0);
-      expect(output).toContain('SONAR-SECURITY-HIGH');
-      expect(output).toContain('SONAR-BUG-MEDIUM');
-      expect(output).toContain('SONAR-ACCEPTED-LOW');
-      expect(output).toContain('SONAR-UNKNOWN-SEVERITY');
-      expect(output).toContain('SONAR-INFO-LOW');
+      expect([
+        result.status,
+        output.includes('SONAR-SECURITY-HIGH'),
+        output.includes('SONAR-BUG-MEDIUM'),
+        output.includes('SONAR-ACCEPTED-LOW'),
+        output.includes('SONAR-UNKNOWN-SEVERITY'),
+        output.includes('SONAR-INFO-LOW'),
+      ]).toStrictEqual([0, true, true, true, true, true]);
     },
     TEST_TIMEOUT_MS,
   );
@@ -135,6 +139,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'gREEN: prioritises security and reliability ahead of low maintainability work',
     () => {
+      expect.hasAssertions();
+
       const { output } = runBacklog();
 
       expect(output.indexOf('SONAR-SECURITY-HIGH')).toBeLessThan(
@@ -150,6 +156,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'aMBER: preserves unknown future Sonar shapes as triage work instead of dropping them',
     () => {
+      expect.hasAssertions();
+
       const { result, output } = runBacklog();
 
       expect(result.stdout).toContain('AMBER');
@@ -162,6 +170,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'rED: never writes authentication material into the backlog artifact',
     () => {
+      expect.hasAssertions();
+
       const { output } = runBacklog();
 
       expect(output).not.toContain('SONAR_TOKEN');
@@ -171,6 +181,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   );
 
   it('rejects fixture files with malformed issue entries', () => {
+    expect.hasAssertions();
+
     const fixtureDirectory = mkdtempSync(path.join(tmpdir(), 'sonar-invalid-'));
     const outputPath = path.join(fixtureDirectory, 'output.md');
     writeTextFileSync(
@@ -203,6 +215,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   });
 
   it('rejects fixture pages with duplicate issue keys', () => {
+    expect.hasAssertions();
+
     const fixtureDirectory = mkdtempSync(
       path.join(tmpdir(), 'sonar-duplicate-'),
     );
@@ -248,6 +262,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   });
 
   it('rejects malformed array-valued ranking fields in fixtures', () => {
+    expect.hasAssertions();
+
     const fixtureDirectory = mkdtempSync(path.join(tmpdir(), 'sonar-ranking-'));
     const outputPath = path.join(fixtureDirectory, 'output.md');
     writeTextFileSync(
@@ -289,6 +305,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'retries a transient live Sonar failure before writing the backlog',
     async () => {
+      expect.hasAssertions();
+
       let requestCount = 0;
 
       await withSonarServer(
@@ -350,6 +368,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'fails instead of looping when live pagination returns an empty page',
     async () => {
+      expect.hasAssertions();
+
       let requestCount = 0;
 
       await withSonarServer(
@@ -408,6 +428,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'aborts a stalled live Sonar request at the configured timeout',
     async () => {
+      expect.hasAssertions();
+
       await withSonarServer(
         (request, response) => {
           void request;
@@ -448,6 +470,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'rejects live pages without a total instead of truncating the backlog',
     async () => {
+      expect.hasAssertions();
+
       let requestCount = 0;
 
       await withSonarServer(
@@ -491,6 +515,8 @@ describe('sonar all-issue backlog pressure tests', () => {
   it(
     'rejects duplicate issue keys across live pages',
     async () => {
+      expect.hasAssertions();
+
       let requestCount = 0;
 
       await withSonarServer(

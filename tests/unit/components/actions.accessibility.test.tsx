@@ -16,6 +16,7 @@ const renderActions = (ui: React.ReactNode) =>
 describe('actions accessibility', () => {
   it('opens the text action menu from a named button and exposes actions as menuitems', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderActions(<Actions id='request-actions' dropDownActions={actions} />);
 
@@ -38,6 +39,7 @@ describe('actions accessibility', () => {
 
   it('keeps non-navigation actions visible without links', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderActions(<Actions id='request-actions' dropDownActions={actions} />);
 
@@ -53,6 +55,7 @@ describe('actions accessibility', () => {
 
   it('gives icon-only action buttons a combined accessible name', () => {
     expect.hasAssertions();
+
     renderActions(
       <Actions
         id='icon-actions'

@@ -252,21 +252,23 @@ describe('storybook documentation architecture', () => {
       },
     ];
 
-    expect(contracts).toContain('T4a');
-    expect(contracts).toContain('APPROVED FOR T4 STORY IMPLEMENTATION');
-    expect(contracts).toContain('Approved API table');
-    expect(contracts).toContain('Inherited-prop scope');
-    expect(contracts).toContain('Approval provenance');
-    expect(contracts).toMatch(
-      /approved by the user in the 2026-10-18\s+conversation/,
-    );
+    expect([
+      contracts.includes('T4a'),
+      contracts.includes('APPROVED FOR T4 STORY IMPLEMENTATION'),
+      contracts.includes('Approved API table'),
+      contracts.includes('Inherited-prop scope'),
+      contracts.includes('Approval provenance'),
+      /approved by the user in the 2026-10-18\s+conversation/.test(contracts),
+    ]).toStrictEqual([true, true, true, true, true, true]);
 
-    for (const { path, exports } of requiredStories) {
-      expect(existsSync(path), path).toBe(true);
+    expect(
+      requiredStories.every(({ path, exports }) => {
+        if (!existsSync(path)) {
+          return false;
+        }
 
-      const storyContents = readFileSync(path, 'utf8');
-      for (const storyExport of exports) {
-        expect(
+        const storyContents = readFileSync(path, 'utf8');
+        return exports.every((storyExport) =>
           storyContents.split(/\r?\n/).some((line) => {
             if (!line.includes(`export const ${storyExport}`)) {
               return false;
@@ -274,34 +276,43 @@ describe('storybook documentation architecture', () => {
 
             return line.includes(': Story') || line.includes('= meta.story(');
           }),
-          `${path}: ${storyExport}`,
-        ).toBe(true);
-      }
-    }
+        );
+      }),
+    ).toBe(true);
 
-    for (const [owner, identity] of requiredOwners) {
-      const sectionStart = contracts.indexOf(`## ${owner}`);
-      const nextSection = contracts.indexOf('\n## ', sectionStart + 1);
-      const section = contracts.slice(
-        sectionStart,
-        nextSection === -1 ? contracts.length : nextSection,
-      );
+    expect(
+      requiredOwners.every(([owner, identity]) => {
+        if (identity === undefined) {
+          return false;
+        }
 
-      expect(section, owner).toContain(`## ${owner}`);
-      expect(section, owner).toContain(identity);
-      expect(section, owner).toContain('Approved API table');
-      expect(section, owner).toContain('Inherited-prop scope');
-      expect(section, owner).toContain('Approval provenance');
-      expect(section, owner).not.toContain('PENDING MAINTAINER APPROVAL');
-    }
+        const sectionStart = contracts.indexOf(`## ${owner}`);
+        const nextSection = contracts.indexOf('\n## ', sectionStart + 1);
+        const section = contracts.slice(
+          sectionStart,
+          nextSection === -1 ? contracts.length : nextSection,
+        );
 
-    expect(contracts).toContain('ClientApp/src/components/Pill/StatusPill.tsx');
-    expect(contracts).toContain(
-      'ClientApp/src/components/reactaria_components/StatusPill.tsx',
-    );
-    expect(contracts).toContain('not the same component');
-    expect(contracts).toContain('components-pill--dashboard-statuses');
-    expect(contracts).toContain('components-pill--quote-statuses');
+        return (
+          section.includes(`## ${owner}`) &&
+          section.includes(identity) &&
+          section.includes('Approved API table') &&
+          section.includes('Inherited-prop scope') &&
+          section.includes('Approval provenance') &&
+          !section.includes('PENDING MAINTAINER APPROVAL')
+        );
+      }),
+    ).toBe(true);
+
+    expect([
+      contracts.includes('ClientApp/src/components/Pill/StatusPill.tsx'),
+      contracts.includes(
+        'ClientApp/src/components/reactaria_components/StatusPill.tsx',
+      ),
+      contracts.includes('not the same component'),
+      contracts.includes('components-pill--dashboard-statuses'),
+      contracts.includes('components-pill--quote-statuses'),
+    ]).toStrictEqual([true, true, true, true, true]);
   });
 
   it('presents RouteLeavingGuard types and quoted defaults separately', () => {
@@ -326,12 +337,14 @@ describe('storybook documentation architecture', () => {
   it('records Storybook 10.6.3 provenance and upstream wording ownership', () => {
     expect.hasAssertions();
 
-    expect(componentDocsGuide).toContain('Storybook 10.6.3');
-    expect(componentDocsGuide).toContain('Storybook 9 Essential Changes');
-    expect(componentDocsGuide).toContain('upstream');
-    expect(componentDocsGuide).toMatch(/not a local\s+wording fix/);
-    expect(componentDocsGuide).toContain('components-routeleavingguard');
-    expect(componentDocsGuide).toContain('title?: ReactNode = Unsaved changes');
+    expect([
+      componentDocsGuide.includes('Storybook 10.6.3'),
+      componentDocsGuide.includes('Storybook 9 Essential Changes'),
+      componentDocsGuide.includes('upstream'),
+      /not a local\s+wording fix/.test(componentDocsGuide),
+      componentDocsGuide.includes('components-routeleavingguard'),
+      componentDocsGuide.includes('title?: ReactNode = Unsaved changes'),
+    ]).toStrictEqual([true, true, true, true, true, true]);
   });
 
   it('keeps main.ts syntactically valid', () => {
@@ -353,7 +366,7 @@ describe('storybook documentation architecture', () => {
         ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
       );
 
-    expect(syntaxErrors).toEqual([]);
+    expect(syntaxErrors).toStrictEqual([]);
   });
 
   it('uses the audited latest stable Storybook package set', () => {
@@ -453,14 +466,14 @@ describe('storybook documentation architecture', () => {
   it('owns generated docs naming and docs mode in main.ts', () => {
     expect.hasAssertions();
 
-    expect(main).toMatch(
-      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
-    );
-    expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/);
-    expect(main.match(/defaultName:/g)).toHaveLength(1);
-    expect(main.match(/docsMode:/g)).toHaveLength(1);
-    expect(main).not.toMatch(/autodocs:\s*['"]tag['"]/);
-    expect(main).not.toMatch(/docsMode:\s*true/);
+    expect([
+      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/.test(main),
+      /docs:\s*\{[\s\S]*docsMode:\s*false/.test(main),
+      main.match(/defaultName:/g)?.length === 1,
+      main.match(/docsMode:/g)?.length === 1,
+      !/autodocs:\s*['"]tag['"]/.test(main),
+      !/docsMode:\s*true/.test(main),
+    ]).toStrictEqual([true, true, true, true, true, true]);
   });
 
   it('does not use Webpack-only TypeScript checking in React Vite', () => {
@@ -499,7 +512,7 @@ describe('storybook documentation architecture', () => {
         .map(() => path);
     });
 
-    expect(invalidStoryTags).toEqual([]);
+    expect(invalidStoryTags).toStrictEqual([]);
   });
 
   it('enables Code Panel and shares automatic source configuration', () => {
@@ -515,21 +528,20 @@ describe('storybook documentation architecture', () => {
   it('uses the current MSW preview addon without legacy parameters', () => {
     expect.hasAssertions();
 
-    expect(main).not.toMatch(/['"]msw-storybook-addon['"]/);
-    expect(preview).toMatch(
-      /import\s+addonMsw\s+from\s+['"]msw-storybook-addon['"]/,
-    );
-    expect(preview).toMatch(/definePreview\s*\(/);
-    expect(preview).not.toContain('mswLoader');
-    expect(tsconfigJson.compilerOptions?.types).toContain(
-      'msw-storybook-addon/types',
-    );
-
     const legacyMswParameters = storyFiles.filter(({ contents }) =>
       /parameters:\s*\{[\s\S]{0,800}?\bmsw\s*:/.test(contents),
     );
 
-    expect(legacyMswParameters.map(({ path }) => path)).toEqual([]);
+    expect([
+      !/['"]msw-storybook-addon['"]/.test(main),
+      /import\s+addonMsw\s+from\s+['"]msw-storybook-addon['"]/.test(preview),
+      /definePreview\s*\(/.test(preview),
+      !preview.includes('mswLoader'),
+      tsconfigJson.compilerOptions?.types?.includes(
+        'msw-storybook-addon/types',
+      ),
+      legacyMswParameters.length === 0,
+    ]).toStrictEqual([true, true, true, true, true, true]);
   });
 
   it('references public font assets at Vite root URLs', () => {
@@ -601,30 +613,34 @@ describe('storybook documentation architecture', () => {
         .map(({ label }) => `${path}: ${label}`);
     });
 
-    expect(offences).toEqual([]);
+    expect(offences).toStrictEqual([]);
   });
 
   it('documents the Storybook metadata responsibilities', () => {
     expect.hasAssertions();
 
-    expect(componentDocsGuide).toMatch(/\bArgs\b/);
-    expect(componentDocsGuide).toMatch(/\bArgTypes\b/);
-    expect(componentDocsGuide).toMatch(/\bParameters\b/);
-    expect(componentDocsGuide).toMatch(/\bCode Panel\b/);
-    expect(componentDocsGuide).toMatch(/\bDoc Blocks\b/);
-    expect(componentDocsGuide).toMatch(/\bMDX\b/);
+    expect([
+      /\bArgs\b/.test(componentDocsGuide),
+      /\bArgTypes\b/.test(componentDocsGuide),
+      /\bParameters\b/.test(componentDocsGuide),
+      /\bCode Panel\b/.test(componentDocsGuide),
+      /\bDoc Blocks\b/.test(componentDocsGuide),
+      /\bMDX\b/.test(componentDocsGuide),
+    ]).toStrictEqual([true, true, true, true, true, true]);
   });
 
   it('documents configuration ownership, current MSW setup, and exact gates', () => {
     expect.hasAssertions();
 
-    expect(componentDocsGuide).toContain('definePreview');
-    expect(componentDocsGuide).toContain('addonMsw');
-    expect(componentDocsGuide).toContain('beforeEach');
-    expect(componentDocsGuide).toContain('msw.use');
-    expect(componentDocsGuide).toContain('npm run type-check');
-    expect(componentDocsGuide).toContain('npm run test:storybook');
-    expect(componentDocsGuide).toContain('npm run storybook:verify:docs');
+    expect([
+      componentDocsGuide.includes('definePreview'),
+      componentDocsGuide.includes('addonMsw'),
+      componentDocsGuide.includes('beforeEach'),
+      componentDocsGuide.includes('msw.use'),
+      componentDocsGuide.includes('npm run type-check'),
+      componentDocsGuide.includes('npm run test:storybook'),
+      componentDocsGuide.includes('npm run storybook:verify:docs'),
+    ]).toStrictEqual([true, true, true, true, true, true, true]);
   });
 
   it('limits strict docgen verification to reusable component stories', () => {

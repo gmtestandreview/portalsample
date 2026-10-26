@@ -13,48 +13,47 @@ import {
 } from '../../../../../ClientApp/src/api/web-api-client';
 
 const mocks = vi.hoisted(() => ({
-  setAuthToken: vi.fn(),
-  getAppDetails: vi.fn(),
-  acquireTokenSilent: vi.fn(),
-  appLoggerError: vi.fn(),
-  appLoggerVerbose: vi.fn(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getAppDetails: vi.fn<(...args: unknown[]) => unknown>(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-vi.mock(
-  '../../../../../ClientApp/src/api/web-api-client',
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof WebApiClientModule>();
-    return {
-      ...actual,
-      RequestForPatternApprovalClient: vi.fn(
-        function RequestForPatternApprovalClientMock() {
-          return {
-            setAuthToken: mocks.setAuthToken,
-            getAppDetails: mocks.getAppDetails,
-          };
-        },
-      ),
-    } satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+vi.mock(import('../../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const actual = await importOriginal<typeof WebApiClientModule>();
+  return {
+    ...actual,
+    RequestForPatternApprovalClient: vi.fn<(...args: unknown[]) => unknown>(
+      function RequestForPatternApprovalClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getAppDetails: mocks.getAppDetails,
+        };
+      },
+    ),
+  } satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         error: mocks.appLoggerError,
         verbose: mocks.appLoggerVerbose,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
@@ -73,140 +72,144 @@ describe(appDetailsProps, () => {
   });
 
   it('loads app details and exposes summary hiding rules', async () => {
+    expect.hasAssertions();
+
     const props = appDetailsProps('PA-1', accounts, instance);
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues(abortSignal)).resolves.toEqual({
-      formValues: { applicationDetails: { referenceId: 'PA-1' } },
+    const loaded = await props.loadStepValues(abortSignal);
+
+    expect({
+      loaded,
+      setAuthTokenCalls: mocks.setAuthToken.mock.calls,
+      getAppDetailsCalls: mocks.getAppDetails.mock.calls,
+      location: props.location,
+      title: props.title,
+      isSummaryPage: props.isSummaryPage,
+    }).toEqual({
+      loaded: { formValues: { applicationDetails: { referenceId: 'PA-1' } } },
+      setAuthTokenCalls: [['access-token']],
+      getAppDetailsCalls: [['PA-1', abortSignal]],
+      location: '/summary',
+      title: 'Summary and submit',
+      isSummaryPage: true,
     });
-    expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks.getAppDetails).toHaveBeenCalledWith('PA-1', abortSignal);
-    expect(props.location).toBe('/summary');
-    expect(props.title).toBe('Summary and submit');
-    expect(props.isSummaryPage).toBe(true);
 
     const hidingFields = props.hidingFields as any;
 
-    expect(
-      hidingFields.organisationAndContact.branchOrLocationName({
+    expect({
+      branchEmpty: hidingFields.organisationAndContact.branchOrLocationName({
         organisationAndContact: {},
       }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.branchOrLocationName({
+      branchFilled: hidingFields.organisationAndContact.branchOrLocationName({
         organisationAndContact: { branchOrLocationName: 'Branch' },
       }),
-    ).toBe(false);
-    expect(
-      hidingFields.organisationAndContact.isManufacturerHide({
+      manufacturerYes: hidingFields.organisationAndContact.isManufacturerHide({
         organisationAndContact: { isManufacturer: YesNo.Yes },
       }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.isManufacturerHide({
+      manufacturerNo: hidingFields.organisationAndContact.isManufacturerHide({
         organisationAndContact: { isManufacturer: YesNo.No },
       }),
-    ).toBe(false);
-    expect(
-      hidingFields.organisationAndContact.isManufacturerHide({
-        organisationAndContact: { isManufacturer: undefined },
-      }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.principalInvoiceContactHide({
-        organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes },
-      }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.principalInvoiceContactHide({
-        organisationAndContact: { isPrincipalInvoiceContact: YesNo.No },
-      }),
-    ).toBe(false);
-    expect(
-      hidingFields.organisationAndContact.principalInvoiceContactHide({
-        organisationAndContact: { isPrincipalInvoiceContact: undefined },
-      }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.isCurrentOrganisationHide({
-        organisationAndContact: { isManufacturer: YesNo.No },
-      }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.isCurrentOrganisationHide({
-        organisationAndContact: { isManufacturer: YesNo.Yes },
-      }),
-    ).toBe(false);
-    expect(
-      hidingFields.organisationAndContact.contact.titleOther({
+      manufacturerMissing:
+        hidingFields.organisationAndContact.isManufacturerHide({
+          organisationAndContact: { isManufacturer: undefined },
+        }),
+      invoiceContactYes:
+        hidingFields.organisationAndContact.principalInvoiceContactHide({
+          organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes },
+        }),
+      invoiceContactNo:
+        hidingFields.organisationAndContact.principalInvoiceContactHide({
+          organisationAndContact: { isPrincipalInvoiceContact: YesNo.No },
+        }),
+      invoiceContactMissing:
+        hidingFields.organisationAndContact.principalInvoiceContactHide({
+          organisationAndContact: { isPrincipalInvoiceContact: undefined },
+        }),
+      currentOrganisationNo:
+        hidingFields.organisationAndContact.isCurrentOrganisationHide({
+          organisationAndContact: { isManufacturer: YesNo.No },
+        }),
+      currentOrganisationYes:
+        hidingFields.organisationAndContact.isCurrentOrganisationHide({
+          organisationAndContact: { isManufacturer: YesNo.Yes },
+        }),
+      contactOther: hidingFields.organisationAndContact.contact.titleOther({
         organisationAndContact: { contact: { title: 'Other' } },
       }),
-    ).toBe(false);
-    expect(
-      hidingFields.organisationAndContact.contact.titleOther({
+      contactDr: hidingFields.organisationAndContact.contact.titleOther({
         organisationAndContact: { contact: { title: 'Dr' } },
       }),
-    ).toBe(true);
-    expect(
-      hidingFields.organisationAndContact.invoiceContact.titleOther({
-        organisationAndContact: { invoiceContact: { title: 'Other' } },
-      }),
-    ).toBe(false);
-    expect(
-      hidingFields.organisationAndContact.invoiceContact.titleOther({
+      invoiceOther:
+        hidingFields.organisationAndContact.invoiceContact.titleOther({
+          organisationAndContact: { invoiceContact: { title: 'Other' } },
+        }),
+      invoiceDr: hidingFields.organisationAndContact.invoiceContact.titleOther({
         organisationAndContact: { invoiceContact: { title: 'Dr' } },
       }),
-    ).toBe(true);
-    expect(
-      hidingFields.applicationAndInstrument.isApplNewHide({
+      newCertificate: hidingFields.applicationAndInstrument.isApplNewHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
         },
       }),
-    ).toBe(false);
-    expect(
-      hidingFields.applicationAndInstrument.isApplNewHide({
+      otherApprovalForNew: hidingFields.applicationAndInstrument.isApplNewHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         },
       }),
-    ).toBe(true);
-    expect(
-      hidingFields.applicationAndInstrument.isApplVariationHide({
+      variation: hidingFields.applicationAndInstrument.isApplVariationHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.Variation,
         },
       }),
-    ).toBe(false);
-    expect(
-      hidingFields.applicationAndInstrument.isApplVariationHide({
-        applicationAndInstrument: { patternApprovalType: undefined },
-      }),
-    ).toBe(true);
-    expect(
-      hidingFields.applicationAndInstrument.isApplOtherHide({
+      variationMissing:
+        hidingFields.applicationAndInstrument.isApplVariationHide({
+          applicationAndInstrument: { patternApprovalType: undefined },
+        }),
+      otherApproval: hidingFields.applicationAndInstrument.isApplOtherHide({
         applicationAndInstrument: {
           patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
         },
       }),
-    ).toBe(false);
-    expect(
-      hidingFields.applicationAndInstrument.isApplOtherHide({
-        applicationAndInstrument: {
-          patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-        },
-      }),
-    ).toBe(true);
-    expect(
-      hidingFields.applicationAndInstrument.isApplOIMLHide({
+      otherApprovalForNewType:
+        hidingFields.applicationAndInstrument.isApplOtherHide({
+          applicationAndInstrument: {
+            patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+          },
+        }),
+      oiml: hidingFields.applicationAndInstrument.isApplOIMLHide({
         applicationAndInstrument: {
           newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
         },
       }),
-    ).toBe(false);
+    }).toEqual({
+      branchEmpty: true,
+      branchFilled: false,
+      manufacturerYes: true,
+      manufacturerNo: false,
+      manufacturerMissing: true,
+      invoiceContactYes: true,
+      invoiceContactNo: false,
+      invoiceContactMissing: true,
+      currentOrganisationNo: true,
+      currentOrganisationYes: false,
+      contactOther: false,
+      contactDr: true,
+      invoiceOther: false,
+      invoiceDr: true,
+      newCertificate: false,
+      otherApprovalForNew: true,
+      variation: false,
+      variationMissing: true,
+      otherApproval: false,
+      otherApprovalForNewType: true,
+      oiml: false,
+    });
   });
 
   it('logs and rethrows app details load failures', async () => {
+    expect.hasAssertions();
+
     mocks.getAppDetails.mockRejectedValueOnce(new Error('load failed'));
     const props = appDetailsProps('PA-2', accounts, instance);
 
@@ -221,6 +224,8 @@ describe(appDetailsProps, () => {
   });
 
   it('throws before loading when no account is available', async () => {
+    expect.hasAssertions();
+
     const props = appDetailsProps('PA-3', emptyAccounts, instance);
 
     await expect(props.loadStepValues()).rejects.toThrow(
@@ -237,6 +242,8 @@ describe(appDetailsProps, () => {
   });
 
   it('returns loaded values without mutating the client response', async () => {
+    expect.hasAssertions();
+
     const appDetails: RequestForPatternApprovalAppDetails = {
       applicationDetails: { referenceId: 'PA-4' },
       organisationAndContact: { isManufacturer: YesNo.Yes },

@@ -1,4 +1,13 @@
 import { describe, afterEach, it, expect } from 'vitest';
+import type { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+
+type ApplicationInsightsFactory = (
+  ...args: ConstructorParameters<typeof ApplicationInsights>
+) => InstanceType<typeof ApplicationInsights>;
+type ReactPluginFactory = (
+  ...args: ConstructorParameters<typeof ReactPlugin>
+) => InstanceType<typeof ReactPlugin>;
 
 describe('appInsightsService', () => {
   afterEach(() => {
@@ -7,15 +16,23 @@ describe('appInsightsService', () => {
   });
 
   it('creates and initializes telemetry with the configured connection string', async () => {
-    const loadAppInsights = vi.fn();
-    const applicationInsightsCtor = vi.fn(function ApplicationInsights(
-      this: any,
-    ) {
-      this.loadAppInsights = loadAppInsights;
-    });
-    const reactPluginCtor = vi.fn(function ReactPlugin(this: any) {
-      this.plugin = 'react';
-    });
+    expect.hasAssertions();
+
+    const loadAppInsights = vi.fn<() => void>();
+    const applicationInsightsCtor = vi.fn<ApplicationInsightsFactory>(
+      function ApplicationInsightsMock() {
+        return { loadAppInsights } as unknown as InstanceType<
+          typeof ApplicationInsights
+        >;
+      },
+    );
+    const reactPluginCtor = vi.fn<ReactPluginFactory>(
+      function ReactPluginMock() {
+        return { plugin: 'react' } as unknown as InstanceType<
+          typeof ReactPlugin
+        >;
+      },
+    );
 
     vi.doMock(
       '@microsoft/applicationinsights-web',
@@ -44,8 +61,10 @@ describe('appInsightsService', () => {
 
     const module = await import('@/instrumentation/AppInsightsService');
 
-    expect(reactPluginCtor).toHaveBeenCalledTimes(1);
-    expect(applicationInsightsCtor).toHaveBeenCalledTimes(1);
+    expect([
+      reactPluginCtor.mock.calls.length,
+      applicationInsightsCtor.mock.calls.length,
+    ]).toStrictEqual([1, 1]);
     expect(applicationInsightsCtor).toHaveBeenCalledWith({
       config: expect.objectContaining({
         connectionString: 'InstrumentationConnectionString=test-value',
@@ -63,12 +82,16 @@ describe('appInsightsService', () => {
   });
 
   it('returns null services when the connection string is missing', async () => {
-    const loadAppInsights = vi.fn();
-    const applicationInsightsCtor = vi.fn(function ApplicationInsights(
-      this: any,
-    ) {
-      this.loadAppInsights = loadAppInsights;
-    });
+    expect.hasAssertions();
+
+    const loadAppInsights = vi.fn<() => void>();
+    const applicationInsightsCtor = vi.fn<ApplicationInsightsFactory>(
+      function ApplicationInsightsMock() {
+        return { loadAppInsights } as unknown as InstanceType<
+          typeof ApplicationInsights
+        >;
+      },
+    );
 
     vi.doMock(
       '@microsoft/applicationinsights-web',
@@ -81,7 +104,7 @@ describe('appInsightsService', () => {
       '@microsoft/applicationinsights-react-js',
       () =>
         ({
-          ReactPlugin: vi.fn(function ReactPlugin() {}),
+          ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(
@@ -104,20 +127,22 @@ describe('appInsightsService', () => {
   });
 
   it('warns about disabled telemetry only in runtime development environment', async () => {
+    expect.hasAssertions();
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
       import('@microsoft/applicationinsights-web'),
       () =>
         ({
-          ApplicationInsights: vi.fn(),
+          ApplicationInsights: vi.fn<ApplicationInsightsFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
       '@microsoft/applicationinsights-react-js',
       () =>
         ({
-          ReactPlugin: vi.fn(function ReactPlugin() {}),
+          ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(
@@ -139,20 +164,22 @@ describe('appInsightsService', () => {
   });
 
   it('stays silent when telemetry is deliberately disabled with the dummy sentinel', async () => {
+    expect.hasAssertions();
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
       import('@microsoft/applicationinsights-web'),
       () =>
         ({
-          ApplicationInsights: vi.fn(),
+          ApplicationInsights: vi.fn<ApplicationInsightsFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
       '@microsoft/applicationinsights-react-js',
       () =>
         ({
-          ReactPlugin: vi.fn(function ReactPlugin() {}),
+          ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     // 'dummy-key' is how Storybook and local dev opt out on purpose. A
@@ -177,20 +204,22 @@ describe('appInsightsService', () => {
   });
 
   it('does not warn about disabled telemetry outside the runtime development environment', async () => {
+    expect.hasAssertions();
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
       import('@microsoft/applicationinsights-web'),
       () =>
         ({
-          ApplicationInsights: vi.fn(),
+          ApplicationInsights: vi.fn<ApplicationInsightsFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
       '@microsoft/applicationinsights-react-js',
       () =>
         ({
-          ReactPlugin: vi.fn(function ReactPlugin() {}),
+          ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(

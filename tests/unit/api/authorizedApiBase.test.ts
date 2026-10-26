@@ -7,13 +7,14 @@ class TestClient extends AuthorizedApiBase {
   }
 }
 
-describe('AuthorizedApiBase', () => {
+describe(AuthorizedApiBase, () => {
   const resetSessionStorage = () => {
     globalThis.sessionStorage.clear();
   };
 
   it('captures TargetOrganisationAbn when each client is constructed', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     globalThis.sessionStorage.setItem(
@@ -63,6 +64,7 @@ describe('AuthorizedApiBase', () => {
 
   it('does not parse later sessionStorage changes when the client captured no target organisation', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     const client = new TestClient();

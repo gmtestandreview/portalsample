@@ -99,6 +99,8 @@ afterEach(() => {
 
 describe(installUnexpectedConsoleGuard, () => {
   it('registers exactly one beforeEach and one afterEach so failures attach to the emitting test', () => {
+    expect.hasAssertions();
+
     const hooks = captureHooks();
 
     expect(hooks.before).toHaveLength(1);
@@ -106,6 +108,8 @@ describe(installUnexpectedConsoleGuard, () => {
   });
 
   it('re-emits the original output verbatim', async () => {
+    expect.hasAssertions();
+
     await runGuardedTest(() => {
       console.warn('render warning', { detail: 42 });
     });
@@ -114,6 +118,8 @@ describe(installUnexpectedConsoleGuard, () => {
   });
 
   it('restores the original console methods at teardown', async () => {
+    expect.hasAssertions();
+
     const before = console.warn;
 
     await runGuardedTest(() => {});
@@ -122,12 +128,16 @@ describe(installUnexpectedConsoleGuard, () => {
   });
 
   it('passes when the test emits nothing', async () => {
+    expect.hasAssertions();
+
     const { teardownError } = await runGuardedTest(() => {});
 
     expect(teardownError).toBeUndefined();
   });
 
   it('fails the emitting test on an unconsumed warning', async () => {
+    expect.hasAssertions();
+
     const { teardownError } = await runGuardedTest(() => {
       console.warn('an unexpected warning');
     });
@@ -136,6 +146,8 @@ describe(installUnexpectedConsoleGuard, () => {
   });
 
   it('fails the emitting test on an unconsumed error', async () => {
+    expect.hasAssertions();
+
     const { teardownError } = await runGuardedTest(() => {
       console.error('an unexpected error');
     });
@@ -144,6 +156,8 @@ describe(installUnexpectedConsoleGuard, () => {
   });
 
   it('restores the console even when it fails at teardown', async () => {
+    expect.hasAssertions();
+
     const before = console.warn;
 
     await runGuardedTest(() => {
@@ -166,6 +180,8 @@ describe(installUnexpectedConsoleGuard, () => {
   ] as const)(
     'treats the known %s signature as unexpected when unconsumed',
     async (level, message) => {
+      expect.hasAssertions();
+
       const { teardownError } = await runGuardedTest(() => {
         emit(level, message);
       });
@@ -201,6 +217,8 @@ describe('console argument formatting', () => {
   ])(
     'matches against the formatted message for %s',
     async (_label, args, expected) => {
+      expect.hasAssertions();
+
       const { teardownError } = await runGuardedTest(() => {
         (console.warn as (...values: unknown[]) => void)(...args);
       });
@@ -210,6 +228,8 @@ describe('console argument formatting', () => {
   );
 
   it('consumes a message whose pattern only matches after interpolation', async () => {
+    expect.hasAssertions();
+
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage(
         'error',
@@ -231,6 +251,8 @@ describe('console argument formatting', () => {
 
 describe(expectConsoleMessage, () => {
   it('consumes a matching message so teardown passes', async () => {
+    expect.hasAssertions();
+
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /not wrapped in act/, 1, () => {
         console.warn('Warning: An update to Foo was not wrapped in act(...).');
@@ -242,6 +264,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('still re-emits a consumed message', async () => {
+    expect.hasAssertions();
+
     await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /not wrapped in act/, 1, () => {
         console.warn('Warning: not wrapped in act(...).');
@@ -252,6 +276,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('awaits an asynchronous action before counting', async () => {
+    expect.hasAssertions();
+
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /late/, 1, async () => {
         await Promise.resolve();
@@ -264,6 +290,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('consumes only the requested level, leaving the other level unexpected', async () => {
+    expect.hasAssertions();
+
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /shared text/, 1, () => {
         console.error('shared text');
@@ -275,6 +303,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('consumes only the requested pattern, leaving other messages unexpected', async () => {
+    expect.hasAssertions();
+
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /expected signature/, 1, () => {
         console.warn('expected signature');
@@ -287,6 +317,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('rejects when fewer messages match than the exact count requested', async () => {
+    expect.hasAssertions();
+
     const { bodyError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /missing signature/, 1, () => {});
     });
@@ -296,6 +328,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('rejects when more messages match than the exact count requested', async () => {
+    expect.hasAssertions();
+
     const { bodyError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /repeated signature/, 1, () => {
         console.warn('repeated signature');
@@ -308,6 +342,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('rejects a nested expectation', async () => {
+    expect.hasAssertions();
+
     const { bodyError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /outer/, 1, async () => {
         await expectConsoleMessage('warn', /inner/, 1, () => {});
@@ -318,6 +354,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('does not consume matching messages emitted after the action window', async () => {
+    expect.hasAssertions();
+
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expectConsoleMessage('warn', /windowed signature/, 1, () => {
         console.warn('windowed signature');
@@ -331,6 +369,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('clears the expectation in finally when the action throws, and stays usable afterwards', async () => {
+    expect.hasAssertions();
+
     const actionFailure = new Error('action blew up');
     const { bodyError, teardownError } = await runGuardedTest(async () => {
       await expect(
@@ -350,6 +390,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('fails teardown when an expectation is still open', async () => {
+    expect.hasAssertions();
+
     let release = () => {};
     const pending = new Promise<void>((resolve) => {
       release = resolve;
@@ -374,6 +416,8 @@ describe(expectConsoleMessage, () => {
   });
 
   it('rejects when the guard was never installed for the current test', async () => {
+    expect.hasAssertions();
+
     await expect(
       expectConsoleMessage('warn', /orphan/, 1, () => {}),
     ).rejects.toThrow(/installUnexpectedConsoleGuard/);

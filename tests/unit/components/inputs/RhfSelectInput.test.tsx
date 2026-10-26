@@ -59,6 +59,7 @@ const failingResolver: Resolver<Values> = async () => ({
 describe(RhfSelectInput, () => {
   it('renders the label, a blank option and the given options', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput
@@ -83,6 +84,7 @@ describe(RhfSelectInput, () => {
 
   it('uses a custom blank label and renders no options when none are given', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput
@@ -100,6 +102,7 @@ describe(RhfSelectInput, () => {
 
   it('omits the blank option unless asked for', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
@@ -111,6 +114,7 @@ describe(RhfSelectInput, () => {
 
   it('shows the form value and applies the id and disabled state', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput
@@ -132,6 +136,7 @@ describe(RhfSelectInput, () => {
 
   it('stores the chosen option and calls onChange with it', async () => {
     expect.hasAssertions();
+
     const onChange = vi.fn<() => void>();
     render(
       <Harness>
@@ -153,6 +158,7 @@ describe(RhfSelectInput, () => {
 
   it('keeps the typed value of numeric options', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput<number>
@@ -173,6 +179,7 @@ describe(RhfSelectInput, () => {
 
   it('stores the blank option value when it is chosen again', async () => {
     expect.hasAssertions();
+
     const onChange = vi.fn<() => void>();
     render(
       <Harness defaultValue='cert'>
@@ -194,6 +201,7 @@ describe(RhfSelectInput, () => {
 
   it('updates the form value without an onChange callback', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
@@ -207,6 +215,7 @@ describe(RhfSelectInput, () => {
 
   it('treats a null form value as the blank selection', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfSelectInput
@@ -223,6 +232,7 @@ describe(RhfSelectInput, () => {
 
   it('shows the blank option for a value that matches no option', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput name='category' label='Category' addBlank />
@@ -234,6 +244,7 @@ describe(RhfSelectInput, () => {
 
   it('shows the validation message only after a submit attempt', async () => {
     expect.hasAssertions();
+
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput name='category' label='Category' options={options} />
@@ -261,6 +272,7 @@ describe(RhfSelectInput, () => {
 
   it('has no aria-describedby or aria-invalid while the field is valid', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput name='category' label='Category' options={options} />
@@ -275,6 +287,7 @@ describe(RhfSelectInput, () => {
 
   it('shows the validation message once the field has been touched', async () => {
     expect.hasAssertions();
+
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput name='category' label='Category' options={options} />
@@ -293,6 +306,7 @@ describe(RhfSelectInput, () => {
 
   it('renders inline help and links it to the select', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfSelectInput
@@ -315,6 +329,7 @@ describe(RhfSelectInput, () => {
 
   it('describes the select by both the help and the validation message', async () => {
     expect.hasAssertions();
+
     render(
       <Harness resolver={failingResolver}>
         <RhfSelectInput
@@ -338,6 +353,7 @@ describe(RhfSelectInput, () => {
 
   it('renders a summary line for the selected option', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='cert'>
         <RhfSelectInput
@@ -356,6 +372,7 @@ describe(RhfSelectInput, () => {
 
   it('renders an empty summary value when the selection matches no option', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='other'>
         <RhfSelectInput name='category' label='Category' isSummary />
@@ -367,6 +384,7 @@ describe(RhfSelectInput, () => {
 
   it('renders nothing in summary mode when no value is selected', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <Harness>
         <RhfSelectInput

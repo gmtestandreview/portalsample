@@ -93,6 +93,7 @@ const instrumentRequest: DashboardItemDto = {
 describe('requestList accessibility', () => {
   it('keeps RequestItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
     expect.hasAssertions();
+
     const { container } = renderDashboardItem(
       <RequestItem request={reportIssuedRequest} />,
     );
@@ -122,6 +123,7 @@ describe('requestList accessibility', () => {
 
   it('keeps InstrumentItem recalibration actions as native links and avoids extra card/panel tab stops', () => {
     expect.hasAssertions();
+
     const { container } = renderDashboardItem(
       <InstrumentItem request={instrumentRequest} />,
     );

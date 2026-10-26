@@ -162,6 +162,7 @@ describe('requestList behavior', () => {
 
   it('renders the no requests empty state with a create request link', () => {
     expect.hasAssertions();
+
     render(
       <MemoryRouter>
         <NoRequests />
@@ -179,6 +180,7 @@ describe('requestList behavior', () => {
 
   it('renders RequestItem report details and navigates from the report action button', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(<RequestItem request={baseRequest} />);
 
@@ -203,6 +205,7 @@ describe('requestList behavior', () => {
 
   it('runs RequestItem tab and issued-report action callbacks', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(<RequestItem request={baseRequest} />);
 
@@ -229,6 +232,7 @@ describe('requestList behavior', () => {
 
   it('renders RequestItem quote-available details and navigates by reference id', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -269,6 +273,7 @@ describe('requestList behavior', () => {
 
   it('renders RequestItem accepted quote navigation by quotation id and clone tooltip', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -305,6 +310,7 @@ describe('requestList behavior', () => {
 
   it('renders withdrawn RequestItem report content and runs every withdrawn action', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -340,6 +346,7 @@ describe('requestList behavior', () => {
 
   it('renders sparse RequestItem content and the default non-draft action', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -379,6 +386,7 @@ describe('requestList behavior', () => {
 
   it('opens draft RequestItem actions and dispatches the delete modal', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -419,6 +427,7 @@ describe('requestList behavior', () => {
 
   it('renders RequestItem draft fallback heading when manufacturer is absent', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <RequestItem
@@ -454,6 +463,7 @@ describe('requestList behavior', () => {
 
   it('renders RequestItem headings when the model or artefact name is absent', () => {
     expect.hasAssertions();
+
     const { unmount } = renderInDashboardList(
       <RequestItem
         request={{
@@ -494,6 +504,7 @@ describe('requestList behavior', () => {
 
   it('does not render a RequestItem card when the item is hidden from the dashboard', () => {
     expect.hasAssertions();
+
     renderInDashboardList(
       <RequestItem
         request={{
@@ -516,6 +527,7 @@ describe('requestList behavior', () => {
 
   it('renders InstrumentItem report history links and navigates from the latest report button', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(<InstrumentItem request={instrumentRequest} />);
 
@@ -541,6 +553,7 @@ describe('requestList behavior', () => {
 
   it('runs InstrumentItem tab and issued-report action callbacks', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(<InstrumentItem request={instrumentRequest} />);
 
@@ -563,6 +576,7 @@ describe('requestList behavior', () => {
 
   it('hides InstrumentItem latest report actions for withdrawn reports but keeps recalibration available', () => {
     expect.hasAssertions();
+
     renderInDashboardList(
       <InstrumentItem
         request={{
@@ -589,6 +603,7 @@ describe('requestList behavior', () => {
 
   it('renders InstrumentItem draft and quote-available action states', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const { unmount } = renderInDashboardList(
       <InstrumentItem
@@ -635,6 +650,7 @@ describe('requestList behavior', () => {
 
   it('renders InstrumentItem headings when the model or artefact name is absent', () => {
     expect.hasAssertions();
+
     const { unmount } = renderInDashboardList(
       <InstrumentItem
         request={{
@@ -672,6 +688,7 @@ describe('requestList behavior', () => {
 
   it('renders InstrumentItem in-progress report recalibration action without latest report link', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <InstrumentItem
@@ -706,6 +723,7 @@ describe('requestList behavior', () => {
 
   it('renders sparse InstrumentItem details, missing report date, and default actions', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderInDashboardList(
       <InstrumentItem

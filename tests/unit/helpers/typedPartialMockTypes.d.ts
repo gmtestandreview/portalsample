@@ -5,6 +5,10 @@ type __ExactMockModule<TModule> = Partial<
   Record<keyof TModule | 'default', unknown>
 >;
 
+type __DynamicPartialMockFactory<TModule> = (
+  importOriginal: <TOriginal extends TModule = TModule>() => Promise<TOriginal>,
+) => Partial<TModule> | PromiseLike<Partial<TModule>>;
+
 type __TestMockModule1 = typeof import('react-ga4');
 type __TestMockModule2 = typeof import('@azure/msal-react');
 type __TestMockModule3 = typeof import('@azure/msal-browser');

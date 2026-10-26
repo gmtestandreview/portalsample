@@ -16,7 +16,7 @@ const renderList = (
     />,
   );
 
-describe('ProgressFileList', () => {
+describe(ProgressFileList, () => {
   it('renders byte, kilobyte, and megabyte upload progress rows', () => {
     expect.hasAssertions();
 

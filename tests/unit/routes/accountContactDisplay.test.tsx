@@ -11,6 +11,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule29>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/Inputs/NumberInput',
   () =>
@@ -31,6 +32,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule79>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/Inputs/AddressLookup',
   () =>
@@ -41,6 +43,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/Inputs/OrganisationNameLookup',
   () =>
@@ -51,6 +54,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule80>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/HidableField',
   () =>
@@ -65,6 +69,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule70>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/CommonForms/ContactDetails',
   () =>
@@ -79,6 +84,8 @@ vi.mock(
 
 describe('account and contact display sections', () => {
   it('renders account details fields', async () => {
+    expect.hasAssertions();
+
     const AccountDetails = (
       await import('../../../ClientApp/src/routes/account/accountDetails')
     ).default;
@@ -97,6 +104,8 @@ describe('account and contact display sections', () => {
   });
 
   it('renders organisation details fields', async () => {
+    expect.hasAssertions();
+
     const OrganisationDetails = (
       await import('../../../ClientApp/src/routes/account/organisationDetails')
     ).default;
@@ -116,6 +125,8 @@ describe('account and contact display sections', () => {
   });
 
   it('renders contact information and the contact details form section', async () => {
+    expect.hasAssertions();
+
     const ContactDetails = (
       await import('../../../ClientApp/src/routes/contact/contactDetails')
     ).default;

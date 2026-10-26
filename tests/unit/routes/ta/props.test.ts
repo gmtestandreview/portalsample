@@ -22,21 +22,26 @@ import {
 import { stepStatuses } from '../testFixtures';
 
 const mocks = vi.hoisted(() => ({
-  setAuthToken: vi.fn(),
-  getLookup: vi.fn(),
-  getAllInfoPanelContent: vi.fn(),
-  getNmiApplication: vi.fn(),
-  getApplicationAndInstrument: vi.fn(),
-  saveApplicationAndInstrument: vi.fn(),
-  getOrganisationAndContact: vi.fn(),
-  saveOrganisationAndContact: vi.fn(),
-  getSupportingDocuments: vi.fn(),
-  saveSupportingDocuments: vi.fn(),
-  getSummary: vi.fn(),
-  submit: vi.fn(),
-  acquireTokenSilent: vi.fn(),
-  appLoggerError: vi.fn(),
-  appLoggerVerbose: vi.fn(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getLookup:
+    vi.fn<
+      (
+        type: CRMLookupTypes,
+      ) => Promise<Array<{ id: CRMLookupTypes; name: CRMLookupTypes }>>
+    >(),
+  getAllInfoPanelContent: vi.fn<(...args: unknown[]) => unknown>(),
+  getNmiApplication: vi.fn<(...args: unknown[]) => unknown>(),
+  getApplicationAndInstrument: vi.fn<(...args: unknown[]) => unknown>(),
+  saveApplicationAndInstrument: vi.fn<(...args: unknown[]) => unknown>(),
+  getOrganisationAndContact: vi.fn<(...args: unknown[]) => unknown>(),
+  saveOrganisationAndContact: vi.fn<(...args: unknown[]) => unknown>(),
+  getSupportingDocuments: vi.fn<(...args: unknown[]) => unknown>(),
+  saveSupportingDocuments: vi.fn<(...args: unknown[]) => unknown>(),
+  getSummary: vi.fn<(...args: unknown[]) => unknown>(),
+  submit: vi.fn<(...args: unknown[]) => unknown>(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
@@ -45,15 +50,17 @@ vi.mock(
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
       ...actual,
-      LookupClient: vi.fn(function LookupClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getLookup: mocks.getLookup,
-          getAllInfoPanelContent: mocks.getAllInfoPanelContent,
-          getNmiApplication: mocks.getNmiApplication,
-        };
-      }),
-      RequestForPatternApprovalClient: vi.fn(
+      LookupClient: vi.fn<(...args: unknown[]) => unknown>(
+        function LookupClientMock() {
+          return {
+            setAuthToken: mocks.setAuthToken,
+            getLookup: mocks.getLookup,
+            getAllInfoPanelContent: mocks.getAllInfoPanelContent,
+            getNmiApplication: mocks.getNmiApplication,
+          };
+        },
+      ),
+      RequestForPatternApprovalClient: vi.fn<(...args: unknown[]) => unknown>(
         function RequestForPatternApprovalClientMock() {
           return {
             setAuthToken: mocks.setAuthToken,
@@ -162,48 +169,43 @@ describe('pattern approval wizard prop factories', () => {
         certNameOptions: [{ id: 'cert-1', name: 'NMI-1' }],
       },
     });
-    expect(mocks.getApplicationAndInstrument).toHaveBeenCalledWith(
-      'PA-1',
-      abortSignal,
-    );
-    expect(props.bannerRefTitle).toBe('Ref ID: PA-1');
-    expect(props.bannerSubTitle).toBe(
-      'Trading - Branch - National Measurement Institute',
-    );
-    expect(
-      props.hidingFields?.isApplNewHide?.({
-        patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.isApplNewInstrumentHide?.({
-        patternApprovalType: PatternApprovalRequiredValues.Variation,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.isApplVariationHide?.({
-        patternApprovalType: PatternApprovalRequiredValues.Variation,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.isApplOtherHide?.({
-        patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.isApplOIMLHide?.({
-        newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
-        instrumentCategory: 'category-1',
-        instrumentType: 'type-1',
-        instrumentTypeContent: [
-          {
-            instrumentCategoryId: 'category-1',
-            instrumentTypeId: 'type-1',
-            eligibleForOiml: false,
-          },
-        ],
-      }),
-    ).toBe(false);
+    expect({
+      applicationAndInstrumentCall:
+        mocks.getApplicationAndInstrument.mock.calls.at(-1),
+      bannerRefTitle: props.bannerRefTitle,
+      bannerSubTitle: props.bannerSubTitle,
+      hidingFields: [
+        props.hidingFields?.isApplNewHide?.({
+          patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+        }),
+        props.hidingFields?.isApplNewInstrumentHide?.({
+          patternApprovalType: PatternApprovalRequiredValues.Variation,
+        }),
+        props.hidingFields?.isApplVariationHide?.({
+          patternApprovalType: PatternApprovalRequiredValues.Variation,
+        }),
+        props.hidingFields?.isApplOtherHide?.({
+          patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
+        }),
+        props.hidingFields?.isApplOIMLHide?.({
+          newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
+          instrumentCategory: 'category-1',
+          instrumentType: 'type-1',
+          instrumentTypeContent: [
+            {
+              instrumentCategoryId: 'category-1',
+              instrumentTypeId: 'type-1',
+              eligibleForOiml: false,
+            },
+          ],
+        }),
+      ],
+    }).toStrictEqual({
+      applicationAndInstrumentCall: ['PA-1', abortSignal],
+      bannerRefTitle: 'Ref ID: PA-1',
+      bannerSubTitle: 'Trading - Branch - National Measurement Institute',
+      hidingFields: [false, true, false, false, false],
+    });
 
     await props.onSaveAndNext?.(
       {
@@ -272,71 +274,70 @@ describe('pattern approval wizard prop factories', () => {
     await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
       stepValues: { isManufacturer: YesNo.No },
     });
-    expect(mocks.getOrganisationAndContact).toHaveBeenCalledWith(
-      'PA-2',
-      abortSignal,
-    );
-    expect(
-      props.hidingFields?.isManufacturerHide?.({ isManufacturer: YesNo.Yes }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.isManufacturerHide?.({ isManufacturer: YesNo.No }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.isManufacturerHide?.({ isManufacturer: undefined }),
-    ).toBe(true);
-    expect(props.hidingFields?.isCurrentOrganisationHide?.({})).toBe(true);
-    expect(
-      props.hidingFields?.principalContactHide?.({
-        isPrincipalContact: YesNo.Yes,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.principalContactHide?.({
-        isPrincipalContact: YesNo.No,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.principalContactHide?.({
-        isPrincipalContact: undefined,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.principalInvoiceContactHide?.({
-        isPrincipalInvoiceContact: YesNo.Yes,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.principalInvoiceContactHide?.({
-        isPrincipalInvoiceContact: YesNo.No,
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.principalInvoiceContactHide?.({
-        isPrincipalInvoiceContact: undefined,
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.contact?.titleOther?.({
-        contact: { title: 'Other' },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.invoiceContact?.titleOther?.({
-        invoiceContact: { title: 'Other' },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.invoiceContact?.titleOther?.({
-        invoiceContact: { title: 'Dr' },
-      }),
-    ).toBe(true);
-    expect(props.getRedirectionLocationOnError?.(404, {} as ErrorType)).toBe(
-      '/not-found',
-    );
+    expect({
+      organisationAndContactCall:
+        mocks.getOrganisationAndContact.mock.calls.at(-1),
+      hidingFields: [
+        props.hidingFields?.isManufacturerHide?.({
+          isManufacturer: YesNo.Yes,
+        }),
+        props.hidingFields?.isManufacturerHide?.({
+          isManufacturer: YesNo.No,
+        }),
+        props.hidingFields?.isManufacturerHide?.({
+          isManufacturer: undefined,
+        }),
+        props.hidingFields?.isCurrentOrganisationHide?.({}),
+        props.hidingFields?.principalContactHide?.({
+          isPrincipalContact: YesNo.Yes,
+        }),
+        props.hidingFields?.principalContactHide?.({
+          isPrincipalContact: YesNo.No,
+        }),
+        props.hidingFields?.principalContactHide?.({
+          isPrincipalContact: undefined,
+        }),
+        props.hidingFields?.principalInvoiceContactHide?.({
+          isPrincipalInvoiceContact: YesNo.Yes,
+        }),
+        props.hidingFields?.principalInvoiceContactHide?.({
+          isPrincipalInvoiceContact: YesNo.No,
+        }),
+        props.hidingFields?.principalInvoiceContactHide?.({
+          isPrincipalInvoiceContact: undefined,
+        }),
+        props.hidingFields?.contact?.titleOther?.({
+          contact: { title: 'Other' },
+        }),
+        props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
+        props.hidingFields?.invoiceContact?.titleOther?.({
+          invoiceContact: { title: 'Other' },
+        }),
+        props.hidingFields?.invoiceContact?.titleOther?.({
+          invoiceContact: { title: 'Dr' },
+        }),
+      ],
+      redirect: props.getRedirectionLocationOnError?.(404, {} as ErrorType),
+    }).toStrictEqual({
+      organisationAndContactCall: ['PA-2', abortSignal],
+      hidingFields: [
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+      ],
+      redirect: '/not-found',
+    });
 
     await props.onSaveAndExit?.(
       { isManufacturer: YesNo.No },
@@ -344,7 +345,7 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveOrganisationAndContact).toHaveBeenCalledWith(
+    expect(mocks.saveOrganisationAndContact.mock.calls.at(-1)).toStrictEqual([
       'PA-2',
       {
         applicationId: 'PA-2',
@@ -352,7 +353,7 @@ describe('pattern approval wizard prop factories', () => {
         isCompletingStep: false,
       },
       abortSignal,
-    );
+    ]);
 
     await props.onSaveAndNext?.(
       { isManufacturer: YesNo.Yes },
@@ -360,7 +361,7 @@ describe('pattern approval wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveOrganisationAndContact).toHaveBeenLastCalledWith(
+    expect(mocks.saveOrganisationAndContact.mock.calls.at(-1)).toStrictEqual([
       'PA-2',
       {
         applicationId: 'PA-2',
@@ -368,7 +369,7 @@ describe('pattern approval wizard prop factories', () => {
         isCompletingStep: true,
       },
       abortSignal,
-    );
+    ]);
   });
 
   it('loads and saves supporting documents with document-list branches', async () => {
@@ -387,20 +388,21 @@ describe('pattern approval wizard prop factories', () => {
     await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
       stepValues: { form: { documents: [] } },
     });
-    expect(mocks.getSupportingDocuments).toHaveBeenCalledWith(
-      'PA-3',
-      abortSignal,
-    );
-    expect(props.discard).toEqual({
-      locationOnDiscard: '/',
-      showCancelButton: false,
+    expect({
+      supportingDocumentsCall: mocks.getSupportingDocuments.mock.calls.at(-1),
+      discard: props.discard,
+      redirect: props.getRedirectionLocationOnError?.(404, {} as ErrorType),
+      isSummaryPage: props.isSummaryPage,
+      suppressErrorSummary: props['suppressErrorSummary'],
+      suppressErrorSummaryPath: props['suppressErrorSummaryPath'],
+    }).toStrictEqual({
+      supportingDocumentsCall: ['PA-3', abortSignal],
+      discard: { locationOnDiscard: '/', showCancelButton: false },
+      redirect: '/not-found',
+      isSummaryPage: true,
+      suppressErrorSummary: true,
+      suppressErrorSummaryPath: true,
     });
-    expect(props.getRedirectionLocationOnError?.(404, {} as ErrorType)).toBe(
-      '/not-found',
-    );
-    expect(props.isSummaryPage).toBe(true);
-    expect(props['suppressErrorSummary']).toBe(true);
-    expect(props['suppressErrorSummaryPath']).toBe(true);
 
     const documents: SupportingDocumentsStep = {
       form: {
@@ -411,7 +413,7 @@ describe('pattern approval wizard prop factories', () => {
     };
     await props.onSaveAndNext?.(documents, true, abortSignal);
 
-    expect(mocks.saveSupportingDocuments).toHaveBeenCalledWith(
+    expect(mocks.saveSupportingDocuments.mock.calls.at(-1)).toStrictEqual([
       'PA-3',
       {
         applicationId: 'PA-3',
@@ -419,12 +421,12 @@ describe('pattern approval wizard prop factories', () => {
         isCompletingStep: true,
       },
       abortSignal,
-    );
+    ]);
 
     const withoutDocuments: SupportingDocumentsStep = { form: {} };
     await props.onSaveAndExit?.(withoutDocuments, false, abortSignal);
 
-    expect(mocks.saveSupportingDocuments).toHaveBeenLastCalledWith(
+    expect(mocks.saveSupportingDocuments.mock.calls.at(-1)).toStrictEqual([
       'PA-3',
       {
         applicationId: 'PA-3',
@@ -432,7 +434,7 @@ describe('pattern approval wizard prop factories', () => {
         isCompletingStep: false,
       },
       abortSignal,
-    );
+    ]);
   });
 
   it('loads and submits summary values with lookup-enriched application details', async () => {
@@ -468,127 +470,111 @@ describe('pattern approval wizard prop factories', () => {
         },
       },
     });
-    expect(mocks.getSummary).toHaveBeenCalledWith('PA-4', abortSignal);
-    expect(
-      props.hidingFields?.organisationAndContact?.branchOrLocationName?.({
-        organisationAndContact: {},
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.branchOrLocationName?.({
-        organisationAndContact: { branchOrLocationName: 'Branch' },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.isManufacturerHide?.({
-        organisationAndContact: { isManufacturer: YesNo.Yes },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.isManufacturerHide?.({
-        organisationAndContact: { isManufacturer: YesNo.No },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.isManufacturerHide?.({
-        organisationAndContact: { isManufacturer: undefined },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.principalInvoiceContactHide?.(
-        { organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes } },
-      ),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.principalInvoiceContactHide?.(
-        { organisationAndContact: { isPrincipalInvoiceContact: YesNo.No } },
-      ),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.principalInvoiceContactHide?.(
-        { organisationAndContact: { isPrincipalInvoiceContact: undefined } },
-      ),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.isCurrentOrganisationHide?.({
-        organisationAndContact: { isManufacturer: YesNo.No },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.isCurrentOrganisationHide?.({
-        organisationAndContact: { isManufacturer: YesNo.Yes },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.contact?.titleOther?.({
-        organisationAndContact: { contact: { title: 'Other' } },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.contact?.titleOther?.({
-        organisationAndContact: { contact: { title: 'Dr' } },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.organisationAndContact?.invoiceContact?.titleOther?.({
-        organisationAndContact: { invoiceContact: { title: 'Other' } },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.organisationAndContact?.invoiceContact?.titleOther?.({
-        organisationAndContact: { invoiceContact: { title: 'Dr' } },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplNewHide?.({
-        applicationAndInstrument: {
-          patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-        },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplNewHide?.({
-        applicationAndInstrument: {
-          patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
-        },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplVariationHide?.({
-        applicationAndInstrument: {
-          patternApprovalType: PatternApprovalRequiredValues.Variation,
-        },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplVariationHide?.({
-        applicationAndInstrument: { patternApprovalType: undefined },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplOtherHide?.({
-        applicationAndInstrument: {
-          patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
-        },
-      }),
-    ).toBe(false);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplOtherHide?.({
-        applicationAndInstrument: {
-          patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-        },
-      }),
-    ).toBe(true);
-    expect(
-      props.hidingFields?.applicationAndInstrument?.isApplOIMLHide?.({
-        newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
-      }),
-    ).toBe(false);
-    expect(props.getRedirectionLocationOnError?.(404, {} as ErrorType)).toBe(
-      '/not-found',
-    );
-    expect(props['disableLinkedError']).toBe(false);
-    expect(props['suppressErrorSummaryPath']).toBe(true);
+    expect({
+      summaryCall: mocks.getSummary.mock.calls.at(-1),
+      organisationAndContact: [
+        props.hidingFields?.organisationAndContact?.branchOrLocationName?.({
+          organisationAndContact: {},
+        }),
+        props.hidingFields?.organisationAndContact?.branchOrLocationName?.({
+          organisationAndContact: { branchOrLocationName: 'Branch' },
+        }),
+        props.hidingFields?.organisationAndContact?.isManufacturerHide?.({
+          organisationAndContact: { isManufacturer: YesNo.Yes },
+        }),
+        props.hidingFields?.organisationAndContact?.isManufacturerHide?.({
+          organisationAndContact: { isManufacturer: YesNo.No },
+        }),
+        props.hidingFields?.organisationAndContact?.isManufacturerHide?.({
+          organisationAndContact: { isManufacturer: undefined },
+        }),
+        props.hidingFields?.organisationAndContact?.principalInvoiceContactHide?.(
+          { organisationAndContact: { isPrincipalInvoiceContact: YesNo.Yes } },
+        ),
+        props.hidingFields?.organisationAndContact?.principalInvoiceContactHide?.(
+          { organisationAndContact: { isPrincipalInvoiceContact: YesNo.No } },
+        ),
+        props.hidingFields?.organisationAndContact?.principalInvoiceContactHide?.(
+          { organisationAndContact: { isPrincipalInvoiceContact: undefined } },
+        ),
+        props.hidingFields?.organisationAndContact?.isCurrentOrganisationHide?.(
+          { organisationAndContact: { isManufacturer: YesNo.No } },
+        ),
+        props.hidingFields?.organisationAndContact?.isCurrentOrganisationHide?.(
+          { organisationAndContact: { isManufacturer: YesNo.Yes } },
+        ),
+        props.hidingFields?.organisationAndContact?.contact?.titleOther?.({
+          organisationAndContact: { contact: { title: 'Other' } },
+        }),
+        props.hidingFields?.organisationAndContact?.contact?.titleOther?.({
+          organisationAndContact: { contact: { title: 'Dr' } },
+        }),
+        props.hidingFields?.organisationAndContact?.invoiceContact?.titleOther?.(
+          { organisationAndContact: { invoiceContact: { title: 'Other' } } },
+        ),
+        props.hidingFields?.organisationAndContact?.invoiceContact?.titleOther?.(
+          { organisationAndContact: { invoiceContact: { title: 'Dr' } } },
+        ),
+      ],
+      applicationAndInstrument: [
+        props.hidingFields?.applicationAndInstrument?.isApplNewHide?.({
+          applicationAndInstrument: {
+            patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+          },
+        }),
+        props.hidingFields?.applicationAndInstrument?.isApplNewHide?.({
+          applicationAndInstrument: {
+            patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
+          },
+        }),
+        props.hidingFields?.applicationAndInstrument?.isApplVariationHide?.({
+          applicationAndInstrument: {
+            patternApprovalType: PatternApprovalRequiredValues.Variation,
+          },
+        }),
+        props.hidingFields?.applicationAndInstrument?.isApplVariationHide?.({
+          applicationAndInstrument: { patternApprovalType: undefined },
+        }),
+        props.hidingFields?.applicationAndInstrument?.isApplOtherHide?.({
+          applicationAndInstrument: {
+            patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
+          },
+        }),
+        props.hidingFields?.applicationAndInstrument?.isApplOtherHide?.({
+          applicationAndInstrument: {
+            patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
+          },
+        }),
+        props.hidingFields?.applicationAndInstrument?.isApplOIMLHide?.({
+          newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
+        }),
+      ],
+      redirect: props.getRedirectionLocationOnError?.(404, {} as ErrorType),
+      disableLinkedError: props['disableLinkedError'],
+      suppressErrorSummaryPath: props['suppressErrorSummaryPath'],
+    }).toStrictEqual({
+      summaryCall: ['PA-4', abortSignal],
+      organisationAndContact: [
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+      ],
+      applicationAndInstrument: [false, true, false, true, false, true, false],
+      redirect: '/not-found',
+      disableLinkedError: false,
+      suppressErrorSummaryPath: true,
+    });
 
     const summary: RequestForPatternApprovalSummaryDto = {
       referenceId: 'PA-4',
@@ -613,165 +599,163 @@ describe('pattern approval wizard prop factories', () => {
     expect.hasAssertions();
 
     const abortSignal = new AbortController().signal;
-    mocks.getApplicationAndInstrument.mockRejectedValueOnce(
-      new Error('load application failed'),
-    );
+    const failureCases = [
+      {
+        operation: () => {
+          mocks.getApplicationAndInstrument.mockRejectedValueOnce(
+            new Error('load application failed'),
+          );
+          return applicationAndInstrumentProps(
+            'PA-5',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).loadStepValues?.(abortSignal);
+        },
+        message:
+          'Failed to load PA application and instrument details. Id: PA-5',
+        logger: 'Failed to load PA application and instrument details',
+        id: 'PA-5',
+      },
+      {
+        operation: () => {
+          mocks.saveApplicationAndInstrument.mockRejectedValueOnce(
+            new Error('save application failed'),
+          );
+          return applicationAndInstrumentProps(
+            'PA-6',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).onSaveAndNext?.({}, true, abortSignal);
+        },
+        message:
+          'Failed to save PA application and instrument details. Id: PA-6',
+        logger: 'Failed to save PA application and instrument details',
+        id: 'PA-6',
+      },
+      {
+        operation: () => {
+          mocks.getOrganisationAndContact.mockRejectedValueOnce(
+            new Error('load organisation failed'),
+          );
+          return organisationAndContactProps(
+            'PA-7',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).loadStepValues?.(abortSignal);
+        },
+        message: 'Failed to load PA org and contact details. Id: PA-7',
+        logger: 'Failed to load PA org and contact details',
+        id: 'PA-7',
+      },
+      {
+        operation: () => {
+          mocks.saveOrganisationAndContact.mockRejectedValueOnce(
+            new Error('save organisation failed'),
+          );
+          return organisationAndContactProps(
+            'PA-8',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).onSaveAndNext?.({}, true, abortSignal);
+        },
+        message: 'Failed to save PA org and contact details. Id: PA-8',
+        logger: 'Failed to save PA org and contact details',
+        id: 'PA-8',
+      },
+      {
+        operation: () => {
+          mocks.getSupportingDocuments.mockRejectedValueOnce(
+            new Error('load documents failed'),
+          );
+          return supportingDocumentsProps(
+            'PA-9',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).loadStepValues?.(abortSignal);
+        },
+        message: 'Failed to load PA supporting documents. Id: PA-9',
+        logger: 'Failed to load PA supporting documents',
+        id: 'PA-9',
+      },
+      {
+        operation: () => {
+          mocks.saveSupportingDocuments.mockRejectedValueOnce(
+            new Error('save documents failed'),
+          );
+          return supportingDocumentsProps(
+            'PA-10',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).onSaveAndNext?.({ form: {} }, true, abortSignal);
+        },
+        message: 'Failed to save PA supporting documents. Id: PA-10',
+        logger: 'Failed to save PA supporting documents',
+        id: 'PA-10',
+      },
+      {
+        operation: () => {
+          mocks.getSummary.mockRejectedValueOnce(
+            new Error('load summary failed'),
+          );
+          return summaryAndSubmitProps(
+            'PA-11',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).loadStepValues?.(abortSignal);
+        },
+        message: 'Failed to load PA summary. Id: PA-11',
+        logger: 'Failed to load PA summary',
+        id: 'PA-11',
+      },
+      {
+        operation: () => {
+          mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
+          return summaryAndSubmitProps(
+            'PA-12',
+            accounts,
+            instance,
+            accountDetails,
+            stepStatuses,
+            'Type approval',
+          ).onSaveAndNext?.({}, true, abortSignal);
+        },
+        message: 'Failed to submit PA summary. Id: PA-12',
+        logger: 'Failed to submit PA summary',
+        id: 'PA-12',
+      },
+    ];
 
-    await expect(
-      applicationAndInstrumentProps(
-        'PA-5',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).loadStepValues?.(abortSignal),
-    ).rejects.toThrow(
-      'Failed to load PA application and instrument details. Id: PA-5',
-    );
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load PA application and instrument details',
-      expect.any(Error),
-      { Id: 'PA-5' },
-    );
-
-    mocks.saveApplicationAndInstrument.mockRejectedValueOnce(
-      new Error('save application failed'),
-    );
-
-    await expect(
-      applicationAndInstrumentProps(
-        'PA-6',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).onSaveAndNext?.({}, true, abortSignal),
-    ).rejects.toThrow(
-      'Failed to save PA application and instrument details. Id: PA-6',
-    );
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to save PA application and instrument details',
-      expect.any(Error),
-      { Id: 'PA-6' },
-    );
-
-    mocks.getOrganisationAndContact.mockRejectedValueOnce(
-      new Error('load organisation failed'),
-    );
-
-    await expect(
-      organisationAndContactProps(
-        'PA-7',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).loadStepValues?.(abortSignal),
-    ).rejects.toThrow('Failed to load PA org and contact details. Id: PA-7');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load PA org and contact details',
-      expect.any(Error),
-      { Id: 'PA-7' },
-    );
-
-    mocks.saveOrganisationAndContact.mockRejectedValueOnce(
-      new Error('save organisation failed'),
-    );
-
-    await expect(
-      organisationAndContactProps(
-        'PA-8',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).onSaveAndNext?.({}, true, abortSignal),
-    ).rejects.toThrow('Failed to save PA org and contact details. Id: PA-8');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to save PA org and contact details',
-      expect.any(Error),
-      { Id: 'PA-8' },
-    );
-
-    mocks.getSupportingDocuments.mockRejectedValueOnce(
-      new Error('load documents failed'),
-    );
-
-    await expect(
-      supportingDocumentsProps(
-        'PA-9',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).loadStepValues?.(abortSignal),
-    ).rejects.toThrow('Failed to load PA supporting documents. Id: PA-9');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load PA supporting documents',
-      expect.any(Error),
-      { Id: 'PA-9' },
-    );
-
-    mocks.saveSupportingDocuments.mockRejectedValueOnce(
-      new Error('save documents failed'),
-    );
-
-    await expect(
-      supportingDocumentsProps(
-        'PA-10',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).onSaveAndNext?.({ form: {} }, true, abortSignal),
-    ).rejects.toThrow('Failed to save PA supporting documents. Id: PA-10');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to save PA supporting documents',
-      expect.any(Error),
-      { Id: 'PA-10' },
-    );
-
-    mocks.getSummary.mockRejectedValueOnce(new Error('load summary failed'));
-
-    await expect(
-      summaryAndSubmitProps(
-        'PA-11',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).loadStepValues?.(abortSignal),
-    ).rejects.toThrow('Failed to load PA summary. Id: PA-11');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to load PA summary',
-      expect.any(Error),
-      { Id: 'PA-11' },
-    );
-
-    mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
-
-    await expect(
-      summaryAndSubmitProps(
-        'PA-12',
-        accounts,
-        instance,
-        accountDetails,
-        stepStatuses,
-        'Type approval',
-      ).onSaveAndNext?.({}, true, abortSignal),
-    ).rejects.toThrow('Failed to submit PA summary. Id: PA-12');
-    expect(mocks.appLoggerError).toHaveBeenCalledWith(
-      'Failed to submit PA summary',
-      expect.any(Error),
-      { Id: 'PA-12' },
-    );
+    for (const failureCase of failureCases) {
+      await expect(Promise.resolve(failureCase.operation())).rejects.toThrow(
+        failureCase.message,
+      );
+      expect(mocks.appLoggerError).toHaveBeenLastCalledWith(
+        failureCase.logger,
+        expect.any(Error),
+        { Id: failureCase.id },
+      );
+    }
   });
 
   it('throws account-availability errors before making client calls', async () => {
@@ -810,32 +794,39 @@ describe('pattern approval wizard prop factories', () => {
       'Type approval',
     );
 
-    await expect(appProps.loadStepValues?.()).rejects.toThrow(
-      'There are no accounts available to load PA application and instrument details. Id: PA-13',
+    const failureMessages = await Promise.all(
+      [
+        appProps.loadStepValues?.(),
+        appProps.onSaveAndExit?.({}, false),
+        orgProps.loadStepValues?.(),
+        orgProps.onSaveAndExit?.({}, false),
+        docsProps.loadStepValues?.(),
+        docsProps.onSaveAndExit?.({ form: {} }, false),
+        summaryProps.loadStepValues?.(),
+        summaryProps.onSaveAndNext?.({}, false),
+      ].map((operation) =>
+        Promise.resolve(operation).then(
+          () => undefined,
+          (error: unknown) => (error as Error).message,
+        ),
+      ),
     );
-    await expect(appProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'There are no accounts available to save PA application and instrument details. Id: PA-13',
-    );
-    await expect(orgProps.loadStepValues?.()).rejects.toThrow(
-      'There are no accounts available to load PA organisation and contact details. Id: PA-13',
-    );
-    await expect(orgProps.onSaveAndExit?.({}, false)).rejects.toThrow(
-      'There are no accounts available to save PA organisation and contact details. Id: PA-13',
-    );
-    await expect(docsProps.loadStepValues?.()).rejects.toThrow(
-      'There are no accounts available to load PA supporting documents. Id: PA-13',
-    );
-    await expect(
-      docsProps.onSaveAndExit?.({ form: {} }, false),
-    ).rejects.toThrow(
-      'There are no accounts available to save PA supporting documents. Id: PA-13',
-    );
-    await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
-      'There are no accounts available to load PA summary. Id: PA-13',
-    );
-    await expect(summaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
-      'There are no accounts available to submit PA summary. Id: PA-13',
-    );
-    expect(mocks.appLoggerVerbose).toHaveBeenCalledTimes(8);
+
+    expect({
+      failureMessages,
+      verboseCalls: mocks.appLoggerVerbose.mock.calls.length,
+    }).toStrictEqual({
+      failureMessages: [
+        'There are no accounts available to load PA application and instrument details. Id: PA-13',
+        'There are no accounts available to save PA application and instrument details. Id: PA-13',
+        'There are no accounts available to load PA organisation and contact details. Id: PA-13',
+        'There are no accounts available to save PA organisation and contact details. Id: PA-13',
+        'There are no accounts available to load PA supporting documents. Id: PA-13',
+        'There are no accounts available to save PA supporting documents. Id: PA-13',
+        'There are no accounts available to load PA summary. Id: PA-13',
+        'There are no accounts available to submit PA summary. Id: PA-13',
+      ],
+      verboseCalls: 8,
+    });
   });
 });

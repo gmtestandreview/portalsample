@@ -5,6 +5,7 @@ import type {
   FileParameter,
 } from '../../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
+import type { default as UseAccountContext } from '../../../../ClientApp/src/authentication/hooks';
 
 import {
   msalMocks,
@@ -19,8 +20,8 @@ import {
 } from '../../helpers/renderWithRouter';
 
 const mocks = vi.hoisted(() => ({
-  accountContext: vi.fn(),
-  appLoggerError: vi.fn(),
+  accountContext: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 const clients = vi.hoisted(() => ({
@@ -50,108 +51,111 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
 
-    clients.patternApproval = createClientMockFor(
-      'getStepStatuses',
-      'addDocuments',
-    );
-    clients.progress = createClientMockFor(
-      'getProgressUploadId',
-      'getProgress',
-      'deleteProgressStatistics',
-      'cancelFile',
-    );
+  clients.patternApproval = createClientMockFor(
+    'getStepStatuses',
+    'addDocuments',
+  );
+  clients.progress = createClientMockFor(
+    'getProgressUploadId',
+    'getProgress',
+    'deleteProgressStatistics',
+    'cancelFile',
+  );
 
-    return webApiClientModuleMock(original, {
-      RequestForPatternApprovalClient: clients.patternApproval,
-      ProgressClient: clients.progress,
-    }) satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+  return webApiClientModuleMock(original, {
+    RequestForPatternApprovalClient: clients.patternApproval,
+    ProgressClient: clients.progress,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/hooks'),
-  () =>
+  (() =>
     ({
-      default: () => mocks.accountContext(),
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+      default: mocks.accountContext as unknown as typeof UseAccountContext,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
-      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm',
-  () =>
+  import('../../../../ClientApp/src/components/forms/WizardForm'),
+  (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <section data-testid='wizard-form'>{children}</section>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule60>,
+    }) satisfies __ExactMockModule<__TestMockModule60>) as unknown as __DynamicPartialMockFactory<__TestMockModule60>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
-  () =>
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
+  (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <article data-testid='wizard-step'>{children}</article>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>,
+    }) satisfies __ExactMockModule<__TestMockModule24>) as unknown as __DynamicPartialMockFactory<__TestMockModule24>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/routes/ta/organisationAndContact'),
-  () =>
+  (() =>
     ({
       default: () => <div>Organisation and contact step</div>,
-    }) satisfies __ExactMockModule<__TestMockModule138>,
+    }) satisfies __ExactMockModule<__TestMockModule138>) as unknown as __DynamicPartialMockFactory<__TestMockModule138>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/routes/ta/applicationAndInstrument'),
-  () =>
+  (() =>
     ({
       default: () => <div>Application and instrument step</div>,
-    }) satisfies __ExactMockModule<__TestMockModule139>,
+    }) satisfies __ExactMockModule<__TestMockModule139>) as unknown as __DynamicPartialMockFactory<__TestMockModule139>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/routes/ta/summaryAndSubmit'),
-  () =>
+  (() =>
     ({
       default: () => <div>Summary and submit step</div>,
-    }) satisfies __ExactMockModule<__TestMockModule140>,
+    }) satisfies __ExactMockModule<__TestMockModule140>) as unknown as __DynamicPartialMockFactory<__TestMockModule140>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/supportingDocuments',
-  () =>
+  import('../../../../ClientApp/src/routes/ta/supportingDocuments'),
+  (() =>
     ({
       default: (props: typeof documentsStep.props) => {
         documentsStep.props = props;
@@ -165,7 +169,7 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule141>,
+    }) satisfies __ExactMockModule<__TestMockModule141>) as unknown as __DynamicPartialMockFactory<__TestMockModule141>,
 );
 
 const statuses = [{ name: 'Organisation and contact', status: 'current' }];
@@ -236,6 +240,8 @@ describe('application for type approval', () => {
 
   describe('loading the wizard', () => {
     it('renders every step once the statuses arrive', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
@@ -252,6 +258,8 @@ describe('application for type approval', () => {
     });
 
     it('shows a spinner until the statuses arrive', async () => {
+      expect.hasAssertions();
+
       let releaseStatuses: (value: unknown) => void = () => undefined;
       clients.patternApproval.methods.getStepStatuses.mockReturnValue(
         new Promise((resolve) => {
@@ -273,6 +281,8 @@ describe('application for type approval', () => {
     });
 
     it('redirects to not found when the statuses fail to load', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getStepStatuses.mockRejectedValue(
         new Error('load failed'),
       );
@@ -290,6 +300,8 @@ describe('application for type approval', () => {
     });
 
     it('does not load anything without a signed-in account', async () => {
+      expect.hasAssertions();
+
       const { signOut } = await import('../../helpers/mockMsal');
       signOut();
 
@@ -304,6 +316,8 @@ describe('application for type approval', () => {
 
   describe('uploading attachments', () => {
     it('maps the returned documents onto attachments', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockResolvedValue({
         uploadId: 'upload-2',
@@ -344,6 +358,8 @@ describe('application for type approval', () => {
     });
 
     it('returns an empty list when the response carries no form', async () => {
+      expect.hasAssertions();
+
       // Regression guard. `documents?.map(...)` was cast to AttachmentDto[], so a response
       // without a form resolved to undefined while the signature promised an array - any
       // caller doing `.length` on the result threw.
@@ -361,6 +377,8 @@ describe('application for type approval', () => {
     });
 
     it('returns an empty list when the form carries no documents', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockResolvedValue({
         uploadId: 'upload-4',
@@ -376,6 +394,8 @@ describe('application for type approval', () => {
     });
 
     it('reports a blocked upload distinctly from a generic failure', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue({
         status: 403,
@@ -400,6 +420,8 @@ describe('application for type approval', () => {
     });
 
     it('reports a server error for a 5xx', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue({
         status: 503,
@@ -418,6 +440,8 @@ describe('application for type approval', () => {
     });
 
     it('falls back to a generic message when the failure carries no status', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue(
         new Error('network'),
@@ -436,6 +460,8 @@ describe('application for type approval', () => {
     });
 
     it('hands the documents step an inert onUploadFiles stub', async () => {
+      expect.hasAssertions();
+
       // The wizard routes uploads through onUploadAttachment; the step's own onUploadFiles
       // prop is required by its contract but deliberately does nothing, and the source marks
       // it "Not used". Pinning it means a future change that starts relying on it fails here
@@ -448,6 +474,8 @@ describe('application for type approval', () => {
     });
 
     it('skips progress polling when no upload id is issued', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.progress.methods.getProgressUploadId.mockResolvedValue(undefined);
 
@@ -461,6 +489,8 @@ describe('application for type approval', () => {
 
   describe('progress polling', () => {
     it('publishes progress and stops once the upload completes', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.progress.methods.getProgress
         .mockResolvedValueOnce({ percent: 40, status: 'InProgress' })
@@ -484,6 +514,8 @@ describe('application for type approval', () => {
     });
 
     it('also stops when the upload completes with errors', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.progress.methods.getProgress.mockResolvedValue({
         percent: 100,
@@ -502,6 +534,8 @@ describe('application for type approval', () => {
     });
 
     it('logs a failed cleanup without disturbing the upload', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.progress.methods.deleteProgressStatistics.mockRejectedValue(
         new Error('gone'),
@@ -521,6 +555,8 @@ describe('application for type approval', () => {
     });
 
     it('retries after a failed poll and still finishes', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.progress.methods.getProgress
         .mockRejectedValueOnce(new Error('poll blipped'))
@@ -545,6 +581,8 @@ describe('application for type approval', () => {
     }, 20000);
 
     it('abandons polling when the component unmounts mid-flight', async () => {
+      expect.hasAssertions();
+
       const { unmount } = await renderLoadedWizard();
 
       let failPoll: (reason: Error) => void = () => undefined;
@@ -587,6 +625,8 @@ describe('application for type approval', () => {
 
   describe('cancelling a file', () => {
     it('does nothing before an upload has started', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
 
       await act(async () => {
@@ -597,6 +637,8 @@ describe('application for type approval', () => {
     });
 
     it('cancels the named file against the current upload', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
 
       await act(async () => {
@@ -613,6 +655,8 @@ describe('application for type approval', () => {
     });
 
     it('swallows a failed cancellation because polling reports the real state', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
       clients.progress.methods.cancelFile.mockRejectedValue(
         new Error('too late'),
@@ -630,6 +674,8 @@ describe('application for type approval', () => {
     });
 
     it('gives up cancelling when the token cannot be refreshed', async () => {
+      expect.hasAssertions();
+
       await renderLoadedWizard();
 
       await act(async () => {

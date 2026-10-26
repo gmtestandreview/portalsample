@@ -92,6 +92,7 @@ vi.mock(
 describe(AuthorisedAgent, () => {
   it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
     expect.hasAssertions();
+
     render(<AuthorisedAgent />);
 
     expect({
@@ -134,6 +135,7 @@ describe(AuthorisedAgent, () => {
 
   it('prefixes child field names', () => {
     expect.hasAssertions();
+
     render(<AuthorisedAgent name='agent' isSummary />);
 
     expect({
@@ -153,6 +155,7 @@ describe(AuthorisedAgent, () => {
 
   it('forwards summary mode to child fields', () => {
     expect.hasAssertions();
+
     render(<AuthorisedAgent name='agent' isSummary />);
 
     expect({

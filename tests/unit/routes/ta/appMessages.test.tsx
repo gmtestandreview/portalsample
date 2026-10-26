@@ -14,8 +14,8 @@ import { renderWithRouter } from '../../helpers/renderWithRouter';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
-  sanitiseHtml: vi.fn((html: string) => html),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  sanitiseHtml: vi.fn<(html: string) => string>((html: string) => html),
 }));
 
 const clients = vi.hoisted(() => ({
@@ -35,62 +35,69 @@ const editor = vi.hoisted(() => ({
   lastKey: null as string | null,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
 
-    clients.patternApproval = createClientMockFor(
-      'getAppMessages',
-      'addAppMessage',
-    );
+  clients.patternApproval = createClientMockFor(
+    'getAppMessages',
+    'addAppMessage',
+  );
 
-    // FilterMessages must stay the real enum - the view select compares against its members.
-    return webApiClientModuleMock(original, {
-      RequestForPatternApprovalClient: clients.patternApproval,
-    }) satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+  // FilterMessages must stay the real enum - the view select compares against its members.
+  return webApiClientModuleMock(original, {
+    RequestForPatternApprovalClient: clients.patternApproval,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
-      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
-  async (importOriginal) => {
-    const original = await importOriginal<Record<string, unknown>>();
+  import('../../../../ClientApp/src/routes/common/helperFunctions'),
+  (async (
+    importOriginal: Parameters<
+      __DynamicPartialMockFactory<__TestMockModule9>
+    >[0],
+  ) => {
+    const original = await importOriginal();
 
     return {
       ...original,
       sanitiseHtml: mocks.sanitiseHtml,
     } satisfies __ExactMockModule<__TestMockModule9>;
-  },
+  }) as unknown as __DynamicPartialMockFactory<__TestMockModule9>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/SlateEditor/SlateEditor',
-  () =>
+  import('../../../../ClientApp/src/components/SlateEditor/SlateEditor'),
+  (() =>
     ({
       default: (props: typeof editor.props) => {
         editor.props = props;
@@ -104,12 +111,12 @@ vi.mock(
         );
       },
       serializeToHtml: (value: unknown[]) => `<p>${JSON.stringify(value)}</p>`,
-    }) satisfies __ExactMockModule<__TestMockModule142>,
+    }) satisfies __ExactMockModule<__TestMockModule142>) as unknown as __DynamicPartialMockFactory<__TestMockModule142>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/Pagination'),
-  () =>
+  (() =>
     ({
       default: ({
         currentPage,
@@ -130,12 +137,12 @@ vi.mock(
           next page
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule98>,
+    }) satisfies __ExactMockModule<__TestMockModule98>) as unknown as __DynamicPartialMockFactory<__TestMockModule98>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/PaginationHeader'),
-  () =>
+  (() =>
     ({
       default: ({
         currentPage,
@@ -150,7 +157,7 @@ vi.mock(
           data-total-count={totalCount}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule99>,
+    }) satisfies __ExactMockModule<__TestMockModule99>) as unknown as __DynamicPartialMockFactory<__TestMockModule99>,
 );
 
 const messageItem = (overrides: Record<string, unknown> = {}) => ({
@@ -228,6 +235,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
   describe('loading messages', () => {
     it('requests the first page and renders the returned message', async () => {
+      expect.hasAssertions();
+
       await renderRoute();
 
       await waitFor(() =>
@@ -257,6 +266,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('says so when the application has no messages', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([]),
       );
@@ -272,6 +283,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('keeps its defaults when the response omits the paging fields', async () => {
+      expect.hasAssertions();
+
       // Each paging field is written only when truthy, so a response with zeroes or omissions
       // must leave the component on its own defaults rather than paging to zero.
       clients.patternApproval.methods.getAppMessages.mockResolvedValue({
@@ -300,6 +313,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('logs a failed load and stops the spinner', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockRejectedValue(
         new Error('messages down'),
       );
@@ -318,6 +333,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('does not fetch without a signed-in account', async () => {
+      expect.hasAssertions();
+
       signOut();
 
       await renderRoute();
@@ -328,6 +345,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('does not fetch without an application id', async () => {
+      expect.hasAssertions();
+
       await renderRoute('/ta/manage/messages', '/ta/manage/messages');
 
       expect(
@@ -336,6 +355,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('shows a spinner while the request is in flight', async () => {
+      expect.hasAssertions();
+
       let release: (value: unknown) => void = () => undefined;
       clients.patternApproval.methods.getAppMessages.mockReturnValue(
         new Promise((resolve) => {
@@ -361,6 +382,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
   describe('rendering a message', () => {
     it('sanitises the html body before parsing it', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ body: '<p>Safe body</p><script>evil()</script>' }),
@@ -379,6 +402,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('renders a non-string body directly without parsing', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ body: undefined, subject: 'Empty body' }),
@@ -395,6 +420,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('shows the sign-off only when the message carries one', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ id: 'with-footer', footer: 'The NMI team' }),
@@ -412,6 +439,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('uses the NMI avatar for NMI senders and the user avatar otherwise', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ id: 'from-nmi', avatar: 'NMI' }),
@@ -431,6 +460,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('marks read and unread messages differently', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse(
           [
@@ -456,6 +487,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('falls back to placeholder initials when a sender has no avatar', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([messageItem({ id: 'anon', avatar: undefined })]),
       );
@@ -467,6 +500,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('omits the timestamp when a message has never been sent', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ messageSent: undefined, subject: 'Draft note' }),
@@ -483,6 +518,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
   describe('sending a message', () => {
     it('sanitises, submits and resets the editor', async () => {
+      expect.hasAssertions();
+
       await renderRoute();
       await waitFor(() =>
         expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
@@ -514,6 +551,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('refetches the first page after a successful send', async () => {
+      expect.hasAssertions();
+
       await renderRoute();
       await waitFor(() =>
         expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
@@ -534,6 +573,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('logs a failed send without clearing what was typed', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.addAppMessage.mockRejectedValue(
         new Error('send failed'),
       );
@@ -557,6 +598,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('does not send without a signed-in account', async () => {
+      expect.hasAssertions();
+
       // Sign out before rendering. Signing out afterwards would not work: the handler closes
       // over `accounts` from its last render, and clearing the shared mock state does not
       // itself re-render the component.
@@ -579,6 +622,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
   describe('filtering and paging', () => {
     it('refetches from page one when the view filter changes', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
       await waitFor(() =>
@@ -604,6 +649,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('only ever sends a real FilterMessages member', async () => {
+      expect.hasAssertions();
+
       // Regression guard. The options were valued '1'/'2'/'3' while FilterMessages members
       // are ShowAllMessages/ShowNmiMessages/ShowPortalMessages, and
       // `e.target.value as FilterMessages` cast the mismatch away - so every request after a
@@ -635,6 +682,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('starts on a view the select can actually show', async () => {
+      expect.hasAssertions();
+
       // The initial state is ShowAllMessages. While the options were valued '1'/'2'/'3' no
       // option matched it, so the control displayed a selection the component did not hold.
       await renderRoute();
@@ -648,8 +697,10 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('fetches the requested page and scrolls back to the heading', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
-      const scrollIntoView = vi.fn();
+      const scrollIntoView = vi.fn<(...args: unknown[]) => unknown>();
 
       await renderRoute();
       await waitFor(() =>
@@ -682,6 +733,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     });
 
     it('still pages when the messages section is absent', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderRoute();
       await waitFor(() =>

@@ -157,6 +157,7 @@ describe('formik wizard shell characterisation', () => {
 
   it('moves focus to the error summary and scrolls it into view after an invalid submit', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const scrollIntoView = vi.fn<typeof HTMLElement.prototype.scrollIntoView>();
     HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -174,6 +175,7 @@ describe('formik wizard shell characterisation', () => {
 
   it('focuses the summary again on each further failed submit', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
       () => {},
@@ -197,6 +199,7 @@ describe('formik wizard shell characterisation', () => {
 
   it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     let loads = 0;
     const loadStepValues = vi.fn<LoadStepHandler>(async () => {
@@ -227,6 +230,7 @@ describe('formik wizard shell characterisation', () => {
 
   it('save and exit skips hard validation and navigates to the exit location', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<SaveHandler>(
       async (_values: FormikValues) => undefined,
@@ -248,6 +252,7 @@ describe('formik wizard shell characterisation', () => {
 
   it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep({
       onSaveAndExit: vi.fn<SaveHandler>(),
@@ -267,6 +272,7 @@ describe('formik wizard shell characterisation', () => {
 
   it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<SaveHandler>(async () => {
       throw { status: 500 };

@@ -93,6 +93,7 @@ const renderItem = (
 describe(RhfAttachmentItem, () => {
   it('renders the file link, file size, category options, and validation message', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     renderItem();
     await user.click(screen.getByRole('combobox', { name: 'Category' }));
@@ -124,6 +125,7 @@ describe(RhfAttachmentItem, () => {
 
   it('updates the category field and calls the persisted-category callback when a document id is present', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -153,6 +155,7 @@ describe(RhfAttachmentItem, () => {
 
   it('reports a failed category save and puts the previous category back', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -189,6 +192,7 @@ describe(RhfAttachmentItem, () => {
 
   it('survives a failed category save when no error handler is given', async () => {
     expect.hasAssertions();
+
     const unhandled = vi.fn<UnhandledRejectionHandler>();
     process.on('unhandledRejection', unhandled);
     const user = userEvent.setup();
@@ -236,6 +240,7 @@ describe(RhfAttachmentItem, () => {
 
     it('ends at the saved category when two saves in a row both fail', async () => {
       expect.hasAssertions();
+
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
@@ -259,6 +264,7 @@ describe(RhfAttachmentItem, () => {
 
     it('keeps a later successful save when an earlier one fails afterwards', async () => {
       expect.hasAssertions();
+
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
@@ -287,6 +293,7 @@ describe(RhfAttachmentItem, () => {
 
     it('keeps the newest saved category when an older save succeeds late', async () => {
       expect.hasAssertions();
+
       const user = userEvent.setup();
       const first = deferred();
       const second = deferred();
@@ -314,6 +321,7 @@ describe(RhfAttachmentItem, () => {
 
     it('reverts to an empty category when the document never had one', async () => {
       expect.hasAssertions();
+
       const user = userEvent.setup();
       const failing = deferred();
       const onCategoryUpdate = vi
@@ -339,6 +347,7 @@ describe(RhfAttachmentItem, () => {
       'leaves the form alone when the list no longer holds the document (%j)',
       async (replacement) => {
         expect.hasAssertions();
+
         const user = userEvent.setup();
         const pending = deferred();
         const onCategoryUpdate = vi
@@ -360,6 +369,7 @@ describe(RhfAttachmentItem, () => {
 
     it('writes nothing to the form when the row has gone before the save fails', async () => {
       expect.hasAssertions();
+
       const user = userEvent.setup();
       const pending = deferred();
       const onCategoryUpdate = vi
@@ -379,6 +389,7 @@ describe(RhfAttachmentItem, () => {
 
   it('does not report an error when the category saves', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -403,6 +414,7 @@ describe(RhfAttachmentItem, () => {
 
   it('updates the category locally when no persisted document id is available', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -431,6 +443,7 @@ describe(RhfAttachmentItem, () => {
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
     expect.hasAssertions();
+
     renderItem(
       {
         canRemove: false,
@@ -452,6 +465,7 @@ describe(RhfAttachmentItem, () => {
 
   it('opens and closes the delete confirmation without removing the file', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onRemoveItem = vi.fn<RemoveItem>();
     renderItem({ onRemoveItem });
@@ -475,6 +489,7 @@ describe(RhfAttachmentItem, () => {
 
   it('confirms deletion with the current attachment value', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onRemoveItem = vi.fn<RemoveItem>().mockResolvedValue(undefined);
     renderItem({ onRemoveItem });
@@ -493,6 +508,7 @@ describe(RhfAttachmentItem, () => {
 
   it('names each delete button after its file', () => {
     expect.hasAssertions();
+
     renderItem();
 
     expect(
@@ -502,6 +518,7 @@ describe(RhfAttachmentItem, () => {
 
   it('creates one object URL per document and revokes it when the row goes', () => {
     expect.hasAssertions();
+
     const create = vi.spyOn(URL, 'createObjectURL');
     const revoke = vi.spyOn(URL, 'revokeObjectURL');
     const { rerender, unmount } = renderItem();

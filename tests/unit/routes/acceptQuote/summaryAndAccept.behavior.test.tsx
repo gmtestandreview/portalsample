@@ -18,17 +18,18 @@ import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' });
   return {
     acquireTokenSilent,
-    getSummaryAndAccept: vi.fn(),
-    error: vi.fn(),
+    getSummaryAndAccept: vi.fn<(...args: unknown[]) => unknown>(),
+    error: vi.fn<(...args: unknown[]) => unknown>(),
     accounts: [{ homeAccountId: 'mock-id' }],
     instance: { acquireTokenSilent },
   };
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -42,6 +43,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/authentication/hooks',
   () =>
@@ -53,25 +55,30 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AcceptQuoteClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
       getSummaryAndAccept = mocks.getSummaryAndAccept;
     },
     DashboardClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: mocks.error },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: mocks.error,
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -116,7 +123,7 @@ interface StepHarnessProps {
 // Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
 function StepHarness({
   values = {},
-  onSubmit = vi.fn(),
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<StepHarnessProps>) {
   return (
     <MemoryRouter initialEntries={['/summary/quote-1']}>
@@ -188,19 +195,33 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('renders the read-only summaries and the parties to the contract', async () => {
+    expect.hasAssertions();
+
     renderStep();
     await waitForLoad();
 
-    expect(screen.getByText('Quotation summary marker')).toBeInTheDocument();
-    expect(screen.getByText('Report recipient summary')).toBeInTheDocument();
-    expect(screen.getByText('Delivery and return summary')).toBeInTheDocument();
-    expect(screen.getByText('Payment details summary')).toBeInTheDocument();
-    expect(screen.getByText(/Taylor Nguyen/)).toBeInTheDocument();
-    expect(screen.getByText('Nina Checker')).toBeInTheDocument();
-    expect(screen.getByText(/Rae/)).toBeInTheDocument();
+    expect([
+      screen.getByText('Quotation summary marker'),
+      screen.getByText('Report recipient summary'),
+      screen.getByText('Delivery and return summary'),
+      screen.getByText('Payment details summary'),
+      screen.getByText(/Taylor Nguyen/),
+      screen.getByText('Nina Checker'),
+      screen.getByText(/Rae/),
+    ]).toStrictEqual([
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+    ]);
   });
 
   it('hides the dispute details only once No is selected', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep();
     await waitForLoad();
@@ -219,8 +240,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('submits the typed dispute and the acceptance', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({ onSubmit });
     await waitForLoad();
 
@@ -242,8 +265,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('strips the hidden dispute details when there is no dispute', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: {
         associatedDisputes: YesNo.No,
@@ -265,6 +290,8 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('links the error summary to the dispute and acceptance fields', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep({
       values: {
@@ -297,8 +324,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('strips dispute details typed before switching to No', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({ onSubmit });
     await waitForLoad();
 
@@ -320,8 +349,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('requires the acceptance and the dispute details after a failed submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -346,8 +377,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('shows the acceptance message after the checkbox is cleared', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({ values: { associatedDisputes: YesNo.No }, onSubmit });
     await waitForLoad();
 
@@ -362,8 +395,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('submits an untouched acceptance (the schema only rejects an explicit false)', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({ values: { associatedDisputes: YesNo.No }, onSubmit });
     await waitForLoad();
 
@@ -375,8 +410,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('rejects dispute details longer than 300 characters', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -396,8 +433,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('does not require the acceptance on save and exit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({ onSubmit });
     await waitForLoad();
 
@@ -409,8 +448,10 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('still enforces the dispute length on save and exit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     renderStep({
       values: {
         associatedDisputes: YesNo.Yes,
@@ -429,6 +470,8 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
+    expect.hasAssertions();
+
     const { rerender } = renderStep({ values: {} });
     await waitForLoad();
 
@@ -442,6 +485,8 @@ describe('summaryAndAccept behavior', () => {
   });
 
   it('keeps rendering and logs when the summary fails to load', async () => {
+    expect.hasAssertions();
+
     mocks.getSummaryAndAccept.mockRejectedValue(new Error('boom'));
     renderStep();
 

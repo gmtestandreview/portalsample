@@ -72,6 +72,7 @@ describe(ErrorDisplay, () => {
     ],
   ])('renders the %s error state', (status, heading, title) => {
     expect.hasAssertions();
+
     renderErrorDisplay(status);
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName(
@@ -126,6 +127,7 @@ describe(ErrorBoundary, () => {
 
   it('renders children when no error is thrown', () => {
     expect.hasAssertions();
+
     const trackException = vi.fn<TrackException>();
     const appInsights = {
       getAppInsights: () => ({ trackException }),
@@ -151,6 +153,7 @@ describe(ErrorBoundary, () => {
 
   it('renders the fallback when telemetry is disabled', () => {
     expect.hasAssertions();
+
     const expectedError = Object.assign(new Error('Request failed'), {
       status: HttpStatusCode.Conflict,
     });
@@ -185,6 +188,7 @@ describe(ErrorBoundary, () => {
 
   it('renders the fallback and tracks an exception when a child throws', () => {
     expect.hasAssertions();
+
     const expectedError = Object.assign(new Error('Request failed'), {
       status: HttpStatusCode.Conflict,
     });
@@ -228,6 +232,7 @@ describe(ErrorBoundary, () => {
 
   it('uses the server-error fallback when a thrown error has no status', () => {
     expect.hasAssertions();
+
     const expectedError = new Error('Unknown failure');
     const ThrowingChild = () => {
       throw expectedError;
@@ -261,6 +266,7 @@ describe(ErrorBoundary, () => {
 
   it('wraps a non-Error throw into an Error before tracking it', () => {
     expect.hasAssertions();
+
     const thrown = 'plain string failure';
     const ThrowingChild = () => {
       throw thrown;

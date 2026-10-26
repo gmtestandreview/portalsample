@@ -22,12 +22,12 @@ import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi
-    .fn()
+    .fn<() => Promise<{ accessToken: string }>>()
     .mockResolvedValue({ accessToken: 'mock-token' });
   return {
     acquireTokenSilent,
-    getDeliveryAndReturn: vi.fn(),
-    error: vi.fn(),
+    getDeliveryAndReturn: vi.fn<() => Promise<unknown>>(),
+    error: vi.fn<(...args: unknown[]) => void>(),
     accounts: [{ homeAccountId: 'mock-id' }],
     instance: { acquireTokenSilent },
   };
@@ -62,11 +62,11 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   return {
     ...actual,
     AcceptQuoteClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(token: string) => void>();
       getDeliveryAndReturn = mocks.getDeliveryAndReturn;
     },
     AccountsClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(token: string) => void>();
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
@@ -75,7 +75,10 @@ vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: mocks.error },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => void>(),
+        error: mocks.error,
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -123,7 +126,7 @@ interface StepHarnessProps {
 // Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
 function StepHarness({
   values = {},
-  onSubmit = vi.fn(),
+  onSubmit = vi.fn<(...args: unknown[]) => void>(),
 }: Readonly<StepHarnessProps>) {
   return (
     <MemoryRouter>
@@ -176,6 +179,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   });
 
   it('shows no delivery or return fields when receipt and dispatch is not applicable', async () => {
+    expect.hasAssertions();
+
     mocks.getDeliveryAndReturn.mockResolvedValue({
       acceptQuotePreInfo: { receiptAndDispatchNA: true },
     });
@@ -191,6 +196,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   });
 
   it('shows the delivery and return sections otherwise', async () => {
+    expect.hasAssertions();
+
     renderStep();
     await waitForLoad();
 
@@ -204,6 +211,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   });
 
   it('shows the return contact details only for a different person', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep({
       values: { returnContactType: ReturnContactTypeValues.SamePerson },
@@ -226,6 +235,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   });
 
   it('shows the address lookup only when Other is selected', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep();
     await waitForLoad();
@@ -244,6 +255,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   });
 
   it('shows the carrier block only when the client will provide carrier details', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     renderStep();
     await waitForLoad();
@@ -265,10 +278,18 @@ describe('deliveryAndReturn behavior: visibility', () => {
   });
 
   it('keeps rendering and logs when the step fails to load', async () => {
+    expect.hasAssertions();
+
     mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mocks.error).toHaveBeenCalledWith(
+        'Failed to load AcceptQuotePreInfo',
+        expect.any(Error),
+        { Id: 'RFQ-1' },
+      ),
+    );
 
     expect(screen.getByTestId('info-summary')).toBeInTheDocument();
   });
@@ -289,8 +310,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('submits typed carrier values and the customs value as displayed text', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.SamePerson,
@@ -328,7 +351,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
-    expect(submittedValues(onSubmit)).toEqual({
+    expect(submittedValues(onSubmit)).toStrictEqual({
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
       returnMethod: 'ClientWillProvide',
@@ -349,8 +372,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('strips only the hidden return address (the carrier and contact wrappers do not strip)', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.SamePerson,
@@ -369,7 +394,7 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
-    expect(submittedValues(onSubmit)).toEqual({
+    expect(submittedValues(onSubmit)).toStrictEqual({
       returnContactType: 'SamePerson',
       returnAddressType: 'BusinessAddress',
       returnMethod: 'ClientToArrange',
@@ -380,8 +405,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('submits the typed return contact for a different person', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.DifferentPerson,
@@ -409,8 +436,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('shows required messages for the carrier and contact after a failed submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnContactType: ReturnContactTypeValues.DifferentPerson,
@@ -440,8 +469,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
     ['insuranceNotes'],
     ['specialInstructions'],
   ] as const)('rejects %s longer than 300 characters', async (field) => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -462,8 +493,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('rejects an invalid carrier phone number', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -484,8 +517,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('applies the soft schema to save and exit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -504,8 +539,10 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('still enforces the packaging notes limit on save and exit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
       values: {
         returnMethod: ReturnMethodValues.ClientWillProvide,
@@ -524,6 +561,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   });
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
+    expect.hasAssertions();
+
     const { rerender } = renderStep({
       values: { returnOrganisationName: 'Old' },
     });

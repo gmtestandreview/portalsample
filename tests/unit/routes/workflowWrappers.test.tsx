@@ -4,23 +4,26 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { StrictMode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
+import type { useAccountState as UseAccountState } from '../../../ClientApp/src/authentication/hooks';
 import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  msalInstance: { acquireTokenSilent: vi.fn() },
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  msalInstance: {
+    acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  },
   msalAccounts: [{ homeAccountId: 'account-1' }],
-  setAuthToken: vi.fn(),
-  requestForQuoteGetStepStatuses: vi.fn(),
-  acceptQuoteGetStepStatuses: vi.fn(),
-  createApplication: vi.fn(),
-  copyApplication: vi.fn(),
-  getQuoteRequestDetails: vi.fn(),
-  getQuoteRequestDetailsByRefId: vi.fn(),
-  getPaymentDetails: vi.fn(),
-  appLoggerError: vi.fn(),
-  appLoggerVerbose: vi.fn(),
-  useAccountState: vi.fn(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  requestForQuoteGetStepStatuses: vi.fn<(...args: unknown[]) => unknown>(),
+  acceptQuoteGetStepStatuses: vi.fn<(...args: unknown[]) => unknown>(),
+  createApplication: vi.fn<(...args: unknown[]) => unknown>(),
+  copyApplication: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteRequestDetails: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteRequestDetailsByRefId: vi.fn<(...args: unknown[]) => unknown>(),
+  getPaymentDetails: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
+  useAccountState: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
@@ -46,7 +49,8 @@ vi.mock(
   import('../../../ClientApp/src/authentication/hooks'),
   () =>
     ({
-      useAccountState: mocks.useAccountState,
+      useAccountState:
+        mocks.useAccountState as unknown as typeof UseAccountState,
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
@@ -59,33 +63,41 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
       QuoteAccept: 'QuoteAccept',
       QuoteRequest: 'QuoteRequest',
     },
-    RequestForQuoteClient: vi.fn(function RequestForQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getStepStatuses: mocks.requestForQuoteGetStepStatuses,
-      };
-    }),
-    AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getStepStatuses: mocks.acceptQuoteGetStepStatuses,
-        getPaymentDetails: mocks.getPaymentDetails,
-      };
-    }),
-    ApplicationClient: vi.fn(function ApplicationClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        createApplication: mocks.createApplication,
-        copyApplication: mocks.copyApplication,
-      };
-    }),
-    QuoteClient: vi.fn(function QuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteRequestDetails: mocks.getQuoteRequestDetails,
-        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-      };
-    }),
+    RequestForQuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+      function RequestForQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getStepStatuses: mocks.requestForQuoteGetStepStatuses,
+        };
+      },
+    ),
+    AcceptQuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+      function AcceptQuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getStepStatuses: mocks.acceptQuoteGetStepStatuses,
+          getPaymentDetails: mocks.getPaymentDetails,
+        };
+      },
+    ),
+    ApplicationClient: vi.fn<(...args: unknown[]) => unknown>(
+      function ApplicationClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          createApplication: mocks.createApplication,
+          copyApplication: mocks.copyApplication,
+        };
+      },
+    ),
+    QuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+      function QuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteRequestDetails: mocks.getQuoteRequestDetails,
+          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+        };
+      },
+    ),
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
@@ -212,7 +224,7 @@ vi.mock(
   import('../../../ClientApp/src/storage/notification'),
   () =>
     ({
-      setDashboardNotification: vi.fn(),
+      setDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
@@ -390,6 +402,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('renders the request-for-quote wizard after loading statuses', async () => {
+    expect.hasAssertions();
+
     const RequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote')
     ).default;
@@ -404,21 +418,30 @@ describe('workflow route wrappers', () => {
       expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
     );
 
-    expect(mocks.setAuthToken).toHaveBeenCalledWith('access-token');
-    expect(mocks.requestForQuoteGetStepStatuses).toHaveBeenCalledWith('APP-1');
-    expect(screen.getByTestId('wizard-form')).toHaveAttribute(
-      'data-complete-location',
-      '/request-for-quote-success/APP-1',
-    );
-    expect(screen.getAllByTestId('wizard-step')).toHaveLength(3);
-    expect(
-      screen.getByText('Organisation and contact step'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Instrument and request step')).toBeInTheDocument();
-    expect(screen.getByText('Request summary step')).toBeInTheDocument();
+    expect({
+      authToken: mocks.setAuthToken.mock.calls.at(-1),
+      statuses: mocks.requestForQuoteGetStepStatuses.mock.calls.at(-1),
+      completeLocation: screen
+        .getByTestId('wizard-form')
+        .getAttribute('data-complete-location'),
+      stepCount: screen.getAllByTestId('wizard-step').length,
+      stepLabels: [
+        screen.queryByText('Organisation and contact step') !== null,
+        screen.queryByText('Instrument and request step') !== null,
+        screen.queryByText('Request summary step') !== null,
+      ],
+    }).toStrictEqual({
+      authToken: ['access-token'],
+      statuses: ['APP-1'],
+      completeLocation: '/request-for-quote-success/APP-1',
+      stepCount: 3,
+      stepLabels: [true, true, true],
+    });
   });
 
   it('still loads statuses when StrictMode mounts, unmounts and remounts the wizard', async () => {
+    expect.hasAssertions();
+
     // StrictMode mounts, tears down and remounts every effect in development. An unmount flag
     // that is only initialised - rather than reset each time the effect runs - latches true
     // during that simulated teardown and is never cleared, so the first real response is
@@ -447,6 +470,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('redirects request-for-quote to not found for invalid ids and failed status loads', async () => {
+    expect.hasAssertions();
+
     const RequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote')
     ).default;
@@ -482,6 +507,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('recovers from a rejected token refresh instead of deadlocking the wizard', async () => {
+    expect.hasAssertions();
+
     // `acquireTokenSilent` sat outside the `try`, so a rejected refresh threw
     // past the `finally` that resets `isLoading.current`. The ref stayed true
     // for the life of the component and its own `!isLoading.current` guard
@@ -516,6 +543,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('does not log or navigate once the wizard has unmounted', async () => {
+    expect.hasAssertions();
+
     // The unmount guard. A token refresh that settles after the user has
     // navigated away must not push them to /not-found from a route they are
     // no longer on, and must not write to unmounted state.
@@ -550,6 +579,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('does not apply loaded statuses once the wizard has unmounted', async () => {
+    expect.hasAssertions();
+
     // The success half of the same unmount guard: a status load that lands
     // after the user has navigated away must not write to dead state.
     const RequestForQuote = (
@@ -586,6 +617,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('shows a loading state until request-for-quote account details are available', async () => {
+    expect.hasAssertions();
+
     mocks.useAccountState.mockReturnValue({ details: undefined });
     const RequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote')
@@ -602,6 +635,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('does not load workflow statuses until an MSAL account is available', async () => {
+    expect.hasAssertions();
+
     mocks.msalAccounts.length = 0;
     const RequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote')
@@ -633,6 +668,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('creates and copies request-for-quote applications before navigating into the wizard', async () => {
+    expect.hasAssertions();
+
     const CreateRequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote/create')
     ).default;
@@ -675,6 +712,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('logs request-for-quote application creation failures', async () => {
+    expect.hasAssertions();
+
     mocks.createApplication.mockRejectedValueOnce(new Error('create failed'));
     const CreateRequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote/create')
@@ -697,6 +736,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('logs request-for-quote application copy failures', async () => {
+    expect.hasAssertions();
+
     mocks.copyApplication.mockRejectedValueOnce(new Error('copy failed'));
     const CopyRequestForQuote = (
       await import('../../../ClientApp/src/routes/requestForQuote/copy')
@@ -719,6 +760,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('renders request-for-quote submitted success content', async () => {
+    expect.hasAssertions();
+
     const RequestForQuoteCreated = (
       await import('../../../ClientApp/src/routes/requestForQuote/created')
     ).default;
@@ -747,6 +790,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('renders the submitted request-for-quote summary view after loading statuses', async () => {
+    expect.hasAssertions();
+
     const ViewRequestForQuoteSummary = (
       await import('../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary')
     ).default;
@@ -772,6 +817,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('logs submitted request summary status loading failures', async () => {
+    expect.hasAssertions();
+
     mocks.requestForQuoteGetStepStatuses.mockRejectedValueOnce(
       new Error('status failed'),
     );
@@ -797,6 +844,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('does not load submitted summary statuses without an account or after Strict Mode cleanup', async () => {
+    expect.hasAssertions();
+
     mocks.msalAccounts.length = 0;
     const ViewRequestForQuoteSummary = (
       await import('../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary')
@@ -817,6 +866,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('renders the accept-quote wizard after loading quote and status details', async () => {
+    expect.hasAssertions();
+
     const AcceptQuote = (
       await import('../../../ClientApp/src/routes/acceptQuote')
     ).default;
@@ -831,20 +882,31 @@ describe('workflow route wrappers', () => {
       expect(screen.getByTestId('wizard-form')).toBeInTheDocument(),
     );
 
-    expect(mocks.acceptQuoteGetStepStatuses).toHaveBeenCalledWith('AQ-1');
-    expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-QUOTE-1');
-    expect(screen.getByTestId('wizard-form')).toHaveAttribute(
-      'data-complete-location',
-      '/submitted-success/AQ-1',
-    );
-    expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
-    expect(screen.getByText('Report recipient step')).toBeInTheDocument();
-    expect(screen.getByText('Delivery and return step')).toBeInTheDocument();
-    expect(screen.getByText('Payment details step')).toBeInTheDocument();
-    expect(screen.getByText('Summary and accept step')).toBeInTheDocument();
+    expect({
+      statuses: mocks.acceptQuoteGetStepStatuses.mock.calls.at(-1),
+      quoteDetails: mocks.getQuoteRequestDetails.mock.calls.at(-1),
+      completeLocation: screen
+        .getByTestId('wizard-form')
+        .getAttribute('data-complete-location'),
+      stepCount: screen.getAllByTestId('wizard-step').length,
+      stepLabels: [
+        screen.queryByText('Report recipient step') !== null,
+        screen.queryByText('Delivery and return step') !== null,
+        screen.queryByText('Payment details step') !== null,
+        screen.queryByText('Summary and accept step') !== null,
+      ],
+    }).toStrictEqual({
+      statuses: ['AQ-1'],
+      quoteDetails: ['CRM-QUOTE-1'],
+      completeLocation: '/submitted-success/AQ-1',
+      stepCount: 4,
+      stepLabels: [true, true, true, true],
+    });
   });
 
   it('redirects accept-quote to not found when status loading fails', async () => {
+    expect.hasAssertions();
+
     mocks.acceptQuoteGetStepStatuses.mockRejectedValueOnce(
       new Error('load failed'),
     );
@@ -870,6 +932,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('creates an accept-quote application from a quote reference before navigating into the wizard', async () => {
+    expect.hasAssertions();
+
     const CreateAcceptQuote = (
       await import('../../../ClientApp/src/routes/acceptQuote/create')
     ).default;
@@ -899,6 +963,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('logs accept-quote application creation failures', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteRequestDetailsByRefId.mockRejectedValueOnce(
       new Error('create failed'),
     );
@@ -924,6 +990,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('renders submitted-success prepaid payment copy', async () => {
+    expect.hasAssertions();
+
     const SubmittedSuccess = (
       await import('../../../ClientApp/src/routes/acceptQuote/submittedSuccess')
     ).default;
@@ -947,6 +1015,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('renders submitted-success postpaid payment copy', async () => {
+    expect.hasAssertions();
+
     mocks.getPaymentDetails.mockResolvedValue({
       acceptQuotePreInfo: { paymentTerms: 'Postpaid' },
     });
@@ -972,6 +1042,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('logs submitted-success payment detail failures', async () => {
+    expect.hasAssertions();
+
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('payment failed'));
     const SubmittedSuccess = (
       await import('../../../ClientApp/src/routes/acceptQuote/submittedSuccess')
@@ -993,6 +1065,8 @@ describe('workflow route wrappers', () => {
   });
 
   it('loads quotation summary details and exposes quote actions', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteRequestDetails.mockResolvedValueOnce({
       quotationIdNum: 'Q-500',
     });
@@ -1005,21 +1079,31 @@ describe('workflow route wrappers', () => {
       <QuotationSummary cRMQuoteRequestId='CRM-500' isSummary={false} />,
     );
 
-    expect(screen.getByTestId('block-spinner')).toHaveTextContent('Loading...');
-
+    const initialSpinner = screen.getByTestId('block-spinner').textContent;
     await waitFor(() =>
       expect(screen.getByTestId('quotation-details')).toHaveTextContent(
         'Q-500',
       ),
     );
 
-    expect(mocks.getQuoteRequestDetails).toHaveBeenCalledWith('CRM-500');
-    expect(screen.getByText('Quote terms')).toBeInTheDocument();
-    expect(screen.getByText('Detailed quote PDF')).toBeInTheDocument();
-    expect(screen.getByText('NMI contact details')).toBeInTheDocument();
+    expect({
+      spinner: initialSpinner,
+      detailsCall: mocks.getQuoteRequestDetails.mock.calls.at(-1),
+      quoteTerms: screen.queryByText('Quote terms') !== null,
+      detailedPdf: screen.queryByText('Detailed quote PDF') !== null,
+      contactDetails: screen.queryByText('NMI contact details') !== null,
+    }).toStrictEqual({
+      spinner: 'Loading...',
+      detailsCall: ['CRM-500'],
+      quoteTerms: true,
+      detailedPdf: true,
+      contactDetails: true,
+    });
   });
 
   it('marks quotation summary file errors when quote loading fails', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteRequestDetails.mockRejectedValueOnce(
       new Error('quote failed'),
     );

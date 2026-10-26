@@ -19,15 +19,18 @@ import { removeHidden } from '@/components/forms/utils';
 import { defined } from '../../helpers/defined';
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
-  acquireTokenSilentMock: vi.fn(),
+  acquireTokenSilentMock: vi.fn<(...args: unknown[]) => unknown>(),
   msalContext: {
     accounts: [{ homeAccountId: 'test-account' }],
-    instance: { acquireTokenSilent: vi.fn() },
+    instance: { acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>() },
   },
 }));
 
-const mockGetPaymentDetails = vi.hoisted(() => vi.fn());
+const mockGetPaymentDetails = vi.hoisted(() =>
+  vi.fn<(...args: unknown[]) => unknown>(),
+);
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -36,11 +39,12 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
-    AcceptQuoteClient: vi.fn(function (this: {
+    AcceptQuoteClient: vi.fn<(...args: unknown[]) => unknown>(function (this: {
       setAuthToken: (token: string) => void;
       getPaymentDetails: typeof mockGetPaymentDetails;
     }) {
@@ -52,11 +56,15 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn() },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -89,7 +97,10 @@ interface HarnessProps {
   onSubmit?: (values: PaymentDetailsStep, helpers?: unknown) => void;
 }
 
-function Harness({ values = initialValues, onSubmit = vi.fn() }: HarnessProps) {
+function Harness({
+  values = initialValues,
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
+}: HarnessProps) {
   return (
     <Formik<PaymentDetailsStep>
       initialValues={values}
@@ -156,8 +167,10 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('writes edited RHF field values into the outer wizard payload', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(<Harness onSubmit={onSubmit} />);
 
     await user.type(
@@ -186,8 +199,10 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows and validates invoice contact fields only for a different person', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(<Harness onSubmit={onSubmit} />);
 
     expect(screen.queryByLabelText('Email address')).not.toBeInTheDocument();
@@ -207,8 +222,10 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows the quotation id and preserves an Other title contact', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{
@@ -244,6 +261,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows validation state for invalid loaded title and phone values', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -273,6 +292,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('treats an unloaded purchase order number as an empty field', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -296,6 +317,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('reinitializes displayed values when the wizard loads new step data', async () => {
+    expect.hasAssertions();
+
     const { rerender } = render(<Harness />);
 
     rerender(
@@ -315,6 +338,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows validation errors after reinitializing following an invalid submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <Harness
@@ -354,6 +379,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('formats a loaded business phone without crashing the contact form', async () => {
+    expect.hasAssertions();
+
     render(
       <Harness
         values={{
@@ -373,6 +400,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('registers invoice phone fields through input refs without React warnings', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
@@ -404,6 +433,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows the loaded quotation ID in the purchase-order help copy', async () => {
+    expect.hasAssertions();
+
     mockGetPaymentDetails.mockResolvedValue({
       acceptQuotePreInfo: {
         paymentTerms: 'Standard',
@@ -419,6 +450,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows the other-title field and validates optional invoice contact formats', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -452,6 +485,8 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('renders RHF adapter feedback for touched field-level errors', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <DirectFieldsHarness
@@ -471,8 +506,10 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('preserves entered contact values after switching back to the main contact', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(<Harness onSubmit={onSubmit} />);
 
     await user.click(
@@ -496,8 +533,10 @@ describe('paymentDetails form behavior', () => {
   });
 
   it('shows and preserves loaded contact values when no invoice contact is selected', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{

@@ -40,19 +40,32 @@ async function bundleClientModule(source: string, extension = 'js') {
 
 describe('storybook client directives', () => {
   it('hoists client boundaries to the chunk header without losing exports or maps', async () => {
+    expect.hasAssertions();
+
     const source =
       '/* license */\r\n"use strict";\r\n"use client"\r\nexport const answer = 42;';
     const { chunk, warnings } = await bundleClientModule(source);
 
-    expect(warnings).toEqual([]);
-    expect(chunk.code.startsWith('"use client";')).toBe(true);
-    expect(chunk.exports).toEqual(['answer']);
-    expect(chunk.code).toContain('42');
-    expect(chunk.map?.sourcesContent).toContain(source);
-    expect(chunk.map?.mappings).toBeTypeOf('string');
+    expect({
+      warnings,
+      hasClientHeader: chunk.code.startsWith('"use client";'),
+      exports: chunk.exports,
+      hasAnswer: chunk.code.includes('42'),
+      sourceContent: chunk.map?.sourcesContent,
+      mappingsType: typeof chunk.map?.mappings,
+    }).toStrictEqual({
+      warnings: [],
+      hasClientHeader: true,
+      exports: ['answer'],
+      hasAnswer: true,
+      sourceContent: expect.arrayContaining([source]),
+      mappingsType: 'string',
+    });
   });
 
   it('handles TypeScript and JSX before Rolldown internal transforms', async () => {
+    expect.hasAssertions();
+
     const { chunk, warnings } = await bundleClientModule(
       "'use client';\nexport const element = <div>{42 as number}</div>;",
       'tsx',
@@ -64,6 +77,8 @@ describe('storybook client directives', () => {
   });
 
   it('retains other directive diagnostics and ordinary client strings', async () => {
+    expect.hasAssertions();
+
     const { chunk, warnings } = await bundleClientModule(
       '"use client"; "use custom"; export const label = "use client";',
     );

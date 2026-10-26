@@ -76,6 +76,8 @@ afterEach(async () => {
 
 describe('repository-owned local patches', () => {
   it('applies all patches and is safe to run again', async () => {
+    expect.hasAssertions();
+
     const root = await createPatchFixture();
 
     expect(runPatchApplicator(root).status).toBe(0);
@@ -109,6 +111,6 @@ describe('repository-owned local patches', () => {
           root,
         ),
       ]),
-    ).resolves.toEqual(firstRun);
+    ).resolves.toStrictEqual(firstRun);
   });
 });

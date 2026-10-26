@@ -45,16 +45,17 @@ import {
 } from '../../../../ClientApp/src/routes/common/openWindow';
 
 const mocks = vi.hoisted(() => ({
-  setAuthToken: vi.fn(),
-  getQuoteRequestAcceptedPDFByID: vi.fn(),
-  getQuoteRequestRejectedPDFByID: vi.fn(),
-  getQuoteOfferPDFByQuoteID: vi.fn(),
-  getQuoteReportPDFByID: vi.fn(),
-  setDashboardNotification: vi.fn(),
-  openUrlInSecureNewTab: vi.fn(),
-  openPdfPageInSecureNewTab: vi.fn(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteRequestAcceptedPDFByID: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteRequestRejectedPDFByID: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteOfferPDFByQuoteID: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteReportPDFByID: vi.fn<(...args: unknown[]) => unknown>(),
+  setDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  openUrlInSecureNewTab: vi.fn<(...args: unknown[]) => unknown>(),
+  openPdfPageInSecureNewTab: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../../ClientApp/src/api/web-api-client',
   async (importOriginal) => {
@@ -62,15 +63,19 @@ vi.mock(
 
     return {
       ...actual,
-      DashboardClient: vi.fn(function DashboardClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          getQuoteRequestAcceptedPDFByID: mocks.getQuoteRequestAcceptedPDFByID,
-          getQuoteRequestRejectedPDFByID: mocks.getQuoteRequestRejectedPDFByID,
-          getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
-          getQuoteReportPDFByID: mocks.getQuoteReportPDFByID,
-        };
-      }),
+      DashboardClient: vi.fn<(...args: unknown[]) => unknown>(
+        function DashboardClientMock() {
+          return {
+            setAuthToken: mocks.setAuthToken,
+            getQuoteRequestAcceptedPDFByID:
+              mocks.getQuoteRequestAcceptedPDFByID,
+            getQuoteRequestRejectedPDFByID:
+              mocks.getQuoteRequestRejectedPDFByID,
+            getQuoteOfferPDFByQuoteID: mocks.getQuoteOfferPDFByQuoteID,
+            getQuoteReportPDFByID: mocks.getQuoteReportPDFByID,
+          };
+        },
+      ),
     } satisfies __ExactMockModule<__TestMockModule4>;
   },
 );
@@ -92,12 +97,13 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule91>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   'react-ga4',
   () =>
     ({
       default: {
-        send: vi.fn(),
+        send: vi.fn<(...args: unknown[]) => unknown>(),
       },
     }) satisfies __ExactMockModule<__TestMockModule1>,
 );
@@ -248,56 +254,47 @@ describe('route common helper functions', () => {
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {
     expect.hasAssertions();
 
-    expect(
-      getMakeModelDetails({
-        quoteRequestStatus: QuoteStatus.ReportInProgress,
-        portalArtefactName: 'Portal artefact',
-      }),
-    ).toBe('Portal artefact');
-    expect(
-      getMakeModelDetails({
-        quoteRequestStatus: QuoteStatus.QuoteSubmitted,
-        instrumentArtefactToBeCalibrated: 'Instrument',
-      }),
-    ).toBe('Instrument');
-    expect(
-      getMakeModelDetails({ quoteRequestStatus: QuoteStatus.QuoteSubmitted }),
-    ).toBe('');
-    expect(
-      getMakeModelDetails({ quoteRequestStatus: QuoteStatus.ArtifactReceived }),
-    ).toBe('');
-
-    expect(getFileSize(1024)).toBe('1.00Kb');
-    expect(getFileSize(2 * 1024 * 1024)).toBe('2.00Mb');
-
-    expect(getQuoteOfferPageNumber(QuoteStatus.QuoteDeclined)).toBe('3');
-    expect(getQuoteOfferPageNumber(QuoteStatus.QuoteAccepted)).toBe('5');
-    expect(getQuoteOfferPageNumber(undefined)).toBe('2');
-
-    expect(
-      getFormattedAddress({
-        line1: '1 National Circuit',
-        line2: 'Level 2',
-        line3: 'Building A',
-        suburb: 'Barton',
-        state: State.ACT,
-        postcode: '2600',
-      }),
-    ).toBe('1 National Circuit, Level 2, Building A,  Barton ACT 2600');
-    expect(
-      getFormattedAddress({
-        line1: '1 National Circuit',
-        line2: 'Level 2',
-        line3: '',
-        suburb: 'Barton',
-        state: State.ACT,
-        postcode: '2600',
-      }),
-    ).toBe('1 National Circuit, Level 2,  Barton ACT 2600');
-    expect(getFormattedAddress(undefined)).toBe('No Address Found');
-
-    expect(
-      mapToUserProfile({
+    expect({
+      makeModel: [
+        getMakeModelDetails({
+          quoteRequestStatus: QuoteStatus.ReportInProgress,
+          portalArtefactName: 'Portal artefact',
+        }),
+        getMakeModelDetails({
+          quoteRequestStatus: QuoteStatus.QuoteSubmitted,
+          instrumentArtefactToBeCalibrated: 'Instrument',
+        }),
+        getMakeModelDetails({ quoteRequestStatus: QuoteStatus.QuoteSubmitted }),
+        getMakeModelDetails({
+          quoteRequestStatus: QuoteStatus.ArtifactReceived,
+        }),
+      ],
+      sizes: [getFileSize(1024), getFileSize(2 * 1024 * 1024)],
+      pages: [
+        getQuoteOfferPageNumber(QuoteStatus.QuoteDeclined),
+        getQuoteOfferPageNumber(QuoteStatus.QuoteAccepted),
+        getQuoteOfferPageNumber(undefined),
+      ],
+      addresses: [
+        getFormattedAddress({
+          line1: '1 National Circuit',
+          line2: 'Level 2',
+          line3: 'Building A',
+          suburb: 'Barton',
+          state: State.ACT,
+          postcode: '2600',
+        }),
+        getFormattedAddress({
+          line1: '1 National Circuit',
+          line2: 'Level 2',
+          line3: '',
+          suburb: 'Barton',
+          state: State.ACT,
+          postcode: '2600',
+        }),
+        getFormattedAddress(undefined),
+      ],
+      profile: mapToUserProfile({
         testingCalibrationDashboard: {
           filterYearType: '2026',
           filterStatusType: 'Open',
@@ -308,14 +305,24 @@ describe('route common helper functions', () => {
           filterSearchText: 'NMI',
         },
       }),
-    ).toEqual({
-      filterYearType: '2026',
-      filterStatusType: 'Open',
-      filterSortOrder: 'Newest',
-      filtersChanged: true,
-      filterCurrentPage: 2,
-      filterActiveTab: 'Quotation',
-      filterSearchText: 'NMI',
+    }).toStrictEqual({
+      makeModel: ['Portal artefact', 'Instrument', '', ''],
+      sizes: ['1.00Kb', '2.00Mb'],
+      pages: ['3', '5', '2'],
+      addresses: [
+        '1 National Circuit, Level 2, Building A,  Barton ACT 2600',
+        '1 National Circuit, Level 2,  Barton ACT 2600',
+        'No Address Found',
+      ],
+      profile: {
+        filterYearType: '2026',
+        filterStatusType: 'Open',
+        filterSortOrder: 'Newest',
+        filtersChanged: true,
+        filterCurrentPage: 2,
+        filterActiveTab: 'Quotation',
+        filterSearchText: 'NMI',
+      },
     });
   });
 
@@ -330,43 +337,50 @@ describe('route common helper functions', () => {
         ...overrides,
       }) as AccountDetails;
 
-    expect(
-      formatBannerTitle(details({ trading: 'NMI Trading', branch: 'Sydney' })),
-    ).toBe('NMI Trading - Sydney - National Measurement Institute');
-    expect(formatBannerTitle(details({ branch: 'Sydney' }))).toBe(
-      'Sydney - National Measurement Institute',
-    );
-    expect(formatBannerTitle(details({}))).toBe(
-      'National Measurement Institute',
-    );
-    expect(formatBannerTitle(null as unknown as AccountDetails)).toBe('');
-
-    expect(formatOrganisationTitle('NMI', 'Trading', 'Branch')).toBe(
-      'Trading - Branch - NMI',
-    );
-    expect(formatOrganisationTitle('NMI', '', 'Branch')).toBe('Branch - NMI');
-    expect(formatOrganisationTitle('NMI', '', '')).toBe('NMI');
-    expect(formatOrganisationTitle(undefined, 'Trading', 'Branch')).toBe(
-      'Trading - Branch - undefined',
-    );
-    expect(
-      formatOrganisationTitle(null as unknown as string, 'Trading', 'Branch'),
-    ).toBe('');
-
-    expect(
-      formatTradingBranch(details({ trading: 'Trading', branch: 'Branch' })),
-    ).toBe('Trading - Branch');
-    expect(formatTradingBranch(details({ branch: 'Branch' }))).toBe('Branch');
-    expect(formatTradingBranch(null as unknown as AccountDetails)).toBe('');
-
-    expect(formatTradingBranchFromStrings('Trading', 'Branch')).toBe(
-      'Trading - Branch',
-    );
-    expect(formatTradingBranchFromStrings('', 'Branch')).toBe('Branch');
-    expect(formatTradingBranchFromStrings('', '')).toBe('');
-    expect(
-      formatTradingBranchFromStrings(null as unknown as string, 'Branch'),
-    ).toBe('');
+    expect({
+      banners: [
+        formatBannerTitle(
+          details({ trading: 'NMI Trading', branch: 'Sydney' }),
+        ),
+        formatBannerTitle(details({ branch: 'Sydney' })),
+        formatBannerTitle(details({})),
+        formatBannerTitle(null as unknown as AccountDetails),
+      ],
+      organisations: [
+        formatOrganisationTitle('NMI', 'Trading', 'Branch'),
+        formatOrganisationTitle('NMI', '', 'Branch'),
+        formatOrganisationTitle('NMI', '', ''),
+        formatOrganisationTitle(undefined, 'Trading', 'Branch'),
+        formatOrganisationTitle(null as unknown as string, 'Trading', 'Branch'),
+      ],
+      tradingBranches: [
+        formatTradingBranch(details({ trading: 'Trading', branch: 'Branch' })),
+        formatTradingBranch(details({ branch: 'Branch' })),
+        formatTradingBranch(null as unknown as AccountDetails),
+      ],
+      strings: [
+        formatTradingBranchFromStrings('Trading', 'Branch'),
+        formatTradingBranchFromStrings('', 'Branch'),
+        formatTradingBranchFromStrings('', ''),
+        formatTradingBranchFromStrings(null as unknown as string, 'Branch'),
+      ],
+    }).toStrictEqual({
+      banners: [
+        'NMI Trading - Sydney - National Measurement Institute',
+        'Sydney - National Measurement Institute',
+        'National Measurement Institute',
+        '',
+      ],
+      organisations: [
+        'Trading - Branch - NMI',
+        'Branch - NMI',
+        'NMI',
+        'Trading - Branch - undefined',
+        '',
+      ],
+      tradingBranches: ['Trading - Branch', 'Branch', ''],
+      strings: ['Trading - Branch', 'Branch', '', ''],
+    });
   });
 
   it('treats an undefined trading or branch name as empty', () => {
@@ -385,16 +399,14 @@ describe('route common helper functions', () => {
     const createObjectUrl = vi
       .spyOn(URL, 'createObjectURL')
       .mockReturnValue('blob:unit-test');
-    const click = vi.fn();
+    const click = vi.fn<(...args: unknown[]) => unknown>();
     const createElement = vi.spyOn(document, 'createElement').mockReturnValue({
       href: '',
       download: '',
       click,
     } as unknown as HTMLAnchorElement);
 
-    expect(getFileUrlFromBase64('Zm9v')).toBe('blob:unit-test');
-    expect(getFileIdFromBase64('Zm9v')).toBe('blob:unit-test');
-    expect(createObjectUrl).toHaveBeenCalledTimes(2);
+    const urls = [getFileUrlFromBase64('Zm9v'), getFileIdFromBase64('Zm9v')];
 
     openInNewTab('blob:unit-test');
     openPdfPageInNewTab('blob:unit-test', '5');
@@ -407,8 +419,21 @@ describe('route common helper functions', () => {
 
     triggerDownload('blob:unit-test', 'quote.pdf');
 
-    expect(createElement).toHaveBeenCalledWith('a');
-    expect(click).toHaveBeenCalledWith();
+    expect({
+      urls,
+      objectUrlCalls: createObjectUrl.mock.calls,
+      openUrlCalls: vi.mocked(openUrlInSecureNewTab).mock.calls,
+      openPdfCalls: vi.mocked(openPdfPageInSecureNewTab).mock.calls,
+      elementCalls: createElement.mock.calls,
+      clickCalls: click.mock.calls,
+    }).toMatchObject({
+      urls: ['blob:unit-test', 'blob:unit-test'],
+      objectUrlCalls: [[expect.any(Blob)], [expect.any(Blob)]],
+      openUrlCalls: [['blob:unit-test']],
+      openPdfCalls: [['blob:unit-test', '5']],
+      elementCalls: [['a']],
+      clickCalls: [[]],
+    });
   });
 
   it('sets dashboard notifications for report and unexpected errors', () => {
@@ -425,34 +450,32 @@ describe('route common helper functions', () => {
     handleReportFileError();
     vi.runAllTimers();
 
-    expect(globalThis.scrollTo).toHaveBeenCalledWith(0, 0);
-    expect(notification.scrollIntoView).toHaveBeenCalledWith({
-      behavior: 'smooth',
-      block: 'start',
-    });
-    expect(notification.focus).toHaveBeenCalledWith();
-    expect(setDashboardNotification).toHaveBeenCalledWith({
-      message: expect.stringContaining(
-        'unexpected error has occurred with downloading the PDF report',
-      ),
-      severity: NotificationSeverity.Error,
+    expect({
+      scrollToCalls: vi.mocked(globalThis.scrollTo).mock.calls,
+      scrollIntoViewCalls: vi.mocked(notification.scrollIntoView).mock.calls,
+      focusCalls: vi.mocked(notification.focus).mock.calls,
+    }).toMatchObject({
+      scrollToCalls: [[0, 0]],
+      scrollIntoViewCalls: [[{ behavior: 'smooth', block: 'start' }]],
+      focusCalls: [[]],
     });
 
     handleUnexpectedError({ status: 500 });
 
-    expect(setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        severity: NotificationSeverity.Error,
-      }),
-    );
-
     handleUnexpectedError({});
 
-    expect(setDashboardNotification).toHaveBeenCalledWith(
-      expect.objectContaining({
-        severity: NotificationSeverity.Error,
-      }),
-    );
+    expect(vi.mocked(setDashboardNotification).mock.calls).toMatchObject([
+      [
+        {
+          message: expect.stringContaining(
+            'unexpected error has occurred with downloading the PDF report',
+          ),
+          severity: NotificationSeverity.Error,
+        },
+      ],
+      [expect.objectContaining({ severity: NotificationSeverity.Error })],
+      [expect.objectContaining({ severity: NotificationSeverity.Error })],
+    ]);
   });
 
   it.each([
@@ -522,13 +545,6 @@ describe('route common helper functions', () => {
       'displayText',
     );
 
-    expect(sortedOptions.map((option) => option.displayText)).toEqual([
-      'Alpha',
-      'Beta',
-      'Zed',
-    ]);
-    expect(lastOptionId).toBe('z');
-
     const [sortedDisplayTextOptions, lastDisplayTextOptionId] = sortList(
       [
         { value: 'b', displayText: 'Beta' },
@@ -539,11 +555,6 @@ describe('route common helper functions', () => {
       'displayText',
     );
 
-    expect(
-      sortedDisplayTextOptions.map((option) => option.displayText),
-    ).toEqual(['Alpha', 'Beta', 'Zed']);
-    expect(lastDisplayTextOptionId).toBe('');
-
     const lookups = [
       { id: '2', name: 'Beta' },
       { id: '1', name: 'Alpha' },
@@ -551,20 +562,29 @@ describe('route common helper functions', () => {
 
     const [sortedLookups, lastLookupId] = sortList(lookups, 'missing', 'name');
 
-    expect(sortedLookups.map((lookup) => lookup.name)).toEqual([
-      'Alpha',
-      'Beta',
-    ]);
-    expect(lastLookupId).toBe('');
-
-    expect(sortList([], 'anything', 'name')).toEqual([[], '']);
-    expect(
-      sortList(
+    expect({
+      options: [
+        sortedOptions.map((option) => option.displayText),
+        lastOptionId,
+      ],
+      displayText: [
+        sortedDisplayTextOptions.map((option) => option.displayText),
+        lastDisplayTextOptionId,
+      ],
+      lookups: [sortedLookups.map((lookup) => lookup.name), lastLookupId],
+      empty: sortList([], 'anything', 'name'),
+      undefined: sortList(
         undefined as unknown as Array<{ name: string }>,
         'anything',
         'name',
       ),
-    ).toEqual([undefined, '']);
+    }).toStrictEqual({
+      options: [['Alpha', 'Beta', 'Zed'], 'z'],
+      displayText: [['Alpha', 'Beta', 'Zed'], ''],
+      lookups: [['Alpha', 'Beta'], ''],
+      empty: [[], ''],
+      undefined: [undefined, ''],
+    });
   });
 
   it('covers empty address lines and unusual optional organisation fields', () => {
@@ -601,13 +621,21 @@ describe('route common helper functions', () => {
   it('classifies empty and syntactically valid GUID values', () => {
     expect.hasAssertions();
 
-    expect(isEmptyGuid(undefined)).toBe(true);
-    expect(isEmptyGuid('00000000-0000-0000-0000-000000000000')).toBe(true);
-    expect(isEmptyGuid('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(false);
-
-    expect(isValidGUID(undefined)).toBe(false);
-    expect(isValidGUID('not-a-guid')).toBe(false);
-    expect(isValidGUID('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(true);
+    expect({
+      empty: [
+        isEmptyGuid(undefined),
+        isEmptyGuid('00000000-0000-0000-0000-000000000000'),
+        isEmptyGuid('8fbbf0f8-a931-48c3-951b-944c9a08b6ef'),
+      ],
+      valid: [
+        isValidGUID(undefined),
+        isValidGUID('not-a-guid'),
+        isValidGUID('8fbbf0f8-a931-48c3-951b-944c9a08b6ef'),
+      ],
+    }).toStrictEqual({
+      empty: [true, true, false],
+      valid: [false, false, true],
+    });
   });
 
   it('sanitises unsafe markup before returning HTML', () => {

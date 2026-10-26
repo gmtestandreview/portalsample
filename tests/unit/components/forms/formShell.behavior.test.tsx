@@ -66,6 +66,7 @@ describe('form shell behavior slice', () => {
 
   it('formikForm validates hard, renders function children, and submits normalized values', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
     const validateHard = vi
@@ -123,6 +124,7 @@ describe('form shell behavior slice', () => {
 
   it('formikForm uses soft validation and onSaveAndExit for draft saves', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<Submit>();
     const onSaveAndExit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
@@ -167,6 +169,7 @@ describe('form shell behavior slice', () => {
 
   it('formikForm shows loading and custom banner branches', () => {
     expect.hasAssertions();
+
     render(
       <MemoryRouter>
         <FormikForm
@@ -190,6 +193,7 @@ describe('form shell behavior slice', () => {
 
   it('formikForm validates soft and hard Yup schemas and supports empty children', async () => {
     expect.hasAssertions();
+
     const softSchema = Yup.object({
       draftName: Yup.string().required('Draft name required'),
     });
@@ -264,6 +268,7 @@ describe('form shell behavior slice', () => {
 
   it('formikForm renders the saving spinner while submission is pending', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <MemoryRouter>
@@ -291,6 +296,7 @@ describe('form shell behavior slice', () => {
 
   it('errorSummary renders remaining server error branches and Formik nested errors', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
@@ -352,6 +358,7 @@ describe('form shell behavior slice', () => {
 
   it('errorSummary ignores empty nested errors instead of stringifying them', async () => {
     expect.hasAssertions();
+
     vi.useFakeTimers();
     const scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
@@ -400,6 +407,7 @@ describe('form shell behavior slice', () => {
 
   it('contactDetails renders editable labels and summary fallback/details branches', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>

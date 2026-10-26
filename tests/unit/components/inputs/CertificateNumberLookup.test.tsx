@@ -45,6 +45,7 @@ describe('certificateNumberLookup debounce', () => {
 
   it('holds the existing empty suggestion list when the debounce fires on an empty input', () => {
     expect.hasAssertions();
+
     renderLookup();
 
     // The applicationAndInstrument step renders two of these, and each one arms this timer on
@@ -69,6 +70,7 @@ describe('certificateNumberLookup debounce', () => {
     'supports the %s lookup match',
     async (matchType, input, expected) => {
       expect.hasAssertions();
+
       renderLookup([{ lookupName: expected }, { lookupName: 'Other value' }], {
         matchType,
       });
@@ -87,6 +89,7 @@ describe('certificateNumberLookup debounce', () => {
 
   it('filters malformed lookup records without throwing', async () => {
     expect.hasAssertions();
+
     renderLookup([
       null,
       'not an object',
@@ -109,6 +112,7 @@ describe('certificateNumberLookup debounce', () => {
 
   it('hides suggestions when the configured lookup field is absent', async () => {
     expect.hasAssertions();
+
     renderLookup([{ lookupName: 'Alpha Certificate' }], {}, {}, true);
 
     await act(async () => {
@@ -123,6 +127,7 @@ describe('certificateNumberLookup debounce', () => {
 
   it('filters and sorts suggestions when a parent field is configured', async () => {
     expect.hasAssertions();
+
     renderLookup(
       [
         { lookupName: 'Zulu Certificate', parent: 'NMI' },

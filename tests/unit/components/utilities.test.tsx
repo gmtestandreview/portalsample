@@ -35,6 +35,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('renders contact recovery actions', () => {
+    expect.hasAssertions();
+
     render(
       <MemoryRouter>
         <ContactLink />
@@ -53,6 +55,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('scrolls and focuses the configured target from the back to top button', async () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const target = document.createElement('div');
     target.id = 'summary';
@@ -79,6 +83,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('renders the back-to-top landmark as a semantic nav element', () => {
+    expect.hasAssertions();
+
     render(<BackToTopButton />);
 
     expect(
@@ -88,6 +94,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('renders delivery instructions only when text is supplied', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <DeliveryInstructions deliveryInstructions='Use dock 3 on arrival.' />,
     );
@@ -109,6 +117,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('adds and removes a single body class', () => {
+    expect.hasAssertions();
+
     const { unmount } = render(<BodyClassHarness className='print-mode' />);
 
     expect(document.body).toHaveClass('print-mode');
@@ -119,6 +129,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('adds and removes multiple body classes', () => {
+    expect.hasAssertions();
+
     const { unmount } = render(
       <BodyClassHarness className={['wizard', 'compact']} />,
     );
@@ -132,6 +144,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('accepts arrays created in another DOM realm', () => {
+    expect.hasAssertions();
+
     const foreignClasses = vm.runInNewContext(
       '["wizard", "compact"]',
     ) as string[];
@@ -147,6 +161,8 @@ describe('utility runtime components and hooks', () => {
   });
 
   it('returns the latest value after the debounce delay and cancels stale timers', () => {
+    expect.hasAssertions();
+
     vi.useFakeTimers();
     const { rerender } = render(<DebounceHarness value='first' delay={250} />);
 

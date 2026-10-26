@@ -78,6 +78,7 @@ const expectRadioGroupInitialState = (
 describe(RhfRadioButtonGroup, () => {
   it('checks the option matching the form value', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='open'>
         <RhfRadioButtonGroup name='status' legend='Status' options={options} />
@@ -90,6 +91,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('updates the form value and calls onChange when an option is chosen', async () => {
     expect.hasAssertions();
+
     const onChange =
       vi.fn<
         NonNullable<ComponentProps<typeof RhfRadioButtonGroup>['onChange']>
@@ -114,6 +116,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('keeps the typed value of boolean options', async () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue={false}>
         <RhfRadioButtonGroup
@@ -137,6 +140,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('disables every option when the group is disabled', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -154,6 +158,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('shows the validation message only after the group has been touched', async () => {
     expect.hasAssertions();
+
     const Invalid = () => {
       const methods = useForm<Values>({ defaultValues: { status: '' } });
       return (
@@ -196,6 +201,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('renders the selected label as a summary when isSummary is set', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='open'>
         <RhfRadioButtonGroup
@@ -213,6 +219,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('renders nothing in summary mode when no value is selected', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue=''>
         <RhfRadioButtonGroup
@@ -229,6 +236,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('renders descriptors and linked sub-fields beside their option', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -259,6 +267,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('lays options out horizontally when requested', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -276,6 +285,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('puts titled help inside a details control', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfRadioButtonGroup
@@ -294,6 +304,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('falls back to a placeholder when the summary value matches no option', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='archived'>
         <RhfRadioButtonGroup
@@ -310,6 +321,7 @@ describe(RhfRadioButtonGroup, () => {
 
   it('leaves every option unchecked when the form has no value yet', () => {
     expect.hasAssertions();
+
     const Empty = () => {
       const methods = useForm<Partial<Values>>();
       return (
@@ -363,6 +375,7 @@ describe(RhfRadioButtonGroup, () => {
       invalidAfter,
     }) => {
       expect.hasAssertions();
+
       render(<Submittable inlineHelp={inlineHelp} required={required} />);
       const group = screen.getByRole('radiogroup', { name: 'Status' });
       const radios = screen.getAllByRole('radio');

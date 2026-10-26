@@ -20,18 +20,20 @@ import {
 
 describe('report recipient validation', () => {
   it('accepts valid submit and empty save objects', async () => {
+    expect.hasAssertions();
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'NMI',
         reportAddressType: ReturnAddressTypeValues.BusinessAddress,
       }),
     ).resolves.toBeDefined();
-    await expect(reportRecipientSaveValidation.validate({})).resolves.toEqual(
-      {},
-    );
+    await expect(
+      reportRecipientSaveValidation.validate({}),
+    ).resolves.toStrictEqual({});
   });
 
   it('requires other report address when selected', async () => {
+    expect.hasAssertions();
     await expect(
       reportRecipientSubmitValidation.validate({
         reportAddressType: ReturnAddressTypeValues.Other,
@@ -44,6 +46,7 @@ describe('report recipient validation', () => {
   });
 
   it('enforces organisation name max length', async () => {
+    expect.hasAssertions();
     await expect(
       reportRecipientSubmitValidation.validate({
         organisationName: 'a'.repeat(400),
@@ -75,6 +78,7 @@ describe('delivery and return validation', () => {
   };
 
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate(validDelivery),
     ).resolves.toMatchObject(validDelivery);
@@ -87,6 +91,7 @@ describe('delivery and return validation', () => {
   });
 
   it('requires conditional contact, return address, and carrier fields', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate(
         {
@@ -114,6 +119,7 @@ describe('delivery and return validation', () => {
   });
 
   it('validates invalid formats and min lengths', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate(
         {
@@ -136,6 +142,7 @@ describe('delivery and return validation', () => {
   });
 
   it('accepts max length boundaries and rejects over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       deliveryAndReturnSubmitValidation.validate({
         ...validDelivery,
@@ -178,6 +185,7 @@ describe('delivery and return validation', () => {
 
 describe('payment details validation', () => {
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'PO-123',
@@ -192,6 +200,7 @@ describe('payment details validation', () => {
   });
 
   it('requires email-only contact when invoice goes to a different person', async () => {
+    expect.hasAssertions();
     await expect(
       paymentDetailsSubmitValidation.validate({
         invoiceSentTo: InvoiceSentToValues.DifferentPerson,
@@ -211,6 +220,7 @@ describe('payment details validation', () => {
   });
 
   it('enforces purchase order number max length', async () => {
+    expect.hasAssertions();
     await expect(
       paymentDetailsSubmitValidation.validate({
         purchaseOrderNo: 'p'.repeat(20),
@@ -226,6 +236,7 @@ describe('payment details validation', () => {
 
 describe('summary and accept validation', () => {
   it('accepts valid submit and save objects', async () => {
+    expect.hasAssertions();
     await expect(
       summaryAndAcceptSubmitValidation.validate({
         associatedDisputes: YesNo.No,
@@ -240,6 +251,7 @@ describe('summary and accept validation', () => {
   });
 
   it('requires associated dispute text and quote acceptance on submit', async () => {
+    expect.hasAssertions();
     await expect(
       summaryAndAcceptSubmitValidation.validate(
         {
@@ -258,6 +270,7 @@ describe('summary and accept validation', () => {
   });
 
   it('enforces associated dispute max length on submit and save', async () => {
+    expect.hasAssertions();
     await expect(
       summaryAndAcceptSubmitValidation.validate({
         associatedDisputes: YesNo.Yes,

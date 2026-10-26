@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
+import type * as AccountHooksModule from '../../../ClientApp/src/authentication/hooks';
 
 const mocks = vi.hoisted(() => ({
-  useAccountState: vi.fn(),
+  useAccountState: vi.fn<typeof AccountHooksModule.useAccountState>(),
 }));
 
 vi.mock(
@@ -14,6 +15,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/forms/FormBanner',
   () =>
@@ -55,7 +57,11 @@ describe('account created route', () => {
   });
 
   it('renders the account holder name and dashboard action', async () => {
-    mocks.useAccountState.mockReturnValue({ details: { givenName: 'Alex' } });
+    expect.hasAssertions();
+
+    mocks.useAccountState.mockReturnValue({
+      details: { givenName: 'Alex' },
+    } as unknown as ReturnType<typeof AccountHooksModule.useAccountState>);
     const AccountCreated = (
       await import('../../../ClientApp/src/routes/account/created')
     ).default;
@@ -81,7 +87,13 @@ describe('account created route', () => {
   });
 
   it('renders without a name when account details are unavailable', async () => {
-    mocks.useAccountState.mockReturnValue(undefined);
+    expect.hasAssertions();
+
+    mocks.useAccountState.mockReturnValue(
+      undefined as unknown as ReturnType<
+        typeof AccountHooksModule.useAccountState
+      >,
+    );
     const AccountCreated = (
       await import('../../../ClientApp/src/routes/account/created')
     ).default;

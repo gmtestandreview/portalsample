@@ -23,6 +23,7 @@ const resetSessionStorage = () => {
 describe('web-api-client GREEN: successful requests', () => {
   it('encodes the search and forwards auth, organisation and cancellation without losing Accept', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     globalThis.sessionStorage.setItem(
@@ -55,6 +56,7 @@ describe('web-api-client GREEN: successful requests', () => {
 
   it('serializes application commands without changing the wire contract', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     const http = transport(Response.json({ id: 42, referenceId: 'RFQ-42' }));
@@ -79,6 +81,7 @@ describe('web-api-client GREEN: successful requests', () => {
 
   it('accepts a successful void response', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     const http = transport(new Response(null, { status: 200 }));
@@ -103,6 +106,7 @@ describe('web-api-client RED: rejected requests', () => {
     'preserves the raw problem payload for form error handling (%i)',
     async (status) => {
       expect.hasAssertions();
+
       resetSessionStorage();
 
       const problem = {
@@ -120,6 +124,7 @@ describe('web-api-client RED: rejected requests', () => {
 
   it('preserves unexpected error status, body and response headers', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     const http = transport(
@@ -143,6 +148,7 @@ describe('web-api-client RED: rejected requests', () => {
     new DOMException('Cancelled', 'AbortError'),
   ])('propagates transport failure: $name', async (error) => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     const http = transport(new Response());
@@ -156,6 +162,7 @@ describe('web-api-client RED: rejected requests', () => {
 
   it('rejects malformed JSON rather than returning a successful empty result', async () => {
     expect.hasAssertions();
+
     resetSessionStorage();
 
     const http = transport(new Response('not-json', { status: 200 }));
@@ -171,6 +178,7 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
     'omits an absent search parameter (%s) and auth headers',
     async (keyword) => {
       expect.hasAssertions();
+
       resetSessionStorage();
 
       const http = transport(Response.json({ matches: [] }));
@@ -193,6 +201,7 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
     'preserves a null result for an empty %i response despite the generated non-null signature',
     async (status) => {
       expect.hasAssertions();
+
       resetSessionStorage();
 
       const http = transport(new Response(null, { status }));
@@ -218,6 +227,7 @@ describe('web-api-client AMBER: existing boundary semantics', () => {
     'returns binary content and filename for status $status',
     async ({ status, disposition, name }) => {
       expect.hasAssertions();
+
       resetSessionStorage();
 
       const http = transport(

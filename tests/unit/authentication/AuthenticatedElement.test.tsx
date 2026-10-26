@@ -166,6 +166,7 @@ describe('authenticatedElement', () => {
 
   it('wraps children in preconditions, MSAL authentication, and an error boundary', async () => {
     expect.hasAssertions();
+
     resetAuthElementMocks();
 
     const { default: AuthenticatedElement } =
@@ -198,6 +199,7 @@ describe('authenticatedElement', () => {
 
   it('passes displayHeaderAndFooter as true by default', async () => {
     expect.hasAssertions();
+
     resetAuthElementMocks();
 
     const { default: AuthenticatedElement } =
@@ -213,6 +215,7 @@ describe('authenticatedElement', () => {
 
   it('renders the logging in loading component for MSAL loading state', async () => {
     expect.hasAssertions();
+
     resetAuthElementMocks();
 
     authElementMocks.msalTemplateMode = 'loading';
@@ -226,6 +229,7 @@ describe('authenticatedElement', () => {
 
   it('redirects 404 route errors to the not found route', async () => {
     expect.hasAssertions();
+
     resetAuthElementMocks();
 
     authElementMocks.msalTemplateMode = 'error';
@@ -242,6 +246,7 @@ describe('authenticatedElement', () => {
 
   it('redirects non-404 route errors to the server error route', async () => {
     expect.hasAssertions();
+
     resetAuthElementMocks();
 
     authElementMocks.msalTemplateMode = 'error';
@@ -258,6 +263,7 @@ describe('authenticatedElement', () => {
 
   it('redirects non-route errors to the home route', async () => {
     expect.hasAssertions();
+
     resetAuthElementMocks();
 
     authElementMocks.msalTemplateMode = 'error';

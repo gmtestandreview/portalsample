@@ -65,6 +65,8 @@ function importResolves(importer: string, specifier: string): boolean {
 
 describe('react Aria Storybook evaluation contract', () => {
   it('keeps all 48 reusable component stories discoverable and isolated', () => {
+    expect.hasAssertions();
+
     expect(storyFiles).toHaveLength(48);
 
     for (const file of storyFiles) {
@@ -78,6 +80,8 @@ describe('react Aria Storybook evaluation contract', () => {
   });
 
   it('uses NMI icons rather than Lucide in the first-instance evaluation', () => {
+    expect.hasAssertions();
+
     for (const file of sourceFiles.filter((file) => /\.tsx?$/.test(file))) {
       expect(readTextFileSync(file, repositoryRoot), file).not.toContain(
         'lucide-react',
@@ -86,6 +90,8 @@ describe('react Aria Storybook evaluation contract', () => {
   });
 
   it('resolves every relative import in the reusable evaluation surface', () => {
+    expect.hasAssertions();
+
     const unresolved = sourceFiles.flatMap((file) =>
       findRelativeImports(file)
         .filter((specifier) => !importResolves(file, specifier))
@@ -95,10 +101,12 @@ describe('react Aria Storybook evaluation contract', () => {
         ),
     );
 
-    expect(unresolved).toEqual([]);
+    expect(unresolved).toStrictEqual([]);
   });
 
   it('scopes React Aria theme variables to the evaluation surface', () => {
+    expect.hasAssertions();
+
     const themeFile = path.join(componentsRoot, 'AriaComponents/theme.css');
     const source = readTextFileSync(themeFile, repositoryRoot);
 
@@ -107,6 +115,8 @@ describe('react Aria Storybook evaluation contract', () => {
   });
 
   it('type-checks the evaluation surface with no demo-only carve-outs', () => {
+    expect.hasAssertions();
+
     // The three excludes that stood here carved live directories out of the
     // TypeScript program to hide a broken scaffold. `components/App` never
     // existed, `AriaComponents/main.tsx` imported an absent `App.tsx`, and
@@ -128,6 +138,8 @@ describe('react Aria Storybook evaluation contract', () => {
   });
 
   it('keeps the retained reactaria_components scaffold import-resolvable', () => {
+    expect.hasAssertions();
+
     const scaffoldRoot = path.join(componentsRoot, 'reactaria_components');
     const scaffoldSources = collectFiles(scaffoldRoot).filter((file) =>
       /\.tsx?$/.test(file),
@@ -144,10 +156,12 @@ describe('react Aria Storybook evaluation contract', () => {
         ),
     );
 
-    expect(unresolved).toEqual([]);
+    expect(unresolved).toStrictEqual([]);
   });
 
   it('removes the dead AriaComponents entry point', () => {
+    expect.hasAssertions();
+
     expect(
       pathExists(
         path.join(componentsRoot, 'AriaComponents/main.tsx'),

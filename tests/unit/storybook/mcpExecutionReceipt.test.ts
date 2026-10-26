@@ -71,6 +71,8 @@ const identity = {
 
 describe('normalizeMcpReceipt', () => {
   it('normalizes exact component and a11y results without requiring optional upstream fields', () => {
+    expect.hasAssertions();
+
     const result = moduleUnderTest.normalizeMcpReceipt({
       requestId: 7,
       requestedStoryIds,
@@ -90,6 +92,8 @@ describe('normalizeMcpReceipt', () => {
   });
 
   it('normalizes a complete markdown report returned by the native MCP endpoint', () => {
+    expect.hasAssertions();
+
     const result = moduleUnderTest.normalizeMcpReceipt({
       requestId: 10,
       requestedStoryIds,
@@ -134,6 +138,8 @@ describe('normalizeMcpReceipt', () => {
       ],
     ],
   ])('rejects %s in component results', (_name, componentTestStatuses) => {
+    expect.hasAssertions();
+
     const result = moduleUnderTest.normalizeMcpReceipt({
       requestId: 1,
       requestedStoryIds,
@@ -150,6 +156,8 @@ describe('normalizeMcpReceipt', () => {
   });
 
   it('rejects duplicate statuses, missing a11y, cancellation, and unhandled errors', () => {
+    expect.hasAssertions();
+
     const duplicate = moduleUnderTest.normalizeMcpReceipt({
       requestId: 2,
       requestedStoryIds,
@@ -194,6 +202,8 @@ describe('normalizeMcpReceipt', () => {
   });
 
   it('rejects missing structured data, protocol errors, and non-success statuses', () => {
+    expect.hasAssertions();
+
     const missing = moduleUnderTest.normalizeMcpReceipt({
       requestId: 6,
       requestedStoryIds,
@@ -224,6 +234,8 @@ describe('normalizeMcpReceipt', () => {
   });
 
   it('rejects a receipt whose identity digest is stale for the selected freeze', () => {
+    expect.hasAssertions();
+
     const result = moduleUnderTest.normalizeMcpReceipt({
       requestId: 9,
       requestedStoryIds,

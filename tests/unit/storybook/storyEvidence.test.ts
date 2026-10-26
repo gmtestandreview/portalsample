@@ -84,9 +84,11 @@ const index = {
 
 describe('reviewed Storybook source and story evidence', () => {
   it('accepts a declaration, story play function, marker, index ID, and exact digest', () => {
+    expect.hasAssertions();
+
     expect(
       moduleUnderTest.validateStoryEvidence({ manifest, files, index }),
-    ).toEqual({ ok: true, errors: [] });
+    ).toStrictEqual({ ok: true, errors: [] });
   });
 
   it.each([
@@ -132,6 +134,8 @@ describe('reviewed Storybook source and story evidence', () => {
     ],
     ['stale source digest', files, 'EVIDENCE_MISSING'],
   ])('rejects %s', (_label, evidenceFiles, code) => {
+    expect.hasAssertions();
+
     const changedManifest =
       _label === 'stale source digest'
         ? {
@@ -161,6 +165,8 @@ describe('reviewed Storybook source and story evidence', () => {
   });
 
   it('rejects assertion convention, file identity, and missing story IDs', () => {
+    expect.hasAssertions();
+
     const invalidAssertion = {
       ...manifest,
       records: [

@@ -5,6 +5,8 @@ import { emailSchema } from '../../../ClientApp/src/validationSchemas/contactVal
 
 describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
   it('accepts a valid email address', async () => {
+    expect.hasAssertions();
+
     const schema = emailSchema('Email address');
 
     await expect(schema.validate('user@example.com')).resolves.toBe(
@@ -13,6 +15,8 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
   });
 
   it('rejects an invalid email format', async () => {
+    expect.hasAssertions();
+
     const schema = emailSchema('Email address');
 
     await expect(schema.validate('not-an-email')).rejects.toThrow(
@@ -21,6 +25,8 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
   });
 
   it('rejects an empty string when required (default)', async () => {
+    expect.hasAssertions();
+
     const schema = emailSchema('Email address');
 
     await expect(schema.validate('')).rejects.toThrow(
@@ -29,12 +35,16 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
   });
 
   it('accepts empty string when required=false', async () => {
+    expect.hasAssertions();
+
     const schema = emailSchema('Email address', false);
 
     await expect(schema.validate('')).resolves.toBeDefined();
   });
 
   it('enforces 100-character max length', async () => {
+    expect.hasAssertions();
+
     const schema = emailSchema('Email address');
     const longEmail = `${'a'.repeat(90)}@example.com`; // 102 chars
 

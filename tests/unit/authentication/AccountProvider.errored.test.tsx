@@ -155,6 +155,7 @@ describe('accountProvider — errored state', () => {
 
   it('renders children when account loads successfully', async () => {
     expect.hasAssertions();
+
     resetErroredMocks();
 
     // Override signIn to succeed for this test
@@ -187,6 +188,7 @@ describe('accountProvider — errored state', () => {
 
   it('shows an error message and does NOT render children when account load fails', async () => {
     expect.hasAssertions();
+
     resetErroredMocks();
 
     render(
@@ -219,6 +221,7 @@ describe('accountProvider — errored state', () => {
 
   it('still requests logout when redirect response handling fails', async () => {
     expect.hasAssertions();
+
     resetErroredMocks();
 
     mockInstance.handleRedirectPromise.mockRejectedValueOnce(
@@ -245,6 +248,7 @@ describe('accountProvider — errored state', () => {
 
   it('keeps the recoverable error state when logout redirect rejects', async () => {
     expect.hasAssertions();
+
     resetErroredMocks();
 
     mockInstance.logoutRedirect.mockRejectedValueOnce(

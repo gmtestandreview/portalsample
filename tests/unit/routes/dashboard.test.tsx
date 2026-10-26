@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/vitest';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
+import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
 import { defined } from '../helpers/defined';
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
@@ -31,39 +32,49 @@ const {
   mockModalState,
   mockMsalContext,
 } = vi.hoisted(() => ({
-  mockSetAuthToken: vi.fn(),
-  mockGetDrafts: vi.fn(),
-  mockGetQuotes: vi.fn(),
-  mockGetArtefacts: vi.fn(),
+  mockSetAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  mockGetDrafts: vi.fn<(...args: unknown[]) => unknown>(),
+  mockGetQuotes: vi.fn<(...args: unknown[]) => unknown>(),
+  mockGetArtefacts: vi.fn<(...args: unknown[]) => unknown>(),
   mockAcquireTokenSilent: vi
-    .fn()
+    .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' }),
-  mockSetUserProfile: vi.fn(),
-  mockSetShowBranchSelector: vi.fn(),
-  mockTrackGAEvent: vi.fn(),
+  mockSetUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetShowBranchSelector: vi.fn<(...args: unknown[]) => unknown>(),
+  mockTrackGAEvent: vi.fn<(...args: unknown[]) => unknown>(),
   mockSessionGetItem: vi.fn<() => string | null>(() => null),
-  mockSessionSetItem: vi.fn(),
-  mockSessionRemoveItem: vi.fn(),
-  mockSetTargetOrganisation: vi.fn(),
-  mockSetDashboardNotification: vi.fn(),
-  mockMapToUserProfile: vi.fn((p: any) => ({
-    filterYearType: p?.filterYearType ?? 'allYears',
-    filterStatusType: p?.filterStatusType ?? 'allStatuses',
-    filterCurrentPage: p?.filterCurrentPage ?? 1,
-    filterActiveTab: p?.filterActiveTab ?? 'drafts',
-    filterSearchText: p?.filterSearchText ?? '',
-    filterSortOrder: p?.filterSortOrder ?? 'descending',
-    filtersChanged: p?.filtersChanged ?? false,
-  })),
+  mockSessionSetItem: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSessionRemoveItem: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  mockMapToUserProfile: vi.fn<typeof HelperFunctionsModule.mapToUserProfile>(
+    (p) =>
+      ({
+        filterYearType:
+          (p as Record<string, unknown>)?.['filterYearType'] ?? 'allYears',
+        filterStatusType:
+          (p as Record<string, unknown>)?.['filterStatusType'] ?? 'allStatuses',
+        filterCurrentPage:
+          (p as Record<string, unknown>)?.['filterCurrentPage'] ?? 1,
+        filterActiveTab:
+          (p as Record<string, unknown>)?.['filterActiveTab'] ?? 'drafts',
+        filterSearchText:
+          (p as Record<string, unknown>)?.['filterSearchText'] ?? '',
+        filterSortOrder:
+          (p as Record<string, unknown>)?.['filterSortOrder'] ?? 'descending',
+        filtersChanged:
+          (p as Record<string, unknown>)?.['filtersChanged'] ?? false,
+      }) as ReturnType<typeof HelperFunctionsModule.mapToUserProfile>,
+  ),
   mockAccountDispatchState: {
     value: {
-      setAgree: vi.fn(),
-      setCompleted: vi.fn(),
-      setContactCompleted: vi.fn(),
-      setDefaultOrganisationId: vi.fn(),
-      setTargetOrganisation: vi.fn(),
-      setOrganisationAndBranch: vi.fn(),
-      setUserProfile: vi.fn(),
+      setAgree: vi.fn<(...args: unknown[]) => unknown>(),
+      setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+      setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+      setDefaultOrganisationId: vi.fn<(...args: unknown[]) => unknown>(),
+      setTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+      setOrganisationAndBranch: vi.fn<(...args: unknown[]) => unknown>(),
+      setUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
     } as Record<string, ReturnType<typeof vi.fn>> | undefined,
   },
   mockGetDashboardNotification: vi.fn<
@@ -72,8 +83,8 @@ const {
   mockGetDashboardInfoNotification: vi.fn<
     () => { message: string; severity: string } | null
   >(() => null),
-  mockClearDashboardNotification: vi.fn(),
-  mockClearDashboardInfoNotification: vi.fn(),
+  mockClearDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  mockClearDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
   mockModalState: {
     showBranchSelector: false,
     showRFQDeleteModal: false,
@@ -82,7 +93,7 @@ const {
   mockMsalContext: {
     instance: {
       acquireTokenSilent: vi
-        .fn()
+        .fn<(...args: unknown[]) => unknown>()
         .mockResolvedValue({ accessToken: 'mock-token' }),
     },
     accounts: [{ homeAccountId: 'id' }],
@@ -96,20 +107,24 @@ let mockAccountDetails: AccountDetails | null = null;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/api/web-api-client',
   () =>
     ({
-      DashboardClient: vi.fn().mockImplementation(function (this: any) {
-        this.setAuthToken = mockSetAuthToken;
-        this.getDashboardDraftsByPortalID = mockGetDrafts;
-        this.getDashboardQuotesByPortalID = mockGetQuotes;
-        this.getDashboardArtefactsByPortalID = mockGetArtefacts;
-      }),
+      DashboardClient: vi
+        .fn<(...args: unknown[]) => unknown>()
+        .mockImplementation(function (this: any) {
+          this.setAuthToken = mockSetAuthToken;
+          this.getDashboardDraftsByPortalID = mockGetDrafts;
+          this.getDashboardQuotesByPortalID = mockGetQuotes;
+          this.getDashboardArtefactsByPortalID = mockGetArtefacts;
+        }),
       StatusEnumDto: {},
     }) satisfies __ExactMockModule<__TestMockModule4>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -118,6 +133,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-browser',
   () =>
@@ -126,6 +142,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule3>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/authentication/hooks',
   () =>
@@ -143,6 +160,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule8>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/modals/ModalContext',
   () =>
@@ -294,21 +312,23 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule99>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
       default: {
-        info: vi.fn(),
-        verbose: vi.fn(),
-        warning: vi.fn(),
-        error: vi.fn(),
-        critical: vi.fn(),
-        trace: vi.fn(),
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        warning: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+        critical: vi.fn<(...args: unknown[]) => unknown>(),
+        trace: vi.fn<(...args: unknown[]) => unknown>(),
       },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/routes/common/errorRoutes',
   () =>
@@ -317,31 +337,41 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule100>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/routes/common/dashboardNotifications',
   () =>
     ({
       DashBoardNotifications: {
-        getForbiddenNotification: vi.fn(() => ({
-          message: 'forbidden',
-          severity: 'error',
-        })),
-        getThirdPartyAccessNotification: vi.fn(() => ({
-          message: 'no-third-party',
-          severity: 'error',
-        })),
-        getReportFormsGeneratedNotification: vi.fn(() => ({
+        getForbiddenNotification: vi.fn<(...args: unknown[]) => unknown>(
+          () => ({
+            message: 'forbidden',
+            severity: 'error',
+          }),
+        ),
+        getThirdPartyAccessNotification: vi.fn<(...args: unknown[]) => unknown>(
+          () => ({
+            message: 'no-third-party',
+            severity: 'error',
+          }),
+        ),
+        getReportFormsGeneratedNotification: vi.fn<
+          (...args: unknown[]) => unknown
+        >(() => ({
           message: 'report-forms',
           severity: 'info',
         })),
-        getDashboardErrorNotification: vi.fn(() => ({
-          message: 'error',
-          severity: 'error',
-        })),
+        getDashboardErrorNotification: vi.fn<(...args: unknown[]) => unknown>(
+          () => ({
+            message: 'error',
+            severity: 'error',
+          }),
+        ),
       },
     }) satisfies __ExactMockModule<__TestMockModule101>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/storage/notification',
   () =>
@@ -350,11 +380,12 @@ vi.mock(
       clearDashboardNotification: mockClearDashboardNotification,
       setDashboardNotification: mockSetDashboardNotification,
       getDashboardInfoNotification: mockGetDashboardInfoNotification,
-      setDashboardInfoNotification: vi.fn(),
+      setDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
       clearDashboardInfoNotification: mockClearDashboardInfoNotification,
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/storage/sessionStorageCache',
   () =>
@@ -363,7 +394,7 @@ vi.mock(
         getItem: mockSessionGetItem,
         setItem: mockSessionSetItem,
         removeItem: mockSessionRemoveItem,
-        clear: vi.fn(),
+        clear: vi.fn<(...args: unknown[]) => unknown>(),
       }),
     }) satisfies __ExactMockModule<__TestMockModule72>,
 );
@@ -376,6 +407,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/routes/common/enums',
   () =>
@@ -389,6 +421,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule108>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
   () =>
@@ -488,12 +521,12 @@ describe('dashboard', () => {
     mockModalState.showRFQDeleteModal = false;
     mockModalState.branchSelectionModalMode = undefined;
     mockAccountDispatchState.value = {
-      setAgree: vi.fn(),
-      setCompleted: vi.fn(),
-      setContactCompleted: vi.fn(),
-      setDefaultOrganisationId: vi.fn(),
+      setAgree: vi.fn<(...args: unknown[]) => unknown>(),
+      setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+      setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+      setDefaultOrganisationId: vi.fn<(...args: unknown[]) => unknown>(),
       setTargetOrganisation: mockSetTargetOrganisation,
-      setOrganisationAndBranch: vi.fn(),
+      setOrganisationAndBranch: vi.fn<(...args: unknown[]) => unknown>(),
       setUserProfile: mockSetUserProfile,
     };
     mockMapToUserProfile.mockImplementation((p: any) => ({
@@ -511,6 +544,8 @@ describe('dashboard', () => {
   // ── Test 1: Renders without crashing ──────────────────────────────────────
 
   it('1. renders without crashing and shows Welcome component', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -522,6 +557,8 @@ describe('dashboard', () => {
   // ── Test 2: SEC-010 — organisationCRMGuid passed as first arg to API ──────
 
   it('2. (SEC-010) passes organisationCRMGuid as first argument to getDashboardDraftsByPortalID', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -536,6 +573,8 @@ describe('dashboard', () => {
   });
 
   it('uses the saved search in the first dashboard request', async () => {
+    expect.hasAssertions();
+
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
       filterSearchText: 'Fluke',
@@ -553,6 +592,8 @@ describe('dashboard', () => {
   // ── Test 3: Sets auth token before API call ────────────────────────────────
 
   it('3. sets auth token on the client before making API calls', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -572,6 +613,8 @@ describe('dashboard', () => {
   // ── Test 4: NoRequests when API returns empty items ────────────────────────
 
   it('4. shows NoRequests component when API returns empty items array', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockResolvedValue({
       items: [],
       currentPage: 1,
@@ -605,6 +648,8 @@ describe('dashboard', () => {
   // ── Test 5: Does NOT call API when organisationCRMGuid is absent ──────────
 
   it('5. does not call API when organisationCRMGuid is undefined', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = { ...BASE, organisationCRMGuid: undefined };
 
     const Dashboard = await importDashboard();
@@ -624,6 +669,8 @@ describe('dashboard', () => {
   // ── Test 6: Navigates to error route on fatal API error ───────────────────
 
   it('6. navigates to /server-error route when API rejects with a 500 error', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockRejectedValue({ status: 500, title: 'Server Error' });
 
     const Dashboard = await importDashboard();
@@ -640,6 +687,8 @@ describe('dashboard', () => {
   // ── Test 7: totalPages from API response flows through to pagination ─────
 
   it('7. displays total pages from API response in pagination component', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockResolvedValue({
       items: [],
       currentPage: 1,
@@ -661,6 +710,8 @@ describe('dashboard', () => {
   });
 
   it('8. persists paging changes through account dispatch user profile updates', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -686,6 +737,8 @@ describe('dashboard', () => {
   ])(
     'loads the %s tab and records the selection',
     async (_tabName, accessibleName, apiMock, tabValue) => {
+      expect.hasAssertions();
+
       const Dashboard = await importDashboard();
       renderDashboard(Dashboard);
 
@@ -704,6 +757,8 @@ describe('dashboard', () => {
   );
 
   it('returns to drafts and records the selection', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
 
@@ -726,6 +781,8 @@ describe('dashboard', () => {
   });
 
   it('normalises a newly accepted quote from session storage', async () => {
+    expect.hasAssertions();
+
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
     const acceptedItem = {
       referenceId: 'RFQ-accepted',
@@ -756,6 +813,8 @@ describe('dashboard', () => {
   });
 
   it('removes an accepted quote marker when the response has no items', async () => {
+    expect.hasAssertions();
+
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
     mockGetDrafts.mockResolvedValue({
       items: undefined,
@@ -775,6 +834,8 @@ describe('dashboard', () => {
   });
 
   it('handles forbidden and third-party access errors without fatal navigation', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts
       .mockRejectedValueOnce({ status: 403, title: 'Forbidden' })
       .mockRejectedValueOnce({
@@ -804,6 +865,8 @@ describe('dashboard', () => {
   });
 
   it('ignores aborted dashboard requests', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockRejectedValueOnce({ name: 'AbortError' });
     const Dashboard = await importDashboard();
 
@@ -818,7 +881,9 @@ describe('dashboard', () => {
   });
 
   it('opens branch management and records new request and instrument pagination actions', async () => {
-    const scrollIntoView = vi.fn();
+    expect.hasAssertions();
+
+    const scrollIntoView = vi.fn<(...args: unknown[]) => unknown>();
     vi.spyOn(document, 'getElementById').mockImplementation(
       () => ({ scrollIntoView }) as unknown as HTMLElement,
     );
@@ -849,6 +914,8 @@ describe('dashboard', () => {
   });
 
   it('resets profile paging after branch selection', async () => {
+    expect.hasAssertions();
+
     mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
     const Dashboard = await importDashboard();
 
@@ -865,6 +932,8 @@ describe('dashboard', () => {
   });
 
   it('falls back to drafts when the saved profile records no active tab', async () => {
+    expect.hasAssertions();
+
     // A profile saved before the tab was tracked, on an account with no default organisation
     // yet. Both gaps have to resolve to something usable rather than leaving the dashboard on
     // an undefined tab.
@@ -893,6 +962,8 @@ describe('dashboard', () => {
   });
 
   it('renders dashboard notifications and complete organisation labels', async () => {
+    expect.hasAssertions();
+
     mockGetDashboardNotification.mockReturnValue({
       message: 'Saved',
       severity: 'success',
@@ -923,6 +994,8 @@ describe('dashboard', () => {
   });
 
   it('navigates to the generic error route when an API error has no status', async () => {
+    expect.hasAssertions();
+
     mockGetDrafts.mockRejectedValueOnce({});
 
     const Dashboard = await importDashboard();
@@ -934,6 +1007,8 @@ describe('dashboard', () => {
   });
 
   it('leaves an accepted-quote marker item unchanged when its status is not available', async () => {
+    expect.hasAssertions();
+
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
     const acceptedItem = {
       referenceId: 'RFQ-accepted',
@@ -960,6 +1035,8 @@ describe('dashboard', () => {
   });
 
   it('passes custom year and status filters and applies missing paging defaults', async () => {
+    expect.hasAssertions();
+
     const { filterCurrentPage: _filterCurrentPage, ...profileWithoutPaging } =
       BASE_USER_PROFILE;
     mockAccountDetails = {
@@ -1005,6 +1082,8 @@ describe('dashboard', () => {
   });
 
   it('does not load dashboard data without a saved user profile', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = { ...BASE, userProfile: undefined };
 
     const Dashboard = await importDashboard();
@@ -1018,6 +1097,8 @@ describe('dashboard', () => {
   });
 
   it('uses mapped profile defaults when active tab and page are absent', async () => {
+    expect.hasAssertions();
+
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
       filterActiveTab: undefined,
@@ -1042,6 +1123,8 @@ describe('dashboard', () => {
   });
 
   it('waits for MSAL to become idle before loading dashboard data', async () => {
+    expect.hasAssertions();
+
     mockMsalContext.inProgress = 'login';
 
     const Dashboard = await importDashboard();
@@ -1055,6 +1138,8 @@ describe('dashboard', () => {
   });
 
   it('handles third-party access errors when account dispatch is unavailable', async () => {
+    expect.hasAssertions();
+
     mockAccountDispatchState.value = undefined;
     mockGetDrafts.mockRejectedValueOnce({
       status: 403,
@@ -1075,6 +1160,8 @@ describe('dashboard', () => {
   });
 
   it('uses empty third-party organisation fallbacks', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = {
       ...BASE,
       organisation: undefined,
@@ -1093,6 +1180,8 @@ describe('dashboard', () => {
   });
 
   it('allows tab and page interactions before profile filters are initialised', async () => {
+    expect.hasAssertions();
+
     mockAccountDetails = { ...BASE, userProfile: undefined };
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -1104,6 +1193,8 @@ describe('dashboard', () => {
   });
 
   it('does not replace initial filters when the saved profile changes', async () => {
+    expect.hasAssertions();
+
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
     await waitFor(() =>
@@ -1134,6 +1225,8 @@ describe('dashboard', () => {
   });
 
   it('seeds initial filters when the saved profile arrives after mount', async () => {
+    expect.hasAssertions();
+
     // Mount with no profile: the lazy useState seed resolves to undefined.
     mockAccountDetails = { ...BASE, userProfile: undefined };
     const Dashboard = await importDashboard();
@@ -1177,6 +1270,8 @@ describe('dashboard', () => {
   });
 
   it('writes the branch reset once even when the saved profile identity changes', async () => {
+    expect.hasAssertions();
+
     mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
@@ -1209,6 +1304,8 @@ describe('dashboard', () => {
   });
 
   it('uses branch-reset defaults when the mapped profile omits tab and page', async () => {
+    expect.hasAssertions();
+
     mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
@@ -1233,11 +1330,13 @@ describe('dashboard', () => {
   });
 
   it('parses an absent non-default year and defaults an absent request page', async () => {
+    expect.hasAssertions();
+
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
       filterYearType: undefined,
       filterCurrentPage: undefined,
-      filterActiveTab: 'drafts',
+      filterActiveTab: 'drafts' as any,
     });
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -1251,6 +1350,8 @@ describe('dashboard', () => {
   });
 
   it('marks dashboard content inert while an actionable modal is open', async () => {
+    expect.hasAssertions();
+
     mockModalState.showBranchSelector = true;
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);

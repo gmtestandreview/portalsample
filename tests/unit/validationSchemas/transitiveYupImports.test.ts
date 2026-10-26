@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 
 describe('yup side-effect import — explicit import guard', () => {
   it('update/validation.ts schema validates without relying on transitive import', async () => {
+    expect.hasAssertions();
+
     const { default: schema } =
       await import('../../../ClientApp/src/routes/account/update/validation');
 
@@ -19,6 +21,8 @@ describe('yup side-effect import — explicit import guard', () => {
   });
 
   it('addBranch/validation.ts schema validates without relying on transitive import', async () => {
+    expect.hasAssertions();
+
     const { default: schema } =
       await import('../../../ClientApp/src/routes/account/addBranch/validation');
 

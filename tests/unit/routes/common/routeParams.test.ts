@@ -11,6 +11,7 @@ describe('route param validation', () => {
     '550e8400-e29b-41d4-a716-446655440000',
     '12345',
   ])('accepts application id %s', (id) => {
+    expect.hasAssertions();
     expect(getValidApplicationId(id)).toBe(id);
   });
 
@@ -24,6 +25,7 @@ describe('route param validation', () => {
     'javascript:alert(1)',
     '%2Fadmin',
   ])('rejects unsafe application id %s', (id) => {
+    expect.hasAssertions();
     expect(getValidApplicationId(id)).toBeNull();
   });
 
@@ -32,6 +34,7 @@ describe('route param validation', () => {
     ['42', 42],
     ['9007199254740991', 9007199254740991],
   ])('accepts positive integer id %s', (id, expected) => {
+    expect.hasAssertions();
     expect(getValidPositiveIntegerId(id)).toBe(expected);
   });
 
@@ -47,6 +50,7 @@ describe('route param validation', () => {
     '1/2',
     '9007199254740992',
   ])('rejects invalid positive integer id %s', (id) => {
+    expect.hasAssertions();
     expect(getValidPositiveIntegerId(id)).toBeNull();
   });
 });

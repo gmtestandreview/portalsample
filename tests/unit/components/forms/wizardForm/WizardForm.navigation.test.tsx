@@ -230,6 +230,7 @@ describe('wizardForm — step navigation', () => {
 
   it('renders step 1 content on initial load', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -246,6 +247,7 @@ describe('wizardForm — step navigation', () => {
 
   it('navigates forward from step 1 to step 2 after successful submit', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -269,6 +271,7 @@ describe('wizardForm — step navigation', () => {
 
   it('still navigates when the current step has no status entry', async () => {
     expect.hasAssertions();
+
     const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({});
     const router = makeTwoStepRouter([], step1Save);
     render(<RouterProvider router={router} />);
@@ -285,6 +288,7 @@ describe('wizardForm — step navigation', () => {
 
   it('navigates back from step 2 to step 1 via the back button', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.Completed },
       { status: FormStepStatus.NotStarted },
@@ -312,6 +316,7 @@ describe('wizardForm — step navigation', () => {
 
   it('linear guard: navigating directly to step 2 with step 1 incomplete redirects to step 1', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -333,6 +338,7 @@ describe('wizardForm — step navigation', () => {
 
   it('navigates to locationOnCompletion after the final step submits successfully', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.Completed },
       { status: FormStepStatus.NotStarted },
@@ -356,6 +362,7 @@ describe('wizardForm — step navigation', () => {
 
   it('smoke: preserves the resolved wizard base path for split splat route step navigation', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -389,6 +396,7 @@ describe('wizardForm — step navigation', () => {
 
   it('uses the root path when the resolved path is only the step location', async () => {
     expect.hasAssertions();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
     ];

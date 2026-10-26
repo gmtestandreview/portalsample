@@ -124,6 +124,7 @@ vi.mock('react-bootstrap', () => {
 describe('rFQDeleteModal null context', () => {
   it('skips deletion and still closes and navigates', async () => {
     expect.hasAssertions();
+
     render(<RFQDeleteModal />);
 
     fireEvent.click(screen.getByRole('button', { name: /yes, delete/i }));

@@ -10,7 +10,7 @@ import {
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
 const mocks = vi.hoisted(() => ({
-  downloadFileFromUrl: vi.fn(),
+  downloadFileFromUrl: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock('@azure/msal-react', async () => {
@@ -56,6 +56,8 @@ describe('pattern approval pre-application', () => {
   });
 
   it('explains what the applicant needs before starting', async () => {
+    expect.hasAssertions();
+
     await renderPage();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
@@ -70,6 +72,8 @@ describe('pattern approval pre-application', () => {
   });
 
   it('links out to the certification procedures', async () => {
+    expect.hasAssertions();
+
     await renderPage();
 
     expect(screen.getByRole('link', { name: /NMI P 106/ })).toHaveAttribute(
@@ -85,6 +89,8 @@ describe('pattern approval pre-application', () => {
   });
 
   it('downloads the credit check form through the authenticated helper', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     await renderPage();
 
@@ -105,6 +111,8 @@ describe('pattern approval pre-application', () => {
   });
 
   it('does not follow the placeholder href when downloading', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 
@@ -119,6 +127,8 @@ describe('pattern approval pre-application', () => {
   });
 
   it('starts the application', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 
@@ -128,6 +138,8 @@ describe('pattern approval pre-application', () => {
   });
 
   it('offers a way back to the type approval dashboard', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 

@@ -27,6 +27,8 @@ const validContact = {
 
 describe('contact validation field schemas', () => {
   it('validates required and optional title fields', async () => {
+    expect.hasAssertions();
+
     await expect(titleSchema('Title').validate('Dr')).resolves.toBe('Dr');
     await expect(titleSchema('Title').validate('D')).rejects.toThrow(
       'Title cannot be less than 2 characters',
@@ -46,46 +48,64 @@ describe('contact validation field schemas', () => {
   });
 
   it('validates required and optional name and role fields', async () => {
-    await expect(nameSchema('First name', 5).validate('Alex')).resolves.toBe(
-      'Alex',
-    );
-    await expect(nameSchema('First name', 5).validate('A')).rejects.toThrow(
-      'First name cannot be less than 2 characters',
-    );
-    await expect(
+    expect.hasAssertions();
+
+    const outcomes = await Promise.allSettled([
+      nameSchema('First name', 5).validate('Alex'),
+      nameSchema('First name', 5).validate('A'),
       nameSchema('First name', 5).validate('abcdef'),
-    ).rejects.toThrow('First name cannot be greater than 5 characters');
-    await expect(nameSchema('First name', 5, false).validate('')).resolves.toBe(
+      nameSchema('First name', 5, false).validate(''),
+      roleSchema('Role').validate('QA lead'),
+      roleSchema('Role', false).validate(''),
+    ]);
+
+    expect(
+      outcomes.map((outcome) =>
+        outcome.status === 'fulfilled'
+          ? outcome.value
+          : (outcome.reason as { message: string }).message,
+      ),
+    ).toStrictEqual([
+      'Alex',
+      'First name cannot be less than 2 characters',
+      'First name cannot be greater than 5 characters',
       '',
-    );
-    await expect(roleSchema('Role').validate('QA lead')).resolves.toBe(
       'QA lead',
-    );
-    await expect(roleSchema('Role', false).validate('')).resolves.toBe('');
+      '',
+    ]);
   });
 
   it('validates phone, mobile, and email fields', async () => {
-    await expect(
+    expect.hasAssertions();
+
+    const outcomes = await Promise.allSettled([
       phoneRequiredSchema('Business phone').validate('0212345678'),
-    ).resolves.toBe('0212345678');
-    await expect(
       phoneRequiredSchema('Business phone').validate(''),
-    ).rejects.toThrow('Business phone is required');
-    await expect(
       phoneSchema('Business phone', false).validate('badbad'),
-    ).rejects.toThrow('Please enter a valid Business phone');
-    await expect(
       mobileSchema('Mobile phone', false).validate('0412345678'),
-    ).resolves.toBe('0412345678');
-    await expect(
       mobileSchema('Mobile phone', false).validate('0212345678'),
-    ).rejects.toThrow('Please enter a valid Mobile phone');
-    await expect(
       emailSchema('Email').validate('person@example.com'),
-    ).resolves.toBe('person@example.com');
+    ]);
+
+    expect(
+      outcomes.map((outcome) =>
+        outcome.status === 'fulfilled'
+          ? outcome.value
+          : (outcome.reason as { message: string }).message,
+      ),
+    ).toStrictEqual([
+      '0212345678',
+      'Business phone is required',
+      'Please enter a valid Business phone',
+      '0412345678',
+      'Please enter a valid Mobile phone',
+      'person@example.com',
+    ]);
   });
 
   it('requires at least one phone number when phone schemas are required', async () => {
+    expect.hasAssertions();
+
     const schema = contactSchema();
 
     await expect(
@@ -117,12 +137,16 @@ describe('contact validation field schemas', () => {
 
 describe('contact object schemas', () => {
   it('accepts a complete contact', async () => {
+    expect.hasAssertions();
+
     await expect(contactSchema().validate(validContact)).resolves.toMatchObject(
       validContact,
     );
   });
 
   it('requires hard contact fields', async () => {
+    expect.hasAssertions();
+
     await expect(
       contactSchema().validate({}, { abortEarly: false }),
     ).rejects.toMatchObject({
@@ -138,6 +162,8 @@ describe('contact object schemas', () => {
   });
 
   it('allows soft contact fields to be empty but validates populated formats', async () => {
+    expect.hasAssertions();
+
     await expect(
       contactSchemaSoft().validate({
         title: '',
@@ -158,6 +184,8 @@ describe('contact object schemas', () => {
   });
 
   it('requires only email for email-only contact schema', async () => {
+    expect.hasAssertions();
+
     await expect(
       contactSchemaEmailOnly().validate({
         email: 'billing@example.com',

@@ -73,6 +73,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('resolves a token by default and reports the signed-in account', async () => {
+    expect.hasAssertions();
+
     render(<TokenProbe />);
 
     await waitFor(() =>
@@ -92,6 +94,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('grants a caller-supplied token', async () => {
+    expect.hasAssertions();
+
     grantToken('another-token');
 
     render(<TokenProbe />);
@@ -102,6 +106,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('rejects the token so error paths can be exercised', async () => {
+    expect.hasAssertions();
+
     rejectToken(new Error('interaction_required'));
 
     render(<TokenProbe />);
@@ -116,6 +122,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('holds the token pending until the test settles it', async () => {
+    expect.hasAssertions();
+
     const token = pendingToken();
 
     render(<TokenProbe />);
@@ -137,6 +145,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('fails a pending token so mid-flight rejection can be exercised', async () => {
+    expect.hasAssertions();
+
     const token = pendingToken();
 
     render(<TokenProbe />);
@@ -156,6 +166,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('signs out so token-guarded effects never run', async () => {
+    expect.hasAssertions();
+
     signOut();
 
     render(<TokenProbe />);
@@ -165,6 +177,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('reports a non-idle interaction status', async () => {
+    expect.hasAssertions();
+
     setInteractionStatus(interactionStatus.Login);
 
     render(<TokenProbe />);
@@ -185,6 +199,8 @@ describe('shared MSAL harness', () => {
   });
 
   it('restores default state between tests', async () => {
+    expect.hasAssertions();
+
     // Guards the reset itself. signOut() above mutates shared module state, so if resetMsalMock
     // stopped restoring `accounts` every later test in the file would silently run signed out.
     render(<TokenProbe />);

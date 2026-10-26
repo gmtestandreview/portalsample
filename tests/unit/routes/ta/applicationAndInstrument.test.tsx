@@ -13,7 +13,7 @@ import { FormikWrapper } from '../../helpers/formik';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 /** Captures what the leaf inputs are handed, so this file's own logic can be observed. */
@@ -44,32 +44,36 @@ const selectNamed = (name: string) =>
 const checkboxGroupNamed = (name: string) =>
   defined(captured.checkboxGroups.get(name), `checkbox group "${name}"`);
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
-      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 // HidableField decides visibility from its own Formik flag; that is its logic, not this file's.
 vi.mock(
-  '../../../../ClientApp/src/components/forms/HidableField',
-  () =>
+  import('../../../../ClientApp/src/components/forms/HidableField'),
+  (() =>
     ({
       default: ({ children }: { children: ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule70>,
+    }) satisfies __ExactMockModule<__TestMockModule70>) as unknown as __DynamicPartialMockFactory<__TestMockModule70>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/SelectInput',
-  () =>
+  import('../../../../ClientApp/src/components/Inputs/SelectInput'),
+  (() =>
     ({
       default: ({
         name,
@@ -104,12 +108,12 @@ vi.mock(
           </select>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule131>,
+    }) satisfies __ExactMockModule<__TestMockModule131>) as unknown as __DynamicPartialMockFactory<__TestMockModule131>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/CheckboxGroup',
-  () =>
+  import('../../../../ClientApp/src/components/Inputs/CheckboxGroup'),
+  (() =>
     ({
       default: ({
         name,
@@ -124,12 +128,12 @@ vi.mock(
           <div data-testid={`checkboxes-${name}`} data-count={options.length} />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule132>,
+    }) satisfies __ExactMockModule<__TestMockModule132>) as unknown as __DynamicPartialMockFactory<__TestMockModule132>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/RadioButton',
-  () =>
+  import('../../../../ClientApp/src/components/Inputs/RadioButton'),
+  (() =>
     ({
       default: ({
         id,
@@ -156,42 +160,42 @@ vi.mock(
           {label}
         </label>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule133>,
+    }) satisfies __ExactMockModule<__TestMockModule133>) as unknown as __DynamicPartialMockFactory<__TestMockModule133>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/Inputs/TextInput'),
-  () =>
+  (() =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`text-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>,
+    }) satisfies __ExactMockModule<__TestMockModule29>) as unknown as __DynamicPartialMockFactory<__TestMockModule29>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/Inputs/TextAreaInput'),
-  () =>
+  (() =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`textarea-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule134>,
+    }) satisfies __ExactMockModule<__TestMockModule134>) as unknown as __DynamicPartialMockFactory<__TestMockModule134>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/CertificateNumberLookup',
-  () =>
+  import('../../../../ClientApp/src/components/Inputs/CertificateNumberLookup'),
+  (() =>
     ({
       default: ({ name, label }: { name: string; label: string }) => (
         <div data-testid={`certificate-${name}`}>{label}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule135>,
+    }) satisfies __ExactMockModule<__TestMockModule135>) as unknown as __DynamicPartialMockFactory<__TestMockModule135>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
-  () =>
+  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel'),
+  (() =>
     ({
       default: ({
         selectedInstrumentCategoryId,
@@ -207,12 +211,12 @@ vi.mock(
 
         return <div data-testid='instrument-info-panel' />;
       },
-    }) satisfies __ExactMockModule<__TestMockModule136>,
+    }) satisfies __ExactMockModule<__TestMockModule136>) as unknown as __DynamicPartialMockFactory<__TestMockModule136>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/SummaryDisplay',
-  () =>
+  import('../../../../ClientApp/src/components/SummaryDisplay'),
+  (() =>
     ({
       default: ({
         id,
@@ -227,7 +231,7 @@ vi.mock(
           {value}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule137>,
+    }) satisfies __ExactMockModule<__TestMockModule137>) as unknown as __DynamicPartialMockFactory<__TestMockModule137>,
 );
 
 const categoryLookup = () => [

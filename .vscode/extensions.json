@@ -8,7 +8,8 @@
     "dbaeumer.vscode-eslint",
     "sonarsource.sonarlint-vscode",
     "esbenp.prettier-vscode",
-    "ms-vscode.vscode-typescript-next"
+    "ms-vscode.vscode-typescript-next",
+    "usernamehw.errorlens"
   ],
   "unwantedRecommendations": ["biomejs.biome", "codacy-app.codacy"]
 }

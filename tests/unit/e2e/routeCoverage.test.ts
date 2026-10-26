@@ -16,6 +16,8 @@ const declaredPaths = Array.from(
 
 describe('playwright-BDD route coverage manifest', () => {
   it('registers every route declared in App.tsx exactly once', () => {
+    expect.hasAssertions();
+
     const registered = routeCoverage.map(({ path: routePath }) => routePath);
     const sortRoutes = (routes: string[]) =>
       [...routes].sort((left: string, right: string) =>
@@ -23,46 +25,52 @@ describe('playwright-BDD route coverage manifest', () => {
       );
 
     expect(new Set(registered).size).toBe(registered.length);
-    expect(sortRoutes(registered)).toEqual(sortRoutes(declaredPaths));
+    expect(sortRoutes(registered)).toStrictEqual(sortRoutes(declaredPaths));
   });
 
   it('uses feature and scenario references that exist on disk', () => {
+    expect.hasAssertions();
+
     for (const entry of routeCoverage) {
       if (entry.status === 'excluded') {
-        expect(entry.reason.length).toBeGreaterThan(20);
-        expect(entry.feature).toBeUndefined();
+        expect({
+          hasReason: entry.reason.length > 20,
+          feature: entry.feature,
+        }).toStrictEqual({ hasReason: true, feature: undefined });
       } else {
-        expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
-        expect(entry.scenario).toBeDefined();
-
         const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
-
-        expect(
-          pathExists(featurePath, repoRoot),
-          `${entry.feature} should exist`,
-        ).toBe(true);
-
         const featureSource = readTextFileSync(featurePath, repoRoot);
 
-        expect(
-          featureSource,
-          `${entry.scenario} should exist in ${entry.feature}`,
-        ).toContain(`Scenario: ${entry.scenario}`);
+        expect({
+          feature: /^tests\/e2e\/features\/.+\.feature$/.test(entry.feature),
+          scenario: entry.scenario !== undefined,
+          featureExists: pathExists(featurePath, repoRoot),
+          scenarioExists: featureSource.includes(`Scenario: ${entry.scenario}`),
+        }).toStrictEqual({
+          feature: true,
+          scenario: true,
+          featureExists: true,
+          scenarioExists: true,
+        });
       }
     }
   });
 
   it('does not retain temporary planned entries', () => {
+    expect.hasAssertions();
+
     expect(
       routeCoverage.filter((entry) => (entry.status as string) === 'planned'),
-    ).toEqual([]);
+    ).toStrictEqual([]);
   });
 
   it('maps all 41 declared routes to executable BDD scenarios', () => {
+    expect.hasAssertions();
+
     expect(declaredPaths).toHaveLength(41);
     expect(routeCoverage).toHaveLength(41);
     expect(
       routeCoverage.filter((entry) => entry.status === 'excluded'),
-    ).toEqual([]);
+    ).toStrictEqual([]);
   });
 });

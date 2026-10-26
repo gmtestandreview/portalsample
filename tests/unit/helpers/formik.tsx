@@ -81,12 +81,12 @@ export const createSubmitSpy = <
 >(): SubmitSpy<TValues> => {
   const calls: TValues[] = [];
 
-  const onSubmit = vi.fn(
-    (values: TValues, helpers?: FormikHelpers<TValues>) => {
-      calls.push(values);
-      helpers?.setSubmitting(false);
-    },
-  );
+  const onSubmit = vi.fn<
+    (values: TValues, helpers?: FormikHelpers<TValues>) => void
+  >((values: TValues, helpers?: FormikHelpers<TValues>) => {
+    calls.push(values);
+    helpers?.setSubmitting(false);
+  });
 
   return {
     onSubmit,

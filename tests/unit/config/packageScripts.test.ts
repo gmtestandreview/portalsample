@@ -58,16 +58,22 @@ describe('package formatting scripts', () => {
   });
 
   it('covers maintained root, script, and quality sources in the ESLint contract', () => {
-    expect.assertions(8);
+    expect.hasAssertions();
 
-    expect(scripts['lint:eslint']).toContain('eslint.config.mjs');
-    expect(scripts['lint:eslint']).toContain('remark.config.mjs');
-    expect(scripts['lint:eslint']).toContain('test-import.mjs');
-    expect(scripts['lint:eslint']).toContain('scripts/**/*.{js,mjs,ts,mts}');
-    expect(scripts['lint:eslint']).toContain('quality/**/*.{js,mjs,ts,mts}');
-    expect(scripts['lint:eslint']).toContain('storybook-vite-policies.ts');
-    expect(scripts['lint:eslint']).toContain('runtime-env-fixtures.ts');
-    expect(scripts['lint:eslint']).toContain('vitest.shims.d.ts');
+    const lintCommand = scripts['lint:eslint'] ?? '';
+
+    expect(lintCommand).toContain('eslint.config.mjs');
+    expect(
+      [
+        'remark.config.mjs',
+        'test-import.mjs',
+        'scripts/**/*.{js,mjs,ts,mts}',
+        'quality/**/*.{js,mjs,ts,mts}',
+        'storybook-vite-policies.ts',
+        'runtime-env-fixtures.ts',
+        'vitest.shims.d.ts',
+      ].every((fragment) => lintCommand.includes(fragment)),
+    ).toBe(true);
   });
 
   it('routes migration-check through the Storybook build wrapper', () => {

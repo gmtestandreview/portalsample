@@ -82,6 +82,7 @@ describe(RouteLeavingGuard, () => {
 
   it('keeps the modal hidden while navigation is unblocked', () => {
     expect.hasAssertions();
+
     useBlockerMock.mockReturnValue(unblockedBlocker);
 
     renderGuard();
@@ -92,6 +93,7 @@ describe(RouteLeavingGuard, () => {
 
   it('blocks navigation only when enabled and the pathname changes', () => {
     expect.hasAssertions();
+
     useBlockerMock.mockReturnValue(unblockedBlocker);
 
     renderGuard({ when: true });
@@ -112,6 +114,7 @@ describe(RouteLeavingGuard, () => {
 
   it('allows custom copy and resets a blocked navigation on cancel', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     useBlockerMock.mockReturnValue(blockedBlocker);
 
@@ -137,6 +140,7 @@ describe(RouteLeavingGuard, () => {
 
   it('runs onProceed and then proceeds when a blocked navigation is confirmed', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onProceed = vi.fn<() => void>(() => {
       expect(proceedBlocker).not.toHaveBeenCalled();
@@ -154,6 +158,7 @@ describe(RouteLeavingGuard, () => {
 
   it('proceeds without an onProceed callback and does not run it on cancel', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onProceed = vi.fn<() => void>();
     useBlockerMock.mockReturnValue(blockedBlocker);

@@ -64,6 +64,7 @@ describe('customBreadcrumb React Aria render fallback', () => {
 
   it('renders nothing when no breadcrumbs are provided', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     const { container } = render(<CustomBreadcrumb breadcrumbs={[]} />);
@@ -73,6 +74,7 @@ describe('customBreadcrumb React Aria render fallback', () => {
 
   it('throws when a non-current breadcrumb has no destination', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     expect(() =>
@@ -86,6 +88,7 @@ describe('customBreadcrumb React Aria render fallback', () => {
 
   it('renders previous breadcrumb content as a span when React Aria props do not include an href', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     render(
@@ -110,6 +113,7 @@ describe('customBreadcrumb React Aria render fallback', () => {
 
   it('renders previous breadcrumb content as a router link when React Aria props include an href', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     ariaLinkMockState.includeHref = true;

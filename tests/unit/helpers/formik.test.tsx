@@ -13,6 +13,8 @@ const schema = yup.object({
 
 describe('formik harness', () => {
   it('still renders children against initialValues', () => {
+    expect.hasAssertions();
+
     // Backward compatibility. buttonControls.test.tsx uses the original three-prop signature and
     // the additions below must not disturb it.
     render(
@@ -25,6 +27,8 @@ describe('formik harness', () => {
   });
 
   it('surfaces schema validation messages when fields start touched', async () => {
+    expect.hasAssertions();
+
     render(
       <FormikWrapper
         initialValues={{ name: '' }}
@@ -44,6 +48,8 @@ describe('formik harness', () => {
   });
 
   it('captures submitted values through the submit spy', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const submit = createSubmitSpy<{ name: string }>();
 
@@ -63,10 +69,12 @@ describe('formik harness', () => {
 
     await waitFor(() => expect(submit.submitCount()).toBe(1));
 
-    expect(submit.lastValues()).toEqual({ name: 'Updated' });
+    expect(submit.lastValues()).toStrictEqual({ name: 'Updated' });
   });
 
   it('settles submission state so a second submit is not silently blocked', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const submit = createSubmitSpy<{ name: string }>();
 
@@ -93,6 +101,8 @@ describe('formik harness', () => {
   });
 
   it('does not submit when the schema rejects the values', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     const submit = createSubmitSpy<{ name: string }>();
 

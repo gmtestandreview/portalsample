@@ -6,6 +6,8 @@ import StandardPathway from '../../../ClientApp/src/components/tiles/StandardPat
 
 describe('standardPathway external links', () => {
   it('uses explicit noopener noreferrer on new-tab external links', () => {
+    expect.hasAssertions();
+
     render(
       <StandardPathway
         type='external'
@@ -26,6 +28,8 @@ describe('standardPathway external links', () => {
   });
 
   it('renders same-tab external links without new-tab copy or rel', () => {
+    expect.hasAssertions();
+
     render(
       <StandardPathway
         type='external'
@@ -46,6 +50,8 @@ describe('standardPathway external links', () => {
   });
 
   it('uses the digital identity footer when requested', () => {
+    expect.hasAssertions();
+
     render(
       <StandardPathway
         type='external'
@@ -67,6 +73,8 @@ describe('standardPathway external links', () => {
   });
 
   it('renders the standard footer icon as decorative markup without a presentation role', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <StandardPathway
         type='external'
@@ -85,6 +93,8 @@ describe('standardPathway external links', () => {
   });
 
   it('renders internal pathway links through React Router', () => {
+    expect.hasAssertions();
+
     render(
       <MemoryRouter>
         <StandardPathway

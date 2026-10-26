@@ -52,6 +52,8 @@ const mappingRows = (design: string) =>
 
 describe('browser environment contract', () => {
   it('reads every browser variable from Vite import.meta.env', async () => {
+    expect.hasAssertions();
+
     const [environmentSource, design] = await Promise.all([
       readTextFile(environmentSourcePath, repositoryRoot),
       readTextFile(designPath, repositoryRoot),
@@ -71,6 +73,8 @@ describe('browser environment contract', () => {
   });
 
   it('preserves the application-facing env export while using the Vite contract', async () => {
+    expect.hasAssertions();
+
     const environmentSource = await readTextFile(
       environmentSourcePath,
       repositoryRoot,
@@ -84,6 +88,8 @@ describe('browser environment contract', () => {
 
 describe('browser source environment policy', () => {
   it('contains no legacy names or custom process.env access outside vendored parent code', async () => {
+    expect.hasAssertions();
+
     const sourceFiles = await readSourceFiles(sourceRoot);
 
     for (const [index, source] of sourceFiles.entries()) {

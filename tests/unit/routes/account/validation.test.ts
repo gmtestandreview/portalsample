@@ -28,6 +28,7 @@ const validAccount = {
 
 describe('account submit validation', () => {
   it('accepts a valid account object', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(validAccount),
     ).resolves.toMatchObject({
@@ -39,6 +40,7 @@ describe('account submit validation', () => {
   });
 
   it('validates required nested street address fields', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(
         {
@@ -63,6 +65,7 @@ describe('account submit validation', () => {
   });
 
   it('validates invalid formats', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(
         {
@@ -88,6 +91,7 @@ describe('account submit validation', () => {
   });
 
   it('accepts fields at max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
@@ -104,6 +108,7 @@ describe('account submit validation', () => {
   });
 
   it('rejects fields over max length boundaries', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate(
         {
@@ -131,6 +136,7 @@ describe('account submit validation', () => {
   });
 
   it('requires postal address only when it differs from street address', async () => {
+    expect.hasAssertions();
     await expect(
       accountSubmitValidation.validate({
         ...validAccount,
@@ -156,6 +162,7 @@ describe('branch and organisation account validation modules', () => {
     ['add branch', branchSubmitValidation],
     ['update organisation', organisationSubmitValidation],
   ])('accepts a valid %s object', async (_name, schema) => {
+    expect.hasAssertions();
     await expect(schema.validate(validAccount)).resolves.toMatchObject({
       businessOrTradingName: validAccount.businessOrTradingName,
       branchOrLocationName: validAccount.branchOrLocationName,
@@ -170,6 +177,7 @@ describe('branch and organisation account validation modules', () => {
   ])(
     'requires postal address for %s when it differs from street address',
     async (_name, schema) => {
+      expect.hasAssertions();
       await expect(
         schema.validate({
           ...validAccount,

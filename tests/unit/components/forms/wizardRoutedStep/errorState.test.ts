@@ -47,6 +47,7 @@ describe(resolveErrorState, () => {
 
     it('returns serverError for 403 without third-party title', () => {
       expect.hasAssertions();
+
       const result = resolveErrorState(
         makeError(403, 'Forbidden'),
         undefined,
@@ -74,6 +75,7 @@ describe(resolveErrorState, () => {
 
     it('returns none for an aborted request — stays silent', () => {
       expect.hasAssertions();
+
       const abort = new DOMException(
         'The operation was aborted.',
         'AbortError',
@@ -88,6 +90,7 @@ describe(resolveErrorState, () => {
   describe('update errors — HttpStatus dispatch', () => {
     it('returns concurrency for 409', () => {
       expect.hasAssertions();
+
       const err = makeError(409);
       const result = resolveErrorState(err, undefined, ErrorType.Update);
 
@@ -96,6 +99,7 @@ describe(resolveErrorState, () => {
 
     it('returns wafViolation for 403 with Azure App Gateway server header (Update only)', () => {
       expect.hasAssertions();
+
       const err = makeError(403, 'Forbidden', {
         server: `${AZURE_WAF_SERVER_PREFIX}/2.5`,
       });
@@ -106,6 +110,7 @@ describe(resolveErrorState, () => {
 
     it('does NOT return wafViolation on a Load error even with WAF header', () => {
       expect.hasAssertions();
+
       const err = makeError(403, 'Forbidden', {
         server: `${AZURE_WAF_SERVER_PREFIX}/2.5`,
       });
@@ -116,6 +121,7 @@ describe(resolveErrorState, () => {
 
     it('returns serverError for 500 on Update', () => {
       expect.hasAssertions();
+
       const result = resolveErrorState(
         makeError(500),
         undefined,
@@ -128,8 +134,10 @@ describe(resolveErrorState, () => {
 
   it('returns redirect when callback provides a location', () => {
     expect.hasAssertions();
+
     const cb = (code: number) =>
       code === 404 ? '/custom-not-found' : undefined;
+
     expect(resolveErrorState(makeError(404), cb, ErrorType.Load)).toEqual({
       kind: 'redirect',
       location: '/custom-not-found',
@@ -145,6 +153,7 @@ describe(resolveErrorState, () => {
 
   it('redirect takes precedence over all other error kinds — stale-read fix proof', () => {
     expect.hasAssertions();
+
     const result = resolveErrorState(
       makeError(404),
       () => '/gone-somewhere',

@@ -93,7 +93,7 @@ vi.mock(
         setAuthToken: ReturnType<typeof vi.fn>;
         getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
       }) {
-        this.setAuthToken = vi.fn<DashboardClient['setAuthToken']>();
+        vi.spyOn(this, 'setAuthToken').mockImplementation();
         this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
       }),
     }) satisfies __ExactMockModule<__TestMockModule4>,

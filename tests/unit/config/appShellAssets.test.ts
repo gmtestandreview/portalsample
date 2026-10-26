@@ -33,6 +33,8 @@ const getPublicAsset = async (document: Document, selector: string) => {
 
 describe('application shell identity assets', () => {
   it('publishes favicon and tile metadata backed by public files', async () => {
+    expect.hasAssertions();
+
     const html = await readTextFile(
       path.join(repositoryRoot, 'index.html'),
       repositoryRoot,

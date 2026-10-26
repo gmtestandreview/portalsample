@@ -18,6 +18,7 @@ vi.mock(
 describe('footer accessibility', () => {
   it('uses real buttons for footer modal triggers', async () => {
     expect.hasAssertions();
+
     render(<Footer />);
 
     const termsTrigger = screen.getByRole('button', { name: 'Terms of use' });
@@ -44,6 +45,7 @@ describe('footer accessibility', () => {
     'uses labelled sections without adding contentinfo landmarks in the %s',
     (_name, Content) => {
       expect.hasAssertions();
+
       const { container } = render(<Content />);
 
       expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
@@ -57,7 +59,7 @@ describe('footer accessibility', () => {
       for (const section of labelledSections) {
         const labelId = section.getAttribute('aria-labelledby');
 
-        expect(labelId).toBeTruthy();
+        expect(labelId).toBe(true);
         expect(container.querySelectorAll(`#${labelId}`)).toHaveLength(1);
       }
     },
@@ -65,6 +67,7 @@ describe('footer accessibility', () => {
 
   it('preserves spacing around inline formatting in the privacy statement', () => {
     expect.hasAssertions();
+
     const { container } = render(<Privacy />);
     const paragraphs = Array.from(container.querySelectorAll('p')).map(
       ({ textContent }) => textContent,
@@ -82,6 +85,7 @@ describe('footer accessibility', () => {
 
   it('uses explicit JSX text boundaries around inline strong elements', () => {
     expect.hasAssertions();
+
     const source = readFileSync(
       path.join(process.cwd(), 'ClientApp/src/components/Footer/privacy.tsx'),
       'utf8',

@@ -74,6 +74,8 @@ const instrumentFixture: DashboardItemDto = {
 
 describe('instrumentItem accessibility', () => {
   it('does not emit aria-prohibited-attr for the card container', async () => {
+    expect.hasAssertions();
+
     render(
       <MemoryRouter initialEntries={['/']}>
         <AccountStateCtx.Provider

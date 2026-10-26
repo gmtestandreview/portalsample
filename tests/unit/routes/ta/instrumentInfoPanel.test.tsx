@@ -4,42 +4,46 @@ import type * as WebApiClientModule from '@/api/web-api-client';
 import InstrumentInfoPanel from '@/routes/ta/instrumentInfoPanel';
 
 const mocks = vi.hoisted(() => {
-  const acquireTokenSilent = vi.fn();
+  const acquireTokenSilent = vi.fn<(...args: unknown[]) => unknown>();
 
   return {
     acquireTokenSilent,
-    getInfoPanelContent: vi.fn(),
+    getInfoPanelContent: vi.fn<(...args: unknown[]) => unknown>(),
     msalContext: {
       accounts: [{ localAccountId: 'account-id' }],
       instance: {
         acquireTokenSilent,
       },
     },
-    setAuthToken: vi.fn(),
+    setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
   };
 });
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => mocks.msalContext,
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
     ...actual,
-    LookupClient: vi.fn(function LookupClientMock() {
-      return {
-        getInfoPanelContent: mocks.getInfoPanelContent,
-        setAuthToken: mocks.setAuthToken,
-      };
-    }),
+    LookupClient: vi.fn<(...args: unknown[]) => unknown>(
+      function LookupClientMock() {
+        return {
+          getInfoPanelContent: mocks.getInfoPanelContent,
+          setAuthToken: mocks.setAuthToken,
+        };
+      },
+    ),
   } satisfies __ExactMockModule<__TestMockModule4>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 const categoryId = '11111111-1111-4111-8111-111111111111';
 const typeId = '22222222-2222-4222-8222-222222222222';
@@ -58,6 +62,8 @@ describe(InstrumentInfoPanel, () => {
   });
 
   it('renders the hidden empty state and does not fetch lookup data when no instrument is selected', () => {
+    expect.hasAssertions();
+
     render(<InstrumentInfoPanel name='instrument' />);
 
     expect(
@@ -68,6 +74,8 @@ describe(InstrumentInfoPanel, () => {
   });
 
   it('shows default guidance and new-customer credit form when only a category is selected', () => {
+    expect.hasAssertions();
+
     render(
       <InstrumentInfoPanel
         name='instrument'
@@ -94,6 +102,8 @@ describe(InstrumentInfoPanel, () => {
   });
 
   it('loads and renders lookup resource links for a valid category and type', async () => {
+    expect.hasAssertions();
+
     let resolveInfoPanelContent: (
       value: Array<{ requirements: string; requirementsLink: string }>,
     ) => void;
@@ -132,18 +142,17 @@ describe(InstrumentInfoPanel, () => {
       name: /pattern approval evidence checklist/i,
     });
 
-    expect(requirementsLink).toHaveAttribute(
-      'href',
-      'https://example.test/pattern-approval-requirements',
-    );
-    expect(
-      screen.queryByText(/select an instrument category and type/i),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('link', {
+    expect({
+      requirementsHref: requirementsLink.getAttribute('href'),
+      guidance: screen.queryByText(/select an instrument category and type/i),
+      creditCheckLink: screen.queryByRole('link', {
         name: /download credit check application form/i,
       }),
-    ).not.toBeInTheDocument();
+    }).toEqual({
+      requirementsHref: 'https://example.test/pattern-approval-requirements',
+      guidance: null,
+      creditCheckLink: null,
+    });
 
     await waitFor(() =>
       expect(mocks.setAuthToken).toHaveBeenCalledWith('lookup-token'),
@@ -153,6 +162,8 @@ describe(InstrumentInfoPanel, () => {
   });
 
   it('keeps default guidance and skips the lookup for empty or invalid GUID selections', () => {
+    expect.hasAssertions();
+
     const { rerender } = render(
       <InstrumentInfoPanel
         name='instrument'
@@ -161,11 +172,18 @@ describe(InstrumentInfoPanel, () => {
       />,
     );
 
-    expect(screen.getByRole('alert')).toBeInTheDocument();
-    expect(
-      screen.getByText(/select an instrument category and type/i),
-    ).toBeInTheDocument();
-    expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
+    expect({
+      alert: screen.getByRole('alert').textContent,
+      guidance: screen.getByText(/select an instrument category and type/i)
+        .textContent,
+      calls: mocks.getInfoPanelContent.mock.calls,
+    }).toEqual({
+      alert: expect.any(String),
+      guidance: expect.stringMatching(
+        /select an instrument category and type/i,
+      ),
+      calls: [],
+    });
 
     rerender(
       <InstrumentInfoPanel
@@ -175,10 +193,17 @@ describe(InstrumentInfoPanel, () => {
       />,
     );
 
-    expect(screen.getByRole('alert')).toBeInTheDocument();
-    expect(
-      screen.getByText(/select an instrument category and type/i),
-    ).toBeInTheDocument();
-    expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
+    expect({
+      alert: screen.getByRole('alert').textContent,
+      guidance: screen.getByText(/select an instrument category and type/i)
+        .textContent,
+      calls: mocks.getInfoPanelContent.mock.calls,
+    }).toEqual({
+      alert: expect.any(String),
+      guidance: expect.stringMatching(
+        /select an instrument category and type/i,
+      ),
+      calls: [],
+    });
   });
 });

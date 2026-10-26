@@ -37,6 +37,7 @@ describe('googleAnalytics', () => {
 
   it('initializes ReactGA with configured tracking options and renders children', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     const { default: GoogleAnalytics } =
@@ -62,6 +63,7 @@ describe('googleAnalytics', () => {
 
   it('does not initialize ReactGA when it is already initialized', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     reactGaMock.isInitialized = true;
@@ -75,6 +77,7 @@ describe('googleAnalytics', () => {
 
   it('does not initialize ReactGA when no tracking ID is configured', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     const originalTrackingId = env.VITE_GA_TRACKINGID;
@@ -93,6 +96,7 @@ describe('googleAnalytics', () => {
 
   it('tracks click events with the default dashboard category', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     const { trackGAEvent } =
@@ -109,6 +113,7 @@ describe('googleAnalytics', () => {
 
   it('tracks click events with a custom category', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     const { trackGAEvent } =
@@ -125,6 +130,7 @@ describe('googleAnalytics', () => {
 
   it('tracks the current page path', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     globalThis.history.pushState({}, '', '/dashboard');
@@ -141,6 +147,7 @@ describe('googleAnalytics', () => {
 
   it('does not send sanitized PII event when no data-pii fields exist', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     const { trackGAPii } =
@@ -153,6 +160,7 @@ describe('googleAnalytics', () => {
 
   it('sends redacted PII field names when data-pii fields exist', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     document.body.innerHTML = `
@@ -188,6 +196,7 @@ describe('googleAnalytics', () => {
 
   it('logs original PII data to console.table when running on localhost', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     document.body.innerHTML = '<span data-pii="name">Alice</span>';
@@ -220,6 +229,7 @@ describe('googleAnalytics', () => {
 
   it('does not call console.table when hostname is not localhost', async () => {
     expect.hasAssertions();
+
     resetAnalyticsState();
 
     document.body.innerHTML = '<span data-pii="name">Bob</span>';

@@ -475,10 +475,11 @@ containing only individually justified, tested, and reviewed entries.
 
 ## Current Execution Status — 2026-10-26
 
-Phase 2 manifest generation is repaired and currently produces 6 batches with no
-batch larger than 25 files. The current diagnostics baseline contains 4,060
-warnings, zero errors, and 275 affected files; its dynamically rebaselined Phase
-2 target is 2,254 warnings. The manifest structural suite passes all 12 tests.
+Phase 2 manifest generation is repaired and currently produces 4 remaining
+batches with no batch larger than 25 files. The current diagnostics baseline
+contains 3,658 warnings, zero errors, and 99 remaining Phase 2 batch files; its
+dynamically rebaselined Phase 2 target is 2,246 warnings. The manifest
+structural suite passes all 12 tests.
 
 Typed-mock remediation has been split into small, independently verified slices.
 The previously completed slices in this continuation covered nine files:
@@ -505,14 +506,175 @@ reproducible from the current checkout. Their focused suites passed 21/21 and
 passed after each slice. The diagnostics report and Phase 2 manifest were
 regenerated after the second slice.
 
-The Phase 2 gate remains intentionally open: it reports 4,060 warnings against
-the dynamically rebaselined 2,254 target and still identifies
+The original Phase 2 batch-1 cohort was then remediated: 25 files, 179 Phase 2
+diagnostics, and 275 tests. The complete cohort suite passed 25/25 files and
+275/275 tests; the Phase 2-only lint gate, type-check, diagnostics tests, and
+remediation-gate tests also passed. Verification initially exposed six test
+failures and three type errors; targeted corrections resolved them before the
+final batch run. The regenerated report now contains 3,879 warnings and zero
+errors, with five Phase 2 batches and 124 files remaining.
+
+The next Phase 2 batch was remediated in this execution: 25 files and 215 Phase
+2 diagnostics (132 `vitest/prefer-expect-assertions`, 75
+`vitest/require-mock-type-parameters`, and 8 `vitest/max-expects`). The current
+report decreased from 3,879 to 3,658 warnings, with zero errors; the additional
+six-warning reduction came from the same touched files' later-phase diagnostics.
+The Phase 2-only ESLint check returned exit code 0 for all 25 files. Type-check,
+Prettier, diff checks, diagnostics tests (2/2), and remediation-gate tests
+(12/12) passed. The focused rerun of the three files affected by typed
+constructor/logging corrections passed 29/29 tests.
+
+The full explicit cohort Vitest run collected 22 test files and 153 tests: 21
+files passed with 151 tests passing, while two assertions in
+`tests/unit/config/vscodeProblemsConfig.test.ts` failed because the unchanged
+`.vscode/settings.json` lacks the expected `sonarlint.focusOnNewCode` keys.
+Those configuration assertions are outside this warning-remediation change and
+were not weakened or bypassed; they remain an open baseline issue.
+
+The Phase 2 gate remains intentionally open: it reports 3,658 warnings against
+the dynamically rebaselined 2,246 target and still identifies
 `vitest/max-expects`, `vitest/prefer-expect-assertions`, and
 `vitest/require-mock-type-parameters` as open closure rules. Full unit,
 Storybook, regression, E2E, and zero-warning validation remain outstanding.
 
 The roster check is now verified: `python scripts/roster.py verify` reports 17
 active agents, 19 active skills, and installed Codex project files.
+
+### Continuation update — 2026-10-26 (Phase 2 batch 1)
+
+The manifest-defined next Phase 2 batch was executed across 25 files. The
+pre-edit batch snapshot observed in-session contained 571 diagnostics. The
+batch's four Phase 2 closure rules were removed from all 25 files; the current
+diagnostics report contains zero findings for those rules in the batch files.
+The current repository-wide report contains 3,404 warnings and zero errors. The
+batch-file snapshot contains 573 diagnostics, including later-phase and
+non-closure diagnostics that remain outside this batch's acceptance scope.
+
+Evidence recorded for this batch:
+
+- Focused ESLint with `vitest/prefer-expect-assertions`,
+  `vitest/require-mock-type-parameters`, `vitest/max-expects`, and
+  `vitest/prefer-import-in-mock` as errors: exit code 0 for all 25 files.
+- `npm run type-check`: exit code 0.
+- Prettier check for all 25 files: exit code 0.
+- `git diff --check`: exit code 0.
+- Full explicit cohort Vitest run: 25/25 files and 339/339 tests passed.
+- `npm run test:lint:diagnostics`: 2/2 tests passed.
+- `npm run test:lint:remediation`: 12/12 tests passed.
+- `npm run lint:remediation:gate -- --phase phase-2`: not passed because the
+  manifest still represents the remaining Phase 2 batches; it expects the
+  phase-final 2,504-warning target while the current report has 3,404 warnings,
+  and the closure rules remain in later unprocessed batch files.
+
+The batch is therefore behaviorally and statically verified in isolation, but
+the Phase 2 closure gate remains open. Static `vi.mock` calls in partial mocks
+retain narrow local `vitest/prefer-import-in-mock` suppressions because the
+dynamic-import overload was incompatible with the existing partial factory
+types; this is an explicit residual maintainability risk, not an unverified
+claim that all mocks were converted.
+
+### Follow-up correction — 2026-10-26 (VS Code settings cohort failures)
+
+The two previously reported failures in
+`tests/unit/config/vscodeProblemsConfig.test.ts` were resolved. The root cause
+was a malformed `.vscode/settings.json` TypeScript language-scope block in the
+dirty worktree, together with the missing `sonarlint.focusOnNewCode` setting.
+The JSON structure was restored and the setting was added as `true`; the test
+assertions were not weakened.
+
+Verification evidence: the focused suite passed 9/9 tests, direct `JSON.parse`
+confirmed valid settings JSON and `focusOnNewCode: true`, `npm run type-check`
+passed, and `git diff --check` passed.
+
+### Continuation update — 2026-10-26 (Phase 2 batch 2)
+
+The manifest-defined Phase 2 batch 2 was executed across 25 files. The pre-edit
+snapshot contained 424 diagnostics, including 307 closure-rule diagnostics: 169
+`vitest/prefer-expect-assertions`, 74 `vitest/max-expects`, and 64
+`vitest/require-mock-type-parameters`. After the batch, the current batch
+contains zero findings for those three rules; its total snapshot is 394
+diagnostics.
+
+Evidence:
+
+- Focused ESLint for all 25 files, with the three target rules as errors:
+  exit 0.
+- `npm run type-check`: exit 0.
+- Prettier check for all 25 files: exit 0.
+- `git diff --check`: exit 0.
+- Batch Vitest: 25/25 files and 206/206 tests passed.
+- `npm run test:lint:diagnostics`: 2/2 tests passed.
+- `npm run test:lint:remediation`: 12/12 tests passed.
+- `npm run lint:diagnostics`: current report contains 3,375 warnings and 10
+  errors.
+- `npm run lint:remediation:gate -- --phase phase-2`: not passed; the report
+  contains 3,375 warnings versus the phase target of 2,504, 10 errors versus the
+  expected 0, and closure-rule findings remain in batch 3.
+
+At the time of batch 2 verification, the 10 repository-wide errors were outside
+that batch, in the already-modified
+`tests/unit/components/steppedNavigation.test.tsx`, and were preserved as
+pre-existing worktree issues. The batch was verified in isolation;
+repository-wide Phase 2 closure was not verified.
+
+### Continuation update — 2026-10-27 (Phase 2 batch 3)
+
+The manifest-defined Phase 2 batch 3 was executed across 24 files. The pre-edit
+batch snapshot contained 233 diagnostics, including all 189 remaining closure-
+rule diagnostics: 113 `vitest/prefer-expect-assertions`, 64
+`vitest/max-expects`, and 12 `vitest/require-mock-type-parameters`. After the
+batch, the current batch contains zero findings for those three rules and 61
+non-target diagnostics remain.
+
+Evidence:
+
+- Focused ESLint for all 24 files, with the three target rules as errors and
+  `--quiet`: exit 0.
+- `npm run type-check`: exit 0.
+- Prettier check for all 24 files: exit 0.
+- `git diff --check`: exit 0.
+- Batch Vitest: 24/24 files and 286/286 tests passed.
+- `npm run test:lint:diagnostics`: 2/2 tests passed.
+- `npm run test:lint:remediation`: 12/12 tests passed.
+- Final repository diagnostics: 3,167 warnings and 0 errors.
+- `npm run lint:remediation:gate -- --phase phase-2`: not passed; the report
+  contains 3,167 warnings versus the phase target of 2,504. No Phase 2 closure
+  rule residual was reported by the gate.
+
+The batch is verified in isolation. Full Phase 2 completion remains unverified
+because the repository still exceeds the phase warning target and retains
+non-target diagnostics for later remediation phases. The cohort Vitest run also
+reported the existing non-blocking Vite native-config warning about the missing
+`.ts` extension in `vitest.config.ts`.
+
+### Continuation update — 2026-10-27 (dynamic partial-mock adapter)
+
+The remaining narrow `vitest/prefer-import-in-mock` suppressions were removed
+from the 22-file partial-mock cohort. A typed
+`__DynamicPartialMockFactory<TModule>` adapter was added to the shared test mock
+types. The affected mocks now use dynamic `import(...)` module arguments, with
+the adapter providing the explicit type boundary required by Vitest's dynamic
+overload while preserving each factory's partial return value. One explicit
+`importOriginal<Record<string, unknown>>()` call was narrowed to the
+module-inferred `importOriginal()` form after type-checking identified the
+overload constraint.
+
+Evidence:
+
+- Focused ESLint with `vitest/prefer-import-in-mock` as an error: exit 0 for all
+  22 files.
+- Exact suppression-phrase search: zero matches in `tests`.
+- `npm run type-check`: exit 0.
+- Prettier check for the helper and all 22 affected files: exit 0.
+- `git diff --check`: exit 0.
+- Focused Vitest: 22/22 files and 283/283 tests passed.
+- Secret scan: no issues found for the helper, affected tests, and this plan.
+
+The adapter refactor is verified in isolation. Full Phase 2 completion remains
+unverified because the repository still contains the broader non-target
+diagnostic backlog and unrelated dirty-worktree changes. The focused Vitest run
+retained the non-blocking Vite native-config warning about the missing `.ts`
+extension in `vitest.config.ts`.
 
 ## Success Criteria
 

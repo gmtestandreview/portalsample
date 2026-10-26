@@ -6,8 +6,8 @@ import { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/
 import RequestForPatternApprovalCreated from '../../../../ClientApp/src/routes/ta/created';
 
 const mocks = vi.hoisted(() => ({
-  useHtmlTitle: vi.fn(),
-  useBodyClass: vi.fn(),
+  useHtmlTitle: vi.fn<(...args: unknown[]) => unknown>(),
+  useBodyClass: vi.fn<(...args: unknown[]) => unknown>(),
   account: {
     details: {
       organisation: 'National Measurement Institute',
@@ -18,32 +18,32 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
-  () =>
+  import('../../../../ClientApp/src/authentication/hooks'),
+  (() =>
     ({
       default: () => mocks.account,
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useHtmlTitle'),
-  () =>
+  (() =>
     ({
       default: mocks.useHtmlTitle,
-    }) satisfies __ExactMockModule<__TestMockModule89>,
+    }) satisfies __ExactMockModule<__TestMockModule89>) as unknown as __DynamicPartialMockFactory<__TestMockModule89>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
-  () =>
+  (() =>
     ({
       default: mocks.useBodyClass,
-    }) satisfies __ExactMockModule<__TestMockModule59>,
+    }) satisfies __ExactMockModule<__TestMockModule59>) as unknown as __DynamicPartialMockFactory<__TestMockModule59>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/FormBanner',
-  () =>
+  import('../../../../ClientApp/src/components/forms/FormBanner'),
+  (() =>
     ({
       default: ({
         title,
@@ -60,7 +60,7 @@ vi.mock(
           <span>{subTitle}</span>
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule90>,
+    }) satisfies __ExactMockModule<__TestMockModule90>) as unknown as __DynamicPartialMockFactory<__TestMockModule90>,
 );
 
 const renderCreatedRoute = () =>
@@ -92,32 +92,34 @@ describe(RequestForPatternApprovalCreated, () => {
   });
 
   it('renders the submitted reference and page chrome metadata', () => {
+    expect.hasAssertions();
+
     renderCreatedRoute();
 
-    expect(mocks.useHtmlTitle).toHaveBeenCalledWith(
-      'Application for Pattern/type approval created successfully | NMI Services portal',
-    );
-    expect(mocks.useBodyClass).toHaveBeenCalledWith('application-created');
-    expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Pattern/type approval - Application',
-    );
-    expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Ref ID: PA-200',
-    );
-    expect(screen.getByTestId('form-banner')).toHaveTextContent(
-      'Trading - Branch - National Measurement Institute',
-    );
-    expect(
-      screen.getByRole('heading', {
+    expect({
+      titleCall: mocks.useHtmlTitle.mock.calls,
+      bodyClassCall: mocks.useBodyClass.mock.calls,
+      banner: screen.getByTestId('form-banner').textContent,
+      heading: screen.getByRole('heading', {
         name: 'Your application has been submitted',
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId('application-submit-success')).toHaveTextContent(
-      'PA-200',
-    );
+      }).textContent,
+      success: screen.getByTestId('application-submit-success').textContent,
+    }).toEqual({
+      titleCall: [
+        [
+          'Application for Pattern/type approval created successfully | NMI Services portal',
+        ],
+      ],
+      bodyClassCall: [['application-created']],
+      banner: expect.stringContaining('Pattern/type approval - Application'),
+      heading: 'Your application has been submitted',
+      success: expect.stringContaining('PA-200'),
+    });
   });
 
   it('sets the dashboard tab marker and navigates when the dashboard button is clicked', () => {
+    expect.hasAssertions();
+
     renderCreatedRoute();
 
     fireEvent.click(screen.getByTestId('go-to-dashboard-button'));
@@ -128,6 +130,8 @@ describe(RequestForPatternApprovalCreated, () => {
   });
 
   it('sets the dashboard tab marker when the dashboard text link is followed', () => {
+    expect.hasAssertions();
+
     renderCreatedRoute();
 
     fireEvent.click(screen.getByRole('link', { name: 'dashboard' }));

@@ -71,6 +71,7 @@ const renderAutoSuggest = (
 describe('rhfAutoSuggest parent state', () => {
   it('loads options, reports no results and reports lookup failures', async () => {
     expect.hasAssertions();
+
     const getOptions = vi
       .fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
       .mockResolvedValueOnce(options)
@@ -108,6 +109,7 @@ describe('rhfAutoSuggest parent state', () => {
 
   it('does not search short terms and clears the selected option for an empty term', async () => {
     expect.hasAssertions();
+
     const onSelectedOption = vi
       .fn<SelectedOption>()
       .mockResolvedValue(undefined);
@@ -135,6 +137,7 @@ describe('rhfAutoSuggest parent state', () => {
 
   it('ignores stale responses after cancellation and restores the selected value', async () => {
     expect.hasAssertions();
+
     let resolveSearch: (
       options: AutoSuggestOption<string>[],
     ) => void = () => {};
@@ -167,6 +170,7 @@ describe('rhfAutoSuggest parent state', () => {
 
   it('ignores a stale failed response after cancellation', async () => {
     expect.hasAssertions();
+
     let rejectSearch: (error: Error) => void = () => {};
     const getOptions = vi.fn<
       (term: string) => Promise<AutoSuggestOption<string>[]>
@@ -196,6 +200,7 @@ describe('rhfAutoSuggest parent state', () => {
 
   it('updates loading around selection and reflects selectedOption changes', async () => {
     expect.hasAssertions();
+
     let resolveSelection: () => void = () => {};
     const onSelectedOption = vi.fn<SelectedOption>(
       () => new Promise<void>((resolve) => (resolveSelection = resolve)),

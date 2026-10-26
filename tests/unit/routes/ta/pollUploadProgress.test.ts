@@ -8,18 +8,22 @@ import {
   pollUploadProgress,
 } from '../../../../ClientApp/src/routes/ta/pollUploadProgress';
 
-const appLoggerError = vi.hoisted(() => vi.fn());
+const appLoggerError = vi.hoisted(() =>
+  vi.fn<(...args: unknown[]) => unknown>(),
+);
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: { error: appLoggerError },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const makeClient = () => {
-  const getProgress = vi.fn();
-  const deleteProgressStatistics = vi.fn().mockResolvedValue(undefined);
+  const getProgress = vi.fn<(...args: unknown[]) => unknown>();
+  const deleteProgressStatistics = vi
+    .fn<(...args: unknown[]) => unknown>()
+    .mockResolvedValue(undefined);
   const client = {
     getProgress,
     deleteProgressStatistics,
@@ -38,12 +42,14 @@ describe(pollUploadProgress, () => {
   });
 
   it('feeds each poll the previous percent and stops on completion', async () => {
+    expect.hasAssertions();
+
     const { client, getProgress, deleteProgressStatistics } = makeClient();
     getProgress
       .mockResolvedValueOnce({ percent: 40, status: 'InProgress' })
       .mockResolvedValueOnce({ percent: 100, status: 'Completed' });
-    const onProgress = vi.fn();
-    const onFinished = vi.fn();
+    const onProgress = vi.fn<(...args: unknown[]) => unknown>();
+    const onFinished = vi.fn<(...args: unknown[]) => unknown>();
     const { signal } = new AbortController();
 
     await pollUploadProgress({
@@ -63,18 +69,20 @@ describe(pollUploadProgress, () => {
   });
 
   it('treats CompletedWithErrors as finished', async () => {
+    expect.hasAssertions();
+
     const { client, getProgress } = makeClient();
     getProgress.mockResolvedValue({
       percent: 100,
       status: 'CompletedWithErrors',
     } satisfies UploadProgress);
-    const onFinished = vi.fn();
+    const onFinished = vi.fn<(...args: unknown[]) => unknown>();
 
     await pollUploadProgress({
       client,
       uploadId: 'u1',
       signal: new AbortController().signal,
-      onProgress: vi.fn(),
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
       onFinished,
     });
 
@@ -82,6 +90,8 @@ describe(pollUploadProgress, () => {
   });
 
   it('logs a failed statistics cleanup without rejecting', async () => {
+    expect.hasAssertions();
+
     const { client, getProgress, deleteProgressStatistics } = makeClient();
     getProgress.mockResolvedValue({ percent: 100, status: 'Completed' });
     deleteProgressStatistics.mockRejectedValue(new Error('gone'));
@@ -90,8 +100,8 @@ describe(pollUploadProgress, () => {
       client,
       uploadId: 'u1',
       signal: new AbortController().signal,
-      onProgress: vi.fn(),
-      onFinished: vi.fn(),
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
+      onFinished: vi.fn<(...args: unknown[]) => unknown>(),
     });
     await vi.advanceTimersByTimeAsync(0);
 
@@ -103,6 +113,8 @@ describe(pollUploadProgress, () => {
   });
 
   it('backs off then retries with the same percent after a failed poll', async () => {
+    expect.hasAssertions();
+
     const { client, getProgress } = makeClient();
     getProgress
       .mockResolvedValueOnce({ percent: 40, status: 'InProgress' })
@@ -113,8 +125,8 @@ describe(pollUploadProgress, () => {
       client,
       uploadId: 'u1',
       signal: new AbortController().signal,
-      onProgress: vi.fn(),
-      onFinished: vi.fn(),
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
+      onFinished: vi.fn<(...args: unknown[]) => unknown>(),
     });
 
     await vi.advanceTimersByTimeAsync(PROGRESS_RETRY_DELAY_MS - 1);
@@ -130,6 +142,8 @@ describe(pollUploadProgress, () => {
   });
 
   it('does not poll when already aborted', async () => {
+    expect.hasAssertions();
+
     const { client, getProgress } = makeClient();
     const controller = new AbortController();
     controller.abort();
@@ -138,14 +152,16 @@ describe(pollUploadProgress, () => {
       client,
       uploadId: 'u1',
       signal: controller.signal,
-      onProgress: vi.fn(),
-      onFinished: vi.fn(),
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
+      onFinished: vi.fn<(...args: unknown[]) => unknown>(),
     });
 
     expect(getProgress).not.toHaveBeenCalled();
   });
 
   it('exits without retrying when a failed poll was caused by abort', async () => {
+    expect.hasAssertions();
+
     const { client, getProgress } = makeClient();
     const controller = new AbortController();
     getProgress.mockImplementation(() => {
@@ -157,8 +173,8 @@ describe(pollUploadProgress, () => {
       client,
       uploadId: 'u1',
       signal: controller.signal,
-      onProgress: vi.fn(),
-      onFinished: vi.fn(),
+      onProgress: vi.fn<(...args: unknown[]) => unknown>(),
+      onFinished: vi.fn<(...args: unknown[]) => unknown>(),
     });
 
     expect(getProgress).toHaveBeenCalledExactlyOnceWith(

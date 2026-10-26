@@ -121,6 +121,7 @@ const sourceModeManifestPath = join(
 
 describe('storybook coverage manifest schema v1', () => {
   it('accepts a reviewed renderable record with a meaningful required state', () => {
+    expect.hasAssertions();
     expect(validateManifest(validManifest)).toEqual({
       ok: true,
       errors: [],
@@ -128,6 +129,7 @@ describe('storybook coverage manifest schema v1', () => {
   });
 
   it('rejects a non-v1 schema and unknown record fields', () => {
+    expect.hasAssertions();
     expect(
       validateManifest({
         ...validManifest,
@@ -155,6 +157,7 @@ describe('storybook coverage manifest schema v1', () => {
     'C:/absolute/path.tsx',
     'nested/../path.tsx',
   ])('rejects a non-relative source path: %s', (source) => {
+    expect.hasAssertions();
     expect(
       validateManifest({
         ...validManifest,
@@ -169,6 +172,8 @@ describe('storybook coverage manifest schema v1', () => {
 
 describe('recursive canonical source/export discovery', () => {
   it('finds nested declarations and canonicalises a pure re-export', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -194,6 +199,8 @@ describe('recursive canonical source/export discovery', () => {
   });
 
   it('records ambiguous extension resolution instead of guessing', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -220,6 +227,8 @@ describe('recursive canonical source/export discovery', () => {
   });
 
   it('records only the public default export for a named default declaration', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -239,6 +248,8 @@ describe('recursive canonical source/export discovery', () => {
   });
 
   it('preserves aliases and resolves extensionless .mts and .cts re-exports', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -275,6 +286,8 @@ describe('recursive canonical source/export discovery', () => {
   });
 
   it('does not treat an import-only module as a canonical export', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -296,6 +309,8 @@ describe('recursive canonical source/export discovery', () => {
   });
 
   it('canonicalises local imported re-exports and ignores package re-exports', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -325,6 +340,8 @@ describe('recursive canonical source/export discovery', () => {
   });
 
   it('limits discovery to component and route source trees', () => {
+    expect.hasAssertions();
+
     const result = discoverSourceExports({
       files: [
         {
@@ -353,6 +370,7 @@ describe('renderable evidence and claim validation', () => {
   it.each(['direct', 'consumer', 'forwarding'])(
     'accepts a meaningful required baseline for %s claims',
     (classification) => {
+      expect.hasAssertions();
       expect(
         validateManifest({
           ...validManifest,
@@ -363,6 +381,7 @@ describe('renderable evidence and claim validation', () => {
   );
 
   it('rejects an empty source inventory', () => {
+    expect.hasAssertions();
     expect(
       validateSourceClaims(
         { schemaVersion: 1, records: [] },
@@ -404,6 +423,7 @@ describe('renderable evidence and claim validation', () => {
       ],
     ],
   ])('rejects %s', (_label, states) => {
+    expect.hasAssertions();
     expect(
       validateManifest({
         ...validManifest,
@@ -418,6 +438,7 @@ describe('renderable evidence and claim validation', () => {
   });
 
   it('rejects duplicate canonical claims', () => {
+    expect.hasAssertions();
     expect(
       validateSourceClaims(
         { ...validManifest, records: [validRecord, validRecord] },
@@ -441,6 +462,8 @@ describe('renderable evidence and claim validation', () => {
   });
 
   it('rejects discovered exports that have no manifest claim', () => {
+    expect.hasAssertions();
+
     const result = validateSourceClaims(validManifest, {
       exports: [
         {
@@ -467,6 +490,7 @@ describe('renderable evidence and claim validation', () => {
   });
 
   it('rejects unresolved source/export claims', () => {
+    expect.hasAssertions();
     expect(
       validateSourceClaims(validManifest, {
         exports: [],
@@ -488,6 +512,7 @@ describe('renderable evidence and claim validation', () => {
   });
 
   it('rejects a claim supported only by an import edge', () => {
+    expect.hasAssertions();
     expect(
       validateSourceClaims(
         {
@@ -522,12 +547,14 @@ describe('renderable evidence and claim validation', () => {
 
 describe('guarded Storybook coverage CLI', () => {
   it('rejects duplicate JSON keys before parsing the document', () => {
+    expect.hasAssertions();
     expect(() =>
       coverageModule.parseJsonDocument('{"records": [], "records": []}'),
     ).toThrow(/duplicate manifest JSON key: records/u);
   });
 
   it('does not execute on module import and rejects invalid invocation stably', async () => {
+    expect.hasAssertions();
     expect(process.exitCode).toBeUndefined();
     expect(main(['--mode', 'unknown'])).toMatchObject({
       exitCode: 2,
@@ -536,6 +563,7 @@ describe('guarded Storybook coverage CLI', () => {
   });
 
   it('runs source mode from explicit inputs without importing application modules', async () => {
+    expect.hasAssertions();
     expect(
       main([
         '--mode',
@@ -551,6 +579,8 @@ describe('guarded Storybook coverage CLI', () => {
 
 describe('deterministic inventory generation', () => {
   it('renders sorted source rows and a count summary without runtime metadata', () => {
+    expect.hasAssertions();
+
     const result = generateInventory({
       manifest: {
         ...validManifest,
@@ -584,26 +614,34 @@ describe('deterministic inventory generation', () => {
       },
     });
 
-    expect(result).toMatchObject({ ok: true, errors: [] });
-    expect(result.regions?.components).toContain(
-      'ClientApp/src/components/Field.tsx#Field',
-    );
-    expect(result.regions?.routes).toContain(
-      'ClientApp/src/routes/Example.tsx#ExampleRoute',
-    );
-    expect(result.regions?.matrix).toContain('Renderable records: 3');
-    expect(result.regions?.matrix).not.toMatch(
-      /generatedAt|receiptId|timestamp/u,
-    );
-
     const componentRegion = result.regions?.components ?? '';
 
-    expect(componentRegion.indexOf('Field.tsx#Field')).toBeLessThan(
-      componentRegion.indexOf('Zed.tsx#Zed'),
+    expect({
+      result,
+      component: result.regions?.components,
+      route: result.regions?.routes,
+      matrix: result.regions?.matrix,
+      sorted:
+        componentRegion.indexOf('Field.tsx#Field') <
+        componentRegion.indexOf('Zed.tsx#Zed'),
+    }).toMatchObject({
+      result: { ok: true, errors: [] },
+      component: expect.stringContaining(
+        'ClientApp/src/components/Field.tsx#Field',
+      ),
+      route: expect.stringContaining(
+        'ClientApp/src/routes/Example.tsx#ExampleRoute',
+      ),
+      matrix: expect.stringContaining('Renderable records: 3'),
+      sorted: true,
+    });
+    expect(result.regions?.matrix).not.toMatch(
+      /generatedAt|receiptId|timestamp/u,
     );
   });
 
   it('refuses to generate regions from an invalid manifest', () => {
+    expect.hasAssertions();
     expect(
       generateInventory({ manifest: { schemaVersion: 2, records: [] } }),
     ).toMatchObject({

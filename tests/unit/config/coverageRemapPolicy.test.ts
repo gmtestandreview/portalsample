@@ -117,13 +117,17 @@ const allowedExactExclusions = new Set([
 
 describe('unit coverage denominator', () => {
   it('measures handwritten runtime source and the vite config', () => {
-    expect(coverage.include).toEqual([
+    expect.hasAssertions();
+
+    expect(coverage.include).toStrictEqual([
       'ClientApp/src/**/*.{ts,tsx}',
       'vite.config.mts',
     ]);
   });
 
   it('retains the 100% policy on all four metrics', () => {
+    expect.hasAssertions();
+
     expect(coverage.thresholds).toMatchObject({
       statements: 100,
       branches: 100,
@@ -133,6 +137,8 @@ describe('unit coverage denominator', () => {
   });
 
   it('excludes only reviewed generated, vendor, story, declaration and type-only files', () => {
+    expect.hasAssertions();
+
     for (const pattern of coverage.exclude ?? []) {
       expect(
         allowedExclusionCategories.some((category) => category.test(pattern)) ||
@@ -145,10 +151,14 @@ describe('unit coverage denominator', () => {
 
 describe('remap inputs', () => {
   it('loads the terms configuration as data', () => {
-    expect(termsConfig).toEqual({ TermsVersion: '1' });
+    expect.hasAssertions();
+
+    expect(termsConfig).toStrictEqual({ TermsVersion: '1' });
   });
 
   it('carries no removed Vitest 3 coverage.all option', () => {
+    expect.hasAssertions();
+
     // `all` was removed in Vitest 4; asserting it through a type escape claims
     // behaviour the runtime does not provide and reintroduces the JSON remap
     // path if it is ever honoured again.
@@ -157,6 +167,8 @@ describe('remap inputs', () => {
   });
 
   it('never admits JSON or other non-source assets to the denominator', () => {
+    expect.hasAssertions();
+
     // terms-config.json is imported by AccountProvider.tsx and
     // TermsAndCondition/index.tsx, so it is an executed module. It must still
     // never be measured or remapped.
@@ -169,14 +181,20 @@ describe('remap inputs', () => {
   });
 
   it('reports through providers that do not require an all-files sweep', () => {
+    expect.hasAssertions();
+
     expect(coverage.provider).toBe('v8');
     expect(coverage.reportsDirectory).toBe('./reports/coverage/unit');
   });
 
   it('limits Storybook coverage remapping to executable application source', () => {
+    expect.hasAssertions();
+
     expect(storybookCoverage.provider).toBe('v8');
-    expect(storybookCoverage.include).toEqual(['ClientApp/src/**/*.{ts,tsx}']);
-    expect(storybookCoverage.exclude).toEqual(
+    expect(storybookCoverage.include).toStrictEqual([
+      'ClientApp/src/**/*.{ts,tsx}',
+    ]);
+    expect(storybookCoverage.exclude).toStrictEqual(
       expect.arrayContaining([
         'ClientApp/src/api/web-api-client.ts',
         'ClientApp/src/external/**',

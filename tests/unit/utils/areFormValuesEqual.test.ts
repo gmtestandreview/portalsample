@@ -3,16 +3,22 @@ import { areFormValuesEqual } from '@/utils/areFormValuesEqual';
 
 describe(areFormValuesEqual, () => {
   it('compares primitive, null and undefined values', () => {
-    expect(areFormValuesEqual('same', 'same')).toBe(true);
-    expect(areFormValuesEqual('same', 'different')).toBe(false);
-    expect(areFormValuesEqual(null, null)).toBe(true);
-    expect(areFormValuesEqual(null, undefined)).toBe(false);
-    expect(areFormValuesEqual(undefined, undefined)).toBe(true);
-    expect(areFormValuesEqual(-0, 0)).toBe(true);
-    expect(areFormValuesEqual(Number.NaN, Number.NaN)).toBe(true);
+    expect.hasAssertions();
+
+    expect([
+      areFormValuesEqual('same', 'same'),
+      areFormValuesEqual('same', 'different'),
+      areFormValuesEqual(null, null),
+      areFormValuesEqual(null, undefined),
+      areFormValuesEqual(undefined, undefined),
+      areFormValuesEqual(-0, 0),
+      areFormValuesEqual(Number.NaN, Number.NaN),
+    ]).toStrictEqual([true, false, true, false, true, true, true]);
   });
 
   it('compares nested plain objects without depending on key order', () => {
+    expect.hasAssertions();
+
     expect(
       areFormValuesEqual(
         { first: 'one', nested: { second: 2, third: true } },
@@ -25,6 +31,8 @@ describe(areFormValuesEqual, () => {
   });
 
   it('compares arrays in order', () => {
+    expect.hasAssertions();
+
     expect(areFormValuesEqual([1, { name: 'one' }], [1, { name: 'one' }])).toBe(
       true,
     );
@@ -32,6 +40,8 @@ describe(areFormValuesEqual, () => {
   });
 
   it('compares Date values by their timestamp', () => {
+    expect.hasAssertions();
+
     expect(
       areFormValuesEqual(new Date('2026-01-01'), new Date('2026-01-01')),
     ).toBe(true);
@@ -44,6 +54,8 @@ describe(areFormValuesEqual, () => {
   });
 
   it('does not equate a Date with a non-Date value', () => {
+    expect.hasAssertions();
+
     expect(areFormValuesEqual(new Date('2026-01-01'), '2026-01-01')).toBe(
       false,
     );
@@ -53,11 +65,15 @@ describe(areFormValuesEqual, () => {
   });
 
   it('does not treat different value types as equal', () => {
+    expect.hasAssertions();
+
     expect(areFormValuesEqual(1, '1')).toBe(false);
     expect(areFormValuesEqual([], {})).toBe(false);
   });
 
   it('does not treat objects with a non-plain prototype as equal', () => {
+    expect.hasAssertions();
+
     class Point {
       constructor(public readonly x: number) {}
     }

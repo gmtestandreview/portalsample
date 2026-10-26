@@ -8,10 +8,13 @@ describe(SessionStorageCache, () => {
 
   describe('getItem', () => {
     it('returns undefined for a missing key', () => {
+      expect.hasAssertions();
       expect(SessionStorageCache().getItem('missing-key')).toBeUndefined();
     });
 
     it('returns the parsed value for a valid JSON entry', () => {
+      expect.hasAssertions();
+
       globalThis.sessionStorage.setItem('test-key', JSON.stringify({ id: 42 }));
 
       expect(SessionStorageCache().getItem<{ id: number }>('test-key')).toEqual(
@@ -20,6 +23,8 @@ describe(SessionStorageCache, () => {
     });
 
     it('returns undefined and removes the key for malformed JSON (fail-soft)', () => {
+      expect.hasAssertions();
+
       globalThis.sessionStorage.setItem('bad-key', 'not-json{{{');
       const result = SessionStorageCache().getItem('bad-key');
 
@@ -28,6 +33,8 @@ describe(SessionStorageCache, () => {
     });
 
     it('returns undefined for an empty string value', () => {
+      expect.hasAssertions();
+
       globalThis.sessionStorage.setItem('empty-key', '');
 
       expect(SessionStorageCache().getItem('empty-key')).toBeUndefined();
@@ -36,6 +43,8 @@ describe(SessionStorageCache, () => {
 
   describe('setItem', () => {
     it('stores a value as JSON-serialised string', () => {
+      expect.hasAssertions();
+
       SessionStorageCache().setItem({ name: 'Acme' }, 'org');
 
       expect(globalThis.sessionStorage.getItem('org')).toBe(
@@ -44,6 +53,8 @@ describe(SessionStorageCache, () => {
     });
 
     it('stored value is retrievable via getItem', () => {
+      expect.hasAssertions();
+
       SessionStorageCache().setItem([1, 2, 3], 'list');
 
       expect(SessionStorageCache().getItem<number[]>('list')).toEqual([
@@ -54,6 +65,8 @@ describe(SessionStorageCache, () => {
 
   describe('removeItem', () => {
     it('removes an existing key', () => {
+      expect.hasAssertions();
+
       globalThis.sessionStorage.setItem('to-remove', '"value"');
       SessionStorageCache().removeItem('to-remove');
 
@@ -61,12 +74,15 @@ describe(SessionStorageCache, () => {
     });
 
     it('does not throw when removing a non-existent key', () => {
+      expect.hasAssertions();
       expect(() => SessionStorageCache().removeItem('ghost-key')).not.toThrow();
     });
   });
 
   describe('clear', () => {
     it('removes all entries from sessionStorage', () => {
+      expect.hasAssertions();
+
       globalThis.sessionStorage.setItem('a', '"1"');
       globalThis.sessionStorage.setItem('b', '"2"');
       SessionStorageCache().clear();

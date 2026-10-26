@@ -75,6 +75,8 @@ const vitestExcludes = unitConfig.test?.coverage?.exclude ?? [];
 
 describe('sonar coverage denominator contract', () => {
   it('carries every Vitest coverage exclude into sonar.coverage.exclusions', () => {
+    expect.hasAssertions();
+
     const sonarCoverageExclusions = readSonarProperty(
       'sonar.coverage.exclusions',
     );
@@ -87,10 +89,12 @@ describe('sonar coverage denominator contract', () => {
     expect(
       missing,
       'these Vitest coverage excludes have no counterpart in sonar.coverage.exclusions, so SonarCloud measures files lcov does not',
-    ).toEqual([]);
+    ).toStrictEqual([]);
   });
 
   it('does not carry coverage carve-outs into sonar.exclusions', () => {
+    expect.hasAssertions();
+
     // sonar.exclusions removes files from analysis entirely. A coverage
     // carve-out must never be laundered through it.
     const sonarExclusions = readSonarProperty('sonar.exclusions');
@@ -104,10 +108,12 @@ describe('sonar coverage denominator contract', () => {
   });
 
   it('keeps the analysed sources aligned with the measured sources', () => {
+    expect.hasAssertions();
+
     const sources = readSonarProperty('sonar.sources');
 
-    expect(sources).toEqual(['ClientApp/src', 'vite.config.mts']);
-    expect(unitConfig.test?.coverage?.include).toEqual([
+    expect(sources).toStrictEqual(['ClientApp/src', 'vite.config.mts']);
+    expect(unitConfig.test?.coverage?.include).toStrictEqual([
       'ClientApp/src/**/*.{ts,tsx}',
       'vite.config.mts',
     ]);

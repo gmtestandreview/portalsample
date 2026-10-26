@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import SteppedNavigation from '@/components/SteppedNavigation';
 
-describe(SteppedNavigation, () => {
+describe('steppedNavigation', () => {
   const steps = [
     { title: 'Organisation', path: '/organisation', completed: true },
     { title: 'Contact', path: '/contact', completed: false },
@@ -10,6 +10,8 @@ describe(SteppedNavigation, () => {
   ];
 
   it('renders links for interactive completed and reachable prior steps', () => {
+    expect.hasAssertions();
+
     render(
       <SteppedNavigation
         activeStep={2}
@@ -33,6 +35,8 @@ describe(SteppedNavigation, () => {
   });
 
   it('renders the current step as non-interactive content', () => {
+    expect.hasAssertions();
+
     const { container } = render(
       <SteppedNavigation
         activeStep={1}
@@ -54,6 +58,8 @@ describe(SteppedNavigation, () => {
   });
 
   it('does not link future steps after the first incomplete step', () => {
+    expect.hasAssertions();
+
     render(
       <SteppedNavigation
         activeStep={0}
@@ -70,6 +76,8 @@ describe(SteppedNavigation, () => {
   });
 
   it('renders every non-current step as plain content when not interactive', () => {
+    expect.hasAssertions();
+
     render(
       <SteppedNavigation
         activeStep={1}
@@ -88,6 +96,8 @@ describe(SteppedNavigation, () => {
   });
 
   it('marks the current completed step with both current and completed classes', () => {
+    expect.hasAssertions();
+
     const allCompleteSteps = steps.map((step) => ({
       ...step,
       completed: true,

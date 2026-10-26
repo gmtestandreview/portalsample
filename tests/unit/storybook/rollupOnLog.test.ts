@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { onLog } from '../../../.storybook/rollupOnLog';
+import { onLog, type RollupLogHandler } from '../../../.storybook/rollupOnLog';
 
 describe('storybook rollup onLog filter', () => {
   it('suppresses vendor INVALID_ANNOTATION originating in node_modules', () => {
-    const handler = vi.fn();
+    expect.hasAssertions();
+
+    const handler = vi.fn<RollupLogHandler>();
 
     onLog(
       'warn',
@@ -20,7 +22,9 @@ describe('storybook rollup onLog filter', () => {
   });
 
   it('suppresses PLUGIN_TIMINGS regardless of message', () => {
-    const handler = vi.fn();
+    expect.hasAssertions();
+
+    const handler = vi.fn<RollupLogHandler>();
 
     onLog(
       'info',
@@ -32,7 +36,9 @@ describe('storybook rollup onLog filter', () => {
   });
 
   it('forwards a first-party INVALID_ANNOTATION untouched', () => {
-    const handler = vi.fn();
+    expect.hasAssertions();
+
+    const handler = vi.fn<RollupLogHandler>();
     const log = {
       code: 'INVALID_ANNOTATION',
       message:
@@ -45,7 +51,9 @@ describe('storybook rollup onLog filter', () => {
   });
 
   it('forwards an INVALID_ANNOTATION with no message (nullish path)', () => {
-    const handler = vi.fn();
+    expect.hasAssertions();
+
+    const handler = vi.fn<RollupLogHandler>();
     const log = { code: 'INVALID_ANNOTATION' };
 
     onLog('warn', log, handler);
@@ -60,7 +68,9 @@ describe('storybook rollup onLog filter', () => {
     { code: 'SOURCEMAP_ERROR', message: 'node_modules/x missing sourcemap' },
     {},
   ])('forwards other diagnostics untouched: %o', (log) => {
-    const handler = vi.fn();
+    expect.hasAssertions();
+
+    const handler = vi.fn<RollupLogHandler>();
 
     onLog('warn', log, handler);
 
@@ -68,7 +78,9 @@ describe('storybook rollup onLog filter', () => {
   });
 
   it('passes the level through unchanged', () => {
-    const handler = vi.fn();
+    expect.hasAssertions();
+
+    const handler = vi.fn<RollupLogHandler>();
     const log = { code: 'PLUGIN_ERROR', message: 'boom' };
 
     onLog('error', log, handler);

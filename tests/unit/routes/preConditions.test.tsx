@@ -18,127 +18,131 @@ let mockAccountDispatchAvailable = true;
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useIsAuthenticated: () => mockIsAuthenticated,
-      useMsal: vi.fn(() => ({
+      useMsal: vi.fn<(...args: unknown[]) => unknown>(() => ({
         inProgress: 'none',
         accounts: [],
         instance: {},
       })),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
-  () =>
+  import('../../../ClientApp/src/authentication/hooks'),
+  (() =>
     ({
       useAccountState: () => ({ details: mockAccountStateDetails }),
       useAccountDispatch: () =>
         mockAccountDispatchAvailable
           ? {
-              setAgree: vi.fn(),
-              setCompleted: vi.fn(),
-              setContactCompleted: vi.fn(),
-              setDefaultOrganisationId: vi.fn(),
-              setTargetOrganisation: vi.fn(),
-              setOrganisationAndBranch: vi.fn(),
-              setUserProfile: vi.fn(),
+              setAgree: vi.fn<(...args: unknown[]) => unknown>(),
+              setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+              setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+              setDefaultOrganisationId:
+                vi.fn<(...args: unknown[]) => unknown>(),
+              setTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+              setOrganisationAndBranch:
+                vi.fn<(...args: unknown[]) => unknown>(),
+              setUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
             }
           : undefined,
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Layout'),
-  () =>
+  (() =>
     ({
       default: ({ children }: any) => (
         <div data-testid='layout'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule110>,
+    }) satisfies __ExactMockModule<__TestMockModule110>) as unknown as __DynamicPartialMockFactory<__TestMockModule110>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/modals/TermsAndCondition'),
-  () =>
+  (() =>
     ({
       default: () => <div data-testid='terms-modal'>Terms Modal</div>,
-    }) satisfies __ExactMockModule<__TestMockModule111>,
+    }) satisfies __ExactMockModule<__TestMockModule111>) as unknown as __DynamicPartialMockFactory<__TestMockModule111>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/modals/BranchSelectorModal'),
-  () =>
+  (() =>
     ({
       default: () => (
         <div data-testid='branch-selector-modal'>Branch Selector Modal</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule112>,
+    }) satisfies __ExactMockModule<__TestMockModule112>) as unknown as __DynamicPartialMockFactory<__TestMockModule112>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/BranchSelectorModal/enums',
-  () =>
+  import('../../../ClientApp/src/components/modals/BranchSelectorModal/enums'),
+  (() =>
     ({
       BranchSelectionModalMode: {
         SelectAndEditOrg: 'SelectAndEditOrg',
         RFQSelectOrg: 'RFQSelectOrg',
       },
-    }) satisfies __ExactMockModule<__TestMockModule109>,
+    }) satisfies __ExactMockModule<__TestMockModule109>) as unknown as __DynamicPartialMockFactory<__TestMockModule109>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/modals/RFQDeleteModal'),
-  () =>
+  (() =>
     ({
       default: () => <div data-testid='rfq-delete-modal'>RFQ Delete Modal</div>,
-    }) satisfies __ExactMockModule<__TestMockModule113>,
+    }) satisfies __ExactMockModule<__TestMockModule113>) as unknown as __DynamicPartialMockFactory<__TestMockModule113>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/ModalContext',
-  () =>
+  import('../../../ClientApp/src/components/modals/ModalContext'),
+  (() =>
     ({
       ModalStateCtx: React.createContext(null),
       ModalDispatchCtx: React.createContext(null),
-      useModalState: vi.fn(),
-      useModalDispatch: vi.fn(),
-    }) satisfies __ExactMockModule<__TestMockModule27>,
+      useModalState: vi.fn<(...args: unknown[]) => unknown>(),
+      useModalDispatch: vi.fn<(...args: unknown[]) => unknown>(),
+    }) satisfies __ExactMockModule<__TestMockModule27>) as unknown as __DynamicPartialMockFactory<__TestMockModule27>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/routeChangeScrollTop'),
-  () =>
+  (() =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule44>,
+    }) satisfies __ExactMockModule<__TestMockModule44>) as unknown as __DynamicPartialMockFactory<__TestMockModule44>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/backToTopButton',
-  () =>
+  import('../../../ClientApp/src/components/Utilities/backToTopButton'),
+  (() =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule43>,
+    }) satisfies __ExactMockModule<__TestMockModule43>) as unknown as __DynamicPartialMockFactory<__TestMockModule43>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/routeAccessibleNavigation',
-  () =>
+  import('../../../ClientApp/src/components/Utilities/routeAccessibleNavigation'),
+  (() =>
     ({
       default: () => null,
-    }) satisfies __ExactMockModule<__TestMockModule114>,
+    }) satisfies __ExactMockModule<__TestMockModule114>) as unknown as __DynamicPartialMockFactory<__TestMockModule114>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/storage/notification'),
-  () =>
+  (() =>
     ({
-      clearDashboardNotification: vi.fn(),
-      getBranchModalNotification: vi.fn(() => undefined),
-    }) satisfies __ExactMockModule<__TestMockModule46>,
+      clearDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+      getBranchModalNotification: vi.fn<typeof getBranchModalNotification>(
+        () => undefined,
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule46>) as unknown as __DynamicPartialMockFactory<__TestMockModule46>,
 );
 
 // ── Fixtures ───────────────────────────────────────────────────────────────────

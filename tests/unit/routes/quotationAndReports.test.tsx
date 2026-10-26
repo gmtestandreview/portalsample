@@ -12,77 +12,89 @@ import type { AccountDetails } from '../../../ClientApp/src/authentication/accou
 import type * as WebApiClientModule from '../../../ClientApp/src/api/web-api-client';
 import type * as MsalBrowserModule from '@azure/msal-browser';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import type {
+  clearDashboardInfoNotification as ClearDashboardInfoNotification,
+  clearDashboardNotification as ClearDashboardNotification,
+  getDashboardInfoNotification as GetDashboardInfoNotification,
+  getDashboardNotification as GetDashboardNotification,
+  setDashboardInfoNotification as SetDashboardInfoNotification,
+  setDashboardNotification as SetDashboardNotification,
+} from '../../../ClientApp/src/storage/notification';
 import { ApplicationType } from '../../../ClientApp/src/api/web-api-client';
 import { QuoteStatus } from '../../../ClientApp/src/routes/common/enums';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  setAuthToken: vi.fn(),
-  getQuoteRequestDetailsByRefId: vi.fn(),
-  declineQuote: vi.fn(),
-  getDashboardInstrumentReports: vi.fn(),
-  appLoggerError: vi.fn(),
-  appLoggerVerbose: vi.fn(),
-  useAccountState: vi.fn(),
-  setTargetOrganisation: vi.fn(),
-  getDashboardNotification: vi.fn(),
-  getDashboardInfoNotification: vi.fn(),
-  clearDashboardNotification: vi.fn(),
-  clearDashboardInfoNotification: vi.fn(),
-  setDashboardNotification: vi.fn(),
-  setDashboardInfoNotification: vi.fn(),
-  openInternalRouteInNewTab: vi.fn(),
-  handleReportFileError: vi.fn(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  getQuoteRequestDetailsByRefId: vi.fn<(...args: unknown[]) => unknown>(),
+  declineQuote: vi.fn<(...args: unknown[]) => unknown>(),
+  getDashboardInstrumentReports: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerVerbose: vi.fn<(...args: unknown[]) => unknown>(),
+  useAccountState: vi.fn<(...args: unknown[]) => unknown>(),
+  setTargetOrganisation: vi.fn<(...args: unknown[]) => unknown>(),
+  getDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  getDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  clearDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  clearDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  setDashboardNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  setDashboardInfoNotification: vi.fn<(...args: unknown[]) => unknown>(),
+  openInternalRouteInNewTab: vi.fn<(...args: unknown[]) => unknown>(),
+  handleReportFileError: vi.fn<(...args: unknown[]) => unknown>(),
   sessionGetItem: vi.fn<() => string | null>(() => null),
-  sessionRemoveItem: vi.fn(),
+  sessionRemoveItem: vi.fn<(...args: unknown[]) => unknown>(),
   msalState: {
     inProgress: 'none',
     accounts: [{ homeAccountId: 'account-1' }],
-    instance: { acquireTokenSilent: vi.fn() },
+    instance: { acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>() },
   },
 }));
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => ({
         inProgress: mocks.msalState.inProgress,
         accounts: mocks.msalState.accounts,
         instance: mocks.msalState.instance,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
-vi.mock('@azure/msal-browser', async (importOriginal) => {
+vi.mock(import('@azure/msal-browser'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule3>>[0],
+) => {
   const actual = await importOriginal<typeof MsalBrowserModule>();
 
   return {
     ...actual,
     InteractionStatus: { None: 'none' },
   } satisfies __ExactMockModule<__TestMockModule3>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule3>);
 
 vi.mock(
-  '../../../ClientApp/src/authentication/hooks',
-  () =>
+  import('../../../ClientApp/src/authentication/hooks'),
+  (() =>
     ({
       useAccountState: mocks.useAccountState,
       useAccountDispatch: () => ({
         setTargetOrganisation: mocks.setTargetOrganisation,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
-vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
+vi.mock(import('../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -91,109 +103,119 @@ vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
       QuoteAccept: 'QuoteAccept',
       QuoteRequest: 'QuoteRequest',
     },
-    QuoteClient: vi.fn(function QuoteClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
-        declineQuote: mocks.declineQuote,
-      };
-    }),
-    DashboardClient: vi.fn(function DashboardClientMock() {
-      return {
-        setAuthToken: mocks.setAuthToken,
-        getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
-          mocks.getDashboardInstrumentReports,
-      };
-    }),
+    QuoteClient: vi.fn<(...args: unknown[]) => unknown>(
+      function QuoteClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getQuoteRequestDetailsByRefId: mocks.getQuoteRequestDetailsByRefId,
+          declineQuote: mocks.declineQuote,
+        };
+      },
+    ),
+    DashboardClient: vi.fn<(...args: unknown[]) => unknown>(
+      function DashboardClientMock() {
+        return {
+          setAuthToken: mocks.setAuthToken,
+          getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName:
+            mocks.getDashboardInstrumentReports,
+        };
+      },
+    ),
   } satisfies __ExactMockModule<__TestMockModule4>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../ClientApp/src/storage/notification'),
-  () =>
+  (() =>
     ({
-      getDashboardNotification: mocks.getDashboardNotification,
-      getDashboardInfoNotification: mocks.getDashboardInfoNotification,
-      clearDashboardNotification: mocks.clearDashboardNotification,
-      clearDashboardInfoNotification: mocks.clearDashboardInfoNotification,
-      setDashboardNotification: mocks.setDashboardNotification,
-      setDashboardInfoNotification: mocks.setDashboardInfoNotification,
-    }) satisfies __ExactMockModule<__TestMockModule46>,
+      getDashboardNotification:
+        mocks.getDashboardNotification as unknown as typeof GetDashboardNotification,
+      getDashboardInfoNotification:
+        mocks.getDashboardInfoNotification as unknown as typeof GetDashboardInfoNotification,
+      clearDashboardNotification:
+        mocks.clearDashboardNotification as unknown as typeof ClearDashboardNotification,
+      clearDashboardInfoNotification:
+        mocks.clearDashboardInfoNotification as unknown as typeof ClearDashboardInfoNotification,
+      setDashboardNotification:
+        mocks.setDashboardNotification as unknown as typeof SetDashboardNotification,
+      setDashboardInfoNotification:
+        mocks.setDashboardInfoNotification as unknown as typeof SetDashboardInfoNotification,
+    }) satisfies __ExactMockModule<__TestMockModule46>) as unknown as __DynamicPartialMockFactory<__TestMockModule46>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/types',
-  () =>
+  import('../../../ClientApp/src/storage/types'),
+  (() =>
     ({
       NotificationSeverity: {
         Error: 'error',
         Information: 'information',
       },
-    }) satisfies __ExactMockModule<__TestMockModule47>,
+    }) satisfies __ExactMockModule<__TestMockModule47>) as unknown as __DynamicPartialMockFactory<__TestMockModule47>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/sessionStorageCache',
-  () =>
+  import('../../../ClientApp/src/storage/sessionStorageCache'),
+  (() =>
     ({
       default: () => ({
         getItem: mocks.sessionGetItem,
         removeItem: mocks.sessionRemoveItem,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule72>,
+    }) satisfies __ExactMockModule<__TestMockModule72>) as unknown as __DynamicPartialMockFactory<__TestMockModule72>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useHtmlTitle'),
-  () =>
+  (() =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule89>,
+    }) satisfies __ExactMockModule<__TestMockModule89>) as unknown as __DynamicPartialMockFactory<__TestMockModule89>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/useBodyClass'),
-  () =>
+  (() =>
     ({
       default: () => {},
-    }) satisfies __ExactMockModule<__TestMockModule59>,
+    }) satisfies __ExactMockModule<__TestMockModule59>) as unknown as __DynamicPartialMockFactory<__TestMockModule59>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/BlockUISpinner'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <div data-testid='block-spinner'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>,
+    }) satisfies __ExactMockModule<__TestMockModule14>) as unknown as __DynamicPartialMockFactory<__TestMockModule14>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Breadcrumb'),
-  () =>
+  (() =>
     ({
       default: ({ breadcrumbs }: { breadcrumbs: { text: string }[] }) => (
         <nav data-testid='breadcrumb'>
           {breadcrumbs.map((item) => item.text).join(' > ')}
         </nav>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule115>,
+    }) satisfies __ExactMockModule<__TestMockModule115>) as unknown as __DynamicPartialMockFactory<__TestMockModule115>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/HeaderIntroText'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <p data-testid='header-intro'>{children}</p>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule76>,
+    }) satisfies __ExactMockModule<__TestMockModule76>) as unknown as __DynamicPartialMockFactory<__TestMockModule76>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Alert/NotificationMessage',
-  () =>
+  import('../../../ClientApp/src/components/Alert/NotificationMessage'),
+  (() =>
     ({
       default: ({
         message,
@@ -210,12 +232,12 @@ vi.mock(
           {message}
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule48>,
+    }) satisfies __ExactMockModule<__TestMockModule48>) as unknown as __DynamicPartialMockFactory<__TestMockModule48>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/modals/ConfirmationModal',
-  () =>
+  import('../../../ClientApp/src/components/modals/ConfirmationModal'),
+  (() =>
     ({
       default: ({
         isOpen,
@@ -239,12 +261,12 @@ vi.mock(
             </button>
           </div>
         ) : null,
-    }) satisfies __ExactMockModule<__TestMockModule23>,
+    }) satisfies __ExactMockModule<__TestMockModule23>) as unknown as __DynamicPartialMockFactory<__TestMockModule23>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms'),
-  () =>
+  (() =>
     ({
       default: ({
         prefixText,
@@ -258,42 +280,42 @@ vi.mock(
           {suffixText}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule116>,
+    }) satisfies __ExactMockModule<__TestMockModule116>) as unknown as __DynamicPartialMockFactory<__TestMockModule116>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Utilities/ViewPdfQuote'),
-  () =>
+  (() =>
     ({
       default: ({ text }: { text: string }) => (
         <button type='button'>{text}</button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule117>,
+    }) satisfies __ExactMockModule<__TestMockModule117>) as unknown as __DynamicPartialMockFactory<__TestMockModule117>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/ViewMeasurementReport',
-  () =>
+  import('../../../ClientApp/src/components/Utilities/ViewMeasurementReport'),
+  (() =>
     ({
       default: ({ text }: { text: string }) => (
         <button type='button'>{text}</button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule118>,
+    }) satisfies __ExactMockModule<__TestMockModule118>) as unknown as __DynamicPartialMockFactory<__TestMockModule118>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/mailingLabel',
-  () =>
+  import('../../../ClientApp/src/components/Utilities/mailingLabel'),
+  (() =>
     ({
       default: ({ quotationIdNum }: { quotationIdNum?: string }) => (
         <div data-testid='mailing-label'>{quotationIdNum}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule119>,
+    }) satisfies __ExactMockModule<__TestMockModule119>) as unknown as __DynamicPartialMockFactory<__TestMockModule119>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/Utilities/deliveryInstructions',
-  () =>
+  import('../../../ClientApp/src/components/Utilities/deliveryInstructions'),
+  (() =>
     ({
       default: ({
         deliveryInstructions,
@@ -302,32 +324,32 @@ vi.mock(
       }) => (
         <div data-testid='delivery-instructions'>{deliveryInstructions}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule120>,
+    }) satisfies __ExactMockModule<__TestMockModule120>) as unknown as __DynamicPartialMockFactory<__TestMockModule120>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Pill/QuoteStatusPill'),
-  () =>
+  (() =>
     ({
       default: ({ status }: { status: string }) => (
         <span data-testid='quote-status-pill'>{status}</span>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule121>,
+    }) satisfies __ExactMockModule<__TestMockModule121>) as unknown as __DynamicPartialMockFactory<__TestMockModule121>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Pill/StatusPill'),
-  () =>
+  (() =>
     ({
       default: ({ status }: { status: string }) => (
         <span data-testid='status-pill'>{status}</span>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule122>,
+    }) satisfies __ExactMockModule<__TestMockModule122>) as unknown as __DynamicPartialMockFactory<__TestMockModule122>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Pagination'),
-  () =>
+  (() =>
     ({
       default: ({
         currentPage,
@@ -347,12 +369,12 @@ vi.mock(
           Page {currentPage}
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule98>,
+    }) satisfies __ExactMockModule<__TestMockModule98>) as unknown as __DynamicPartialMockFactory<__TestMockModule98>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/components/InTextLink',
-  () =>
+  import('../../../ClientApp/src/components/InTextLink'),
+  (() =>
     ({
       default: ({
         children,
@@ -365,46 +387,45 @@ vi.mock(
           {children}
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule77>,
+    }) satisfies __ExactMockModule<__TestMockModule77>) as unknown as __DynamicPartialMockFactory<__TestMockModule77>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/components/Icons/ExternalLinkIcon'),
-  () =>
+  (() =>
     ({
       default: () => <span data-testid='external-link-icon' />,
-    }) satisfies __ExactMockModule<__TestMockModule78>,
+    }) satisfies __ExactMockModule<__TestMockModule78>) as unknown as __DynamicPartialMockFactory<__TestMockModule78>,
 );
 
 vi.mock(
   import('../../../ClientApp/src/routes/common/openWindow'),
-  () =>
+  (() =>
     ({
       openInternalRouteInNewTab: mocks.openInternalRouteInNewTab,
-    }) satisfies __ExactMockModule<__TestMockModule91>,
+    }) satisfies __ExactMockModule<__TestMockModule91>) as unknown as __DynamicPartialMockFactory<__TestMockModule91>,
 );
 
-vi.mock(
-  import('../../../ClientApp/src/routes/common/helperFunctions'),
-  async (importOriginal) => {
-    const actual = await importOriginal<typeof HelperFunctionsModule>();
+vi.mock(import('../../../ClientApp/src/routes/common/helperFunctions'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule9>>[0],
+) => {
+  const actual = await importOriginal<typeof HelperFunctionsModule>();
 
-    return {
-      ...actual,
-      handleReportFileError: mocks.handleReportFileError,
-    } satisfies __ExactMockModule<__TestMockModule9>;
-  },
-);
+  return {
+    ...actual,
+    handleReportFileError: mocks.handleReportFileError,
+  } satisfies __ExactMockModule<__TestMockModule9>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule9>);
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         error: mocks.appLoggerError,
         verbose: mocks.appLoggerVerbose,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const accountDetails = {

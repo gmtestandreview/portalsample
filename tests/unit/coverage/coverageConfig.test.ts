@@ -10,6 +10,8 @@ if (coverageConfig?.provider !== 'v8') {
 
 describe('unit coverage configuration', () => {
     it('keeps coverage config under test so Vitest applies it', () => {
+      expect.hasAssertions();
+
         expect(coverageConfig).toBeDefined();
         expect(coverageConfig.provider).toBe('v8');
         // `json` emits coverage-final.json, which retains the statement,
@@ -19,7 +21,7 @@ describe('unit coverage configuration', () => {
         // `lcov` is the only format SonarQube imports for TypeScript; dropping
         // it silently reports 0% coverage on SonarCloud, which reads as a real
         // regression rather than a missing file. See sonar-project.properties.
-        expect(coverageConfig.reporter).toEqual([
+        expect(coverageConfig.reporter).toStrictEqual([
             'text',
             'html',
             'json-summary',
@@ -30,6 +32,8 @@ describe('unit coverage configuration', () => {
     });
 
     it('still writes coverage evidence when the run is red', () => {
+      expect.hasAssertions();
+
         // Vitest defaults reportOnFailure to false, which writes no report at
         // all when any test fails - and it cleans the output directory first, so
         // a red run leaves nothing behind. The PR workflow uploads
@@ -41,14 +45,16 @@ describe('unit coverage configuration', () => {
     });
 
     it('measures editable handwritten source and excludes generated/vendor artifacts', () => {
+      expect.hasAssertions();
+
         // Vitest 4 removed `coverage.all`; the explicit include below is what
         // brings uncovered files into the report. See
         // tests/unit/config/coverageRemapPolicy.test.ts for the remap policy.
-        expect(coverageConfig.include).toEqual([
+        expect(coverageConfig.include).toStrictEqual([
             'ClientApp/src/**/*.{ts,tsx}',
             'vite.config.mts',
         ]);
-        expect(coverageConfig.exclude).toEqual(expect.arrayContaining([
+        expect(coverageConfig.exclude).toStrictEqual(expect.arrayContaining([
             '**/*.d.ts',
             'ClientApp/src/api/web-api-client.ts',
             'ClientApp/src/external/**',
@@ -101,7 +107,7 @@ describe('unit coverage configuration', () => {
         expect(coverageConfig.exclude).not.toContain(
             'ClientApp/src/**/setupTests.ts',
         );
-        expect(coverageConfig.exclude).not.toEqual(expect.arrayContaining([
+        expect(coverageConfig.exclude).not.toStrictEqual(expect.arrayContaining([
             'ClientApp/src/**/types.ts',
             'ClientApp/src/**/*Props.ts',
             'ClientApp/src/components/Inputs/NumberInput/types.ts',
@@ -110,7 +116,9 @@ describe('unit coverage configuration', () => {
     });
 
     it('fails the unit coverage gate below 100 percent', () => {
-        expect(coverageConfig.thresholds).toEqual({
+      expect.hasAssertions();
+
+        expect(coverageConfig.thresholds).toStrictEqual({
             statements: 100,
             branches: 100,
             functions: 100,

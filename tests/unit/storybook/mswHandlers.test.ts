@@ -41,6 +41,7 @@ afterAll(() => server.close());
 
 describe('storybook MSW handlers', () => {
   it('finds the lookup call sites it is supposed to cover', () => {
+    expect.hasAssertions();
     // Guards the enumeration itself: a regex that matched nothing would make
     // every case below vacuous.
     expect(requestedLookupTypes.length).toBeGreaterThanOrEqual(4);
@@ -48,13 +49,17 @@ describe('storybook MSW handlers', () => {
   });
 
   it('returns the shared services fixture', async () => {
+    expect.hasAssertions();
+
     const response = await fetch(apiUrl('/api/lookup/services'));
 
     expect(response.ok).toBe(true);
-    await expect(response.json()).resolves.toEqual(serviceResponses);
+    await expect(response.json()).resolves.toStrictEqual(serviceResponses);
   });
 
   it('answers the route-coverage API requests', async () => {
+    expect.hasAssertions();
+
     const requests: Array<{
       method: 'GET' | 'POST';
       path: string;
@@ -110,11 +115,11 @@ describe('storybook MSW handlers', () => {
       expect(response.status).toBe(200);
 
       if (request.path.includes('get-quote-request-details-byrefid')) {
-        expect(payload).toEqual(
+        expect(payload).toStrictEqual(
           expect.objectContaining({ crmQuoteRequestId: expect.any(String) }),
         );
       } else if (request.path.includes('/api/forms/accounts/')) {
-        expect(payload).toEqual(
+        expect(payload).toStrictEqual(
           expect.objectContaining({
             id: 1,
             stepValues: expect.objectContaining({
@@ -123,14 +128,14 @@ describe('storybook MSW handlers', () => {
           }),
         );
       } else if (request.path.includes('/api/contact/usercontact')) {
-        expect(payload).toEqual(
+        expect(payload).toStrictEqual(
           expect.objectContaining({
             contact: expect.objectContaining({ email: expect.any(String) }),
             formStepStatus: 'NotStarted',
           }),
         );
       } else if (request.path === '/api/application') {
-        expect(payload).toEqual(
+        expect(payload).toStrictEqual(
           expect.objectContaining({
             referenceId: expect.any(String),
             applicationType: JSON.parse(request.body ?? '{}').applicationType,
@@ -141,6 +146,8 @@ describe('storybook MSW handlers', () => {
   });
 
   it('fails closed for an unmapped application type', async () => {
+    expect.hasAssertions();
+
     const response = await fetch(apiUrl('/api/application'), {
       method: 'POST',
       body: JSON.stringify({ applicationType: 'NotARealApplicationType' }),
@@ -151,6 +158,8 @@ describe('storybook MSW handlers', () => {
   });
 
   it('fails closed for an unmapped quote application type', async () => {
+    expect.hasAssertions();
+
     const response = await fetch(
       apiUrl(
         '/api/quote/get-quote-request-details-byrefid?ApplicationType=NotARealApplicationType',
@@ -163,6 +172,8 @@ describe('storybook MSW handlers', () => {
   it.each(requestedLookupTypes)(
     'answers every lookup type application code requests: %s',
     async (lookupTypeName) => {
+      expect.hasAssertions();
+
       const lookupType =
         CRMLookupTypes[lookupTypeName as keyof typeof CRMLookupTypes];
       const lookupResponse = Object.entries(lookupResponsesByType)
@@ -174,11 +185,13 @@ describe('storybook MSW handlers', () => {
       const response = await fetch(url);
 
       expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toEqual(lookupResponse);
+      await expect(response.json()).resolves.toStrictEqual(lookupResponse);
     },
   );
 
   it('fails closed with 501 on an unmapped lookup type instead of falling through', async () => {
+    expect.hasAssertions();
+
     // Falling through reaches MSW's unhandled-request path, which is the exact
     // warning this handler set exists to remove. A 501 surfaces the missing
     // fixture inside the story that needs it.
@@ -193,6 +206,8 @@ describe('storybook MSW handlers', () => {
   it.each(['__proto__', 'constructor', 'toString'])(
     'fails closed with 501 for inherited object member %s',
     async (lookupType) => {
+      expect.hasAssertions();
+
       const url = apiUrl('/api/lookup');
       url.searchParams.set('LookupType', lookupType);
 

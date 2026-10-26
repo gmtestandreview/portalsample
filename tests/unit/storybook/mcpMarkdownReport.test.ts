@@ -3,6 +3,8 @@ import { parseMcpMarkdownReport } from '../../e2e/support/storybookMcpReport';
 
 describe(parseMcpMarkdownReport, () => {
   it('extracts passing stories and empty failure sections', () => {
+    expect.hasAssertions();
+
     const report = parseMcpMarkdownReport(`
 ## Passing Stories
 
@@ -29,6 +31,8 @@ describe(parseMcpMarkdownReport, () => {
   });
 
   it('retains failed story and diagnostic entries', () => {
+    expect.hasAssertions();
+
     const report = parseMcpMarkdownReport(`
 ## Passing Stories
 
@@ -58,6 +62,8 @@ describe(parseMcpMarkdownReport, () => {
   });
 
   it('reports missing sections instead of treating them as empty', () => {
+    expect.hasAssertions();
+
     const report = parseMcpMarkdownReport(`
 ## Passing Stories
 

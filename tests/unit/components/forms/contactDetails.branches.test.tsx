@@ -32,6 +32,7 @@ type ContactSubmit = (values: ContactFormValues) => void | Promise<void>;
 describe('contactDetails branch coverage', () => {
   it('renders all supplied labels in edit mode', () => {
     expect.hasAssertions();
+
     render(
       <Formik
         initialValues={{
@@ -61,6 +62,7 @@ describe('contactDetails branch coverage', () => {
 
   it('omits the empty-title fallback when a summary has a title', () => {
     expect.hasAssertions();
+
     render(
       <Formik
         initialValues={{

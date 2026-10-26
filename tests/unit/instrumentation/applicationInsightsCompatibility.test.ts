@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 
 describe('application Insights package compatibility', () => {
   it('constructs the React plugin with the web SDK', () => {
+    expect.hasAssertions();
+
     const reactPlugin = new ReactPlugin();
     const appInsights = new ApplicationInsights({
       config: {

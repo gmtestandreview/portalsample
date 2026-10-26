@@ -135,6 +135,8 @@ describe('workflow step components', () => {
   });
 
   it('renders request-for-quote organisation/contact inputs and opens the branch selector', async () => {
+    expect.hasAssertions();
+
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
     ).default;
@@ -160,6 +162,8 @@ describe('workflow step components', () => {
   }, 30_000);
 
   it('disables the branch selector until the branch answer is No', async () => {
+    expect.hasAssertions();
+
     mocks.formikValues['isCorrectBranchOrLocation'] = undefined;
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
@@ -177,6 +181,8 @@ describe('workflow step components', () => {
   }, 30_000);
 
   it('opens the branch selector with an empty request id when the route id is omitted', async () => {
+    expect.hasAssertions();
+
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
     ).default;
@@ -196,6 +202,8 @@ describe('workflow step components', () => {
   });
 
   it('renders request-for-quote instrument/request inputs and dependent lookup options', async () => {
+    expect.hasAssertions();
+
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
     ).default;
@@ -227,20 +235,24 @@ describe('workflow step components', () => {
       ),
     );
 
-    expect(mocks.setFieldValue).toHaveBeenCalledWith(
-      'instrumentOrArtefactType',
-      '',
-    );
-    expect(mocks.setFieldTouched).toHaveBeenCalledWith(
-      'instrumentOrArtefactType',
-      false,
-    );
-    expect(
-      screen.getByTestId('select-instrumentOrArtefactType'),
-    ).toHaveAttribute('data-readonly', 'true');
+    expect({
+      clearedValue: mocks.setFieldValue.mock.calls.some(
+        ([name, value]) => name === 'instrumentOrArtefactType' && value === '',
+      ),
+      touched: mocks.setFieldTouched.mock.calls.at(-1),
+      readonly: screen
+        .getByTestId('select-instrumentOrArtefactType')
+        .getAttribute('data-readonly'),
+    }).toStrictEqual({
+      clearedValue: true,
+      touched: ['instrumentOrArtefactType', false],
+      readonly: 'true',
+    });
   });
 
   it('keeps request-for-quote summary edit links available for both editable sections', async () => {
+    expect.hasAssertions();
+
     const RequestForQuoteSummary = (
       await import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary')
     ).default;
@@ -253,7 +265,7 @@ describe('workflow step components', () => {
 
     const editLinks = screen.getAllByTestId('edit-button');
 
-    expect(editLinks.map((link) => link.getAttribute('href'))).toEqual([
+    expect(editLinks.map((link) => link.getAttribute('href'))).toStrictEqual([
       '/request-for-quote/RFQ-1/organisation-and-contact',
       '/request-for-quote/RFQ-1/instrument-and-request',
     ]);
@@ -262,6 +274,8 @@ describe('workflow step components', () => {
   });
 
   it('initially disables instrument type for the no-measurement category', async () => {
+    expect.hasAssertions();
+
     mocks.formikValues['measurementCategory'] = 'no-measurement';
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
@@ -281,6 +295,8 @@ describe('workflow step components', () => {
   });
 
   it('uses an empty artefact option list when the initial measurement category is unavailable', async () => {
+    expect.hasAssertions();
+
     mocks.formikValues['measurementCategory'] = undefined;
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
@@ -304,6 +320,8 @@ describe('workflow step components', () => {
   });
 
   it('normalises missing lookup labels and ids and handles a regular category change', async () => {
+    expect.hasAssertions();
+
     mocks.getLookup.mockReset();
     mocks.getLookup
       .mockResolvedValueOnce([
@@ -348,6 +366,8 @@ describe('workflow step components', () => {
   });
 
   it('handles empty and null measurement category changes', async () => {
+    expect.hasAssertions();
+
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
     ).default;
@@ -374,6 +394,8 @@ describe('workflow step components', () => {
   });
 
   it('keeps instrument lookups loading when no MSAL account is available', async () => {
+    expect.hasAssertions();
+
     mocks.msalAccounts.length = 0;
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
@@ -390,6 +412,8 @@ describe('workflow step components', () => {
   });
 
   it('renders request-for-quote summary edit and submitted states', async () => {
+    expect.hasAssertions();
+
     const RequestForQuoteSummary = (
       await import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary')
     ).default;
@@ -422,6 +446,8 @@ describe('workflow step components', () => {
   });
 
   it('renders report recipient edit and summary address branches', async () => {
+    expect.hasAssertions();
+
     const ReportRecipient = (
       await import('../../../ClientApp/src/routes/acceptQuote/reportRecipient')
     ).default;
@@ -469,6 +495,8 @@ describe('workflow step components', () => {
   });
 
   it('renders delivery/return editable, no-delivery, and summary branches', async () => {
+    expect.hasAssertions();
+
     const DeliveryAndReturn = (
       await import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn')
     ).default;
@@ -508,6 +536,8 @@ describe('workflow step components', () => {
   });
 
   it('renders the editable no-delivery information variant', async () => {
+    expect.hasAssertions();
+
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
       acceptQuotePreInfo: { receiptAndDispatchNA: true },
     });
@@ -537,6 +567,8 @@ describe('workflow step components', () => {
   ])(
     'renders the %s return address summary',
     async (returnAddressType, expectedAddress) => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValueOnce({
         returnAddressType,
         returnAddress: {
@@ -575,6 +607,8 @@ describe('workflow step components', () => {
   );
 
   it('renders a return organisation name in the delivery summary', async () => {
+    expect.hasAssertions();
+
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
       returnAddressType: ReturnAddressTypeValues.BusinessAddress,
       returnOrganisationName: 'Return Organisation',
@@ -596,6 +630,8 @@ describe('workflow step components', () => {
   });
 
   it('logs delivery and lookup load failures', async () => {
+    expect.hasAssertions();
+
     mocks.getDeliveryAndReturn.mockRejectedValueOnce(
       new Error('delivery failed'),
     );
@@ -637,6 +673,8 @@ describe('workflow step components', () => {
   });
 
   it('renders payment details prepaid, postpaid, and summary contact sections', async () => {
+    expect.hasAssertions();
+
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
@@ -673,6 +711,8 @@ describe('workflow step components', () => {
   });
 
   it('logs payment and report recipient load failures', async () => {
+    expect.hasAssertions();
+
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('payment failed'));
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
@@ -714,6 +754,8 @@ describe('workflow step components', () => {
   });
 
   it('uses separate postal address details for report recipients', async () => {
+    expect.hasAssertions();
+
     mocks.getReportRecipient.mockResolvedValueOnce({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
       rfqOrganisation: {
@@ -743,6 +785,8 @@ describe('workflow step components', () => {
   });
 
   it('uses the street address as the delivery postal address when configured', async () => {
+    expect.hasAssertions();
+
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
       returnAddressType: ReturnAddressTypeValues.PostalAddress,
       rfqOrganisation: {
@@ -766,6 +810,8 @@ describe('workflow step components', () => {
   });
 
   it('renders summary-and-accept content and downloads quote terms', async () => {
+    expect.hasAssertions();
+
     mocks.dashboardNotification = { message: 'Saved draft', severity: 'info' };
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
@@ -783,9 +829,15 @@ describe('workflow step components', () => {
       ).toBeInTheDocument(),
     );
 
-    expect(screen.getByText('Saved draft')).toBeInTheDocument();
-    expect(screen.getByText('Alex Tester')).toBeInTheDocument();
-    expect(screen.getByText('Request Owner')).toBeInTheDocument();
+    expect({
+      savedDraft: screen.queryByText('Saved draft') !== null,
+      contactName: screen.queryByText('Alex Tester') !== null,
+      ownerLabel: screen.queryByText('Request Owner') !== null,
+    }).toStrictEqual({
+      savedDraft: true,
+      contactName: true,
+      ownerLabel: true,
+    });
 
     const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
     if (!termsButton) throw new Error('expected a Terms button to be rendered');
@@ -805,6 +857,8 @@ describe('workflow step components', () => {
   });
 
   it('sets the dashboard notification when quote terms download fails and renders submitted action', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteOfferPDFByQuoteID.mockRejectedValueOnce(
       new Error('download failed'),
     );
@@ -843,6 +897,8 @@ describe('workflow step components', () => {
   });
 
   it('downloads terms from the acceptance link', async () => {
+    expect.hasAssertions();
+
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
@@ -872,6 +928,8 @@ describe('workflow step components', () => {
   });
 
   it('does not open incomplete quote terms and renders sparse organisation alternatives', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteOfferPDFByQuoteID.mockResolvedValueOnce({
       fileData: 'pdf-data',
       mimeType: undefined,
@@ -906,8 +964,10 @@ describe('workflow step components', () => {
       expect(screen.getByText('Trading only')).toBeInTheDocument(),
     );
 
-    expect(screen.getByText('Level 2')).toBeInTheDocument();
-    expect(screen.getByText('Building A')).toBeInTheDocument();
+    expect({
+      level: screen.queryByText('Level 2') !== null,
+      building: screen.queryByText('Building A') !== null,
+    }).toStrictEqual({ level: true, building: true });
 
     const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
     if (!termsButton) throw new Error('expected a Terms button to be rendered');
@@ -942,6 +1002,8 @@ describe('workflow step components', () => {
   });
 
   it('logs summary-and-accept load failures', async () => {
+    expect.hasAssertions();
+
     mocks.getSummaryAndAccept.mockRejectedValueOnce(
       new Error('summary failed'),
     );

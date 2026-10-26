@@ -53,6 +53,7 @@ const expectTextAreaSubmittedErrorState = (input: HTMLElement) => {
 describe(RhfTextAreaInput, () => {
   it('renders a labelled textarea with defaults', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='Hello'>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -68,6 +69,7 @@ describe(RhfTextAreaInput, () => {
 
   it('shows an empty box for a nullish value', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -79,6 +81,7 @@ describe(RhfTextAreaInput, () => {
 
   it('applies optional attributes', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput
@@ -100,11 +103,13 @@ describe(RhfTextAreaInput, () => {
     expect(input).toHaveClass('extra');
     expect(input).toHaveAttribute('placeholder', 'Type');
     expect(input).toBeDisabled();
+
     expectTextAreaOptionalAttributes(input);
   });
 
   it('stores typed text, keeping line breaks', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -117,6 +122,7 @@ describe(RhfTextAreaInput, () => {
 
   it('strips supplementary-plane characters', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -131,6 +137,7 @@ describe(RhfTextAreaInput, () => {
 
   it('trims on blur', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -144,6 +151,7 @@ describe(RhfTextAreaInput, () => {
 
   it('leaves an already trimmed value alone on blur', async () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='Acme'>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -157,6 +165,7 @@ describe(RhfTextAreaInput, () => {
 
   it('turns a null value into an empty string on blur like the legacy twin', async () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' />
@@ -170,6 +179,7 @@ describe(RhfTextAreaInput, () => {
 
   it('shows a character counter that flags overflow', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -193,6 +203,7 @@ describe(RhfTextAreaInput, () => {
 
   it('marks the counter as within the maximum', async () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={10} />
@@ -207,6 +218,7 @@ describe(RhfTextAreaInput, () => {
 
   it('shows no counter without a positive maxCharacters', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={0} />
@@ -218,6 +230,7 @@ describe(RhfTextAreaInput, () => {
 
   it('counts a nullish value as zero', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue={null}>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={5} />
@@ -229,6 +242,7 @@ describe(RhfTextAreaInput, () => {
 
   it('links the inline help to the textarea', () => {
     expect.hasAssertions();
+
     render(
       <Harness>
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
@@ -244,6 +258,7 @@ describe(RhfTextAreaInput, () => {
 
   it('hides the error until submit, then shows it with accessibility wiring', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -262,11 +277,13 @@ describe(RhfTextAreaInput, () => {
       'notes-validation-msg',
     );
     expect(input).toHaveClass('is-invalid');
+
     expectTextAreaSubmittedErrorState(input);
   });
 
   it('shows the error once touched', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -282,6 +299,7 @@ describe(RhfTextAreaInput, () => {
 
   it('suppresses field level messages when asked', async () => {
     expect.hasAssertions();
+
     const form = createFormHandle<Values>();
     render(
       <Harness form={form} resolver={failingResolver}>
@@ -300,6 +318,7 @@ describe(RhfTextAreaInput, () => {
 
   it('renders a summary instead of an input', () => {
     expect.hasAssertions();
+
     render(
       <Harness defaultValue='Line'>
         <RhfTextAreaInput name='notes' label='Notes' isSummary />
@@ -312,6 +331,7 @@ describe(RhfTextAreaInput, () => {
 
   it('renders no label element for an empty label', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <Harness>
         <RhfTextAreaInput name='notes' label='' />

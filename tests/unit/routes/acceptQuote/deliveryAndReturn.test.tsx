@@ -16,9 +16,9 @@ import DeliveryAndReturn from '../../../../ClientApp/src/routes/acceptQuote/deli
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi
-    .fn()
+    .fn<() => Promise<{ accessToken: string }>>()
     .mockResolvedValue({ accessToken: 'mock-token' });
-  const getDeliveryAndReturn = vi.fn();
+  const getDeliveryAndReturn = vi.fn<() => Promise<unknown>>();
   const accounts = [{ homeAccountId: 'mock-id' }];
   const instance = { acquireTokenSilent };
   return { acquireTokenSilent, getDeliveryAndReturn, accounts, instance };
@@ -58,11 +58,11 @@ vi.mock(
   () =>
     ({
       AcceptQuoteClient: class {
-        setAuthToken = vi.fn();
+        setAuthToken = vi.fn<(token: string) => void>();
         getDeliveryAndReturn = mocks.getDeliveryAndReturn;
       },
       AccountsClient: class {
-        setAuthToken = vi.fn();
+        setAuthToken = vi.fn<(token: string) => void>();
       },
       Title: {
         Mr: 'Mr',
@@ -91,7 +91,10 @@ vi.mock(
   '../../../../ClientApp/src/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn() },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => void>(),
+        error: vi.fn<(...args: unknown[]) => void>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -162,6 +165,8 @@ describe(DeliveryAndReturn, () => {
   // 1. receiptAndDispatchNA = true ───────────────────────────────────────────
   describe('receiptAndDispatchNA=true', () => {
     it('shows the no-delivery message inside the info banner in form mode', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
@@ -184,6 +189,8 @@ describe(DeliveryAndReturn, () => {
     });
 
     it('shows the no-delivery alert panel in summary mode and hides the delivery section', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
@@ -207,6 +214,8 @@ describe(DeliveryAndReturn, () => {
   // 2. returnAddressType switch in summary mode ──────────────────────────────
   describe('returnAddressType address resolution in summary mode', () => {
     it('businessAddress renders the street address', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'BusinessAddress',
@@ -219,6 +228,8 @@ describe(DeliveryAndReturn, () => {
     });
 
     it('postalAddress with postalAddressSameAsStreetAddress=true falls back to street address', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         rfqOrganisation: {
@@ -235,6 +246,8 @@ describe(DeliveryAndReturn, () => {
     });
 
     it('postalAddress with postalAddressSameAsStreetAddress=false renders the postal address', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'PostalAddress',
@@ -247,6 +260,8 @@ describe(DeliveryAndReturn, () => {
     });
 
     it('renders no return address block when the address type is unset', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
       await waitFor(() =>
@@ -262,6 +277,8 @@ describe(DeliveryAndReturn, () => {
     });
 
     it('other renders the custom returnAddress', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'Other',
@@ -277,6 +294,8 @@ describe(DeliveryAndReturn, () => {
   // 3. Re-fetch on id change — regression test for the exhaustive-deps fix ──
   describe('re-fetch on id prop change', () => {
     it('calls the API again when id changes', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
       });
@@ -299,6 +318,8 @@ describe(DeliveryAndReturn, () => {
   // 4. API error — component must not crash ──────────────────────────────────
   describe('aPI error', () => {
     it('renders the info banner and does not crash when getDeliveryAndReturn rejects', async () => {
+      expect.hasAssertions();
+
       mocks.getDeliveryAndReturn.mockRejectedValue(new Error('Network error'));
       renderComponent();
       // Wait until the API call has been attempted — the effect has fired.

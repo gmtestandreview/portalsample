@@ -6,15 +6,17 @@ import { describe, expect, it, vi } from 'vitest';
 // live makes every story load reach out to js.monitor.azure.com.
 describe('storybook runtime env stubs', () => {
   it('disables Application Insights telemetry', async () => {
+    expect.hasAssertions();
+
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     vi.resetModules();
 
     await import('../../../.storybook/preview-setup');
 
-    const loadAppInsights = vi.fn();
-    const applicationInsightsCtor = vi.fn(function ApplicationInsights(this: {
-      loadAppInsights: () => void;
-    }) {
+    const loadAppInsights = vi.fn<() => void>();
+    const applicationInsightsCtor = vi.fn<
+      (this: { loadAppInsights: () => void }) => void
+    >(function ApplicationInsights(this: { loadAppInsights: () => void }) {
       this.loadAppInsights = loadAppInsights;
     });
     vi.doMock(
@@ -28,7 +30,7 @@ describe('storybook runtime env stubs', () => {
       '@microsoft/applicationinsights-react-js',
       () =>
         ({
-          ReactPlugin: vi.fn(function ReactPlugin() {}),
+          ReactPlugin: vi.fn<() => void>(function ReactPlugin() {}),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
 

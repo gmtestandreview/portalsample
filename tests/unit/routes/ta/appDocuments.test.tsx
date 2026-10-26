@@ -17,7 +17,7 @@ import { renderWithRouter } from '../../helpers/renderWithRouter';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 const clients = vi.hoisted(() => ({
@@ -48,57 +48,60 @@ const documentsStep = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
 
-    clients.patternApproval = createClientMockFor(
-      'getAppDocuments',
-      'addDocuments',
-      'commitAppDocuments',
-    );
-    clients.progress = createClientMockFor(
-      'getProgressUploadId',
-      'getProgress',
-      'deleteProgressStatistics',
-      'cancelFile',
-    );
+  clients.patternApproval = createClientMockFor(
+    'getAppDocuments',
+    'addDocuments',
+    'commitAppDocuments',
+  );
+  clients.progress = createClientMockFor(
+    'getProgressUploadId',
+    'getProgress',
+    'deleteProgressStatistics',
+    'cancelFile',
+  );
 
-    return webApiClientModuleMock(original, {
-      RequestForPatternApprovalClient: clients.patternApproval,
-      ProgressClient: clients.progress,
-    }) satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+  return webApiClientModuleMock(original, {
+    RequestForPatternApprovalClient: clients.patternApproval,
+    ProgressClient: clients.progress,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
-      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/rhfSupportingDocuments',
-  () =>
+  import('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments'),
+  (() =>
     ({
       default: (props: typeof documentsStep.props) => {
         documentsStep.props = props;
@@ -112,7 +115,7 @@ vi.mock(
           />
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule130>,
+    }) satisfies __ExactMockModule<__TestMockModule130>) as unknown as __DynamicPartialMockFactory<__TestMockModule130>,
 );
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
@@ -207,6 +210,8 @@ describe('application documents', () => {
 
   describe('loading existing documents', () => {
     it('fetches the application documents with an auth token', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
 
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
@@ -218,6 +223,8 @@ describe('application documents', () => {
     });
 
     it('offers a commit when at least one document is still unlocked', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
 
       expect(
@@ -226,6 +233,8 @@ describe('application documents', () => {
     });
 
     it('offers no commit when every document is locked', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
         appDocuments([document1({ documentLocked: true })]),
       );
@@ -238,6 +247,8 @@ describe('application documents', () => {
     });
 
     it('offers no commit when the application carries no documents', async () => {
+      expect.hasAssertions();
+
       // `?? false` covers a response with no documents array at all.
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue({
         form: {},
@@ -251,6 +262,8 @@ describe('application documents', () => {
     });
 
     it('blocks further upload once the application is complete', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
         appDocuments([document1()], { applicationStatus: 'Completed' }),
       );
@@ -264,6 +277,8 @@ describe('application documents', () => {
     });
 
     it('allows upload while the application is still open', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
 
       expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
@@ -273,6 +288,8 @@ describe('application documents', () => {
     });
 
     it('shows a spinner while the documents are loading', async () => {
+      expect.hasAssertions();
+
       let release: (value: unknown) => void = () => undefined;
       clients.patternApproval.methods.getAppDocuments.mockReturnValue(
         new Promise((resolve) => {
@@ -294,6 +311,8 @@ describe('application documents', () => {
     });
 
     it('logs a failed load and clears the spinner', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppDocuments.mockRejectedValue(
         new Error('docs down'),
       );
@@ -312,6 +331,8 @@ describe('application documents', () => {
     });
 
     it('does not fetch without a signed-in account', async () => {
+      expect.hasAssertions();
+
       signOut();
 
       await renderRoute();
@@ -322,6 +343,8 @@ describe('application documents', () => {
     });
 
     it('does not fetch without an application id', async () => {
+      expect.hasAssertions();
+
       await renderRoute('/ta/manage/documents', '/ta/manage/documents');
 
       expect(
@@ -332,6 +355,8 @@ describe('application documents', () => {
 
   describe('uploading attachments', () => {
     it('maps the returned documents and re-enables the commit', async () => {
+      expect.hasAssertions();
+
       clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
         appDocuments([document1({ documentLocked: true })]),
       );
@@ -368,6 +393,8 @@ describe('application documents', () => {
     });
 
     it('returns an empty list when the response carries no form', async () => {
+      expect.hasAssertions();
+
       // The same cast defect that was fixed in routes/ta/index.tsx lived here too, and here it
       // was worse: `attachments.some(...)` on the next line threw a TypeError that the catch
       // then logged as a document load failure, hiding the real cause.
@@ -386,6 +413,8 @@ describe('application documents', () => {
     });
 
     it('logs an upload failure', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.patternApproval.methods.addDocuments.mockRejectedValue(
         new Error('upload failed'),
@@ -403,6 +432,8 @@ describe('application documents', () => {
     });
 
     it('skips progress polling when no upload id is issued', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.progress.methods.getProgressUploadId.mockResolvedValue(undefined);
 
@@ -414,6 +445,8 @@ describe('application documents', () => {
     });
 
     it('hands the documents step an inert onUploadFiles stub', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
 
       await expect(
@@ -424,6 +457,8 @@ describe('application documents', () => {
 
   describe('progress polling', () => {
     it('stops once the upload completes and cleans up', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.progress.methods.getProgress
         .mockResolvedValueOnce({ percent: 30, status: 'InProgress' })
@@ -441,6 +476,8 @@ describe('application documents', () => {
     });
 
     it('also stops when the upload completes with errors', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.progress.methods.getProgress.mockResolvedValue({
         percent: 100,
@@ -459,6 +496,8 @@ describe('application documents', () => {
     });
 
     it('logs a failed cleanup', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.progress.methods.deleteProgressStatistics.mockRejectedValue(
         new Error('gone'),
@@ -478,6 +517,8 @@ describe('application documents', () => {
     });
 
     it('retries after a failed poll and still finishes', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.progress.methods.getProgress
         .mockRejectedValueOnce(new Error('poll blipped'))
@@ -502,6 +543,8 @@ describe('application documents', () => {
     }, 20000);
 
     it('abandons polling when the component unmounts mid-flight', async () => {
+      expect.hasAssertions();
+
       const { unmount } = await renderLoaded();
 
       let failPoll: (reason: Error) => void = () => undefined;
@@ -541,6 +584,8 @@ describe('application documents', () => {
 
   describe('cancelling a file', () => {
     it('does nothing before an upload has started', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
 
       await act(async () => {
@@ -551,6 +596,8 @@ describe('application documents', () => {
     });
 
     it('cancels the named file against the current upload', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
 
       await act(async () => {
@@ -567,6 +614,8 @@ describe('application documents', () => {
     });
 
     it('swallows a failed cancellation', async () => {
+      expect.hasAssertions();
+
       await renderLoaded();
       clients.progress.methods.cancelFile.mockRejectedValue(
         new Error('too late'),
@@ -586,6 +635,8 @@ describe('application documents', () => {
 
   describe('committing', () => {
     it('strips document bytes before sending the commit', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderLoaded();
 
@@ -607,6 +658,8 @@ describe('application documents', () => {
     });
 
     it('refetches the documents after a successful commit', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       await renderLoaded();
 
@@ -623,6 +676,8 @@ describe('application documents', () => {
     });
 
     it('reports a blocked commit distinctly', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       clients.patternApproval.methods.commitAppDocuments.mockRejectedValue({
         status: 403,
@@ -646,6 +701,8 @@ describe('application documents', () => {
     });
 
     it('reports a server error for a 5xx', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       clients.patternApproval.methods.commitAppDocuments.mockRejectedValue({
         status: 502,
@@ -663,6 +720,8 @@ describe('application documents', () => {
     });
 
     it('falls back to a generic message when the failure carries no status', async () => {
+      expect.hasAssertions();
+
       const user = userEvent.setup();
       clients.patternApproval.methods.commitAppDocuments.mockRejectedValue(
         new Error('network'),

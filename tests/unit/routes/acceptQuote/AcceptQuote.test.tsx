@@ -4,10 +4,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type * as ReactRouterModule from 'react-router';
 import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
-import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
+import type {
+  AccountDetails,
+  AccountStateContext,
+} from '../../../../ClientApp/src/authentication/accountContext';
+import type { NavigateFunction } from 'react-router';
 
 const mocks = vi.hoisted(() => {
-  const acquireTokenSilent = vi.fn();
+  const acquireTokenSilent = vi.fn<() => Promise<unknown>>();
   const instance = { acquireTokenSilent };
   return {
     acquireTokenSilent,
@@ -15,13 +19,13 @@ const mocks = vi.hoisted(() => {
     msalAccounts: [{ homeAccountId: 'account-1' }] as {
       homeAccountId: string;
     }[],
-    setAuthToken: vi.fn(),
-    getStepStatuses: vi.fn(),
-    getQuoteRequestDetails: vi.fn(),
-    appLoggerError: vi.fn(),
-    appLoggerVerbose: vi.fn(),
-    useAccountState: vi.fn(),
-    navigate: vi.fn(),
+    setAuthToken: vi.fn<(token: string) => void>(),
+    getStepStatuses: vi.fn<() => Promise<unknown>>(),
+    getQuoteRequestDetails: vi.fn<() => Promise<unknown>>(),
+    appLoggerError: vi.fn<(...args: unknown[]) => void>(),
+    appLoggerVerbose: vi.fn<(...args: unknown[]) => void>(),
+    useAccountState: vi.fn<() => AccountStateContext | null>(),
+    navigate: vi.fn<NavigateFunction>(),
   };
 });
 
@@ -40,7 +44,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
-    useNavigate: () => mocks.navigate,
+    useNavigate: () => mocks.navigate as unknown as NavigateFunction,
   } satisfies __ExactMockModule<__TestMockModule11>;
 });
 
@@ -66,13 +70,23 @@ vi.mock(
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
       ...actual,
-      AcceptQuoteClient: vi.fn(function AcceptQuoteClientMock() {
+      AcceptQuoteClient: vi.fn<
+        () => {
+          setAuthToken: typeof mocks.setAuthToken;
+          getStepStatuses: typeof mocks.getStepStatuses;
+        }
+      >(function AcceptQuoteClientMock() {
         return {
           setAuthToken: mocks.setAuthToken,
           getStepStatuses: mocks.getStepStatuses,
         };
       }),
-      QuoteClient: vi.fn(function QuoteClientMock() {
+      QuoteClient: vi.fn<
+        () => {
+          setAuthToken: typeof mocks.setAuthToken;
+          getQuoteRequestDetails: typeof mocks.getQuoteRequestDetails;
+        }
+      >(function QuoteClientMock() {
         return {
           setAuthToken: mocks.setAuthToken,
           getQuoteRequestDetails: mocks.getQuoteRequestDetails,
@@ -225,6 +239,8 @@ describe('acceptQuote container', () => {
   };
 
   it('shows the loading spinner while step statuses are being fetched', async () => {
+    expect.hasAssertions();
+
     mocks.getStepStatuses.mockReturnValue(new Promise(() => {})); // never resolves
     await renderAcceptQuote();
 
@@ -234,6 +250,8 @@ describe('acceptQuote container', () => {
   });
 
   it('renders the four-step WizardForm once step statuses resolve', async () => {
+    expect.hasAssertions();
+
     await renderAcceptQuote();
 
     await waitFor(() =>
@@ -242,13 +260,17 @@ describe('acceptQuote container', () => {
 
     expect(screen.queryByTestId('block-spinner')).not.toBeInTheDocument();
     expect(screen.getAllByTestId('wizard-step')).toHaveLength(4);
-    expect(screen.getByTestId('step-report-recipient')).toBeInTheDocument();
-    expect(screen.getByTestId('step-delivery-and-return')).toBeInTheDocument();
-    expect(screen.getByTestId('step-payment-details')).toBeInTheDocument();
-    expect(screen.getByTestId('step-summary-and-accept')).toBeInTheDocument();
+    expect([
+      screen.getByTestId('step-report-recipient'),
+      screen.getByTestId('step-delivery-and-return'),
+      screen.getByTestId('step-payment-details'),
+      screen.getByTestId('step-summary-and-accept'),
+    ]).toHaveLength(4);
   });
 
   it('fetches quote request details using the crmQuoteRequestId from step statuses', async () => {
+    expect.hasAssertions();
+
     await renderAcceptQuote();
 
     await waitFor(() =>
@@ -259,6 +281,8 @@ describe('acceptQuote container', () => {
   });
 
   it('navigates to /not-found and logs when getStepStatuses rejects', async () => {
+    expect.hasAssertions();
+
     mocks.getStepStatuses.mockRejectedValue(new Error('network error'));
     await renderAcceptQuote();
 
@@ -274,6 +298,8 @@ describe('acceptQuote container', () => {
   });
 
   it('navigates to /not-found and skips quote details when no step statuses are returned', async () => {
+    expect.hasAssertions();
+
     mocks.getStepStatuses.mockResolvedValue([]);
     await renderAcceptQuote();
 
@@ -292,6 +318,8 @@ describe('acceptQuote container', () => {
   });
 
   it('navigates to /not-found and logs when getQuoteRequestDetails rejects', async () => {
+    expect.hasAssertions();
+
     mocks.getQuoteRequestDetails.mockRejectedValue(
       new Error('quote details error'),
     );
@@ -309,6 +337,8 @@ describe('acceptQuote container', () => {
   });
 
   it('stays on the loading spinner and does not call the API when no MSAL account is present', async () => {
+    expect.hasAssertions();
+
     mocks.msalAccounts.length = 0;
     await renderAcceptQuote();
 

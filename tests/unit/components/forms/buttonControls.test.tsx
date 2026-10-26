@@ -22,6 +22,7 @@ function ValuesProbe() {
 describe('form button controls', () => {
   it('renders SaveAndExitButton default text and submits after click', async () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
@@ -50,6 +51,7 @@ describe('form button controls', () => {
 
   it('renders SaveAndExitButton via render prop', async () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
@@ -73,6 +75,7 @@ describe('form button controls', () => {
 
   it('renders SubmitFormButton default text and submits after click', async () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper
@@ -101,6 +104,7 @@ describe('form button controls', () => {
 
   it('renders SubmitFormButton via render prop', async () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<ButtonSubmit>();
     render(
       <FormikWrapper

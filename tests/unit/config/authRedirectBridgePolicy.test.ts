@@ -49,6 +49,8 @@ afterEach(() => {
 
 describe('mSAL redirect bridge policy', () => {
   it('accepts a title-only page with one relative bridge script', async () => {
+    expect.hasAssertions();
+
     const result = await runVerifier('--dist', createDist(validBridge));
 
     expect(result.status).toBe(0);
@@ -78,6 +80,8 @@ describe('mSAL redirect bridge policy', () => {
       ),
     ],
   ])('rejects %s', async (_description, html) => {
+    expect.hasAssertions();
+
     const result = await runVerifier('--dist', createDist(html));
 
     expect(result.status).toBe(1);
@@ -85,6 +89,8 @@ describe('mSAL redirect bridge policy', () => {
   });
 
   it('rejects a URL with a query or fragment before fetching it', async () => {
+    expect.hasAssertions();
+
     const result = await runVerifier(
       '--url',
       'http://127.0.0.1:3000/redirect.html?code=secret',
@@ -95,6 +101,8 @@ describe('mSAL redirect bridge policy', () => {
   });
 
   it('requires no-store, exact CSP, and no COOP on the served bridge', async () => {
+    expect.hasAssertions();
+
     const server = createServer((_request, response) => {
       response.writeHead(200, {
         'cache-control': 'public, max-age=60',

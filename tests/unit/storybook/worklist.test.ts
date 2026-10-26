@@ -29,6 +29,8 @@ const worklistModule =
 
 describe('storybook coverage worklist', () => {
   it('uses declaration-aware discovery and emits a deterministic reviewed queue', () => {
+    expect.hasAssertions();
+
     const input = {
       files: [
         {
@@ -65,8 +67,8 @@ describe('storybook coverage worklist', () => {
       candidateFiles: [...(input.candidateFiles ?? [])].reverse(),
     });
 
-    expect(first).toEqual(second);
-    expect(first.worklist).toEqual([
+    expect(first).toStrictEqual(second);
+    expect(first.worklist).toStrictEqual([
       {
         source: 'ClientApp/src/components/Button.tsx',
         export: 'Button',
@@ -88,7 +90,7 @@ describe('storybook coverage worklist', () => {
         status: 'needs-review',
       },
     ]);
-    expect(first.summary).toEqual({
+    expect(first.summary).toStrictEqual({
       categoryCounts: {
         direct: 1,
         consumer: 0,
@@ -115,6 +117,8 @@ describe('storybook coverage worklist', () => {
   });
 
   it('keeps unresolved discovery explicit and does not convert it into a claim', () => {
+    expect.hasAssertions();
+
     const result = worklistModule.buildWorklist({
       files: [
         {
@@ -124,7 +128,7 @@ describe('storybook coverage worklist', () => {
       ],
     });
 
-    expect(result.worklist).toEqual([
+    expect(result.worklist).toStrictEqual([
       {
         source: 'ClientApp/src/components/index.ts',
         export: 'Missing',

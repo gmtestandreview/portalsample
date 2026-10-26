@@ -42,6 +42,7 @@ const contactOptions = [
 describe(CheckboxGroup, () => {
   it('renders vertical options with plain inline help and validation feedback', () => {
     expect.hasAssertions();
+
     render(
       <FormikHarness
         initialValues={{ contactMethod: '' }}
@@ -103,6 +104,7 @@ describe(CheckboxGroup, () => {
 
   it('renders titled help, horizontal options, and forwards option changes', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onChange = vi.fn<CheckboxChange>();
 
@@ -142,6 +144,7 @@ describe(CheckboxGroup, () => {
 
   it('omits describedby when there is no inline help or validation message', () => {
     expect.hasAssertions();
+
     render(
       <FormikHarness initialValues={{ contactMethod: '' }}>
         <CheckboxGroup
@@ -159,6 +162,7 @@ describe(CheckboxGroup, () => {
 
   it('renders the selected option label in summary mode', () => {
     expect.hasAssertions();
+
     render(
       <FormikHarness initialValues={{ contactMethod: 'sms' }}>
         <CheckboxGroup
@@ -179,6 +183,7 @@ describe(CheckboxGroup, () => {
 
   it('renders nothing in summary mode when the field is empty', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <FormikHarness initialValues={{ contactMethod: '' }}>
         <CheckboxGroup
@@ -196,6 +201,7 @@ describe(CheckboxGroup, () => {
 
   it('renders nothing in summary mode when the selected field value is unmatched', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <FormikHarness initialValues={{ contactMethod: 'fax' }}>
         <CheckboxGroup

@@ -166,7 +166,5 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
 ) {
-  main().then((exitCode) => {
-    process.exitCode = exitCode;
-  });
+  process.exitCode = await main();
 }

@@ -63,24 +63,30 @@ const makeAdapters = (overrides: Record<string, unknown> = {}) => {
     observedChildEpoch: { pid: 101, createdAt: '2026-10-19T00:00:01.000Z' },
   };
   const adapters = {
-    resolveTarget: vi.fn(() => ({
+    resolveTarget: vi.fn<(...args: unknown[]) => unknown>(() => ({
       baseURL: 'http://localhost:6007',
       mcpURL: 'http://localhost:6007/mcp',
       command: 'storybook',
       webServer: undefined,
     })),
-    assertOwnedPaths: vi.fn(async () => calls.push('paths')),
-    acquireFreeze: vi.fn(async () => {
+    assertOwnedPaths: vi.fn<(...args: unknown[]) => unknown>(async () =>
+      calls.push('paths'),
+    ),
+    acquireFreeze: vi.fn<(...args: unknown[]) => unknown>(async () => {
       calls.push('freeze');
       return freeze;
     }),
-    releaseFreeze: vi.fn(async () => calls.push('release-freeze')),
-    establishProducer: vi.fn(async () => {
+    releaseFreeze: vi.fn<(...args: unknown[]) => unknown>(async () =>
+      calls.push('release-freeze'),
+    ),
+    establishProducer: vi.fn<(...args: unknown[]) => unknown>(async () => {
       calls.push('producer');
       return producer;
     }),
-    stopOwnedServer: vi.fn(async () => calls.push('stop-server')),
-    runGate: vi.fn(async (gate: string) => {
+    stopOwnedServer: vi.fn<(...args: unknown[]) => unknown>(async () =>
+      calls.push('stop-server'),
+    ),
+    runGate: vi.fn<(gate: string) => Promise<Gate>>(async (gate: string) => {
       calls.push(gate);
       return {
         name: gate,
@@ -90,9 +96,13 @@ const makeAdapters = (overrides: Record<string, unknown> = {}) => {
         freezeId: freeze.freezeId,
       } satisfies Gate;
     }),
-    assertStableIdentity: vi.fn(async () => undefined),
-    writeAwaitingMcp: vi.fn(async () => calls.push('awaiting-mcp')),
-    produceMcpReceipts: vi.fn(async () => {
+    assertStableIdentity: vi.fn<(...args: unknown[]) => unknown>(
+      async () => undefined,
+    ),
+    writeAwaitingMcp: vi.fn<(...args: unknown[]) => unknown>(async () =>
+      calls.push('awaiting-mcp'),
+    ),
+    produceMcpReceipts: vi.fn<(...args: unknown[]) => unknown>(async () => {
       calls.push('mcp-receipts');
       return {
         freezeId: freeze.freezeId,
@@ -100,17 +110,32 @@ const makeAdapters = (overrides: Record<string, unknown> = {}) => {
         receiptFiles: ['receipt-cold.json', 'receipt-warm.json'],
       };
     }),
-    readReceipt: vi.fn(async () => receipt),
-    normalizeReceipt: vi.fn(({ value }: { value: typeof receipt }) => ({
+    readReceipt: vi.fn<(...args: unknown[]) => unknown>(async () => receipt),
+    normalizeReceipt: vi.fn<
+      (input: { value: typeof receipt }) => {
+        ok: true;
+        receipt: typeof receipt;
+      }
+    >(({ value }: { value: typeof receipt }) => ({
       ok: true,
       receipt: value,
     })),
-    observeChildEpoch: vi.fn(
+    observeChildEpoch: vi.fn<
+      (input: {
+        receipt: typeof receipt;
+      }) => Promise<typeof receipt.observedChildEpoch>
+    >(
       async ({ receipt: observedReceipt }: { receipt: typeof receipt }) =>
         observedReceipt.observedChildEpoch,
     ),
-    validateFreezeRecord: vi.fn(() => ({ ok: true, errors: [] })),
-    validateProducerIdentity: vi.fn(() => ({ ok: true, errors: [] })),
+    validateFreezeRecord: vi.fn<(...args: unknown[]) => unknown>(() => ({
+      ok: true,
+      errors: [],
+    })),
+    validateProducerIdentity: vi.fn<(...args: unknown[]) => unknown>(() => ({
+      ok: true,
+      errors: [],
+    })),
     ...overrides,
   };
 
@@ -127,6 +152,8 @@ const options = {
 
 describe('runClosure', () => {
   it('runs gates in order, validates the native handoff, and cleans up', async () => {
+    expect.hasAssertions();
+
     const { adapters, calls, freeze, producer } = makeAdapters();
 
     const result = await moduleUnderTest.runClosure(options, adapters);
@@ -185,8 +212,10 @@ describe('runClosure', () => {
   });
 
   it('fails before qualifying gates when the handoff is stale', async () => {
+    expect.hasAssertions();
+
     const { adapters, calls } = makeAdapters({
-      produceMcpReceipts: vi.fn(async () => ({
+      produceMcpReceipts: vi.fn<(...args: unknown[]) => unknown>(async () => ({
         freezeId: 'old-freeze',
         producerId: 'producer-1',
         receiptFiles: ['receipt-cold.json'],
@@ -223,8 +252,10 @@ describe('runClosure', () => {
   });
 
   it('fails closed when a pre-freeze gate is reported', async () => {
+    expect.hasAssertions();
+
     const { adapters, calls } = makeAdapters({
-      runGate: vi.fn(async (gate: string) => ({
+      runGate: vi.fn<(gate: string) => Promise<Gate>>(async (gate: string) => ({
         name: gate,
         ok: gate !== 'gate-3-unit',
         inputDigest: 'sha256:inputs',
@@ -255,15 +286,17 @@ describe('runClosure', () => {
   });
 
   it('surfaces cleanup failures even after an earlier gate failure', async () => {
+    expect.hasAssertions();
+
     const { adapters } = makeAdapters({
-      runGate: vi.fn(async (gate: string) => ({
+      runGate: vi.fn<(gate: string) => Promise<Gate>>(async (gate: string) => ({
         name: gate,
         ok: gate !== 'gate-3-unit',
         inputDigest: 'sha256:inputs',
         producerIdentityDigest: 'sha256:producer',
         freezeId: 'freeze-1',
       })),
-      releaseFreeze: vi.fn(async () => {
+      releaseFreeze: vi.fn<(...args: unknown[]) => unknown>(async () => {
         throw new Error('ACL restoration failed');
       }),
     });
@@ -278,6 +311,8 @@ describe('runClosure', () => {
   });
 
   it('releases the freeze and owned server when cancellation is signalled', async () => {
+    expect.hasAssertions();
+
     const controller = new AbortController();
     const { adapters, calls, producer } = makeAdapters();
     vi.spyOn(adapters, 'establishProducer').mockImplementation(async () => {
@@ -307,6 +342,8 @@ describe('runClosure', () => {
   });
 
   it('rejects invalid timeout values without touching the checkout', async () => {
+    expect.hasAssertions();
+
     const { adapters, calls } = makeAdapters();
 
     const result = await moduleUnderTest.runClosure(

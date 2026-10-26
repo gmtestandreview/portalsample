@@ -17,6 +17,7 @@ describe('mSAL redirect bridge entry', () => {
 
   it('broadcasts the authentication response', async () => {
     expect.hasAssertions();
+
     resetModules();
 
     bridgeMocks.broadcastResponseToMainFrame.mockResolvedValue(undefined);
@@ -28,6 +29,7 @@ describe('mSAL redirect bridge entry', () => {
 
   it('reports a sanitized constant when broadcasting fails', async () => {
     expect.hasAssertions();
+
     resetModules();
 
     bridgeMocks.broadcastResponseToMainFrame.mockRejectedValue(

@@ -33,7 +33,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule53>,
 );
 
-describe('PaSearchFilter', () => {
+describe(PaSearchFilter, () => {
   it('renders the filter menu with default Bootstrap layout classes', () => {
     expect.hasAssertions();
 

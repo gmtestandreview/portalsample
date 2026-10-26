@@ -20,6 +20,12 @@ const handlerSource = readFileSync('.storybook/msw-handlers.ts', 'utf8');
 type UnhandledFrameCallbackArgs = Parameters<
   typeof onUnhandledStorybookRequest
 >[0];
+type StorybookDefaults = UnhandledFrameCallbackArgs['defaults'];
+
+const createDefaults = (): StorybookDefaults => ({
+  error: vi.fn<StorybookDefaults['error']>(),
+  warn: vi.fn<StorybookDefaults['warn']>(),
+});
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'bypass' }));
 
@@ -29,10 +35,14 @@ afterAll(() => server.close());
 
 describe('storybook dashboard API contracts', () => {
   it('does not use a dashboard wildcard for incompatible response types', () => {
+    expect.hasAssertions();
+
     expect(handlerSource).not.toContain('/api/dashboard/*');
   });
 
   it('returns only file metadata when ReturnFile is false', async () => {
+    expect.hasAssertions();
+
     const response = await fetch(
       apiUrl(
         '/api/dashboard/get-quote-report-pdf?QuoteRequestID=QR-100245&ReturnFile=false',
@@ -40,10 +50,14 @@ describe('storybook dashboard API contracts', () => {
     );
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({ fileSizeBytes: 2048 });
+    await expect(response.json()).resolves.toStrictEqual({
+      fileSizeBytes: 2048,
+    });
   });
 
   it('returns a downloadable PDF payload when ReturnFile is true', async () => {
+    expect.hasAssertions();
+
     const response = await fetch(
       apiUrl(
         '/api/dashboard/get-quote-report-pdf?QuoteRequestID=QR-100245&ReturnFile=true',
@@ -51,7 +65,7 @@ describe('storybook dashboard API contracts', () => {
     );
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({
+    await expect(response.json()).resolves.toStrictEqual({
       filename: 'measurement-report.pdf',
       mimeType: 'application/pdf',
       fileData: 'JVBERi0xLjQK',
@@ -59,6 +73,8 @@ describe('storybook dashboard API contracts', () => {
   });
 
   it('returns the instrument-report paginated DTO from its own endpoint', async () => {
+    expect.hasAssertions();
+
     const response = await fetch(
       apiUrl(
         '/api/dashboard/get-dashboard-instrument-artefact-reports?PortalId=org-crm-guid-001&Name=INS-1&PageSize=10&PageNumber=1',
@@ -66,7 +82,7 @@ describe('storybook dashboard API contracts', () => {
     );
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({
+    await expect(response.json()).resolves.toStrictEqual({
       currentPage: 1,
       items: [
         {
@@ -90,10 +106,12 @@ describe('storybook dashboard API contracts', () => {
     '/api/dashboard/get-filtered-dashboard-drafts',
     '/api/dashboard/get-filtered-dashboard-artefacts',
   ])('keeps %s on the dashboard paginated DTO', async (path) => {
+    expect.hasAssertions();
+
     const response = await fetch(apiUrl(path));
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({
+    await expect(response.json()).resolves.toStrictEqual({
       currentPage: 1,
       items: [],
       pageSize: 10,
@@ -105,7 +123,9 @@ describe('storybook dashboard API contracts', () => {
 
 describe('storybook unhandled-request policy', () => {
   it('fails an unhandled same-origin API request at its owner', () => {
-    const defaults = { error: vi.fn(), warn: vi.fn() };
+    expect.hasAssertions();
+
+    const defaults = createDefaults();
 
     onUnhandledStorybookRequest({
       frame: {
@@ -126,7 +146,9 @@ describe('storybook unhandled-request policy', () => {
     '/assets/logo.svg',
     'https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js',
   ])('bypasses non-API request %s', (requestUrl) => {
-    const defaults = { error: vi.fn(), warn: vi.fn() };
+    expect.hasAssertions();
+
+    const defaults = createDefaults();
     const url = new URL(requestUrl, globalThis.location.origin);
 
     onUnhandledStorybookRequest({

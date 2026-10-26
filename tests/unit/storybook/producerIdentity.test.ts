@@ -39,6 +39,8 @@ const receipt = {
 
 describe('validateProducerIdentity', () => {
   it('accepts a receipt joined to the owned producer and freeze', () => {
+    expect.hasAssertions();
+
     expect(
       moduleUnderTest.validateProducerIdentity({
         producer,
@@ -50,7 +52,7 @@ describe('validateProducerIdentity', () => {
           createdAt: string;
         },
       }),
-    ).toEqual({ ok: true, errors: [] });
+    ).toStrictEqual({ ok: true, errors: [] });
   });
 
   type Overrides = {
@@ -74,6 +76,8 @@ describe('validateProducerIdentity', () => {
       },
     ],
   ])('rejects %s', (_name, overrides) => {
+    expect.hasAssertions();
+
     expect(
       moduleUnderTest.validateProducerIdentity({
         producer,

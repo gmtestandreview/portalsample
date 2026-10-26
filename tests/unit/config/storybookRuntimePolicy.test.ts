@@ -24,6 +24,8 @@ const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
 describe('storybook runtime fixtures', () => {
   it('uses the shared Storybook fixture in both browser entry paths', () => {
+    expect.hasAssertions();
+
     expect(previewSetup).toContain('VITE_ENV_FIXTURES.storybook');
     expect(browserSetup).toContain('VITE_ENV_FIXTURES.storybook');
     expect(VITE_ENV_FIXTURES.storybook).toMatchObject({
@@ -34,6 +36,8 @@ describe('storybook runtime fixtures', () => {
   });
 
   it('does not retain the legacy browser environment fixture names', () => {
+    expect.hasAssertions();
+
     expect(previewSetup).not.toMatch(
       /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
     );
@@ -43,12 +47,16 @@ describe('storybook runtime fixtures', () => {
   });
 
   it('disables Storybook telemetry in automated pull-request execution', () => {
+    expect.hasAssertions();
+
     expect(pullRequestWorkflow).toContain("STORYBOOK_DISABLE_TELEMETRY: '1'");
   });
 });
 
 describe('storybook MSW diagnostic policy', () => {
   it('enables detailed MSW output only for the explicit debug query', async () => {
+    expect.hasAssertions();
+
     const policySpecifier = path
       .join(repositoryRoot, '.storybook/msw-policy.ts')
       .replaceAll('\\', '/');
@@ -63,16 +71,22 @@ describe('storybook MSW diagnostic policy', () => {
   });
 
   it('passes query-gated quiet mode to the installed addon-v3 loader', () => {
+    expect.hasAssertions();
+
     expect(preview).toContain('quiet: !isStorybookMswDebugEnabled');
     expect(previewSetup).not.toContain('quiet: false');
   });
 
   it('registers the CSF Next MSW addon independently of browser globals', () => {
+    expect.hasAssertions();
+
     expect(preview).toMatch(/addonMsw\(getStorybookWorker\)/);
     expect(preview).not.toContain('navigator?.serviceWorker');
   });
 
   it('serves the generated MSW worker from Storybook static assets', () => {
+    expect.hasAssertions();
+
     expect(storybookMain).toContain("staticDirs: ['../ClientApp/public']");
     expect(
       pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot),
@@ -93,6 +107,8 @@ describe('storybook closure child diagnostics', () => {
     }) as unknown as RuntimeVitest;
 
   it('does not write diagnostic files unless both closure values are supplied', () => {
+    expect.hasAssertions();
+
     const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'storybook-runtime-'));
     const receiptRoot = path.join(
       tempRoot,
@@ -111,7 +127,7 @@ describe('storybook closure child diagnostics', () => {
         vitest: createVitestFixture(),
       });
 
-      expect(readDirectorySync(receiptRoot, tempRoot)).toEqual([]);
+      expect(readDirectorySync(receiptRoot, tempRoot)).toStrictEqual([]);
     } finally {
       if (previousReceiptRoot === undefined) {
         delete process.env['STORYBOOK_CLOSURE_RECEIPTS'];
@@ -128,6 +144,8 @@ describe('storybook closure child diagnostics', () => {
   });
 
   it('writes a redacted child record to the validated receipt directory', () => {
+    expect.hasAssertions();
+
     const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'storybook-runtime-'));
     const receiptRoot = path.join(
       tempRoot,

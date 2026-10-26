@@ -10,7 +10,7 @@ import { defined } from '../../helpers/defined';
 import { ValidationMessages } from '../../../../ClientApp/src/routes/ta/types';
 
 const mocks = vi.hoisted(() => ({
-  appLoggerError: vi.fn(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 const clients = vi.hoisted(() => ({
@@ -25,53 +25,56 @@ const clients = vi.hoisted(() => ({
   >,
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
-  async (importOriginal) => {
-    const { createClientMockFor, webApiClientModuleMock } =
-      await import('../../helpers/mockApiClient');
-    const original = await importOriginal<typeof WebApiClient>();
+vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
+  const { createClientMockFor, webApiClientModuleMock } =
+    await import('../../helpers/mockApiClient');
+  const original = await importOriginal<typeof WebApiClient>();
 
-    clients.patternApproval = createClientMockFor(
-      'getAppDocuments',
-      'addDocuments',
-      'commitAppDocuments',
-      'updateCategory',
-    );
-    clients.progress = createClientMockFor(
-      'getProgressUploadId',
-      'getProgress',
-      'deleteProgressStatistics',
-      'cancelFile',
-    );
+  clients.patternApproval = createClientMockFor(
+    'getAppDocuments',
+    'addDocuments',
+    'commitAppDocuments',
+    'updateCategory',
+  );
+  clients.progress = createClientMockFor(
+    'getProgressUploadId',
+    'getProgress',
+    'deleteProgressStatistics',
+    'cancelFile',
+  );
 
-    return webApiClientModuleMock(original, {
-      RequestForPatternApprovalClient: clients.patternApproval,
-      ProgressClient: clients.progress,
-    }) satisfies __ExactMockModule<__TestMockModule4>;
-  },
-);
+  return webApiClientModuleMock(original, {
+    RequestForPatternApprovalClient: clients.patternApproval,
+    ProgressClient: clients.progress,
+  }) satisfies __ExactMockModule<__TestMockModule4>;
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
-      default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: {
+        error: mocks.appLoggerError,
+        info: vi.fn<(...args: unknown[]) => unknown>(),
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+      },
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const document1 = (overrides: Record<string, unknown> = {}) => ({
@@ -148,6 +151,8 @@ describe('application documents with the real RHF form', () => {
   });
 
   it('commits the documents without their bytes and leaves the form data intact', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     await renderLoaded([document1()]);
 
@@ -169,6 +174,8 @@ describe('application documents with the real RHF form', () => {
   });
 
   it('blocks the commit and asks for a category while a document has none', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
 
@@ -185,6 +192,8 @@ describe('application documents with the real RHF form', () => {
   });
 
   it('commits once a category has been chosen', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
 
@@ -214,6 +223,8 @@ describe('application documents with the real RHF form', () => {
   });
 
   it('shows the saved documents as rows with their category', async () => {
+    expect.hasAssertions();
+
     await renderLoaded([document1({ attachmentCategory: 'Certificate' })]);
 
     const row = screen.getByText('spec.pdf').closest('.attachment');

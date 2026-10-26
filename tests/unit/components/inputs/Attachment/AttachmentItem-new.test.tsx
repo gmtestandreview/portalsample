@@ -83,6 +83,7 @@ const renderItem = (
 describe(AttachmentItemNew, () => {
   it('renders the file link, file size, and invalid category state', () => {
     expect.hasAssertions();
+
     renderItem({}, { attachments: [{ attachmentCategory: true }] });
 
     const fileLink = screen.getByRole('link', { name: 'manual.pdf' });
@@ -97,6 +98,7 @@ describe(AttachmentItemNew, () => {
 
   it('renders the category validation message and options', () => {
     expect.hasAssertions();
+
     renderItem({}, { attachments: [{ attachmentCategory: true }] });
 
     expect(
@@ -109,6 +111,7 @@ describe(AttachmentItemNew, () => {
 
   it('updates the category field and calls the persisted-category callback when a document id is present', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -136,6 +139,7 @@ describe(AttachmentItemNew, () => {
 
   it('updates the category locally when no persisted document id is available', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onCategoryUpdate = vi
       .fn<CategoryUpdate>()
@@ -167,6 +171,7 @@ describe(AttachmentItemNew, () => {
 
   it('does not render removal controls in summary mode and tolerates missing file bytes', () => {
     expect.hasAssertions();
+
     renderItem({
       canRemove: false,
       fileBytes: undefined,
@@ -186,6 +191,7 @@ describe(AttachmentItemNew, () => {
 
   it('opens and closes the delete confirmation without removing the file', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onRemoveItem = vi.fn<RemoveItem>();
     renderItem({ onRemoveItem });
@@ -209,6 +215,7 @@ describe(AttachmentItemNew, () => {
 
   it('confirms deletion with the current attachment value', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     const onRemoveItem = vi.fn<RemoveItem>().mockResolvedValue(undefined);
     renderItem({ onRemoveItem });

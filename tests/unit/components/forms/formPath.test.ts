@@ -50,6 +50,7 @@ describe(getIn, () => {
 describe(setIn, () => {
   it('sets a nested value without mutating the source', () => {
     expect.hasAssertions();
+
     const source = { a: { b: 1, keep: true } };
     const result = setIn(source, 'a.b', 2);
 
@@ -68,6 +69,7 @@ describe(setIn, () => {
 
   it('returns the original object when the value is unchanged', () => {
     expect.hasAssertions();
+
     const source = { a: { b: 1 } };
 
     expect(setIn(source, 'a.b', 1)).toBe(source);

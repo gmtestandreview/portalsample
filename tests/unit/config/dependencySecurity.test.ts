@@ -88,6 +88,8 @@ describe('direct security dependency floors', () => {
   it.each([...minimumVersions])(
     '%s resolves only patched versions',
     (packageName, minimumVersion) => {
+      expect.hasAssertions();
+
       const versions = installedVersions(packageName);
 
       expect(versions).not.toHaveLength(0);
@@ -99,6 +101,8 @@ describe('direct security dependency floors', () => {
   );
 
   it('keeps the exact-peer Vitest packages on one version', () => {
+    expect.hasAssertions();
+
     const vitestPackages = [
       '@vitest/browser',
       '@vitest/browser-playwright',
@@ -109,7 +113,7 @@ describe('direct security dependency floors', () => {
 
     for (const packageName of vitestPackages) {
       expect(exactDevDependency(packageName)).toBe(expectedVersion);
-      expect(new Set(installedVersions(packageName))).toEqual(
+      expect(new Set(installedVersions(packageName))).toStrictEqual(
         new Set([expectedVersion]),
       );
     }
@@ -135,7 +139,11 @@ describe('transitive security dependency floors', () => {
   it.each([...minimumVersions])(
     '%s resolves only patched versions when installed',
     (packageName, minimumVersion) => {
+      expect.hasAssertions();
+
       const versions = installedVersions(packageName);
+
+      expect(versions).toBeInstanceOf(Array);
 
       // A dependency contraction may remove a transitive package entirely;
       // absence is safe, while any remaining copy must still meet its floor.
@@ -146,6 +154,8 @@ describe('transitive security dependency floors', () => {
   );
 
   it('brace-expansion resolves only patched versions per major', () => {
+    expect.hasAssertions();
+
     const floors = new Map([
       [1, '1.1.21'],
       [2, '2.1.7'],
@@ -170,6 +180,8 @@ describe('transitive security dependency floors', () => {
   });
 
   it('keeps every glob major off deprecated releases and pins the three scoped owners to glob 13.0.6', () => {
+    expect.hasAssertions();
+
     // Glob 7 arrives only through the deprecated ESLint 8 / rimraf 3 chain.
     // Glob 10 was a transitional allowance under Task D1; Task D2 replaces the
     // remaining remark-cli / unified-engine copies with the owner-scoped
@@ -199,7 +211,7 @@ describe('transitive security dependency floors', () => {
       expect(
         recordValue(rootPackage.overrides, owner),
         `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`,
-      ).toEqual({
+      ).toStrictEqual({
         glob: '13.0.6',
       });
     }
@@ -220,12 +232,16 @@ describe('lint cohort', () => {
   it.each([...cohort])(
     'declares %s as an exact supported version',
     (packageName, expectedVersion) => {
+      expect.hasAssertions();
+
       expect(exactDevDependency(packageName)).toBe(expectedVersion);
       expect(installedVersions(packageName)).toContain(expectedVersion);
     },
   );
 
   it('resolves ESLint only on the maintained 10 line', () => {
+    expect.hasAssertions();
+
     const versions = installedVersions('eslint');
 
     expect(versions).not.toHaveLength(0);
@@ -245,10 +261,14 @@ describe('lint cohort', () => {
     'inflight',
     'rimraf',
   ])('no longer installs the deprecated package %s', (packageName) => {
+    expect.hasAssertions();
+
     expect(installedVersions(packageName)).toHaveLength(0);
   });
 
   it('retains the Storybook lint plugin alongside the new cohort', () => {
+    expect.hasAssertions();
+
     expect(installedVersions('eslint-plugin-storybook')).not.toHaveLength(0);
   });
 });
@@ -261,11 +281,13 @@ describe('publisher deprecations', () => {
    * `deprecated` field.
    */
   it('installs no package that npm publishers have marked deprecated', () => {
+    expect.hasAssertions();
+
     const deprecatedEntries = Object.entries(lock.packages)
       .filter(([, metadata]) => Boolean(metadata.deprecated))
       .map(([packagePath]) => packagePath);
 
-    expect(deprecatedEntries).toEqual([]);
+    expect(deprecatedEntries).toStrictEqual([]);
   });
 });
 
@@ -303,12 +325,16 @@ describe('install-script approvals', () => {
   ).allowScripts;
 
   it('reviews every dependency that runs an install script', () => {
-    expect(Object.keys(allowScripts ?? {}).sort()).toEqual(
+    expect.hasAssertions();
+
+    expect(Object.keys(allowScripts ?? {}).sort()).toStrictEqual(
       [...APPROVED_INSTALL_SCRIPTS].sort(),
     );
   });
 
   it('records each review as an explicit allow', () => {
+    expect.hasAssertions();
+
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
         recordValue(allowScripts, packageName),
@@ -318,6 +344,8 @@ describe('install-script approvals', () => {
   });
 
   it('keeps each approved package installed at exactly one version', () => {
+    expect.hasAssertions();
+
     for (const packageName of APPROVED_INSTALL_SCRIPTS) {
       expect(
         installedVersions(packageName),
@@ -332,14 +360,20 @@ describe('coverage remapping cohort', () => {
   // `terms-config.json?import` parse failure. Keep the reviewed lockfile
   // version visible so the next incidental move is not silent.
   it('resolves the V8-to-Istanbul remapper at exactly one reviewed version', () => {
-    expect(installedVersions('ast-v8-to-istanbul')).toEqual(['1.0.7']);
+    expect.hasAssertions();
+
+    expect(installedVersions('ast-v8-to-istanbul')).toStrictEqual(['1.0.7']);
   });
 
   it('keeps the coverage provider aligned with the Vitest cohort', () => {
-    expect(installedVersions('@vitest/coverage-v8')).toEqual(['4.1.12']);
+    expect.hasAssertions();
+
+    expect(installedVersions('@vitest/coverage-v8')).toStrictEqual(['4.1.12']);
   });
 
   it('holds the Storybook test cohort on Vitest 4 pending dedicated Vitest 5 validation', () => {
+    expect.hasAssertions();
+
     const vitestVersion = exactDevDependency('vitest');
 
     expect(vitestVersion).toMatch(/^4\./);

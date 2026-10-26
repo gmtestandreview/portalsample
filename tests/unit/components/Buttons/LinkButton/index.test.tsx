@@ -55,6 +55,7 @@ describe('linkButton React Aria render fallback', () => {
 
   it('renders a span when React Aria render props do not include an href', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     render(
@@ -75,6 +76,7 @@ describe('linkButton React Aria render fallback', () => {
 
   it('renders a router link when React Aria render props include an href', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     ariaLinkMockState.includeHref = true;
@@ -100,6 +102,7 @@ describe('linkButton React Aria render fallback', () => {
 
   it('renders an anchor link when configured as an anchor', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     render(
@@ -124,6 +127,7 @@ describe('linkButton React Aria render fallback', () => {
 
   it('uses the NMI primary variant by default', () => {
     expect.hasAssertions();
+
     resetMockState();
 
     render(

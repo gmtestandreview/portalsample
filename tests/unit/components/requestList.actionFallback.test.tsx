@@ -66,6 +66,7 @@ describe('requestList fallback action wiring', () => {
     'opens the delete modal from %s when Actions invokes its fallback callback',
     async (_name, item) => {
       expect.hasAssertions();
+
       const user = userEvent.setup();
       renderItem(item);
 

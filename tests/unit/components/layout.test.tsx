@@ -74,6 +74,7 @@ const expectLayoutNavigationChrome = () => {
 describe(Layout, () => {
   it('renders page chrome, main content, and the route announcement region', () => {
     expect.hasAssertions();
+
     render(
       <MemoryRouter>
         <Layout>
@@ -88,6 +89,7 @@ describe(Layout, () => {
     expect(screen.getByRole('status')).toHaveTextContent(
       'Navigated to Dashboard page.',
     );
+
     expectLayoutNavigationChrome();
   });
 });

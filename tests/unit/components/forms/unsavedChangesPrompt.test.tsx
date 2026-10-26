@@ -55,6 +55,7 @@ describe(UnsavedChangesPrompt, () => {
     ],
   ])('when %s the guard is %s', (_name, state, expected) => {
     expect.hasAssertions();
+
     render(<UnsavedChangesPrompt {...state} />);
 
     expect(whenOf()).toBe(expected);
@@ -62,6 +63,7 @@ describe(UnsavedChangesPrompt, () => {
 
   it('passes onProceed to the guard on both wordings', () => {
     expect.hasAssertions();
+
     const onProceed = vi.fn<Proceed>();
     const { rerender } = render(
       <UnsavedChangesPrompt {...base} onProceed={onProceed} />,
@@ -89,6 +91,7 @@ describe('unsavedFormPrompt (Formik)', () => {
 
   it('clears Formik errors when the guard confirms leaving', async () => {
     expect.hasAssertions();
+
     render(
       <Formik
         initialValues={{ name: '' }}

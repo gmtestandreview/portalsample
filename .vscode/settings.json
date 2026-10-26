@@ -9,10 +9,11 @@
   "cucumberautocomplete.smartSnippets": true,
   "cucumberautocomplete.onTypeFormat": true,
   "editor.quickSuggestions": {
-    "comments": false,
+    "comments": true,
     "strings": true,
     "other": true
   },
+
   "js/ts.tsdk.path": "./node_modules/typescript/lib",
   "eslint.enable": true,
   "eslint.lintTask.enable": true,
@@ -29,6 +30,7 @@
     "typescriptreact"
   ],
   "sonarlint.analysisExcludesStandalone": "**/ClientApp/src/api/web-api-client.ts",
+  "sonarlint.focusOnNewCode": true,
   "sonarlint.connectedMode.project": {
     "connectionId": "gmtestandreview",
     "projectKey": "gmtestandreview_portalsample"
@@ -68,7 +70,11 @@
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.quickSuggestions": true,
+    "editor.wordBasedSuggestions": "allDocuments",
+    "editor.tabSize": 2,
+    "editor.suggest.showSnippets": false
   },
   "[mdx]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -93,5 +99,72 @@
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true
-  }
+  },
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "editor.foldingImportsByDefault": true,
+  "editor.showFoldingControls": "always",
+  "editor.stickyScroll.enabled": true,
+  "explorer.compactFolders": false,
+  "explorer.sortOrder": "type",
+  "search.showLineNumbers": true,
+  "scm.inputFontFamily": "'Cascadia Code', Consolas, monospace",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.lineHeight": 1.2,
+  "better-comments.tags": [
+    {
+      "tag": "!",
+      "color": "#FF6961",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "?",
+      "color": "#AEC6CF",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "//",
+      "color": "#474747",
+      "strikethrough": true,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "[]",
+      "color": "#FEFE95",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "[x]",
+      "color": "#FEFE95",
+      "strikethrough": true,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "*",
+      "color": "#B19CD9",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    }
+  ]
 }

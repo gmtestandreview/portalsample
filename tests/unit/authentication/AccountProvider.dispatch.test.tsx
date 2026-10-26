@@ -294,6 +294,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('updates account state through dispatch callbacks exposed by hooks', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     const user = userEvent.setup();
@@ -338,6 +339,7 @@ describe('accountProvider dispatch callbacks', () => {
       '"branch":"Branch Name"',
       '"userProfile":{"testingCalibrationDashboard":{"filterActiveTab":"2","filterCurrentPage":3,"filterSearchText":"needle","filterSortOrder":"1","filterStatusType":"4","filterYearType":"2026","filtersChanged":true}}',
     ]);
+
     expect(providerMocks.setStoredTargetOrganisation).toHaveBeenCalledWith({
       targetOrganisationAbn: '99999999999',
       targetOrganisationName: 'Target Org',
@@ -369,6 +371,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('logs profile save failures without removing provider children', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     const user = userEvent.setup();
@@ -397,6 +400,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('clears account details while MSAL logout is in progress', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     providerMocks.inProgress = 'logout';
@@ -413,6 +417,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('uses the active account without request-level navigation callbacks', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     providerMocks.signIn.mockRejectedValue(new Error('load failed'));
@@ -436,6 +441,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('shows error UI and logs out when account-load token acquisition fails', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     providerMocks.acquireTokenSilent.mockRejectedValue(
@@ -468,6 +474,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('leaves dispatch callbacks as no-ops before account details exist', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     const user = userEvent.setup();
@@ -503,6 +510,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('uses existing business context and defaults missing user fields', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     providerMocks.accounts = [
@@ -555,7 +563,9 @@ describe('accountProvider dispatch callbacks', () => {
       '"targetOrganisationName":"Stored Org"',
       '"organisationIsCompleted":false',
     ]);
+
     expect(providerMocks.setStoredTargetOrganisation).not.toHaveBeenCalled();
+
     expectDetailsToContain(details, [
       '"userProfile":{"testingCalibrationDashboard":{"filterSearchText":"saved"}}',
     ]);
@@ -563,6 +573,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('stores empty target organisation values when no business context or organisation exists', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     providerMocks.signIn.mockResolvedValue({
@@ -590,6 +601,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('falls back to empty trading and branch names when organisation branch dispatch receives nullish values', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     const user = userEvent.setup();
@@ -616,6 +628,7 @@ describe('accountProvider dispatch callbacks', () => {
 
   it('logs profile-save token failures without removing provider children', async () => {
     expect.hasAssertions();
+
     resetProviderMocks();
 
     const user = userEvent.setup();

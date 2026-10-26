@@ -67,18 +67,26 @@ const extractSection = (source: string, pattern: RegExp) =>
 
 describe('storybook Playwright step quality', () => {
   it('does not use body-wide text assertions', () => {
+    expect.hasAssertions();
+
     expect(steps).not.toContain("page.locator('body')");
   });
 
   it('does not convert failed visibility checks into false', () => {
+    expect.hasAssertions();
+
     expect(steps).not.toMatch(/isVisible\(\)\.catch\(\(\) => false\)/);
   });
 
   it('does not branch on locator counts for optional assertions', () => {
+    expect.hasAssertions();
+
     expect(steps).not.toMatch(/if \(count > 0\)/);
   });
 
   it('interacts with controls when completing quote wizard steps', () => {
+    expect.hasAssertions();
+
     const completionSteps = extractSection(
       quoteSteps,
       /When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/,
@@ -91,6 +99,8 @@ describe('storybook Playwright step quality', () => {
   });
 
   it('waits for the RFQ route and form before treating a wizard step as ready', () => {
+    expect.hasAssertions();
+
     const readinessHelper = extractSection(
       commonSteps,
       /const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/,
@@ -108,10 +118,14 @@ describe('storybook Playwright step quality', () => {
   });
 
   it('scopes success notifications to the alert role', () => {
+    expect.hasAssertions();
+
     expect(accountMaintenanceSteps).toContain("getByRole('alert')");
   });
 
   it('opens an existing RFQ draft through its visible dashboard action', () => {
+    expect.hasAssertions();
+
     const actionStep = extractSection(
       rfqLifecycleSteps,
       /When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/,
@@ -126,12 +140,16 @@ describe('storybook Playwright step quality', () => {
   });
 
   it('asserts the accessible measurement report history table', () => {
+    expect.hasAssertions();
+
     expect(reportSteps).toMatch(
       /getByRole\('table', \{\s+name: \/Measurement reports history\/i/,
     );
   });
 
   it('attempts unsaved navigation with the visible discard action', () => {
+    expect.hasAssertions();
+
     expect(workflowErrorsFeature).toContain(
       'And the user clicks "Discard changes"',
     );
@@ -151,6 +169,8 @@ describe('storybook Playwright step quality', () => {
     '**/api/contact/save-contact',
     '**/api/dashboard/get-quote-report-pdf?**',
   ])('delegates configured failures for mutable handler %s', (routePattern) => {
+    expect.hasAssertions();
+
     expect(routeHandler(routePattern)).toContain(
       'fulfillConfiguredFailure(route, state)',
     );

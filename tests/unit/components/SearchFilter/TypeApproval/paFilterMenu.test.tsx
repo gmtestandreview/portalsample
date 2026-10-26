@@ -97,7 +97,7 @@ const expectTrackedEvents = (events: readonly string[]) => {
   }
 };
 
-describe('PaFilterMenu', () => {
+describe(PaFilterMenu, () => {
   const resetMocks = () => {
     mocks.setUserProfile.mockReset();
     mocks.trackGAEvent.mockReset();
@@ -105,6 +105,7 @@ describe('PaFilterMenu', () => {
 
   it('shows no applied filters when the initial filters are undefined', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     renderMenu(undefined);
@@ -125,6 +126,7 @@ describe('PaFilterMenu', () => {
 
   it('counts changed year, status, and sort filters in the toggle title', () => {
     expect.hasAssertions();
+
     resetMocks();
 
     renderMenu({
@@ -142,6 +144,7 @@ describe('PaFilterMenu', () => {
 
   it('applies changed filters, resets paging, and saves the pattern approval dashboard profile', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     const initialFilters: PatternApprovalDashboardDto = {
@@ -176,11 +179,13 @@ describe('PaFilterMenu', () => {
     expect(mocks.setUserProfile).toHaveBeenCalledWith({
       patternApprovalDashboard: expectedFilters,
     });
+
     expectTrackedEvents(['FilterStatusType', 'Filteryeartype', 'ApplyFilter']);
   });
 
   it('counts nothing when the changed flag is set but every value is still the default', () => {
     expect.hasAssertions();
+
     resetMocks();
 
     // Filters changed and then changed back leave the flag set while the values match the
@@ -200,6 +205,7 @@ describe('PaFilterMenu', () => {
 
   it('treats a year-only change as a change even with the status left alone', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     // The applied flag is an either-or: leaving the status at its default must not mask a
@@ -229,6 +235,7 @@ describe('PaFilterMenu', () => {
 
   it('resets filters to defaults while preserving the active tab and search text', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     const initialFilters: PatternApprovalDashboardDto = {
@@ -263,6 +270,7 @@ describe('PaFilterMenu', () => {
 
   it('closes without applying filters when cancel is selected', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     const { setInitialFilters, setCurrentPage } = renderMenu({
@@ -282,6 +290,7 @@ describe('PaFilterMenu', () => {
 
   it('discards unapplied edits when the menu is dismissed', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     // Dismissing the dropdown routes through onToggle, which clicks the hidden close button so
@@ -302,6 +311,7 @@ describe('PaFilterMenu', () => {
 
   it('disables status options for draft pattern approval dashboard filters', async () => {
     expect.hasAssertions();
+
     resetMocks();
 
     renderMenu({

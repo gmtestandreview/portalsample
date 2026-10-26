@@ -56,6 +56,7 @@ const SetTypeButton = ({ type }: Readonly<{ type: string }>) => {
 describe(RhfHidableField, () => {
   it('renders children when the rule evaluates to false', () => {
     expect.hasAssertions();
+
     render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
         <RhfHidableField name='account.abn'>
@@ -69,6 +70,7 @@ describe(RhfHidableField, () => {
 
   it('hides children when the callback rule on a nested path is true', () => {
     expect.hasAssertions();
+
     render(
       <Harness values={INDIVIDUAL_VALUES} rules={hideAbnUnlessBusiness}>
         <RhfHidableField name='account.abn'>
@@ -82,6 +84,7 @@ describe(RhfHidableField, () => {
 
   it('re-evaluates when a watched value changes through setValue', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
@@ -106,6 +109,7 @@ describe(RhfHidableField, () => {
 
   it('reacts to a rerender that supplies new rules', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <Harness values={BUSINESS_VALUES} rules={{ account: { abn: false } }}>
         <RhfHidableField name='account.abn'>
@@ -129,6 +133,7 @@ describe(RhfHidableField, () => {
 
   it('hides every child field when a group "this" rule is true', () => {
     expect.hasAssertions();
+
     render(
       <Harness values={BUSINESS_VALUES} rules={{ account: { this: true } }}>
         <RhfHidableField name='account.abn'>
@@ -142,6 +147,7 @@ describe(RhfHidableField, () => {
 
   it('hides a field when a boolean rule is true', () => {
     expect.hasAssertions();
+
     render(
       <Harness values={BUSINESS_VALUES} rules={{ account: { abn: true } }}>
         <RhfHidableField name='account.abn'>
@@ -155,6 +161,7 @@ describe(RhfHidableField, () => {
 
   it('renders children when no provider supplies rules', () => {
     expect.hasAssertions();
+
     render(
       <Harness values={BUSINESS_VALUES}>
         <RhfHidableField name='account.abn'>
@@ -168,6 +175,7 @@ describe(RhfHidableField, () => {
 
   it('renders an empty wrapper when a visible field has no children', () => {
     expect.hasAssertions();
+
     render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
         <div data-testid='wrapper'>
@@ -183,6 +191,7 @@ describe(RhfHidableField, () => {
 describe(useHiddenRules, () => {
   it('returns an empty rule set without a provider', () => {
     expect.hasAssertions();
+
     const Probe = () => (
       <output data-testid='rules'>{JSON.stringify(useHiddenRules())}</output>
     );

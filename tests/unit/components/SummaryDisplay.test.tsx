@@ -5,6 +5,7 @@ import SummaryDisplay from '@/components/SummaryDisplay';
 describe(SummaryDisplay, () => {
   it('renders the label, span value, descriptor, and custom classes by default', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <SummaryDisplay
         label='Instrument'
@@ -29,6 +30,7 @@ describe(SummaryDisplay, () => {
 
   it('renders ReactNode labels without treating them as phone labels', () => {
     expect.hasAssertions();
+
     render(
       <SummaryDisplay label={<span>Phone contact</span>} value='0212345678' />,
     );
@@ -40,6 +42,7 @@ describe(SummaryDisplay, () => {
 
   it('renders paragraph values without hiding normal text from assistive technology', () => {
     expect.hasAssertions();
+
     render(
       <SummaryDisplay label='Address' value='1 National Circuit' as='p' />,
     );
@@ -53,6 +56,7 @@ describe(SummaryDisplay, () => {
 
   it('adds spaced screen reader text for phone values rendered as span or paragraph', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <SummaryDisplay label='Mobile phone' value='0212345678' />,
     );
@@ -80,6 +84,7 @@ describe(SummaryDisplay, () => {
 
   it('renders custom body text only when a custom value is present', () => {
     expect.hasAssertions();
+
     const { rerender } = render(
       <SummaryDisplay
         label='Attachments'
@@ -105,6 +110,7 @@ describe(SummaryDisplay, () => {
 
   it('renders empty values with a visible dash and hidden no-details text', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <SummaryDisplay label='Reference' className='empty-value' />,
     );
@@ -119,6 +125,7 @@ describe(SummaryDisplay, () => {
     'renders empty %s values with the no-details fallback',
     (as) => {
       expect.hasAssertions();
+
       const { container } = render(
         <SummaryDisplay label='Reference' as={as} className='empty-value' />,
       );
@@ -134,6 +141,7 @@ describe(SummaryDisplay, () => {
 
   it('formats number-style values and provides spaced hidden text', () => {
     expect.hasAssertions();
+
     render(
       <SummaryDisplay
         label='ABN'
@@ -155,6 +163,7 @@ describe(SummaryDisplay, () => {
 
   it('renders number-style values without a format pattern', () => {
     expect.hasAssertions();
+
     render(<SummaryDisplay label='Amount' value='1234' as='number' />);
 
     expect(screen.getByText('1234')).toHaveAttribute('aria-hidden', 'true');
@@ -163,6 +172,7 @@ describe(SummaryDisplay, () => {
 
   it('renders no field value for unsupported display modes', () => {
     expect.hasAssertions();
+
     const { container } = render(
       <SummaryDisplay label='Unsupported' value='Hidden value' as='aside' />,
     );

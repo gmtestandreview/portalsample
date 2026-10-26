@@ -81,6 +81,7 @@ const settle = () =>
 describe('rhfForm shell behavior', () => {
   it('shows an error after the first blur, not before, and clears it on change', async () => {
     expect.hasAssertions();
+
     const { user } = setup();
 
     expect(screen.queryByText('Name is required')).toBeNull();
@@ -101,6 +102,7 @@ describe('rhfForm shell behavior', () => {
 
   it('shows every error after an invalid submit without moving focus or submitting', async () => {
     expect.hasAssertions();
+
     const { user, onSubmit } = setup();
 
     await user.click(screen.getByTestId('next'));
@@ -116,6 +118,7 @@ describe('rhfForm shell behavior', () => {
 
   it('submits once on Enter', async () => {
     expect.hasAssertions();
+
     const { user, onSubmit } = setup();
 
     await user.type(screen.getByLabelText('Name'), 'abc');
@@ -128,6 +131,7 @@ describe('rhfForm shell behavior', () => {
 
   it('strips hidden fields and drops their validation errors', async () => {
     expect.hasAssertions();
+
     const { user, onSubmit } = setup({
       hidingFields: { other: true },
       initialValues: { name: '', other: 'hidden value' },
@@ -143,6 +147,7 @@ describe('rhfForm shell behavior', () => {
 
   it('save and exit validates softly and calls onSaveAndExit with the payload', async () => {
     expect.hasAssertions();
+
     const { user, onSubmit, onSaveAndExit } = setup({
       initialValues: { name: 'kept', other: '' },
     });
@@ -157,6 +162,7 @@ describe('rhfForm shell behavior', () => {
 
   it('returns to the hard schema after a failed save and exit', async () => {
     expect.hasAssertions();
+
     const onSaveAndExit = vi.fn<(values: Values) => Promise<unknown>>(
       async (_values) => {
         throw new Error('boom');
@@ -179,6 +185,7 @@ describe('rhfForm shell behavior', () => {
 
   it('falls back to onSubmit for save and exit when no exit handler is given', async () => {
     expect.hasAssertions();
+
     const { user, onSubmit } = setup({
       noExitHandler: true,
       initialValues: { name: 'a', other: 'b' },
@@ -191,6 +198,7 @@ describe('rhfForm shell behavior', () => {
 
   it('resets on a new initialValues object, not on a re-render with the same one', async () => {
     expect.hasAssertions();
+
     const { user, rerenderShell, baseProps } = setup();
     await user.type(screen.getByLabelText('Name'), 'typed');
     await user.click(screen.getByTestId('next'));
@@ -219,6 +227,7 @@ describe('rhfForm shell behavior', () => {
 
   it('lets a form without schemas submit freely', async () => {
     expect.hasAssertions();
+
     const { user, onSubmit } = setup({
       validateHard: undefined,
       validateSoft: undefined,

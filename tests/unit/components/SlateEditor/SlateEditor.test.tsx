@@ -83,6 +83,7 @@ const paragraph = (text: string): CustomElement[] => [
 describe('slateEditor helpers', () => {
   it('serializes paragraph text with inline mark formatting', () => {
     expect.hasAssertions();
+
     const html = serializeToHtml([
       {
         type: 'paragraph',
@@ -102,6 +103,7 @@ describe('slateEditor helpers', () => {
 
   it('serializes unknown block types as their child content', () => {
     expect.hasAssertions();
+
     const html = serializeToHtml([
       {
         type: 'heading',
@@ -139,6 +141,7 @@ describe('slateEditor helpers', () => {
 describe(SlateEditor, () => {
   it('renders toolbar controls, placeholder label, and the configured character limit', () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('Hello')}
@@ -168,6 +171,7 @@ describe(SlateEditor, () => {
 
   it('prevents submitting empty or whitespace-only messages', () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<Submit>();
 
     render(
@@ -188,6 +192,7 @@ describe(SlateEditor, () => {
 
   it('prevents submitting messages that exceed the configured character limit', () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<Submit>();
 
     render(
@@ -211,6 +216,7 @@ describe(SlateEditor, () => {
 
   it('submits valid messages and supports toolbar mouse interactions', () => {
     expect.hasAssertions();
+
     const onSubmit = vi.fn<Submit>();
 
     render(
@@ -231,6 +237,7 @@ describe(SlateEditor, () => {
 
   it('renders bold, italic and underline marks in the editor body', () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={[
@@ -257,6 +264,7 @@ describe(SlateEditor, () => {
 
   it('does not stack the same error when send is pressed repeatedly', () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('   ')}
@@ -277,6 +285,7 @@ describe(SlateEditor, () => {
 
   it('does not stack the length error when send is pressed repeatedly', () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('abcdef')}
@@ -305,6 +314,7 @@ describe('slateEditor document changes', () => {
 
   it('pushes edits back to the caller and updates the live character count', async () => {
     expect.hasAssertions();
+
     const setValue = vi.fn<SetValue>();
 
     render(
@@ -331,6 +341,7 @@ describe('slateEditor document changes', () => {
 
   it('reports a message that grows past the limit while it is being typed', async () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('abcdef')}
@@ -354,6 +365,7 @@ describe('slateEditor document changes', () => {
 
   it('does not stack the length error as typing continues past the limit', async () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('abcdef')}
@@ -380,6 +392,7 @@ describe('slateEditor document changes', () => {
 
   it('clears the length error once the message fits again', async () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor
         value={paragraph('abcdefghijkl')}
@@ -418,6 +431,7 @@ describe('slateEditor document changes', () => {
 
   it('turns a mark off again when the toolbar button is pressed twice', async () => {
     expect.hasAssertions();
+
     render(
       <SlateEditor value={paragraph('ready')} setValue={vi.fn<SetValue>()} />,
     );

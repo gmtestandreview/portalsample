@@ -282,6 +282,7 @@ describe('modal coverage slice', () => {
     );
 
     expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
+
     expectSuccessfulRfqDeleteSideEffects(dispatch);
   });
 

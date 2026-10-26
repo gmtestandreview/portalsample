@@ -22,11 +22,12 @@ import { removeHidden, validateForm } from '@/components/forms/utils';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn(),
-  search: vi.fn(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  search: vi.fn<(...args: unknown[]) => unknown>(),
   account: { homeAccountId: 'mock-id' },
 }));
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@azure/msal-react',
   () =>
@@ -40,22 +41,27 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AddressClient: class {
-      setAuthToken = vi.fn();
+      setAuthToken = vi.fn<(...args: unknown[]) => unknown>();
       search = mocks.search;
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
+// eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
   '@/instrumentation/AppLogger',
   () =>
     ({
-      default: { verbose: vi.fn(), error: vi.fn() },
+      default: {
+        verbose: vi.fn<(...args: unknown[]) => unknown>(),
+        error: vi.fn<(...args: unknown[]) => unknown>(),
+      },
     }) satisfies __ExactMockModule<__TestMockModule5>,
 );
 
@@ -83,7 +89,7 @@ function Harness({
   values = {},
   withHiddenRules = true,
   withErrorSummary = false,
-  onSubmit = vi.fn(),
+  onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
   return (
     <MemoryRouter>
@@ -126,8 +132,10 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('mirrors a manually entered return address into the submit payload', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
@@ -157,8 +165,10 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{
@@ -194,6 +204,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('mirrors a selected return address as a whole object', async () => {
+    expect.hasAssertions();
+
     mocks.search.mockResolvedValue({
       matches: [
         {
@@ -207,7 +219,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
       ],
     });
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
@@ -237,8 +249,10 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('shows address messages only after a failed submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{ returnAddressType: ReturnAddressTypeValues.Other }}
@@ -259,6 +273,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('shows messages for fields that were never given a value', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -282,6 +298,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('does not dirty the outer form when a failed submit touches an undefined address', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -302,8 +320,10 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('applies the soft schema once the outer form is saving and exiting', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
-    const onSubmit = vi.fn();
+    const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
       <Harness
         values={{
@@ -323,30 +343,38 @@ describe(DeliveryAndReturnFormikBridge, () => {
   });
 
   it('follows the hide rules from the form status', () => {
+    expect.hasAssertions();
+
     const { unmount } = render(
       <Harness
         values={{ returnContactType: ReturnContactTypeValues.SamePerson }}
       />,
     );
 
-    expect(screen.queryByLabelText('Carrier name')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
-    expect(
+    expect([
+      screen.queryByLabelText('Carrier name'),
+      screen.queryByLabelText('First name'),
       screen.queryByRole('combobox', { name: /Return address/ }),
-    ).not.toBeInTheDocument();
+    ]).toStrictEqual([null, null, null]);
 
     unmount();
 
     render(<Harness withHiddenRules={false} />);
 
-    expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
-    expect(screen.getByLabelText('First name')).toBeInTheDocument();
-    expect(
+    expect([
+      screen.getByLabelText('Carrier name'),
+      screen.getByLabelText('First name'),
       screen.getByRole('combobox', { name: /Return address/ }),
-    ).toBeInTheDocument();
+    ]).toStrictEqual([
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+      expect.any(HTMLElement),
+    ]);
   });
 
   it('renders a field for every error summary link after a failed submit', async () => {
+    expect.hasAssertions();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -366,7 +394,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
       .getAllByRole('link')
       .map((link) => link.getAttribute('href')?.replace(/^#/, '') ?? '');
 
-    expect(keys).toEqual(
+    expect(keys).toStrictEqual(
       expect.arrayContaining(['carrierName', 'contact.firstName']),
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);

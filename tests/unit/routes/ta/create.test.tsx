@@ -11,15 +11,15 @@ import CreateRequestForTypeApproval from '../../../../ClientApp/src/routes/ta/cr
 
 const mocks = vi.hoisted(() => ({
   accounts: [{ homeAccountId: 'account-1' }] as AccountInfo[],
-  acquireTokenSilent: vi.fn(),
-  setAuthToken: vi.fn(),
-  createApplication: vi.fn(),
-  appLoggerError: vi.fn(),
+  acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
+  setAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
+  createApplication: vi.fn<(...args: unknown[]) => unknown>(),
+  appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => ({
         accounts: mocks.accounts,
@@ -27,51 +27,53 @@ vi.mock(
           acquireTokenSilent: mocks.acquireTokenSilent,
         } as unknown as IPublicClientApplication,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/authentication/authConfig'),
-  () =>
+  (() =>
     ({
       tokenRequest: { scopes: ['type-approval.scope'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+    }) satisfies __ExactMockModule<__TestMockModule8>) as unknown as __DynamicPartialMockFactory<__TestMockModule8>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
-  () =>
+  import('../../../../ClientApp/src/api/web-api-client'),
+  (() =>
     ({
       ApplicationType: {
         PatternApproval: 'PatternApproval',
       },
-      ApplicationClient: vi.fn(function ApplicationClientMock() {
-        return {
-          setAuthToken: mocks.setAuthToken,
-          createApplication: mocks.createApplication,
-        };
-      }),
-    }) satisfies __ExactMockModule<__TestMockModule4>,
+      ApplicationClient: vi.fn<(...args: unknown[]) => unknown>(
+        function ApplicationClientMock() {
+          return {
+            setAuthToken: mocks.setAuthToken,
+            createApplication: mocks.createApplication,
+          };
+        },
+      ),
+    }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
 );
 
 vi.mock(
   import('../../../../ClientApp/src/components/BlockUISpinner'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children: ReactNode }) => (
         <div data-testid='block-ui-spinner'>{children}</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>,
+    }) satisfies __ExactMockModule<__TestMockModule14>) as unknown as __DynamicPartialMockFactory<__TestMockModule14>,
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         error: mocks.appLoggerError,
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 const renderCreateRoute = () =>
@@ -96,6 +98,8 @@ describe(CreateRequestForTypeApproval, () => {
   });
 
   it('creates a pattern approval application and redirects to organisation details', async () => {
+    expect.hasAssertions();
+
     renderCreateRoute();
 
     expect(screen.getByTestId('block-ui-spinner')).toHaveTextContent(
@@ -119,6 +123,8 @@ describe(CreateRequestForTypeApproval, () => {
   });
 
   it('logs a client failure and leaves the user on the loading state', async () => {
+    expect.hasAssertions();
+
     const error = new Error('create failed');
     mocks.createApplication.mockRejectedValue(error);
 

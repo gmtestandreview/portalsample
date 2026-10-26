@@ -18,6 +18,8 @@ const summaryThenOomRun = `${completedRun}\n${oomRun}`;
 
 describe('storybook run log audit', () => {
   it('reports clean only when the run reached its summary', () => {
+    expect.hasAssertions();
+
     const audit = auditLog(completedRun);
 
     expect(audit.completed).toBe(true);
@@ -26,6 +28,8 @@ describe('storybook run log audit', () => {
   });
 
   it('refuses to call a truncated log clean, even with zero target strings', () => {
+    expect.hasAssertions();
+
     // This is the exact shape of docs/change-record/storybbok_change_remaining_errors.md:
     // no target strings, and no summary either. Absence of evidence is not
     // evidence of absence, because V8 remapping runs at end of run.
@@ -38,6 +42,8 @@ describe('storybook run log audit', () => {
   });
 
   it('refuses to call a summary followed by an OOM clean', () => {
+    expect.hasAssertions();
+
     const audit = auditLog(summaryThenOomRun);
 
     expect(audit.completed).toBe(true);
@@ -47,6 +53,8 @@ describe('storybook run log audit', () => {
   });
 
   it('still reports a positive hit found in a truncated log', () => {
+    expect.hasAssertions();
+
     // Presence of evidence IS valid evidence, even when the run died early.
     const audit = auditLog(
       `${oomRun}\n[MSW] Warning: intercepted a request without a matching handler`,
@@ -58,6 +66,8 @@ describe('storybook run log audit', () => {
   });
 
   it('counts every occurrence of each target string', () => {
+    expect.hasAssertions();
+
     const audit = auditLog(
       `${completedRun}\nunhandled request\nunhandled request`,
     );
@@ -67,6 +77,8 @@ describe('storybook run log audit', () => {
   });
 
   it('names the source and the reason in the report', () => {
+    expect.hasAssertions();
+
     expect(formatReport(auditLog(oomRun), 'run.log')).toContain('run.log');
     expect(formatReport(auditLog(oomRun), 'run.log')).toContain('INVALID');
   });

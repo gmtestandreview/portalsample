@@ -62,6 +62,8 @@ describe('vite environment contract', () => {
   });
 
   it('exports VITE-prefixed values and validates allowed redirect hosts', async () => {
+    expect.hasAssertions();
+
     const module = await importEnv({
       VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:5173/return',
     });
@@ -73,6 +75,8 @@ describe('vite environment contract', () => {
   });
 
   it('prefers the deployed runtime configuration over build-time defaults', async () => {
+    expect.hasAssertions();
+
     const module = await importEnv(
       { VITE_B2C_CLIENTID: 'build-client-id' },
       true,
@@ -83,6 +87,8 @@ describe('vite environment contract', () => {
   });
 
   it('allows measurement.gov.au and its subdomains as redirect hosts', async () => {
+    expect.hasAssertions();
+
     const exactHost = await importEnv({
       VITE_EXTERNAL_REDIRECT_URL: 'https://measurement.gov.au/return',
     });
@@ -101,6 +107,8 @@ describe('vite environment contract', () => {
   });
 
   it('logs missing required variables and falls back to empty strings', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
@@ -128,6 +136,8 @@ describe('vite environment contract', () => {
   });
 
   it('keeps quiet about absent telemetry variables in development', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
@@ -146,6 +156,8 @@ describe('vite environment contract', () => {
   });
 
   it('reports absent telemetry variables outside development', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
@@ -167,6 +179,8 @@ describe('vite environment contract', () => {
   });
 
   it('falls back to empty-string build-time defaults when Vite env vars are undefined', async () => {
+    expect.hasAssertions();
+
     const consoleError = vi
       .spyOn(console, 'error')
       .mockImplementation(() => undefined);
@@ -191,6 +205,7 @@ describe('vite environment contract', () => {
   });
 
   it('rejects malformed or disallowed external redirect hosts', async () => {
+    expect.hasAssertions();
     await expect(
       importEnv({
         VITE_EXTERNAL_REDIRECT_URL: 'https://evil.example/redirect',

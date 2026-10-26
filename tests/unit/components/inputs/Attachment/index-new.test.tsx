@@ -158,6 +158,7 @@ describe(AttachmentNew, () => {
 
   it('renders upload file constraints', () => {
     expect.hasAssertions();
+
     renderAttachment([], {
       className: 'drop-target',
       containerClassName: 'attachment-container',

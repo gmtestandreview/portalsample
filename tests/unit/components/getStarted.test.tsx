@@ -42,6 +42,7 @@ describe(GetStarted, () => {
 
   it('renders the unauthenticated entry content and pathway links', () => {
     expect.hasAssertions();
+
     renderGetStarted();
 
     expect(
@@ -77,6 +78,7 @@ describe(GetStarted, () => {
 
   it('renders and clears a stored get-started notification', async () => {
     expect.hasAssertions();
+
     const user = userEvent.setup();
     setGetStartedNotification({
       severity: NotificationSeverity.Information,
@@ -100,6 +102,7 @@ describe(GetStarted, () => {
 
   it('redirects authenticated users to the dashboard', () => {
     expect.hasAssertions();
+
     vi.mocked(useIsAuthenticated).mockReturnValue(true);
 
     renderGetStarted();

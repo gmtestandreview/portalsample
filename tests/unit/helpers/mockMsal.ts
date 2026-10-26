@@ -48,6 +48,15 @@ export const interactionStatus = {
 export type InteractionStatusValue =
   (typeof interactionStatus)[keyof typeof interactionStatus];
 
+type TokenResult = { accessToken: string; account: AccountInfo };
+type AcquireTokenSilent = (request?: unknown) => Promise<TokenResult>;
+type AcquireTokenRedirect = (request?: unknown) => Promise<void>;
+type GetActiveAccount = () => AccountInfo | null;
+type SetActiveAccount = (account: AccountInfo | null) => void;
+type HandleRedirectPromise = (options?: unknown) => Promise<unknown>;
+type LoginRedirect = (request?: unknown) => Promise<void>;
+type LogoutRedirect = (request?: unknown) => Promise<void>;
+
 /** Mutable state the mocked `useMsal()` reads on every render. */
 export const msalState: {
   accounts: AccountInfo[];
@@ -58,14 +67,14 @@ export const msalState: {
 };
 
 export const msalMocks = {
-  acquireTokenSilent: vi.fn(),
-  acquireTokenRedirect: vi.fn(),
-  getActiveAccount: vi.fn(),
-  setActiveAccount: vi.fn(),
-  handleRedirectPromise: vi.fn(),
-  loginRedirect: vi.fn(),
-  logoutRedirect: vi.fn(),
-  isInIframe: vi.fn(),
+  acquireTokenSilent: vi.fn<AcquireTokenSilent>(),
+  acquireTokenRedirect: vi.fn<AcquireTokenRedirect>(),
+  getActiveAccount: vi.fn<GetActiveAccount>(),
+  setActiveAccount: vi.fn<SetActiveAccount>(),
+  handleRedirectPromise: vi.fn<HandleRedirectPromise>(),
+  loginRedirect: vi.fn<LoginRedirect>(),
+  logoutRedirect: vi.fn<LogoutRedirect>(),
+  isInIframe: vi.fn<() => boolean>(),
 };
 
 /**
@@ -73,16 +82,23 @@ export const msalMocks = {
  * implementation mid-run is still seen by a component that captured `instance` on an earlier render.
  */
 export const msalInstance = {
-  acquireTokenSilent: (...args: unknown[]) =>
-    msalMocks.acquireTokenSilent(...args),
-  acquireTokenRedirect: (...args: unknown[]) =>
-    msalMocks.acquireTokenRedirect(...args),
-  getActiveAccount: (...args: unknown[]) => msalMocks.getActiveAccount(...args),
-  setActiveAccount: (...args: unknown[]) => msalMocks.setActiveAccount(...args),
-  handleRedirectPromise: (...args: unknown[]) =>
-    msalMocks.handleRedirectPromise(...args),
-  loginRedirect: (...args: unknown[]) => msalMocks.loginRedirect(...args),
-  logoutRedirect: (...args: unknown[]) => msalMocks.logoutRedirect(...args),
+  acquireTokenSilent: (
+    ...args: Parameters<typeof msalMocks.acquireTokenSilent>
+  ) => msalMocks.acquireTokenSilent(...args),
+  acquireTokenRedirect: (
+    ...args: Parameters<typeof msalMocks.acquireTokenRedirect>
+  ) => msalMocks.acquireTokenRedirect(...args),
+  getActiveAccount: (...args: Parameters<typeof msalMocks.getActiveAccount>) =>
+    msalMocks.getActiveAccount(...args),
+  setActiveAccount: (...args: Parameters<typeof msalMocks.setActiveAccount>) =>
+    msalMocks.setActiveAccount(...args),
+  handleRedirectPromise: (
+    ...args: Parameters<typeof msalMocks.handleRedirectPromise>
+  ) => msalMocks.handleRedirectPromise(...args),
+  loginRedirect: (...args: Parameters<typeof msalMocks.loginRedirect>) =>
+    msalMocks.loginRedirect(...args),
+  logoutRedirect: (...args: Parameters<typeof msalMocks.logoutRedirect>) =>
+    msalMocks.logoutRedirect(...args),
 };
 
 /*
