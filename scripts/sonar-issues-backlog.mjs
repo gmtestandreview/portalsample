@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import {
+  listDirectory,
+  makeDirectory,
+  pathExists,
+  readTextFile,
+  writeTextFile,
+} from './safe-file-io.mjs';
 
 const DEFAULT_OUT = 'analysis/sonar-issues-backlog.md';
 const PAGE_SIZE = 500;
@@ -23,7 +23,7 @@ function argValue(name) {
 }
 
 function positiveIntegerEnv(name, fallback) {
-  const value = Number.parseInt(process.env[name] ?? '', 10);
+  const value = Number.parseInt(Reflect.get(process.env, name) ?? '', 10);
   return Number.isInteger(value) && value > 0 ? value : fallback;
 }
 
@@ -92,6 +92,8 @@ function validateIssuePayload(payload, source) {
     throw new Error(`${source} must contain an issues array.`);
   }
 
+  const issueValue = (issue, field) => Reflect.get(issue, field);
+
   payload.issues.forEach((issue, index) => {
     if (
       !issue ||
@@ -118,7 +120,7 @@ function validateIssuePayload(payload, source) {
       'type',
       'updateDate',
     ]) {
-      if (field in issue && typeof issue[field] !== 'string') {
+      if (field in issue && typeof issueValue(issue, field) !== 'string') {
         throw new Error(
           `${source} contains invalid issue at index ${index}: ${field} must be a string.`,
         );
@@ -128,8 +130,8 @@ function validateIssuePayload(payload, source) {
     for (const field of ['impactSeverities', 'impactSoftwareQualities']) {
       if (
         field in issue &&
-        (!Array.isArray(issue[field]) ||
-          issue[field].some((value) => typeof value !== 'string'))
+        (!Array.isArray(issueValue(issue, field)) ||
+          issueValue(issue, field).some((value) => typeof value !== 'string'))
       ) {
         throw new Error(
           `${source} contains invalid issue at index ${index}: ${field} must be an array of strings.`,
@@ -158,16 +160,15 @@ function validateUniqueIssueKeys(issues, source) {
 }
 
 function priorityWeight(priority) {
-  return (
-    {
-      P0: 0,
-      P1: 1,
-      P2: 2,
-      P3: 3,
-      P4: 4,
-      'Needs triage': 5,
-    }[priority] ?? 6
-  );
+  const weights = new Map([
+    ['P0', 0],
+    ['P1', 1],
+    ['P2', 2],
+    ['P3', 3],
+    ['P4', 4],
+    ['Needs triage', 5],
+  ]);
+  return weights.get(priority) ?? 6;
 }
 
 function formatMarkdown(issues) {
@@ -205,14 +206,17 @@ function formatMarkdown(issues) {
 }
 
 function readFixtureIssues(fixtureDirectory) {
-  const issues = readdirSync(fixtureDirectory)
+  const fixtureRoot = path.isAbsolute(fixtureDirectory)
+    ? fixtureDirectory
+    : process.cwd();
+  const issues = listDirectory(fixtureDirectory, undefined, fixtureRoot)
     .filter((file) => file.endsWith('.json'))
     .sort()
     .flatMap((file) => {
       const fixturePath = path.join(fixtureDirectory, file);
       let payload;
       try {
-        payload = JSON.parse(readFileSync(fixturePath, 'utf8'));
+        payload = JSON.parse(readTextFile(fixturePath, fixtureRoot));
       } catch (error) {
         throw new Error(
           `${fixturePath} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
@@ -223,6 +227,45 @@ function readFixtureIssues(fixtureDirectory) {
     });
   validateUniqueIssueKeys(issues, fixtureDirectory);
   return issues;
+}
+
+function normalizeSonarRequestError(error, timeoutMs) {
+  if (error instanceof Error && error.name === 'AbortError') {
+    return new Error(`Sonar API request timed out after ${timeoutMs}ms.`);
+  }
+  if (error instanceof Error) return error;
+  return new Error(String(error));
+}
+
+async function requestSonarPage(url, token, timeoutMs) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
+    });
+    const responseBody = await response.text();
+    return { response, responseBody };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function parseSonarResponse(responseBody) {
+  try {
+    return JSON.parse(responseBody);
+  } catch (error) {
+    throw new Error(
+      `Sonar API returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
+    );
+  }
+}
+
+async function waitBeforeSonarRetry(retryDelayMs, attempt) {
+  await wait(retryDelayMs * 2 ** (attempt - 1));
 }
 
 async function fetchSonarPage(url, token) {
@@ -241,31 +284,17 @@ async function fetchSonarPage(url, token) {
   let lastError;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    let response;
-    let responseBody;
-
+    let request;
     try {
-      response = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-        signal: controller.signal,
-      });
-      responseBody = await response.text();
+      request = await requestSonarPage(url, token, timeoutMs);
     } catch (error) {
-      lastError =
-        error instanceof Error && error.name === 'AbortError'
-          ? new Error(`Sonar API request timed out after ${timeoutMs}ms.`)
-          : error instanceof Error
-            ? error
-            : new Error(String(error));
-      clearTimeout(timeout);
+      lastError = normalizeSonarRequestError(error, timeoutMs);
       if (attempt === maxAttempts) throw lastError;
-      await wait(retryDelayMs * 2 ** (attempt - 1));
+      await waitBeforeSonarRetry(retryDelayMs, attempt);
       continue;
     }
 
-    clearTimeout(timeout);
+    const { response, responseBody } = request;
     if (!response.ok) {
       lastError = new Error(
         `Sonar API request failed ${response.status}: ${responseBody}`,
@@ -273,18 +302,11 @@ async function fetchSonarPage(url, token) {
       if (!isRetryableStatus(response.status) || attempt === maxAttempts) {
         throw lastError;
       }
-      await wait(retryDelayMs * 2 ** (attempt - 1));
+      await waitBeforeSonarRetry(retryDelayMs, attempt);
       continue;
     }
 
-    try {
-      return JSON.parse(responseBody);
-    } catch (error) {
-      throw new Error(
-        `Sonar API returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
-        { cause: error },
-      );
-    }
+    return parseSonarResponse(responseBody);
   }
 
   throw lastError ?? new Error('Sonar API request failed without an error.');
@@ -351,10 +373,14 @@ const issues = fixtureDirectory
   : await fetchLiveIssues();
 const markdown = formatMarkdown(issues);
 const outputDirectory = path.dirname(outputPath);
+const outputRoot = path.isAbsolute(outputDirectory)
+  ? outputDirectory
+  : process.cwd();
 
-if (!existsSync(outputDirectory))
-  mkdirSync(outputDirectory, { recursive: true });
-writeFileSync(outputPath, markdown, 'utf8');
+if (!pathExists(outputDirectory, outputRoot)) {
+  makeDirectory(outputDirectory, outputRoot);
+}
+writeTextFile(outputPath, markdown, undefined, outputRoot);
 
 if (issues.some((issue) => rankIssue(issue) === 'Needs triage')) {
   process.stdout.write(

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
   ReportAddressTypeValues,
@@ -100,15 +100,18 @@ function Harness({
   );
 }
 
-describe(ReportRecipientFormikBridge, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
-    mocks.search.mockResolvedValue({ matches: [] });
-  });
+const resetReportRecipientFormikBridgeMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
+  mocks.search.mockResolvedValue({ matches: [] });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(ReportRecipientFormikBridge, () => {
   it('mirrors a manually entered address into the outer submit payload', async () => {
     expect.hasAssertions();
+
+    resetReportRecipientFormikBridgeMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -142,6 +145,8 @@ describe(ReportRecipientFormikBridge, () => {
 
   it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
     expect.hasAssertions();
+
+    resetReportRecipientFormikBridgeMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -181,6 +186,8 @@ describe(ReportRecipientFormikBridge, () => {
 
   it('mirrors a selected address as a whole object', async () => {
     expect.hasAssertions();
+
+    resetReportRecipientFormikBridgeMocks();
 
     mocks.search.mockResolvedValue({
       matches: [
@@ -224,6 +231,8 @@ describe(ReportRecipientFormikBridge, () => {
   it('shows address messages after a failed submit', async () => {
     expect.hasAssertions();
 
+    resetReportRecipientFormikBridgeMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
@@ -248,6 +257,8 @@ describe(ReportRecipientFormikBridge, () => {
   it('does not dirty the outer form when a failed submit touches an empty address', async () => {
     expect.hasAssertions();
 
+    resetReportRecipientFormikBridgeMocks();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -261,7 +272,9 @@ describe(ReportRecipientFormikBridge, () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     await screen.findByText(/is required/i);
 
-    expect(JSON.parse(screen.getByTestId('probe').textContent ?? '')).toEqual({
+    expect(
+      JSON.parse(screen.getByTestId('probe').textContent ?? ''),
+    ).toStrictEqual({
       address: {},
       dirty: false,
     });
@@ -269,6 +282,8 @@ describe(ReportRecipientFormikBridge, () => {
 
   it('leaves an undefined address undefined and the outer form clean after a failed submit', async () => {
     expect.hasAssertions();
+
+    resetReportRecipientFormikBridgeMocks();
 
     const user = userEvent.setup();
     render(
@@ -287,6 +302,8 @@ describe(ReportRecipientFormikBridge, () => {
   it('describes the failed address search field by its message', async () => {
     expect.hasAssertions();
 
+    resetReportRecipientFormikBridgeMocks();
+
     const user = userEvent.setup();
     render(
       <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />,
@@ -301,6 +318,8 @@ describe(ReportRecipientFormikBridge, () => {
 
   it('shows the address without hide rules when the form has no status', () => {
     expect.hasAssertions();
+
+    resetReportRecipientFormikBridgeMocks();
 
     const { unmount } = render(<Harness />);
 

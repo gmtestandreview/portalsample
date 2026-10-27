@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { FormikProps } from 'formik';
 import type { ChangeEvent, ReactNode } from 'react';
 import {
@@ -292,19 +292,21 @@ const renderStep = async ({
   return result;
 };
 
-describe('application and instrument step', () => {
-  beforeEach(() => {
-    resetMsalMock();
-    mocks.appLoggerError.mockReset();
-    formik = undefined;
-    captured.selects.clear();
-    captured.checkboxGroups.clear();
-    captured.infoPanel = undefined as unknown as typeof captured.infoPanel;
-  });
+const resetApplicationAndInstrumentMocks = () => {
+  resetMsalMock();
+  mocks.appLoggerError.mockReset();
+  formik = undefined;
+  captured.selects.clear();
+  captured.checkboxGroups.clear();
+  captured.infoPanel = undefined as unknown as typeof captured.infoPanel;
+};
 
+describe('application and instrument step', () => {
   describe('choosing an application type', () => {
     it('offers all three application types with the stored one selected', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep();
 
@@ -320,6 +322,8 @@ describe('application and instrument step', () => {
     it('starts on a new certificate when nothing is stored', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({ patternApprovalType: undefined }),
       });
@@ -331,6 +335,8 @@ describe('application and instrument step', () => {
 
     it('follows the stored type when it is a variation', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         values: baseValues({
@@ -354,6 +360,8 @@ describe('application and instrument step', () => {
       // that changes form behaviour and wants a decision rather than a guess.
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
 
@@ -367,6 +375,8 @@ describe('application and instrument step', () => {
 
     it('clears stale validation when the type changes after a failed submit', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       const user = userEvent.setup();
       await renderStep();
@@ -384,13 +394,15 @@ describe('application and instrument step', () => {
       );
 
       // Switching type changes which fields even apply, so errors about the old branch go.
-      await waitFor(() => expect(formik?.errors).toEqual({}));
+      await waitFor(() => expect(formik?.errors).toStrictEqual({}));
 
-      expect(formik?.touched).toEqual({});
+      expect(formik?.touched).toStrictEqual({});
     });
 
     it('leaves validation alone when the type changes before any submit', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       const user = userEvent.setup();
       await renderStep();
@@ -403,13 +415,15 @@ describe('application and instrument step', () => {
         screen.getByLabelText('Variation or request a minor edit'),
       );
 
-      expect(formik?.errors).toEqual({
+      expect(formik?.errors).toStrictEqual({
         instrumentCategory: 'Category is required',
       });
     });
 
     it('offers the sub-options belonging to each application type', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep();
 
@@ -427,6 +441,8 @@ describe('application and instrument step', () => {
     it('lists the categories with the none option last', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       await waitFor(() =>
@@ -436,7 +452,7 @@ describe('application and instrument step', () => {
         (o) => o.displayText,
       );
 
-      expect(labels).toEqual([
+      expect(labels).toStrictEqual([
         'Length measures',
         'Weighing instruments',
         'No measurement instrument',
@@ -446,17 +462,21 @@ describe('application and instrument step', () => {
     it('offers no instrument types until a category is chosen', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       await waitFor(() =>
         expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
-      expect(selectNamed('instrumentType').options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
     });
 
     it('narrows the types to the chosen category', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         values: baseValues({
@@ -471,11 +491,13 @@ describe('application and instrument step', () => {
 
       expect(
         selectNamed('instrumentType').options.map((o) => o.displayText),
-      ).toEqual(['Automatic scale', 'Beam balance']);
+      ).toStrictEqual(['Automatic scale', 'Beam balance']);
     });
 
     it('shows every type in summary mode regardless of category', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         isSummary: true,
@@ -495,6 +517,8 @@ describe('application and instrument step', () => {
     it('offers nothing when the lookups have not arrived', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategoryLookup: undefined,
@@ -506,14 +530,16 @@ describe('application and instrument step', () => {
         expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
-      expect(selectNamed('instrumentType').options).toEqual([]);
-      expect(selectNamed('instrumentCategory').options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
+      expect(selectNamed('instrumentCategory').options).toStrictEqual([]);
     });
 
     it('offers no types when the instrument field has never been set', async () => {
       // Distinct from an empty string: a step whose values omit instrumentType entirely has
       // nothing to resolve against, so the type list starts empty rather than unfiltered.
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       const values = baseValues();
       delete (values as Record<string, unknown>)['instrumentType'];
@@ -524,11 +550,13 @@ describe('application and instrument step', () => {
         expect(captured.selects.get('instrumentType')).toBeDefined(),
       );
 
-      expect(selectNamed('instrumentType').options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
     });
 
     it('ignores a category change before the type lookup has arrived', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         values: baseValues({
@@ -547,7 +575,7 @@ describe('application and instrument step', () => {
       });
 
       // No lookup means no options to narrow; the field is still cleared for re-entry.
-      expect(selectNamed('instrumentType').options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toStrictEqual([]);
 
       await waitFor(() => expect(formik?.values['instrumentType']).toBe(''));
     });
@@ -556,6 +584,8 @@ describe('application and instrument step', () => {
       // A lookup entry that is not an object at all makes sortList throw while reading its
       // display field - the catch exists so a malformed payload cannot blank the whole step.
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         values: baseValues({
@@ -577,6 +607,8 @@ describe('application and instrument step', () => {
     it('re-narrows the types and clears the previous choice', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
@@ -591,7 +623,7 @@ describe('application and instrument step', () => {
       await waitFor(() =>
         expect(
           selectNamed('instrumentType').options.map((o) => o.displayText),
-        ).toEqual(['Tape measure']),
+        ).toStrictEqual(['Tape measure']),
       );
 
       expect(formik?.values['instrumentType']).toBe('');
@@ -599,6 +631,8 @@ describe('application and instrument step', () => {
 
     it('picks the none instrument and locks the type when no measurement applies', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       const user = userEvent.setup();
       await renderStep();
@@ -626,6 +660,8 @@ describe('application and instrument step', () => {
     it('locks the type on load when the stored category is the none option', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategory: 'cat-none',
@@ -646,6 +682,8 @@ describe('application and instrument step', () => {
     it('shows the instrument info and OIML warning while editing', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         values: baseValues({
           instrumentCategory: 'cat-weighing',
@@ -657,7 +695,7 @@ describe('application and instrument step', () => {
         expect(screen.getByTestId('instrument-info-panel')).toBeInTheDocument(),
       );
 
-      expect(captured.infoPanel).toEqual({
+      expect(captured.infoPanel).toStrictEqual({
         category: 'cat-weighing',
         type: 'type-beam',
       });
@@ -668,6 +706,8 @@ describe('application and instrument step', () => {
 
     it('drops both panels in summary mode', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({ isSummary: true });
 
@@ -681,6 +721,8 @@ describe('application and instrument step', () => {
   describe('summary mode', () => {
     it('names the chosen application type and its options', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         isSummary: true,
@@ -705,6 +747,8 @@ describe('application and instrument step', () => {
     it('reads a single stored option that is not in a list', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({
@@ -721,6 +765,8 @@ describe('application and instrument step', () => {
     it('says nothing was selected for an empty option list', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ newSubOptions: [] }),
@@ -733,6 +779,8 @@ describe('application and instrument step', () => {
 
     it('says nothing was selected when the options are absent', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         isSummary: true,
@@ -747,6 +795,8 @@ describe('application and instrument step', () => {
     it('says nothing was selected for a single option it cannot name', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ newSubOptions: 'no-such-option' }),
@@ -759,6 +809,8 @@ describe('application and instrument step', () => {
 
     it('says nothing was selected for options it cannot name', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         isSummary: true,
@@ -775,6 +827,8 @@ describe('application and instrument step', () => {
       // later release. The summary says so rather than printing a raw enum value.
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ patternApprovalType: 'Retired' }),
@@ -788,6 +842,8 @@ describe('application and instrument step', () => {
     it('says nothing was selected when no application type is stored', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({ patternApprovalType: undefined }),
@@ -800,6 +856,8 @@ describe('application and instrument step', () => {
 
     it('summarises a variation application', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({
         isSummary: true,
@@ -822,6 +880,8 @@ describe('application and instrument step', () => {
     it('summarises an other-approval application', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep({
         isSummary: true,
         values: baseValues({
@@ -839,6 +899,8 @@ describe('application and instrument step', () => {
     it('addresses fields at the root when given no prefix', async () => {
       expect.hasAssertions();
 
+      resetApplicationAndInstrumentMocks();
+
       await renderStep();
 
       expect(captured.selects.get('instrumentCategory')).toBeDefined();
@@ -847,6 +909,8 @@ describe('application and instrument step', () => {
 
     it('prefixes every field when nested under a name', async () => {
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({ name: 'applicationAndInstrument' });
 
@@ -867,6 +931,8 @@ describe('application and instrument step', () => {
       // `<name>.patternApprovalType` while the selection is read from the root. Harmless today
       // because the only nested use is a summary, which never reaches the radio.
       expect.hasAssertions();
+
+      resetApplicationAndInstrumentMocks();
 
       await renderStep({ name: 'applicationAndInstrument' });
 

@@ -1,4 +1,4 @@
-import { describe, beforeEach, afterEach, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter, useNavigate } from 'react-router';
 import { useRouteAccessibility } from '@/hooks/useRouteAccessibility';
@@ -19,18 +19,17 @@ function AccessibilityProbe() {
   );
 }
 
+const resetAccessibilityTestState = () => {
+  vi.useRealTimers();
+  vi.useFakeTimers();
+  document.title = 'Dashboard';
+};
+
 describe('route accessibility behavior', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    document.title = 'Dashboard';
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('announces the current title and focuses main content after navigation', async () => {
     expect.hasAssertions();
+
+    resetAccessibilityTestState();
 
     render(
       <MemoryRouter initialEntries={['/start']}>
@@ -58,6 +57,8 @@ describe('route accessibility behavior', () => {
 
   it('clears a pending announcement timer on unmount', () => {
     expect.hasAssertions();
+
+    resetAccessibilityTestState();
 
     const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
     const { unmount } = render(

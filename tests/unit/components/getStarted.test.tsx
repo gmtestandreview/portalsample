@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useIsAuthenticated } from '@azure/msal-react';
 import GetStarted from '@/components/get-started/get-started';
 import {
@@ -12,10 +12,10 @@ import { NotificationSeverity } from '@/storage/types';
 
 vi.mock(
   import('@azure/msal-react'),
-  () =>
+  (() =>
     ({
       useIsAuthenticated: vi.fn<typeof useIsAuthenticated>(),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 const renderGetStarted = () =>
@@ -32,16 +32,18 @@ const renderGetStarted = () =>
     </MemoryRouter>,
   );
 
-describe(GetStarted, () => {
-  beforeEach(() => {
+describe('get started', () => {
+  const resetGetStarted = () => {
     vi.mocked(useIsAuthenticated).mockReturnValue(false);
     clearGetStartedNotification();
     document.body.className = '';
     document.title = '';
-  });
+  };
 
   it('renders the unauthenticated entry content and pathway links', () => {
     expect.hasAssertions();
+
+    resetGetStarted();
 
     renderGetStarted();
 
@@ -62,7 +64,7 @@ describe(GetStarted, () => {
       digitalId: screen
         .getByRole('link', { name: /^Digital ID/i })
         .getAttribute('href'),
-    }).toEqual({
+    }).toStrictEqual({
       howToSetUpAccess: '/help-guide/how-to-setup-access',
       login: '/dashboard',
       digitalId: 'https://www.digitalidsystem.gov.au',
@@ -70,7 +72,7 @@ describe(GetStarted, () => {
     expect({
       title: document.title,
       bodyHasHomeClass: document.body.classList.contains('home'),
-    }).toEqual({
+    }).toStrictEqual({
       title: 'NMI Services portal | NMI',
       bodyHasHomeClass: true,
     });
@@ -78,6 +80,8 @@ describe(GetStarted, () => {
 
   it('renders and clears a stored get-started notification', async () => {
     expect.hasAssertions();
+
+    resetGetStarted();
 
     const user = userEvent.setup();
     setGetStartedNotification({
@@ -102,6 +106,8 @@ describe(GetStarted, () => {
 
   it('redirects authenticated users to the dashboard', () => {
     expect.hasAssertions();
+
+    resetGetStarted();
 
     vi.mocked(useIsAuthenticated).mockReturnValue(true);
 

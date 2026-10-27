@@ -35,7 +35,7 @@ describe('validateFreezeRecord', () => {
         expectedInputDigest: 'sha256:inputs',
         selectedPaths: ['ClientApp/src', '.storybook'],
       }),
-    ).toEqual({ ok: true, errors: [] });
+    ).toStrictEqual({ ok: true, errors: [] });
   });
 
   type Overrides = {

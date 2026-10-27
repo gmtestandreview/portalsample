@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 
 import { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
@@ -85,14 +85,17 @@ const expectDashboardTabStorage = () => {
   );
 };
 
-describe(RequestForPatternApprovalCreated, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    globalThis.sessionStorage.clear();
-  });
+const resetCreatedRequestMocks = () => {
+  vi.clearAllMocks();
+  globalThis.sessionStorage.clear();
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(RequestForPatternApprovalCreated, () => {
   it('renders the submitted reference and page chrome metadata', () => {
     expect.hasAssertions();
+
+    resetCreatedRequestMocks();
 
     renderCreatedRoute();
 
@@ -104,7 +107,7 @@ describe(RequestForPatternApprovalCreated, () => {
         name: 'Your application has been submitted',
       }).textContent,
       success: screen.getByTestId('application-submit-success').textContent,
-    }).toEqual({
+    }).toStrictEqual({
       titleCall: [
         [
           'Application for Pattern/type approval created successfully | NMI Services portal',
@@ -120,6 +123,8 @@ describe(RequestForPatternApprovalCreated, () => {
   it('sets the dashboard tab marker and navigates when the dashboard button is clicked', () => {
     expect.hasAssertions();
 
+    resetCreatedRequestMocks();
+
     renderCreatedRoute();
 
     fireEvent.click(screen.getByTestId('go-to-dashboard-button'));
@@ -131,6 +136,8 @@ describe(RequestForPatternApprovalCreated, () => {
 
   it('sets the dashboard tab marker when the dashboard text link is followed', () => {
     expect.hasAssertions();
+
+    resetCreatedRequestMocks();
 
     renderCreatedRoute();
 

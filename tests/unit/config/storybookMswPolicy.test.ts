@@ -1,14 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { setupServer } from 'msw/node';
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
 import * as handlersModule from '../../../.storybook/msw-handlers';
 import { onUnhandledStorybookRequest } from '../../../.storybook/msw-policy';
@@ -27,21 +19,27 @@ const createDefaults = (): StorybookDefaults => ({
   warn: vi.fn<StorybookDefaults['warn']>(),
 });
 
-beforeAll(() => server.listen({ onUnhandledFrame: 'bypass' }));
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => server.close());
+const startStorybookMswTest = () => {
+  server.listen({ onUnhandledFrame: 'bypass' });
+  onTestFinished(() => {
+    server.resetHandlers();
+    server.close();
+  });
+};
 
 describe('storybook dashboard API contracts', () => {
   it('does not use a dashboard wildcard for incompatible response types', () => {
     expect.hasAssertions();
+
+    startStorybookMswTest();
 
     expect(handlerSource).not.toContain('/api/dashboard/*');
   });
 
   it('returns only file metadata when ReturnFile is false', async () => {
     expect.hasAssertions();
+
+    startStorybookMswTest();
 
     const response = await fetch(
       apiUrl(
@@ -57,6 +55,8 @@ describe('storybook dashboard API contracts', () => {
 
   it('returns a downloadable PDF payload when ReturnFile is true', async () => {
     expect.hasAssertions();
+
+    startStorybookMswTest();
 
     const response = await fetch(
       apiUrl(
@@ -74,6 +74,8 @@ describe('storybook dashboard API contracts', () => {
 
   it('returns the instrument-report paginated DTO from its own endpoint', async () => {
     expect.hasAssertions();
+
+    startStorybookMswTest();
 
     const response = await fetch(
       apiUrl(
@@ -108,6 +110,8 @@ describe('storybook dashboard API contracts', () => {
   ])('keeps %s on the dashboard paginated DTO', async (path) => {
     expect.hasAssertions();
 
+    startStorybookMswTest();
+
     const response = await fetch(apiUrl(path));
 
     expect(response.status).toBe(200);
@@ -124,6 +128,8 @@ describe('storybook dashboard API contracts', () => {
 describe('storybook unhandled-request policy', () => {
   it('fails an unhandled same-origin API request at its owner', () => {
     expect.hasAssertions();
+
+    startStorybookMswTest();
 
     const defaults = createDefaults();
 
@@ -147,6 +153,8 @@ describe('storybook unhandled-request policy', () => {
     'https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js',
   ])('bypasses non-API request %s', (requestUrl) => {
     expect.hasAssertions();
+
+    startStorybookMswTest();
 
     const defaults = createDefaults();
     const url = new URL(requestUrl, globalThis.location.origin);

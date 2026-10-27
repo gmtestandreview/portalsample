@@ -5,14 +5,22 @@ import type {
   AuthenticationResult,
   IPublicClientApplication,
 } from '@azure/msal-browser';
+import type * as MsalBrowserModule from '@azure/msal-browser';
+import type * as MsalReactModule from '@azure/msal-react';
 import { describe, expect, it, vi } from 'vitest';
 import AccountProvider from '../../../ClientApp/src/authentication/AccountProvider';
 import type { UsersClient } from '../../../ClientApp/src/api/web-api-client';
+import type * as WebApiModule from '../../../ClientApp/src/api/web-api-client';
+import type * as AppLoggerModule from '../../../ClientApp/src/instrumentation/AppLogger';
 import {
   useAccountDispatch,
   useAccountState,
 } from '../../../ClientApp/src/authentication/hooks';
 import type * as TargetOrganisationModule from '../../../ClientApp/src/storage/targetOrganisation';
+import type * as AuthConfigModule from '../../../ClientApp/src/authentication/authConfig';
+
+type InteractionStatusValue =
+  (typeof MsalBrowserModule)['InteractionStatus'][keyof (typeof MsalBrowserModule)['InteractionStatus']];
 
 const providerMocks = vi.hoisted(() => {
   const accounts: AccountInfo[] = [
@@ -32,14 +40,14 @@ const providerMocks = vi.hoisted(() => {
 
   return {
     acquireTokenSilent: vi.fn<IPublicClientApplication['acquireTokenSilent']>(),
-    appLoggerError: vi.fn<(message: string, error?: unknown) => void>(),
+    appLoggerError: vi.fn<(typeof AppLoggerModule)['default']['error']>(),
     accounts,
     getActiveAccount: vi.fn<IPublicClientApplication['getActiveAccount']>(),
     getStoredTargetOrganisation:
       vi.fn<typeof TargetOrganisationModule.getTargetOrganisation>(),
     handleRedirectPromise:
       vi.fn<IPublicClientApplication['handleRedirectPromise']>(),
-    inProgress: 'none',
+    inProgress: 'none' as InteractionStatusValue,
     logoutRedirect: vi.fn<IPublicClientApplication['logoutRedirect']>(),
     setStoredTargetOrganisation:
       vi.fn<typeof TargetOrganisationModule.default>(),
@@ -48,65 +56,86 @@ const providerMocks = vi.hoisted(() => {
   };
 });
 
+vi.mock(import('@azure/msal-react'), async (importOriginal) => {
+  const original = await importOriginal();
+  const msalBrowser = await import('@azure/msal-browser');
+  const instance = new msalBrowser.PublicClientApplication({
+    auth: { clientId: 'test-client-id' },
+  });
+  instance.acquireTokenSilent = providerMocks.acquireTokenSilent;
+  instance.getActiveAccount = providerMocks.getActiveAccount;
+  instance.handleRedirectPromise = providerMocks.handleRedirectPromise;
+  instance.logoutRedirect = providerMocks.logoutRedirect;
+
+  const logger = new msalBrowser.Logger({ loggerCallback: () => undefined });
+
+  return {
+    ...original,
+    useMsal: vi.fn<(typeof MsalReactModule)['useMsal']>(() => ({
+      inProgress: providerMocks.inProgress,
+      accounts: providerMocks.accounts,
+      instance,
+      logger,
+    })),
+  } satisfies Partial<typeof MsalReactModule>;
+});
+
+vi.mock(import('@azure/msal-browser'), async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    ...original,
+    InteractionStatus: { ...original.InteractionStatus },
+  } satisfies Partial<typeof MsalBrowserModule>;
+});
+
 vi.mock(
-  '@azure/msal-react',
-  () =>
-    ({
-      useMsal: () => ({
-        inProgress: providerMocks.inProgress,
-        accounts: providerMocks.accounts,
-        instance: {
-          acquireTokenSilent: providerMocks.acquireTokenSilent,
-          getActiveAccount: providerMocks.getActiveAccount,
-          handleRedirectPromise: providerMocks.handleRedirectPromise,
-          logoutRedirect: providerMocks.logoutRedirect,
-        },
-      }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    class MockUsersClient extends original.UsersClient {
+      override setAuthToken = vi.fn<UsersClient['setAuthToken']>();
+      override setUserProfile = providerMocks.setUserProfileApi;
+      override signIn = providerMocks.signIn;
+    }
+
+    return {
+      ...original,
+      UsersClient: MockUsersClient,
+    } satisfies Partial<typeof WebApiModule>;
+  },
 );
 
 vi.mock(
-  '@azure/msal-browser',
-  () =>
-    ({
-      InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
-    }) satisfies __ExactMockModule<__TestMockModule3>,
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    class MockAppLogger extends original.default {
+      static override error = providerMocks.appLoggerError;
+      static override verbose =
+        vi.fn<(typeof AppLoggerModule)['default']['verbose']>();
+    }
+
+    return {
+      ...original,
+      default: MockAppLogger,
+    } satisfies Partial<typeof AppLoggerModule>;
+  },
 );
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
-  () =>
-    ({
-      UsersClient: class {
-        setAuthToken = vi.fn<UsersClient['setAuthToken']>();
-        setUserProfile = providerMocks.setUserProfileApi;
-        signIn = providerMocks.signIn;
-      },
-    }) satisfies __ExactMockModule<__TestMockModule4>,
-);
-
-vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
-    ({
-      default: {
-        error: providerMocks.appLoggerError,
-        verbose: vi.fn<(message: string, ...args: unknown[]) => void>(),
-      },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
-);
-
-vi.mock(
-  '../../../ClientApp/src/storage/targetOrganisation',
-  () =>
-    ({
+  import('../../../ClientApp/src/storage/targetOrganisation'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    return {
+      ...original,
       default: providerMocks.setStoredTargetOrganisation,
       getTargetOrganisation: providerMocks.getStoredTargetOrganisation,
-    }) satisfies __ExactMockModule<__TestMockModule6>,
+    } satisfies Partial<typeof TargetOrganisationModule>;
+  },
 );
 
 vi.mock(
-  '../../../ClientApp/src/terms-config.json',
+  import('../../../ClientApp/src/terms-config.json'),
   () =>
     ({
       default: { TermsVersion: '1' },
@@ -114,11 +143,14 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/authentication/authConfig',
-  () =>
-    ({
-      tokenRequest: { scopes: ['read'] },
-    }) satisfies __ExactMockModule<__TestMockModule8>,
+  import('../../../ClientApp/src/authentication/authConfig'),
+  async (importOriginal) => {
+    const original = await importOriginal();
+    return {
+      ...original,
+      tokenRequest: { ...original.tokenRequest, scopes: ['read'] },
+    } satisfies Partial<typeof AuthConfigModule>;
+  },
 );
 
 const AccountConsumer = () => {

@@ -12,6 +12,7 @@ const Destination = () => {
   return <p>Destination reference: {reference}</p>;
 };
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(PortalStoryRouter, () => {
   it('matches an exact destination ahead of the story wildcard and reports destination params', async () => {
     expect.hasAssertions();

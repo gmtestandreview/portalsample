@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import getUnexpectedErrorRoute from '../../../ClientApp/src/routes/common/errorRoutes';
 import { HttpStatusCode } from '../../../ClientApp/src/types';
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(getUnexpectedErrorRoute, () => {
   it('maps 403 Forbidden to /forbidden', () => {
     expect.hasAssertions();

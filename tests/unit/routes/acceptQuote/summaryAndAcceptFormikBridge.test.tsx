@@ -86,6 +86,7 @@ const probe = () =>
     dirty: boolean;
   };
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndAcceptFormikBridge, () => {
   it('renders its children between the bridged fields', () => {
     expect.hasAssertions();

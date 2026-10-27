@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   ProgressClient,
   UploadProgress,
@@ -31,18 +31,18 @@ const makeClient = () => {
   return { client, getProgress, deleteProgressStatistics };
 };
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(pollUploadProgress, () => {
-  beforeEach(() => {
+  const resetPollUploadProgressState = () => {
+    vi.useRealTimers();
     vi.useFakeTimers();
     appLoggerError.mockReset();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  };
 
   it('feeds each poll the previous percent and stops on completion', async () => {
     expect.hasAssertions();
+
+    resetPollUploadProgressState();
 
     const { client, getProgress, deleteProgressStatistics } = makeClient();
     getProgress
@@ -60,7 +60,7 @@ describe(pollUploadProgress, () => {
       onFinished,
     });
 
-    expect(getProgress.mock.calls.map(([, percent]) => percent)).toEqual([
+    expect(getProgress.mock.calls.map(([, percent]) => percent)).toStrictEqual([
       -1, 40,
     ]);
     expect(onProgress).toHaveBeenCalledTimes(2);
@@ -70,6 +70,8 @@ describe(pollUploadProgress, () => {
 
   it('treats CompletedWithErrors as finished', async () => {
     expect.hasAssertions();
+
+    resetPollUploadProgressState();
 
     const { client, getProgress } = makeClient();
     getProgress.mockResolvedValue({
@@ -91,6 +93,8 @@ describe(pollUploadProgress, () => {
 
   it('logs a failed statistics cleanup without rejecting', async () => {
     expect.hasAssertions();
+
+    resetPollUploadProgressState();
 
     const { client, getProgress, deleteProgressStatistics } = makeClient();
     getProgress.mockResolvedValue({ percent: 100, status: 'Completed' });
@@ -115,6 +119,8 @@ describe(pollUploadProgress, () => {
   it('backs off then retries with the same percent after a failed poll', async () => {
     expect.hasAssertions();
 
+    resetPollUploadProgressState();
+
     const { client, getProgress } = makeClient();
     getProgress
       .mockResolvedValueOnce({ percent: 40, status: 'InProgress' })
@@ -136,13 +142,15 @@ describe(pollUploadProgress, () => {
     await vi.advanceTimersByTimeAsync(1);
     await done;
 
-    expect(getProgress.mock.calls.map(([, percent]) => percent)).toEqual([
+    expect(getProgress.mock.calls.map(([, percent]) => percent)).toStrictEqual([
       -1, 40, 40,
     ]);
   });
 
   it('does not poll when already aborted', async () => {
     expect.hasAssertions();
+
+    resetPollUploadProgressState();
 
     const { client, getProgress } = makeClient();
     const controller = new AbortController();
@@ -161,6 +169,8 @@ describe(pollUploadProgress, () => {
 
   it('exits without retrying when a failed poll was caused by abort', async () => {
     expect.hasAssertions();
+
+    resetPollUploadProgressState();
 
     const { client, getProgress } = makeClient();
     const controller = new AbortController();

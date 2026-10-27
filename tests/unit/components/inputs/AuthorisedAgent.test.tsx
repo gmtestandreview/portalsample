@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import AuthorisedAgent from '@/components/Inputs/AuthorisedAgent';
 
 vi.mock(
-  '@/components/Inputs/TextInput',
-  () =>
+  import('@/components/Inputs/TextInput'),
+  (() =>
     ({
       default: ({
         name,
@@ -23,12 +23,12 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule29>,
+    }) satisfies __ExactMockModule<__TestMockModule29>) as unknown as __DynamicPartialMockFactory<__TestMockModule29>,
 );
 
 vi.mock(
-  '@/components/Inputs/NumberInput',
-  () =>
+  import('@/components/Inputs/NumberInput'),
+  (() =>
     ({
       default: ({
         name,
@@ -56,12 +56,12 @@ vi.mock(
           <span>{inlineHelp}</span>
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule30>,
+    }) satisfies __ExactMockModule<__TestMockModule30>) as unknown as __DynamicPartialMockFactory<__TestMockModule30>,
 );
 
 vi.mock(
-  '@/components/Inputs/AddressLookup',
-  () =>
+  import('@/components/Inputs/AddressLookup'),
+  (() =>
     ({
       default: ({
         name,
@@ -86,10 +86,10 @@ vi.mock(
           {label}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule31>,
+    }) satisfies __ExactMockModule<__TestMockModule31>) as unknown as __DynamicPartialMockFactory<__TestMockModule31>,
 );
 
-describe(AuthorisedAgent, () => {
+describe('authorised agent behavior', () => {
   it('renders unprefixed manufacturer, ABN, and street address fields by default', () => {
     expect.hasAssertions();
 
@@ -119,7 +119,7 @@ describe(AuthorisedAgent, () => {
       addressPlaceholder: screen
         .getByTestId('address-lookup')
         .getAttribute('data-placeholder'),
-    }).toEqual({
+    }).toStrictEqual({
       manufacturerName: 'manufacturerName',
       abnName: 'abn',
       abnFormat: '## ### ### ###',
@@ -146,7 +146,7 @@ describe(AuthorisedAgent, () => {
       addressName: screen
         .getByTestId('address-lookup')
         .getAttribute('data-name'),
-    }).toEqual({
+    }).toStrictEqual({
       manufacturerName: 'agent.manufacturerName',
       abnName: 'agent.abn',
       addressName: 'agent.streetAddress',
@@ -168,7 +168,7 @@ describe(AuthorisedAgent, () => {
       addressSummary: screen
         .getByTestId('address-lookup')
         .getAttribute('data-summary'),
-    }).toEqual({
+    }).toStrictEqual({
       manufacturerSummary: 'true',
       abnSummary: 'true',
       addressSummary: 'true',

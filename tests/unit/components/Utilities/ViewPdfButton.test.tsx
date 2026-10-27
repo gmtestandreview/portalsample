@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { trackGAEvent } from '@/analytics/GoogleAnalytics';
 import ViewPdfButton from '@/components/Utilities/ViewPdfButton';
 import type { ViewPdfButtonProps } from '@/components/Utilities/ViewPdfButton';
@@ -15,13 +15,11 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-describe(ViewPdfButton, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
+describe('view pdf button', () => {
   it('shows the download button and file size note when loaded', () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     render(
       <ViewPdfButton
@@ -45,6 +43,8 @@ describe(ViewPdfButton, () => {
   it('shows the loading spinner and hides the button while not loaded', () => {
     expect.hasAssertions();
 
+    vi.clearAllMocks();
+
     render(
       <ViewPdfButton
         fileSize='1.2 MB'
@@ -63,6 +63,8 @@ describe(ViewPdfButton, () => {
 
   it('calls getPdf and tracks a GA event when the button is clicked', async () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     const user = userEvent.setup();
     const getPdf = vi.fn<ViewPdfButtonProps['getPdf']>();
@@ -85,6 +87,8 @@ describe(ViewPdfButton, () => {
 
   it('renders the button without label text when text prop is omitted', () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     render(
       <ViewPdfButton

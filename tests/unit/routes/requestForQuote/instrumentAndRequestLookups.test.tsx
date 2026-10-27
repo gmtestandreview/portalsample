@@ -26,6 +26,7 @@ const wrapper = ({ children }: { readonly children: ReactNode }) => (
   </Formik>
 );
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(useInstrumentAndRequestLookups, () => {
   it('returns no measurement category options before the lookups resolve', () => {
     expect.hasAssertions();
@@ -34,7 +35,7 @@ describe(useInstrumentAndRequestLookups, () => {
       wrapper,
     });
 
-    expect(result.current.getMeasurementCategories()).toEqual([]);
+    expect(result.current.getMeasurementCategories()).toStrictEqual([]);
     expect(result.current.isLoading).toBe(true);
   });
 });

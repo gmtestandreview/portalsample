@@ -1,5 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { FormikErrors, FormikProps } from 'formik';
 import { PatternApprovalRequiredValues } from '../../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
@@ -75,14 +75,14 @@ const attachmentControl = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react') as unknown as string, async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  import('../../../../ClientApp/src/api/web-api-client') as unknown as string,
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -100,7 +100,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  import('../../../../ClientApp/src/authentication/authConfig') as unknown as string,
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -108,7 +108,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks') as unknown as string,
   () =>
     ({
       default: () => mocks.accountContext(),
@@ -119,7 +119,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/notification'),
+  import('../../../../ClientApp/src/storage/notification') as unknown as string,
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -127,7 +127,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
+  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel') as unknown as string,
   () =>
     ({
       default: ({
@@ -147,7 +147,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/Attachment/index-new',
+  import('../../../../ClientApp/src/components/Inputs/Attachment/index-new') as unknown as string,
   () =>
     ({
       default: (props: typeof attachmentControl.props) => {
@@ -240,69 +240,79 @@ const alertItems = () =>
     (li) => li.textContent,
   );
 
-describe('supporting documents', () => {
-  beforeEach(async () => {
-    await import('../../../../ClientApp/src/api/web-api-client');
+const resetSupportingDocumentsMocks = async () => {
+  await import('../../../../ClientApp/src/api/web-api-client');
 
-    resetMsalMock();
-    formik = undefined;
-    mocks.accountContext.mockReset().mockReturnValue({
-      details: createAccountDetails(),
-    });
-    mocks.setTargetOrganisation.mockReset();
-    mocks.setDashboardNotification.mockReset();
-    attachmentControl.props =
-      undefined as unknown as typeof attachmentControl.props;
-
-    clients.patternApproval.setAuthToken.mockReset();
-    for (const method of Object.values(clients.patternApproval.methods)) {
-      method.mockReset().mockResolvedValue(undefined);
-    }
+  resetMsalMock();
+  formik = undefined;
+  mocks.accountContext.mockReset().mockReturnValue({
+    details: createAccountDetails(),
   });
+  mocks.setTargetOrganisation.mockReset();
+  mocks.setDashboardNotification.mockReset();
+  attachmentControl.props =
+    undefined as unknown as typeof attachmentControl.props;
 
+  clients.patternApproval.setAuthToken.mockReset();
+  for (const method of Object.values(clients.patternApproval.methods)) {
+    method.mockReset().mockResolvedValue(undefined);
+  }
+};
+
+describe('supporting documents', () => {
   describe('surfacing errors', () => {
     it('shows errors handed down from the parent', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({
         props: { externalErrors: ['Failed to commit documents.'] },
       });
 
-      expect(alertItems()).toEqual(['Failed to commit documents.']);
+      expect(alertItems()).toStrictEqual(['Failed to commit documents.']);
     });
 
     it('shows a Formik field error given as a string', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       await setFormikErrors({ form: 'The form is invalid' });
 
-      expect(alertItems()).toEqual(['The form is invalid']);
+      expect(alertItems()).toStrictEqual(['The form is invalid']);
     });
 
     it('shows Formik field errors given as an array of strings', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       await setFormikErrors({ form: ['First problem', 'Second problem'] });
 
-      expect(alertItems()).toEqual(['First problem', 'Second problem']);
+      expect(alertItems()).toStrictEqual(['First problem', 'Second problem']);
     });
 
     it('shows the named field error when Formik reports an object', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       await setFormikErrors({ form: { documents: 'Documents are invalid' } });
 
-      expect(alertItems()).toEqual(['Documents are invalid']);
+      expect(alertItems()).toStrictEqual(['Documents are invalid']);
     });
 
     it('reports each failed and cancelled upload once the transfer finishes', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({
         props: {
@@ -317,7 +327,7 @@ describe('supporting documents', () => {
         },
       });
 
-      expect(alertItems()).toEqual([
+      expect(alertItems()).toStrictEqual([
         'Error uploading bad.pdf',
         'Upload cancelled for stopped.pdf',
       ]);
@@ -325,6 +335,8 @@ describe('supporting documents', () => {
 
     it('reports no file errors until the transfer reaches 100 percent', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({
         props: {
@@ -341,11 +353,13 @@ describe('supporting documents', () => {
     it('shows a repeated error only once', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({ props: { externalErrors: ['Same problem'] } });
 
       await setFormikErrors({ form: 'Same problem' });
 
-      expect(alertItems()).toEqual(['Same problem']);
+      expect(alertItems()).toStrictEqual(['Same problem']);
     });
 
     it('hides the summary when the only error is an untouched category prompt', async () => {
@@ -353,6 +367,8 @@ describe('supporting documents', () => {
       // not finished yet. It must arrive as an external error to be the sole entry: the same
       // message coming from uploadErrors is filtered out before it reaches the summary.
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({
         props: { externalErrors: [ValidationMessages.RequiredTag] },
@@ -364,6 +380,8 @@ describe('supporting documents', () => {
     it('shows a lone category prompt after the form has been submitted', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({
         props: { externalErrors: [ValidationMessages.RequiredTag] },
       });
@@ -372,11 +390,13 @@ describe('supporting documents', () => {
         await formik?.submitForm();
       });
 
-      expect(alertItems()).toEqual([ValidationMessages.RequiredTag]);
+      expect(alertItems()).toStrictEqual([ValidationMessages.RequiredTag]);
     });
 
     it('drops the category prompt when it arrives as an upload error', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -392,6 +412,8 @@ describe('supporting documents', () => {
       // exactly this message before they ever reach the summary.
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({
         props: {
           externalErrors: [
@@ -401,11 +423,13 @@ describe('supporting documents', () => {
         },
       });
 
-      expect(alertItems()).toEqual(['Failed to commit documents.']);
+      expect(alertItems()).toStrictEqual(['Failed to commit documents.']);
     });
 
     it('shows the category prompt once the form has been submitted', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({
         props: {
@@ -420,7 +444,7 @@ describe('supporting documents', () => {
         await formik?.submitForm();
       });
 
-      expect(alertItems()).toEqual([
+      expect(alertItems()).toStrictEqual([
         ValidationMessages.RequiredTag,
         'Failed to commit documents.',
       ]);
@@ -428,6 +452,8 @@ describe('supporting documents', () => {
 
     it('ignores a Formik error that is neither text, list nor object', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -442,15 +468,19 @@ describe('supporting documents', () => {
       // string, so an unrelated field error yields a bullet with no text in it.
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       await setFormikErrors({ form: { somethingElse: 'Unrelated problem' } });
 
-      expect(alertItems()).toEqual(['']);
+      expect(alertItems()).toStrictEqual(['']);
     });
 
     it('scrolls the summary into view when a document is required', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
       const focus = vi.fn<HTMLElement['focus']>();
@@ -480,6 +510,8 @@ describe('supporting documents', () => {
     it('refuses an empty selection', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({
         props: {
           onUploadAttachment:
@@ -494,6 +526,8 @@ describe('supporting documents', () => {
 
     it('sends every selected file in a single call', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -526,11 +560,13 @@ describe('supporting documents', () => {
         { data: files[1], fileName: 'second.pdf' },
       ]);
       expect(setExternalErrors).toHaveBeenCalledWith([]);
-      expect(uploaded).toEqual([{ id: 'doc-1' }]);
+      expect(uploaded).toStrictEqual([{ id: 'doc-1' }]);
     });
 
     it('falls back to the attachment handler when no upload handler is supplied', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const onUploadFiles = vi
         .fn<AttachmentFunction['onUploadFiles']>()
@@ -549,6 +585,8 @@ describe('supporting documents', () => {
     it('lists every server-side validation message', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
         .mockRejectedValue({
@@ -563,7 +601,7 @@ describe('supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      expect(alertItems()).toEqual([
+      expect(alertItems()).toStrictEqual([
         'File type not allowed',
         'File too large',
         'Name is invalid',
@@ -572,6 +610,8 @@ describe('supporting documents', () => {
 
     it('falls back to the problem title when no field errors are given', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -582,11 +622,13 @@ describe('supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      expect(alertItems()).toEqual(['Upload rejected']);
+      expect(alertItems()).toStrictEqual(['Upload rejected']);
     });
 
     it('stays quiet when the failure carries neither errors nor a title', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -602,6 +644,8 @@ describe('supporting documents', () => {
 
     it('drops the caller back to their own organisation when third-party access is revoked', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -639,6 +683,8 @@ describe('supporting documents', () => {
     it('falls back to empty identifiers when the account has no organisation recorded', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       mocks.accountContext.mockReturnValue({
         details: createAccountDetails({ abn: '', organisation: '' }),
       });
@@ -662,6 +708,8 @@ describe('supporting documents', () => {
     it('treats a 403 without the third-party title as an ordinary failure', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
         .mockRejectedValue({
@@ -675,13 +723,15 @@ describe('supporting documents', () => {
       });
 
       expect(mocks.setTargetOrganisation).not.toHaveBeenCalled();
-      expect(alertItems()).toEqual(['Forbidden']);
+      expect(alertItems()).toStrictEqual(['Forbidden']);
     });
   });
 
   describe('managing existing documents', () => {
     it('deletes a document and reports the success', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const onDeleteSuccess = vi.fn<(success: boolean) => void>();
       await renderDocs({ props: { onDeleteSuccess } });
@@ -702,6 +752,8 @@ describe('supporting documents', () => {
     it('deletes a document when no success callback is supplied', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       await act(async () => {
@@ -715,6 +767,8 @@ describe('supporting documents', () => {
 
     it('updates a document category', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -733,6 +787,8 @@ describe('supporting documents', () => {
     it('ignores a category update with no category', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       await act(async () => {
@@ -749,6 +805,8 @@ describe('supporting documents', () => {
     it('shows the panel for a new certificate application', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs();
 
       expect(screen.getByTestId('instrument-info-panel')).toHaveAttribute(
@@ -763,6 +821,8 @@ describe('supporting documents', () => {
 
     it('hides the panel for other application types', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({
         values: {
@@ -781,6 +841,8 @@ describe('supporting documents', () => {
     it('hides the panel when the instrument is not yet chosen', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({
         values: {
           form: { ...defaultValues.form, instrumentType: undefined },
@@ -795,6 +857,8 @@ describe('supporting documents', () => {
     it('hides the panel in summary mode', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({ props: { isSummary: true } });
 
       expect(
@@ -806,6 +870,8 @@ describe('supporting documents', () => {
   describe('presentation', () => {
     it('invites an upload when documents can still be changed', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -820,6 +886,8 @@ describe('supporting documents', () => {
     it('explains the commit rule when document changes are suppressed', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({ props: { suppressDocChanges: true } });
 
       expect(
@@ -829,6 +897,8 @@ describe('supporting documents', () => {
 
     it('reads as a record rather than an invitation in summary mode', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       await renderDocs({ props: { isSummary: true } });
 
@@ -844,6 +914,8 @@ describe('supporting documents', () => {
     it('passes the upload lock through to the attachment control', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       await renderDocs({ props: { disableUpload: true } });
 
       expect(screen.getByTestId('attachment')).toHaveAttribute(
@@ -857,6 +929,8 @@ describe('supporting documents', () => {
     it('clears the progress it no longer owns', async () => {
       expect.hasAssertions();
 
+      await resetSupportingDocumentsMocks();
+
       const setProgress =
         vi.fn<NonNullable<TASupportingDocumentsProps['setProgress']>>();
       const { unmount } = await renderDocs({ props: { setProgress } });
@@ -868,6 +942,8 @@ describe('supporting documents', () => {
 
     it('leaves progress alone while an upload is still running', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const setProgress =
         vi.fn<NonNullable<TASupportingDocumentsProps['setProgress']>>();
@@ -882,6 +958,8 @@ describe('supporting documents', () => {
 
     it('survives unmount when no progress setter was supplied', async () => {
       expect.hasAssertions();
+
+      await resetSupportingDocumentsMocks();
 
       const { unmount } = await renderDocs({
         props: { setProgress: undefined },

@@ -29,7 +29,7 @@ vi.mock(
 const base = { isDirty: false, isValid: true, submitCount: 0 };
 const whenOf = () => screen.getByTestId('guard').getAttribute('data-when');
 
-describe(UnsavedChangesPrompt, () => {
+describe('unsaved changes prompt', () => {
   it.each([
     ['clean and unsubmitted', base, 'false'],
     ['dirty and unsubmitted', { ...base, isDirty: true }, 'true'],

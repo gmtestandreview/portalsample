@@ -1,5 +1,5 @@
 import type React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import type { Mock } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,44 +27,44 @@ type SaveStepFn = (values: unknown, isDirty: boolean) => Promise<object>;
 // say what should happen. See the design addendum, parity contract.
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         verbose: vi.fn<AppLogger['verbose']>(),
         error: vi.fn<AppLogger['error']>(),
         trace: vi.fn<AppLogger['trace']>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 // The real WizardStep wraps an error boundary and analytics; render children.
 vi.mock(
   import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>,
+    }) satisfies __ExactMockModule<__TestMockModule24>) as unknown as __DynamicPartialMockFactory<__TestMockModule24>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/components/SteppedNavigation'),
-  () =>
+  (() =>
     ({
       default: () => <div data-testid='stepped-navigation' />,
-    }) satisfies __ExactMockModule<__TestMockModule25>,
+    }) satisfies __ExactMockModule<__TestMockModule25>) as unknown as __DynamicPartialMockFactory<__TestMockModule25>,
 );
 
 const accountState = {
@@ -205,16 +205,18 @@ const MODAL = 'prompt-save-modal';
 describe('formik wizard characterisation: steps, Enter key and unsaved prompt', () => {
   let saves: Saves;
 
-  beforeEach(() => {
+  const resetWizardCharacterization = () => {
     vi.clearAllMocks();
     saves = {
       step1: vi.fn<SaveStepFn>(async () => ({})),
       step2: vi.fn<SaveStepFn>(async () => ({})),
     };
-  });
+  };
 
   it('starts the next step clean and without errors after a valid submit', async () => {
     expect.hasAssertions();
+
+    resetWizardCharacterization();
 
     const user = userEvent.setup();
     renderWizard(saves);
@@ -227,11 +229,13 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
     expect((second as HTMLInputElement).value).toBe('');
     expect(screen.queryByTestId('form-error-summary')).toBeNull();
     expect(saves.step1).toHaveBeenCalledTimes(1);
-    expect(saves.step1.mock.calls[0]?.[0]).toEqual({ name: 'abc' });
+    expect(saves.step1.mock.calls[0]?.[0]).toStrictEqual({ name: 'abc' });
   });
 
   it('shows the unsaved prompt on Back after an invalid submit on the next step', async () => {
     expect.hasAssertions();
+
+    resetWizardCharacterization();
 
     const user = userEvent.setup();
     renderWizard(saves);
@@ -250,6 +254,8 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('submits once on Enter when valid and shows errors on Enter when invalid', async () => {
     expect.hasAssertions();
+
+    resetWizardCharacterization();
 
     const user = userEvent.setup();
     renderWizard(saves);
@@ -273,6 +279,8 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
   it('lets a clean form navigate away without a prompt', async () => {
     expect.hasAssertions();
 
+    resetWizardCharacterization();
+
     const router = renderWizard(saves);
     await screen.findByLabelText('Name one');
 
@@ -286,6 +294,8 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('blocks a dirty form and stays on the step when Cancel is chosen', async () => {
     expect.hasAssertions();
+
+    resetWizardCharacterization();
 
     const user = userEvent.setup();
     const router = renderWizard(saves);
@@ -307,6 +317,8 @@ describe('formik wizard characterisation: steps, Enter key and unsaved prompt', 
 
   it('blocks a dirty form and leaves when Discard is chosen', async () => {
     expect.hasAssertions();
+
+    resetWizardCharacterization();
 
     const user = userEvent.setup();
     const router = renderWizard(saves);

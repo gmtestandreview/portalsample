@@ -1,5 +1,5 @@
 import ReactGA from 'react-ga4';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DashboardClient,
   State,
@@ -113,25 +113,22 @@ const baseRequest = {
   crmQuoteId: 'quote-1',
 };
 
+const resetHelperFunctionsState = () => {
+  document.body.innerHTML = '';
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+  vi.clearAllMocks();
+  mocks.getQuoteRequestAcceptedPDFByID.mockResolvedValue({
+    fileData: 'accepted',
+  });
+  mocks.getQuoteRequestRejectedPDFByID.mockResolvedValue({
+    fileData: 'rejected',
+  });
+  mocks.getQuoteOfferPDFByQuoteID.mockResolvedValue({ fileData: 'offer' });
+  mocks.getQuoteReportPDFByID.mockResolvedValue({ fileData: 'report' });
+};
+
 describe('route common helper functions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.getQuoteRequestAcceptedPDFByID.mockResolvedValue({
-      fileData: 'accepted',
-    });
-    mocks.getQuoteRequestRejectedPDFByID.mockResolvedValue({
-      fileData: 'rejected',
-    });
-    mocks.getQuoteOfferPDFByQuoteID.mockResolvedValue({ fileData: 'offer' });
-    mocks.getQuoteReportPDFByID.mockResolvedValue({ fileData: 'report' });
-  });
-
-  afterEach(() => {
-    document.body.innerHTML = '';
-    vi.useRealTimers();
-    vi.restoreAllMocks();
-  });
-
   it.each([
     [
       QuoteStatus.QuoteAccepted,
@@ -164,6 +161,8 @@ describe('route common helper functions', () => {
     async (status, methodName, expectedArgs) => {
       expect.hasAssertions();
 
+      resetHelperFunctionsState();
+
       await getFileDetails(
         'access-token',
         { ...baseRequest, quoteRequestStatus: status },
@@ -180,6 +179,8 @@ describe('route common helper functions', () => {
 
   it('routes report-issued dashboard downloads differently for quotation and measurement tabs', async () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     await getFileDetails(
       'token',
@@ -205,6 +206,8 @@ describe('route common helper functions', () => {
 
   it('resolves to undefined for statuses without downloadable files', async () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     await expect(
       getFileDetails(
@@ -234,6 +237,8 @@ describe('route common helper functions', () => {
   ])('routes quotation file downloads for %s', async (status, methodName) => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     await getQuotationFileDetails(
       'access-token',
       { ...baseRequest, quoteRequestStatus: status },
@@ -253,6 +258,8 @@ describe('route common helper functions', () => {
 
   it('formats make/model, file sizes, quote pages, addresses, and user profiles', () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     expect({
       makeModel: [
@@ -329,6 +336,8 @@ describe('route common helper functions', () => {
   it('formats account and organisation display names across optional trading and branch names', () => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     const details = (overrides: Partial<AccountDetails>): AccountDetails =>
       ({
         organisation: 'National Measurement Institute',
@@ -386,6 +395,8 @@ describe('route common helper functions', () => {
   it('treats an undefined trading or branch name as empty', () => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     expect(formatTradingBranchFromStrings(undefined, undefined)).toBe('');
     expect(formatTradingBranchFromStrings('Trading', undefined)).toBe(
       'Trading',
@@ -395,6 +406,8 @@ describe('route common helper functions', () => {
 
   it('creates file URLs, delegates secure open helpers, and triggers downloads', () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     const createObjectUrl = vi
       .spyOn(URL, 'createObjectURL')
@@ -439,11 +452,15 @@ describe('route common helper functions', () => {
   it('sets dashboard notifications for report and unexpected errors', () => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     vi.useFakeTimers();
     const notification = document.createElement('button');
     notification.id = '#notif-test';
-    vi.spyOn(notification, 'scrollIntoView').mockImplementation(() => {});
-    vi.spyOn(notification, 'focus').mockImplementation(() => {});
+    const scrollIntoView = vi
+      .spyOn(notification, 'scrollIntoView')
+      .mockImplementation(() => {});
+    const focus = vi.spyOn(notification, 'focus').mockImplementation(() => {});
     document.body.append(notification);
     vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => {});
 
@@ -452,8 +469,8 @@ describe('route common helper functions', () => {
 
     expect({
       scrollToCalls: vi.mocked(globalThis.scrollTo).mock.calls,
-      scrollIntoViewCalls: vi.mocked(notification.scrollIntoView).mock.calls,
-      focusCalls: vi.mocked(notification.focus).mock.calls,
+      scrollIntoViewCalls: scrollIntoView.mock.calls,
+      focusCalls: focus.mock.calls,
     }).toMatchObject({
       scrollToCalls: [[0, 0]],
       scrollIntoViewCalls: [[{ behavior: 'smooth', block: 'start' }]],
@@ -488,6 +505,8 @@ describe('route common helper functions', () => {
   ])('detects the %s environment', (hostname, expected) => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
       ...globalThis.location,
       hostname,
@@ -498,6 +517,8 @@ describe('route common helper functions', () => {
 
   it('sends redacted GA events for PII fields and optional page views', () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     globalThis.history.pushState({}, '', '/dashboard');
     document.body.innerHTML = `
@@ -532,6 +553,8 @@ describe('route common helper functions', () => {
 
   it('sorts lists and moves the matching final item to the end', () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     const options = [
       { value: 'b', displayText: 'Beta' },
@@ -590,6 +613,8 @@ describe('route common helper functions', () => {
   it('covers empty address lines and unusual optional organisation fields', () => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     expect(
       getFormattedAddress({
         line1: null as unknown as string,
@@ -621,6 +646,8 @@ describe('route common helper functions', () => {
   it('classifies empty and syntactically valid GUID values', () => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     expect({
       empty: [
         isEmptyGuid(undefined),
@@ -641,6 +668,8 @@ describe('route common helper functions', () => {
   it('sanitises unsafe markup before returning HTML', () => {
     expect.hasAssertions();
 
+    resetHelperFunctionsState();
+
     expect(
       sanitiseHtml('<img src="x" onerror="alert(1)"><p>Safe copy</p>'),
     ).toBe('<img src="x"><p>Safe copy</p>');
@@ -648,6 +677,8 @@ describe('route common helper functions', () => {
 
   it('opens downloaded file URLs in a secure new tab', () => {
     expect.hasAssertions();
+
+    resetHelperFunctionsState();
 
     downloadFileFromUrl(
       'https://example.test/report.pdf',

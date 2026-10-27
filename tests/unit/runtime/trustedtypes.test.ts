@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'dompurify',
+  import('dompurify') as unknown as string,
   () =>
     ({
       default: {
@@ -18,10 +18,10 @@ vi.mock(
 );
 
 describe('trustedTypes', () => {
-  afterEach(() => {
+  const resetTrustedTypes = () => {
     delete (globalThis as { trustedTypes?: unknown }).trustedTypes;
     vi.restoreAllMocks();
-  });
+  };
 
   it('creates a default trusted types policy that sanitizes HTML and script URLs', async () => {
     expect.hasAssertions();
@@ -63,6 +63,8 @@ describe('trustedTypes', () => {
     expect(() => policy.createScript()).toThrow(
       'Inline script creation is not allowed',
     );
+
+    resetTrustedTypes();
   });
 
   it('does nothing when trusted types are unavailable', async () => {
@@ -72,5 +74,7 @@ describe('trustedTypes', () => {
       await import('../../../ClientApp/src/trustedtypes');
 
     expect(() => TrustedTypes.createTrustedTypePolicy()).not.toThrow();
+
+    resetTrustedTypes();
   });
 });

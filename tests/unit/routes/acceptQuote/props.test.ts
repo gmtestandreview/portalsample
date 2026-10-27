@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -118,20 +118,22 @@ const accountDetails = {
 } as AccountDetails;
 const statuses = stepStatuses;
 
-describe('accept quote wizard prop factories', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.getDeliveryAndReturn.mockResolvedValue({
-      returnContactType: 'SamePerson',
-    });
-    mocks.getPaymentDetails.mockResolvedValue({ invoiceSentTo: 'SamePerson' });
-    mocks.getReportRecipient.mockResolvedValue({ reportAddressType: 'Other' });
-    mocks.getSummaryAndAccept.mockResolvedValue({ associatedDisputes: 'No' });
+const resetAcceptQuotePropsMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.getDeliveryAndReturn.mockResolvedValue({
+    returnContactType: 'SamePerson',
   });
+  mocks.getPaymentDetails.mockResolvedValue({ invoiceSentTo: 'SamePerson' });
+  mocks.getReportRecipient.mockResolvedValue({ reportAddressType: 'Other' });
+  mocks.getSummaryAndAccept.mockResolvedValue({ associatedDisputes: 'No' });
+};
 
+describe('accept quote wizard prop factories', () => {
   it('loads, saves, hides, and redirects delivery/return branches', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuotePropsMocks();
 
     const props = deliveryAndReturnProps(
       'Q-1',
@@ -223,6 +225,8 @@ describe('accept quote wizard prop factories', () => {
 
   it('loads and saves payment details while logging load and save failures', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuotePropsMocks();
 
     const props = paymentDetailsProps(
       'Q-2',
@@ -330,6 +334,8 @@ describe('accept quote wizard prop factories', () => {
   it('loads and saves report recipient details with custom discard and error logging', async () => {
     expect.hasAssertions();
 
+    resetAcceptQuotePropsMocks();
+
     const props = reportRecipientProps(
       'Q-3',
       'RFQ-3',
@@ -424,6 +430,8 @@ describe('accept quote wizard prop factories', () => {
 
   it('loads, saves, completes, and hides summary/accept sections', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuotePropsMocks();
 
     const props = summaryAndAcceptProps(
       'Q-4',
@@ -539,6 +547,8 @@ describe('accept quote wizard prop factories', () => {
 
   it('throws load/save errors when no account is available', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuotePropsMocks();
 
     const deliveryProps = deliveryAndReturnProps(
       'Q-5',

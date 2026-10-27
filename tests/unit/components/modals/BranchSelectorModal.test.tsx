@@ -8,7 +8,7 @@ import {
 import { MemoryRouter } from 'react-router';
 import type * as ReactRouterModule from 'react-router';
 import type * as WebApiClientModule from '@/api/web-api-client';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MsalContext, type IMsalContext } from '@azure/msal-react';
 import {
   InteractionStatus,
@@ -110,7 +110,9 @@ const acquireTokenSilent = vi
     correlationId: 'mock-correlation-id',
   });
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -124,7 +126,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       };
     }),
   } satisfies __ExactMockModule<__TestMockModule4>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 vi.mock(
   import('@/storage/notification'),
@@ -136,14 +138,14 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
-  () =>
+  import('@/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         error: mocks.appLoggerError,
         verbose: vi.fn<() => void>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(import('react-router'), async (importOriginal) => {
@@ -155,13 +157,13 @@ vi.mock(import('react-router'), async (importOriginal) => {
 });
 
 vi.mock(
-  '@/components/Alert/NotificationMessage',
-  () =>
+  import('@/components/Alert/NotificationMessage'),
+  (() =>
     ({
       default: ({ id }: { id: string }) => (
         <div data-testid={id}>notification message</div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule48>,
+    }) satisfies __ExactMockModule<__TestMockModule48>) as unknown as __DynamicPartialMockFactory<__TestMockModule48>,
 );
 
 // ─── test data ────────────────────────────────────────────────────────────────
@@ -307,22 +309,20 @@ const renderModal = (opts: RenderOptions = {}) => {
 
 // ─── tests ────────────────────────────────────────────────────────────────────
 
-describe(BranchSelectorModal, () => {
-  beforeEach(() => {
+describe('branch selector modal', () => {
+  const resetBranchSelectorMocks = () => {
     vi.clearAllMocks();
     getOrganisationsByABN.mockResolvedValue(mockBranches);
     mocks.setDefaultOrganisation.mockResolvedValue(undefined);
     mocks.getBranchModalNotification.mockReturnValue(undefined);
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  };
 
   // ── branch loading ──────────────────────────────────────────────────────
 
   it('preselects the first branch when the account has no default organisation id', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal();
 
@@ -337,6 +337,8 @@ describe(BranchSelectorModal, () => {
 
   it('preselects the matching branch when the account has a default organisation id', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal({ defaultOrganisationId: 1 });
 
@@ -354,6 +356,8 @@ describe(BranchSelectorModal, () => {
     // but branches is set to [] before the throw so the empty-branches tbody renders.
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     getOrganisationsByABN.mockResolvedValue([]);
 
     renderModal();
@@ -367,6 +371,8 @@ describe(BranchSelectorModal, () => {
 
   it('shows error alert when branch loading fails', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     getOrganisationsByABN.mockRejectedValueOnce(new Error('network error'));
 
@@ -386,6 +392,8 @@ describe(BranchSelectorModal, () => {
 
   it('ignores branch load result after the component unmounts (covers !isActive return in try)', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     let resolveLoad!: (value: OrganisationDto[]) => void;
     getOrganisationsByABN.mockReturnValueOnce(
@@ -407,6 +415,8 @@ describe(BranchSelectorModal, () => {
 
   it('ignores branch load error after the component unmounts (covers !isActive return in catch)', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     let rejectLoad!: (error: Error) => void;
     getOrganisationsByABN.mockReturnValueOnce(
@@ -430,6 +440,8 @@ describe(BranchSelectorModal, () => {
   it('skips branch loading when the account ABN is not set', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal({ abn: undefined });
 
     await Promise.resolve();
@@ -441,6 +453,8 @@ describe(BranchSelectorModal, () => {
 
   it('renders the RFQ modal title and body text', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal({ mode: BranchSelectionModalMode.RFQSelectOrg });
 
@@ -454,6 +468,8 @@ describe(BranchSelectorModal, () => {
 
   it('renders a notification message when getBranchModalNotification returns a value', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     mocks.getBranchModalNotification.mockReturnValue({
       message: 'Info note',
@@ -470,6 +486,8 @@ describe(BranchSelectorModal, () => {
   it('does not render a notification when storage has no branch notification', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal();
 
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
@@ -481,6 +499,8 @@ describe(BranchSelectorModal, () => {
 
   it('updates selected branch when a different radio button is clicked', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal();
 
@@ -499,6 +519,8 @@ describe(BranchSelectorModal, () => {
   it('shows the cancel button when a default organisation id is set', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal({ defaultOrganisationId: 1 });
 
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
@@ -508,6 +530,8 @@ describe(BranchSelectorModal, () => {
 
   it('does not show the cancel button when no default organisation id is set', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal();
 
@@ -520,6 +544,8 @@ describe(BranchSelectorModal, () => {
 
   it('calls setShowBranchSelector(false) when the cancel button is clicked', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal({ defaultOrganisationId: 1 });
 
@@ -536,6 +562,8 @@ describe(BranchSelectorModal, () => {
   it('toggles sort direction from asc to desc and covers all getArrow icon paths', async () => {
     // Branch with undefined businessListName exercises the ?? '' fallback in toSortableText
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     getOrganisationsByABN.mockResolvedValueOnce([
       ...mockBranches,
@@ -567,6 +595,8 @@ describe(BranchSelectorModal, () => {
   it('calls setDefaultOrganisation without rfqId and navigates to home on save', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal();
 
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
@@ -593,6 +623,8 @@ describe(BranchSelectorModal, () => {
 
   it('calls setDefaultOrganisation with rfqId and reloads the page on save (RFQ mode)', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     const origLocation = globalThis.location;
     const reloadMock = vi.fn<() => void>();
@@ -630,6 +662,8 @@ describe(BranchSelectorModal, () => {
   it('shows error alert and logs when save fails', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     mocks.setDefaultOrganisation.mockRejectedValueOnce(new Error('save error'));
 
     renderModal();
@@ -655,6 +689,8 @@ describe(BranchSelectorModal, () => {
   it('returns early from applyAccountDispatchUpdates when accountDispatch is null', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal({ accountDispatch: null });
 
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
@@ -676,6 +712,8 @@ describe(BranchSelectorModal, () => {
     // No ABN → branches never load → selectedOrganisation stays undefined
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal({ abn: undefined });
 
     fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
@@ -693,6 +731,8 @@ describe(BranchSelectorModal, () => {
 
   it('calls setCompleted and setTargetOrganisation when account creation is incomplete on save', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal({ accountCreationCompleted: false });
 
@@ -713,6 +753,8 @@ describe(BranchSelectorModal, () => {
   it('does nothing when MSAL interaction is in progress (line 187 false branch)', async () => {
     expect.hasAssertions();
 
+    resetBranchSelectorMocks();
+
     renderModal({ msalInProgress: InteractionStatus.AcquireToken });
 
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
@@ -727,6 +769,8 @@ describe(BranchSelectorModal, () => {
 
   it('passes empty-string fallbacks when tradingName and branchName are undefined on save', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     getOrganisationsByABN.mockResolvedValueOnce([
       {
@@ -758,6 +802,8 @@ describe(BranchSelectorModal, () => {
 
   it('skips setDefaultOrganisation and navigates when modal mode is unrecognised (line 199 false branch)', async () => {
     expect.hasAssertions();
+
+    resetBranchSelectorMocks();
 
     renderModal({ mode: 'UnknownMode' });
 

@@ -24,7 +24,9 @@ const mocks = vi.hoisted(() => ({
     vi.fn<typeof NotificationModule.setDashboardNotification>(),
 }));
 
-vi.mock('@azure/msal-react', async (importOriginal) => {
+vi.mock(import('@azure/msal-react'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule2>>[0],
+) => {
   const actual = await importOriginal<typeof MsalReactModule>();
 
   return {
@@ -34,27 +36,37 @@ vi.mock('@azure/msal-react', async (importOriginal) => {
       instance: { acquireTokenSilent: mocks.acquireTokenSilent },
     }),
   } satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock('@/analytics/GoogleAnalytics', async (importOriginal) => {
+vi.mock(import('@/analytics/GoogleAnalytics'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule22>
+  >[0],
+) => {
   const actual = await importOriginal<typeof GoogleAnalyticsModule>();
 
   return {
     ...actual,
     trackGAEvent: vi.fn<(label: string, evtCategory?: string) => void>(),
   } satisfies __ExactMockModule<__TestMockModule22>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule22>);
 
-vi.mock('@/storage/notification', async (importOriginal) => {
+vi.mock(import('@/storage/notification'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule46>
+  >[0],
+) => {
   const actual = await importOriginal<typeof NotificationModule>();
 
   return {
     ...actual,
     setDashboardNotification: mocks.setDashboardNotification,
   } satisfies __ExactMockModule<__TestMockModule46>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule46>);
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -64,12 +76,16 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       override setAuthToken = vi.fn<ApplicationClient['setAuthToken']>();
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 // The real modal only opens after a delete target is chosen, so its confirm
 // handler is unreachable without one. This stand-in is always rendered so the
 // "confirmed with no delete target" guard in PaRequestItem can be exercised.
-vi.mock('@/components/modals/ConfirmationModal', async (importOriginal) => {
+vi.mock(import('@/components/modals/ConfirmationModal'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule23>
+  >[0],
+) => {
   const actual = await importOriginal<typeof ConfirmationModalModule>();
 
   return {
@@ -80,7 +96,7 @@ vi.mock('@/components/modals/ConfirmationModal', async (importOriginal) => {
       </button>
     ),
   } satisfies __ExactMockModule<__TestMockModule23>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule23>);
 
 const request: PatternApprovalDashboardDetailsDto = {
   referenceId: 'NMI-PA-2024-001',

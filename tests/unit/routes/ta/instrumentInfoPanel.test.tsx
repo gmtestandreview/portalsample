@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import InstrumentInfoPanel from '@/routes/ta/instrumentInfoPanel';
@@ -49,20 +49,23 @@ const categoryId = '11111111-1111-4111-8111-111111111111';
 const typeId = '22222222-2222-4222-8222-222222222222';
 const emptyGuid = '00000000-0000-0000-0000-000000000000';
 
-describe(InstrumentInfoPanel, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'lookup-token' });
-    mocks.getInfoPanelContent.mockResolvedValue([
-      {
-        requirements: 'Pattern approval evidence checklist',
-        requirementsLink: 'https://example.test/pattern-approval-requirements',
-      },
-    ]);
-  });
+const resetInstrumentInfoPanelMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'lookup-token' });
+  mocks.getInfoPanelContent.mockResolvedValue([
+    {
+      requirements: 'Pattern approval evidence checklist',
+      requirementsLink: 'https://example.test/pattern-approval-requirements',
+    },
+  ]);
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(InstrumentInfoPanel, () => {
   it('renders the hidden empty state and does not fetch lookup data when no instrument is selected', () => {
     expect.hasAssertions();
+
+    resetInstrumentInfoPanelMocks();
 
     render(<InstrumentInfoPanel name='instrument' />);
 
@@ -75,6 +78,8 @@ describe(InstrumentInfoPanel, () => {
 
   it('shows default guidance and new-customer credit form when only a category is selected', () => {
     expect.hasAssertions();
+
+    resetInstrumentInfoPanelMocks();
 
     render(
       <InstrumentInfoPanel
@@ -103,6 +108,8 @@ describe(InstrumentInfoPanel, () => {
 
   it('loads and renders lookup resource links for a valid category and type', async () => {
     expect.hasAssertions();
+
+    resetInstrumentInfoPanelMocks();
 
     let resolveInfoPanelContent: (
       value: Array<{ requirements: string; requirementsLink: string }>,
@@ -148,7 +155,7 @@ describe(InstrumentInfoPanel, () => {
       creditCheckLink: screen.queryByRole('link', {
         name: /download credit check application form/i,
       }),
-    }).toEqual({
+    }).toStrictEqual({
       requirementsHref: 'https://example.test/pattern-approval-requirements',
       guidance: null,
       creditCheckLink: null,
@@ -164,6 +171,8 @@ describe(InstrumentInfoPanel, () => {
   it('keeps default guidance and skips the lookup for empty or invalid GUID selections', () => {
     expect.hasAssertions();
 
+    resetInstrumentInfoPanelMocks();
+
     const { rerender } = render(
       <InstrumentInfoPanel
         name='instrument'
@@ -177,7 +186,7 @@ describe(InstrumentInfoPanel, () => {
       guidance: screen.getByText(/select an instrument category and type/i)
         .textContent,
       calls: mocks.getInfoPanelContent.mock.calls,
-    }).toEqual({
+    }).toStrictEqual({
       alert: expect.any(String),
       guidance: expect.stringMatching(
         /select an instrument category and type/i,
@@ -198,7 +207,7 @@ describe(InstrumentInfoPanel, () => {
       guidance: screen.getByText(/select an instrument category and type/i)
         .textContent,
       calls: mocks.getInfoPanelContent.mock.calls,
-    }).toEqual({
+    }).toStrictEqual({
       alert: expect.any(String),
       guidance: expect.stringMatching(
         /select an instrument category and type/i,

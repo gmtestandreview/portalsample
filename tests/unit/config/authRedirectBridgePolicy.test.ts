@@ -8,6 +8,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 import { writeTextFileSync } from '../../helpers/safeTestFilesystem';
 
+import type { AddressInfo } from 'node:net';
+
 const verifier = path.resolve(
   process.cwd(),
   'scripts/verify-auth-redirect-bridge.mjs',
@@ -21,6 +23,15 @@ const validBridge = `<!doctype html>
 </html>`;
 
 const execFileAsync = promisify(execFile);
+
+const requireAddressInfo = (
+  address: AddressInfo | string | null,
+): AddressInfo => {
+  if (!address || typeof address === 'string') {
+    throw new Error('test server did not expose a port');
+  }
+  return address;
+};
 
 const runVerifier = async (...argumentsList: string[]) => {
   try {
@@ -41,13 +52,14 @@ const createDist = (html: string) => {
   return directory;
 };
 
-afterEach(() => {
-  for (const directory of temporaryDirectories.splice(0)) {
-    rmSync(directory, { force: true, recursive: true });
-  }
-});
-
 describe('mSAL redirect bridge policy', () => {
+  // eslint-disable-next-line vitest/no-hooks -- cleanup must run after every external verifier process.
+  afterEach(() => {
+    for (const directory of temporaryDirectories.splice(0)) {
+      rmSync(directory, { force: true, recursive: true });
+    }
+  });
+
   it('accepts a title-only page with one relative bridge script', async () => {
     expect.hasAssertions();
 
@@ -115,10 +127,7 @@ describe('mSAL redirect bridge policy', () => {
     await new Promise<void>((resolve) =>
       server.listen(0, '127.0.0.1', resolve),
     );
-    const address = server.address();
-    if (!address || typeof address === 'string') {
-      throw new Error('test server did not expose a port');
-    }
+    const address = requireAddressInfo(server.address());
 
     try {
       const result = await runVerifier(

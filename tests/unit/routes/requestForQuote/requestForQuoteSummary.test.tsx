@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import { Formik } from 'formik';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
 import type { RequestForQuoteSummary as RequestForQuoteSummaryValues } from '../../../../ClientApp/src/api/web-api-client';
@@ -122,16 +122,19 @@ const renderPage = async (
   return result;
 };
 
-describe(RequestForQuoteSummary, () => {
-  beforeEach(() => {
-    cleanup();
-    resetMsalMock();
-    clients.lookup.methods.getLookup.mockReset();
-    mockSummaryLookups(clients.lookup.methods.getLookup);
-  });
+const resetRequestForQuoteSummary = () => {
+  cleanup();
+  resetMsalMock();
+  clients.lookup.methods.getLookup.mockReset();
+  mockSummaryLookups(clients.lookup.methods.getLookup);
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(RequestForQuoteSummary, () => {
   it('shows both sections with the values held by Formik', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
 
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
@@ -150,6 +153,8 @@ describe(RequestForQuoteSummary, () => {
   it('honours the wizard hiding rule for an empty branch name', async () => {
     expect.hasAssertions();
 
+    resetRequestForQuoteSummary();
+
     await renderPage(fixtureValues('no branch or location name'));
 
     expect(screen.getByText('Acme Trading')).toBeInTheDocument();
@@ -158,6 +163,8 @@ describe(RequestForQuoteSummary, () => {
 
   it('shows the contact details unless principalContactHide says otherwise', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
 
     const values = fixtureValues('fully populated with the principal contact');
     await renderPage(values, {
@@ -175,6 +182,8 @@ describe(RequestForQuoteSummary, () => {
   it('copes with a Formik status that carries no hiding rules', async () => {
     expect.hasAssertions();
 
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       {
@@ -187,6 +196,8 @@ describe(RequestForQuoteSummary, () => {
 
   it('describes the signed-in account holder under "Use my contact details"', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
 
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
@@ -208,6 +219,8 @@ describe(RequestForQuoteSummary, () => {
   it('leaves the account holder out when the account has no name or email', async () => {
     expect.hasAssertions();
 
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
       { account: { givenName: 'Margaret' } },
@@ -218,6 +231,8 @@ describe(RequestForQuoteSummary, () => {
 
   it('hides the serial number row when no serial number is available', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
 
     const values = fixtureValues('no serial number');
     await renderPage({
@@ -234,6 +249,8 @@ describe(RequestForQuoteSummary, () => {
   it('offers review guidance and no back button while editable', async () => {
     expect.hasAssertions();
 
+    resetRequestForQuoteSummary();
+
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
     );
@@ -249,6 +266,8 @@ describe(RequestForQuoteSummary, () => {
     [1, 'instrument-and-request'],
   ])('edit button %i leads to %s while editable', async (index, step) => {
     expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
 
     await renderPage(
       fixtureValues('fully populated with the principal contact'),
@@ -269,6 +288,8 @@ describe(RequestForQuoteSummary, () => {
 
   it('swaps guidance and Edit links for a back button once submitted', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuoteSummary();
 
     await renderPage(
       fixtureValues('fully populated with the principal contact'),

@@ -11,27 +11,27 @@ function makeError(
   return { status, title: title ?? '', headers: headers ?? {} };
 }
 
-describe(resolveErrorState, () => {
+describe('wizard routed step error state', () => {
   describe('load errors — HttpStatus dispatch', () => {
     it('returns notFound for 404', () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(404), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'notFound' });
+      ).toStrictEqual({ kind: 'notFound' });
     });
 
     it('returns gone for 410', () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(410), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'gone' });
+      ).toStrictEqual({ kind: 'gone' });
     });
 
     it('returns gone for 401', () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(401), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'gone' });
+      ).toStrictEqual({ kind: 'gone' });
     });
 
     it('returns noThirdPartyAccess for 403 with third-party title', () => {
@@ -42,7 +42,7 @@ describe(resolveErrorState, () => {
           undefined,
           ErrorType.Load,
         ),
-      ).toEqual({ kind: 'noThirdPartyAccess' });
+      ).toStrictEqual({ kind: 'noThirdPartyAccess' });
     });
 
     it('returns serverError for 403 without third-party title', () => {
@@ -61,7 +61,7 @@ describe(resolveErrorState, () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(makeError(500), undefined, ErrorType.Load),
-      ).toEqual({
+      ).toStrictEqual({
         kind: 'loading',
       });
     });
@@ -70,7 +70,7 @@ describe(resolveErrorState, () => {
       expect.hasAssertions();
       expect(
         resolveErrorState(new Error('fetch failed'), undefined, ErrorType.Load),
-      ).toEqual({ kind: 'loading' });
+      ).toStrictEqual({ kind: 'loading' });
     });
 
     it('returns none for an aborted request — stays silent', () => {
@@ -81,9 +81,11 @@ describe(resolveErrorState, () => {
         'AbortError',
       );
 
-      expect(resolveErrorState(abort, undefined, ErrorType.Load)).toEqual({
-        kind: 'none',
-      });
+      expect(resolveErrorState(abort, undefined, ErrorType.Load)).toStrictEqual(
+        {
+          kind: 'none',
+        },
+      );
     });
   });
 
@@ -138,10 +140,12 @@ describe(resolveErrorState, () => {
     const cb = (code: number) =>
       code === 404 ? '/custom-not-found' : undefined;
 
-    expect(resolveErrorState(makeError(404), cb, ErrorType.Load)).toEqual({
-      kind: 'redirect',
-      location: '/custom-not-found',
-    });
+    expect(resolveErrorState(makeError(404), cb, ErrorType.Load)).toStrictEqual(
+      {
+        kind: 'redirect',
+        location: '/custom-not-found',
+      },
+    );
   });
 
   it('falls through to default dispatch when callback returns undefined', () => {
@@ -160,6 +164,9 @@ describe(resolveErrorState, () => {
       ErrorType.Load,
     );
 
-    expect(result).toEqual({ kind: 'redirect', location: '/gone-somewhere' });
+    expect(result).toStrictEqual({
+      kind: 'redirect',
+      location: '/gone-somewhere',
+    });
   });
 });

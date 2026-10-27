@@ -72,10 +72,12 @@ describe('react Aria Storybook evaluation contract', () => {
     for (const file of storyFiles) {
       const source = readTextFileSync(file, repositoryRoot);
 
-      expect(source, file).toMatch(/preview\.meta(?:<[\s\S]*?>)?\s*\(/);
-      expect(source, file).toContain('meta.story(');
-      expect(source, file).toMatch(/title:\s*['"]Evaluation\/React Aria\//);
-      expect(source, file).not.toContain('../src/');
+      expect(
+        source.includes('preview.meta(') || source.includes('preview.meta<'),
+      ).toBe(true);
+      expect(source).toContain('meta.story(');
+      expect(source).toMatch(/title:\s*['"]Evaluation\/React Aria\//);
+      expect(source).not.toContain('../src/');
     }
   });
 
@@ -83,7 +85,7 @@ describe('react Aria Storybook evaluation contract', () => {
     expect.hasAssertions();
 
     for (const file of sourceFiles.filter((file) => /\.tsx?$/.test(file))) {
-      expect(readTextFileSync(file, repositoryRoot), file).not.toContain(
+      expect(readTextFileSync(file, repositoryRoot)).not.toContain(
         'lucide-react',
       );
     }

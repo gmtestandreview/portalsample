@@ -10,7 +10,7 @@ const renderTextAreaInput = () =>
     </Formik>,
   );
 
-describe(TextAreaInput, () => {
+describe('text area input behavior', () => {
   it('preserves pasted multiline content', async () => {
     expect.hasAssertions();
 

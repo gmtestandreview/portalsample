@@ -39,7 +39,7 @@ const contactOptions = [
   { value: 'sms', label: 'SMS' },
 ];
 
-describe(CheckboxGroup, () => {
+describe('checkbox group behavior', () => {
   it('renders vertical options with plain inline help and validation feedback', () => {
     expect.hasAssertions();
 
@@ -74,7 +74,7 @@ describe(CheckboxGroup, () => {
       errorClass: screen
         .getAllByText('Choose at least one method')[0]
         ?.classList.contains('form-validation-message'),
-    }).toEqual({
+    }).toStrictEqual({
       helpId: 'help-contactMethod',
       errorCount: 3,
       errorClass: true,
@@ -93,7 +93,7 @@ describe(CheckboxGroup, () => {
         ?.classList.contains('contact-checkbox'),
       smsText: screen.getByText('SMS').textContent,
       containerPresent: document.querySelector('.contact-container') !== null,
-    }).toEqual({
+    }).toStrictEqual({
       legendClass: true,
       checkboxCount: 2,
       emailClass: true,

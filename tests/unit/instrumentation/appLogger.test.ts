@@ -1,11 +1,12 @@
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const importLoggerWithInsights = async (insights: unknown) => {
   vi.resetModules();
+  vi.restoreAllMocks();
   const getAppInsights = vi.fn<() => unknown>(() => insights);
   vi.doMock(
-    '@/instrumentation/AppInsightsService',
+    import('@/instrumentation/AppInsightsService') as unknown as string,
     () =>
       ({
         getAppInsights,
@@ -16,11 +17,6 @@ const importLoggerWithInsights = async (insights: unknown) => {
 };
 
 describe('appLogger', () => {
-  afterEach(() => {
-    vi.resetModules();
-    vi.restoreAllMocks();
-  });
-
   it('delegates trace severity helpers to App Insights', async () => {
     expect.hasAssertions();
 

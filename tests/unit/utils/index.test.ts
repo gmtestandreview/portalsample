@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import * as utils from '../../../ClientApp/src/utils';
 
 describe('utils exports', () => {
@@ -455,10 +455,6 @@ describe('formatting helpers', () => {
 });
 
 describe('async helpers', () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('resolves sleep after the requested delay', async () => {
     expect.hasAssertions();
 
@@ -474,5 +470,7 @@ describe('async helpers', () => {
     await promise;
 
     expect(resolved).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
   });
 });

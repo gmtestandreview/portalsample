@@ -92,6 +92,35 @@ const loadComponent = async (path: (typeof lazyFeaturePaths)[number]) => {
   return module.Component;
 };
 
+const routeWrapperContract = (path: string, element: ReactElement) => {
+  if (layoutPaths.has(path)) return { type: element.type };
+  if (path === '/sign-out') {
+    return {
+      authenticated: element.type === AuthenticatedElement,
+      layout: element.type === Layout,
+    };
+  }
+  const contract = {
+    type: element.type,
+    displayHeaderAndFooter: element.props.displayHeaderAndFooter,
+  };
+  return path === '/request-for-quote/:id/view-summary/*'
+    ? { ...contract, childName: element.props.children?.props.name }
+    : contract;
+};
+
+const expectedRouteWrapperContract = (path: string) => {
+  if (layoutPaths.has(path)) return { type: Layout };
+  if (path === '/sign-out') return { authenticated: false, layout: false };
+  const contract = {
+    type: AuthenticatedElement,
+    displayHeaderAndFooter: headerlessPaths.has(path) ? false : undefined,
+  };
+  return path === '/request-for-quote/:id/view-summary/*'
+    ? { ...contract, childName: '' }
+    : contract;
+};
+
 describe('application route loading', () => {
   it('preserves the complete route path contract', () => {
     expect.hasAssertions();
@@ -116,42 +145,9 @@ describe('application route loading', () => {
       const Component = await loadComponent(path);
       const element = Component();
 
-      if (layoutPaths.has(path)) {
-        expect(element.type).toBe(Layout);
-
-        return;
-      }
-
-      if (path === '/sign-out') {
-        expect([
-          element.type === AuthenticatedElement,
-          element.type === Layout,
-        ]).toStrictEqual([false, false]);
-
-        return;
-      }
-
-      if (path === '/request-for-quote/:id/view-summary/*') {
-        expect({
-          type: element.type,
-          displayHeaderAndFooter: element.props.displayHeaderAndFooter,
-          childName: element.props.children?.props.name,
-        }).toStrictEqual({
-          type: AuthenticatedElement,
-          displayHeaderAndFooter: headerlessPaths.has(path) ? false : undefined,
-          childName: '',
-        });
-
-        return;
-      }
-
-      expect({
-        type: element.type,
-        displayHeaderAndFooter: element.props.displayHeaderAndFooter,
-      }).toStrictEqual({
-        type: AuthenticatedElement,
-        displayHeaderAndFooter: headerlessPaths.has(path) ? false : undefined,
-      });
+      expect(routeWrapperContract(path, element)).toStrictEqual(
+        expectedRouteWrapperContract(path),
+      );
     },
   );
 });

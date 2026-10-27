@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 
 import { resetMsalMock } from '../../helpers/mockMsal';
@@ -132,7 +132,7 @@ const renderLoaded = async (documents: unknown[]) => {
 };
 
 describe('application documents with the real RHF form', () => {
-  beforeEach(async () => {
+  const resetApplicationDocumentsRHFState = async () => {
     await import('../../../../ClientApp/src/api/web-api-client');
 
     resetMsalMock();
@@ -148,10 +148,12 @@ describe('application documents with the real RHF form', () => {
       undefined,
     );
     clients.patternApproval.methods.updateCategory.mockResolvedValue(undefined);
-  });
+  };
 
   it('commits the documents without their bytes and leaves the form data intact', async () => {
     expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
 
     const user = userEvent.setup();
     await renderLoaded([document1()]);
@@ -176,6 +178,8 @@ describe('application documents with the real RHF form', () => {
   it('blocks the commit and asks for a category while a document has none', async () => {
     expect.hasAssertions();
 
+    await resetApplicationDocumentsRHFState();
+
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
 
@@ -193,6 +197,8 @@ describe('application documents with the real RHF form', () => {
 
   it('commits once a category has been chosen', async () => {
     expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
 
     const user = userEvent.setup();
     await renderLoaded([document1({ attachmentCategory: '' })]);
@@ -224,6 +230,8 @@ describe('application documents with the real RHF form', () => {
 
   it('shows the saved documents as rows with their category', async () => {
     expect.hasAssertions();
+
+    await resetApplicationDocumentsRHFState();
 
     await renderLoaded([document1({ attachmentCategory: 'Certificate' })]);
 

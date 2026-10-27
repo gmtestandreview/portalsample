@@ -3,10 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
 import { resolveStorybookTestTargetImplementation } from '../../../.storybook/storybook-test-target.mjs';
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(resolveStorybookTestTarget, () => {
   it('derives the managed default target on port 6006', () => {
     expect.assertions(1);
-    expect(resolveStorybookTestTarget({ ci: false })).toEqual({
+    expect(resolveStorybookTestTarget({ ci: false })).toStrictEqual({
       baseURL: 'http://localhost:6006',
       mcpURL: 'http://localhost:6006/mcp',
       command:
@@ -29,7 +30,7 @@ describe(resolveStorybookTestTarget, () => {
         serverMode: 'external',
         ci: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       baseURL: 'http://127.0.0.1:6007',
       mcpURL: 'http://127.0.0.1:6007/mcp',
       command:
@@ -46,7 +47,7 @@ describe(resolveStorybookTestTarget, () => {
         serverMode: 'external',
         ci: true,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       baseURL: 'https://storybook.example.test:8443',
       mcpURL: 'https://storybook.example.test:8443/mcp',
       command:
@@ -75,7 +76,7 @@ describe(resolveStorybookTestTarget, () => {
     'keeps the TypeScript adapter in parity with the runtime resolver',
     (options) => {
       expect.assertions(1);
-      expect(resolveStorybookTestTarget(options)).toEqual(
+      expect(resolveStorybookTestTarget(options)).toStrictEqual(
         resolveStorybookTestTargetImplementation(options),
       );
     },

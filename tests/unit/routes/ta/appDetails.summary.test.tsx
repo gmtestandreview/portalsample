@@ -1,5 +1,5 @@
 import { screen, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import {
@@ -119,15 +119,17 @@ const details = {
   },
 };
 
-describe('application details summary', () => {
-  beforeEach(() => {
-    resetMsalMock();
-    clients.patternApproval.methods.getAppMessageCount.mockResolvedValue(0);
-    clients.patternApproval.methods.getAppDetails.mockResolvedValue(details);
-  });
+const resetApplicationDetailsSummaryState = () => {
+  resetMsalMock();
+  clients.patternApproval.methods.getAppMessageCount.mockResolvedValue(0);
+  clients.patternApproval.methods.getAppDetails.mockResolvedValue(details);
+};
 
+describe('application details summary', () => {
   it('shows the loaded organisation, application and documents without a Formik form', async () => {
     expect.hasAssertions();
+
+    resetApplicationDetailsSummaryState();
 
     const ApplicationDetails = (
       await import('../../../../ClientApp/src/routes/ta/manage/appDetails')

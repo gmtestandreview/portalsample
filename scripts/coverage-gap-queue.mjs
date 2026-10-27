@@ -15,8 +15,8 @@
  * Usage: node scripts/coverage-gap-queue.mjs
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { makeDirectory, readTextFile, writeTextFile } from './safe-file-io.mjs';
 
 const COVERAGE_FINAL = 'reports/coverage/unit/coverage-final.json';
 const OUTPUT = 'reports/stabilisation/coverage-gap-queue.json';
@@ -83,22 +83,25 @@ const percentage = (covered, total) =>
 
 const buildRow = (absolutePath, entry) => {
   const relativeFile = toRelative(absolutePath);
+  const statementMap = new Map(Object.entries(entry.statementMap ?? {}));
+  const functionMap = new Map(Object.entries(entry.fnMap ?? {}));
+  const branchMap = new Map(Object.entries(entry.branchMap ?? {}));
 
   const uncoveredLines = Object.entries(entry.s ?? {})
     .filter(([, hits]) => hits === 0)
-    .map(([id]) => entry.statementMap[id]?.start?.line)
+    .map(([id]) => statementMap.get(id)?.start?.line)
     .filter((line) => line !== undefined);
 
   const uncoveredFunctions = Object.entries(entry.f ?? {})
     .filter(([, hits]) => hits === 0)
     .map(([id]) => ({
-      name: entry.fnMap[id]?.name ?? '(anonymous)',
-      line: entry.fnMap[id]?.decl?.start?.line,
+      name: functionMap.get(id)?.name ?? '(anonymous)',
+      line: functionMap.get(id)?.decl?.start?.line,
     }));
 
   const uncoveredBranches = [];
   for (const [id, hitCounts] of Object.entries(entry.b ?? {})) {
-    const meta = entry.branchMap[id];
+    const meta = branchMap.get(id);
     hitCounts.forEach((hits, armIndex) => {
       if (hits !== 0) return;
       uncoveredBranches.push({
@@ -144,7 +147,7 @@ const buildRow = (absolutePath, entry) => {
   };
 };
 
-const coverage = JSON.parse(readFileSync(COVERAGE_FINAL, 'utf8'));
+const coverage = JSON.parse(readTextFile(COVERAGE_FINAL));
 
 const rows = Object.entries(coverage)
   .map(([absolutePath, entry]) => buildRow(absolutePath, entry))
@@ -185,8 +188,8 @@ for (const row of rows) {
   byFamily[row.family].statements += row.uncoveredStatements;
 }
 
-mkdirSync(path.dirname(OUTPUT), { recursive: true });
-writeFileSync(
+makeDirectory(path.dirname(OUTPUT));
+writeTextFile(
   OUTPUT,
   `${JSON.stringify({ generatedFrom: COVERAGE_FINAL, measuredFiles: Object.keys(coverage).length, filesNeedingWork: rows.length, totals, byFamily, rows }, null, 2)}\n`,
 );

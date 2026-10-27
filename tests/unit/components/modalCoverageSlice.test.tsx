@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import ConfirmationModal from '../../../ClientApp/src/components/modals/ConfirmationModal';
 import {
@@ -44,8 +44,8 @@ const expectSuccessfulRfqDeleteSideEffects = (dispatch: {
 };
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => ({
         accounts: [{ homeAccountId: 'account-1' }],
@@ -53,7 +53,7 @@ vi.mock(
           acquireTokenSilent: mocks.acquireTokenSilent,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 vi.mock(import('react-router'), async () => {
@@ -65,8 +65,8 @@ vi.mock(import('react-router'), async () => {
 });
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
-  () =>
+  import('../../../ClientApp/src/api/web-api-client'),
+  (() =>
     ({
       ApplicationType: {
         QuoteRequest: 'QuoteRequest',
@@ -78,7 +78,7 @@ vi.mock(
         this.setAuthToken = mocks.setAuthToken;
         this.deleteApplication = mocks.deleteApplication;
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>,
+    }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
 );
 
 vi.mock(
@@ -98,23 +98,23 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/storage/types',
-  () =>
+  import('../../../ClientApp/src/storage/types'),
+  (() =>
     ({
       NotificationSeverity: {
         Success: 'success',
       },
-    }) satisfies __ExactMockModule<__TestMockModule47>,
+    }) satisfies __ExactMockModule<__TestMockModule47>) as unknown as __DynamicPartialMockFactory<__TestMockModule47>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         error: vi.fn<() => void>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(
@@ -169,14 +169,16 @@ const renderRFQDeleteModal = (
   );
 
 describe('modal coverage slice', () => {
-  beforeEach(() => {
+  const resetModalCoverageMocks = () => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
     mocks.deleteApplication.mockResolvedValue(undefined);
-  });
+  };
 
   it('exposes modal state and dispatch through providers', () => {
     expect.hasAssertions();
+
+    resetModalCoverageMocks();
 
     const dispatch = {
       setShowBranchSelector: vi.fn<() => void>(),
@@ -208,6 +210,8 @@ describe('modal coverage slice', () => {
   it('returns null modal contexts when no provider is present', () => {
     expect.hasAssertions();
 
+    resetModalCoverageMocks();
+
     render(<ModalConsumer />);
 
     expect(
@@ -217,6 +221,8 @@ describe('modal coverage slice', () => {
 
   it('closes confirmation modal before yes and no callbacks', () => {
     expect.hasAssertions();
+
+    resetModalCoverageMocks();
 
     const calls: string[] = [];
     const closeModal = vi.fn<() => number>(() => calls.push('close'));
@@ -238,16 +244,18 @@ describe('modal coverage slice', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Yes' }));
 
-    expect(calls).toEqual(['close', 'yes']);
+    expect(calls).toStrictEqual(['close', 'yes']);
 
     calls.length = 0;
     fireEvent.click(screen.getByRole('button', { name: /no/i }));
 
-    expect(calls).toEqual(['close', 'no']);
+    expect(calls).toStrictEqual(['close', 'no']);
   });
 
   it('cancels RFQ deletion by closing the modal and tracking the event', () => {
     expect.hasAssertions();
+
+    resetModalCoverageMocks();
 
     const dispatch = {
       setShowBranchSelector: vi.fn<() => void>(),
@@ -265,6 +273,8 @@ describe('modal coverage slice', () => {
 
   it('deletes an RFQ, shows the dashboard notification, closes, tracks and navigates home', async () => {
     expect.hasAssertions();
+
+    resetModalCoverageMocks();
 
     const dispatch = {
       setShowBranchSelector: vi.fn<() => void>(),
@@ -289,6 +299,8 @@ describe('modal coverage slice', () => {
   it('still closes and navigates when RFQ deletion fails', async () => {
     expect.hasAssertions();
 
+    resetModalCoverageMocks();
+
     mocks.deleteApplication.mockRejectedValueOnce(new Error('delete failed'));
     const dispatch = {
       setShowBranchSelector: vi.fn<() => void>(),
@@ -307,6 +319,8 @@ describe('modal coverage slice', () => {
 
   it('closes and navigates without deleting when RFQ id is missing', async () => {
     expect.hasAssertions();
+
+    resetModalCoverageMocks();
 
     const dispatch = {
       setShowBranchSelector: vi.fn<() => void>(),

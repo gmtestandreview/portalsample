@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type * as ReactRouterModule from 'react-router';
 import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
@@ -30,7 +30,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react') as unknown as string,
   () =>
     ({
       useMsal: () => ({
@@ -40,7 +40,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule2>,
 );
 
-vi.mock(import('react-router'), async (importOriginal) => {
+vi.mock(import('react-router') as unknown as string, async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return {
     ...actual,
@@ -49,7 +49,7 @@ vi.mock(import('react-router'), async (importOriginal) => {
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/hooks'),
+  import('../../../../ClientApp/src/authentication/hooks') as unknown as string,
   () =>
     ({
       useAccountState: mocks.useAccountState,
@@ -57,7 +57,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  import('../../../../ClientApp/src/authentication/authConfig') as unknown as string,
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -65,7 +65,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client') as unknown as string,
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -97,7 +97,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger') as unknown as string,
   () =>
     ({
       default: {
@@ -108,7 +108,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/BlockUISpinner'),
+  import('../../../../ClientApp/src/components/BlockUISpinner') as unknown as string,
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -118,7 +118,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/components/Utilities/useBodyClass'),
+  import('../../../../ClientApp/src/components/Utilities/useBodyClass') as unknown as string,
   () =>
     ({
       default: () => {},
@@ -126,7 +126,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm',
+  import('../../../../ClientApp/src/components/forms/WizardForm') as unknown as string,
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -136,7 +136,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/forms/WizardForm/WizardStep',
+  import('../../../../ClientApp/src/components/forms/WizardForm/WizardStep') as unknown as string,
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -146,28 +146,28 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient'),
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipient') as unknown as string,
   () =>
     ({
       default: () => <div data-testid='step-report-recipient' />,
     }) satisfies __ExactMockModule<__TestMockModule61>,
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn'),
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn') as unknown as string,
   () =>
     ({
       default: () => <div data-testid='step-delivery-and-return' />,
     }) satisfies __ExactMockModule<__TestMockModule62>,
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails'),
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetails') as unknown as string,
   () =>
     ({
       default: () => <div data-testid='step-payment-details' />,
     }) satisfies __ExactMockModule<__TestMockModule63>,
 );
 vi.mock(
-  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept'),
+  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept') as unknown as string,
   () =>
     ({
       default: () => <div data-testid='step-summary-and-accept' />,
@@ -175,28 +175,28 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps') as unknown as string,
   () =>
     ({
       default: () => ({}),
     }) satisfies __ExactMockModule<__TestMockModule65>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps') as unknown as string,
   () =>
     ({
       default: () => ({}),
     }) satisfies __ExactMockModule<__TestMockModule66>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps') as unknown as string,
   () =>
     ({
       default: () => ({}),
     }) satisfies __ExactMockModule<__TestMockModule67>,
 );
 vi.mock(
-  '../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps',
+  import('../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps') as unknown as string,
   () =>
     ({
       default: () => ({}),
@@ -210,20 +210,20 @@ const accountDetails = {
 } as AccountDetails;
 const stepStatus = [{ crmQuoteRequestId: 'CRM-Q-42', status: 'Saved' }];
 
-describe('acceptQuote container', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.msalAccounts.splice(0, mocks.msalAccounts.length, {
-      homeAccountId: 'account-1',
-    });
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.useAccountState.mockReturnValue({ details: accountDetails });
-    mocks.getStepStatuses.mockResolvedValue(stepStatus);
-    mocks.getQuoteRequestDetails.mockResolvedValue({
-      quoteRequestIdNum: 'RFQ-NUM-42',
-    });
+const resetAcceptQuoteMocks = () => {
+  vi.clearAllMocks();
+  mocks.msalAccounts.splice(0, mocks.msalAccounts.length, {
+    homeAccountId: 'account-1',
   });
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.useAccountState.mockReturnValue({ details: accountDetails });
+  mocks.getStepStatuses.mockResolvedValue(stepStatus);
+  mocks.getQuoteRequestDetails.mockResolvedValue({
+    quoteRequestIdNum: 'RFQ-NUM-42',
+  });
+};
 
+describe('acceptQuote container', () => {
   const renderAcceptQuote = async () => {
     const AcceptQuote = (
       await import('../../../../ClientApp/src/routes/acceptQuote/index')
@@ -241,6 +241,8 @@ describe('acceptQuote container', () => {
   it('shows the loading spinner while step statuses are being fetched', async () => {
     expect.hasAssertions();
 
+    resetAcceptQuoteMocks();
+
     mocks.getStepStatuses.mockReturnValue(new Promise(() => {})); // never resolves
     await renderAcceptQuote();
 
@@ -251,6 +253,8 @@ describe('acceptQuote container', () => {
 
   it('renders the four-step WizardForm once step statuses resolve', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuoteMocks();
 
     await renderAcceptQuote();
 
@@ -271,6 +275,8 @@ describe('acceptQuote container', () => {
   it('fetches quote request details using the crmQuoteRequestId from step statuses', async () => {
     expect.hasAssertions();
 
+    resetAcceptQuoteMocks();
+
     await renderAcceptQuote();
 
     await waitFor(() =>
@@ -282,6 +288,8 @@ describe('acceptQuote container', () => {
 
   it('navigates to /not-found and logs when getStepStatuses rejects', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuoteMocks();
 
     mocks.getStepStatuses.mockRejectedValue(new Error('network error'));
     await renderAcceptQuote();
@@ -299,6 +307,8 @@ describe('acceptQuote container', () => {
 
   it('navigates to /not-found and skips quote details when no step statuses are returned', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuoteMocks();
 
     mocks.getStepStatuses.mockResolvedValue([]);
     await renderAcceptQuote();
@@ -320,6 +330,8 @@ describe('acceptQuote container', () => {
   it('navigates to /not-found and logs when getQuoteRequestDetails rejects', async () => {
     expect.hasAssertions();
 
+    resetAcceptQuoteMocks();
+
     mocks.getQuoteRequestDetails.mockRejectedValue(
       new Error('quote details error'),
     );
@@ -338,6 +350,8 @@ describe('acceptQuote container', () => {
 
   it('stays on the loading spinner and does not call the API when no MSAL account is present', async () => {
     expect.hasAssertions();
+
+    resetAcceptQuoteMocks();
 
     mocks.msalAccounts.length = 0;
     await renderAcceptQuote();

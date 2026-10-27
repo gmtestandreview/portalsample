@@ -65,7 +65,14 @@ Then(
       throw new Error(`Unsupported type-approval step: ${title}`);
     }
 
-    await expect(page).toHaveURL(new RegExp(`/ta/[^/]+/${location}$`));
+    await expect(page).toHaveURL((url) => {
+      const segments = url.pathname.split('/').filter(Boolean);
+      return (
+        segments.length === 3 &&
+        segments[0] === 'ta' &&
+        segments[2] === location
+      );
+    });
     await expect(page.getByTestId('form')).toBeVisible();
     await expect
       .poll(async () =>

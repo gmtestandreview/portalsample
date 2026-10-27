@@ -7,18 +7,18 @@ const resetBlocker = vi.fn<() => void>();
 const proceedBlocker = vi.fn<() => void>();
 
 vi.mock(
-  'react-router',
-  () =>
+  import('react-router'),
+  (() =>
     ({
       useBlocker: () => ({
         state: 'unblocked',
         reset: resetBlocker,
         proceed: proceedBlocker,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule11>,
+    }) satisfies __ExactMockModule<__TestMockModule11>) as unknown as __DynamicPartialMockFactory<__TestMockModule11>,
 );
 
-vi.mock('react-bootstrap/Modal', () => {
+vi.mock(import('react-bootstrap/Modal'), (() => {
   const Modal = ({
     children,
     onHide,
@@ -58,7 +58,7 @@ vi.mock('react-bootstrap/Modal', () => {
     return <div>{children}</div>;
   };
   return { default: Modal } satisfies __ExactMockModule<__TestMockModule51>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule51>);
 
 describe('routeLeavingGuard unblocked actions', () => {
   it('ignores close and confirm actions when navigation is not blocked', () => {

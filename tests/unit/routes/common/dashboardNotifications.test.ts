@@ -9,6 +9,7 @@ const defaultError = {
   severity: NotificationSeverity.Error,
 };
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(DashBoardNotifications, () => {
   it.each([
     ['forbidden', DashBoardNotifications.getForbiddenNotification],
@@ -28,7 +29,7 @@ describe(DashBoardNotifications, () => {
     'returns the default dashboard error notification for %s',
     (_name, factory) => {
       expect.hasAssertions();
-      expect(factory()).toEqual(defaultError);
+      expect(factory()).toStrictEqual(defaultError);
     },
   );
 
@@ -36,7 +37,7 @@ describe(DashBoardNotifications, () => {
     expect.hasAssertions();
     expect(
       DashBoardNotifications.getThirdPartyAccessNotification('NMI Branch'),
-    ).toEqual({
+    ).toStrictEqual({
       message:
         'You no longer have access to the records for NMI Branch.  Your changes have not been saved.',
       severity: NotificationSeverity.Error,
@@ -44,7 +45,7 @@ describe(DashBoardNotifications, () => {
 
     expect(
       DashBoardNotifications.getReportFormsGeneratedNotification(),
-    ).toEqual({
+    ).toStrictEqual({
       message:
         'New initial reporting and/or ongoing reporting forms have been generated',
       severity: NotificationSeverity.Information,
@@ -64,6 +65,6 @@ describe(DashBoardNotifications, () => {
     expect.hasAssertions();
     expect(
       DashBoardNotifications.getDashboardErrorNotification(status),
-    ).toEqual(defaultError);
+    ).toStrictEqual(defaultError);
   });
 });

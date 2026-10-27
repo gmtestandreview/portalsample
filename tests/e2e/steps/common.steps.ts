@@ -26,9 +26,14 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
     throw new Error(`Unsupported RFQ wizard step: ${step}`);
   }
 
-  await expect(page).toHaveURL(
-    new RegExp(`/request-for-quote/[^/]+/${location}$`),
-  );
+  await expect(page).toHaveURL((url) => {
+    const segments = url.pathname.split('/').filter(Boolean);
+    return (
+      segments.length === 3 &&
+      segments[0] === 'request-for-quote' &&
+      segments[2] === location
+    );
+  });
   await expect(page.getByTestId('form')).toBeVisible();
   await expect(page.locator('.stepped-navigation .current-step')).toContainText(
     `${step}`,

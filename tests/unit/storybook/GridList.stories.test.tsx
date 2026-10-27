@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import {
-  renderExample,
-  renderSections,
+  RenderExample,
+  RenderSections,
 } from '../../../ClientApp/src/components/AriaComponents/GridLists/GridList.stories';
 
 describe('gridList stories', () => {
   it('provides alt text for every image in the example story', () => {
     expect.hasAssertions();
 
-    render(<>{renderExample({ selectionMode: 'multiple', layout: 'grid' })}</>);
+    render(<>{RenderExample({ selectionMode: 'multiple', layout: 'grid' })}</>);
 
     for (const image of screen.getAllByRole('img')) {
       expect(image).toHaveAttribute('alt');
@@ -20,7 +20,7 @@ describe('gridList stories', () => {
     expect.hasAssertions();
 
     render(
-      <>{renderSections({ selectionMode: 'multiple', layout: 'grid' })}</>,
+      <>{RenderSections({ selectionMode: 'multiple', layout: 'grid' })}</>,
     );
 
     for (const image of screen.getAllByRole('img')) {

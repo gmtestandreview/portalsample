@@ -1,5 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AttachmentDto,
   FileParameter,
@@ -202,7 +202,7 @@ const renderLoadedWizard = async () => {
 };
 
 describe('application for type approval', () => {
-  beforeEach(async () => {
+  const resetApplicationForTypeApprovalState = async () => {
     // vi.mock factories are lazy: they run when the mocked module is first imported. This file
     // imports web-api-client for types only, and those are erased at compile time, so without
     // this the factory has not run yet and `clients` is still undefined here.
@@ -236,11 +236,13 @@ describe('application for type approval', () => {
       undefined,
     );
     clients.progress.methods.cancelFile.mockResolvedValue(undefined);
-  });
+  };
 
   describe('loading the wizard', () => {
     it('renders every step once the statuses arrive', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
 
@@ -259,6 +261,8 @@ describe('application for type approval', () => {
 
     it('shows a spinner until the statuses arrive', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       let releaseStatuses: (value: unknown) => void = () => undefined;
       clients.patternApproval.methods.getStepStatuses.mockReturnValue(
@@ -283,6 +287,8 @@ describe('application for type approval', () => {
     it('redirects to not found when the statuses fail to load', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       clients.patternApproval.methods.getStepStatuses.mockRejectedValue(
         new Error('load failed'),
       );
@@ -302,6 +308,8 @@ describe('application for type approval', () => {
     it('does not load anything without a signed-in account', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       const { signOut } = await import('../../helpers/mockMsal');
       signOut();
 
@@ -317,6 +325,8 @@ describe('application for type approval', () => {
   describe('uploading attachments', () => {
     it('maps the returned documents onto attachments', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockResolvedValue({
@@ -360,6 +370,8 @@ describe('application for type approval', () => {
     it('returns an empty list when the response carries no form', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       // Regression guard. `documents?.map(...)` was cast to AttachmentDto[], so a response
       // without a form resolved to undefined while the signature promised an array - any
       // caller doing `.length` on the result threw.
@@ -373,11 +385,13 @@ describe('application for type approval', () => {
         attachments = await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      expect(attachments).toEqual([]);
+      expect(attachments).toStrictEqual([]);
     });
 
     it('returns an empty list when the form carries no documents', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockResolvedValue({
@@ -390,11 +404,13 @@ describe('application for type approval', () => {
         attachments = await documentsStep.props.onUploadAttachment('token', []);
       });
 
-      expect(attachments).toEqual([]);
+      expect(attachments).toStrictEqual([]);
     });
 
     it('reports a blocked upload distinctly from a generic failure', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue({
@@ -422,6 +438,8 @@ describe('application for type approval', () => {
     it('reports a server error for a 5xx', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue({
         status: 503,
@@ -441,6 +459,8 @@ describe('application for type approval', () => {
 
     it('falls back to a generic message when the failure carries no status', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.patternApproval.methods.addDocuments.mockRejectedValue(
@@ -462,6 +482,8 @@ describe('application for type approval', () => {
     it('hands the documents step an inert onUploadFiles stub', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       // The wizard routes uploads through onUploadAttachment; the step's own onUploadFiles
       // prop is required by its contract but deliberately does nothing, and the source marks
       // it "Not used". Pinning it means a future change that starts relying on it fails here
@@ -470,11 +492,13 @@ describe('application for type approval', () => {
 
       await expect(
         documentsStep.props.attachment.onUploadFiles(),
-      ).resolves.toEqual([]);
+      ).resolves.toStrictEqual([]);
     });
 
     it('skips progress polling when no upload id is issued', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.progress.methods.getProgressUploadId.mockResolvedValue(undefined);
@@ -490,6 +514,8 @@ describe('application for type approval', () => {
   describe('progress polling', () => {
     it('publishes progress and stops once the upload completes', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.progress.methods.getProgress
@@ -516,6 +542,8 @@ describe('application for type approval', () => {
     it('also stops when the upload completes with errors', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       await renderLoadedWizard();
       clients.progress.methods.getProgress.mockResolvedValue({
         percent: 100,
@@ -535,6 +563,8 @@ describe('application for type approval', () => {
 
     it('logs a failed cleanup without disturbing the upload', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.progress.methods.deleteProgressStatistics.mockRejectedValue(
@@ -556,6 +586,8 @@ describe('application for type approval', () => {
 
     it('retries after a failed poll and still finishes', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
       clients.progress.methods.getProgress
@@ -582,6 +614,8 @@ describe('application for type approval', () => {
 
     it('abandons polling when the component unmounts mid-flight', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       const { unmount } = await renderLoadedWizard();
 
@@ -627,6 +661,8 @@ describe('application for type approval', () => {
     it('does nothing before an upload has started', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       await renderLoadedWizard();
 
       await act(async () => {
@@ -638,6 +674,8 @@ describe('application for type approval', () => {
 
     it('cancels the named file against the current upload', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
 
@@ -657,6 +695,8 @@ describe('application for type approval', () => {
     it('swallows a failed cancellation because polling reports the real state', async () => {
       expect.hasAssertions();
 
+      await resetApplicationForTypeApprovalState();
+
       await renderLoadedWizard();
       clients.progress.methods.cancelFile.mockRejectedValue(
         new Error('too late'),
@@ -675,6 +715,8 @@ describe('application for type approval', () => {
 
     it('gives up cancelling when the token cannot be refreshed', async () => {
       expect.hasAssertions();
+
+      await resetApplicationForTypeApprovalState();
 
       await renderLoadedWizard();
 

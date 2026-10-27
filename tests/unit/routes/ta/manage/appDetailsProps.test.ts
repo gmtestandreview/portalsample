@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -62,17 +62,20 @@ const instance = {
   acquireTokenSilent: mocks.acquireTokenSilent,
 } as unknown as IPublicClientApplication;
 
-describe(appDetailsProps, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.getAppDetails.mockResolvedValue({
-      applicationDetails: { referenceId: 'PA-1' },
-    });
+const resetAppDetailsPropsMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.getAppDetails.mockResolvedValue({
+    applicationDetails: { referenceId: 'PA-1' },
   });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(appDetailsProps, () => {
   it('loads app details and exposes summary hiding rules', async () => {
     expect.hasAssertions();
+
+    resetAppDetailsPropsMocks();
 
     const props = appDetailsProps('PA-1', accounts, instance);
     const abortSignal = new AbortController().signal;
@@ -86,7 +89,7 @@ describe(appDetailsProps, () => {
       location: props.location,
       title: props.title,
       isSummaryPage: props.isSummaryPage,
-    }).toEqual({
+    }).toStrictEqual({
       loaded: { formValues: { applicationDetails: { referenceId: 'PA-1' } } },
       setAuthTokenCalls: [['access-token']],
       getAppDetailsCalls: [['PA-1', abortSignal]],
@@ -182,7 +185,7 @@ describe(appDetailsProps, () => {
           newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
         },
       }),
-    }).toEqual({
+    }).toStrictEqual({
       branchEmpty: true,
       branchFilled: false,
       manufacturerYes: true,
@@ -210,6 +213,8 @@ describe(appDetailsProps, () => {
   it('logs and rethrows app details load failures', async () => {
     expect.hasAssertions();
 
+    resetAppDetailsPropsMocks();
+
     mocks.getAppDetails.mockRejectedValueOnce(new Error('load failed'));
     const props = appDetailsProps('PA-2', accounts, instance);
 
@@ -225,6 +230,8 @@ describe(appDetailsProps, () => {
 
   it('throws before loading when no account is available', async () => {
     expect.hasAssertions();
+
+    resetAppDetailsPropsMocks();
 
     const props = appDetailsProps('PA-3', emptyAccounts, instance);
 
@@ -244,6 +251,8 @@ describe(appDetailsProps, () => {
   it('returns loaded values without mutating the client response', async () => {
     expect.hasAssertions();
 
+    resetAppDetailsPropsMocks();
+
     const appDetails: RequestForPatternApprovalAppDetails = {
       applicationDetails: { referenceId: 'PA-4' },
       organisationAndContact: { isManufacturer: YesNo.Yes },
@@ -252,13 +261,13 @@ describe(appDetailsProps, () => {
 
     await expect(
       appDetailsProps('PA-4', accounts, instance).loadStepValues(),
-    ).resolves.toEqual({
+    ).resolves.toStrictEqual({
       formValues: {
         applicationDetails: { referenceId: 'PA-4' },
         organisationAndContact: { isManufacturer: YesNo.Yes },
       },
     });
-    expect(appDetails).toEqual({
+    expect(appDetails).toStrictEqual({
       applicationDetails: { referenceId: 'PA-4' },
       organisationAndContact: { isManufacturer: YesNo.Yes },
     });

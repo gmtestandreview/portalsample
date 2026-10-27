@@ -676,6 +676,184 @@ diagnostic backlog and unrelated dirty-worktree changes. The focused Vitest run
 retained the non-blocking Vite native-config warning about the missing `.ts`
 extension in `vitest.config.ts`.
 
+### Continuation update — 2026-10-27 (merge-readiness review)
+
+The current bounded remediation slice is verified in isolation, but the branch
+is not merge-ready. The slice renamed the GridList story helpers and updated
+their Storybook unit consumer, replaced the two dynamic E2E URL regular
+expressions with pathname predicates, removed the unnecessary `use` prefix in
+the quality regression mock, converted the touched Vitest partial mocks to the
+typed dynamic-import adapter, and replaced hook-based test resets with explicit
+per-test reset ownership in the touched modal cohorts.
+
+Evidence for the latest slice:
+
+- The focused modal cohort passed 55/55 tests across four files; the two
+  additional mock-import fixes passed 7/7 tests across two files.
+- TypeScript, Prettier, scoped ESLint, and `git diff --check` passed for the
+  touched slices. Secret scans reported no issues for the newly edited files.
+- The regenerated diagnostics report contains 492 warnings and zero errors, down
+  from 536 warnings at the start of this continuation. The remaining inventory
+  includes 56 non-literal filesystem warnings, 12 object-injection warnings, and
+  unresolved Vitest structure/matcher/import warnings.
+- `npm run test:lint:diagnostics` passed 2/2 tests and
+  `npm run test:lint:remediation` passed 12/12 tests.
+- `npm run lint:eslint -- --max-warnings 0`, `npm run lint:diagnostics:check`,
+  and the phase-5 remediation gate fail on the remaining 492 warnings. The full
+  unit suite produced no progress output after repeated 30-second polls and was
+  interrupted; its result is not verified.
+
+The plan remains PARTIALLY VERIFIED and the branch remains NOT READY for merge.
+The next required work is the remaining phase-5 security/path-safety batch and
+residual Vitest rule families; a fresh full-unit run and the complete Storybook,
+quality, build, and E2E matrix remain required before merge.
+
+### Continuation update — 2026-10-27 (security and Vitest residual remediation)
+
+The follow-up remediation removed the remaining security/path-safety findings
+and reduced the current diagnostic inventory from 492 to 75 warnings, with zero
+errors. A shared `scripts/safe-file-io.mjs` boundary helper, declaration file,
+and regression test now constrain caller-supplied file paths to an explicit
+root. The redirect-bridge verifier was corrected to declare its temporary
+distribution directory as that root after focused verification exposed the
+legitimate external-fixture boundary.
+
+The Vitest residual work removed strict-equality, dynamic-mock-import,
+unbound-method, conditional-expect, matcher, title, and several lifecycle
+warnings. Remaining diagnostics are 61 `vitest/no-hooks`, 8
+`vitest/require-top-level-describe`, and 6 `vitest/no-conditional-in-test`. The
+only remaining hook suppressions are narrow, documented exceptions for shared
+MSW and external-process cleanup lifecycles; no global rule suppression was
+added.
+
+Evidence:
+
+- Fresh ESLint JSON diagnostics: 75 warnings and 0 errors.
+- Secret scan of the diagnostics report and all newly edited files: no issues.
+- Focused safe-file/script tests: 19/19 passed.
+- Focused evidence-freshness tests: 10/10 passed.
+- Focused preconditions tests: 24/24 passed.
+- Focused delivery/return bridge tests: 9/9 passed.
+- Focused helper/display/module-coverage cohort: 95/95 passed.
+- Focused redirect-bridge, coverage-lint, and MSW cohort after the boundary
+  correction: 23/23 passed.
+- Targeted TypeScript, Prettier, and ESLint checks passed for the latest
+  cohorts. The Vite native-config message about the missing `.ts` extension is
+  non-blocking and remains an environment/tooling warning, not an ESLint
+  diagnostic.
+- `npm run lint:eslint -- --max-warnings 0` failed with the 75 remaining
+  warnings; `npm run lint:diagnostics:check` failed for the same reason.
+- `npm run lint:remediation:gate -- --phase phase-5` failed because the report
+  still contains 75 warnings and the three closed residual rule families are
+  `vitest/no-conditional-in-test`, `vitest/no-hooks`, and
+  `vitest/require-top-level-describe`.
+
+The plan remains PARTIALLY VERIFIED and the branch remains NOT READY for merge.
+The zero-warning lint gate, full unit suite, Storybook build/tests, quality
+regression, and E2E matrix are still not verified. The current remaining work is
+the explicit ownership conversion for the 61 ordinary test lifecycle hooks and
+the six conditional-in-test cases, followed by the full verification matrix.
+
+### Current status — 2026-10-27
+
+**PARTIALLY VERIFIED — NOT READY FOR MERGE**
+
+The authoritative ESLint report was regenerated after the diagnostic gate
+overwrote the report path with its summary format. The fresh report contains 75
+warnings and 0 errors: 61 `vitest/no-hooks`, 8
+`vitest/require-top-level-describe`, and 6 `vitest/no-conditional-in-test`. The
+zero-warning lint and Phase 5 remediation gates therefore remain failed.
+
+Next action: convert the remaining ordinary lifecycle hooks and conditional test
+branches, regenerate the report, then run the full unit, Storybook, quality, and
+E2E verification matrix before preparing the merge commit.
+
+### Finishing review — 2026-10-27
+
+The branch was reviewed against the finishing-a-development-branch criteria.
+TypeScript type-checking and `npm run build-storybook` passed. The full unit
+suite and `npm run test:storybook` both started but produced no test progress
+after 30 seconds and were interrupted; neither is verified. The authoritative
+ESLint report was regenerated after those checks and remains at 75 warnings and
+0 errors. The zero-warning lint gate therefore still fails.
+
+The worktree contains 196 changed or untracked paths. No generated/vendor paths
+were detected in the changed-path review, and `git diff --check` passes. No
+commit, push, merge, or PR creation was performed. The branch remains
+**PARTIALLY VERIFIED — NOT READY FOR MERGE**.
+
+### Continuation update — 2026-10-27 (explicit per-test lifecycle ownership)
+
+The remaining Vitest lifecycle warnings were refactored to explicit per-test
+reset/setup functions. Ordinary suites now own their mock state after
+`expect.hasAssertions()`, and the configuration/helper suites use Vitest's
+`onTestFinished` for cleanup. No lint suppression or global rule change was
+introduced. The six conditional-test cases and eight top-level-describe cases
+were also resolved in the preceding cohorts.
+
+Evidence:
+
+- Fresh repository-scoped ESLint JSON diagnostics: 0 warnings and 0 errors.
+- `npm run lint`: passed, including the source formatting contract.
+- `npm run lint:diagnostics:check`: passed.
+- `npm run lint:remediation:gate -- --phase phase-5`: passed.
+- `npm run test:lint:diagnostics`: 2/2 tests passed.
+- `npm run test:lint:remediation`: 12/12 tests passed.
+- `npm run type-check`: passed after the final lifecycle refactor.
+- Focused final lifecycle cohort: 4 files and 63/63 tests passed.
+- Focused ordinary route cohorts: 7 files and 160/160 tests passed, plus earlier
+  cohorts of 6 files and 163/163 tests, 4 files and 39/39 tests, and 4 files and
+  23/23 tests.
+- `npm run build-storybook`: passed; Vite transformed 3,861 modules and wrote
+  `storybook-static` successfully.
+- Full `npm run test:unit`: NOT VERIFIED. After 30 seconds it had emitted only
+  the Vitest startup banner and was interrupted.
+- Full `npm run test:storybook`: NOT VERIFIED. It emitted the expected
+  ErrorBoundary story traces but no test-file summary after an additional
+  observation window and was interrupted.
+
+The zero-warning lint and static build criteria are verified. The full test
+criteria remain unverified, so the plan remains **PARTIALLY VERIFIED — NOT READY
+FOR MERGE**. The branch still contains the pre-existing dirty worktree; no
+commit, push, merge, or PR creation was performed. The Vite native-config
+missing-extension message remains a non-blocking tool warning, not an ESLint
+diagnostic.
+
+### Verification update — 2026-10-27 (full-suite completion)
+
+The first bounded full-unit run exposed nine concrete failures after executing
+260 files and 2,900 tests. Seven were caused by the safe-file-IO boundary
+receiving explicitly created temporary Sonar fixture/output directories without
+their declared roots; the backlog script now selects the repository root for
+relative paths and the caller-owned absolute directory for absolute paths. Two
+TA type assertions now compare the class's own fields with strict equality
+instead of comparing a class instance to a plain object.
+
+Evidence after correction:
+
+- Focused regression verification: 14/14 tests passed across the Sonar backlog
+  and TA type suites; type-check, formatting, and scoped ESLint passed.
+- Full unit suite with the reproducible bounded-worker command
+  `npm run test:unit -- --pool=forks --maxWorkers=2 --reporter=dot`: 260/260
+  files and 2,900/2,900 tests passed.
+- Full Storybook suite with the same bounded-worker mode: 150/150 files and
+  373/373 tests passed. The intentional ErrorBoundary story render traces were
+  emitted as expected; the run exited successfully.
+- `npm run test:quality:regression`: 1/1 files and 8/8 tests passed.
+- Final `npm run lint`: passed.
+- Final `npm run lint:diagnostics:check`: passed.
+- Final `npm run lint:remediation:gate -- --phase phase-5`: passed.
+- Fresh direct ESLint JSON diagnostics: 0 warnings and 0 errors.
+- Final `git diff --check`: passed.
+
+The default Vitest worker mode still produced only its startup banner during the
+earlier diagnostic attempts, but the bounded forked-worker execution is an
+independently reproducible full-suite pass for both configured suites. The
+requested ESLint and full configured Vitest blockers are VERIFIED. The broader
+merge matrix still requires the E2E suites, which were not run in this pass. The
+branch still has the pre-existing dirty worktree and no commit, push, merge, or
+PR creation was performed.
+
 ## Success Criteria
 
 - [ ] `reports/eslint/diagnostics.json` reports zero warnings and zero errors.

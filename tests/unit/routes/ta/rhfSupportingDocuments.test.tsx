@@ -1,5 +1,5 @@
 import { act, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -77,14 +77,14 @@ const attachmentControl = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react') as unknown as string, async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  import('../../../../ClientApp/src/api/web-api-client'),
+  import('../../../../ClientApp/src/api/web-api-client') as unknown as string,
   async (importOriginal) => {
     const { createClientMockFor, webApiClientModuleMock } =
       await import('../../helpers/mockApiClient');
@@ -102,7 +102,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  import('../../../../ClientApp/src/authentication/authConfig') as unknown as string,
   () =>
     ({
       tokenRequest: { scopes: ['api://ta/.default'] },
@@ -110,7 +110,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks') as unknown as string,
   () =>
     ({
       default: () => mocks.accountContext(),
@@ -121,7 +121,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/storage/notification'),
+  import('../../../../ClientApp/src/storage/notification') as unknown as string,
   () =>
     ({
       setDashboardNotification: mocks.setDashboardNotification,
@@ -129,7 +129,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/routes/ta/instrumentInfoPanel',
+  import('../../../../ClientApp/src/routes/ta/instrumentInfoPanel') as unknown as string,
   () =>
     ({
       default: ({
@@ -149,7 +149,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/components/Inputs/RhfAttachment',
+  import('../../../../ClientApp/src/components/Inputs/RhfAttachment') as unknown as string,
   () =>
     ({
       default: (props: typeof attachmentControl.props) => {
@@ -255,49 +255,55 @@ const alertItems = () =>
     (li) => li.textContent,
   );
 
-describe('rHF supporting documents', () => {
-  beforeEach(async () => {
-    await import('../../../../ClientApp/src/api/web-api-client');
+const resetRhfSupportingDocumentsMocks = async () => {
+  await import('../../../../ClientApp/src/api/web-api-client');
 
-    resetMsalMock();
-    formMethods = undefined;
-    mocks.accountContext.mockReset().mockReturnValue({
-      details: createAccountDetails(),
-    });
-    mocks.setTargetOrganisation.mockReset();
-    mocks.setDashboardNotification.mockReset();
-    attachmentControl.props =
-      undefined as unknown as typeof attachmentControl.props;
-
-    clients.patternApproval.setAuthToken.mockReset();
-    for (const method of Object.values(clients.patternApproval.methods)) {
-      method.mockReset().mockResolvedValue(undefined);
-    }
+  resetMsalMock();
+  formMethods = undefined;
+  mocks.accountContext.mockReset().mockReturnValue({
+    details: createAccountDetails(),
   });
+  mocks.setTargetOrganisation.mockReset();
+  mocks.setDashboardNotification.mockReset();
+  attachmentControl.props =
+    undefined as unknown as typeof attachmentControl.props;
 
+  clients.patternApproval.setAuthToken.mockReset();
+  for (const method of Object.values(clients.patternApproval.methods)) {
+    method.mockReset().mockResolvedValue(undefined);
+  }
+};
+
+describe('rHF supporting documents', () => {
   describe('surfacing errors', () => {
     it('shows errors handed down from the parent', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs({
         props: { externalErrors: ['Failed to commit documents.'] },
       });
 
-      expect(alertItems()).toEqual(['Failed to commit documents.']);
+      expect(alertItems()).toStrictEqual(['Failed to commit documents.']);
     });
 
     it('shows the validation message for the documents field', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs();
 
       await setFieldError('Documents are invalid');
 
-      expect(alertItems()).toEqual(['Documents are invalid']);
+      expect(alertItems()).toStrictEqual(['Documents are invalid']);
     });
 
     it('ignores a validation error that carries no text', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -308,6 +314,8 @@ describe('rHF supporting documents', () => {
 
     it('ignores a validation error on an unrelated field', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -323,6 +331,8 @@ describe('rHF supporting documents', () => {
 
     it('clears validation errors when an upload starts', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -340,6 +350,8 @@ describe('rHF supporting documents', () => {
     it('reports each failed and cancelled upload once the transfer finishes', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({
         props: {
           progress: {
@@ -353,7 +365,7 @@ describe('rHF supporting documents', () => {
         },
       });
 
-      expect(alertItems()).toEqual([
+      expect(alertItems()).toStrictEqual([
         'Error uploading bad.pdf',
         'Upload cancelled for stopped.pdf',
       ]);
@@ -361,6 +373,8 @@ describe('rHF supporting documents', () => {
 
     it('reports no file errors until the transfer reaches 100 percent', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs({
         props: {
@@ -377,11 +391,13 @@ describe('rHF supporting documents', () => {
     it('shows a repeated error only once', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({ props: { externalErrors: ['Same problem'] } });
 
       await setFieldError('Same problem');
 
-      expect(alertItems()).toEqual(['Same problem']);
+      expect(alertItems()).toStrictEqual(['Same problem']);
     });
 
     it('hides the summary when the only error is an untouched category prompt', async () => {
@@ -389,6 +405,8 @@ describe('rHF supporting documents', () => {
       // not finished yet. It must arrive as an external error to be the sole entry: the same
       // message coming from uploadErrors is filtered out before it reaches the summary.
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs({
         props: { externalErrors: [ValidationMessages.RequiredTag] },
@@ -400,17 +418,21 @@ describe('rHF supporting documents', () => {
     it('shows a lone category prompt after the form has been submitted', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({
         props: { externalErrors: [ValidationMessages.RequiredTag] },
       });
 
       await submitForm();
 
-      expect(alertItems()).toEqual([ValidationMessages.RequiredTag]);
+      expect(alertItems()).toStrictEqual([ValidationMessages.RequiredTag]);
     });
 
     it('drops the category prompt when it arrives as an upload error', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -426,6 +448,8 @@ describe('rHF supporting documents', () => {
       // exactly this message before they ever reach the summary.
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({
         props: {
           externalErrors: [
@@ -435,11 +459,13 @@ describe('rHF supporting documents', () => {
         },
       });
 
-      expect(alertItems()).toEqual(['Failed to commit documents.']);
+      expect(alertItems()).toStrictEqual(['Failed to commit documents.']);
     });
 
     it('shows the category prompt once the form has been submitted', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs({
         props: {
@@ -452,7 +478,7 @@ describe('rHF supporting documents', () => {
 
       await submitForm();
 
-      expect(alertItems()).toEqual([
+      expect(alertItems()).toStrictEqual([
         ValidationMessages.RequiredTag,
         'Failed to commit documents.',
       ]);
@@ -460,6 +486,8 @@ describe('rHF supporting documents', () => {
 
     it('scrolls the summary into view when a document is required', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
       const focus = vi.fn<HTMLElement['focus']>();
@@ -489,6 +517,8 @@ describe('rHF supporting documents', () => {
     it('refuses an empty selection', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({
         props: {
           onUploadAttachment:
@@ -503,6 +533,8 @@ describe('rHF supporting documents', () => {
 
     it('sends every selected file in a single call', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -535,11 +567,13 @@ describe('rHF supporting documents', () => {
         { data: files[1], fileName: 'second.pdf' },
       ]);
       expect(setExternalErrors).toHaveBeenCalledWith([]);
-      expect(uploaded).toEqual([{ id: 'doc-1' }]);
+      expect(uploaded).toStrictEqual([{ id: 'doc-1' }]);
     });
 
     it('falls back to the attachment handler when no upload handler is supplied', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onUploadFiles = vi
         .fn<AttachmentFunction['onUploadFiles']>()
@@ -558,6 +592,8 @@ describe('rHF supporting documents', () => {
     it('lists every server-side validation message', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
         .mockRejectedValue({
@@ -572,7 +608,7 @@ describe('rHF supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      expect(alertItems()).toEqual([
+      expect(alertItems()).toStrictEqual([
         'File type not allowed',
         'File too large',
         'Name is invalid',
@@ -581,6 +617,8 @@ describe('rHF supporting documents', () => {
 
     it('falls back to the problem title when no field errors are given', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -591,11 +629,13 @@ describe('rHF supporting documents', () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
       });
 
-      expect(alertItems()).toEqual(['Upload rejected']);
+      expect(alertItems()).toStrictEqual(['Upload rejected']);
     });
 
     it('stays quiet when the failure carries neither errors nor a title', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -611,6 +651,8 @@ describe('rHF supporting documents', () => {
 
     it('drops the caller back to their own organisation when third-party access is revoked', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
@@ -648,6 +690,8 @@ describe('rHF supporting documents', () => {
     it('falls back to empty identifiers when the account has no organisation recorded', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       mocks.accountContext.mockReturnValue({
         details: createAccountDetails({ abn: '', organisation: '' }),
       });
@@ -671,6 +715,8 @@ describe('rHF supporting documents', () => {
     it('treats a 403 without the third-party title as an ordinary failure', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
         .mockRejectedValue({
@@ -684,13 +730,15 @@ describe('rHF supporting documents', () => {
       });
 
       expect(mocks.setTargetOrganisation).not.toHaveBeenCalled();
-      expect(alertItems()).toEqual(['Forbidden']);
+      expect(alertItems()).toStrictEqual(['Forbidden']);
     });
   });
 
   describe('managing existing documents', () => {
     it('deletes a document and reports the success', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const onDeleteSuccess = vi.fn<(success: boolean) => void>();
       await renderDocs({ props: { onDeleteSuccess } });
@@ -711,6 +759,8 @@ describe('rHF supporting documents', () => {
     it('deletes a document when no success callback is supplied', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs();
 
       await act(async () => {
@@ -724,6 +774,8 @@ describe('rHF supporting documents', () => {
 
     it('updates a document category', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -742,6 +794,8 @@ describe('rHF supporting documents', () => {
     it('ignores a category update with no category', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs();
 
       await act(async () => {
@@ -758,6 +812,8 @@ describe('rHF supporting documents', () => {
     it('shows the panel for a new certificate application', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs();
 
       expect(screen.getByTestId('instrument-info-panel')).toHaveAttribute(
@@ -772,6 +828,8 @@ describe('rHF supporting documents', () => {
 
     it('hides the panel for other application types', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs({
         values: {
@@ -790,6 +848,8 @@ describe('rHF supporting documents', () => {
     it('hides the panel when the instrument is not yet chosen', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({
         values: {
           form: { ...defaultValues.form, instrumentType: undefined },
@@ -804,6 +864,8 @@ describe('rHF supporting documents', () => {
     it('hides the panel in summary mode', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({ props: { isSummary: true } });
 
       expect(
@@ -815,6 +877,8 @@ describe('rHF supporting documents', () => {
   describe('presentation', () => {
     it('invites an upload when documents can still be changed', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs();
 
@@ -829,6 +893,8 @@ describe('rHF supporting documents', () => {
     it('explains the commit rule when document changes are suppressed', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({ props: { suppressDocChanges: true } });
 
       expect(
@@ -838,6 +904,8 @@ describe('rHF supporting documents', () => {
 
     it('reads as a record rather than an invitation in summary mode', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       await renderDocs({ props: { isSummary: true } });
 
@@ -853,6 +921,8 @@ describe('rHF supporting documents', () => {
     it('passes the upload lock through to the attachment control', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       await renderDocs({ props: { disableUpload: true } });
 
       expect(screen.getByTestId('attachment')).toHaveAttribute(
@@ -866,6 +936,8 @@ describe('rHF supporting documents', () => {
     it('clears the progress it no longer owns', async () => {
       expect.hasAssertions();
 
+      await resetRhfSupportingDocumentsMocks();
+
       const setProgress =
         vi.fn<NonNullable<TASupportingDocumentsProps['setProgress']>>();
       const { unmount } = await renderDocs({ props: { setProgress } });
@@ -877,6 +949,8 @@ describe('rHF supporting documents', () => {
 
     it('leaves progress alone while an upload is still running', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const setProgress =
         vi.fn<NonNullable<TASupportingDocumentsProps['setProgress']>>();
@@ -891,6 +965,8 @@ describe('rHF supporting documents', () => {
 
     it('survives unmount when no progress setter was supplied', async () => {
       expect.hasAssertions();
+
+      await resetRhfSupportingDocumentsMocks();
 
       const { unmount } = await renderDocs({
         props: { setProgress: undefined },

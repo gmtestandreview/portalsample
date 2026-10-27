@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { areFormValuesEqual } from '@/utils/areFormValuesEqual';
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(areFormValuesEqual, () => {
   it('compares primitive, null and undefined values', () => {
     expect.hasAssertions();

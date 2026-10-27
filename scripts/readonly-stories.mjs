@@ -1,10 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import ts from 'typescript';
 import { projectDiagnostics } from './readonly-props.mjs';
+import { readTextFile, realPath, writeTextFile } from './safe-file-io.mjs';
 
 const slash = (value) => value.replaceAll('\\', '/');
 const isFunctionLike = (node) =>
@@ -190,6 +191,9 @@ const gitExecutablePaths = {
 
 function resolveExistingPath(candidate) {
   try {
+    // The candidate is one of the fixed executable paths or an explicit
+    // operator-provided absolute path; it is not repository input.
+    // eslint-disable-next-line security/detect-non-literal-fs-filename -- executable path is constrained by the fixed allowlist or explicit configuration.
     return realpathSync(candidate);
   } catch {
     return null;
@@ -266,9 +270,9 @@ function previewTransforms(root, files) {
   let skipped = 0;
   for (const file of files) {
     const absolute = path.join(root, file);
-    if (path.resolve(realpathSync(absolute)) !== path.resolve(absolute))
+    if (path.resolve(realPath(absolute, root)) !== path.resolve(absolute))
       throw new Error(`Refusing symlinked source: ${file}`);
-    const original = readFileSync(absolute, 'utf8');
+    const original = readTextFile(absolute, root);
     const result = transformStory(original, file);
     for (const change of result.changes)
       process.stdout.write(`${file} ${change.name}: added ${change.text}\n`);
@@ -309,7 +313,7 @@ function applyReplacements(root, replacements, originals) {
     );
   for (const [file, original] of originals) {
     if (
-      readFileSync(file, 'utf8') !== original ||
+      readTextFile(file, root) !== original ||
       git(root, ['status', '--porcelain', '--', file]).trim()
     ) {
       throw new Error(
@@ -321,10 +325,11 @@ function applyReplacements(root, replacements, originals) {
   try {
     for (const [file, source] of replacements) {
       written.push(file);
-      writeFileSync(file, source);
+      writeTextFile(file, source, undefined, root);
     }
   } catch (error) {
-    for (const file of written) writeFileSync(file, originals.get(file));
+    for (const file of written)
+      writeTextFile(file, originals.get(file), undefined, root);
     throw error;
   }
 }

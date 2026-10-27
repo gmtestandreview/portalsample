@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   act,
   fireEvent,
@@ -24,20 +24,20 @@ type Validate = (values: TestValues) => Record<string, unknown>;
 
 vi.mock(
   import('@/components/forms/UnsavedFormPrompt'),
-  () =>
+  (() =>
     ({
       default: () => <div data-testid='unsaved-form-prompt' />,
-    }) satisfies __ExactMockModule<__TestMockModule21>,
+    }) satisfies __ExactMockModule<__TestMockModule21>) as unknown as __DynamicPartialMockFactory<__TestMockModule21>,
 );
 
 vi.mock(
   import('@/components/BlockUISpinner'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
         <output>{children}</output>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule14>,
+    }) satisfies __ExactMockModule<__TestMockModule14>) as unknown as __DynamicPartialMockFactory<__TestMockModule14>,
 );
 
 function ValuesProbe() {
@@ -60,12 +60,10 @@ function ValuesProbe() {
 }
 
 describe('form shell behavior slice', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('formikForm validates hard, renders function children, and submits normalized values', async () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
@@ -125,6 +123,8 @@ describe('form shell behavior slice', () => {
   it('formikForm uses soft validation and onSaveAndExit for draft saves', async () => {
     expect.hasAssertions();
 
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<Submit>();
     const onSaveAndExit = vi.fn<AsyncSubmit>().mockResolvedValue(undefined);
@@ -170,6 +170,8 @@ describe('form shell behavior slice', () => {
   it('formikForm shows loading and custom banner branches', () => {
     expect.hasAssertions();
 
+    vi.clearAllMocks();
+
     render(
       <MemoryRouter>
         <FormikForm
@@ -193,6 +195,8 @@ describe('form shell behavior slice', () => {
 
   it('formikForm validates soft and hard Yup schemas and supports empty children', async () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     const softSchema = Yup.object({
       draftName: Yup.string().required('Draft name required'),
@@ -269,6 +273,8 @@ describe('form shell behavior slice', () => {
   it('formikForm renders the saving spinner while submission is pending', async () => {
     expect.hasAssertions();
 
+    vi.clearAllMocks();
+
     const user = userEvent.setup();
     render(
       <MemoryRouter>
@@ -296,6 +302,8 @@ describe('form shell behavior slice', () => {
 
   it('errorSummary renders remaining server error branches and Formik nested errors', async () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     const user = userEvent.setup();
     const { rerender } = render(
@@ -359,6 +367,8 @@ describe('form shell behavior slice', () => {
   it('errorSummary ignores empty nested errors instead of stringifying them', async () => {
     expect.hasAssertions();
 
+    vi.clearAllMocks();
+
     vi.useFakeTimers();
     const scrollIntoView = vi.fn<HTMLElement['scrollIntoView']>();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
@@ -407,6 +417,8 @@ describe('form shell behavior slice', () => {
 
   it('contactDetails renders editable labels and summary fallback/details branches', async () => {
     expect.hasAssertions();
+
+    vi.clearAllMocks();
 
     const user = userEvent.setup();
     const { rerender } = render(

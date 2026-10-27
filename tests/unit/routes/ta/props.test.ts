@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -45,7 +45,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client') as unknown as string,
   async (importOriginal) => {
     const actual = await importOriginal<typeof WebApiClientModule>();
     return {
@@ -80,7 +80,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../../ClientApp/src/authentication/authConfig'),
+  import('../../../../ClientApp/src/authentication/authConfig') as unknown as string,
   () =>
     ({
       tokenRequest: { scopes: ['scope'] },
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger') as unknown as string,
   () =>
     ({
       default: {
@@ -109,36 +109,36 @@ const accountDetails = {
   branch: 'Branch',
 } as AccountDetails;
 
-describe('pattern approval wizard prop factories', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.getLookup.mockImplementation((type: CRMLookupTypes) =>
-      Promise.resolve([{ id: type, name: type }]),
-    );
-    mocks.getAllInfoPanelContent.mockResolvedValue([
-      { instrumentTypeId: 'type-1' },
-    ]);
-    mocks.getNmiApplication.mockResolvedValue([
-      { id: 'cert-1', name: 'NMI-1' },
-    ]);
-    mocks.getApplicationAndInstrument.mockResolvedValue({
-      patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-    });
-    mocks.getOrganisationAndContact.mockResolvedValue({
-      isManufacturer: YesNo.No,
-    });
-    mocks.getSupportingDocuments.mockResolvedValue({ form: { documents: [] } });
-    mocks.getSummary.mockResolvedValue({
-      referenceId: 'PA-1',
-      applicationAndInstrument: {
-        patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
-      },
-    });
+const resetTaPropsMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.getLookup.mockImplementation((type: CRMLookupTypes) =>
+    Promise.resolve([{ id: type, name: type }]),
+  );
+  mocks.getAllInfoPanelContent.mockResolvedValue([
+    { instrumentTypeId: 'type-1' },
+  ]);
+  mocks.getNmiApplication.mockResolvedValue([{ id: 'cert-1', name: 'NMI-1' }]);
+  mocks.getApplicationAndInstrument.mockResolvedValue({
+    patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
   });
+  mocks.getOrganisationAndContact.mockResolvedValue({
+    isManufacturer: YesNo.No,
+  });
+  mocks.getSupportingDocuments.mockResolvedValue({ form: { documents: [] } });
+  mocks.getSummary.mockResolvedValue({
+    referenceId: 'PA-1',
+    applicationAndInstrument: {
+      patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
+    },
+  });
+};
 
+describe('pattern approval wizard prop factories', () => {
   it('loads and saves application/instrument details while stripping lookup-only values', async () => {
     expect.hasAssertions();
+
+    resetTaPropsMocks();
 
     const props = applicationAndInstrumentProps(
       'PA-1',
@@ -150,7 +150,7 @@ describe('pattern approval wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
+    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
       stepValues: {
         patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
         instrumentCategoryLookup: [
@@ -261,6 +261,8 @@ describe('pattern approval wizard prop factories', () => {
   it('loads and saves organisation/contact details with all hide branches', async () => {
     expect.hasAssertions();
 
+    resetTaPropsMocks();
+
     const props = organisationAndContactProps(
       'PA-2',
       accounts,
@@ -271,7 +273,7 @@ describe('pattern approval wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
+    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
       stepValues: { isManufacturer: YesNo.No },
     });
     expect({
@@ -375,6 +377,8 @@ describe('pattern approval wizard prop factories', () => {
   it('loads and saves supporting documents with document-list branches', async () => {
     expect.hasAssertions();
 
+    resetTaPropsMocks();
+
     const props = supportingDocumentsProps(
       'PA-3',
       accounts,
@@ -385,7 +389,7 @@ describe('pattern approval wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
+    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
       stepValues: { form: { documents: [] } },
     });
     expect({
@@ -440,6 +444,8 @@ describe('pattern approval wizard prop factories', () => {
   it('loads and submits summary values with lookup-enriched application details', async () => {
     expect.hasAssertions();
 
+    resetTaPropsMocks();
+
     const props = summaryAndSubmitProps(
       'PA-4',
       accounts,
@@ -450,7 +456,7 @@ describe('pattern approval wizard prop factories', () => {
     );
     const abortSignal = new AbortController().signal;
 
-    await expect(props.loadStepValues?.(abortSignal)).resolves.toEqual({
+    await expect(props.loadStepValues?.(abortSignal)).resolves.toStrictEqual({
       stepValues: {
         referenceId: 'PA-1',
         applicationAndInstrument: {
@@ -597,6 +603,8 @@ describe('pattern approval wizard prop factories', () => {
 
   it('logs and rethrows client failures from each async prop helper', async () => {
     expect.hasAssertions();
+
+    resetTaPropsMocks();
 
     const abortSignal = new AbortController().signal;
     const failureCases = [
@@ -760,6 +768,8 @@ describe('pattern approval wizard prop factories', () => {
 
   it('throws account-availability errors before making client calls', async () => {
     expect.hasAssertions();
+
+    resetTaPropsMocks();
 
     const appProps = applicationAndInstrumentProps(
       'PA-13',

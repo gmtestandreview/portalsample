@@ -68,15 +68,15 @@ test('BUG-003: missing App Insights config disables telemetry instead of loading
 test('BUG-004: pristine valid create-account forms do not trigger route-leave confirmation', async () => {
   let capturedWhen: boolean | undefined;
 
-  vi.doMock('formik', () => ({
-    useFormikContext: () => ({
-      dirty: false,
-      isValid: true,
-      submitCount: 0,
-      isSubmitting: false,
-      errors: {},
-    }),
-  }));
+  const formikContext = () => ({
+    dirty: false,
+    isValid: true,
+    submitCount: 0,
+    isSubmitting: false,
+    errors: {},
+  });
+
+  vi.doMock('formik', () => ({ useFormikContext: formikContext }));
   vi.doMock('../ClientApp/src/components/RouteLeavingGuard', () => ({
     default: ({ when }: { when: boolean }) => {
       capturedWhen = when;

@@ -11,6 +11,15 @@ const readFileSync = (filePath: string, _encoding: 'utf8'): string =>
 const existsSync = (filePath: string): boolean =>
   pathExists(filePath, testRoot);
 
+const requireViteFinal = (
+  viteFinal: typeof storybookConfig.viteFinal | undefined,
+): NonNullable<typeof storybookConfig.viteFinal> => {
+  if (!viteFinal) {
+    throw new Error('Storybook viteFinal configuration is required');
+  }
+  return viteFinal;
+};
+
 const main = readFileSync('.storybook/main.ts', 'utf8');
 const preview = readFileSync('.storybook/preview.ts', 'utf8');
 const previewHead = readFileSync('.storybook/preview-head.html', 'utf8');
@@ -383,7 +392,7 @@ describe('storybook documentation architecture', () => {
     ];
 
     for (const packageName of storybookPackages) {
-      expect(declaredVersion(packageName), packageName).toBe('10.6.3');
+      expect(declaredVersion(packageName)).toBe('10.6.3');
     }
 
     expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.3');
@@ -413,10 +422,7 @@ describe('storybook documentation architecture', () => {
   it('preserves Sass compatibility and the size budget while splitting the preview runtime', async () => {
     expect.hasAssertions();
 
-    const viteFinal = storybookConfig.viteFinal;
-    if (!viteFinal) {
-      throw new Error('Storybook viteFinal configuration is required');
-    }
+    const viteFinal = requireViteFinal(storybookConfig.viteFinal);
 
     const viteConfig: UserConfig = await viteFinal(
       {},

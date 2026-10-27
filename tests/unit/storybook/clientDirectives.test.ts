@@ -71,8 +71,8 @@ describe('storybook client directives', () => {
       'tsx',
     );
 
-    expect(warnings).toEqual([]);
-    expect(chunk.exports).toEqual(['element']);
+    expect(warnings).toStrictEqual([]);
+    expect(chunk.exports).toStrictEqual(['element']);
     expect(chunk.code).toContain('42');
   });
 

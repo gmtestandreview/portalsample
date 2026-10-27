@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   fireEvent,
   render,
@@ -40,7 +40,9 @@ const mocks = vi.hoisted(() => ({
   loggerError: vi.fn<typeof AppLogger.error>(),
 }));
 
-vi.mock('@azure/msal-react', async (importOriginal) => {
+vi.mock(import('@azure/msal-react'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule2>>[0],
+) => {
   const actual = await importOriginal<typeof MsalReactModule>();
 
   return {
@@ -52,35 +54,47 @@ vi.mock('@azure/msal-react', async (importOriginal) => {
       },
     }),
   } satisfies __ExactMockModule<__TestMockModule2>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule2>);
 
-vi.mock('@/analytics/GoogleAnalytics', async (importOriginal) => {
+vi.mock(import('@/analytics/GoogleAnalytics'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule22>
+  >[0],
+) => {
   const actual = await importOriginal<typeof GoogleAnalyticsModule>();
 
   return {
     ...actual,
     trackGAEvent: mocks.trackGAEvent,
   } satisfies __ExactMockModule<__TestMockModule22>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule22>);
 
-vi.mock('@/instrumentation/AppLogger', async (importOriginal) => {
+vi.mock(import('@/instrumentation/AppLogger'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule5>>[0],
+) => {
   const actual = await importOriginal<typeof AppLoggerModule>();
 
   return {
     ...actual,
     default: { ...actual.default, error: mocks.loggerError },
   } satisfies __ExactMockModule<__TestMockModule5>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule5>);
 
-vi.mock('@/storage/notification', async (importOriginal) => {
+vi.mock(import('@/storage/notification'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule46>
+  >[0],
+) => {
   const actual = await importOriginal<typeof NotificationModule>();
   return {
     ...actual,
     setDashboardNotification: mocks.setDashboardNotification,
   } satisfies __ExactMockModule<__TestMockModule46>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule46>);
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
 
   return {
@@ -90,7 +104,7 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
       override setAuthToken = mocks.setAuthToken;
     },
   } satisfies __ExactMockModule<__TestMockModule4>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 const LocationDisplay = () => {
   const location = useLocation();
@@ -132,8 +146,8 @@ const renderPaRequestItem = (
     </MemoryRouter>,
   );
 
-describe(PaRequestItem, () => {
-  beforeEach(() => {
+describe('pa request item', () => {
+  const resetPaRequestItemMocks = () => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({
       authority: 'https://login.microsoftonline.com/tenant-id',
@@ -156,11 +170,12 @@ describe(PaRequestItem, () => {
       correlationId: 'correlation-id',
     } satisfies AuthenticationResult & { account: AccountInfo });
     mocks.deleteApplication.mockResolvedValue(undefined);
-  });
+  };
 
   it('routes submitted applications to details and messages with unread message context', async () => {
     expect.hasAssertions();
 
+    resetPaRequestItemMocks();
     const user = userEvent.setup();
     renderPaRequestItem(baseRequest);
 
@@ -232,6 +247,7 @@ describe(PaRequestItem, () => {
     async (status) => {
       expect.hasAssertions();
 
+      resetPaRequestItemMocks();
       const user = userEvent.setup();
       renderPaRequestItem({
         ...baseRequest,
@@ -255,6 +271,7 @@ describe(PaRequestItem, () => {
   it('resumes draft applications and deletes them after confirmation', async () => {
     expect.hasAssertions();
 
+    resetPaRequestItemMocks();
     const user = userEvent.setup();
     const setDeleteSuccess = vi.fn<(success: boolean) => void>();
     const {
@@ -352,6 +369,7 @@ describe(PaRequestItem, () => {
   it('logs and closes the confirmation modal when draft deletion fails', async () => {
     expect.hasAssertions();
 
+    resetPaRequestItemMocks();
     const user = userEvent.setup();
     const setDeleteSuccess = vi.fn<(success: boolean) => void>();
     const deleteError = new Error('delete failed');
@@ -399,6 +417,7 @@ describe(PaRequestItem, () => {
     async (portalReferenceId) => {
       expect.hasAssertions();
 
+      resetPaRequestItemMocks();
       const user = userEvent.setup();
       const {
         portalReferenceId: _basePortalReferenceId,
@@ -430,6 +449,7 @@ describe(PaRequestItem, () => {
   it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {
     expect.hasAssertions();
 
+    resetPaRequestItemMocks();
     const user = userEvent.setup();
     const { container } = renderPaRequestItem({
       ...baseRequest,

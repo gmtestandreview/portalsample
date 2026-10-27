@@ -158,7 +158,7 @@ describe('runClosure', () => {
 
     const result = await moduleUnderTest.runClosure(options, adapters);
 
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       ok: true,
       phases: [
         'paths',
@@ -191,7 +191,7 @@ describe('runClosure', () => {
       expectedFreezeId: freeze.freezeId,
       expectedChildEpoch: expect.any(Object),
     });
-    expect(calls).toEqual([
+    expect(calls).toStrictEqual([
       'paths',
       'freeze',
       'producer',
@@ -229,7 +229,7 @@ describe('runClosure', () => {
       code: 'EXECUTION_INCOMPLETE',
     });
     expect(result.message).toContain('handoff');
-    expect(calls).toEqual([
+    expect(calls).toStrictEqual([
       'paths',
       'freeze',
       'producer',
@@ -270,7 +270,7 @@ describe('runClosure', () => {
       ok: false,
       code: 'EXECUTION_INCOMPLETE',
     });
-    expect(calls).toEqual([
+    expect(calls).toStrictEqual([
       'paths',
       'freeze',
       'producer',
@@ -331,7 +331,7 @@ describe('runClosure', () => {
       code: 'EXECUTION_INCOMPLETE',
       message: 'closure interrupted by SIGTERM',
     });
-    expect(calls).toEqual([
+    expect(calls).toStrictEqual([
       'paths',
       'freeze',
       'producer',
@@ -355,6 +355,6 @@ describe('runClosure', () => {
       ok: false,
       code: 'INVALID_INVOCATION',
     });
-    expect(calls).toEqual([]);
+    expect(calls).toStrictEqual([]);
   });
 });

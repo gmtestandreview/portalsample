@@ -43,7 +43,7 @@ const failingResolver: Resolver<Values> = async () => ({
   },
 });
 
-describe(RhfCheckbox, () => {
+describe('rhf checkbox behavior', () => {
   it('renders a labelled checkbox reflecting the form value', () => {
     expect.hasAssertions();
 

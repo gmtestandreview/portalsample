@@ -1,6 +1,6 @@
 import { act, render } from '@testing-library/react';
 import { Formik } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   PatternApprovalRequiredValueOptions,
   PatternApprovalRequiredValues,
@@ -16,14 +16,14 @@ import ApplicationSummary from '../../../../../ClientApp/src/routes/ta/summary/A
 import OrganisationSummary from '../../../../../ClientApp/src/routes/ta/summary/OrganisationSummary';
 import { resetMsalMock } from '../../../helpers/mockMsal';
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react') as unknown as string, async () => {
   const { msalReactModuleMock } = await import('../../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../../ClientApp/src/instrumentation/AppLogger') as unknown as string,
   () =>
     ({
       default: {
@@ -181,26 +181,32 @@ const renderSummary = (values: RequestForPatternApprovalAppDetails) =>
     </>,
   ).container.innerHTML;
 
-describe('form-free TA summary parity with the Formik summary', () => {
-  beforeEach(() => {
-    resetMsalMock();
-  });
+const resetSummaryParityMocks = () => {
+  resetMsalMock();
+};
 
+describe('form-free TA summary parity with the Formik summary', () => {
   it.each(Object.entries(fixtures))(
     'renders the same markup for %s',
     async (_name, values) => {
       expect.hasAssertions();
 
+      resetSummaryParityMocks();
+
       const legacy = await renderLegacy(values);
       document.body.innerHTML = '';
       const summary = renderSummary(values);
 
-      expect(lines(withoutSubOptionValues(summary))).toEqual(lines(legacy));
+      expect(lines(withoutSubOptionValues(summary))).toStrictEqual(
+        lines(legacy),
+      );
     },
   );
 
   it('shows the chosen sub-options that the Formik summary leaves blank', () => {
     expect.hasAssertions();
+
+    resetSummaryParityMocks();
 
     const { container } = render(
       <ApplicationSummary

@@ -2,8 +2,8 @@ import { LogLevel } from '@azure/msal-browser';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock(
-  '@/env',
-  () =>
+  import('@/env'),
+  (() =>
     ({
       env: {
         VITE_B2C_CLIENTID: 'test-client-id',
@@ -14,7 +14,7 @@ vi.mock(
         VITE_B2C_USER_IMPERSONATION_SCOPE: 'user_impersonation',
         VITE_B2C_REDIRECT_URL: 'https://example.test/redirect',
       },
-    }) satisfies __ExactMockModule<__TestMockModule10>,
+    }) satisfies __ExactMockModule<__TestMockModule10>) as unknown as __DynamicPartialMockFactory<__TestMockModule10>,
 );
 
 describe('auth configuration', () => {
@@ -57,7 +57,7 @@ describe('auth configuration', () => {
       iframeBridgeTimeout: 6000,
       navigatePopups: true,
     });
-    expect(Object.keys(configuration.system ?? {})).not.toEqual(
+    expect(Object.keys(configuration.system ?? {})).not.toStrictEqual(
       expect.arrayContaining(['windowHashTimeout', 'iframeHashTimeout']),
     );
     expect(

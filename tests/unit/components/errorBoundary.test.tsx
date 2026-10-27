@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { MemoryRouter } from 'react-router';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ErrorDisplay from '@/components/ErrorBoundary/ErrorDisplay';
 import { HttpStatusCode } from '@/types';
@@ -18,12 +18,13 @@ const renderErrorDisplay = (status: HttpStatusCode | number) =>
     </MemoryRouter>,
   );
 
-describe(ErrorDisplay, () => {
-  afterEach(() => {
-    document.body.className = '';
-    document.title = '';
-  });
+const resetErrorBoundaryTest = () => {
+  vi.restoreAllMocks();
+  document.body.className = '';
+  document.title = '';
+};
 
+describe('error display', () => {
   it.each([
     [
       HttpStatusCode.Conflict,
@@ -73,6 +74,8 @@ describe(ErrorDisplay, () => {
   ])('renders the %s error state', (status, heading, title) => {
     expect.hasAssertions();
 
+    resetErrorBoundaryTest();
+
     renderErrorDisplay(status);
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName(
@@ -92,11 +95,7 @@ describe(ErrorDisplay, () => {
   });
 });
 
-describe(ErrorBoundary, () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
+describe('error boundary', () => {
   const renderWithExpectedError = (
     expectedError: Error,
     ui: React.ReactElement,
@@ -122,11 +121,13 @@ describe(ErrorBoundary, () => {
       globalThis.removeEventListener('error', preventExpectedError);
     }
 
-    expect(unexpectedConsoleErrors).toEqual([]);
+    expect(unexpectedConsoleErrors).toStrictEqual([]);
   };
 
   it('renders children when no error is thrown', () => {
     expect.hasAssertions();
+
+    resetErrorBoundaryTest();
 
     const trackException = vi.fn<TrackException>();
     const appInsights = {
@@ -153,6 +154,8 @@ describe(ErrorBoundary, () => {
 
   it('renders the fallback when telemetry is disabled', () => {
     expect.hasAssertions();
+
+    resetErrorBoundaryTest();
 
     const expectedError = Object.assign(new Error('Request failed'), {
       status: HttpStatusCode.Conflict,
@@ -188,6 +191,8 @@ describe(ErrorBoundary, () => {
 
   it('renders the fallback and tracks an exception when a child throws', () => {
     expect.hasAssertions();
+
+    resetErrorBoundaryTest();
 
     const expectedError = Object.assign(new Error('Request failed'), {
       status: HttpStatusCode.Conflict,
@@ -233,6 +238,8 @@ describe(ErrorBoundary, () => {
   it('uses the server-error fallback when a thrown error has no status', () => {
     expect.hasAssertions();
 
+    resetErrorBoundaryTest();
+
     const expectedError = new Error('Unknown failure');
     const ThrowingChild = () => {
       throw expectedError;
@@ -266,6 +273,8 @@ describe(ErrorBoundary, () => {
 
   it('wraps a non-Error throw into an Error before tracking it', () => {
     expect.hasAssertions();
+
+    resetErrorBoundaryTest();
 
     const thrown = 'plain string failure';
     const ThrowingChild = () => {

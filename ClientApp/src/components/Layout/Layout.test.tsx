@@ -1,17 +1,9 @@
 import { render, screen, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import Layout from './index';
 
 describe('layout AppShell — WCAG accessibility', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('renders an aria-live polite region', () => {
     expect.assertions(2);
 
@@ -45,20 +37,25 @@ describe('layout AppShell — WCAG accessibility', () => {
   it('populates the announcement after navigation', () => {
     expect.assertions(1);
 
+    vi.useFakeTimers();
     document.title = 'Dashboard | NMI Portal';
-    render(
-      <MemoryRouter initialEntries={['/dashboard']}>
-        <Layout>
-          <div>content</div>
-        </Layout>
-      </MemoryRouter>,
-    );
-    act(() => {
-      vi.advanceTimersByTime(100);
-    });
+    try {
+      render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <Layout>
+            <div>content</div>
+          </Layout>
+        </MemoryRouter>,
+      );
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
 
-    expect(screen.getByRole('status').textContent).toBe(
-      'Navigated to Dashboard | NMI Portal page.',
-    );
+      expect(screen.getByRole('status').textContent).toBe(
+        'Navigated to Dashboard | NMI Portal page.',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

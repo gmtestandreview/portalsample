@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import type { ComponentProps, ReactNode } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
@@ -75,7 +75,7 @@ const expectRadioGroupInitialState = (
   }
 };
 
-describe(RhfRadioButtonGroup, () => {
+describe('rhf radio button group behavior', () => {
   it('checks the option matching the form value', () => {
     expect.hasAssertions();
 
@@ -345,6 +345,7 @@ describe(RhfRadioButtonGroup, () => {
       case: 'help only',
       inlineHelp: 'Pick one',
       required: false,
+      expectedValidation: null,
       describedByBefore: 'help-q-status',
       describedByAfter: 'help-q-status',
       invalidAfter: null,
@@ -353,6 +354,7 @@ describe(RhfRadioButtonGroup, () => {
       case: 'error only',
       inlineHelp: undefined,
       required: true,
+      expectedValidation: expect.anything(),
       describedByBefore: null,
       describedByAfter: 'q-status-validation-msg',
       invalidAfter: 'true',
@@ -361,6 +363,7 @@ describe(RhfRadioButtonGroup, () => {
       case: 'help and error',
       inlineHelp: 'Pick one',
       required: true,
+      expectedValidation: expect.anything(),
       describedByBefore: 'help-q-status',
       describedByAfter: 'help-q-status q-status-validation-msg',
       invalidAfter: 'true',
@@ -370,6 +373,7 @@ describe(RhfRadioButtonGroup, () => {
     async ({
       inlineHelp,
       required,
+      expectedValidation,
       describedByBefore,
       describedByAfter,
       invalidAfter,
@@ -384,11 +388,11 @@ describe(RhfRadioButtonGroup, () => {
 
       await userEvent.click(screen.getByText('submit'));
 
-      if (required) {
-        await expect(
-          screen.findByText('Choose a status'),
-        ).resolves.toBeInTheDocument();
-      }
+      await waitFor(() => {
+        const validationMessage = screen.queryByText('Choose a status');
+
+        expect(validationMessage).toStrictEqual(expectedValidation);
+      });
 
       expect(group.getAttribute('aria-describedby')).toBe(describedByAfter);
       expect(group.getAttribute('aria-invalid')).toBe(invalidAfter);

@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
   type AcceptQuotePreInfoDto,
 } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
-import PaymentDetails from '@/routes/acceptQuote/paymentDetails';
+import paymentDetails from '@/routes/acceptQuote/paymentDetails';
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -38,17 +38,29 @@ vi.mock(
 // eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
+  const MockAcceptQuoteClient = vi.fn<typeof actual.AcceptQuoteClient>(
+    class extends actual.AcceptQuoteClient {
+      constructor(
+        ...args: ConstructorParameters<typeof actual.AcceptQuoteClient>
+      ) {
+        super(...args);
+        Object.defineProperty(this, 'setAuthToken', {
+          configurable: true,
+          value: vi.fn<(token: string) => void>(),
+          writable: true,
+        });
+        Object.defineProperty(this, 'getPaymentDetails', {
+          configurable: true,
+          value: mockGetPaymentDetails,
+          writable: true,
+        });
+      }
+    },
+  );
+
   return {
     ...actual,
-    AcceptQuoteClient: vi.fn<(...args: unknown[]) => unknown>(function (this: {
-      setAuthToken: (token: string) => void;
-      getPaymentDetails: typeof mockGetPaymentDetails;
-    }) {
-      vi.spyOn(this, 'setAuthToken').mockImplementation(
-        (_token: string) => undefined,
-      );
-      this['getPaymentDetails'] = mockGetPaymentDetails;
-    }),
+    AcceptQuoteClient: MockAcceptQuoteClient,
   } satisfies __ExactMockModule<__TestMockModule4>;
 });
 
@@ -133,6 +145,7 @@ function makePreInfo(
 }
 
 const defaultProps = { id: 'TEST-001' };
+const PaymentDetails = paymentDetails;
 
 const renderPaymentDetails = (
   props: React.ComponentProps<typeof PaymentDetails> = defaultProps,
@@ -157,17 +170,20 @@ const renderPaymentDetails = (
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe(PaymentDetails, () => {
-  beforeEach(() => {
+describe('payment details', () => {
+  const resetPaymentDetailsMocks = () => {
     vi.clearAllMocks();
     acquireTokenSilentMock.mockResolvedValue({ accessToken: 'test-token' });
     msalContext.instance.acquireTokenSilent = acquireTokenSilentMock;
     mockGetPaymentDetails.mockResolvedValue(makePreInfo('Standard'));
-  });
+  };
 
   describe('info Alert visibility', () => {
     it('renders the info Alert in non-summary mode', () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails();
@@ -177,6 +193,9 @@ describe(PaymentDetails, () => {
 
     it('does not render the info Alert in summary mode', () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
       renderPaymentDetails({ ...defaultProps, isSummary: true });
@@ -188,6 +207,9 @@ describe(PaymentDetails, () => {
   describe('payment-terms conditional copy', () => {
     it('shows the 30-day invoice warning when paymentTerms is not Prepaid', async () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Standard'));
       renderPaymentDetails();
@@ -203,6 +225,9 @@ describe(PaymentDetails, () => {
 
     it('shows the prepayment required notice when paymentTerms is Prepaid', async () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Prepaid'));
       renderPaymentDetails();
@@ -220,6 +245,9 @@ describe(PaymentDetails, () => {
   describe('loading spinner', () => {
     it('shows the spinner during the API fetch in non-summary mode', () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
@@ -230,6 +258,9 @@ describe(PaymentDetails, () => {
 
     it('does not show the spinner in summary mode even while loading', () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
 
@@ -242,6 +273,9 @@ describe(PaymentDetails, () => {
   describe('field name prefixing (getNameForUse)', () => {
     it('passes raw key names to inputs in non-summary mode', async () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       renderPaymentDetails({ ...defaultProps, isSummary: false });
 
@@ -259,6 +293,9 @@ describe(PaymentDetails, () => {
 
     it('prefixes key names with paymentDetails. in summary mode', async () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       mockGetPaymentDetails.mockResolvedValue(
         makePreInfo('Standard', 'Q-SUMMARY-001'),
@@ -280,6 +317,9 @@ describe(PaymentDetails, () => {
 
     it('includes the loaded quotation ID in summary help copy', async () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       mockGetPaymentDetails.mockResolvedValue(
         makePreInfo('Standard', 'RFQ-2026-042'),
@@ -296,6 +336,9 @@ describe(PaymentDetails, () => {
   describe('aPI error handling', () => {
     it('logs an error and remains rendered when the API call fails', async () => {
       expect.hasAssertions();
+      expect.hasAssertions();
+
+      resetPaymentDetailsMocks();
 
       const AppLogger = (await import('@/instrumentation/AppLogger')).default;
       acquireTokenSilentMock.mockRejectedValue(new Error('Token failed'));

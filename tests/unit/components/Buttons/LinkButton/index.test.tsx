@@ -9,8 +9,8 @@ const ariaLinkMockState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-aria-components/Link',
-  () =>
+  import('react-aria-components/Link'),
+  (() =>
     ({
       Link: ({
         children,
@@ -45,7 +45,7 @@ vi.mock(
             {children}
           </a>
         ),
-    }) satisfies __ExactMockModule<__TestMockModule18>,
+    }) satisfies __ExactMockModule<__TestMockModule18>) as unknown as __DynamicPartialMockFactory<__TestMockModule18>,
 );
 
 describe('linkButton React Aria render fallback', () => {

@@ -1,5 +1,5 @@
 import type React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -32,37 +32,37 @@ import { defined } from '../../../helpers/defined';
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         verbose: vi.fn<AppLogger['verbose']>(),
         error: vi.fn<AppLogger['error']>(),
         trace: vi.fn<AppLogger['trace']>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 // WizardStep wraps ErrorBoundary (needs AppInsights) + GoogleAnalytics.
 // Both are irrelevant to these tests; stub them out.
 vi.mock(
   import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>,
+    }) satisfies __ExactMockModule<__TestMockModule24>) as unknown as __DynamicPartialMockFactory<__TestMockModule24>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 // ── Test helpers ─────────────────────────────────────────────────────────────
@@ -186,17 +186,16 @@ function makeRouter(
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
+const resetWizardRoutedStepIntegration = () => {
+  vi.restoreAllMocks();
+  vi.clearAllMocks();
+};
+
 describe('wizardRoutedStep — error navigation', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('navigates to /not-found when loadStepValues throws a 404', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const router = makeRouter({
       loadStepValues: vi
@@ -213,6 +212,8 @@ describe('wizardRoutedStep — error navigation', () => {
   it('navigates to /server-error when loadStepValues throws an unrecognised error — restores suppressed silent failure', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const router = makeRouter({
       loadStepValues: vi
         .fn<LoadStepHandler>()
@@ -227,6 +228,8 @@ describe('wizardRoutedStep — error navigation', () => {
 
   it('navigates to a custom redirect URL when getRedirectionLocationOnError returns one', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const router = makeRouter(
       {
@@ -246,6 +249,8 @@ describe('wizardRoutedStep — error navigation', () => {
 
   it('automatically retries loadStepValues after a 409 concurrency error', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const loadStepValues = vi
       .fn<LoadStepHandler>()
@@ -267,6 +272,8 @@ describe('wizardRoutedStep — error navigation', () => {
   it('replaces the document location with sign-out after a gone load error', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const replace = vi.fn<Location['replace']>();
     vi.spyOn(globalThis, 'location', 'get').mockReturnValue({
       ...globalThis.location,
@@ -285,6 +292,8 @@ describe('wizardRoutedStep — error navigation', () => {
 
   it('resets target organisation and navigates to dashboard after third-party access is lost', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const router = makeRouter({
       loadStepValues: vi.fn<LoadStepHandler>().mockRejectedValue({
@@ -306,6 +315,8 @@ describe('wizardRoutedStep — error navigation', () => {
 
   it('handles lost third-party access without account dispatch', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const router = makeRouter(
       {
@@ -329,6 +340,8 @@ describe('wizardRoutedStep — error navigation', () => {
 
   it('uses empty account values when resetting third-party access', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const accountWithoutOrganisation = {
       ...mockStateValue,
@@ -360,6 +373,8 @@ describe('wizardRoutedStep — error navigation', () => {
   it('keeps rendering after an aborted load request', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const router = makeRouter({
       loadStepValues: vi
         .fn<LoadStepHandler>()
@@ -372,6 +387,8 @@ describe('wizardRoutedStep — error navigation', () => {
 
   it('redirects to the first incomplete prior step', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const steps = [
       makeStepElementAt('/step-1', 'First'),
@@ -418,6 +435,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('does not mutate the original FormStepStatusDto on successful step save', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const originalDto: FormStepStatusDto = {
       status: FormStepStatus.NotStarted,
     };
@@ -453,6 +472,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
 
   it('navigates to the next step using a returned base URL and reports dirty values', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const user = userEvent.setup();
     const onSaveAndNext = vi
@@ -499,6 +520,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('saves and exits to the configured location with dirty values', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<ExitHandler>().mockResolvedValue(undefined);
     const router = makeRouter(
@@ -532,6 +555,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('exits without a save callback and defaults the destination to root', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const user = userEvent.setup();
     const router = makeRouter(
       {
@@ -552,6 +577,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
 
   it('renders update server and WAF errors from failed submissions', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const user = userEvent.setup();
     const onSaveAndNext = vi
@@ -584,6 +611,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('keeps the form visible when save-and-exit fails', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const user = userEvent.setup();
     const onSaveAndExit = vi
       .fn<ExitHandler>()
@@ -608,6 +637,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('does nothing on submit when no save-and-next callback is configured', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const user = userEvent.setup();
     const router = makeRouter({});
     render(<RouterProvider router={router} />);
@@ -622,6 +653,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
 
   it('falls back to root after save and exit without a configured destination', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<ExitHandler>().mockResolvedValue(undefined);
@@ -642,6 +675,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
 
   it('runs discard and cancel callbacks before navigating', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const user = userEvent.setup();
     const onDiscard = vi.fn<NonNullable<DiscardProps['onDiscard']>>();
@@ -676,6 +711,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('uses the discard location and hides the save-and-next button', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const user = userEvent.setup();
     const router = makeRouter(
       {
@@ -708,6 +745,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
   it('falls back to root when cancelling without a configured location', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepIntegration();
+
     const user = userEvent.setup();
     const router = makeRouter(
       {
@@ -732,6 +771,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
 
   it('uses the external redirect for an HTTPS discard location', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepIntegration();
 
     const user = userEvent.setup();
     const router = makeRouter({

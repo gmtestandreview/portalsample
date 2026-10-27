@@ -15,6 +15,7 @@ const LocationProbe = () => {
   );
 };
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(renderWithProviders, () => {
   const renderWithRoute = renderWithProviders as unknown as (
     ui: ReactNode,

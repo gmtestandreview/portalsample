@@ -10,25 +10,22 @@ import Details from '@/components/forms/Details';
 import FormBanner from '@/components/forms/FormBanner';
 import HidableField from '@/components/forms/HidableField';
 import UnsavedFormPrompt from '@/components/forms/UnsavedFormPrompt';
+import type { RouteLeavingGuardProps } from '@/components/RouteLeavingGuard/types';
 import countOfErrors from '@/components/forms/FormikForm/formikHelpers';
 import { isHidden, removeHidden, validateForm } from '@/components/forms/utils';
 import type { ValidationSchema } from '@/components/forms/types';
 
 vi.mock(
-  '@/components/RouteLeavingGuard',
+  import('@/components/RouteLeavingGuard'),
   () =>
     ({
       default: ({
         when,
         title,
         body,
+        cancelBtn: _cancelBtn,
         confirmBtn,
-      }: {
-        when?: boolean;
-        title?: string;
-        body?: string;
-        confirmBtn?: string;
-      }) => (
+      }: Readonly<RouteLeavingGuardProps>) => (
         <div
           data-testid='route-leaving-guard'
           data-when={String(Boolean(when))}
@@ -37,7 +34,7 @@ vi.mock(
           data-confirm={confirmBtn ?? ''}
         />
       ),
-    }) satisfies __ExactMockModule<__TestMockModule20>,
+    }) satisfies Partial<__TestMockModule20>,
 );
 
 interface FormikHarnessProps<TValues extends FormikValues> {
@@ -365,20 +362,20 @@ describe('form utility helpers', () => {
       },
     };
 
-    expect(removeHidden(values, values, hidden as never)).toEqual({
+    expect(removeHidden(values, values, hidden as never)).toStrictEqual({
       applicant: {
         name: 'Alex',
         addresses: [{ street: 'Visible street' }],
       },
     });
 
-    expect(removeHidden({ tags: ['visible'] }, values, {})).toEqual({
+    expect(removeHidden({ tags: ['visible'] }, values, {})).toStrictEqual({
       tags: ['visible'],
     });
 
     // A nullish field value falls back to an empty object rather than throwing
     // when Object.entries is called.
-    expect(removeHidden(undefined, values, {})).toEqual({});
+    expect(removeHidden(undefined, values, {})).toStrictEqual({});
   });
 
   it('validates forms and filters Yup errors for hidden fields', async () => {
@@ -394,7 +391,7 @@ describe('form utility helpers', () => {
       phone: '',
     });
 
-    expect(errors).toEqual({ name: 'Name is required' });
+    expect(errors).toStrictEqual({ name: 'Name is required' });
   });
 
   it('maps a single Yup validation error when the field is visible', async () => {
@@ -405,16 +402,18 @@ describe('form utility helpers', () => {
       validate: vi.fn<ValidationSchema['validate']>().mockRejectedValue(error),
     };
 
-    await expect(validateForm(schema, {})({ name: '' })).resolves.toEqual({
-      name: 'Name is required',
-    });
+    await expect(validateForm(schema, {})({ name: '' })).resolves.toStrictEqual(
+      {
+        name: 'Name is required',
+      },
+    );
   });
 
   it('returns no errors without a schema and rethrows non-validation failures', async () => {
     expect.hasAssertions();
-    await expect(validateForm(undefined, {})({ name: '' })).resolves.toEqual(
-      {},
-    );
+    await expect(
+      validateForm(undefined, {})({ name: '' }),
+    ).resolves.toStrictEqual({});
 
     const schema = {
       validate: vi
@@ -447,9 +446,11 @@ describe('form utility helpers', () => {
       }),
     };
 
-    await expect(validateForm(noInner, {})({ name: '' })).resolves.toEqual({});
+    await expect(
+      validateForm(noInner, {})({ name: '' }),
+    ).resolves.toStrictEqual({});
     await expect(
       validateForm(emptyInnerWithoutPath, {})({ name: '' }),
-    ).resolves.toEqual({});
+    ).resolves.toStrictEqual({});
   });
 });

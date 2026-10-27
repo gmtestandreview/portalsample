@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { defined } from '../helpers/defined';
 import type * as AccountHooksModule from '../../../ClientApp/src/authentication/hooks';
@@ -186,37 +186,39 @@ const renderAt = (path: string, element: React.ReactNode, routePath: string) =>
     </MemoryRouter>,
   );
 
-describe('account and contact route wrappers', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.useAccountState.mockReturnValue({
-      details: { defaultOrganisationId: 1 },
-    } as unknown as ReturnType<typeof AccountHooksModule.useAccountState>);
-    mocks.useAccountDispatch.mockReturnValue({
-      setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
-    } as unknown as ReturnType<typeof AccountHooksModule.useAccountDispatch>);
-    mocks.useModalDispatch.mockReturnValue({
-      setShowBranchSelector: mocks.setShowBranchSelector,
-    } as unknown as ReturnType<typeof ModalContextModule.useModalDispatch>);
-    mocks.createAccountProps.mockReturnValue({
-      title: 'Create account step',
-    } as unknown as ReturnType<typeof CreateAccountPropsModule.default>);
-    mocks.updateAccountProps.mockReturnValue({
-      title: 'Update account step',
-    } as unknown as ReturnType<typeof UpdateAccountPropsModule.default>);
-    mocks.addBranchProps.mockReturnValue({
-      title: 'Add branch step',
-    } as unknown as ReturnType<typeof AddBranchPropsModule.default>);
-    mocks.createContactProps.mockReturnValue({
-      title: 'Create contact step',
-    } as unknown as ReturnType<typeof CreateContactPropsModule.default>);
-    mocks.updateContactProps.mockReturnValue({
-      title: 'Update contact step',
-    } as unknown as ReturnType<typeof UpdateContactPropsModule.default>);
-  });
+const resetAccountContactWrapperMocks = () => {
+  vi.clearAllMocks();
+  mocks.useAccountState.mockReturnValue({
+    details: { defaultOrganisationId: 1 },
+  } as unknown as ReturnType<typeof AccountHooksModule.useAccountState>);
+  mocks.useAccountDispatch.mockReturnValue({
+    setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+  } as unknown as ReturnType<typeof AccountHooksModule.useAccountDispatch>);
+  mocks.useModalDispatch.mockReturnValue({
+    setShowBranchSelector: mocks.setShowBranchSelector,
+  } as unknown as ReturnType<typeof ModalContextModule.useModalDispatch>);
+  mocks.createAccountProps.mockReturnValue({
+    title: 'Create account step',
+  } as unknown as ReturnType<typeof CreateAccountPropsModule.default>);
+  mocks.updateAccountProps.mockReturnValue({
+    title: 'Update account step',
+  } as unknown as ReturnType<typeof UpdateAccountPropsModule.default>);
+  mocks.addBranchProps.mockReturnValue({
+    title: 'Add branch step',
+  } as unknown as ReturnType<typeof AddBranchPropsModule.default>);
+  mocks.createContactProps.mockReturnValue({
+    title: 'Create contact step',
+  } as unknown as ReturnType<typeof CreateContactPropsModule.default>);
+  mocks.updateContactProps.mockReturnValue({
+    title: 'Update contact step',
+  } as unknown as ReturnType<typeof UpdateContactPropsModule.default>);
+};
 
+describe('account and contact route wrappers', () => {
   it('renders create-account and add-branch workflows with merged account context', async () => {
     expect.hasAssertions();
+
+    resetAccountContactWrapperMocks();
 
     const CreateAccount = (
       await import('../../../ClientApp/src/routes/account/create')
@@ -259,6 +261,8 @@ describe('account and contact route wrappers', () => {
 
   it('renders valid update workflows and passes numeric route ids', async () => {
     expect.hasAssertions();
+
+    resetAccountContactWrapperMocks();
 
     const UpdateAccount = (
       await import('../../../ClientApp/src/routes/account/update')
@@ -311,6 +315,8 @@ describe('account and contact route wrappers', () => {
   it('redirects invalid account ids and supports unavailable account contexts', async () => {
     expect.hasAssertions();
 
+    resetAccountContactWrapperMocks();
+
     const UpdateAccount = (
       await import('../../../ClientApp/src/routes/account/update')
     ).default;
@@ -345,6 +351,8 @@ describe('account and contact route wrappers', () => {
 
   it('passes null when account state is unavailable and tolerates unavailable modal dispatch', async () => {
     expect.hasAssertions();
+
+    resetAccountContactWrapperMocks();
 
     mocks.useAccountState.mockReturnValue(
       undefined as unknown as ReturnType<
@@ -388,6 +396,8 @@ describe('account and contact route wrappers', () => {
 
   it('passes null account context through update and contact wrappers', async () => {
     expect.hasAssertions();
+
+    resetAccountContactWrapperMocks();
 
     mocks.useAccountDispatch.mockReturnValue(
       undefined as unknown as ReturnType<
@@ -444,6 +454,8 @@ describe('account and contact route wrappers', () => {
 
   it('uses zero when contact route ids are omitted', async () => {
     expect.hasAssertions();
+
+    resetAccountContactWrapperMocks();
 
     const CreateContact = (
       await import('../../../ClientApp/src/routes/contact/create')

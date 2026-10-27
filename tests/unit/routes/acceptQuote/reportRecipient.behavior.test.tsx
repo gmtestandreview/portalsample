@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { ReportAddressTypeValues } from '@/api/web-api-client';
 import type { ReportRecipientStep } from '@/api/web-api-client';
@@ -162,7 +162,7 @@ function renderStep(options: StepHarnessProps) {
 }
 
 describe('reportRecipient behavior', () => {
-  beforeEach(() => {
+  const resetReportRecipientMocks = () => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
     mocks.getReportRecipient.mockResolvedValue({
@@ -172,10 +172,13 @@ describe('reportRecipient behavior', () => {
         postalAddressSameAsStreetAddress: false,
       },
     });
-  });
+  };
 
   it('describes the street and postal address options from the loaded organisation', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     renderStep({});
 
@@ -188,6 +191,9 @@ describe('reportRecipient behavior', () => {
 
   it('describes the postal option with the street address when they are the same', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     mocks.getReportRecipient.mockResolvedValue({
       rfqOrganisation: {
@@ -207,6 +213,9 @@ describe('reportRecipient behavior', () => {
 
   it('shows the address lookup only when Other is selected', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     renderStep({});
@@ -227,6 +236,9 @@ describe('reportRecipient behavior', () => {
 
   it('submits the organisation name and strips the hidden address', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -248,7 +260,7 @@ describe('reportRecipient behavior', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     const submitted = defined(onSubmit.mock.calls[0], 'submit call')[0];
 
-    expect(submitted).toEqual({
+    expect(submitted).toStrictEqual({
       reportAddressType: ReportAddressTypeValues.BusinessAddress,
       organisationName: 'Acme Metrology',
     });
@@ -256,6 +268,9 @@ describe('reportRecipient behavior', () => {
 
   it('rejects an organisation name longer than 400 characters', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -273,6 +288,9 @@ describe('reportRecipient behavior', () => {
 
   it('holds back the validation message until the form is submitted', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     renderStep({ values: { organisationName: 'x'.repeat(401) } });
@@ -291,6 +309,9 @@ describe('reportRecipient behavior', () => {
 
   it('hides the address lookup again for the postal address option', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     renderStep({
@@ -309,6 +330,9 @@ describe('reportRecipient behavior', () => {
 
   it('submits the chosen address type to the outer form', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -322,13 +346,16 @@ describe('reportRecipient behavior', () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
-    expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toEqual({
+    expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toStrictEqual({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
     });
   });
 
   it('applies the soft schema to save and exit', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -347,6 +374,9 @@ describe('reportRecipient behavior', () => {
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const { rerender } = renderStep({ values: { organisationName: 'Old' } });
     await screen.findByText(/1 Street Road/);
@@ -362,6 +392,9 @@ describe('reportRecipient behavior', () => {
 
   it('shows validation again after reinitializing following an invalid submit', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     const user = userEvent.setup();
     const { rerender } = renderStep({
@@ -384,11 +417,20 @@ describe('reportRecipient behavior', () => {
 
   it('keeps rendering the form and logs when the recipient fails to load', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     mocks.getReportRecipient.mockRejectedValue(new Error('boom'));
     renderStep({});
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mocks.error).toHaveBeenCalledWith(
+        'Failed to load AcceptQuotePreInfo',
+        expect.any(Error),
+        { Id: 'RFQ-1' },
+      ),
+    );
 
     expect(
       screen.getByLabelText('Organisation name for report'),
@@ -397,6 +439,9 @@ describe('reportRecipient behavior', () => {
 
   it('shows the formatted postal address read-only in summary mode', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetReportRecipientMocks();
 
     mocks.getReportRecipient.mockResolvedValue({
       reportAddressType: ReportAddressTypeValues.PostalAddress,

@@ -7,7 +7,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
 import type * as NotificationModule from '../../../../ClientApp/src/storage/notification';
@@ -452,45 +452,47 @@ function renderDashboard(Dashboard: React.ComponentType) {
   );
 }
 
-describe('pattern/type approval dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.accounts = [{ homeAccountId: 'account-id' }];
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
-    mockGetDashboardNotification.mockReturnValue(
-      null as unknown as ReturnType<
-        typeof NotificationModule.getDashboardNotification
-      >,
-    );
-    mockGetDashboardInfoNotification.mockReturnValue(
-      null as unknown as ReturnType<
-        typeof NotificationModule.getDashboardInfoNotification
-      >,
-    );
-    mockSessionGetItem.mockReturnValue(null);
-    mockSetUserProfile.mockResolvedValue(true);
-    mockAccountDetails = { ...BASE_ACCOUNT };
-    mockAccountDispatchState.value = {
-      setUserProfile: mockSetUserProfile,
-      setTargetOrganisation: mockSetTargetOrganisation,
-    };
-    mockAccountContextState.value = {
-      details: mockAccountDetails,
-      ...mockAccountDispatchState.value,
-    };
-    mockServicesState.value = ACTIVE_PATTERN_APPROVAL;
-    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
-      configurable: true,
-      value: mockScrollIntoView,
-    });
+const resetPatternApprovalDashboardMocks = () => {
+  vi.clearAllMocks();
+  mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
+  mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
+  mockMsalContext.accounts = [{ homeAccountId: 'account-id' }];
+  mockMsalContext.inProgress = 'none';
+  mockGetDrafts.mockResolvedValue({ ...EMPTY_RESPONSE });
+  mockGetApplications.mockResolvedValue({ ...EMPTY_RESPONSE });
+  mockGetDashboardNotification.mockReturnValue(
+    null as unknown as ReturnType<
+      typeof NotificationModule.getDashboardNotification
+    >,
+  );
+  mockGetDashboardInfoNotification.mockReturnValue(
+    null as unknown as ReturnType<
+      typeof NotificationModule.getDashboardInfoNotification
+    >,
+  );
+  mockSessionGetItem.mockReturnValue(null);
+  mockSetUserProfile.mockResolvedValue(true);
+  mockAccountDetails = { ...BASE_ACCOUNT };
+  mockAccountDispatchState.value = {
+    setUserProfile: mockSetUserProfile,
+    setTargetOrganisation: mockSetTargetOrganisation,
+  };
+  mockAccountContextState.value = {
+    details: mockAccountDetails,
+    ...mockAccountDispatchState.value,
+  };
+  mockServicesState.value = ACTIVE_PATTERN_APPROVAL;
+  Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+    configurable: true,
+    value: mockScrollIntoView,
   });
+};
 
+describe('pattern/type approval dashboard', () => {
   it('loads organisation-scoped drafts with an auth token and renders the response', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockGetDrafts.mockResolvedValue({
       currentPage: 2,
@@ -532,6 +534,8 @@ describe('pattern/type approval dashboard', () => {
   it('applies non-default year, status, and search filters to the request', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
     await waitFor(() =>
@@ -556,6 +560,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('loads applications, persists the selected tab after the debounce, and records analytics', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -585,6 +591,8 @@ describe('pattern/type approval dashboard', () => {
   it('returns to Drafts and records the selection', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -608,6 +616,8 @@ describe('pattern/type approval dashboard', () => {
   it('restores a saved tab from session storage and removes the one-shot override', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     mockSessionGetItem.mockReturnValue('requests');
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -625,6 +635,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('persists page changes, scrolls to the title, and records analytics', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -652,6 +664,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('resets the saved page once when a different organisation branch is selected', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockAccountDetails = {
       ...BASE_ACCOUNT,
@@ -708,6 +722,8 @@ describe('pattern/type approval dashboard', () => {
   it('reports a rejected profile update without disrupting the dashboard', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     const saveError = new Error('profile unavailable');
     mockSetUserProfile.mockRejectedValueOnce(saveError);
     const Dashboard = await importDashboard();
@@ -730,6 +746,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('redirects users who do not have active Pattern Approval service', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockServicesState.value = [
       { service: ServiceType.PatternApproval, isActive: false },
@@ -799,6 +817,8 @@ describe('pattern/type approval dashboard', () => {
     async (_condition, arrange) => {
       expect.hasAssertions();
 
+      resetPatternApprovalDashboardMocks();
+
       arrange();
       const Dashboard = await importDashboard();
       renderDashboard(Dashboard);
@@ -812,6 +832,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('routes fatal API failures using the returned status', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockGetDrafts.mockRejectedValueOnce({ status: 500, title: 'Server Error' });
     const Dashboard = await importDashboard();
@@ -829,6 +851,8 @@ describe('pattern/type approval dashboard', () => {
   it('publishes a forbidden notification without leaving the dashboard', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     mockGetDrafts.mockRejectedValueOnce({ status: 403, title: 'Forbidden' });
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -845,6 +869,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('resets third-party organisation selection after an access failure', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockGetDrafts.mockRejectedValueOnce({
       status: 403,
@@ -868,6 +894,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('uses empty organisation values when third-party account data is absent', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockAccountDetails = {
       ...BASE_ACCOUNT,
@@ -899,6 +927,8 @@ describe('pattern/type approval dashboard', () => {
   it('renders empty state instead of requests before terms are accepted and marks content inert', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     mockAccountDetails = {
       ...BASE_ACCOUNT,
       userAcceptedTermsOfUse: false,
@@ -926,6 +956,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('renders persisted notifications and clears them from their controls and on unmount', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockGetDashboardNotification.mockReturnValue({
       message: 'saved',
@@ -956,6 +988,8 @@ describe('pattern/type approval dashboard', () => {
   it('cancels a pending tab-profile save when unmounted', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     vi.useFakeTimers();
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
@@ -976,6 +1010,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('reloads after a request deletion and sends the current tab to request items', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockGetDrafts.mockResolvedValue({
       ...EMPTY_RESPONSE,
@@ -1002,6 +1038,8 @@ describe('pattern/type approval dashboard', () => {
   it('retains the active tab while cleared filters suspend request loading', async () => {
     expect.hasAssertions();
 
+    resetPatternApprovalDashboardMocks();
+
     mockGetDrafts.mockResolvedValue({
       ...EMPTY_RESPONSE,
       items: [{ referenceId: 'TA-CLEAR' }],
@@ -1021,6 +1059,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('renders organisation identity, service-management affordance, and navigation analytics', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockServicesState.value = [
       { service: ServiceType.PatternApproval, isActive: true },
@@ -1045,6 +1085,8 @@ describe('pattern/type approval dashboard', () => {
 
   it('converts an unsupported restored tab into the standard error route', async () => {
     expect.hasAssertions();
+
+    resetPatternApprovalDashboardMocks();
 
     mockSessionGetItem.mockReturnValue('instruments');
     const Dashboard = await importDashboard();

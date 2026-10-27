@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { ComponentProps, ReactNode } from 'react';
 import type * as ReactBootstrap from 'react-bootstrap';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
@@ -254,7 +254,8 @@ const renderDetails = async (search = '') => {
 };
 
 describe('application details', () => {
-  beforeEach(async () => {
+  const resetApplicationDetailsState = async () => {
+    vi.restoreAllMocks();
     await import('../../../../ClientApp/src/api/web-api-client');
 
     resetMsalMock();
@@ -269,15 +270,13 @@ describe('application details', () => {
     // jsdom implements neither, and both are called on the documents shortcut.
     vi.spyOn(globalThis, 'scrollTo').mockImplementation(() => undefined);
     globalThis.history.pushState({}, '', '/ta/manage/APP-1');
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  };
 
   describe('loading the application', () => {
     it('renders the application title and breadcrumb once loaded', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       await renderDetails();
 
@@ -295,6 +294,8 @@ describe('application details', () => {
     it('falls back to a generic heading when the application has no title', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       mocks.loadStepValues.mockResolvedValue(stepValues({ title: undefined }));
 
       await renderDetails();
@@ -308,6 +309,8 @@ describe('application details', () => {
 
     it('shows the status, dates and assessment on the details tab', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       await renderDetails();
 
@@ -335,6 +338,8 @@ describe('application details', () => {
     it('leaves the date blank when the application has none', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       mocks.loadStepValues.mockResolvedValue(
         stepValues({ lastUpdated: undefined, submittedDate: undefined }),
       );
@@ -353,6 +358,8 @@ describe('application details', () => {
     it('records no application type when the response omits one', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       mocks.loadStepValues.mockResolvedValue(
         stepValues({ patternApprovalType: undefined }),
       );
@@ -370,6 +377,8 @@ describe('application details', () => {
   describe('the unread message count', () => {
     it('polls the count and shows it as a badge', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       clients.patternApproval.methods.getAppMessageCount.mockResolvedValue(4);
 
@@ -391,6 +400,8 @@ describe('application details', () => {
     it('shows no badge when nothing is unread', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       await renderDetails();
 
       await waitFor(() =>
@@ -407,6 +418,8 @@ describe('application details', () => {
 
     it('treats a missing count as zero', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       clients.patternApproval.methods.getAppMessageCount.mockResolvedValue(
         undefined,
@@ -426,6 +439,8 @@ describe('application details', () => {
     it('swallows a failed count rather than breaking the page', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       clients.patternApproval.methods.getAppMessageCount.mockRejectedValue(
         new Error('count down'),
       );
@@ -442,6 +457,8 @@ describe('application details', () => {
     it('does not poll without a signed-in account', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       signOut();
 
       await renderDetails();
@@ -457,6 +474,8 @@ describe('application details', () => {
 
     it('does not poll without an application id', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const ApplicationDetails = (
         await import('../../../../ClientApp/src/routes/ta/manage/appDetails')
@@ -477,6 +496,8 @@ describe('application details', () => {
 
     it('stops polling once the page is unmounted', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const { unmount } = await renderDetails();
 
@@ -503,6 +524,8 @@ describe('application details', () => {
     it('opens on the details tab by default', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       await renderDetails();
 
       await waitFor(() =>
@@ -518,6 +541,8 @@ describe('application details', () => {
     it('opens straight onto messages when the url asks for it', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       await renderDetails('?tab=messages');
 
       await waitFor(() =>
@@ -527,6 +552,8 @@ describe('application details', () => {
 
     it('ignores a tab the page does not have', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       await renderDetails('?tab=nonsense');
 
@@ -541,6 +568,8 @@ describe('application details', () => {
 
     it('mounts messages and records the tab in the url when selected', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const user = userEvent.setup();
       await renderDetails();
@@ -560,6 +589,8 @@ describe('application details', () => {
     it('follows the messages shortcut on the status panel', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       const user = userEvent.setup();
       await renderDetails();
       await waitFor(() =>
@@ -575,6 +606,8 @@ describe('application details', () => {
 
     it('jumps to the documents tab from the supporting documents shortcut', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const user = userEvent.setup();
       await renderDetails();
@@ -594,6 +627,8 @@ describe('application details', () => {
     it('jumps to the documents tab from the keyboard', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       const user = userEvent.setup();
       await renderDetails();
       await waitFor(() =>
@@ -611,6 +646,8 @@ describe('application details', () => {
 
     it('also takes the space bar on the documents shortcut', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const user = userEvent.setup();
       await renderDetails();
@@ -630,6 +667,8 @@ describe('application details', () => {
     it('ignores other keys on the documents shortcut', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       const user = userEvent.setup();
       await renderDetails();
       await waitFor(() =>
@@ -645,6 +684,8 @@ describe('application details', () => {
 
     it('follows the browser back button between tabs', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const user = userEvent.setup();
       await renderDetails();
@@ -673,6 +714,8 @@ describe('application details', () => {
     it('logs the failure and stops the spinner instead of hanging on it', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       mocks.loadStepValues.mockRejectedValue(new Error('details unavailable'));
 
       await renderDetails();
@@ -691,6 +734,8 @@ describe('application details', () => {
     it('copes with a response that carries no application details', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       mocks.loadStepValues.mockResolvedValue({ formValues: {} });
 
       await renderDetails();
@@ -708,6 +753,8 @@ describe('application details', () => {
 
     it('shows the details spinner while switching to another application', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const { router } = await renderDetails();
       await waitFor(() =>
@@ -741,6 +788,8 @@ describe('application details', () => {
     it('ignores a tab key the page does not know', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       await renderDetails();
       await waitFor(() =>
         expect(screen.getByText('With the assessor')).toBeInTheDocument(),
@@ -760,6 +809,8 @@ describe('application details', () => {
 
     it('forces a refresh when the messages tab is chosen again', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const user = userEvent.setup();
       await renderDetails();
@@ -784,6 +835,8 @@ describe('application details', () => {
     it('leaves messages unmounted when another tab is chosen', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       const user = userEvent.setup();
       await renderDetails();
       await waitFor(() =>
@@ -803,6 +856,8 @@ describe('application details', () => {
 
     it('drops a message count that arrives after the page is gone', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       let releaseCount: (value: number) => void = () => undefined;
       clients.patternApproval.methods.getAppMessageCount.mockReturnValue(
@@ -840,23 +895,27 @@ describe('application details', () => {
       // no-ops. Pinning them means a change that starts relying on either one fails here.
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       await renderDetails();
       await waitFor(() =>
         expect(screen.getByTestId('supporting-documents')).toBeInTheDocument(),
       );
 
-      await expect(captured.docsProps.onUploadAttachment()).resolves.toEqual(
-        [],
-      );
+      await expect(
+        captured.docsProps.onUploadAttachment(),
+      ).resolves.toStrictEqual([]);
       await expect(
         captured.docsProps.attachment.onUploadFiles(),
-      ).resolves.toEqual([]);
+      ).resolves.toStrictEqual([]);
     });
   });
 
   describe('the summary accordions', () => {
     it('still renders the summaries when the page props carry no hiding rules', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       const original = mocks.hidingFields;
       Object.assign(mocks, { hidingFields: undefined });
@@ -877,6 +936,8 @@ describe('application details', () => {
     it('embeds the organisation, application and document summaries', async () => {
       expect.hasAssertions();
 
+      await resetApplicationDetailsState();
+
       await renderDetails();
 
       await waitFor(() =>
@@ -893,6 +954,8 @@ describe('application details', () => {
 
     it('shows the application status pill', async () => {
       expect.hasAssertions();
+
+      await resetApplicationDetailsState();
 
       await renderDetails();
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import PreConditions from '../../../ClientApp/src/routes/preConditions/PreConditions';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
@@ -11,9 +11,9 @@ import { NotificationSeverity } from '../../../ClientApp/src/storage/types';
 
 // ── Mock factories ─────────────────────────────────────────────────────────────
 
-let mockIsAuthenticated = false;
-let mockAccountStateDetails: AccountDetails | null = null;
-let mockAccountDispatchAvailable = true;
+let mockIsAuthenticated: boolean;
+let mockAccountStateDetails: AccountDetails | null;
+let mockAccountDispatchAvailable: boolean;
 
 // ── Module mocks ───────────────────────────────────────────────────────────────
 
@@ -306,19 +306,21 @@ function renderAtPathWithPlainRoot(initialPath: string) {
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
-describe('preConditions state machine', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.mocked(getBranchModalNotification).mockReturnValue(undefined);
-    mockIsAuthenticated = false;
-    mockAccountStateDetails = null;
-    mockAccountDispatchAvailable = true;
-  });
+const resetPreConditionsState = () => {
+  vi.clearAllMocks();
+  mockIsAuthenticated = false;
+  mockAccountStateDetails = null;
+  mockAccountDispatchAvailable = true;
+  vi.mocked(getBranchModalNotification).mockReturnValue(undefined);
+};
 
+describe('preConditions state machine', () => {
   // ── 1. Unauthenticated ────────────────────────────────────────────────────
 
   it('1. unauthenticated: renders children without any redirect', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = false;
     mockAccountStateDetails = null;
@@ -332,6 +334,8 @@ describe('preConditions state machine', () => {
 
   it('2. redirectToCreateAccount: navigates to /create-account when org exists and account not created', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -353,6 +357,8 @@ describe('preConditions state machine', () => {
   it('3. redirectToCreateAccount suppressed: children render when already on /create-account', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -369,6 +375,8 @@ describe('preConditions state machine', () => {
 
   it('4. redirectToCreateAccount not triggered when defaultOrganisationId is exactly null', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -401,6 +409,8 @@ describe('preConditions state machine', () => {
   it('4a. redirectToCreateAccount not triggered when defaultOrganisationId is undefined (no organisation)', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -417,6 +427,8 @@ describe('preConditions state machine', () => {
 
   it('4b. no organisation + incomplete account and contact redirects to /create-contact', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -435,6 +447,8 @@ describe('preConditions state machine', () => {
 
   it('4c. organisation exists + incomplete account and contact redirects to /create-account', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -456,6 +470,8 @@ describe('preConditions state machine', () => {
   it('5. redirectToCreateContact: navigates to /create-contact when account created but contact not completed', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -474,6 +490,8 @@ describe('preConditions state machine', () => {
   it('6. redirectToCreateContact suppressed: children render when on /create-contact', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -490,6 +508,8 @@ describe('preConditions state machine', () => {
 
   it('7. redirectToCreateContact not triggered when on /create-account (create-account path suppresses it)', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -511,6 +531,8 @@ describe('preConditions state machine', () => {
   it('8. redirectToDashboard NOT triggered on authenticated app routes when account setup is complete', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -526,6 +548,8 @@ describe('preConditions state machine', () => {
 
   it('9. redirectToDashboard: completed users are redirected out of /create-account', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -551,6 +575,8 @@ describe('preConditions state machine', () => {
   it('10. showTermsAndConditions: TermsAndConditionModal renders when terms not accepted', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -567,6 +593,8 @@ describe('preConditions state machine', () => {
 
   it('11. showTermsAndConditions: modal absent when terms accepted', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -596,6 +624,8 @@ describe('preConditions state machine', () => {
   it('12. autoShowBranchSelector: BranchSelectorModal renders when defaultOrganisationId is null and contact active', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -612,6 +642,8 @@ describe('preConditions state machine', () => {
 
   it('13. autoShowBranchSelector suppressed when path contains success-creating-account', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -645,6 +677,8 @@ describe('preConditions state machine', () => {
   it('14a. autoShowBranchSelector does NOT fire when defaultOrganisationId is undefined (known gap)', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -659,6 +693,8 @@ describe('preConditions state machine', () => {
 
   it('14. autoShowBranchSelector not triggered when defaultOrganisationId is set (not null)', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -678,6 +714,8 @@ describe('preConditions state machine', () => {
   it('initializes the branch selector from a persisted notification', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     vi.mocked(getBranchModalNotification).mockReturnValue({
       message: 'Select a branch to continue.',
       severity: NotificationSeverity.Information,
@@ -696,6 +734,8 @@ describe('preConditions state machine', () => {
   it('15. renders with Layout wrapper when displayHeaderAndFooter is true', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -710,6 +750,8 @@ describe('preConditions state machine', () => {
   it('16. renders without Layout wrapper when displayHeaderAndFooter is false', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
       ...BASE,
@@ -723,6 +765,8 @@ describe('preConditions state machine', () => {
 
   it('renders terms and branch modals without the Layout wrapper', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = {
@@ -747,6 +791,8 @@ describe('preConditions state machine', () => {
   it('renders without a merged account when account dispatch is unavailable', () => {
     expect.hasAssertions();
 
+    resetPreConditionsState();
+
     mockAccountDispatchAvailable = false;
     renderAt('/some-path');
 
@@ -755,6 +801,8 @@ describe('preConditions state machine', () => {
 
   it('17. exposes modal dispatch callbacks to protected route children', () => {
     expect.hasAssertions();
+
+    resetPreConditionsState();
 
     mockIsAuthenticated = true;
     mockAccountStateDetails = { ...BASE };

@@ -53,7 +53,7 @@ const SetTypeButton = ({ type }: Readonly<{ type: string }>) => {
   );
 };
 
-describe(RhfHidableField, () => {
+describe('rhf hidable field', () => {
   it('renders children when the rule evaluates to false', () => {
     expect.hasAssertions();
 
@@ -188,7 +188,7 @@ describe(RhfHidableField, () => {
   });
 });
 
-describe(useHiddenRules, () => {
+describe('use hidden rules', () => {
   it('returns an empty rule set without a provider', () => {
     expect.hasAssertions();
 

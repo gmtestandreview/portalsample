@@ -172,32 +172,38 @@ describe('displayRules.isOIMLHidden', () => {
 describe.each([
   {
     name: 'isApplOtherHiddenP',
-    rule: DisplayRules.isApplOtherHiddenP,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isApplOtherHiddenP(input),
     shows: PatternApprovalRequiredValues.OtherApproval,
   },
   {
     name: 'isVariationHiddenP',
-    rule: DisplayRules.isVariationHiddenP,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isVariationHiddenP(input),
     shows: PatternApprovalRequiredValues.Variation,
   },
   {
     name: 'isNewCertificateHiddenP',
-    rule: DisplayRules.isNewCertificateHiddenP,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isNewCertificateHiddenP(input),
     shows: PatternApprovalRequiredValues.NewCertificate,
   },
   {
     name: 'isApplOtherHidden',
-    rule: DisplayRules.isApplOtherHidden,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isApplOtherHidden(input),
     shows: PatternApprovalRequiredValues.OtherApproval,
   },
   {
     name: 'isVariationHidden',
-    rule: DisplayRules.isVariationHidden,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isVariationHidden(input),
     shows: PatternApprovalRequiredValues.Variation,
   },
   {
     name: 'isNewCertificateHidden',
-    rule: DisplayRules.isNewCertificateHidden,
+    rule: (input: ApplicationAndInstrumentStep) =>
+      DisplayRules.isNewCertificateHidden(input),
     shows: PatternApprovalRequiredValues.NewCertificate,
   },
 ])('displayRules.$name', ({ rule, shows }) => {

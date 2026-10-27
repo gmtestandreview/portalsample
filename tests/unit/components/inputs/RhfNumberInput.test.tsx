@@ -51,7 +51,7 @@ const expectNumberInputSubmittedErrorState = (input: HTMLElement) => {
   expect(input).toHaveFocus();
 };
 
-describe(RhfNumberInput, () => {
+describe('rhf number input behavior', () => {
   it('renders a labelled text box showing the form value', () => {
     expect.hasAssertions();
 

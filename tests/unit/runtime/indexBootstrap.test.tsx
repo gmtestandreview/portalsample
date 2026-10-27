@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  import('react-dom/client'),
+  import('react-dom/client') as unknown as string,
   () =>
     ({
       createRoot: mocks.createRoot as unknown as typeof CreateRoot,
@@ -21,7 +21,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('@azure/msal-browser'),
+  import('@azure/msal-browser') as unknown as string,
   () =>
     ({
       createStandardPublicClientApplication:
@@ -30,7 +30,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react') as unknown as string,
   () =>
     ({
       MsalProvider: ({ children }: { children: React.ReactNode }) => (
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('react-router/dom'),
+  import('react-router/dom') as unknown as string,
   () =>
     ({
       RouterProvider: () => <main>Router provider</main>,
@@ -48,7 +48,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/AccountProvider'),
+  import('../../../ClientApp/src/authentication/AccountProvider') as unknown as string,
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -58,7 +58,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/authentication/authConfig'),
+  import('../../../ClientApp/src/authentication/authConfig') as unknown as string,
   () =>
     ({
       configuration: { auth: { clientId: 'client-id' } },
@@ -66,7 +66,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/App',
+  import('../../../ClientApp/src/App') as unknown as string,
   () =>
     ({
       default: { routes: [] },
@@ -74,7 +74,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/trustedtypes',
+  import('../../../ClientApp/src/trustedtypes') as unknown as string,
   () =>
     ({
       TrustedTypes: {
@@ -84,7 +84,7 @@ vi.mock(
 );
 
 vi.mock(
-  import('../../../ClientApp/src/components/ErrorBoundary'),
+  import('../../../ClientApp/src/components/ErrorBoundary') as unknown as string,
   () =>
     ({
       default: ({ children }: { children: React.ReactNode }) => (
@@ -94,7 +94,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppInsightsService',
+  import('../../../ClientApp/src/instrumentation/AppInsightsService') as unknown as string,
   () =>
     ({
       ai: {

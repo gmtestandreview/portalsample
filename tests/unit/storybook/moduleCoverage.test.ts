@@ -69,13 +69,13 @@ const untypedCoverageModule =
   await import('../../../scripts/storybook-coverage.mjs');
 const coverageModule = untypedCoverageModule as unknown as CoverageModule;
 
-const {
-  discoverSourceExports,
-  generateInventory,
-  main,
-  validateManifest,
-  validateSourceClaims,
-} = coverageModule;
+const discoverSourceExports =
+  coverageModule.discoverSourceExports.bind(coverageModule);
+const generateInventory = coverageModule.generateInventory.bind(coverageModule);
+const main = coverageModule.main.bind(coverageModule);
+const validateManifest = coverageModule.validateManifest.bind(coverageModule);
+const validateSourceClaims =
+  coverageModule.validateSourceClaims.bind(coverageModule);
 
 const validState: CoverageState = {
   name: 'default',
@@ -122,7 +122,7 @@ const sourceModeManifestPath = join(
 describe('storybook coverage manifest schema v1', () => {
   it('accepts a reviewed renderable record with a meaningful required state', () => {
     expect.hasAssertions();
-    expect(validateManifest(validManifest)).toEqual({
+    expect(validateManifest(validManifest)).toStrictEqual({
       ok: true,
       errors: [],
     });
@@ -187,7 +187,7 @@ describe('recursive canonical source/export discovery', () => {
       ],
     });
 
-    expect(result.unresolved).toEqual([]);
+    expect(result.unresolved).toStrictEqual([]);
     expect(result.exports).toContainEqual({
       source: 'ClientApp/src/components/forms/nested/Field.tsx',
       export: 'Field',
@@ -238,7 +238,7 @@ describe('recursive canonical source/export discovery', () => {
       ],
     });
 
-    expect(result.exports).toEqual([
+    expect(result.exports).toStrictEqual([
       {
         source: 'ClientApp/src/components/DefaultField.tsx',
         export: 'default',
@@ -268,8 +268,8 @@ describe('recursive canonical source/export discovery', () => {
       ],
     });
 
-    expect(result.unresolved).toEqual([]);
-    expect(result.exports).toEqual(
+    expect(result.unresolved).toStrictEqual([]);
+    expect(result.exports).toStrictEqual(
       expect.arrayContaining([
         {
           source: 'ClientApp/src/components/Typed.mts',
@@ -325,7 +325,7 @@ describe('recursive canonical source/export discovery', () => {
       ],
     });
 
-    expect(result.unresolved).toEqual([]);
+    expect(result.unresolved).toStrictEqual([]);
     expect(result.exports).toContainEqual({
       source: 'ClientApp/src/components/Content.tsx',
       export: 'Text',
@@ -376,7 +376,7 @@ describe('renderable evidence and claim validation', () => {
           ...validManifest,
           records: [{ ...validRecord, classification }],
         }),
-      ).toEqual({ ok: true, errors: [] });
+      ).toStrictEqual({ ok: true, errors: [] });
     },
   );
 

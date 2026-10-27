@@ -1,6 +1,6 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
+import { makeDirectory, readTextFile, writeTextFile } from './safe-file-io.mjs';
 
 const outputFlag = process.argv.indexOf('--out');
 const outputPath = outputFlag >= 0 ? process.argv[outputFlag + 1] : undefined;
@@ -21,7 +21,7 @@ if (outputFlag >= 0 && !outputPath) {
     process.exitCode = 2;
   } else {
     const configFile = ts.readConfigFile(configPath, (file) =>
-      readFileSync(file, 'utf8'),
+      readTextFile(file, projectRoot),
     );
     const configDiagnostics = configFile.error ? [configFile.error] : [];
     const parsed = configFile.error
@@ -76,8 +76,8 @@ if (outputFlag >= 0 && !outputPath) {
 
     if (outputPath) {
       const resolvedOutput = path.resolve(projectRoot, outputPath);
-      mkdirSync(path.dirname(resolvedOutput), { recursive: true });
-      writeFileSync(resolvedOutput, serialized, 'utf8');
+      makeDirectory(path.dirname(resolvedOutput), projectRoot);
+      writeTextFile(resolvedOutput, serialized, undefined, projectRoot);
       process.stdout.write(`TypeScript diagnostics written to ${outputPath}\n`);
     } else {
       process.stdout.write(serialized);

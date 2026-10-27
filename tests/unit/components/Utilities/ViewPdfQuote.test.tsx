@@ -1,10 +1,13 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { InteractionStatus, Logger } from '@azure/msal-browser';
 import type {
+  AccountInfo,
   AuthenticationResult,
   IPublicClientApplication,
 } from '@azure/msal-browser';
+import type { IMsalContext } from '@azure/msal-react';
 import type { RequestForQuoteDetails } from '@/api/web-api-client';
 import type {
   getFileSize,
@@ -28,31 +31,110 @@ const helperMocks = vi.hoisted(() => ({
   openInNewTab: vi.fn<typeof openInNewTab>(),
 }));
 
-const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => {
+const mockMsalState = vi.hoisted(() => {
   const acquireTokenSilentMock =
     vi.fn<IPublicClientApplication['acquireTokenSilent']>();
-  // Stable object reference: prevents useEffect from re-firing due to
-  // new object identity on every useMsal() call (see dashboard.test.tsx pattern)
-  const msalContext = {
-    accounts: [{ homeAccountId: 'test-account' }],
-    instance: { acquireTokenSilent: acquireTokenSilentMock },
+  let msalContext: IMsalContext | undefined;
+
+  return {
+    acquireTokenSilentMock,
+    setMsalContext(context: IMsalContext) {
+      msalContext = context;
+    },
+    getMsalContext() {
+      if (!msalContext) {
+        throw new Error(
+          'MSAL context was not initialized by the mock factory.',
+        );
+      }
+      return msalContext;
+    },
   };
-  return { acquireTokenSilentMock, msalContext };
+});
+
+const { acquireTokenSilentMock } = mockMsalState;
+
+const mockAppLogger = vi.hoisted(() => {
+  class MockAppLogger {
+    static info = vi.fn<typeof AppLogger.info>();
+    static warning = vi.fn<typeof AppLogger.warning>();
+    static verbose = vi.fn<typeof AppLogger.verbose>();
+    static critical = vi.fn<typeof AppLogger.critical>();
+    static trace = vi.fn<typeof AppLogger.trace>();
+    static error = vi.fn<typeof AppLogger.error>();
+    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
+    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
+    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
+    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
+    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
+  }
+
+  return MockAppLogger;
 });
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
-vi.mock(
-  '@azure/msal-react',
-  () =>
-    ({
-      useMsal: () => msalContext,
-    }) satisfies __ExactMockModule<__TestMockModule2>,
-);
+vi.mock(import('@azure/msal-react'), () => {
+  const mockAccount = {
+    homeAccountId: 'test-account',
+    environment: 'login.microsoftonline.com',
+    tenantId: 'test-tenant',
+    username: 'test@example.com',
+    localAccountId: 'test-local-account',
+  } satisfies AccountInfo;
+  const msalInstance = {
+    initialize: vi.fn<IPublicClientApplication['initialize']>(),
+    acquireTokenPopup: vi.fn<IPublicClientApplication['acquireTokenPopup']>(),
+    acquireTokenRedirect:
+      vi.fn<IPublicClientApplication['acquireTokenRedirect']>(),
+    acquireTokenSilent: mockMsalState.acquireTokenSilentMock,
+    acquireTokenByCode: vi.fn<IPublicClientApplication['acquireTokenByCode']>(),
+    addEventCallback: vi.fn<IPublicClientApplication['addEventCallback']>(),
+    removeEventCallback:
+      vi.fn<IPublicClientApplication['removeEventCallback']>(),
+    addPerformanceCallback:
+      vi.fn<IPublicClientApplication['addPerformanceCallback']>(),
+    removePerformanceCallback:
+      vi.fn<IPublicClientApplication['removePerformanceCallback']>(),
+    getAccount: vi.fn<IPublicClientApplication['getAccount']>(),
+    getAllAccounts: vi.fn<IPublicClientApplication['getAllAccounts']>(),
+    handleRedirectPromise:
+      vi.fn<IPublicClientApplication['handleRedirectPromise']>(),
+    loginPopup: vi.fn<IPublicClientApplication['loginPopup']>(),
+    loginRedirect: vi.fn<IPublicClientApplication['loginRedirect']>(),
+    logoutRedirect: vi.fn<IPublicClientApplication['logoutRedirect']>(),
+    logoutPopup: vi.fn<IPublicClientApplication['logoutPopup']>(),
+    ssoSilent: vi.fn<IPublicClientApplication['ssoSilent']>(),
+    getLogger: vi.fn<IPublicClientApplication['getLogger']>(),
+    setLogger: vi.fn<IPublicClientApplication['setLogger']>(),
+    setActiveAccount: vi.fn<IPublicClientApplication['setActiveAccount']>(),
+    getActiveAccount: vi.fn<IPublicClientApplication['getActiveAccount']>(),
+    initializeWrapperLibrary:
+      vi.fn<IPublicClientApplication['initializeWrapperLibrary']>(),
+    setNavigationClient:
+      vi.fn<IPublicClientApplication['setNavigationClient']>(),
+    getConfiguration: vi.fn<IPublicClientApplication['getConfiguration']>(),
+    hydrateCache: vi.fn<IPublicClientApplication['hydrateCache']>(),
+    clearCache: vi.fn<IPublicClientApplication['clearCache']>(),
+  } satisfies IPublicClientApplication;
+
+  // Stable object reference: prevents useEffect from re-firing due to
+  // new object identity on every useMsal() call (see dashboard.test.tsx pattern)
+  mockMsalState.setMsalContext({
+    accounts: [mockAccount],
+    instance: msalInstance,
+    inProgress: InteractionStatus.None,
+    logger: new Logger({ loggerCallback: () => undefined }),
+  });
+
+  return {
+    useMsal: () => mockMsalState.getMsalContext(),
+  } satisfies Partial<__TestMockModule2>;
+});
 
 vi.mock(
   import('@/routes/common/helperFunctions'),
-  () => helperMocks satisfies __ExactMockModule<__TestMockModule9>,
+  () => helperMocks satisfies Partial<__TestMockModule9>,
 );
 
 vi.mock(
@@ -60,18 +142,15 @@ vi.mock(
   () =>
     ({
       trackGAEvent: vi.fn<typeof trackGAEvent>(),
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies Partial<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger'),
   () =>
     ({
-      default: {
-        verbose: vi.fn<typeof AppLogger.verbose>(),
-        error: vi.fn<typeof AppLogger.error>(),
-      },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+      default: mockAppLogger,
+    }) satisfies Partial<__TestMockModule5>,
 );
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -113,24 +192,27 @@ const mockTokenResult = {
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
-describe(ViewPdfQuote, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // Restore after clearAllMocks resets implementations (Vitest 4 behaviour)
-    acquireTokenSilentMock.mockResolvedValue(mockTokenResult);
-    msalContext.instance.acquireTokenSilent = acquireTokenSilentMock;
-    helperMocks.getQuotationFileDetails.mockResolvedValue({
-      fileSizeBytes: 1234567,
-      fileData: 'base64data',
-      mimeType: 'application/pdf',
-      filename: 'quote.pdf',
-    });
-    helperMocks.getFileSize.mockReturnValue('1.2 MB');
-    helperMocks.getFileUrlFromBase64.mockReturnValue('blob:test-url');
+const resetViewPdfQuoteMocks = () => {
+  vi.clearAllMocks();
+  // Restore after clearAllMocks resets implementations (Vitest 4 behaviour)
+  acquireTokenSilentMock.mockResolvedValue(mockTokenResult);
+  mockMsalState.getMsalContext().instance.acquireTokenSilent =
+    acquireTokenSilentMock;
+  helperMocks.getQuotationFileDetails.mockResolvedValue({
+    fileSizeBytes: 1234567,
+    fileData: 'base64data',
+    mimeType: 'application/pdf',
+    filename: 'quote.pdf',
   });
+  helperMocks.getFileSize.mockReturnValue('1.2 MB');
+  helperMocks.getFileUrlFromBase64.mockReturnValue('blob:test-url');
+};
 
+describe('view pdf quote', () => {
   it('shows the loading spinner while the file size is being fetched', () => {
     expect.hasAssertions();
+
+    resetViewPdfQuoteMocks();
 
     acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
@@ -142,6 +224,8 @@ describe(ViewPdfQuote, () => {
 
   it('shows the download button with the file size after a successful mount fetch', async () => {
     expect.hasAssertions();
+
+    resetViewPdfQuoteMocks();
 
     render(<ViewPdfQuote {...defaultProps} />);
 
@@ -164,6 +248,8 @@ describe(ViewPdfQuote, () => {
   it('sets a file error and removes the spinner when the size fetch throws', async () => {
     expect.hasAssertions();
 
+    resetViewPdfQuoteMocks();
+
     const setFileError = vi.fn<ViewPdfQuoteProps['setFileError']>();
     acquireTokenSilentMock.mockRejectedValue(new Error('Token expired'));
 
@@ -178,6 +264,8 @@ describe(ViewPdfQuote, () => {
   it('skips setting file size when the response has no fileSizeBytes', async () => {
     expect.hasAssertions();
 
+    resetViewPdfQuoteMocks();
+
     helperMocks.getQuotationFileDetails.mockResolvedValue({});
 
     render(<ViewPdfQuote {...defaultProps} />);
@@ -191,6 +279,8 @@ describe(ViewPdfQuote, () => {
 
   it('fetches and opens the full PDF in a new tab when the button is clicked', async () => {
     expect.hasAssertions();
+
+    resetViewPdfQuoteMocks();
 
     const user = userEvent.setup();
     const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
@@ -220,6 +310,8 @@ describe(ViewPdfQuote, () => {
   it('sets a file error when the PDF download throws', async () => {
     expect.hasAssertions();
 
+    resetViewPdfQuoteMocks();
+
     const user = userEvent.setup();
     const setFileError = vi.fn<ViewPdfQuoteProps['setFileError']>();
     const setIsLoading = vi.fn<ViewPdfQuoteProps['setIsLoading']>();
@@ -248,6 +340,8 @@ describe(ViewPdfQuote, () => {
   it('skips opening the PDF when the file response is missing required fields', async () => {
     expect.hasAssertions();
 
+    resetViewPdfQuoteMocks();
+
     const user = userEvent.setup();
 
     helperMocks.getQuotationFileDetails
@@ -268,6 +362,8 @@ describe(ViewPdfQuote, () => {
 
   it('calls the latest setFileError when quotationData changes and the setter reference has changed', async () => {
     expect.hasAssertions();
+
+    resetViewPdfQuoteMocks();
 
     // Regression for exhaustive-deps fix: without setFileError in the dep array,
     // re-running the effect (triggered by a quotationData change) would call the

@@ -23,7 +23,7 @@ describe('storybook run log audit', () => {
     const audit = auditLog(completedRun);
 
     expect(audit.completed).toBe(true);
-    expect(audit.hits).toEqual([]);
+    expect(audit.hits).toStrictEqual([]);
     expect(audit.verdict).toBe('clean');
   });
 
@@ -36,7 +36,7 @@ describe('storybook run log audit', () => {
     const audit = auditLog(oomRun);
 
     expect(audit.completed).toBe(false);
-    expect(audit.hits).toEqual([]);
+    expect(audit.hits).toStrictEqual([]);
     expect(audit.verdict).toBe('invalid');
     expect(audit.truncatedBy).toContain('JavaScript heap out of memory');
   });
@@ -47,7 +47,7 @@ describe('storybook run log audit', () => {
     const audit = auditLog(summaryThenOomRun);
 
     expect(audit.completed).toBe(true);
-    expect(audit.hits).toEqual([]);
+    expect(audit.hits).toStrictEqual([]);
     expect(audit.truncatedBy).toContain('FATAL ERROR');
     expect(audit.verdict).toBe('invalid');
   });
@@ -62,7 +62,7 @@ describe('storybook run log audit', () => {
 
     expect(audit.completed).toBe(false);
     expect(audit.verdict).toBe('dirty');
-    expect(audit.hits).toEqual([{ target: '[MSW] Warning', count: 1 }]);
+    expect(audit.hits).toStrictEqual([{ target: '[MSW] Warning', count: 1 }]);
   });
 
   it('counts every occurrence of each target string', () => {
@@ -73,7 +73,9 @@ describe('storybook run log audit', () => {
     );
 
     expect(audit.verdict).toBe('dirty');
-    expect(audit.hits).toEqual([{ target: 'unhandled request', count: 2 }]);
+    expect(audit.hits).toStrictEqual([
+      { target: 'unhandled request', count: 2 },
+    ]);
   });
 
   it('names the source and the reason in the report', () => {

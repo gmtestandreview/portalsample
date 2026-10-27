@@ -56,7 +56,7 @@ const failingResolver: Resolver<Values> = async () => ({
   },
 });
 
-describe(RhfSelectInput, () => {
+describe('rhf select input behavior', () => {
   it('renders the label, a blank option and the given options', () => {
     expect.hasAssertions();
 

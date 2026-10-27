@@ -14,17 +14,25 @@ import RhfUnsavedFormPrompt from '../../../../ClientApp/src/components/forms/Uns
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 import type AppLogger from '../../../../ClientApp/src/instrumentation/AppLogger';
 
-vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
-    ({
-      default: {
-        verbose: vi.fn<typeof AppLogger.verbose>(),
-        error: vi.fn<typeof AppLogger.error>(),
-        trace: vi.fn<typeof AppLogger.trace>(),
-      },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
-);
+vi.mock(import('../../../../ClientApp/src/instrumentation/AppLogger'), () => {
+  class MockAppLogger {
+    static info = vi.fn<typeof AppLogger.info>();
+    static warning = vi.fn<typeof AppLogger.warning>();
+    static verbose = vi.fn<typeof AppLogger.verbose>();
+    static critical = vi.fn<typeof AppLogger.critical>();
+    static trace = vi.fn<typeof AppLogger.trace>();
+    static error = vi.fn<typeof AppLogger.error>();
+    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
+    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
+    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
+    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
+    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
+  }
+
+  return {
+    default: MockAppLogger,
+  } satisfies Partial<__TestMockModule5>;
+});
 
 /**
  * The shell contract: one suite, run against the Formik shell and the RHF
@@ -222,7 +230,7 @@ describe.each(['formik', 'rhf'] as const)(
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
-        expect(payloadOf(onSubmit)).toEqual({ name: 'Alex' });
+        expect(payloadOf(onSubmit)).toStrictEqual({ name: 'Alex' });
         expect(
           screen.queryByTestId('form-error-summary'),
         ).not.toBeInTheDocument();

@@ -1,6 +1,6 @@
-import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { readTextFile } from './safe-file-io.mjs';
 
 const EXPECTED_TITLE = 'Signing in - NMI Portal';
 const EXPECTED_CSP =
@@ -85,8 +85,7 @@ export const verifyBridgeHtml = (html) => {
 };
 
 export const verifyBridgeDist = async (distDirectory) => {
-  const bridgePath = path.join(distDirectory, 'redirect.html');
-  const html = await fs.readFile(bridgePath, 'utf8');
+  const html = readTextFile('redirect.html', distDirectory);
   return verifyBridgeHtml(html);
 };
 
@@ -118,7 +117,7 @@ export const verifyBridgeResponse = async (response, requestedUrl) => {
 const parseArguments = (argumentsList) => {
   const values = new Map();
   for (let index = 0; index < argumentsList.length; index += 1) {
-    const argument = argumentsList[index];
+    const argument = argumentsList.at(index);
     if (argument === '--dist' || argument === '--url') {
       const value = argumentsList[index + 1];
       if (!value) {
@@ -152,10 +151,12 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
 ) {
-  run().catch((error) => {
+  try {
+    await run();
+  } catch (error) {
     const message =
       error instanceof Error ? error.message : 'unknown verification error';
     console.error(`MSAL redirect bridge verification failed: ${message}`);
     process.exitCode = 1;
-  });
+  }
 }

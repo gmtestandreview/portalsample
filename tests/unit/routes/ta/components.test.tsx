@@ -1,6 +1,6 @@
 import { Form, Formik } from 'formik';
 import { render, screen, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { ReactNode } from 'react';
 
@@ -331,13 +331,18 @@ const renderSummary = (isSubmitted = false) =>
     </MemoryRouter>,
   );
 
-describe(OrganisationAndContact, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const resetTaComponentsMocks = () => {
+  vi.clearAllMocks();
+  mocks.supportingDocumentsUploadAttachment.mockClear();
+  mocks.supportingDocumentsUploadFiles.mockClear();
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(OrganisationAndContact, () => {
   it('renders the editable organisation and contact fields with prefixed field names', () => {
     expect.hasAssertions();
+
+    resetTaComponentsMocks();
 
     renderWithFormik(
       <OrganisationAndContact
@@ -379,7 +384,7 @@ describe(OrganisationAndContact, () => {
         .getByTestId('help-organisationAndContact.isPrincipalContact')
         .textContent?.replace(/\s+/g, ' ')
         .includes('Dashboard > Settings menu > My contact details'),
-    }).toEqual({
+    }).toStrictEqual({
       manufacturerSummary: 'false',
       name: 'organisationAndContact.name',
       streetAddress: 'organisationAndContact.streetAddress',
@@ -397,6 +402,8 @@ describe(OrganisationAndContact, () => {
 
   it('renders the summary field names without a prefix when no name is supplied', () => {
     expect.hasAssertions();
+
+    resetTaComponentsMocks();
 
     renderWithFormik(<OrganisationAndContact isSummary name='' />);
 
@@ -421,7 +428,7 @@ describe(OrganisationAndContact, () => {
         name: 'Contact information',
       }),
       principalContact: principalContact.textContent,
-    }).toEqual({
+    }).toStrictEqual({
       manufacturerSummary: 'true',
       name: 'name',
       streetAddress: 'streetAddress',
@@ -434,15 +441,12 @@ describe(OrganisationAndContact, () => {
   });
 });
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(SummaryAndSubmit, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.supportingDocumentsUploadAttachment.mockClear();
-    mocks.supportingDocumentsUploadFiles.mockClear();
-  });
-
   it('renders the summaries when the form carries no hiding rules', () => {
     expect.hasAssertions();
+
+    resetTaComponentsMocks();
 
     render(
       <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
@@ -464,6 +468,8 @@ describe(SummaryAndSubmit, () => {
 
   it('renders editable summary sections with edit links and declaration fields', async () => {
     expect.hasAssertions();
+
+    resetTaComponentsMocks();
 
     renderSummary();
 
@@ -492,7 +498,7 @@ describe(SummaryAndSubmit, () => {
         })
         .getAttribute('target'),
       backButton: screen.queryByTestId('back-button'),
-    }).toEqual({
+    }).toStrictEqual({
       bodyClassCalls: [['summary']],
       guidance: expect.stringMatching(/Before you submit your request/),
       organisation: 'Organisation name',
@@ -522,6 +528,8 @@ describe(SummaryAndSubmit, () => {
 
   it('renders the submitted summary without edit controls and with a dashboard return link', () => {
     expect.hasAssertions();
+
+    resetTaComponentsMocks();
 
     renderSummary(true);
 

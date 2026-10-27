@@ -16,26 +16,26 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/authentication/hooks',
-  () =>
+  import('@/authentication/hooks'),
+  (() =>
     ({
       useAccountDispatch: () => ({
         setUserProfile: mocks.setUserProfile,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
-  () =>
+  import('@/analytics/GoogleAnalytics'),
+  (() =>
     ({
       trackGAEvent: mocks.trackGAEvent,
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/components/Inputs/RadioButtonGroup',
-  () =>
+  import('@/components/Inputs/RadioButtonGroup'),
+  (() =>
     ({
       default: <T,>({
         legend,
@@ -63,7 +63,7 @@ vi.mock(
           ))}
         </fieldset>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule52>,
+    }) satisfies __ExactMockModule<__TestMockModule52>) as unknown as __DynamicPartialMockFactory<__TestMockModule52>,
 );
 
 const renderMenu = (
@@ -97,7 +97,7 @@ const expectTrackedEvents = (events: readonly string[]) => {
   }
 };
 
-describe(PaFilterMenu, () => {
+describe('pa filter menu', () => {
   const resetMocks = () => {
     mocks.setUserProfile.mockReset();
     mocks.trackGAEvent.mockReset();

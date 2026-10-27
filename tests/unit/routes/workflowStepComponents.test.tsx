@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { AuthenticationResult } from '@azure/msal-browser';
 import {
   ReportAddressTypeValues,
@@ -16,126 +16,136 @@ import {
   triggerInputChange,
 } from './workflowStepComponents.test.setup';
 
-describe('workflow step components', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.msalAccounts.splice(0, mocks.msalAccounts.length, {
+const requireRenderedElement = <T extends Element>(
+  element: T | undefined,
+  message: string,
+): T => {
+  if (!element) throw new Error(message);
+  return element;
+};
+
+const resetWorkflowStepComponentsMocks = () => {
+  vi.clearAllMocks();
+  mocks.msalAccounts.splice(0, mocks.msalAccounts.length, {
+    homeAccountId: 'account-1',
+    environment: 'login.microsoftonline.com',
+    tenantId: 'tenant-id',
+    username: 'user@example.test',
+    localAccountId: 'local-account-1',
+  });
+  mocks.acquireTokenSilent.mockResolvedValue({
+    authority: 'https://login.microsoftonline.com/tenant-id',
+    uniqueId: 'unique-id',
+    tenantId: 'tenant-id',
+    scopes: ['scope'],
+    account: {
       homeAccountId: 'account-1',
       environment: 'login.microsoftonline.com',
       tenantId: 'tenant-id',
       username: 'user@example.test',
       localAccountId: 'local-account-1',
-    });
-    mocks.acquireTokenSilent.mockResolvedValue({
-      authority: 'https://login.microsoftonline.com/tenant-id',
-      uniqueId: 'unique-id',
-      tenantId: 'tenant-id',
-      scopes: ['scope'],
-      account: {
-        homeAccountId: 'account-1',
-        environment: 'login.microsoftonline.com',
-        tenantId: 'tenant-id',
-        username: 'user@example.test',
-        localAccountId: 'local-account-1',
+    },
+    idToken: 'id-token',
+    idTokenClaims: {},
+    accessToken: 'access-token',
+    fromCache: false,
+    expiresOn: null,
+    tokenType: 'Bearer',
+    correlationId: 'correlation-id',
+  } satisfies AuthenticationResult);
+  mocks.useAccountState.mockReturnValue({ details: accountDetails });
+  mocks.dashboardNotification = null;
+  mocks.inputChangeHandlers.clear();
+  mocks.formikValues = {
+    sourceReferenceId: 'SOURCE-1',
+    isCorrectBranchOrLocation: 'No',
+    organisationCount: '2',
+    businessOrTradingName: 'Trading',
+    branchOrLocationName: 'Branch',
+    name: 'National Measurement Institute',
+    abn: '12345678901',
+    currentContact: {
+      title: 'Dr',
+      firstName: 'Alex',
+      lastName: 'Tester',
+      email: 'alex@example.test',
+    },
+    measurementCategory: 'measurement-1',
+  };
+  mocks.getLookup
+    .mockResolvedValueOnce([
+      { id: 'measurement-1', label: 'Mass' },
+      { id: 'no-measurement', label: 'No measurement' },
+    ])
+    .mockResolvedValueOnce([
+      { id: 'artefact-1', parentId: 'measurement-1', label: 'Balance' },
+      {
+        id: 'no-instrument',
+        parentId: 'no-measurement',
+        label: 'No instrument',
       },
-      idToken: 'id-token',
-      idTokenClaims: {},
-      accessToken: 'access-token',
-      fromCache: false,
-      expiresOn: null,
-      tokenType: 'Bearer',
-      correlationId: 'correlation-id',
-    } satisfies AuthenticationResult);
-    mocks.useAccountState.mockReturnValue({ details: accountDetails });
-    mocks.dashboardNotification = null;
-    mocks.inputChangeHandlers.clear();
-    mocks.formikValues = {
-      sourceReferenceId: 'SOURCE-1',
-      isCorrectBranchOrLocation: 'No',
-      organisationCount: '2',
+    ]);
+  mocks.getReportRecipient.mockResolvedValue({
+    reportAddressType: ReportAddressTypeValues.BusinessAddress,
+    acceptQuotePreInfo: basePreInfo,
+    rfqOrganisation: {
+      streetAddress,
+      postalAddressSameAsStreetAddress: true,
+      postalAddress: {
+        line1: 'PO Box 1',
+        suburb: 'Canberra',
+        state: State.ACT,
+        postcode: '2601',
+      },
+    },
+  });
+  mocks.getDeliveryAndReturn.mockResolvedValue({
+    acceptQuotePreInfo: basePreInfo,
+    rfqOrganisation: {
+      streetAddress,
+      postalAddressSameAsStreetAddress: false,
+      postalAddress: {
+        line1: 'PO Box 1',
+        suburb: 'Canberra',
+        state: State.ACT,
+        postcode: '2601',
+      },
+    },
+  });
+  mocks.getPaymentDetails.mockResolvedValue({
+    acceptQuotePreInfo: { ...basePreInfo, paymentTerms: 'Prepaid' },
+  });
+  mocks.getSummaryAndAccept.mockResolvedValue({
+    acceptQuotePreInfo: basePreInfo,
+    requestForQuote: {
+      contact: {
+        firstName: 'Request',
+        lastName: 'Owner',
+        role: 'Manager',
+        phone: '02 1111 1111',
+        email: 'request@example.test',
+      },
+    },
+    rfqOrganisation: {
       businessOrTradingName: 'Trading',
       branchOrLocationName: 'Branch',
       name: 'National Measurement Institute',
       abn: '12345678901',
-      currentContact: {
-        title: 'Dr',
-        firstName: 'Alex',
-        lastName: 'Tester',
-        email: 'alex@example.test',
-      },
-      measurementCategory: 'measurement-1',
-    };
-    mocks.getLookup
-      .mockResolvedValueOnce([
-        { id: 'measurement-1', label: 'Mass' },
-        { id: 'no-measurement', label: 'No measurement' },
-      ])
-      .mockResolvedValueOnce([
-        { id: 'artefact-1', parentId: 'measurement-1', label: 'Balance' },
-        {
-          id: 'no-instrument',
-          parentId: 'no-measurement',
-          label: 'No instrument',
-        },
-      ]);
-    mocks.getReportRecipient.mockResolvedValue({
-      reportAddressType: ReportAddressTypeValues.BusinessAddress,
-      acceptQuotePreInfo: basePreInfo,
-      rfqOrganisation: {
-        streetAddress,
-        postalAddressSameAsStreetAddress: true,
-        postalAddress: {
-          line1: 'PO Box 1',
-          suburb: 'Canberra',
-          state: State.ACT,
-          postcode: '2601',
-        },
-      },
-    });
-    mocks.getDeliveryAndReturn.mockResolvedValue({
-      acceptQuotePreInfo: basePreInfo,
-      rfqOrganisation: {
-        streetAddress,
-        postalAddressSameAsStreetAddress: false,
-        postalAddress: {
-          line1: 'PO Box 1',
-          suburb: 'Canberra',
-          state: State.ACT,
-          postcode: '2601',
-        },
-      },
-    });
-    mocks.getPaymentDetails.mockResolvedValue({
-      acceptQuotePreInfo: { ...basePreInfo, paymentTerms: 'Prepaid' },
-    });
-    mocks.getSummaryAndAccept.mockResolvedValue({
-      acceptQuotePreInfo: basePreInfo,
-      requestForQuote: {
-        contact: {
-          firstName: 'Request',
-          lastName: 'Owner',
-          role: 'Manager',
-          phone: '02 1111 1111',
-          email: 'request@example.test',
-        },
-      },
-      rfqOrganisation: {
-        businessOrTradingName: 'Trading',
-        branchOrLocationName: 'Branch',
-        name: 'National Measurement Institute',
-        abn: '12345678901',
-        streetAddress,
-      },
-    });
-    mocks.getQuoteOfferPDFByQuoteID.mockResolvedValue({
-      fileData: btoa('pdf-data'),
-      mimeType: 'application/pdf',
-      filename: 'quote.pdf',
-    });
+      streetAddress,
+    },
   });
+  mocks.getQuoteOfferPDFByQuoteID.mockResolvedValue({
+    fileData: btoa('pdf-data'),
+    mimeType: 'application/pdf',
+    filename: 'quote.pdf',
+  });
+};
 
+describe('workflow step components', () => {
   it('renders request-for-quote organisation/contact inputs and opens the branch selector', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
@@ -164,6 +174,8 @@ describe('workflow step components', () => {
   it('disables the branch selector until the branch answer is No', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.formikValues['isCorrectBranchOrLocation'] = undefined;
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
@@ -182,6 +194,8 @@ describe('workflow step components', () => {
 
   it('opens the branch selector with an empty request id when the route id is omitted', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     const OrganisationAndContact = (
       await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
@@ -203,6 +217,8 @@ describe('workflow step components', () => {
 
   it('renders request-for-quote instrument/request inputs and dependent lookup options', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
@@ -253,6 +269,8 @@ describe('workflow step components', () => {
   it('keeps request-for-quote summary edit links available for both editable sections', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     const RequestForQuoteSummary = (
       await import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary')
     ).default;
@@ -276,6 +294,8 @@ describe('workflow step components', () => {
   it('initially disables instrument type for the no-measurement category', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.formikValues['measurementCategory'] = 'no-measurement';
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
@@ -296,6 +316,8 @@ describe('workflow step components', () => {
 
   it('uses an empty artefact option list when the initial measurement category is unavailable', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.formikValues['measurementCategory'] = undefined;
     const InstrumentAndRequest = (
@@ -321,6 +343,8 @@ describe('workflow step components', () => {
 
   it('normalises missing lookup labels and ids and handles a regular category change', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.getLookup.mockReset();
     mocks.getLookup
@@ -368,6 +392,8 @@ describe('workflow step components', () => {
   it('handles empty and null measurement category changes', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
     ).default;
@@ -396,6 +422,8 @@ describe('workflow step components', () => {
   it('keeps instrument lookups loading when no MSAL account is available', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.msalAccounts.length = 0;
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
@@ -413,6 +441,8 @@ describe('workflow step components', () => {
 
   it('renders request-for-quote summary edit and submitted states', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     const RequestForQuoteSummary = (
       await import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary')
@@ -447,6 +477,8 @@ describe('workflow step components', () => {
 
   it('renders report recipient edit and summary address branches', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     const ReportRecipient = (
       await import('../../../ClientApp/src/routes/acceptQuote/reportRecipient')
@@ -497,6 +529,8 @@ describe('workflow step components', () => {
   it('renders delivery/return editable, no-delivery, and summary branches', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     const DeliveryAndReturn = (
       await import('../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn')
     ).default;
@@ -538,6 +572,8 @@ describe('workflow step components', () => {
   it('renders the editable no-delivery information variant', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
       acceptQuotePreInfo: { receiptAndDispatchNA: true },
     });
@@ -568,6 +604,8 @@ describe('workflow step components', () => {
     'renders the %s return address summary',
     async (returnAddressType, expectedAddress) => {
       expect.hasAssertions();
+
+      resetWorkflowStepComponentsMocks();
 
       mocks.getDeliveryAndReturn.mockResolvedValueOnce({
         returnAddressType,
@@ -609,6 +647,8 @@ describe('workflow step components', () => {
   it('renders a return organisation name in the delivery summary', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
       returnAddressType: ReturnAddressTypeValues.BusinessAddress,
       returnOrganisationName: 'Return Organisation',
@@ -631,6 +671,8 @@ describe('workflow step components', () => {
 
   it('logs delivery and lookup load failures', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.getDeliveryAndReturn.mockRejectedValueOnce(
       new Error('delivery failed'),
@@ -675,6 +717,8 @@ describe('workflow step components', () => {
   it('renders payment details prepaid, postpaid, and summary contact sections', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     const PaymentDetails = (
       await import('../../../ClientApp/src/routes/acceptQuote/paymentDetails')
     ).default;
@@ -712,6 +756,8 @@ describe('workflow step components', () => {
 
   it('logs payment and report recipient load failures', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.getPaymentDetails.mockRejectedValueOnce(new Error('payment failed'));
     const PaymentDetails = (
@@ -756,6 +802,8 @@ describe('workflow step components', () => {
   it('uses separate postal address details for report recipients', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.getReportRecipient.mockResolvedValueOnce({
       reportAddressType: ReportAddressTypeValues.PostalAddress,
       rfqOrganisation: {
@@ -787,6 +835,8 @@ describe('workflow step components', () => {
   it('uses the street address as the delivery postal address when configured', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     mocks.getDeliveryAndReturn.mockResolvedValueOnce({
       returnAddressType: ReturnAddressTypeValues.PostalAddress,
       rfqOrganisation: {
@@ -811,6 +861,8 @@ describe('workflow step components', () => {
 
   it('renders summary-and-accept content and downloads quote terms', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.dashboardNotification = { message: 'Saved draft', severity: 'info' };
     const SummaryAndAccept = (
@@ -839,8 +891,10 @@ describe('workflow step components', () => {
       ownerLabel: true,
     });
 
-    const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
-    if (!termsButton) throw new Error('expected a Terms button to be rendered');
+    const termsButton = requireRenderedElement(
+      screen.getAllByRole('button', { name: /Terms/i })[0],
+      'expected a Terms button to be rendered',
+    );
     fireEvent.click(termsButton);
 
     await waitFor(() =>
@@ -858,6 +912,8 @@ describe('workflow step components', () => {
 
   it('sets the dashboard notification when quote terms download fails and renders submitted action', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.getQuoteOfferPDFByQuoteID.mockRejectedValueOnce(
       new Error('download failed'),
@@ -883,8 +939,10 @@ describe('workflow step components', () => {
         '/submitted-success/AQ-2',
       ),
     );
-    const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
-    if (!termsButton) throw new Error('expected a Terms button to be rendered');
+    const termsButton = requireRenderedElement(
+      screen.getAllByRole('button', { name: /Terms/i })[0],
+      'expected a Terms button to be rendered',
+    );
     fireEvent.click(termsButton);
 
     await waitFor(() =>
@@ -899,6 +957,8 @@ describe('workflow step components', () => {
   it('downloads terms from the acceptance link', async () => {
     expect.hasAssertions();
 
+    resetWorkflowStepComponentsMocks();
+
     const SummaryAndAccept = (
       await import('../../../ClientApp/src/routes/acceptQuote/summaryAndAccept')
     ).default;
@@ -911,12 +971,10 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(screen.getAllByRole('button', { name: /terms/i })).toHaveLength(2),
     );
-    const secondTermsButton = screen.getAllByRole('button', {
-      name: /terms/i,
-    })[1];
-    if (!secondTermsButton) {
-      throw new Error('expected a second Terms button to be rendered');
-    }
+    const secondTermsButton = requireRenderedElement(
+      screen.getAllByRole('button', { name: /terms/i })[1],
+      'expected a second Terms button to be rendered',
+    );
     fireEvent.click(secondTermsButton);
 
     await waitFor(() =>
@@ -929,6 +987,8 @@ describe('workflow step components', () => {
 
   it('does not open incomplete quote terms and renders sparse organisation alternatives', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.getQuoteOfferPDFByQuoteID.mockResolvedValueOnce({
       fileData: 'pdf-data',
@@ -969,8 +1029,10 @@ describe('workflow step components', () => {
       building: screen.queryByText('Building A') !== null,
     }).toStrictEqual({ level: true, building: true });
 
-    const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
-    if (!termsButton) throw new Error('expected a Terms button to be rendered');
+    const termsButton = requireRenderedElement(
+      screen.getAllByRole('button', { name: /Terms/i })[0],
+      'expected a Terms button to be rendered',
+    );
     fireEvent.click(termsButton);
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
@@ -1003,6 +1065,8 @@ describe('workflow step components', () => {
 
   it('logs summary-and-accept load failures', async () => {
     expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
 
     mocks.getSummaryAndAccept.mockRejectedValueOnce(
       new Error('summary failed'),

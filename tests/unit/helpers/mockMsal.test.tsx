@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { useEffect, useState } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useMsal } from '@azure/msal-react';
 
 import {
@@ -16,7 +16,7 @@ import {
   testAccount,
 } from './mockMsal';
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react') as unknown as string, async () => {
   const { msalReactModuleMock } = await import('./mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
@@ -68,12 +68,10 @@ const TokenProbe = () => {
 };
 
 describe('shared MSAL harness', () => {
-  beforeEach(() => {
-    resetMsalMock();
-  });
-
   it('resolves a token by default and reports the signed-in account', async () => {
     expect.hasAssertions();
+
+    resetMsalMock();
 
     render(<TokenProbe />);
 
@@ -96,6 +94,8 @@ describe('shared MSAL harness', () => {
   it('grants a caller-supplied token', async () => {
     expect.hasAssertions();
 
+    resetMsalMock();
+
     grantToken('another-token');
 
     render(<TokenProbe />);
@@ -107,6 +107,8 @@ describe('shared MSAL harness', () => {
 
   it('rejects the token so error paths can be exercised', async () => {
     expect.hasAssertions();
+
+    resetMsalMock();
 
     rejectToken(new Error('interaction_required'));
 
@@ -123,6 +125,8 @@ describe('shared MSAL harness', () => {
 
   it('holds the token pending until the test settles it', async () => {
     expect.hasAssertions();
+
+    resetMsalMock();
 
     const token = pendingToken();
 
@@ -147,6 +151,8 @@ describe('shared MSAL harness', () => {
   it('fails a pending token so mid-flight rejection can be exercised', async () => {
     expect.hasAssertions();
 
+    resetMsalMock();
+
     const token = pendingToken();
 
     render(<TokenProbe />);
@@ -168,6 +174,8 @@ describe('shared MSAL harness', () => {
   it('signs out so token-guarded effects never run', async () => {
     expect.hasAssertions();
 
+    resetMsalMock();
+
     signOut();
 
     render(<TokenProbe />);
@@ -178,6 +186,8 @@ describe('shared MSAL harness', () => {
 
   it('reports a non-idle interaction status', async () => {
     expect.hasAssertions();
+
+    resetMsalMock();
 
     setInteractionStatus(interactionStatus.Login);
 
@@ -200,6 +210,8 @@ describe('shared MSAL harness', () => {
 
   it('restores default state between tests', async () => {
     expect.hasAssertions();
+
+    resetMsalMock();
 
     // Guards the reset itself. signOut() above mutates shared module state, so if resetMsalMock
     // stopped restoring `accounts` every later test in the file would silently run signed out.

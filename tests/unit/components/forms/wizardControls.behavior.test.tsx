@@ -29,23 +29,23 @@ const wrapperMocks = vi.hoisted(() => ({
 
 vi.mock(
   import('@/components/ErrorBoundary'),
-  () =>
+  (() =>
     ({
       default: wrapperMocks.errorBoundary,
-    }) satisfies __ExactMockModule<__TestMockModule13>,
+    }) satisfies __ExactMockModule<__TestMockModule13>) as unknown as __DynamicPartialMockFactory<__TestMockModule13>,
 );
 
 vi.mock(
   import('@/analytics/GoogleAnalytics'),
-  () =>
+  (() =>
     ({
       default: wrapperMocks.analytics,
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 vi.mock(
-  '@/components/modals/ConfirmationModal',
-  () =>
+  import('@/components/modals/ConfirmationModal'),
+  (() =>
     ({
       default: ({
         closeModal,
@@ -73,7 +73,7 @@ vi.mock(
             </button>
           </dialog>
         ) : null,
-    }) satisfies __ExactMockModule<__TestMockModule23>,
+    }) satisfies __ExactMockModule<__TestMockModule23>) as unknown as __DynamicPartialMockFactory<__TestMockModule23>,
 );
 
 const step = (location: string) => (

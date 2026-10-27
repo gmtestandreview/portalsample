@@ -1,5 +1,5 @@
 import type React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -24,43 +24,43 @@ type SaveStepFn = NonNullable<WizardStepProps<FormikValues>['onSaveAndNext']>;
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         verbose: vi.fn<AppLogger['verbose']>(),
         error: vi.fn<AppLogger['error']>(),
         trace: vi.fn<AppLogger['trace']>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>,
+    }) satisfies __ExactMockModule<__TestMockModule24>) as unknown as __DynamicPartialMockFactory<__TestMockModule24>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/components/SteppedNavigation'),
-  () =>
+  (() =>
     ({
       default: () => <div data-testid='stepped-navigation' />,
-    }) satisfies __ExactMockModule<__TestMockModule25>,
+    }) satisfies __ExactMockModule<__TestMockModule25>) as unknown as __DynamicPartialMockFactory<__TestMockModule25>,
 );
 
 // ── Shared mock context values ────────────────────────────────────────────────
@@ -224,12 +224,14 @@ function makeSplitSplatTwoStepRouter(
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('wizardForm — step navigation', () => {
-  beforeEach(() => {
+  const resetWizardNavigation = () => {
     vi.clearAllMocks();
-  });
+  };
 
   it('renders step 1 content on initial load', async () => {
     expect.hasAssertions();
+
+    resetWizardNavigation();
 
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
@@ -247,6 +249,8 @@ describe('wizardForm — step navigation', () => {
 
   it('navigates forward from step 1 to step 2 after successful submit', async () => {
     expect.hasAssertions();
+
+    resetWizardNavigation();
 
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
@@ -272,6 +276,8 @@ describe('wizardForm — step navigation', () => {
   it('still navigates when the current step has no status entry', async () => {
     expect.hasAssertions();
 
+    resetWizardNavigation();
+
     const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({});
     const router = makeTwoStepRouter([], step1Save);
     render(<RouterProvider router={router} />);
@@ -288,6 +294,8 @@ describe('wizardForm — step navigation', () => {
 
   it('navigates back from step 2 to step 1 via the back button', async () => {
     expect.hasAssertions();
+
+    resetWizardNavigation();
 
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.Completed },
@@ -317,6 +325,8 @@ describe('wizardForm — step navigation', () => {
   it('linear guard: navigating directly to step 2 with step 1 incomplete redirects to step 1', async () => {
     expect.hasAssertions();
 
+    resetWizardNavigation();
+
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
@@ -338,6 +348,8 @@ describe('wizardForm — step navigation', () => {
 
   it('navigates to locationOnCompletion after the final step submits successfully', async () => {
     expect.hasAssertions();
+
+    resetWizardNavigation();
 
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.Completed },
@@ -362,6 +374,8 @@ describe('wizardForm — step navigation', () => {
 
   it('smoke: preserves the resolved wizard base path for split splat route step navigation', async () => {
     expect.hasAssertions();
+
+    resetWizardNavigation();
 
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },
@@ -396,6 +410,8 @@ describe('wizardForm — step navigation', () => {
 
   it('uses the root path when the resolved path is only the step location', async () => {
     expect.hasAssertions();
+
+    resetWizardNavigation();
 
     const statuses: FormStepStatusDto[] = [
       { status: FormStepStatus.NotStarted },

@@ -44,11 +44,11 @@ vi.mock(
 );
 
 vi.mock(
-  '@/analytics/GoogleAnalytics',
-  () =>
+  import('@/analytics/GoogleAnalytics'),
+  (() =>
     ({
       default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 vi.mock(
@@ -71,7 +71,7 @@ const expectLayoutNavigationChrome = () => {
   ).toBeInTheDocument();
 };
 
-describe(Layout, () => {
+describe('layout', () => {
   it('renders page chrome, main content, and the route announcement region', () => {
     expect.hasAssertions();
 

@@ -8,9 +8,9 @@
  *
  * Usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>
  */
-import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
+import { readTextFile } from './safe-file-io.mjs';
 
 export type CoverageReportAudit = {
   nonExecutableEntries: string[];
@@ -101,7 +101,7 @@ if (isEntryPoint()) {
     );
     process.exitCode = 2;
   } else {
-    const report = JSON.parse(readFileSync(reportPath, 'utf8')) as Record<
+    const report = JSON.parse(readTextFile(reportPath)) as Record<
       string,
       unknown
     >;

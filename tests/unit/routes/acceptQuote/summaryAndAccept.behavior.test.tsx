@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { YesNo, type SummaryAndAcceptStep } from '@/api/web-api-client';
 import SummaryAndAccept from '@/routes/acceptQuote/summaryAndAccept';
@@ -184,7 +184,7 @@ const DISPUTE_LABEL = /Please provide details of the associated dispute/;
 const waitForLoad = () => screen.findByText('Acme Pty Ltd');
 
 describe('summaryAndAccept behavior', () => {
-  beforeEach(() => {
+  const resetSummaryAndAcceptMocks = () => {
     vi.clearAllMocks();
     mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
     mocks.getSummaryAndAccept.mockResolvedValue({
@@ -192,10 +192,13 @@ describe('summaryAndAccept behavior', () => {
       requestForQuote: { contact: { firstName: 'Rae', lastName: 'Quote' } },
       rfqOrganisation: { name: 'Acme Pty Ltd' },
     });
-  });
+  };
 
   it('renders the read-only summaries and the parties to the contract', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     renderStep();
     await waitForLoad();
@@ -221,6 +224,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('hides the dispute details only once No is selected', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     renderStep();
@@ -241,6 +247,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('submits the typed dispute and the acceptance', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -257,7 +266,7 @@ describe('summaryAndAccept behavior', () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
-    expect(submittedValues(onSubmit)).toEqual({
+    expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'Yes',
       associatedDispute: 'Pricing disagreement',
       acceptanceOfQuote: true,
@@ -266,6 +275,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('strips the hidden dispute details when there is no dispute', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -283,7 +295,7 @@ describe('summaryAndAccept behavior', () => {
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
-    expect(submittedValues(onSubmit)).toEqual({
+    expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
     });
@@ -291,6 +303,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('links the error summary to the dispute and acceptance fields', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     renderStep({
@@ -325,6 +340,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('strips dispute details typed before switching to No', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -350,6 +368,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('requires the acceptance and the dispute details after a failed submit', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -378,6 +399,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('shows the acceptance message after the checkbox is cleared', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -396,6 +420,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('submits an untouched acceptance (the schema only rejects an explicit false)', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -411,6 +438,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('rejects dispute details longer than 300 characters', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -434,6 +464,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('does not require the acceptance on save and exit', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -449,6 +482,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('still enforces the dispute length on save and exit', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -471,6 +507,9 @@ describe('summaryAndAccept behavior', () => {
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
     expect.hasAssertions();
+    expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const { rerender } = renderStep({ values: {} });
     await waitForLoad();
@@ -490,7 +529,13 @@ describe('summaryAndAccept behavior', () => {
     mocks.getSummaryAndAccept.mockRejectedValue(new Error('boom'));
     renderStep();
 
-    await waitFor(() => expect(mocks.error).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(mocks.error).toHaveBeenCalledWith(
+        'Failed to retrieve getAcceptQuotePreInfo',
+        expect.any(Error),
+        { Id: 'quote-1' },
+      ),
+    );
 
     expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInTheDocument();
   });

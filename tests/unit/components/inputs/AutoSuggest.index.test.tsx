@@ -67,7 +67,7 @@ describe('autoSuggest parent state', () => {
     });
 
     expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
-    expect(onSelectedOption.mock.calls[0]).toEqual([]);
+    expect(onSelectedOption.mock.calls[0]).toStrictEqual([]);
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
     expect(screen.getByTestId('option-count')).toHaveTextContent('0');
     expect(screen.getByTestId('loading')).toHaveTextContent('false');
@@ -125,7 +125,7 @@ describe('autoSuggest parent state', () => {
 
     expect({
       loading: screen.getByTestId('loading').textContent,
-    }).toEqual({ loading: 'true' });
+    }).toStrictEqual({ loading: 'true' });
 
     await act(async () => {
       containerState.props.onCancel();
@@ -134,7 +134,7 @@ describe('autoSuggest parent state', () => {
     expect({
       searchTerm: screen.getByTestId('search-term').textContent,
       loading: screen.getByTestId('loading').textContent,
-    }).toEqual({ searchTerm: 'Original', loading: 'false' });
+    }).toStrictEqual({ searchTerm: 'Original', loading: 'false' });
 
     await act(async () => {
       resolveSearch([{ id: 'syd', displayText: 'Sydney', value: 'syd' }]);
@@ -145,7 +145,7 @@ describe('autoSuggest parent state', () => {
       searchTerm: screen.getByTestId('search-term').textContent,
       optionCount: screen.getByTestId('option-count').textContent,
       noResult: screen.getByTestId('no-result').textContent,
-    }).toEqual({
+    }).toStrictEqual({
       searchTerm: 'Original',
       optionCount: '0',
       noResult: 'false',
@@ -184,6 +184,6 @@ describe('autoSuggest parent state', () => {
       error: screen.getByTestId('error').textContent,
       optionCount: screen.getByTestId('option-count').textContent,
       loading: screen.getByTestId('loading').textContent,
-    }).toEqual({ error: 'false', optionCount: '0', loading: 'false' });
+    }).toStrictEqual({ error: 'false', optionCount: '0', loading: 'false' });
   });
 });

@@ -53,7 +53,7 @@ const renderLookup = (
     </Formik>,
   );
 
-describe(OrganisationNameLookup, () => {
+describe('organisation name lookup behavior', () => {
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
     expect.hasAssertions();
 

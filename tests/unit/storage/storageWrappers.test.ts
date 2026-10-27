@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   clearBranchModalNotification,
   clearDashboardInfoNotification,
@@ -34,9 +34,9 @@ describe('notification storage wrappers', () => {
     severity: NotificationSeverity.Success,
   };
 
-  beforeEach(() => {
+  const resetNotificationStorage = () => {
     sessionStorage.clear();
-  });
+  };
 
   it.each([
     [
@@ -85,12 +85,15 @@ describe('notification storage wrappers', () => {
     'sets, gets, and clears the %s notification',
     (_name, setNotification, getNotification, clearNotification, key) => {
       expect.hasAssertions();
+
+      resetNotificationStorage();
+
       expect(getNotification()).toBeUndefined();
 
       setNotification(notification);
 
       expect(sessionStorage.getItem(key)).toBe(JSON.stringify(notification));
-      expect(getNotification()).toEqual(notification);
+      expect(getNotification()).toStrictEqual(notification);
 
       clearNotification();
 
@@ -101,12 +104,14 @@ describe('notification storage wrappers', () => {
 });
 
 describe('target organisation storage wrapper', () => {
-  beforeEach(() => {
+  const resetTargetOrganisationStorage = () => {
     sessionStorage.clear();
-  });
+  };
 
   it('sets, gets, and clears the target organisation', () => {
     expect.hasAssertions();
+
+    resetTargetOrganisationStorage();
 
     const targetOrganisation = {
       targetOrganisationAbn: '12345678901',
@@ -120,7 +125,7 @@ describe('target organisation storage wrapper', () => {
     expect(sessionStorage.getItem('targetOrganisation')).toBe(
       JSON.stringify(targetOrganisation),
     );
-    expect(getTargetOrganisation()).toEqual(targetOrganisation);
+    expect(getTargetOrganisation()).toStrictEqual(targetOrganisation);
 
     clearTargetOrganisation();
 

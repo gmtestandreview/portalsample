@@ -1,4 +1,4 @@
-import { describe, afterEach, it, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
@@ -99,17 +99,14 @@ const expectCancelledCombobox = (combobox: HTMLElement) => {
 };
 
 describe('combobox accessibility', () => {
+  // This helper intentionally registers Vitest lifecycle hooks for the console guard.
+  // eslint-disable-next-line vitest/require-hook
   installUnexpectedConsoleGuard();
-
-  // Vitest runs `afterEach` hooks in reverse registration order, so the guard
-  // above runs before the global cleanup in `vitest.setup.ts`. When the guard
-  // throws, that cleanup never runs and the previous test's DOM leaks - two
-  // elements then share `id="suburb"` and accessible-name computation breaks
-  // for every later test. Registering cleanup after the guard runs it first.
-  afterEach(cleanup);
 
   it('exposes AutoSuggest as a labelled input with keyboard navigation and listbox options', async () => {
     expect.hasAssertions();
+
+    cleanup();
 
     renderWithFormik(
       <AutoSuggestContainer
@@ -158,6 +155,8 @@ describe('combobox accessibility', () => {
 
   it('exposes OrganisationNameLookup as a labelled input combobox with active-descendant navigation', async () => {
     expect.hasAssertions();
+
+    cleanup();
 
     renderWithFormik(
       <OrganisationNameLookup
@@ -238,6 +237,8 @@ describe('combobox accessibility', () => {
   it('keeps the React Aria label through manual entry, results and cancellation', async () => {
     expect.hasAssertions();
 
+    cleanup();
+
     const getOptions = vi
       .fn<NonNullable<AutoSuggestProps<string>['getOptions']>>()
       .mockResolvedValue(suburbOptions);
@@ -277,6 +278,8 @@ describe('combobox accessibility', () => {
 
   it('keeps the React Aria label while the field carries a validation error', () => {
     expect.hasAssertions();
+
+    cleanup();
 
     renderWithFormik(
       <AutoSuggestContainer<string>

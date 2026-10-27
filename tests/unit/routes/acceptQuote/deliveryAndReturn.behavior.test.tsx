@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import { MemoryRouter } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
   ReturnAddressTypeValues,
@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react') as unknown as string,
   () =>
     ({
       useMsal: () => ({
@@ -47,7 +47,7 @@ vi.mock(
 );
 
 vi.mock(
-  '@/authentication/hooks',
+  import('@/authentication/hooks') as unknown as string,
   () =>
     ({
       useAccountState: () => ({
@@ -57,22 +57,25 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule26>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
-  const actual = await importOriginal<typeof WebApiClientModule>();
-  return {
-    ...actual,
-    AcceptQuoteClient: class {
-      setAuthToken = vi.fn<(token: string) => void>();
-      getDeliveryAndReturn = mocks.getDeliveryAndReturn;
-    },
-    AccountsClient: class {
-      setAuthToken = vi.fn<(token: string) => void>();
-    },
-  } satisfies __ExactMockModule<__TestMockModule4>;
-});
+vi.mock(
+  import('@/api/web-api-client') as unknown as string,
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
+    return {
+      ...actual,
+      AcceptQuoteClient: class {
+        setAuthToken = vi.fn<(token: string) => void>();
+        getDeliveryAndReturn = mocks.getDeliveryAndReturn;
+      },
+      AccountsClient: class {
+        setAuthToken = vi.fn<(token: string) => void>();
+      },
+    } satisfies __ExactMockModule<__TestMockModule4>;
+  },
+);
 
 vi.mock(
-  '@/instrumentation/AppLogger',
+  import('@/instrumentation/AppLogger') as unknown as string,
   () =>
     ({
       default: {
@@ -85,7 +88,7 @@ vi.mock(
 // The lookup talks to the address service; stand in a marker element. The edit
 // form renders the RHF twin once migrated; the summary keeps the Formik one.
 vi.mock(
-  '@/components/Inputs/AddressLookup',
+  import('@/components/Inputs/AddressLookup') as unknown as string,
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -94,7 +97,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule31>,
 );
 vi.mock(
-  '@/components/Inputs/RhfAddressLookup',
+  import('@/components/Inputs/RhfAddressLookup') as unknown as string,
   () =>
     ({
       default: ({ label }: { label: string }) => (
@@ -164,22 +167,24 @@ const submittedValues = (onSubmit: ReturnType<typeof vi.fn>) =>
 
 const waitForLoad = () => screen.findByText(/1 Street Road/);
 
-describe('deliveryAndReturn behavior: visibility', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mocks.getDeliveryAndReturn.mockResolvedValue({
-      acceptQuotePreInfo: { receiptAndDispatchNA: false },
-      rfqOrganisation: {
-        streetAddress,
-        postalAddress,
-        postalAddressSameAsStreetAddress: false,
-      },
-    });
+const resetDeliveryAndReturnBehaviorMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
+  mocks.getDeliveryAndReturn.mockResolvedValue({
+    acceptQuotePreInfo: { receiptAndDispatchNA: false },
+    rfqOrganisation: {
+      streetAddress,
+      postalAddress,
+      postalAddressSameAsStreetAddress: false,
+    },
   });
+};
 
+describe('deliveryAndReturn behavior: visibility', () => {
   it('shows no delivery or return fields when receipt and dispatch is not applicable', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     mocks.getDeliveryAndReturn.mockResolvedValue({
       acceptQuotePreInfo: { receiptAndDispatchNA: true },
@@ -198,6 +203,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   it('shows the delivery and return sections otherwise', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     renderStep();
     await waitForLoad();
 
@@ -212,6 +219,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
 
   it('shows the return contact details only for a different person', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
     renderStep({
@@ -237,6 +246,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   it('shows the address lookup only when Other is selected', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     const user = userEvent.setup();
     renderStep();
     await waitForLoad();
@@ -256,6 +267,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
 
   it('shows the carrier block only when the client will provide carrier details', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
     renderStep();
@@ -280,6 +293,8 @@ describe('deliveryAndReturn behavior: visibility', () => {
   it('keeps rendering and logs when the step fails to load', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     mocks.getDeliveryAndReturn.mockRejectedValue(new Error('boom'));
     renderStep();
 
@@ -296,21 +311,10 @@ describe('deliveryAndReturn behavior: visibility', () => {
 });
 
 describe('deliveryAndReturn behavior: submit, validation and reload', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mocks.getDeliveryAndReturn.mockResolvedValue({
-      acceptQuotePreInfo: { receiptAndDispatchNA: false },
-      rfqOrganisation: {
-        streetAddress,
-        postalAddress,
-        postalAddressSameAsStreetAddress: false,
-      },
-    });
-  });
-
   it('submits typed carrier values and the customs value as displayed text', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
@@ -374,6 +378,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   it('strips only the hidden return address (the carrier and contact wrappers do not strip)', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
@@ -407,6 +413,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   it('submits the typed return contact for a different person', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
@@ -437,6 +445,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
   it('shows required messages for the carrier and contact after a failed submit', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
@@ -471,6 +481,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   ] as const)('rejects %s longer than 300 characters', async (field) => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
@@ -494,6 +506,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
   it('rejects an invalid carrier phone number', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
@@ -519,6 +533,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   it('applies the soft schema to save and exit', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
@@ -541,6 +557,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
   it('still enforces the packaging notes limit on save and exit', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnBehaviorMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => void>();
     renderStep({
@@ -562,6 +580,8 @@ describe('deliveryAndReturn behavior: submit, validation and reload', () => {
 
   it('reinitializes the fields when the wizard loads new step data', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnBehaviorMocks();
 
     const { rerender } = renderStep({
       values: { returnOrganisationName: 'Old' },

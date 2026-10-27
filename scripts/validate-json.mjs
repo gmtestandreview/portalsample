@@ -1,9 +1,9 @@
-import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import Ajv from 'ajv';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { listDirectory, readTextFile } from './safe-file-io.mjs';
 
 const root = process.cwd();
 const ignoredDirectories = new Set([
@@ -54,7 +54,7 @@ const collectJsonFiles = async (directory) => {
     return;
   }
 
-  const entries = await readdir(directory, { withFileTypes: true });
+  const entries = listDirectory(directory, { withFileTypes: true }, root);
 
   await Promise.all(
     entries.map(async (entry) => {
@@ -102,7 +102,7 @@ const parsedFiles = await Promise.all(
     .toSorted((left, right) => left.localeCompare(right))
     .map(async (filePath) => {
       try {
-        const content = await readFile(filePath, 'utf8');
+        const content = readTextFile(filePath, root);
         const parsed = JSON.parse(content);
 
         return { filePath, parsed };

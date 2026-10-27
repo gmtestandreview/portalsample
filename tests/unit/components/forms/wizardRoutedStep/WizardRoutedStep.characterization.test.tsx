@@ -1,5 +1,5 @@
 import type React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -28,37 +28,37 @@ type LoadStepHandler = WizardRoutedStepProps<FormikValues>['loadStepValues'];
 // the RHF shell (see the design addendum, parity contract).
 
 vi.mock(
-  '../../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         verbose: vi.fn<AppLogger['verbose']>(),
         error: vi.fn<AppLogger['error']>(),
         trace: vi.fn<AppLogger['trace']>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 // The real WizardStep wraps an error boundary and analytics that are not under
 // test; render its children directly.
 vi.mock(
   import('../../../../../ClientApp/src/components/forms/WizardForm/WizardStep'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule24>,
+    }) satisfies __ExactMockModule<__TestMockModule24>) as unknown as __DynamicPartialMockFactory<__TestMockModule24>,
 );
 
 vi.mock(
   import('../../../../../ClientApp/src/analytics/GoogleAnalytics'),
-  () =>
+  (() =>
     ({
       default: ({ children }: { children?: React.ReactNode }) => (
         <>{children}</>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 const accountState = {
@@ -151,12 +151,14 @@ const renderStep = (
 const NEXT = 'save-and-next-button';
 
 describe('formik wizard shell characterisation', () => {
-  beforeEach(() => {
+  const resetWizardRoutedStepCharacterization = () => {
     vi.clearAllMocks();
-  });
+  };
 
   it('moves focus to the error summary and scrolls it into view after an invalid submit', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
     const scrollIntoView = vi.fn<typeof HTMLElement.prototype.scrollIntoView>();
@@ -175,6 +177,8 @@ describe('formik wizard shell characterisation', () => {
 
   it('focuses the summary again on each further failed submit', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
     vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
@@ -199,6 +203,8 @@ describe('formik wizard shell characterisation', () => {
 
   it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
     let loads = 0;
@@ -231,6 +237,8 @@ describe('formik wizard shell characterisation', () => {
   it('save and exit skips hard validation and navigates to the exit location', async () => {
     expect.hasAssertions();
 
+    resetWizardRoutedStepCharacterization();
+
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<SaveHandler>(
       async (_values: FormikValues) => undefined,
@@ -246,12 +254,14 @@ describe('formik wizard shell characterisation', () => {
 
     await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
 
-    expect(onSaveAndExit.mock.calls[0]?.[0]).toEqual({});
+    expect(onSaveAndExit.mock.calls[0]?.[0]).toStrictEqual({});
     await expect(screen.findByText('Done Page')).resolves.toBeInTheDocument();
   });
 
   it('control: without a prior save and exit, clearing the field shows the hard-schema message', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
     renderStep({
@@ -272,6 +282,8 @@ describe('formik wizard shell characterisation', () => {
 
   it('keeps using the soft schema after a failed save and exit (sticky saveAndExit flag)', async () => {
     expect.hasAssertions();
+
+    resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<SaveHandler>(async () => {

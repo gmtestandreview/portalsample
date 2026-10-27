@@ -19,7 +19,7 @@ const meta = preview.meta({
 
 type GridListStoryArgs = Partial<Parameters<typeof GridList>[0]>;
 
-export const renderExample = (args: GridListStoryArgs) => (
+export const RenderExample = (args: GridListStoryArgs) => (
   <GridList
     {...args}
     style={{ width: 800, maxWidth: 'calc(100vw - 80px)' }}
@@ -129,7 +129,7 @@ export const renderExample = (args: GridListStoryArgs) => (
 );
 
 export const Example = meta.story({
-  render: renderExample,
+  render: RenderExample,
   args: {
     selectionMode: 'multiple',
     layout: 'grid',
@@ -140,7 +140,7 @@ export const Example = meta.story({
   },
 });
 
-export const renderSections = (args: GridListStoryArgs) => (
+export const RenderSections = (args: GridListStoryArgs) => (
   <GridList
     {...args}
     style={{ width: 800, maxWidth: 'calc(100vw - 80px)' }}
@@ -216,7 +216,7 @@ export const renderSections = (args: GridListStoryArgs) => (
 );
 
 export const Sections = meta.story({
-  render: renderSections,
+  render: RenderSections,
 
   args: {
     selectionMode: 'multiple',

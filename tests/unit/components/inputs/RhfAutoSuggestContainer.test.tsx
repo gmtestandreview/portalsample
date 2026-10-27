@@ -29,7 +29,7 @@ const comboState = vi.hoisted(() => ({
   onOpenChange: undefined as ((isOpen: boolean) => void) | undefined,
 }));
 
-vi.mock('react-aria-components/ComboBox', async () => {
+vi.mock(import('react-aria-components/ComboBox'), (async () => {
   const React = await import('react');
   const ComboBoxStateContext = React.createContext(comboState);
 
@@ -70,18 +70,18 @@ vi.mock('react-aria-components/ComboBox', async () => {
     Label,
     Popover,
   } satisfies __ExactMockModule<__TestMockModule37>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule37>);
 
-vi.mock('react-aria-components/Group', async () => {
+vi.mock(import('react-aria-components/Group'), (async () => {
   const React = await import('react');
   const Group = ({ children }: { children: ReactNode }) =>
     React.createElement('div', { 'data-testid': 'group' }, children);
   return { Group } satisfies __ExactMockModule<__TestMockModule38>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule38>);
 
 vi.mock(
-  '@/components/Inputs/AutoSuggest/AutoSuggestOptions',
-  () =>
+  import('@/components/Inputs/AutoSuggest/AutoSuggestOptions'),
+  (() =>
     ({
       default: ({ options }: { options: AutoSuggestOption<string>[] }) => (
         <ul data-testid='options'>
@@ -90,7 +90,7 @@ vi.mock(
           ))}
         </ul>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule39>,
+    }) satisfies __ExactMockModule<__TestMockModule39>) as unknown as __DynamicPartialMockFactory<__TestMockModule39>,
 );
 
 interface Values {
@@ -135,7 +135,7 @@ const failingResolver = async () => ({
   },
 });
 
-describe(RhfAutoSuggestContainer, () => {
+describe('rhf auto suggest container behavior', () => {
   it('renders options, help, loading state and handles input actions', async () => {
     expect.hasAssertions();
 
@@ -169,7 +169,7 @@ describe(RhfAutoSuggestContainer, () => {
       loadingMessage: screen.getByText('Searching').textContent,
       optionsRendered: Boolean(screen.getByTestId('options')),
       openCalls: comboState.open.mock.calls,
-    }).toEqual({
+    }).toStrictEqual({
       placeholder: 'Start typing',
       inlineHelp: 'Use your suburb',
       loadingMessage: 'Searching',
@@ -182,7 +182,9 @@ describe(RhfAutoSuggestContainer, () => {
       comboState.onInputChange?.('syd');
     });
 
-    expect({ searchTermChangeCalls: onSearchTermChange.mock.calls }).toEqual({
+    expect({
+      searchTermChangeCalls: onSearchTermChange.mock.calls,
+    }).toStrictEqual({
       searchTermChangeCalls: [['syd']],
     });
 
@@ -196,7 +198,7 @@ describe(RhfAutoSuggestContainer, () => {
       cancelCalls: onCancel.mock.calls,
       suggestionSummary: screen.getByText(/2 suggestions displayed/)
         .textContent,
-    }).toEqual({
+    }).toStrictEqual({
       cancelCalls: [[]],
       suggestionSummary: expect.stringContaining('2 suggestions displayed'),
     });
@@ -206,7 +208,7 @@ describe(RhfAutoSuggestContainer, () => {
       comboState.onChange?.('sydney');
     });
 
-    expect({ selectedOptionCalls: onSelectedOption.mock.calls }).toEqual({
+    expect({ selectedOptionCalls: onSelectedOption.mock.calls }).toStrictEqual({
       selectedOptionCalls: [[options[0]]],
     });
 
@@ -226,7 +228,7 @@ describe(RhfAutoSuggestContainer, () => {
     expect({
       closeCalls: comboState.close.mock.calls,
       comboBoxRendered: Boolean(screen.getByTestId('combo-box')),
-    }).toEqual({ closeCalls: [[]], comboBoxRendered: true });
+    }).toStrictEqual({ closeCalls: [[]], comboBoxRendered: true });
   });
 
   it('renders no-result and lookup-error messages with defaults and overrides', () => {

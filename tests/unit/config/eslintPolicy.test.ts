@@ -1,6 +1,6 @@
 import { ESLint } from 'eslint';
 
-import { beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 /**
  * Policy characterization for the ESLint 10 flat config (Task D1).
@@ -21,17 +21,14 @@ const PROBE_FILE = 'ClientApp/src/App.tsx';
 
 const LOAD_TIMEOUT_MS = 60_000;
 
-let appRules: Record<string, unknown> = {};
-
-let appPluginNames: string[] = [];
-
-let pluginRuleNames: string[] = [];
-
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
 type Severity = 0 | 1 | 2 | 'absent';
 
-const severityOf = (ruleId: string): Severity => {
-  const entry = Object.entries(appRules)
+const severityOf = (
+  rules: Record<string, unknown>,
+  ruleId: string,
+): Severity => {
+  const entry = Object.entries(rules)
     .find(([name]) => name === ruleId)
     ?.at(1);
 
@@ -46,7 +43,8 @@ const severityIn = (
   rules: Record<string, unknown> | undefined,
   ruleId: string,
 ): Severity => {
-  const configured = rules?.[ruleId];
+  const configured =
+    rules === undefined ? undefined : Reflect.get(rules, ruleId);
 
   if (configured === undefined) return 'absent';
 
@@ -66,12 +64,9 @@ const lintTextMessages = async (filePath: string, code: string) => {
   return result.messages;
 };
 
-beforeAll(async () => {
+const policyReady = (async () => {
   const eslint = new ESLint();
   const config = await eslint.calculateConfigForFile(PROBE_FILE);
-
-  appRules = (config.rules ?? {}) as Record<string, unknown>;
-  appPluginNames = Object.keys(config.plugins ?? {});
 
   const imported = (await import('@eslint-react/eslint-plugin')) as {
     default?: { rules?: Record<string, unknown> };
@@ -79,13 +74,28 @@ beforeAll(async () => {
   };
   const plugin = imported.default ?? imported;
 
-  pluginRuleNames = Object.keys(plugin.rules ?? {});
-}, LOAD_TIMEOUT_MS);
+  return {
+    appRules: (config.rules ?? {}) as Record<string, unknown>,
+    appPluginNames: Object.keys(config.plugins ?? {}),
+    pluginRuleNames: Object.keys(plugin.rules ?? {}),
+  };
+})();
 
-describe('the resolved config actually applies to application files', () => {
-  it('resolves a non-empty rule set for the probe file', () => {
+const requireLintResult = <T>(value: T | undefined): T => {
+  if (value === undefined) {
+    throw new Error('ESLint returned no result for the policy probe');
+  }
+  return value;
+};
+
+describe('resolved application lint policy', () => {
+  it('resolves a non-empty rule set for the probe file', async () => {
     expect.assertions(1);
-    expect(Object.keys(appRules).length).toBeGreaterThan(100);
+
+    await policyReady;
+    const policy = await policyReady;
+
+    expect(Object.keys(policy.appRules).length).toBeGreaterThan(100);
   });
 });
 
@@ -160,14 +170,18 @@ describe('runner-specific lint boundaries', () => {
   );
 });
 
-describe('the resolved config actually applies to application files', () => {
-  it('loads the plugin whose rule surface these assertions describe', () => {
+describe('resolved plugin rule surface', () => {
+  it('loads the plugin whose rule surface these assertions describe', async () => {
     expect.assertions(1);
-    expect(pluginRuleNames.length).toBeGreaterThan(100);
+
+    await policyReady;
+    const policy = await policyReady;
+
+    expect(policy.pluginRuleNames.length).toBeGreaterThan(100);
   });
 });
 
-describe('the resolved config actually applies to application files', () => {
+describe('vitest policy autofix boundary', () => {
   it(
     'does not auto-fix partial Vitest mock module specifiers',
     async () => {
@@ -180,12 +194,10 @@ describe('the resolved config actually applies to application files', () => {
         filePath: 'tests/unit/config/eslintPolicy.test.ts',
       });
 
-      if (result === undefined) {
-        throw new Error('ESLint returned no result for the policy probe');
-      }
+      const policyResult = requireLintResult(result);
 
-      expect(result.output).toBeUndefined();
-      expect(result.messages).toEqual(
+      expect(policyResult.output).toBeUndefined();
+      expect(policyResult.messages).toStrictEqual(
         expect.arrayContaining([
           expect.objectContaining({
             ruleId: 'vitest/prefer-import-in-mock',
@@ -198,15 +210,19 @@ describe('the resolved config actually applies to application files', () => {
   );
 });
 
-describe('the resolved config actually applies to application files', () => {
-  it('loads jsx-a11y-x and enables its recommended rules', () => {
+describe('jsx accessibility policy', () => {
+  it('loads jsx-a11y-x and enables its recommended rules', async () => {
     expect.assertions(2);
-    expect(appPluginNames).toContain('jsx-a11y-x');
-    expect(severityOf('jsx-a11y-x/alt-text')).toBe(2);
+
+    await policyReady;
+    const policy = await policyReady;
+
+    expect(policy.appPluginNames).toContain('jsx-a11y-x');
+    expect(severityOf(policy.appRules, 'jsx-a11y-x/alt-text')).toBe(2);
   });
 });
 
-describe('the resolved config actually applies to application files', () => {
+describe('vite configuration lint policy', () => {
   it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
     expect.assertions(1);
 

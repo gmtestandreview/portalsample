@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import TermsAndConditionModal from '../../../../ClientApp/src/components/modals/TermsAndCondition/index';
 import type {
@@ -50,8 +50,8 @@ const mockMsal = vi.hoisted(() => {
 });
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => ({
         inProgress: mockMsal.inProgress,
@@ -60,7 +60,7 @@ vi.mock(
           acquireTokenSilent: mockMsal.acquireTokenSilent,
         },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 const mockSetAgree = vi.fn<() => void>();
@@ -123,14 +123,14 @@ type MockUsersClient = {
 };
 
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
-  () =>
+  import('../../../../ClientApp/src/api/web-api-client'),
+  (() =>
     ({
       UsersClient: vi.fn<() => void>(function (this: MockUsersClient) {
         this.setAuthToken = mockSetAuthToken;
         this.acceptTermsAndCondition = mockAcceptTermsAndCondition;
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>,
+    }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
 );
 
 vi.mock(
@@ -156,8 +156,8 @@ import {
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
-describe(TermsAndConditionModal, () => {
-  beforeEach(() => {
+describe('terms and condition modal', () => {
+  const resetTermsAndConditionMocks = () => {
     vi.clearAllMocks();
     mockMsal.inProgress = 'none';
     mockMsal.accounts = [mockMsal.account];
@@ -167,10 +167,12 @@ describe(TermsAndConditionModal, () => {
     vi.mocked(useAccountDispatch).mockReturnValue(mockDispatch);
     // Restore the default success implementation after clearAllMocks
     mockAcceptTermsAndCondition.mockResolvedValue(undefined);
-  });
+  };
 
   it('renders the modal when userAcceptedTermsOfUse is false', () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -190,6 +192,8 @@ describe(TermsAndConditionModal, () => {
   it('does not render the modal when userAcceptedTermsOfUse is true', () => {
     expect.hasAssertions();
 
+    resetTermsAndConditionMocks();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
         userAcceptedTermsOfUse: true,
@@ -207,6 +211,8 @@ describe(TermsAndConditionModal, () => {
 
   it('dispatches setAgree after successful ToU acceptance', async () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -227,6 +233,8 @@ describe(TermsAndConditionModal, () => {
 
   it('sends the auth token and configured terms version when accepting terms', async () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -251,6 +259,8 @@ describe(TermsAndConditionModal, () => {
   it('uses the family name only when the given name is not available', () => {
     expect.hasAssertions();
 
+    resetTermsAndConditionMocks();
+
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({ familyName: 'Solo' }),
     );
@@ -264,6 +274,8 @@ describe(TermsAndConditionModal, () => {
 
   it('renders the exit portal link', () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -281,6 +293,8 @@ describe(TermsAndConditionModal, () => {
 
   it('does not call the API while MSAL is in progress', async () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     mockMsal.inProgress = 'login';
     vi.mocked(useAccountState).mockReturnValue(
@@ -303,6 +317,8 @@ describe(TermsAndConditionModal, () => {
   it('does not call the API when there is no MSAL account', async () => {
     expect.hasAssertions();
 
+    resetTermsAndConditionMocks();
+
     mockMsal.accounts = [];
     vi.mocked(useAccountState).mockReturnValue(
       createAccountState({
@@ -323,6 +339,8 @@ describe(TermsAndConditionModal, () => {
 
   it('accepts terms without dispatching when account dispatch is unavailable', async () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     vi.mocked(useAccountDispatch).mockReturnValue(null);
     vi.mocked(useAccountState).mockReturnValue(
@@ -348,6 +366,8 @@ describe(TermsAndConditionModal, () => {
 
   it('shows the error alert when acceptTermsAndCondition API call fails', async () => {
     expect.hasAssertions();
+
+    resetTermsAndConditionMocks();
 
     mockAcceptTermsAndCondition.mockRejectedValueOnce(
       new Error('Network error'),

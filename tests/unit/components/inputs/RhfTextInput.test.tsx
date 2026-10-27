@@ -44,7 +44,7 @@ const expectTextInputOptionalAttributes = (input: HTMLElement) => {
   expect(input.closest('.form-field-container')).toHaveClass('wrap');
 };
 
-describe(RhfTextInput, () => {
+describe('rhf text input behavior', () => {
   it('renders a labelled text box showing the form value', () => {
     expect.hasAssertions();
 

@@ -133,7 +133,7 @@ const renderAttachment = (
     />,
   );
 
-describe(AttachmentNew, () => {
+describe('attachment upload behavior', () => {
   it('renders upload controls with help text and disabled state', () => {
     expect.hasAssertions();
 
@@ -171,7 +171,7 @@ describe(AttachmentNew, () => {
         (_, element) =>
           element?.textContent === 'Maximum size for each file: 1MB each',
       ).textContent,
-    }).toEqual({
+    }).toStrictEqual({
       fileTypes: '.pdf, .jpg',
       maximumSize: 'Maximum size for each file: 1MB each',
     });

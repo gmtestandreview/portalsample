@@ -3,7 +3,7 @@ import { cp, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it, onTestFinished } from 'vitest';
 
 import { readTextFile } from '../../helpers/safeTestFilesystem';
 
@@ -66,17 +66,19 @@ async function createPatchFixture() {
   return root;
 }
 
-afterEach(async () => {
+const cleanupTemporaryRoots = async (): Promise<void> => {
   await Promise.all(
     temporaryRoots
       .splice(0)
       .map((root) => rm(root, { force: true, recursive: true })),
   );
-});
+};
 
 describe('repository-owned local patches', () => {
   it('applies all patches and is safe to run again', async () => {
     expect.hasAssertions();
+
+    onTestFinished(cleanupTemporaryRoots);
 
     const root = await createPatchFixture();
 

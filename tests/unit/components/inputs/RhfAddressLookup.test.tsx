@@ -31,8 +31,8 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useAccount: () => mocks.account,
       useMsal: () => ({
@@ -40,16 +40,20 @@ vi.mock(
         inProgress: mocks.inProgress,
         instance: { acquireTokenSilent: mocks.acquireTokenSilent },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 vi.mock(
-  '@/api/web-api-client',
-  async (importOriginal) =>
+  import('@/api/web-api-client'),
+  (async (
+    importOriginal: <
+      TOriginal = typeof WebApiClientModule,
+    >() => Promise<TOriginal>,
+  ) =>
     ({
       ...(await importOriginal<typeof WebApiClientModule>()),
       AddressClient,
-    }) satisfies __ExactMockModule<__TestMockModule4>,
+    }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
 );
 
 const match: MatchedAddress = {
@@ -144,7 +148,7 @@ describe('rhfAddressLookup selection', () => {
     );
 
     await waitFor(() =>
-      expect(formValue()).toEqual({
+      expect(formValue()).toStrictEqual({
         id: 7,
         type: 'postal',
         timeStamp: 'stamp',

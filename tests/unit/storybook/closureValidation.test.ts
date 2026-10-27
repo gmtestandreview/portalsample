@@ -93,7 +93,7 @@ describe('closure evidence validation', () => {
     expect.hasAssertions();
     expect(
       moduleUnderTest.deriveExecutableStorySet({ index: fullIndex }),
-    ).toEqual({
+    ).toStrictEqual({
       storyIds: ['components-field--default'],
       skipped: ['components-field--skipped'],
     });
@@ -102,7 +102,7 @@ describe('closure evidence validation', () => {
         index: fullIndex,
         requiredStoryIds: ['components-field--required'],
       }),
-    ).toEqual({
+    ).toStrictEqual({
       storyIds: ['components-field--default', 'components-field--required'],
       skipped: ['components-field--skipped'],
     });
@@ -127,7 +127,7 @@ describe('closure evidence validation', () => {
           producerIdentityDigest: 'sha256:producer',
         },
       }),
-    ).toEqual({
+    ).toStrictEqual({
       ok: true,
       errors: [],
       counts: { required: 1, executed: 1, skipped: 1 },

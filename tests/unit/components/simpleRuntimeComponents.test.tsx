@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
 import {
   AlertError,
@@ -41,13 +41,15 @@ vi.mock(
 const renderWithRouter = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);
 
-describe('simple reusable runtime components', () => {
-  beforeEach(() => {
-    vi.mocked(useAccountState).mockReturnValue(null);
-  });
+const resetSimpleRuntimeMocks = () => {
+  vi.mocked(useAccountState).mockReturnValue(null);
+};
 
+describe('simple reusable runtime components', () => {
   it('home delegates to the get started entry content', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     renderWithRouter(<Home />);
 
@@ -56,6 +58,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders accordion header parts and custom container/body classes', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const { container } = render(
       <CustomAccordion id='quote-accordion' containerClassName='quote-wrapper'>
@@ -96,6 +100,8 @@ describe('simple reusable runtime components', () => {
   it('renders accordion content without optional header parts or wrapper classes', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     const { container } = render(
       <CustomAccordion id='simple-accordion'>
         <CustomAccordionBody eventKey='0' name='Simple section'>
@@ -117,6 +123,8 @@ describe('simple reusable runtime components', () => {
   it('dismisses closeable alerts and invokes the close callback', async () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
     const onClose = vi.fn<() => void>();
 
@@ -132,6 +140,8 @@ describe('simple reusable runtime components', () => {
 
   it('resets a dismissed alert when the message changes', async () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const user = userEvent.setup();
     const { rerender } = render(<AlertInfo canClose>First message</AlertInfo>);
@@ -152,6 +162,8 @@ describe('simple reusable runtime components', () => {
     'renders the %s alert variant with live-region behavior',
     (Component, message, ariaLive, className) => {
       expect.hasAssertions();
+
+      resetSimpleRuntimeMocks();
 
       render(<Component testId='alert-message'>{message}</Component>);
 
@@ -194,6 +206,8 @@ describe('simple reusable runtime components', () => {
     (severity, id, message, iconClassName) => {
       expect.hasAssertions();
 
+      resetSimpleRuntimeMocks();
+
       const onClose = vi.fn<() => void>();
       const { container } = render(
         <NotificationMessage
@@ -218,6 +232,8 @@ describe('simple reusable runtime components', () => {
   it('uses a supplied notification id instead of the default id', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     const { container } = render(
       <NotificationMessage
         id='custom-notification'
@@ -235,6 +251,8 @@ describe('simple reusable runtime components', () => {
   it('uses assertive error semantics when notification severity is missing', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     render(<NotificationMessage message='Unknown failure' />);
 
     const notification = screen.getByRole('alert');
@@ -245,6 +263,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders full-page and partial block UI spinners with different announcement priority', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const { rerender } = render(
       <BlockUISpinner>Loading the page</BlockUISpinner>,
@@ -261,6 +281,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders breadcrumb links and marks the current page', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     renderWithRouter(
       <Breadcrumb
@@ -292,6 +314,8 @@ describe('simple reusable runtime components', () => {
   it('renders no breadcrumb when there are no breadcrumb items', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     const { container } = renderWithRouter(<Breadcrumb breadcrumbs={[]} />);
 
     expect(container).toBeEmptyDOMElement();
@@ -299,6 +323,8 @@ describe('simple reusable runtime components', () => {
 
   it('requires non-current breadcrumb items to provide a destination', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     expect(() =>
       Breadcrumb({
@@ -309,6 +335,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders a dashboard link with supplied wrapper and link classes', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const { container } = renderWithRouter(
       <BackToDashboardButton containerClassName='mt-4' className='wide-link' />,
@@ -323,6 +351,8 @@ describe('simple reusable runtime components', () => {
 
   it('navigates from EditButton when a link is supplied', async () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const user = userEvent.setup();
     const LocationDisplay = () => {
@@ -344,6 +374,8 @@ describe('simple reusable runtime components', () => {
   it('leaves the current route unchanged when EditButton has no link', async () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     const user = userEvent.setup();
     const LocationDisplay = () => {
       const location = useLocation();
@@ -363,6 +395,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders LinkButton as an external anchor', async () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const user = userEvent.setup();
     const onClick = vi.fn<() => void>();
@@ -396,6 +430,8 @@ describe('simple reusable runtime components', () => {
   it('renders LinkButton as an internal router link', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     renderWithRouter(
       /* eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */
       <LinkButton
@@ -417,6 +453,8 @@ describe('simple reusable runtime components', () => {
   it('uses the default button variant for internal LinkButton links', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     renderWithRouter(
       // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
       <LinkButton as='Link' to='/help'>
@@ -431,6 +469,8 @@ describe('simple reusable runtime components', () => {
 
   it('adds external-link affordances only for links that open in a new tab', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     const { rerender } = render(
       <InTextLink href='https://example.gov.au' target='_blank'>
@@ -455,6 +495,8 @@ describe('simple reusable runtime components', () => {
   it('shows pagination ranges and hides the summary when there are no results', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     const { rerender } = render(
       <PaginationHeader totalCount={25} pageSize={10} currentPage={3} />,
     );
@@ -471,6 +513,8 @@ describe('simple reusable runtime components', () => {
   it('shows a full pagination range before the final page', () => {
     expect.hasAssertions();
 
+    resetSimpleRuntimeMocks();
+
     render(<PaginationHeader totalCount={25} pageSize={10} currentPage={1} />);
 
     expect(screen.getByText('1 - 10')).toBeInTheDocument();
@@ -478,6 +522,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders the welcome banner with a given name when account details are available', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     vi.mocked(useAccountState).mockReturnValue({
       details: {
@@ -495,6 +541,8 @@ describe('simple reusable runtime components', () => {
 
   it('renders the welcome banner without a name when account details are absent', () => {
     expect.hasAssertions();
+
+    resetSimpleRuntimeMocks();
 
     vi.mocked(useAccountState).mockReturnValue(
       {} as ReturnType<typeof useAccountState>,

@@ -1,6 +1,6 @@
 import { Form, Formik } from 'formik';
 import { render, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as ReactRouterModule from 'react-router';
 import type * as HelperFunctionsModule from '../../../../ClientApp/src/routes/common/helperFunctions';
 import type * as NotificationModule from '../../../../ClientApp/src/storage/notification';
@@ -250,19 +250,23 @@ function renderComponent() {
   );
 }
 
-describe(SummaryAndAccept, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.route.id = 'quote-1';
-    mocks.getSummaryAndAccept.mockResolvedValue({
-      acceptQuotePreInfo: {},
-      requestForQuote: {},
-      rfqOrganisation: {},
-    });
+const resetSummaryAndAcceptMocks = () => {
+  vi.clearAllMocks();
+  mocks.route.id = 'quote-1';
+  mocks.accounts = [{ homeAccountId: 'mock-account' }];
+  mocks.getSummaryAndAccept.mockResolvedValue({
+    acceptQuotePreInfo: {},
+    requestForQuote: {},
+    rfqOrganisation: {},
   });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(SummaryAndAccept, () => {
   it('skips the API call when no MSAL accounts are available', async () => {
     expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     mocks.accounts = [];
     renderComponent();
@@ -278,6 +282,8 @@ describe(SummaryAndAccept, () => {
 
   it('re-fetches summary data when the route id changes', async () => {
     expect.hasAssertions();
+
+    resetSummaryAndAcceptMocks();
 
     const { rerender } = renderComponent();
 

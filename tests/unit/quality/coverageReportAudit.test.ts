@@ -17,7 +17,7 @@ describe('storybook coverage report audit', () => {
 
     const audit = auditCoverageReport(cleanReport, 3, repositoryRoot);
 
-    expect(audit.nonExecutableEntries).toEqual([]);
+    expect(audit.nonExecutableEntries).toStrictEqual([]);
     expect(audit.executableEntryCount).toBe(3);
     expect(audit.verdict).toBe('clean');
   });
@@ -32,7 +32,7 @@ describe('storybook coverage report audit', () => {
 
     const audit = auditCoverageReport(report, 3, repositoryRoot);
 
-    expect(audit.nonExecutableEntries).toEqual([
+    expect(audit.nonExecutableEntries).toStrictEqual([
       'C:/repo/ClientApp/src/terms-config.json?import',
     ]);
     expect(audit.verdict).toBe('dirty');

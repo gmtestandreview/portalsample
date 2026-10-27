@@ -98,7 +98,9 @@ describe('common validation helpers', () => {
     const schema = oneOfEnum({ Yes: 'Yes', No: 'No' });
 
     await expect(schema.validate('Yes')).resolves.toBe('Yes');
-    await expect(schema.validate('Maybe')).rejects.toThrow();
+    await expect(schema.validate('Maybe')).rejects.toThrow(
+      'must be one of the following values',
+    );
   });
 
   it('checks future dates while ignoring empty and invalid values', () => {

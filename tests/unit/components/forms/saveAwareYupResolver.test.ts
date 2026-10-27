@@ -8,7 +8,7 @@ import {
 } from '@/routes/acceptQuote/validation';
 import * as Yup from 'yup';
 
-describe(createSaveAwareYupResolver, () => {
+describe('save aware yup resolver', () => {
   const resolver = createSaveAwareYupResolver(
     deliveryAndReturnSaveValidation,
     deliveryAndReturnSubmitValidation,
@@ -29,7 +29,7 @@ describe(createSaveAwareYupResolver, () => {
       {} as never,
     );
 
-    expect(softResult.errors).toEqual({});
+    expect(softResult.errors).toStrictEqual({});
     expect(hardResult.errors).toHaveProperty('carrierName');
     expect(hardResult.errors).toHaveProperty('carrierAccountNumber');
   });
@@ -90,7 +90,7 @@ describe(createSaveAwareYupResolver, () => {
 
     const result = await duplicatePathResolver(values, undefined, {} as never);
 
-    expect(result.errors).toEqual({
+    expect(result.errors).toStrictEqual({
       carrierName: {
         type: 'validation',
         message: 'carrierName is too short',
@@ -105,8 +105,8 @@ describe(createSaveAwareYupResolver, () => {
 
     const result = await resolver(values, undefined, {} as never);
 
-    expect(result.errors).toEqual({});
-    expect(result.values).toEqual(values);
+    expect(result.errors).toStrictEqual({});
+    expect(result.values).toStrictEqual(values);
   });
 
   it('returns empty errors without validating when the active mode has no schema', async () => {
@@ -123,7 +123,7 @@ describe(createSaveAwareYupResolver, () => {
 
     const result = await softOnlyResolver(values, undefined, {} as never);
 
-    expect(result).toEqual({ values, errors: {} });
+    expect(result).toStrictEqual({ values, errors: {} });
   });
 
   it('maps a validation error with no inner errors to its own path', async () => {
@@ -142,7 +142,7 @@ describe(createSaveAwareYupResolver, () => {
 
     const result = await singleErrorResolver(values, undefined, {} as never);
 
-    expect(result.errors).toEqual({
+    expect(result.errors).toStrictEqual({
       carrierName: { type: 'validation', message: 'carrierName is required' },
     });
   });
@@ -163,7 +163,7 @@ describe(createSaveAwareYupResolver, () => {
 
     const result = await resolverWithoutInner(values, undefined, {} as never);
 
-    expect(result.errors).toEqual({
+    expect(result.errors).toStrictEqual({
       carrierName: { type: 'validation', message: 'carrierName is required' },
     });
   });
@@ -192,7 +192,7 @@ describe(createSaveAwareYupResolver, () => {
       {} as never,
     );
 
-    expect(result.errors).toEqual({});
+    expect(result.errors).toStrictEqual({});
   });
 
   it('returns no field errors when the validation error has neither inner errors nor a path', async () => {
@@ -219,7 +219,7 @@ describe(createSaveAwareYupResolver, () => {
       {} as never,
     );
 
-    expect(result.errors).toEqual({});
+    expect(result.errors).toStrictEqual({});
   });
 
   it('rethrows a non-validation error raised during schema validation', async () => {

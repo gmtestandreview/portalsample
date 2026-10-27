@@ -1,4 +1,4 @@
-import { describe, afterEach, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import type { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
@@ -10,13 +10,15 @@ type ReactPluginFactory = (
 ) => InstanceType<typeof ReactPlugin>;
 
 describe('appInsightsService', () => {
-  afterEach(() => {
+  const resetAppInsightsTest = () => {
     vi.resetModules();
     vi.restoreAllMocks();
-  });
+  };
 
   it('creates and initializes telemetry with the configured connection string', async () => {
     expect.hasAssertions();
+
+    resetAppInsightsTest();
 
     const loadAppInsights = vi.fn<() => void>();
     const applicationInsightsCtor = vi.fn<ApplicationInsightsFactory>(
@@ -35,21 +37,21 @@ describe('appInsightsService', () => {
     );
 
     vi.doMock(
-      '@microsoft/applicationinsights-web',
+      import('@microsoft/applicationinsights-web') as unknown as string,
       () =>
         ({
           ApplicationInsights: applicationInsightsCtor,
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
-      '@microsoft/applicationinsights-react-js',
+      import('@microsoft/applicationinsights-react-js') as unknown as string,
       () =>
         ({
           ReactPlugin: reactPluginCtor,
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(
-      '@/env',
+      import('@/env') as unknown as string,
       () =>
         ({
           env: {
@@ -73,16 +75,18 @@ describe('appInsightsService', () => {
       }),
     });
     expect(loadAppInsights).toHaveBeenCalledTimes(1);
-    expect(module.ai.reactPlugin).toEqual(
+    expect(module.ai.reactPlugin).toStrictEqual(
       expect.objectContaining({ plugin: 'react' }),
     );
-    expect(module.getAppInsights()).toEqual(
+    expect(module.getAppInsights()).toStrictEqual(
       expect.objectContaining({ loadAppInsights }),
     );
   });
 
   it('returns null services when the connection string is missing', async () => {
     expect.hasAssertions();
+
+    resetAppInsightsTest();
 
     const loadAppInsights = vi.fn<() => void>();
     const applicationInsightsCtor = vi.fn<ApplicationInsightsFactory>(
@@ -94,21 +98,21 @@ describe('appInsightsService', () => {
     );
 
     vi.doMock(
-      '@microsoft/applicationinsights-web',
+      import('@microsoft/applicationinsights-web') as unknown as string,
       () =>
         ({
           ApplicationInsights: applicationInsightsCtor,
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
-      '@microsoft/applicationinsights-react-js',
+      import('@microsoft/applicationinsights-react-js') as unknown as string,
       () =>
         ({
           ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(
-      '@/env',
+      import('@/env') as unknown as string,
       () =>
         ({
           env: {
@@ -129,24 +133,26 @@ describe('appInsightsService', () => {
   it('warns about disabled telemetry only in runtime development environment', async () => {
     expect.hasAssertions();
 
+    resetAppInsightsTest();
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      import('@microsoft/applicationinsights-web') as unknown as string,
       () =>
         ({
           ApplicationInsights: vi.fn<ApplicationInsightsFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
-      '@microsoft/applicationinsights-react-js',
+      import('@microsoft/applicationinsights-react-js') as unknown as string,
       () =>
         ({
           ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(
-      '@/env',
+      import('@/env') as unknown as string,
       () =>
         ({
           env: {
@@ -166,17 +172,19 @@ describe('appInsightsService', () => {
   it('stays silent when telemetry is deliberately disabled with the dummy sentinel', async () => {
     expect.hasAssertions();
 
+    resetAppInsightsTest();
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      import('@microsoft/applicationinsights-web') as unknown as string,
       () =>
         ({
           ApplicationInsights: vi.fn<ApplicationInsightsFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
-      '@microsoft/applicationinsights-react-js',
+      import('@microsoft/applicationinsights-react-js') as unknown as string,
       () =>
         ({
           ReactPlugin: vi.fn<ReactPluginFactory>(),
@@ -186,7 +194,7 @@ describe('appInsightsService', () => {
     // warning per module instantiation is noise there - 48 lines across the
     // Storybook suite - and it drowns out warnings that mean something.
     vi.doMock(
-      '@/env',
+      import('@/env') as unknown as string,
       () =>
         ({
           env: {
@@ -206,24 +214,26 @@ describe('appInsightsService', () => {
   it('does not warn about disabled telemetry outside the runtime development environment', async () => {
     expect.hasAssertions();
 
+    resetAppInsightsTest();
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     vi.doMock(
-      import('@microsoft/applicationinsights-web'),
+      import('@microsoft/applicationinsights-web') as unknown as string,
       () =>
         ({
           ApplicationInsights: vi.fn<ApplicationInsightsFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule57>,
     );
     vi.doMock(
-      '@microsoft/applicationinsights-react-js',
+      import('@microsoft/applicationinsights-react-js') as unknown as string,
       () =>
         ({
           ReactPlugin: vi.fn<ReactPluginFactory>(),
         }) satisfies __ExactMockModule<__TestMockModule58>,
     );
     vi.doMock(
-      '@/env',
+      import('@/env') as unknown as string,
       () =>
         ({
           env: {

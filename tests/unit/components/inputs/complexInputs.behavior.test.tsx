@@ -58,8 +58,8 @@ const mocks: {
 }));
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useAccount: () => mocks.account,
       useMsal: () => ({
@@ -67,16 +67,20 @@ vi.mock(
         inProgress: mocks.inProgress,
         instance: { acquireTokenSilent: mocks.acquireTokenSilent },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
-vi.mock('@/api/web-api-client', async (importOriginal) => {
+vi.mock(import('@/api/web-api-client'), (async (
+  importOriginal: <
+    TOriginal = typeof WebApiClientModule,
+  >() => Promise<TOriginal>,
+) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
     AddressClient,
   } satisfies __ExactMockModule<__TestMockModule4>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule4>);
 
 interface FormikHarnessProps {
   readonly initialValues: Record<string, unknown>;
@@ -148,13 +152,22 @@ const expectAddressLookupValues = () => {
 };
 
 describe('complex input behavior slice', () => {
+  // This helper intentionally registers Vitest lifecycle hooks for the console guard.
+  // The helper owns that hook contract; moving the call into a test would be too late.
+  // eslint-disable-next-line vitest/require-hook
   installUnexpectedConsoleGuard();
 
   // Registered after the guard so it runs first: Vitest runs `afterEach` in
   // reverse order, and a guard failure would otherwise skip the global
   // cleanup and leak the previous test's DOM into the next one.
+  // Register cleanup after the guard so Vitest's reverse afterEach order runs
+  // cleanup first, even when the guard reports unexpected console output.
+  // eslint-disable-next-line vitest/no-hooks
   afterEach(cleanup);
 
+  // This suite shares a large fixture graph; reset it before each test to keep
+  // mock implementations and account state isolated.
+  // eslint-disable-next-line vitest/no-hooks, vitest/prefer-hooks-in-order
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.account = { homeAccountId: 'account-1' };
@@ -176,6 +189,7 @@ describe('complex input behavior slice', () => {
     });
   });
 
+  // eslint-disable-next-line vitest/no-hooks, vitest/no-duplicate-hooks
   afterEach(() => {
     vi.useRealTimers();
   });
@@ -668,7 +682,11 @@ describe('complex input behavior slice', () => {
         >
       >()
       .mockResolvedValue([
-        { id: 'cal-1', displayText: 'Calibration services', value: { id: 1 } },
+        {
+          id: 'cal-1',
+          displayText: 'Calibration services',
+          value: { id: 1 },
+        },
       ]);
     const onSelectedOption = vi
       .fn<() => Promise<void>>()
@@ -930,7 +948,7 @@ describe('complex input behavior slice', () => {
     await user.clear(combobox);
 
     expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
-    expect(onSelectedOption.mock.calls[0]).toEqual([]);
+    expect(onSelectedOption.mock.calls[0]).toStrictEqual([]);
     expect(getOptions).not.toHaveBeenCalled();
 
     await user.type(combobox, 'ab');
@@ -1573,7 +1591,9 @@ describe('complex input behavior slice', () => {
           certificateNumberId: '',
           certNameOptions: [{ id: 'cert-a', lookupName: '5/6A/91B' }],
         }}
-        initialErrors={{ certificateNumber: 'Certificate number is required' }}
+        initialErrors={{
+          certificateNumber: 'Certificate number is required',
+        }}
         initialTouched={{ certificateNumber: true }}
       >
         <CertificateNumberLookup

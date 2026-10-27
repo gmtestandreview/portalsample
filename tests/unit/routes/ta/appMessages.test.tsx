@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { FilterMessages } from '../../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 
@@ -34,6 +34,14 @@ const editor = vi.hoisted(() => ({
   renderCount: 0,
   lastKey: null as string | null,
 }));
+
+const requireRenderedElement = <T extends Element>(
+  element: T | null,
+  message: string,
+): T => {
+  if (!element) throw new Error(message);
+  return element;
+};
 
 vi.mock(import('@azure/msal-react'), (async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
@@ -207,35 +215,35 @@ const renderRoute = async (
 
 // The first routed render is sensitive to full-suite V8 instrumentation; keep
 // the integration contract from cascading after a slow initial render.
+const resetApplicationMessagesMocks = async () => {
+  await import('../../../../ClientApp/src/api/web-api-client');
+
+  resetMsalMock();
+  mocks.appLoggerError.mockReset();
+  mocks.sanitiseHtml.mockReset().mockImplementation((html: string) => html);
+  editor.props = undefined as unknown as typeof editor.props;
+  editor.renderCount = 0;
+
+  clients.patternApproval.setAuthToken.mockReset();
+  // Echo the requested page back, as the real endpoint does. A fixed `currentPage: 1` would
+  // make the component snap straight back to page one after every page change, so paging
+  // would look broken here for a reason that only exists in the mock.
+  clients.patternApproval.methods.getAppMessages
+    .mockReset()
+    .mockImplementation((_id: string, _pageSize: number, page: number) =>
+      Promise.resolve(messagesResponse([messageItem()], { currentPage: page })),
+    );
+  clients.patternApproval.methods.addAppMessage
+    .mockReset()
+    .mockResolvedValue(undefined);
+};
+
 describe('application messages', { timeout: 15_000 }, () => {
-  beforeEach(async () => {
-    await import('../../../../ClientApp/src/api/web-api-client');
-
-    resetMsalMock();
-    mocks.appLoggerError.mockReset();
-    mocks.sanitiseHtml.mockReset().mockImplementation((html: string) => html);
-    editor.props = undefined as unknown as typeof editor.props;
-    editor.renderCount = 0;
-
-    clients.patternApproval.setAuthToken.mockReset();
-    // Echo the requested page back, as the real endpoint does. A fixed `currentPage: 1` would
-    // make the component snap straight back to page one after every page change, so paging
-    // would look broken here for a reason that only exists in the mock.
-    clients.patternApproval.methods.getAppMessages
-      .mockReset()
-      .mockImplementation((_id: string, _pageSize: number, page: number) =>
-        Promise.resolve(
-          messagesResponse([messageItem()], { currentPage: page }),
-        ),
-      );
-    clients.patternApproval.methods.addAppMessage
-      .mockReset()
-      .mockResolvedValue(undefined);
-  });
-
   describe('loading messages', () => {
     it('requests the first page and renders the returned message', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       await renderRoute();
 
@@ -268,6 +276,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('says so when the application has no messages', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([]),
       );
@@ -284,6 +294,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('keeps its defaults when the response omits the paging fields', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       // Each paging field is written only when truthy, so a response with zeroes or omissions
       // must leave the component on its own defaults rather than paging to zero.
@@ -315,6 +327,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('logs a failed load and stops the spinner', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       clients.patternApproval.methods.getAppMessages.mockRejectedValue(
         new Error('messages down'),
       );
@@ -335,6 +349,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('does not fetch without a signed-in account', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       signOut();
 
       await renderRoute();
@@ -347,6 +363,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('does not fetch without an application id', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       await renderRoute('/ta/manage/messages', '/ta/manage/messages');
 
       expect(
@@ -356,6 +374,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('shows a spinner while the request is in flight', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       let release: (value: unknown) => void = () => undefined;
       clients.patternApproval.methods.getAppMessages.mockReturnValue(
@@ -384,6 +404,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('sanitises the html body before parsing it', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ body: '<p>Safe body</p><script>evil()</script>' }),
@@ -404,6 +426,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('renders a non-string body directly without parsing', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
           messageItem({ body: undefined, subject: 'Empty body' }),
@@ -421,6 +445,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('shows the sign-off only when the message carries one', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
@@ -440,6 +466,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('uses the NMI avatar for NMI senders and the user avatar otherwise', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
@@ -461,6 +489,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('marks read and unread messages differently', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse(
@@ -489,6 +519,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('falls back to placeholder initials when a sender has no avatar', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([messageItem({ id: 'anon', avatar: undefined })]),
       );
@@ -501,6 +533,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('omits the timestamp when a message has never been sent', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       clients.patternApproval.methods.getAppMessages.mockResolvedValue(
         messagesResponse([
@@ -519,6 +553,8 @@ describe('application messages', { timeout: 15_000 }, () => {
   describe('sending a message', () => {
     it('sanitises, submits and resets the editor', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       await renderRoute();
       await waitFor(() =>
@@ -553,6 +589,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('refetches the first page after a successful send', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       await renderRoute();
       await waitFor(() =>
         expect(screen.getByTestId('slate-editor')).toBeInTheDocument(),
@@ -574,6 +612,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('logs a failed send without clearing what was typed', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       clients.patternApproval.methods.addAppMessage.mockRejectedValue(
         new Error('send failed'),
@@ -600,6 +640,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('does not send without a signed-in account', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       // Sign out before rendering. Signing out afterwards would not work: the handler closes
       // over `accounts` from its last render, and clearing the shared mock state does not
       // itself re-render the component.
@@ -623,6 +665,8 @@ describe('application messages', { timeout: 15_000 }, () => {
   describe('filtering and paging', () => {
     it('refetches from page one when the view filter changes', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       const user = userEvent.setup();
       await renderRoute();
@@ -650,6 +694,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('only ever sends a real FilterMessages member', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       // Regression guard. The options were valued '1'/'2'/'3' while FilterMessages members
       // are ShowAllMessages/ShowNmiMessages/ShowPortalMessages, and
@@ -684,6 +730,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('starts on a view the select can actually show', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       // The initial state is ShowAllMessages. While the options were valued '1'/'2'/'3' no
       // option matched it, so the control displayed a selection the component did not hold.
       await renderRoute();
@@ -699,6 +747,8 @@ describe('application messages', { timeout: 15_000 }, () => {
     it('fetches the requested page and scrolls back to the heading', async () => {
       expect.hasAssertions();
 
+      await resetApplicationMessagesMocks();
+
       const user = userEvent.setup();
       const scrollIntoView = vi.fn<(...args: unknown[]) => unknown>();
 
@@ -706,10 +756,10 @@ describe('application messages', { timeout: 15_000 }, () => {
       await waitFor(() =>
         expect(screen.getByTestId('pagination')).toBeInTheDocument(),
       );
-      const messagesSection = document.getElementById('application-messages');
-      if (!messagesSection) {
-        throw new Error('Expected application messages section to be rendered');
-      }
+      const messagesSection = requireRenderedElement(
+        document.getElementById('application-messages'),
+        'Expected application messages section to be rendered',
+      );
       messagesSection.scrollIntoView = scrollIntoView;
 
       await user.click(screen.getByTestId('pagination'));
@@ -734,6 +784,8 @@ describe('application messages', { timeout: 15_000 }, () => {
 
     it('still pages when the messages section is absent', async () => {
       expect.hasAssertions();
+
+      await resetApplicationMessagesMocks();
 
       const user = userEvent.setup();
       await renderRoute();

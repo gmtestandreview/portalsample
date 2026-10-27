@@ -1,5 +1,5 @@
 import { render, renderHook, waitFor, within } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import type * as React from 'react';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
@@ -113,21 +113,23 @@ const renderLoaded = async (values: Values) => {
   return result.container;
 };
 
+const resetRfqInstrumentSummaryMocks = () => {
+  resetMsalMock();
+  vi.mocked(AppLogger.error).mockClear();
+  stateSetterCalls.calls.length = 0;
+  clients.lookup.methods.getLookup.mockReset();
+  mockSummaryLookups(clients.lookup.methods.getLookup);
+};
+
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(RfqInstrumentSummary, () => {
-  beforeEach(() => {
-    resetMsalMock();
-    vi.mocked(AppLogger.error).mockClear();
-    stateSetterCalls.calls.length = 0;
-    clients.lookup.methods.getLookup.mockReset();
-    mockSummaryLookups(clients.lookup.methods.getLookup);
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('shows a loading spinner until the lookups arrive, then the sections', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const result = renderInstrument(populated);
 
@@ -143,6 +145,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('keeps the spinner and logs when the lookups fail to load', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const failure = new Error('lookup down');
     clients.lookup.methods.getLookup.mockRejectedValue(failure);
@@ -163,6 +170,11 @@ describe(RfqInstrumentSummary, () => {
   it('logs a non-Error rejection as an Error', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     clients.lookup.methods.getLookup.mockRejectedValue('boom');
 
     renderInstrument(populated);
@@ -178,6 +190,11 @@ describe(RfqInstrumentSummary, () => {
   it('keeps the spinner and does not load when nobody is signed in', () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     signOut();
 
     const result = renderInstrument(populated);
@@ -188,6 +205,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('does not set state when unmounted while the lookups load', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     let release: (value: unknown[]) => void = () => undefined;
     clients.lookup.methods.getLookup.mockReturnValue(
@@ -213,6 +235,11 @@ describe(RfqInstrumentSummary, () => {
   it('sets state when the lookups arrive while still mounted', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     const { result } = renderHook(() => useRfqInstrumentLookups());
 
     await waitFor(() => expect(result.current).toBeDefined());
@@ -222,6 +249,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('shows labels and resolves the lookup ids to their names', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const container = await renderLoaded(populated);
 
@@ -238,7 +270,7 @@ describe(RfqInstrumentSummary, () => {
       hasRegulation: container.textContent?.includes(
         'Regulation 13 with measurement report',
       ),
-    }).toEqual({
+    }).toStrictEqual({
       hasSerialPrompt: true,
       hasSerialNumber: true,
       hasManufacturer: true,
@@ -252,6 +284,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('shows the No measurement and No instrument selections by name', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const container = await renderLoaded(
       instrumentValues({
@@ -268,6 +305,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('hides the serial number when the answer is No, and shows it when the answer is Yes', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const hidden = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: 'SN-STALE' }),
@@ -287,6 +329,11 @@ describe(RfqInstrumentSummary, () => {
   it('hides the serial number row when the answer is No or unanswered, even with no value', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     const no = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: undefined }),
     );
@@ -301,6 +348,11 @@ describe(RfqInstrumentSummary, () => {
   it('shows the serial number row when the answer is Yes, with a placeholder when empty', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     const container = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: undefined }),
     );
@@ -311,6 +363,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('shows a dash for an id that matches no lookup', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const container = await renderLoaded(
       instrumentValues({
@@ -335,6 +392,11 @@ describe(RfqInstrumentSummary, () => {
   it('falls back to a placeholder for an unrecognised choice answer', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     const container = await renderLoaded(
       instrumentValues({
         hasSerialNumber: 'Maybe' as unknown as YesNo,
@@ -346,6 +408,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('shows an unparseable availability date as typed and drops an invalid date object', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const typed = await renderLoaded(
       instrumentValues({
@@ -368,6 +435,11 @@ describe(RfqInstrumentSummary, () => {
   it('shows an empty number of items as a dash, including zero', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     const container = await renderLoaded(
       instrumentValues({ numberOfItems: 0 }),
     );
@@ -378,6 +450,11 @@ describe(RfqInstrumentSummary, () => {
 
   it('renders only the headings and unanswered rows for empty values', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const container = await renderLoaded({ instrumentAndRequest: {} });
 
@@ -390,21 +467,26 @@ describe(RfqInstrumentSummary, () => {
   it('renders the headings when there is no instrument step at all', async () => {
     expect.hasAssertions();
 
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
+
     const container = await renderLoaded({});
 
     expect(container).toHaveTextContent('Request details');
   });
 });
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(useRfqInstrumentLookups, () => {
-  beforeEach(() => {
-    resetMsalMock();
-    clients.lookup.methods.getLookup.mockReset();
-    mockSummaryLookups(clients.lookup.methods.getLookup);
-  });
-
   it('sorts alphabetically with the No measurement and No instrument choices last', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const { result } = renderHook(() => useRfqInstrumentLookups());
 
@@ -412,13 +494,19 @@ describe(useRfqInstrumentLookups, () => {
 
     expect(
       result.current?.measurementCategories.map((o) => o.displayText),
-    ).toEqual(['Mass', 'Temperature', 'No measurement category available']);
-    expect(result.current?.artefactTypes.map((o) => o.displayText)).toEqual([
+    ).toStrictEqual([
+      'Mass',
+      'Temperature',
+      'No measurement category available',
+    ]);
+    expect(
+      result.current?.artefactTypes.map((o) => o.displayText),
+    ).toStrictEqual([
       'Balance',
       'Digital thermometer',
       'No instrument/artefact type available',
     ]);
-    expect(result.current?.measurementCategories[0]).toEqual({
+    expect(result.current?.measurementCategories[0]).toStrictEqual({
       displayText: 'Mass',
       value: 'cat-mass',
     });
@@ -426,6 +514,11 @@ describe(useRfqInstrumentLookups, () => {
 
   it('does not reorder the arrays it was handed', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     const categories = measurementCategoryLookup.map((x) => ({ ...x }));
     const types = artefactTypeLookup.map((x) => ({ ...x }));
@@ -436,12 +529,17 @@ describe(useRfqInstrumentLookups, () => {
     const { result } = renderHook(() => useRfqInstrumentLookups());
     await waitFor(() => expect(result.current).toBeDefined());
 
-    expect(categories).toEqual(measurementCategoryLookup);
-    expect(types).toEqual(artefactTypeLookup);
+    expect(categories).toStrictEqual(measurementCategoryLookup);
+    expect(types).toStrictEqual(artefactTypeLookup);
   });
 
   it('maps lookups missing an id or label to empty strings', async () => {
     expect.hasAssertions();
+
+    resetRfqInstrumentSummaryMocks();
+    onTestFinished(() => {
+      vi.restoreAllMocks();
+    });
 
     clients.lookup.methods.getLookup
       .mockResolvedValueOnce([{ id: 'only-id', label: '' }])
@@ -450,7 +548,7 @@ describe(useRfqInstrumentLookups, () => {
     const { result } = renderHook(() => useRfqInstrumentLookups());
     await waitFor(() => expect(result.current).toBeDefined());
 
-    expect(result.current?.measurementCategories).toEqual([
+    expect(result.current?.measurementCategories).toStrictEqual([
       { displayText: '', value: 'only-id' },
     ]);
     expect(result.current?.artefactTypes).toContainEqual({

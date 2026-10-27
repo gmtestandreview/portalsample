@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -108,28 +108,30 @@ const accountContext = {
   setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
 } as unknown as AccountContextState;
 
-describe('account and contact wizard prop factories', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.getNewAccountDetails.mockResolvedValue({
-      stepValues: { name: 'New org' },
-    });
-    mocks.getAccountDetailsByOrgId.mockResolvedValue({
-      stepValues: { name: 'Existing org' },
-    });
-    mocks.getBranchDetails.mockResolvedValue({
-      stepValues: { name: 'Branch org' },
-    });
-    mocks.getUserContact.mockResolvedValue({ contact: { title: 'Other' } });
-    mocks.signIn.mockResolvedValue({
-      defaultOrganisationId: 'new-default',
-      organisation: { crmGuid: 'crm-guid' },
-    });
+const resetAccountContactPropsMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.getNewAccountDetails.mockResolvedValue({
+    stepValues: { name: 'New org' },
   });
+  mocks.getAccountDetailsByOrgId.mockResolvedValue({
+    stepValues: { name: 'Existing org' },
+  });
+  mocks.getBranchDetails.mockResolvedValue({
+    stepValues: { name: 'Branch org' },
+  });
+  mocks.getUserContact.mockResolvedValue({ contact: { title: 'Other' } });
+  mocks.signIn.mockResolvedValue({
+    defaultOrganisationId: 'new-default',
+    organisation: { crmGuid: 'crm-guid' },
+  });
+};
 
+describe('account and contact wizard prop factories', () => {
   it('loads and completes create-account details with account context updates', async () => {
     expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
 
     const props = createAccountProps(
       accounts,
@@ -194,6 +196,8 @@ describe('account and contact wizard prop factories', () => {
 
   it('loads and completes update-account details with success and error notifications', async () => {
     expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
 
     const props = updateAccountProps(
       accounts,
@@ -291,6 +295,8 @@ describe('account and contact wizard prop factories', () => {
 
   it('loads and completes add-branch details with branch selector side effects', async () => {
     expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
 
     const onShowBranchSelector = vi.fn<(...args: unknown[]) => unknown>();
     const props = addBranchProps(
@@ -402,6 +408,8 @@ describe('account and contact wizard prop factories', () => {
 
   it('loads and saves create/update contact details with notifications and title hiding', async () => {
     expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
 
     const createProps = createContactProps(
       accounts,
@@ -544,6 +552,8 @@ describe('account and contact wizard prop factories', () => {
   it('throws load/save errors when account or contact users are missing', async () => {
     expect.hasAssertions();
 
+    resetAccountContactPropsMocks();
+
     const createAccount = createAccountProps(
       emptyAccounts,
       instance,
@@ -617,6 +627,8 @@ describe('account and contact wizard prop factories', () => {
 
   it('handles optional account context and organisation values', async () => {
     expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
 
     const createProps = createAccountProps(accounts, instance, statuses, null);
     const updateProps = updateAccountProps(
@@ -696,6 +708,8 @@ describe('account and contact wizard prop factories', () => {
   it('preserves defined trading and branch names in account context updates', async () => {
     expect.hasAssertions();
 
+    resetAccountContactPropsMocks();
+
     const createProps = createAccountProps(
       accounts,
       instance,
@@ -742,6 +756,8 @@ describe('account and contact wizard prop factories', () => {
 
   it('ignores falsy caught account and contact errors', async () => {
     expect.hasAssertions();
+
+    resetAccountContactPropsMocks();
 
     const updateProps = updateAccountProps(
       accounts,

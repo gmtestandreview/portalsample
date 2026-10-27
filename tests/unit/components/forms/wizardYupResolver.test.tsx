@@ -31,13 +31,13 @@ const required = Yup.object({
   name: Yup.string().required('Name is required'),
 });
 
-describe(createWizardYupResolver, () => {
+describe('wizard yup resolver', () => {
   it('passes values through when the mode has no schema', async () => {
     expect.hasAssertions();
 
     const result = await resolve({ hard: undefined });
 
-    expect(result).toEqual({ values: { name: '' }, errors: {} });
+    expect(result).toStrictEqual({ values: { name: '' }, errors: {} });
   });
 
   it('uses the soft schema for saveAndExit and the hard schema for next', async () => {
@@ -47,7 +47,7 @@ describe(createWizardYupResolver, () => {
 
     expect(
       (await resolve({ soft, hard: required }, { mode: 'saveAndExit' })).errors,
-    ).toEqual({});
+    ).toStrictEqual({});
     expect(
       (await resolve({ soft, hard: required }, { mode: 'next' })).errors,
     ).toMatchObject({
@@ -107,7 +107,7 @@ describe(createWizardYupResolver, () => {
       },
     };
 
-    await expect(resolve({ hard: throwing })).resolves.toEqual({
+    await expect(resolve({ hard: throwing })).resolves.toStrictEqual({
       values: { name: '' },
       errors: {},
     });
@@ -121,7 +121,7 @@ describe(createWizardYupResolver, () => {
       { hidden: { name: true } },
     );
 
-    expect(result).toEqual({ values: { name: '' }, errors: {} });
+    expect(result).toStrictEqual({ values: { name: '' }, errors: {} });
   });
 
   it('rethrows failures that are not validation errors', async () => {

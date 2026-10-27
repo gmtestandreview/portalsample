@@ -1,11 +1,14 @@
 import DOMPurify from 'dompurify';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+
+const requireImage = (node: Element | null): HTMLImageElement => {
+  if (!(node instanceof HTMLImageElement)) {
+    throw new Error('Exploit fixture must contain an image');
+  }
+  return node;
+};
 
 describe('dOMPurify security regressions', () => {
-  afterEach(() => {
-    DOMPurify.removeAllHooks();
-  });
-
   it('neutralizes a detached descendant after an IN_PLACE hook removes its ancestor', () => {
     expect.hasAssertions();
 
@@ -16,11 +19,7 @@ describe('dOMPurify security regressions', () => {
       '</footer>',
       '<div>safe</div>',
     ].join('');
-    const detachedImage = root.querySelector('img');
-
-    if (!(detachedImage instanceof HTMLImageElement)) {
-      throw new Error('Exploit fixture must contain an image');
-    }
+    const detachedImage = requireImage(root.querySelector('img'));
 
     DOMPurify.addHook('uponSanitizeElement', (node) => {
       if (node.nodeName === 'FOOTER') {
@@ -35,5 +34,7 @@ describe('dOMPurify security regressions', () => {
 
     expect(root.innerHTML).toBe('<div>safe</div>');
     expect(detachedImage).not.toHaveAttribute('onload');
+
+    DOMPurify.removeAllHooks();
   });
 });

@@ -50,7 +50,7 @@ const expectTextAreaSubmittedErrorState = (input: HTMLElement) => {
   expect(input).toHaveFocus();
 };
 
-describe(RhfTextAreaInput, () => {
+describe('rhf text area input behavior', () => {
   it('renders a labelled textarea with defaults', () => {
     expect.hasAssertions();
 

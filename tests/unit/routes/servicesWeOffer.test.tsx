@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ServiceType } from '../../../ClientApp/src/api/web-api-client';
 import type {
   ServiceDto,
@@ -135,23 +135,23 @@ const noDefaultYet: ServicesOffered[] = [
   { service: ServiceType.PatternApproval, isActive: false, isDefault: false },
 ];
 
-describe('services we offer', () => {
-  beforeEach(() => {
-    resetMsalMock();
-    mocks.accountContext.mockReset();
-    mocks.setUserProfile.mockReset().mockResolvedValue(true);
-    mocks.appLoggerError.mockReset();
-    mocks.appLoggerInfo.mockReset();
-    clients.lookup.setAuthToken.mockReset();
-    clients.lookup.methods.getServices
-      .mockReset()
-      .mockResolvedValue(serviceDtos);
-    mocks.accountContext.mockReturnValue(accountWith(noDefaultYet));
-  });
+const resetServicesWeOfferMocks = () => {
+  resetMsalMock();
+  mocks.accountContext.mockReset();
+  mocks.setUserProfile.mockReset().mockResolvedValue(true);
+  mocks.appLoggerError.mockReset();
+  mocks.appLoggerInfo.mockReset();
+  clients.lookup.setAuthToken.mockReset();
+  clients.lookup.methods.getServices.mockReset().mockResolvedValue(serviceDtos);
+  mocks.accountContext.mockReturnValue(accountWith(noDefaultYet));
+};
 
+describe('services we offer', () => {
   describe('loading services', () => {
     it('acquires a token and renders every service returned', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       await renderRoute();
 
@@ -172,6 +172,8 @@ describe('services we offer', () => {
     it('hydrates the checkboxes from the stored profile', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       await renderRoute();
 
       await waitFor(() =>
@@ -188,6 +190,8 @@ describe('services we offer', () => {
 
     it('marks the stored default service as the selected radio', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       mocks.accountContext.mockReturnValue(
         accountWith([
@@ -215,6 +219,8 @@ describe('services we offer', () => {
     it('shows a loading state while the services request is in flight', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       let releaseServices: (value: ServiceDto[]) => void = () => undefined;
       clients.lookup.methods.getServices.mockReturnValue(
         new Promise<ServiceDto[]>((resolve) => {
@@ -240,6 +246,8 @@ describe('services we offer', () => {
     it('shows a loading state while the token is still pending', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       // Regression guard. `setIsDataLoading(true)` used to run AFTER
       // `await acquireTokenSilent`, so for the whole token round trip the user was shown the
       // selector with an empty service list and no indication anything was happening - which
@@ -264,6 +272,8 @@ describe('services we offer', () => {
     it('logs and stops loading when the lookup fails', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       clients.lookup.methods.getServices.mockRejectedValue(
         new Error('lookup down'),
       );
@@ -283,6 +293,8 @@ describe('services we offer', () => {
     it('logs when the token itself is rejected', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       rejectToken(new Error('interaction_required'));
 
       await renderRoute();
@@ -299,6 +311,8 @@ describe('services we offer', () => {
 
     it('does not call the lookup when no account is signed in', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       signOut();
 
@@ -317,6 +331,8 @@ describe('services we offer', () => {
 
     it('leaves a service unticked when the profile has no entry for it', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       // The lookup is the source of which services exist; the profile only says which ones
       // this account holds. A service present in one and absent from the other must not throw
@@ -347,6 +363,8 @@ describe('services we offer', () => {
     it('renders the lookup services when the profile carries no services list at all', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       // A profile that exists but has never been given a services array. Manage mode is what
       // gets past the pre-render gate, so the effect still runs and has to cope with the
       // list being absent rather than merely empty.
@@ -369,6 +387,8 @@ describe('services we offer', () => {
     it('waits on a spinner until assigned services are known', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       mocks.accountContext.mockReturnValue({ details: undefined });
 
       await renderRoute();
@@ -383,6 +403,8 @@ describe('services we offer', () => {
   describe('redirecting an account that already chose a default', () => {
     it('sends a testing and calibration user to the main dashboard', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       mocks.accountContext.mockReturnValue(
         accountWith([
@@ -402,6 +424,8 @@ describe('services we offer', () => {
     it('sends a pattern approval user to the type approval dashboard', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       mocks.accountContext.mockReturnValue(
         accountWith([
           {
@@ -419,6 +443,8 @@ describe('services we offer', () => {
 
     it('falls back to the services page for a default service it does not recognise', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       // The API can return a service the client build predates. The switch has a default arm
       // for exactly that, and without it the user would be stranded on a blank page.
@@ -444,6 +470,8 @@ describe('services we offer', () => {
 
     it('stays on the page in manage mode even with a default already set', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       mocks.accountContext.mockReturnValue(
         accountWith([
@@ -471,6 +499,8 @@ describe('services we offer', () => {
     it('ticks the matching checkbox when a service is set as default', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -495,6 +525,8 @@ describe('services we offer', () => {
     it('clears the default when its own checkbox is unticked', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -518,6 +550,8 @@ describe('services we offer', () => {
 
     it('leaves the default alone when a different service is unticked', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       const user = userEvent.setup();
       await renderRoute();
@@ -545,6 +579,8 @@ describe('services we offer', () => {
   describe('saving', () => {
     it('refuses to save with no service selected at all', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       const user = userEvent.setup();
       mocks.accountContext.mockReturnValue(
@@ -576,6 +612,8 @@ describe('services we offer', () => {
     it('refuses to save a ticked service with no default chosen', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       const user = userEvent.setup();
       await renderRoute();
 
@@ -593,6 +631,8 @@ describe('services we offer', () => {
 
     it('saves the selection and routes to the chosen dashboard', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       const user = userEvent.setup();
       const { currentPath } = await renderRoute();
@@ -632,6 +672,8 @@ describe('services we offer', () => {
     it('logs and stays put when the profile save fails', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       const user = userEvent.setup();
       mocks.setUserProfile.mockRejectedValue(new Error('save failed'));
       const { currentPath } = await renderRoute();
@@ -659,6 +701,8 @@ describe('services we offer', () => {
     it('returns to the dashboard of the previously saved default', async () => {
       expect.hasAssertions();
 
+      resetServicesWeOfferMocks();
+
       const user = userEvent.setup();
       mocks.accountContext.mockReturnValue(
         accountWith([
@@ -684,6 +728,8 @@ describe('services we offer', () => {
 
     it('stays put when the saved default maps to no dashboard, and falls back to a default icon', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       const user = userEvent.setup();
       // A service the client build does not recognise, delivered without an icon. Both of the
@@ -728,6 +774,8 @@ describe('services we offer', () => {
 
     it('shows the error summary when there is no saved default to return to', async () => {
       expect.hasAssertions();
+
+      resetServicesWeOfferMocks();
 
       const user = userEvent.setup();
       await renderRoute();

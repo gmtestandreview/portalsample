@@ -587,34 +587,43 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
   // repo's PRs are treated, so the scan runs on push: main instead.
   const block = jobBlock(releaseWorkflow, 'sonarcloud');
 
-  it('checks out full history so blame can attribute new code', () => {
-    // SonarCloud decides what counts as new code from SCM blame dates. A
-    // shallow clone leaves it no history to read, so the new-code period -
-    // and every quality gate condition built on it - becomes meaningless.
+  const sonarCloudChecks = [
+    {
+      name: 'checks out full history so blame can attribute new code',
+      verify: () => {
+        // SonarCloud decides what counts as new code from SCM blame dates. A
+        // shallow clone leaves it no history to read, so the new-code period -
+        // and every quality gate condition built on it - becomes meaningless.
+        expect(block).toContain('fetch-depth: 0');
+      },
+    },
+    {
+      name: "reuses the unit partition's coverage instead of re-running the suite",
+      verify: () => {
+        // Each test environment runs exactly once, through the matrix. Re-running
+        // the unit suite here would duplicate several minutes per PR and could
+        // report a different result than the partition that owns that status.
+        expect(block).toContain(`uses: ${DOWNLOAD_ARTIFACT_PIN}`);
+        expect(block).toContain('release-unit-coverage');
+        expect(block).not.toContain('npm run test:ci:unit');
+      },
+    },
+    {
+      name: 'restores coverage before the scan rather than scanning bare',
+      verify: () => {
+        const download = block.indexOf(DOWNLOAD_ARTIFACT_PIN);
+        const scan = block.indexOf('uses: SonarSource/sonarqube-scan-action@');
+
+        expect(download).toBeGreaterThan(-1);
+        expect(scan).toBeGreaterThan(download);
+      },
+    },
+  ] as const;
+
+  it.each(sonarCloudChecks)('$name', ({ verify }) => {
     expect.hasAssertions();
 
-    expect(block).toContain('fetch-depth: 0');
-  });
-
-  it("reuses the unit partition's coverage instead of re-running the suite", () => {
-    // Each test environment runs exactly once, through the matrix. Re-running
-    // the unit suite here would duplicate several minutes per PR and could
-    // report a different result than the partition that owns that status.
-    expect.hasAssertions();
-
-    expect(block).toContain(`uses: ${DOWNLOAD_ARTIFACT_PIN}`);
-    expect(block).toContain('release-unit-coverage');
-    expect(block).not.toContain('npm run test:ci:unit');
-  });
-
-  it('restores coverage before the scan rather than scanning bare', () => {
-    expect.hasAssertions();
-
-    const download = block.indexOf(DOWNLOAD_ARTIFACT_PIN);
-    const scan = block.indexOf('uses: SonarSource/sonarqube-scan-action@');
-
-    expect(download).toBeGreaterThan(-1);
-    expect(scan).toBeGreaterThan(download);
+    verify();
   });
 
   it('waits for the partition that produces the coverage it consumes', () => {
@@ -639,7 +648,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
     ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
     expect(scannerReferences.length).toBeGreaterThan(0);
-    expect(scannerReferences).toEqual([
+    expect(scannerReferences).toStrictEqual([
       'd209202bc7d53ff1cc128f7f907dac145c9d6ae9',
     ]);
     expect(
@@ -661,7 +670,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
       })(),
     );
 
-    expect(scannerRunSteps).toEqual([]);
+    expect(scannerRunSteps).toStrictEqual([]);
   });
 
   it('authenticates from a secret, never an inline token', () => {
@@ -887,7 +896,7 @@ describe('chromatic publishing reports asynchronously through GitHub', () => {
   it("uses the repository's enforced Node 24 runtime", () => {
     expect.hasAssertions();
 
-    expect(nodeVersions(chromaticWorkflow)).toEqual(['24.21.0']);
+    expect(nodeVersions(chromaticWorkflow)).toStrictEqual(['24.21.0']);
   });
 
   it('provisions npm through corepack before installing dependencies', () => {

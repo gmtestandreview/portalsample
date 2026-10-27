@@ -12,14 +12,14 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       useMsal: () => ({
         accounts: [],
         instance: { acquireTokenSilent: mocks.acquireTokenSilent },
       }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 vi.mock(
@@ -31,19 +31,19 @@ vi.mock(
 );
 
 vi.mock(
-  '@/components/modals/ModalContext',
-  () =>
+  import('@/components/modals/ModalContext'),
+  (() =>
     ({
       useModalState: () => null,
       useModalDispatch: () => ({
         setShowRFQDeleteModal: mocks.setShowRFQDeleteModal,
       }),
-    }) satisfies __ExactMockModule<__TestMockModule27>,
+    }) satisfies __ExactMockModule<__TestMockModule27>) as unknown as __DynamicPartialMockFactory<__TestMockModule27>,
 );
 
 vi.mock(
-  '@/api/web-api-client',
-  () =>
+  import('@/api/web-api-client'),
+  (() =>
     ({
       ApplicationType: { QuoteRequest: 'QuoteRequest' },
       ApplicationClient: vi.fn<() => void>(function ApplicationClientMock() {
@@ -52,7 +52,7 @@ vi.mock(
           deleteApplication: mocks.deleteApplication,
         };
       }),
-    }) satisfies __ExactMockModule<__TestMockModule4>,
+    }) satisfies __ExactMockModule<__TestMockModule4>) as unknown as __DynamicPartialMockFactory<__TestMockModule4>,
 );
 
 vi.mock(
@@ -64,11 +64,11 @@ vi.mock(
 );
 
 vi.mock(
-  '@/instrumentation/AppLogger',
-  () =>
+  import('@/instrumentation/AppLogger'),
+  (() =>
     ({
       default: { error: vi.fn<() => void>() },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 vi.mock(
@@ -79,7 +79,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule22>,
 );
 
-vi.mock('react-bootstrap', () => {
+vi.mock(import('react-bootstrap'), (() => {
   const Modal = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );
@@ -119,7 +119,7 @@ vi.mock('react-bootstrap', () => {
     ),
     Modal,
   } satisfies __ExactMockModule<__TestMockModule49>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule49>);
 
 describe('rFQDeleteModal null context', () => {
   it('skips deletion and still closes and navigates', async () => {

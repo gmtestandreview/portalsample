@@ -9,15 +9,15 @@ import type AppLogger from '../../../../ClientApp/src/instrumentation/AppLogger'
 import { renderRhfShell } from '../../helpers/rhfShell';
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
+  import('../../../../ClientApp/src/instrumentation/AppLogger'),
+  (() =>
     ({
       default: {
         verbose: vi.fn<typeof AppLogger.verbose>(),
         error: vi.fn<typeof AppLogger.error>(),
         trace: vi.fn<typeof AppLogger.trace>(),
       },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+    }) satisfies __ExactMockModule<__TestMockModule5>) as unknown as __DynamicPartialMockFactory<__TestMockModule5>,
 );
 
 interface Values {

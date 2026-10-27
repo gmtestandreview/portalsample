@@ -12,7 +12,7 @@ const guardedLeaf = (message: unknown, type = 'required') => {
   return leaf;
 };
 
-describe(flattenRhfErrors, () => {
+describe('rhf errors', () => {
   it('returns messages by dotted path without reading any ref', () => {
     expect.hasAssertions();
 
@@ -22,7 +22,7 @@ describe(flattenRhfErrors, () => {
       address: { street: guardedLeaf('Street is required', 'min') },
     };
 
-    expect(flattenRhfErrors(errors)).toEqual({
+    expect(flattenRhfErrors(errors)).toStrictEqual({
       name: 'Name is required',
       'contacts.0.firstName': 'First name is required',
       'address.street': 'Street is required',
@@ -38,13 +38,13 @@ describe(flattenRhfErrors, () => {
     });
 
     expect(JSON.stringify(result)).not.toContain('Input');
-    expect(Object.values(result)).toEqual(['Required']);
+    expect(Object.values(result)).toStrictEqual(['Required']);
   });
 
   it('skips leaves without a message and non-object input', () => {
     expect.hasAssertions();
-    expect(flattenRhfErrors(undefined)).toEqual({});
-    expect(flattenRhfErrors('x')).toEqual({});
+    expect(flattenRhfErrors(undefined)).toStrictEqual({});
+    expect(flattenRhfErrors('x')).toStrictEqual({});
     expect(
       flattenRhfErrors({
         a: { type: 'required' },
@@ -52,13 +52,13 @@ describe(flattenRhfErrors, () => {
         c: null,
         d: 'text',
       }),
-    ).toEqual({});
+    ).toStrictEqual({});
   });
 
   it('treats a nested field named type as a group, not a leaf', () => {
     expect.hasAssertions();
     expect(
       flattenRhfErrors({ type: { type: 'required', message: 'Pick a type' } }),
-    ).toEqual({ type: 'Pick a type' });
+    ).toStrictEqual({ type: 'Pick a type' });
   });
 });

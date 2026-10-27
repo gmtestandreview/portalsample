@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Form, Formik } from 'formik';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { ComponentProps } from 'react';
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
 
@@ -35,32 +35,29 @@ const renderLookup = (
   );
 
 describe('certificateNumberLookup debounce', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('holds the existing empty suggestion list when the debounce fires on an empty input', () => {
     expect.hasAssertions();
 
-    renderLookup();
+    vi.useFakeTimers();
+    try {
+      renderLookup();
 
-    // The applicationAndInstrument step renders two of these, and each one arms this timer on
-    // mount with an empty input. Returning `prev` rather than a fresh `[]` is what stops that
-    // committing an identical render per instance - a new array literal is never referentially
-    // equal, so React would treat the no-op as a change.
-    act(() => {
-      vi.advanceTimersByTime(DEBOUNCE_MS);
-    });
+      // The applicationAndInstrument step renders two of these, and each one arms this timer on
+      // mount with an empty input. Returning `prev` rather than a fresh `[]` is what stops that
+      // committing an identical render per instance - a new array literal is never referentially
+      // equal, so React would treat the no-op as a change.
+      act(() => {
+        vi.advanceTimersByTime(DEBOUNCE_MS);
+      });
 
-    expect(screen.getByRole('combobox')).toHaveAttribute(
-      'aria-expanded',
-      'false',
-    );
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      expect(screen.getByRole('combobox')).toHaveAttribute(
+        'aria-expanded',
+        'false',
+      );
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it.each([
@@ -71,89 +68,112 @@ describe('certificateNumberLookup debounce', () => {
     async (matchType, input, expected) => {
       expect.hasAssertions();
 
-      renderLookup([{ lookupName: expected }, { lookupName: 'Other value' }], {
-        matchType,
-      });
+      vi.useFakeTimers();
+      try {
+        renderLookup(
+          [{ lookupName: expected }, { lookupName: 'Other value' }],
+          {
+            matchType,
+          },
+        );
 
-      const inputElement = screen.getByRole('textbox');
-      await act(async () => {
-        fireEvent.change(inputElement, { target: { value: input } });
-        vi.advanceTimersByTime(DEBOUNCE_MS);
-      });
+        const inputElement = screen.getByRole('textbox');
+        await act(async () => {
+          fireEvent.change(inputElement, { target: { value: input } });
+          vi.advanceTimersByTime(DEBOUNCE_MS);
+        });
 
-      expect(
-        screen.getByRole('option', { name: /Alpha Certificate/ }),
-      ).toBeInTheDocument();
+        expect(
+          screen.getByRole('option', { name: /Alpha Certificate/ }),
+        ).toBeInTheDocument();
+      } finally {
+        vi.useRealTimers();
+      }
     },
   );
 
   it('filters malformed lookup records without throwing', async () => {
     expect.hasAssertions();
 
-    renderLookup([
-      null,
-      'not an object',
-      { lookupName: 123 },
-      { lookupName: 'Alpha Certificate' },
-    ]);
+    vi.useFakeTimers();
+    try {
+      renderLookup([
+        null,
+        'not an object',
+        { lookupName: 123 },
+        { lookupName: 'Alpha Certificate' },
+      ]);
 
-    await act(async () => {
-      fireEvent.change(screen.getByRole('textbox'), {
-        target: { value: 'Alpha' },
+      await act(async () => {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: 'Alpha' },
+        });
+        vi.advanceTimersByTime(DEBOUNCE_MS);
       });
-      vi.advanceTimersByTime(DEBOUNCE_MS);
-    });
 
-    expect(
-      screen.getByRole('option', { name: /Alpha Certificate/ }),
-    ).toBeInTheDocument();
-    expect(screen.getAllByRole('option')).toHaveLength(1);
+      expect(
+        screen.getByRole('option', { name: /Alpha Certificate/ }),
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole('option')).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('hides suggestions when the configured lookup field is absent', async () => {
     expect.hasAssertions();
 
-    renderLookup([{ lookupName: 'Alpha Certificate' }], {}, {}, true);
+    vi.useFakeTimers();
+    try {
+      renderLookup([{ lookupName: 'Alpha Certificate' }], {}, {}, true);
 
-    await act(async () => {
-      fireEvent.change(screen.getByRole('textbox'), {
-        target: { value: 'Alpha' },
+      await act(async () => {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: 'Alpha' },
+        });
+        vi.advanceTimersByTime(DEBOUNCE_MS);
       });
-      vi.advanceTimersByTime(DEBOUNCE_MS);
-    });
 
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('filters and sorts suggestions when a parent field is configured', async () => {
     expect.hasAssertions();
 
-    renderLookup(
-      [
-        { lookupName: 'Zulu Certificate', parent: 'NMI' },
-        { lookupName: 'Alpha Certificate', parent: 'NMI' },
-        { lookupName: 'Alpha Industry', parent: 'Industry' },
-      ],
-      {
-        parentName: 'parent',
-        parentOptionsName: 'parent',
-        matchType: 'startsWith',
-      },
-      { parent: 'NMI' },
-    );
+    vi.useFakeTimers();
+    try {
+      renderLookup(
+        [
+          { lookupName: 'Zulu Certificate', parent: 'NMI' },
+          { lookupName: 'Alpha Certificate', parent: 'NMI' },
+          { lookupName: 'Alpha Industry', parent: 'Industry' },
+        ],
+        {
+          parentName: 'parent',
+          parentOptionsName: 'parent',
+          matchType: 'startsWith',
+        },
+        { parent: 'NMI' },
+      );
 
-    await act(async () => {
-      fireEvent.change(screen.getByRole('textbox'), {
-        target: { value: 'Al' },
+      await act(async () => {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: 'Al' },
+        });
+        vi.advanceTimersByTime(DEBOUNCE_MS);
       });
-      vi.advanceTimersByTime(DEBOUNCE_MS);
-    });
 
-    expect(
-      screen.getByRole('option', { name: /Alpha Certificate/ }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('option', { name: /Alpha Industry/ }),
-    ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: /Alpha Certificate/ }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('option', { name: /Alpha Industry/ }),
+      ).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

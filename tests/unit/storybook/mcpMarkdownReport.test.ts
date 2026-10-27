@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseMcpMarkdownReport } from '../../e2e/support/storybookMcpReport';
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(parseMcpMarkdownReport, () => {
   it('extracts passing stories and empty failure sections', () => {
     expect.hasAssertions();
@@ -18,7 +19,7 @@ describe(parseMcpMarkdownReport, () => {
 ## Unhandled Errors
 `);
 
-    expect(report).toEqual({
+    expect(report).toStrictEqual({
       passingStoryIds: [
         'components-searchfilter-searchbox--type-and-submit',
         'components-progress-progressfilelist--cancel-invokes-callback',
@@ -51,14 +52,14 @@ describe(parseMcpMarkdownReport, () => {
 - Vitest runner failed
 `);
 
-    expect(report.failingStoryIds).toEqual([
+    expect(report.failingStoryIds).toStrictEqual([
       'components-progress-progressfilelist--cancel-invokes-callback',
     ]);
-    expect(report.accessibilityViolationStoryIds).toEqual([
+    expect(report.accessibilityViolationStoryIds).toStrictEqual([
       'components-progress-progressfilelist--cancel-invokes-callback',
     ]);
-    expect(report.unhandledErrors).toEqual(['Vitest runner failed']);
-    expect(report.missingSections).toEqual([]);
+    expect(report.unhandledErrors).toStrictEqual(['Vitest runner failed']);
+    expect(report.missingSections).toStrictEqual([]);
   });
 
   it('reports missing sections instead of treating them as empty', () => {
@@ -70,7 +71,7 @@ describe(parseMcpMarkdownReport, () => {
 - components-searchfilter-searchbox--type-and-submit
 `);
 
-    expect(report.missingSections).toEqual([
+    expect(report.missingSections).toStrictEqual([
       'Failing Stories',
       'Accessibility Violations',
       'Unhandled Errors',

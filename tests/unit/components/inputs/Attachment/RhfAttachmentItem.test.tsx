@@ -90,7 +90,7 @@ const renderItem = (
     </FormHarness>,
   );
 
-describe(RhfAttachmentItem, () => {
+describe('rhf attachment item behavior', () => {
   it('renders the file link, file size, category options, and validation message', async () => {
     expect.hasAssertions();
 
@@ -111,7 +111,7 @@ describe(RhfAttachmentItem, () => {
       validationMessage: screen.getByText(
         'Select a category that best describes this document.',
       ).textContent,
-    }).toEqual({
+    }).toStrictEqual({
       download: 'manual.pdf',
       hrefIsBlob: true,
       fileSize: '2 kb',
@@ -361,7 +361,7 @@ describe(RhfAttachmentItem, () => {
         });
         await settle(pending, 'reject');
 
-        expect(methodsRef.current?.getValues('attachments')).toEqual(
+        expect(methodsRef.current?.getValues('attachments')).toStrictEqual(
           replacement,
         );
       },

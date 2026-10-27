@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getFilteredSuggestions } from '@/components/Inputs/OrganisationNameLookup/suggestionUtils';
 
-describe(getFilteredSuggestions, () => {
+describe('suggestion filtering', () => {
   it('sorts matching suggestions with a case-insensitive comparator and removes duplicates', () => {
     expect.hasAssertions();
 
@@ -18,7 +18,7 @@ describe(getFilteredSuggestions, () => {
       ],
     });
 
-    expect(suggestions).toEqual([
+    expect(suggestions).toStrictEqual([
       'Alpha Pty Ltd',
       'apple Pty Ltd',
       'beta Pty Ltd',
@@ -35,7 +35,7 @@ describe(getFilteredSuggestions, () => {
         optionsFieldName: 'name',
         options: [{ name: 'Alpha Pty Ltd' }],
       }),
-    ).toEqual([]);
+    ).toStrictEqual([]);
 
     expect(
       getFilteredSuggestions({
@@ -43,7 +43,7 @@ describe(getFilteredSuggestions, () => {
         optionsFieldName: 'name',
         options: [{ name: 'Alpha Pty Ltd' }],
       }),
-    ).toEqual([]);
+    ).toStrictEqual([]);
   });
 
   it('returns empty when parentValue is set but parentOptionsName is not provided', () => {
@@ -56,7 +56,7 @@ describe(getFilteredSuggestions, () => {
       parentValue: 'acme',
     });
 
-    expect(suggestions).toEqual([]);
+    expect(suggestions).toStrictEqual([]);
   });
 
   it('applies the same ordering when parent filtering is enabled', () => {
@@ -76,7 +76,7 @@ describe(getFilteredSuggestions, () => {
       parentOptionsName: 'parent',
     });
 
-    expect(suggestions).toEqual([
+    expect(suggestions).toStrictEqual([
       'Alpha Pty Ltd',
       'apple Pty Ltd',
       'beta Pty Ltd',

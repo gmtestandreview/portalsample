@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   msalInstance,
@@ -13,14 +13,14 @@ const mocks = vi.hoisted(() => ({
   downloadFileFromUrl: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
-vi.mock('@azure/msal-react', async () => {
+vi.mock(import('@azure/msal-react') as unknown as string, async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
 
   return msalReactModuleMock() satisfies __ExactMockModule<__TestMockModule2>;
 });
 
 vi.mock(
-  '../../../../ClientApp/src/routes/common/helperFunctions',
+  import('../../../../ClientApp/src/routes/common/helperFunctions') as unknown as string,
   async (importOriginal) => {
     const original = await importOriginal<Record<string, unknown>>();
 
@@ -49,14 +49,16 @@ const renderPage = async () => {
   });
 };
 
-describe('pattern approval pre-application', () => {
-  beforeEach(() => {
-    resetMsalMock();
-    mocks.downloadFileFromUrl.mockReset();
-  });
+const resetPreApplicationMocks = () => {
+  resetMsalMock();
+  mocks.downloadFileFromUrl.mockReset();
+};
 
+describe('pattern approval pre-application', () => {
   it('explains what the applicant needs before starting', async () => {
     expect.hasAssertions();
+
+    resetPreApplicationMocks();
 
     await renderPage();
 
@@ -74,6 +76,8 @@ describe('pattern approval pre-application', () => {
   it('links out to the certification procedures', async () => {
     expect.hasAssertions();
 
+    resetPreApplicationMocks();
+
     await renderPage();
 
     expect(screen.getByRole('link', { name: /NMI P 106/ })).toHaveAttribute(
@@ -90,6 +94,8 @@ describe('pattern approval pre-application', () => {
 
   it('downloads the credit check form through the authenticated helper', async () => {
     expect.hasAssertions();
+
+    resetPreApplicationMocks();
 
     const user = userEvent.setup();
     await renderPage();
@@ -113,6 +119,8 @@ describe('pattern approval pre-application', () => {
   it('does not follow the placeholder href when downloading', async () => {
     expect.hasAssertions();
 
+    resetPreApplicationMocks();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 
@@ -129,6 +137,8 @@ describe('pattern approval pre-application', () => {
   it('starts the application', async () => {
     expect.hasAssertions();
 
+    resetPreApplicationMocks();
+
     const user = userEvent.setup();
     const { currentPath } = await renderPage();
 
@@ -139,6 +149,8 @@ describe('pattern approval pre-application', () => {
 
   it('offers a way back to the type approval dashboard', async () => {
     expect.hasAssertions();
+
+    resetPreApplicationMocks();
 
     const user = userEvent.setup();
     const { currentPath } = await renderPage();

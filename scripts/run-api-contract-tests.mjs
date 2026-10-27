@@ -5,7 +5,7 @@ import process from 'node:process';
 const deleteEnvironmentKey = (environment, key) => {
   for (const environmentKey of Object.keys(environment)) {
     if (environmentKey.toUpperCase() === key) {
-      delete environment[environmentKey];
+      Reflect.deleteProperty(environment, environmentKey);
     }
   }
 };

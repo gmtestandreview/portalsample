@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { InteractionStatus } from '@azure/msal-browser';
 import type { IPublicClientApplication } from '@azure/msal-browser';
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
@@ -59,41 +59,43 @@ vi.mock(
 const renderRoute = (ui: React.ReactNode) =>
   render(<MemoryRouter>{ui}</MemoryRouter>);
 
-describe('static route pages', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    document.body.className = '';
-    document.title = '';
-    mocks.useIsAuthenticated.mockReturnValue(false);
-    mocks.useMsal.mockReturnValue({
-      instance: {
-        handleRedirectPromise: mocks.handleRedirectPromise.mockResolvedValue(
-          undefined,
-        ) as unknown as IPublicClientApplication['handleRedirectPromise'],
-        logoutRedirect: mocks.logoutRedirect.mockResolvedValue(
-          undefined,
-        ) as unknown as IPublicClientApplication['logoutRedirect'],
-        getActiveAccount: mocks.getActiveAccount.mockReturnValue({
-          homeAccountId: 'account-1',
-        }) as unknown as IPublicClientApplication['getActiveAccount'],
-      },
-      accounts: [],
-      inProgress: InteractionStatus.None,
-    });
-    mocks.useAccountContext.mockReturnValue({
-      details: {
-        userProfile: {
-          services: [],
-        },
-      },
-    });
-    mocks.useAccountDispatch.mockReturnValue({
-      setUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
-    });
+const resetStaticPagesState = () => {
+  vi.clearAllMocks();
+  document.body.className = '';
+  document.title = '';
+  mocks.useIsAuthenticated.mockReturnValue(false);
+  mocks.useMsal.mockReturnValue({
+    instance: {
+      handleRedirectPromise: mocks.handleRedirectPromise.mockResolvedValue(
+        undefined,
+      ) as unknown as IPublicClientApplication['handleRedirectPromise'],
+      logoutRedirect: mocks.logoutRedirect.mockResolvedValue(
+        undefined,
+      ) as unknown as IPublicClientApplication['logoutRedirect'],
+      getActiveAccount: mocks.getActiveAccount.mockReturnValue({
+        homeAccountId: 'account-1',
+      }) as unknown as IPublicClientApplication['getActiveAccount'],
+    },
+    accounts: [],
+    inProgress: InteractionStatus.None,
   });
+  mocks.useAccountContext.mockReturnValue({
+    details: {
+      userProfile: {
+        services: [],
+      },
+    },
+  });
+  mocks.useAccountDispatch.mockReturnValue({
+    setUserProfile: vi.fn<(...args: unknown[]) => unknown>(),
+  });
+};
 
+describe('static route pages', () => {
   it('renders HelpGuide for unauthenticated users with home navigation', () => {
     expect.hasAssertions();
+
+    resetStaticPagesState();
 
     renderRoute(<HelpGuide />);
 
@@ -128,6 +130,8 @@ describe('static route pages', () => {
   it('renders HelpGuide dashboard navigation for authenticated users', () => {
     expect.hasAssertions();
 
+    resetStaticPagesState();
+
     vi.mocked(useIsAuthenticated).mockReturnValue(true);
 
     renderRoute(<HelpGuide />);
@@ -139,6 +143,8 @@ describe('static route pages', () => {
 
   it('renders FAQ and setup guide help pages with table-of-contents links', () => {
     expect.hasAssertions();
+
+    resetStaticPagesState();
 
     const { unmount } = renderRoute(<FAQs />);
 
@@ -188,6 +194,8 @@ describe('static route pages', () => {
   it('renders services offered and the simple sign-in/helper pages', () => {
     expect.hasAssertions();
 
+    resetStaticPagesState();
+
     const { unmount } = renderRoute(<ServicesWeOffer />);
 
     expect({
@@ -230,6 +238,8 @@ describe('static route pages', () => {
   it('runs sign-out redirect when MSAL is idle', async () => {
     expect.hasAssertions();
 
+    resetStaticPagesState();
+
     render(<Signout />);
 
     expect(screen.getByText('Logging out...')).toBeInTheDocument();
@@ -246,7 +256,12 @@ describe('static route pages', () => {
 
   it('skips sign-out redirect while an interaction is already running', async () => {
     expect.hasAssertions();
+
+    resetStaticPagesState();
+
     expect.hasAssertions();
+
+    resetStaticPagesState();
 
     vi.mocked(useMsal).mockReturnValue({
       instance: {
@@ -270,6 +285,8 @@ describe('static route pages', () => {
 
   it('does not restart sign-out after the effect has been cleaned up', async () => {
     expect.hasAssertions();
+
+    resetStaticPagesState();
 
     const { rerender } = render(<Signout />);
     await waitFor(() =>

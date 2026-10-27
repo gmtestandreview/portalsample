@@ -5,7 +5,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Link, MemoryRouter, Route, Routes } from 'react-router';
 import findElementInTreeById from '../../../ClientApp/src/components/Utilities/findElementInTreeById';
 import HashLink from '../../../ClientApp/src/components/Utilities/hashLink';
@@ -25,34 +25,62 @@ import {
   openInNewTab,
   openPdfPageInNewTab,
 } from '../../../ClientApp/src/routes/common/helperFunctions';
-import { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
+import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
+import type AppLogger from '../../../ClientApp/src/instrumentation/AppLogger';
+import type * as ApiModule from '../../../ClientApp/src/api/web-api-client';
+import type { IMsalContext } from '@azure/msal-react';
+import type * as MsalReactModule from '@azure/msal-react';
 import type * as NotificationModule from '../../../ClientApp/src/storage/notification';
 
 type BooleanSetter = (value: boolean) => void;
 
 const mocks = vi.hoisted(() => {
   const acquireTokenSilent = vi.fn<() => Promise<{ accessToken: string }>>();
+  const setAuthToken = vi.fn<DashboardClient['setAuthToken']>();
   const getQuoteReportPDFByID =
     vi.fn<DashboardClient['getQuoteReportPDFByID']>();
 
   return {
     acquireTokenSilent,
     getQuoteReportPDFByID,
+    setAuthToken,
   };
 });
 
-vi.mock(
-  '@azure/msal-react',
-  () =>
-    ({
-      useMsal: () => ({
-        accounts: [{ homeAccountId: 'account-1' }],
-        instance: {
-          acquireTokenSilent: mocks.acquireTokenSilent,
-        },
-      }),
-    }) satisfies __ExactMockModule<__TestMockModule2>,
-);
+vi.mock(import('@azure/msal-react'), async (importOriginal) => {
+  const actual = await importOriginal<typeof MsalReactModule>();
+  const { InteractionStatus, Logger, stubbedPublicClientApplication } =
+    await import('@azure/msal-browser');
+  const account = {
+    homeAccountId: 'account-1',
+    environment: 'test',
+    tenantId: 'tenant-1',
+    username: 'test@example.com',
+    localAccountId: 'local-account-1',
+  } satisfies IMsalContext['accounts'][number];
+  const acquireTokenSilent = vi
+    .spyOn(stubbedPublicClientApplication, 'acquireTokenSilent')
+    .mockImplementation(async () => {
+      const tokenResult = await mocks.acquireTokenSilent();
+      return tokenResult as Awaited<
+        ReturnType<typeof stubbedPublicClientApplication.acquireTokenSilent>
+      >;
+    });
+  const msalContext: IMsalContext = {
+    accounts: [account],
+    inProgress: InteractionStatus.None,
+    instance: {
+      ...stubbedPublicClientApplication,
+      acquireTokenSilent,
+    },
+    logger: new Logger({ loggerCallback: () => undefined }),
+  };
+
+  return {
+    ...actual,
+    useMsal: () => msalContext,
+  } satisfies Partial<__TestMockModule2>;
+});
 
 vi.mock(
   import('../../../ClientApp/src/analytics/GoogleAnalytics'),
@@ -71,32 +99,54 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule46>,
 );
 
+const mockAppLogger = vi.hoisted(() => {
+  class MockAppLogger {
+    static info = vi.fn<typeof AppLogger.info>();
+    static warning = vi.fn<typeof AppLogger.warning>();
+    static verbose = vi.fn<typeof AppLogger.verbose>();
+    static critical = vi.fn<typeof AppLogger.critical>();
+    static trace = vi.fn<typeof AppLogger.trace>();
+    static error = vi.fn<typeof AppLogger.error>();
+    static trackEvent = vi.fn<typeof AppLogger.trackEvent>();
+    static startTrackPage = vi.fn<typeof AppLogger.startTrackPage>();
+    static stopTrackPage = vi.fn<typeof AppLogger.stopTrackPage>();
+    static startTrackEvent = vi.fn<typeof AppLogger.startTrackEvent>();
+    static stopTrackEvent = vi.fn<typeof AppLogger.stopTrackEvent>();
+  }
+
+  return MockAppLogger;
+});
+
 vi.mock(
-  '../../../ClientApp/src/instrumentation/AppLogger',
-  () =>
-    ({
-      default: {
-        verbose: vi.fn<(message: string, properties?: unknown) => void>(),
-        error:
-          vi.fn<
-            (message: string, error: Error, properties?: unknown) => void
-          >(),
-      },
-    }) satisfies __ExactMockModule<__TestMockModule5>,
+  import('../../../ClientApp/src/instrumentation/AppLogger'),
+  () => ({ default: mockAppLogger }) satisfies Partial<__TestMockModule5>,
 );
 
 vi.mock(
-  '../../../ClientApp/src/api/web-api-client',
-  () =>
-    ({
-      DashboardClient: vi.fn<() => void>(function (this: {
-        setAuthToken: ReturnType<typeof vi.fn>;
-        getQuoteReportPDFByID: ReturnType<typeof vi.fn>;
-      }) {
-        vi.spyOn(this, 'setAuthToken').mockImplementation();
-        this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
-      }),
-    }) satisfies __ExactMockModule<__TestMockModule4>,
+  import('../../../ClientApp/src/api/web-api-client'),
+  async (importOriginal) => {
+    const actual = await importOriginal<typeof ApiModule>();
+    const MockDashboardClient = vi.fn<typeof actual.DashboardClient>(
+      class extends actual.DashboardClient {
+        constructor(
+          ...args: ConstructorParameters<typeof actual.DashboardClient>
+        ) {
+          super(...args);
+          Object.defineProperty(this, 'setAuthToken', {
+            configurable: true,
+            value: mocks.setAuthToken,
+            writable: true,
+          });
+          this.getQuoteReportPDFByID = mocks.getQuoteReportPDFByID;
+        }
+      },
+    );
+
+    return {
+      ...actual,
+      DashboardClient: MockDashboardClient,
+    } satisfies Partial<__TestMockModule4>;
+  },
 );
 
 vi.mock(
@@ -148,16 +198,8 @@ describe('utility component coverage slice', () => {
     'clipboard',
   );
 
-  beforeEach(() => {
+  const resetUtilityCoverageState = () => {
     vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
-    mocks.getQuoteReportPDFByID.mockResolvedValue({ fileSizeBytes: 2048 });
-    vi.mocked(getQuotationFileDetails).mockResolvedValue({
-      fileSizeBytes: 4096,
-    } as any);
-  });
-
-  afterEach(() => {
     vi.useRealTimers();
     document.body.innerHTML = '';
     if (originalClipboard) {
@@ -165,11 +207,17 @@ describe('utility component coverage slice', () => {
     } else {
       Reflect.deleteProperty(navigator, 'clipboard');
     }
-    vi.restoreAllMocks();
-  });
+    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
+    mocks.getQuoteReportPDFByID.mockResolvedValue({ fileSizeBytes: 2048 });
+    vi.mocked(getQuotationFileDetails).mockResolvedValue({
+      fileSizeBytes: 4096,
+    } as any);
+  };
 
   it('finds an ancestor by id and returns false for null or missing ancestors', () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     const wrapper = document.createElement('section');
     wrapper.id = 'wrapper-id';
@@ -185,6 +233,8 @@ describe('utility component coverage slice', () => {
 
   it('scrolls and focuses a hash target without an accordion delay', () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.useFakeTimers();
     const target = document.createElement('h2');
@@ -210,6 +260,8 @@ describe('utility component coverage slice', () => {
 
   it('expands a collapsed accordion before scrolling to a hash target', () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.useFakeTimers();
     document.body.innerHTML = `
@@ -248,6 +300,8 @@ describe('utility component coverage slice', () => {
   it('scrolls to the top and focuses page title after route changes', () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     vi.useFakeTimers();
     render(<RouteHarness showTitle />);
     const title = document.querySelector('#page-title') as HTMLElement;
@@ -263,6 +317,8 @@ describe('utility component coverage slice', () => {
   it('focuses page top when the route has no page title', () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     vi.useFakeTimers();
     render(<RouteHarness showTitle={false} />);
     const pageTop = document.querySelector('#page-top') as HTMLElement;
@@ -277,96 +333,110 @@ describe('utility component coverage slice', () => {
   it('prints, copies and can hide mailing label actions', async () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     const print = vi
       .spyOn(globalThis, 'print')
       .mockImplementation(() => undefined);
-    const writeText = vi
-      .fn<(text: string) => Promise<void>>()
-      .mockResolvedValue(undefined);
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText },
-    });
-
-    const { rerender } = render(
-      <MailingLabel
-        quotationIdNum='Q-123'
-        nmiTestOfficerName='Alex Officer'
-        nmiFacilityName='NMI Lab'
-        nmiFacilityAddress='1 Measurement Way'
-      />,
-    );
-    Object.defineProperty(
-      document.querySelector('#printable-label'),
-      'innerText',
-      {
+    try {
+      const writeText = vi
+        .fn<(text: string) => Promise<void>>()
+        .mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
         configurable: true,
-        value:
-          'Deliver to:\nQuotation ID: Q-123\nATTN: Alex Officer\nNMI Lab\n1 Measurement Way',
-      },
-    );
+        value: { writeText },
+      });
 
-    fireEvent.click(screen.getByRole('button', { name: /print/i }));
+      const { rerender } = render(
+        <MailingLabel
+          quotationIdNum='Q-123'
+          nmiTestOfficerName='Alex Officer'
+          nmiFacilityName='NMI Lab'
+          nmiFacilityAddress='1 Measurement Way'
+        />,
+      );
+      Object.defineProperty(
+        document.querySelector('#printable-label'),
+        'innerText',
+        {
+          configurable: true,
+          value:
+            'Deliver to:\nQuotation ID: Q-123\nATTN: Alex Officer\nNMI Lab\n1 Measurement Way',
+        },
+      );
 
-    expect(print).toHaveBeenCalledWith();
+      fireEvent.click(screen.getByRole('button', { name: /print/i }));
 
-    fireEvent.click(screen.getByRole('button', { name: /copy/i }));
-    await waitFor(() =>
+      expect(print).toHaveBeenCalledWith();
+
+      fireEvent.click(screen.getByRole('button', { name: /copy/i }));
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: /copied/i }),
+        ).toBeInTheDocument(),
+      );
+
+      expect(writeText).toHaveBeenCalledWith(
+        expect.stringContaining('Quotation ID: Q-123'),
+      );
+
+      rerender(<MailingLabel showPrintOrCopy={false} />);
+
       expect(
-        screen.getByRole('button', { name: /copied/i }),
-      ).toBeInTheDocument(),
-    );
-
-    expect(writeText).toHaveBeenCalledWith(
-      expect.stringContaining('Quotation ID: Q-123'),
-    );
-
-    rerender(<MailingLabel showPrintOrCopy={false} />);
-
-    expect(
-      screen.queryByRole('button', { name: /print/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /copy/i }),
-    ).not.toBeInTheDocument();
+        screen.queryByRole('button', { name: /print/i }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /copy/i }),
+      ).not.toBeInTheDocument();
+    } finally {
+      print.mockRestore();
+    }
   });
 
   it('leaves the mailing label copy action available when clipboard copy fails', async () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     const writeText = vi
       .fn<(text: string) => Promise<void>>()
       .mockRejectedValue(new Error('copy failed'));
-    vi.spyOn(console, 'log').mockImplementation(() => undefined);
-    Object.defineProperty(navigator, 'clipboard', {
-      configurable: true,
-      value: { writeText },
-    });
-
-    render(<MailingLabel quotationIdNum='Q-123' />);
-    Object.defineProperty(
-      document.querySelector('#printable-label'),
-      'innerText',
-      {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      Object.defineProperty(navigator, 'clipboard', {
         configurable: true,
-        value: 'Quotation ID: Q-123',
-      },
-    );
+        value: { writeText },
+      });
 
-    fireEvent.click(screen.getByRole('button', { name: /copy/i }));
+      render(<MailingLabel quotationIdNum='Q-123' />);
+      Object.defineProperty(
+        document.querySelector('#printable-label'),
+        'innerText',
+        {
+          configurable: true,
+          value: 'Quotation ID: Q-123',
+        },
+      );
 
-    await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith('Quotation ID: Q-123'),
-    );
+      fireEvent.click(screen.getByRole('button', { name: /copy/i }));
 
-    expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /copied/i }),
-    ).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(writeText).toHaveBeenCalledWith('Quotation ID: Q-123'),
+      );
+
+      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /copied/i }),
+      ).not.toBeInTheDocument();
+    } finally {
+      log.mockRestore();
+    }
   });
 
   it('renders loaded PDF buttons and tracks downloads', () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     const getPdf = vi.fn<() => void>();
 
@@ -389,6 +459,8 @@ describe('utility component coverage slice', () => {
   it('renders loading state before a PDF button is loaded', () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     render(
       <ViewPdfButton
         text='Download PDF'
@@ -407,6 +479,8 @@ describe('utility component coverage slice', () => {
 
   it('loads and opens an offered quote PDF', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.mocked(getQuotationFileDetails).mockImplementation(
       (_token, _data, getFile) =>
@@ -448,6 +522,8 @@ describe('utility component coverage slice', () => {
   it('reports an offered quote PDF size load failure', async () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     vi.mocked(getQuotationFileDetails).mockRejectedValueOnce(
       new Error('size failed'),
     );
@@ -469,6 +545,8 @@ describe('utility component coverage slice', () => {
 
   it('reports an offered quote PDF download failure', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.mocked(getQuotationFileDetails).mockImplementation(
       (_token, _data, getFile) =>
@@ -498,6 +576,8 @@ describe('utility component coverage slice', () => {
 
   it('loads and opens a measurement report PDF', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     mocks.getQuoteReportPDFByID.mockImplementation((_id, getFile) =>
       Promise.resolve(
@@ -529,7 +609,7 @@ describe('utility component coverage slice', () => {
       expect(openInNewTab).toHaveBeenCalledWith('blob:report-data'),
     );
 
-    expect(DashboardClient).toHaveBeenCalledWith();
+    expect(mocks.setAuthToken).toHaveBeenCalledWith('token-1');
     expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
       'crm-quote-1',
       false,
@@ -543,6 +623,8 @@ describe('utility component coverage slice', () => {
 
   it('handles measurement report PDF download failures', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     mocks.getQuoteReportPDFByID.mockImplementation((_id, getFile) =>
       getFile
@@ -573,6 +655,8 @@ describe('utility component coverage slice', () => {
   it('handles measurement report PDF size load failures', async () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     mocks.getQuoteReportPDFByID.mockRejectedValueOnce(new Error('size failed'));
     const setFileError = vi.fn<BooleanSetter>();
 
@@ -593,6 +677,8 @@ describe('utility component coverage slice', () => {
 
   it('handles missing measurement report metadata and absent quotation data', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     mocks.getQuoteReportPDFByID.mockResolvedValue({});
     const setFileError = vi.fn<BooleanSetter>();
@@ -636,6 +722,8 @@ describe('utility component coverage slice', () => {
   it('does not request measurement report PDFs when the report id is missing', async () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     const setFileError = vi.fn<BooleanSetter>();
     const setIsLoading = vi.fn<BooleanSetter>();
 
@@ -659,6 +747,8 @@ describe('utility component coverage slice', () => {
 
   it('does not open quote PDFs when file metadata is incomplete', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.mocked(getQuotationFileDetails).mockResolvedValue({} as any);
 
@@ -687,6 +777,8 @@ describe('utility component coverage slice', () => {
 
   it('opens quote terms at the computed PDF page and tracks the click', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.mocked(getQuotationFileDetails).mockResolvedValueOnce({
       fileData: 'terms-data',
@@ -722,6 +814,8 @@ describe('utility component coverage slice', () => {
   it('sets a file error when quote terms cannot be downloaded', async () => {
     expect.hasAssertions();
 
+    resetUtilityCoverageState();
+
     vi.mocked(getQuotationFileDetails).mockRejectedValueOnce(
       new Error('terms failed'),
     );
@@ -747,6 +841,8 @@ describe('utility component coverage slice', () => {
 
   it('does not open quote terms when file metadata is incomplete', async () => {
     expect.hasAssertions();
+
+    resetUtilityCoverageState();
 
     vi.mocked(getQuotationFileDetails).mockResolvedValueOnce({} as any);
 

@@ -24,8 +24,8 @@ const containerState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer',
-  () =>
+  import('@/components/Inputs/RhfAutoSuggest/RhfAutoSuggestContainer'),
+  (() =>
     ({
       default: (props: MockContainerProps) => {
         containerState.props = props;
@@ -41,7 +41,7 @@ vi.mock(
           </div>
         );
       },
-    }) satisfies __ExactMockModule<__TestMockModule36>,
+    }) satisfies __ExactMockModule<__TestMockModule36>) as unknown as __DynamicPartialMockFactory<__TestMockModule36>,
 );
 
 const options: AutoSuggestOption<string>[] = [
@@ -86,7 +86,7 @@ describe('rhfAutoSuggest parent state', () => {
     expect({
       optionCount: screen.getByTestId('option-count').textContent,
       noResult: screen.getByTestId('no-result').textContent,
-    }).toEqual({ optionCount: '1', noResult: 'false' });
+    }).toStrictEqual({ optionCount: '1', noResult: 'false' });
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('sydney');
@@ -95,7 +95,7 @@ describe('rhfAutoSuggest parent state', () => {
     expect({
       optionCount: screen.getByTestId('option-count').textContent,
       noResult: screen.getByTestId('no-result').textContent,
-    }).toEqual({ optionCount: '0', noResult: 'true' });
+    }).toStrictEqual({ optionCount: '0', noResult: 'true' });
 
     await act(async () => {
       await containerState.props?.onSearchTermChange('sydney nsw');
@@ -104,7 +104,7 @@ describe('rhfAutoSuggest parent state', () => {
     expect({
       error: screen.getByTestId('error').textContent,
       loading: screen.getByTestId('loading').textContent,
-    }).toEqual({ error: 'true', loading: 'false' });
+    }).toStrictEqual({ error: 'true', loading: 'false' });
   });
 
   it('does not search short terms and clears the selected option for an empty term', async () => {
@@ -131,7 +131,7 @@ describe('rhfAutoSuggest parent state', () => {
     });
 
     expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
-    expect(onSelectedOption.mock.calls[0]).toEqual([]);
+    expect(onSelectedOption.mock.calls[0]).toStrictEqual([]);
     expect(screen.getByTestId('search-term')).toHaveTextContent('');
   });
 
@@ -208,13 +208,12 @@ describe('rhfAutoSuggest parent state', () => {
     renderAutoSuggest(undefined, onSelectedOption);
 
     const [selectedOption] = options;
-    if (selectedOption === undefined) {
-      throw new Error('Expected a selected AutoSuggest option');
-    }
 
     let selectionPromise: Promise<void> | undefined;
     await act(async () => {
-      selectionPromise = containerState.props?.onSelectedOption(selectedOption);
+      selectionPromise = containerState.props?.onSelectedOption(
+        selectedOption!,
+      );
     });
 
     expect(screen.getByTestId('loading')).toHaveTextContent('true');

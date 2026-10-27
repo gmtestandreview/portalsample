@@ -1,28 +1,23 @@
 import { act, render, screen } from '@testing-library/react';
 import { Form, Formik, type FormikConfig, type FormikProps } from 'formik';
 import { MemoryRouter } from 'react-router';
-import { afterEach, vi, describe, beforeEach, it, expect } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import ErrorSummary from '@/components/forms/ErrorSummary';
 import { HttpStatusCode } from '@/types';
 
 type EmptyFormikSubmit = FormikConfig<Record<string, never>>['onSubmit'];
 type NameFormikSubmit = FormikConfig<{ name: string }>['onSubmit'];
 
-afterEach(() => {
-  vi.useRealTimers();
-});
-
 const TestRouter = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
 );
 
-describe(ErrorSummary, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
+describe('error summary', () => {
   it('normalizes validation error keys and renders linked errors', () => {
     expect.hasAssertions();
+
+    vi.useRealTimers();
+    vi.clearAllMocks();
 
     render(
       <TestRouter>
@@ -39,13 +34,18 @@ describe(ErrorSummary, () => {
       </TestRouter>,
     );
 
-    const link = screen.getByRole('link', { name: 'Contact: (#1): Required' });
+    const link = screen.getByRole('link', {
+      name: 'Contact: (#1): Required',
+    });
 
     expect(link).toHaveAttribute('href', '#contact.0.firstName');
   });
 
   it('renders non-linked validation errors when disableLinkedError is true', () => {
     expect.hasAssertions();
+
+    vi.useRealTimers();
+    vi.clearAllMocks();
 
     render(
       <TestRouter>
@@ -70,6 +70,9 @@ describe(ErrorSummary, () => {
   it('renders the WAF violation message', () => {
     expect.hasAssertions();
 
+    vi.useRealTimers();
+    vi.clearAllMocks();
+
     render(
       <TestRouter>
         <ErrorSummary isWafViolation />
@@ -86,6 +89,9 @@ describe(ErrorSummary, () => {
 
   it('renders the unprocessable entity server error branch', () => {
     expect.hasAssertions();
+
+    vi.useRealTimers();
+    vi.clearAllMocks();
 
     render(
       <TestRouter>
@@ -105,6 +111,9 @@ describe(ErrorSummary, () => {
 
   it('handles validation errors without a prefix and preserves empty arrays', () => {
     expect.hasAssertions();
+
+    vi.useRealTimers();
+    vi.clearAllMocks();
 
     render(
       <TestRouter>
@@ -129,6 +138,9 @@ describe(ErrorSummary, () => {
 
   it('formats camel-case and separator-based validation keys as sentences', () => {
     expect.hasAssertions();
+
+    vi.useRealTimers();
+    vi.clearAllMocks();
 
     render(
       <TestRouter>
@@ -156,6 +168,9 @@ describe(ErrorSummary, () => {
   it('renders a key whose segment reduces to an empty label after stripping separators', () => {
     expect.hasAssertions();
 
+    vi.useRealTimers();
+    vi.clearAllMocks();
+
     render(
       <TestRouter>
         <ErrorSummary
@@ -178,6 +193,9 @@ describe(ErrorSummary, () => {
   it('falls through when validation problem details has no errors collection', () => {
     expect.hasAssertions();
 
+    vi.useRealTimers();
+    vi.clearAllMocks();
+
     render(
       <TestRouter>
         <Formik initialValues={{}} onSubmit={vi.fn<EmptyFormikSubmit>()}>
@@ -192,64 +210,79 @@ describe(ErrorSummary, () => {
   it('calls scrollIntoView on the error summary element when handleAlertScroll fires after the timeout', () => {
     expect.hasAssertions();
 
+    vi.useRealTimers();
+    vi.clearAllMocks();
+
     vi.useFakeTimers();
-    // disableLinkedError=true triggers handleAlertScroll inside renderErrorListItem;
-    // the rendered Alert has id="form-error-summary" so the querySelector finds it.
-    render(
-      <TestRouter>
-        <ErrorSummary
-          serverErrors={{ errors: { FirstName: ['Required'] } } as any}
-          disableLinkedError
-        />
-      </TestRouter>,
-    );
+    try {
+      // disableLinkedError=true triggers handleAlertScroll inside renderErrorListItem;
+      // the rendered Alert has id="form-error-summary" so the querySelector finds it.
+      render(
+        <TestRouter>
+          <ErrorSummary
+            serverErrors={{ errors: { FirstName: ['Required'] } } as any}
+            disableLinkedError
+          />
+        </TestRouter>,
+      );
 
-    const summaryEl = document.querySelector(
-      '#form-error-summary',
-    ) as HTMLElement;
+      const summaryEl = document.querySelector(
+        '#form-error-summary',
+      ) as HTMLElement;
 
-    expect(summaryEl).not.toBeNull();
+      expect(summaryEl).not.toBeNull();
 
-    act(() => {
-      vi.advanceTimersByTime(150);
-    });
+      act(() => {
+        vi.advanceTimersByTime(150);
+      });
 
-    expect(summaryEl.scrollIntoView).toHaveBeenCalledWith({
-      behavior: 'smooth',
-      block: 'start',
-    });
+      expect(summaryEl.scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('does not call scrollIntoView when the error summary element cannot be found when handleAlertScroll fires', () => {
     expect.hasAssertions();
 
+    vi.useRealTimers();
+    vi.clearAllMocks();
+
     vi.useFakeTimers();
-    render(
-      <TestRouter>
-        <ErrorSummary
-          serverErrors={{ errors: { FirstName: ['Required'] } } as any}
-        />
-      </TestRouter>,
-    );
+    const querySelectorSpy = vi.spyOn(document, 'querySelector');
+    try {
+      render(
+        <TestRouter>
+          <ErrorSummary
+            serverErrors={{ errors: { FirstName: ['Required'] } } as any}
+          />
+        </TestRouter>,
+      );
 
-    // Simulate document.querySelector('#form-error-summary') finding nothing when the
-    // scheduled timeout fires, without touching the real DOM tree (which would desync
-    // React's fiber tree from the document and break the render's own cleanup).
-    const querySelectorSpy = vi
-      .spyOn(document, 'querySelector')
-      .mockReturnValue(null);
+      // Simulate document.querySelector('#form-error-summary') finding nothing when the
+      // scheduled timeout fires, without touching the real DOM tree (which would desync
+      // React's fiber tree from the document and break the render's own cleanup).
+      querySelectorSpy.mockReturnValue(null);
 
-    act(() => {
-      vi.advanceTimersByTime(150);
-    });
+      act(() => {
+        vi.advanceTimersByTime(150);
+      });
 
-    expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
-
-    querySelectorSpy.mockRestore();
+      expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+    } finally {
+      querySelectorSpy.mockRestore();
+      vi.useRealTimers();
+    }
   });
 
   it('skips undefined error entries in sanitizeErrorData (line 140 else-if false branch)', async () => {
     expect.hasAssertions();
+
+    vi.useRealTimers();
+    vi.clearAllMocks();
 
     let formikInstance: FormikProps<{ name: string }> | null = null;
 
@@ -282,43 +315,50 @@ describe(ErrorSummary, () => {
   it('scrolls and focuses the summary after a failed submit settles', async () => {
     expect.hasAssertions();
 
+    vi.useRealTimers();
+    vi.clearAllMocks();
+
     vi.useFakeTimers();
 
-    let formikInstance: FormikProps<{ name: string }> | null = null;
+    try {
+      let formikInstance: FormikProps<{ name: string }> | null = null;
 
-    render(
-      <TestRouter>
-        <Formik
-          initialValues={{ name: '' }}
-          validate={(values) => (values.name ? {} : { name: 'Required' })}
-          onSubmit={vi.fn<NameFormikSubmit>()}
-          innerRef={(instance) => {
-            formikInstance = instance;
-          }}
-        >
-          <Form>
-            <ErrorSummary />
-          </Form>
-        </Formik>
-      </TestRouter>,
-    );
+      render(
+        <TestRouter>
+          <Formik
+            initialValues={{ name: '' }}
+            validate={(values) => (values.name ? {} : { name: 'Required' })}
+            onSubmit={vi.fn<NameFormikSubmit>()}
+            innerRef={(instance) => {
+              formikInstance = instance;
+            }}
+          >
+            <Form>
+              <ErrorSummary />
+            </Form>
+          </Formik>
+        </TestRouter>,
+      );
 
-    // Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true
-    await act(async () => {
-      await formikInstance!.submitForm();
-    });
+      // Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true
+      await act(async () => {
+        await formikInstance!.submitForm();
+      });
 
-    expect(document.querySelector('#form-error-summary')).not.toBeNull();
+      expect(document.querySelector('#form-error-summary')).not.toBeNull();
 
-    // The failed submit above settles with errors and no pending submission, so
-    // the summary schedules its focus once; let the timer fire.
-    act(() => {
-      vi.advanceTimersByTime(200);
-    });
+      // The failed submit above settles with errors and no pending submission, so
+      // the summary schedules its focus once; let the timer fire.
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
 
-    expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
-      behavior: 'smooth',
-      block: 'start',
-    });
+      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

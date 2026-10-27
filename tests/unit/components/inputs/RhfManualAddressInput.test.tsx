@@ -26,7 +26,7 @@ const renderManualAddress = (
 const formValue = () =>
   JSON.parse(screen.getByTestId('value').textContent) as Record<string, string>;
 
-describe(RhfManualAddressInput, () => {
+describe('rhf manual address input behavior', () => {
   it('renders every address field with its label', () => {
     expect.hasAssertions();
 
@@ -51,7 +51,7 @@ describe(RhfManualAddressInput, () => {
       .getAllByRole('option')
       .map((option) => option.textContent);
 
-    expect(options).toEqual([
+    expect(options).toStrictEqual([
       'Please select',
       'ACT',
       'NSW',
@@ -86,7 +86,7 @@ describe(RhfManualAddressInput, () => {
       'NSW',
     );
 
-    expect(formValue()).toEqual({
+    expect(formValue()).toStrictEqual({
       ...emptyAddress,
       line1: '1 Bourke St',
       suburb: 'Hay',

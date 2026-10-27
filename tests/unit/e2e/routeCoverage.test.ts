@@ -14,6 +14,24 @@ const declaredPaths = Array.from(
   (match) => match[1],
 ).filter((routePath): routePath is string => routePath !== undefined);
 
+const coverageEntryContract = (entry: (typeof routeCoverage)[number]) => {
+  if (entry.status === 'excluded') {
+    return {
+      hasReason: entry.reason.length > 20,
+      feature: entry.feature,
+    };
+  }
+
+  const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
+  const featureSource = readTextFileSync(featurePath, repoRoot);
+  return {
+    feature: /^tests\/e2e\/features\/.+\.feature$/.test(entry.feature),
+    scenario: entry.scenario !== undefined,
+    featureExists: pathExists(featurePath, repoRoot),
+    scenarioExists: featureSource.includes(`Scenario: ${entry.scenario}`),
+  };
+};
+
 describe('playwright-BDD route coverage manifest', () => {
   it('registers every route declared in App.tsx exactly once', () => {
     expect.hasAssertions();
@@ -32,27 +50,16 @@ describe('playwright-BDD route coverage manifest', () => {
     expect.hasAssertions();
 
     for (const entry of routeCoverage) {
-      if (entry.status === 'excluded') {
-        expect({
-          hasReason: entry.reason.length > 20,
-          feature: entry.feature,
-        }).toStrictEqual({ hasReason: true, feature: undefined });
-      } else {
-        const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
-        const featureSource = readTextFileSync(featurePath, repoRoot);
-
-        expect({
-          feature: /^tests\/e2e\/features\/.+\.feature$/.test(entry.feature),
-          scenario: entry.scenario !== undefined,
-          featureExists: pathExists(featurePath, repoRoot),
-          scenarioExists: featureSource.includes(`Scenario: ${entry.scenario}`),
-        }).toStrictEqual({
-          feature: true,
-          scenario: true,
-          featureExists: true,
-          scenarioExists: true,
-        });
-      }
+      expect(coverageEntryContract(entry)).toStrictEqual(
+        entry.status === 'excluded'
+          ? { hasReason: true, feature: undefined }
+          : {
+              feature: true,
+              scenario: true,
+              featureExists: true,
+              scenarioExists: true,
+            },
+      );
     }
   });
 

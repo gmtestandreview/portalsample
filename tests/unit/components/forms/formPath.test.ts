@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getIn, isObject, setIn } from '@/components/forms/formPath';
 
-describe(isObject, () => {
+describe('form path object checks', () => {
   it('is true for plain objects and arrays', () => {
     expect.hasAssertions();
     expect(isObject({})).toBe(true);
@@ -18,7 +18,7 @@ describe(isObject, () => {
   });
 });
 
-describe(getIn, () => {
+describe('form path get in', () => {
   const values = { a: { b: [{ c: 'deep' }] }, empty: null, zero: 0 };
 
   it('reads dotted and bracketed paths', () => {
@@ -47,23 +47,28 @@ describe(getIn, () => {
   });
 });
 
-describe(setIn, () => {
+describe('form path set in', () => {
   it('sets a nested value without mutating the source', () => {
     expect.hasAssertions();
 
     const source = { a: { b: 1, keep: true } };
     const result = setIn(source, 'a.b', 2);
 
-    expect(result).toEqual({ a: { b: 2, keep: true } });
-    expect(source).toEqual({ a: { b: 1, keep: true } });
+    expect(result).toStrictEqual({ a: { b: 2, keep: true } });
+    expect(source).toStrictEqual({ a: { b: 1, keep: true } });
     expect(result.a).not.toBe(source.a);
   });
 
   it('creates missing objects and arrays along the path', () => {
     expect.hasAssertions();
-    expect(setIn({}, 'a.b', 'x')).toEqual({ a: { b: 'x' } });
-    expect(setIn({}, 'list[1].name', 'x')).toEqual({
-      list: [undefined, { name: 'x' }],
+    expect(setIn({}, 'a.b', 'x')).toStrictEqual({ a: { b: 'x' } });
+
+    const expectedList: Array<{ name: string } | undefined> = [];
+    expectedList.length = 2;
+    expectedList[1] = { name: 'x' };
+
+    expect(setIn({}, 'list[1].name', 'x')).toStrictEqual({
+      list: expectedList,
     });
   });
 
@@ -77,9 +82,9 @@ describe(setIn, () => {
 
   it('deletes the key when the value is undefined', () => {
     expect.hasAssertions();
-    expect(setIn({ a: { b: 1, c: 2 } }, 'a.b', undefined)).toEqual({
+    expect(setIn({ a: { b: 1, c: 2 } }, 'a.b', undefined)).toStrictEqual({
       a: { c: 2 },
     });
-    expect(setIn({ a: 1, b: 2 }, 'a', undefined)).toEqual({ b: 2 });
+    expect(setIn({ a: 1, b: 2 }, 'a', undefined)).toStrictEqual({ b: 2 });
   });
 });

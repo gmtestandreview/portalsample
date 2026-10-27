@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import { describe, beforeEach, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchFilter from '@/components/SearchFilter';
@@ -26,11 +26,11 @@ const accountDispatchMock = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/authentication/hooks',
-  () =>
+  import('@/authentication/hooks'),
+  (() =>
     ({
       useAccountDispatch: () => accountDispatchMock,
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
@@ -52,12 +52,14 @@ const defaultFilters: UserProfile = {
 };
 
 describe('searchFilter behavior', () => {
-  beforeEach(() => {
+  const resetSearchFilterMocks = () => {
     vi.clearAllMocks();
-  });
+  };
 
   it('submits and clears SearchBox keywords through the public callback', async () => {
     expect.hasAssertions();
+
+    resetSearchFilterMocks();
 
     const user = userEvent.setup();
     const onSearchSubmit = vi.fn<SearchSubmit>();
@@ -92,6 +94,8 @@ describe('searchFilter behavior', () => {
   it('renders the leading search icon as decorative markup without a presentation role', () => {
     expect.hasAssertions();
 
+    resetSearchFilterMocks();
+
     const { container } = render(
       <SearchBox
         onSearchSubmit={vi.fn<SearchSubmit>()}
@@ -108,6 +112,8 @@ describe('searchFilter behavior', () => {
 
   it('opens FilterMenu, applies selected options, and persists the profile', async () => {
     expect.hasAssertions();
+
+    resetSearchFilterMocks();
 
     const user = userEvent.setup();
     const setInitialFilters = vi.fn<FilterStateSetter>();
@@ -151,6 +157,8 @@ describe('searchFilter behavior', () => {
   it('resets FilterMenu to default status and year while preserving active tab and search text', async () => {
     expect.hasAssertions();
 
+    resetSearchFilterMocks();
+
     const user = userEvent.setup();
     const setInitialFilters = vi.fn<FilterStateSetter>();
     const setCurrentPage = vi.fn<PageStateSetter>();
@@ -192,6 +200,8 @@ describe('searchFilter behavior', () => {
   it('closes FilterMenu without applying cancelled radio changes', async () => {
     expect.hasAssertions();
 
+    resetSearchFilterMocks();
+
     const user = userEvent.setup();
     const setInitialFilters = vi.fn<FilterStateSetter>();
     render(
@@ -215,6 +225,8 @@ describe('searchFilter behavior', () => {
 
   it('closes FilterMenu from its close control and counts a changed sort order', async () => {
     expect.hasAssertions();
+
+    resetSearchFilterMocks();
 
     const user = userEvent.setup();
     render(
@@ -244,6 +256,8 @@ describe('searchFilter behavior', () => {
   it('counts only a changed sort order and closes when the toggle is pressed again', async () => {
     expect.hasAssertions();
 
+    resetSearchFilterMocks();
+
     const user = userEvent.setup();
     render(
       <FilterMenu
@@ -270,6 +284,8 @@ describe('searchFilter behavior', () => {
   it('falls back to default filter values when no initial profile is supplied', async () => {
     expect.hasAssertions();
 
+    resetSearchFilterMocks();
+
     const user = userEvent.setup();
     const setInitialFilters = vi.fn<FilterStateSetter>();
     render(
@@ -295,6 +311,8 @@ describe('searchFilter behavior', () => {
   it('disables status choices when filtering the instruments tab', async () => {
     expect.hasAssertions();
 
+    resetSearchFilterMocks();
+
     const user = userEvent.setup();
     render(
       <FilterMenu
@@ -316,6 +334,8 @@ describe('searchFilter behavior', () => {
 
   it('searchFilter submits search text by resetting page and updating filters through the state updater', async () => {
     expect.hasAssertions();
+
+    resetSearchFilterMocks();
 
     const user = userEvent.setup();
     const setCurrentPage = vi.fn<PageStateSetter>();
@@ -351,7 +371,7 @@ describe('searchFilter behavior', () => {
         ...defaultFilters,
         filterCurrentPage: 4,
       }),
-    ).toEqual({
+    ).toStrictEqual({
       ...defaultFilters,
       filterCurrentPage: 1,
       filterSearchText: 'caliper',

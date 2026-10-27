@@ -16,7 +16,7 @@ const setViewportWidth = (width: number) => {
   });
 };
 
-describe(CustomPagination, () => {
+describe('custom pagination', () => {
   const resetPaginationState = () => {
     vi.useRealTimers();
     if (originalInnerWidth) {
@@ -123,7 +123,7 @@ describe(CustomPagination, () => {
       page1: screen.queryByLabelText('Page 1') !== null,
       page10: screen.queryByLabelText('Page 10') !== null,
       page11: screen.queryByLabelText('Page 11') !== null,
-    }).toEqual({ page1: true, page10: true, page11: false });
+    }).toStrictEqual({ page1: true, page10: true, page11: false });
 
     rerender(
       <CustomPagination
@@ -137,7 +137,7 @@ describe(CustomPagination, () => {
       page10: screen.queryByLabelText('Page 10') !== null,
       page11: screen.queryByLabelText('Page 11') !== null,
       page20: screen.queryByLabelText('Page 20') !== null,
-    }).toEqual({ page10: false, page11: true, page20: true });
+    }).toStrictEqual({ page10: false, page11: true, page20: true });
   });
 
   it('updates the visible page range after a debounced responsive resize', () => {
@@ -159,7 +159,7 @@ describe(CustomPagination, () => {
     expect({
       page1: screen.queryByLabelText('Page 1') !== null,
       page11: screen.queryByLabelText('Page 11') !== null,
-    }).toEqual({ page1: true, page11: true });
+    }).toStrictEqual({ page1: true, page11: true });
 
     setViewportWidth(500);
     act(() => {
@@ -167,7 +167,7 @@ describe(CustomPagination, () => {
       vi.advanceTimersByTime(499);
     });
 
-    expect(screen.queryByLabelText('Page 1')).not.toBeNull();
+    expect(screen.getByLabelText('Page 1')).toBeInTheDocument();
 
     act(() => {
       vi.advanceTimersByTime(1);
@@ -178,7 +178,7 @@ describe(CustomPagination, () => {
       page5: screen.queryByLabelText('Page 5') !== null,
       page6: screen.queryByLabelText('Page 6') !== null,
       page7: screen.queryByLabelText('Page 7') !== null,
-    }).toEqual({ page1: false, page5: true, page6: true, page7: true });
+    }).toStrictEqual({ page1: false, page5: true, page6: true, page7: true });
   });
 
   it.each([

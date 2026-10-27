@@ -3,10 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
 import { PatternApprovalDashboard } from '../../../../ClientApp/src/routes/ta/types';
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(PatternApprovalDashboard, () => {
   it('uses default dashboard filters when no initial values are supplied', () => {
     expect.hasAssertions();
-    expect(new PatternApprovalDashboard()).toEqual({
+    expect({ ...new PatternApprovalDashboard() }).toStrictEqual({
       filterStatusType: 'allStatuses',
       filterYearType: 'allYears',
       filterSortOrder: 'descending',
@@ -19,8 +20,8 @@ describe(PatternApprovalDashboard, () => {
 
   it('uses provided dashboard filters, including falsy but intentional values', () => {
     expect.hasAssertions();
-    expect(
-      new PatternApprovalDashboard({
+    expect({
+      ...new PatternApprovalDashboard({
         filterStatusType: '',
         filterYearType: '',
         filterSortOrder: '',
@@ -29,7 +30,7 @@ describe(PatternApprovalDashboard, () => {
         filterActiveTab: DashboardTab.Requests,
         filterSearchText: 'certificate',
       }),
-    ).toEqual({
+    }).toStrictEqual({
       filterStatusType: '',
       filterYearType: '',
       filterSortOrder: '',

@@ -13,6 +13,43 @@ const server = setupServer(...mswHandlers);
 
 const apiUrl = (path: string) => new URL(path, globalThis.location.origin);
 
+type ApiRequest = {
+  method: 'GET' | 'POST';
+  path: string;
+  body?: string;
+};
+
+const assertRouteCoveragePayload = (request: ApiRequest, payload: unknown) => {
+  if (request.path.includes('get-quote-request-details-byrefid')) {
+    expect(payload).toStrictEqual(
+      expect.objectContaining({ crmQuoteRequestId: expect.any(String) }),
+    );
+  } else if (request.path.includes('/api/forms/accounts/')) {
+    expect(payload).toStrictEqual(
+      expect.objectContaining({
+        id: 1,
+        stepValues: expect.objectContaining({
+          status: 'NotStarted',
+        }),
+      }),
+    );
+  } else if (request.path.includes('/api/contact/usercontact')) {
+    expect(payload).toStrictEqual(
+      expect.objectContaining({
+        contact: expect.objectContaining({ email: expect.any(String) }),
+        formStepStatus: 'NotStarted',
+      }),
+    );
+  } else if (request.path === '/api/application') {
+    expect(payload).toStrictEqual(
+      expect.objectContaining({
+        referenceId: expect.any(String),
+        applicationType: JSON.parse(request.body ?? '{}').applicationType,
+      }),
+    );
+  }
+};
+
 /**
  * Derived from application source, not from a run log. The previous handler set
  * mocked exactly the two lookup types that appeared in one captured log, while
@@ -33,13 +70,16 @@ const requestedLookupTypes = [
   ),
 ];
 
-beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
-
-afterEach(() => server.resetHandlers());
-
-afterAll(() => server.close());
-
 describe('storybook MSW handlers', () => {
+  // eslint-disable-next-line vitest/no-hooks -- MSW server lifecycle spans the suite.
+  beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
+
+  // eslint-disable-next-line vitest/no-hooks -- each test starts with clean handlers.
+  afterEach(() => server.resetHandlers());
+
+  // eslint-disable-next-line vitest/no-hooks -- close the shared MSW server after the suite.
+  afterAll(() => server.close());
+
   it('finds the lookup call sites it is supposed to cover', () => {
     expect.hasAssertions();
     // Guards the enumeration itself: a regex that matched nothing would make
@@ -60,11 +100,7 @@ describe('storybook MSW handlers', () => {
   it('answers the route-coverage API requests', async () => {
     expect.hasAssertions();
 
-    const requests: Array<{
-      method: 'GET' | 'POST';
-      path: string;
-      body?: string;
-    }> = [
+    const requests: ApiRequest[] = [
       {
         method: 'GET',
         path: '/api/quote/get-quote-request-details-byrefid?ApplicationType=QuoteRequest',
@@ -114,34 +150,7 @@ describe('storybook MSW handlers', () => {
 
       expect(response.status).toBe(200);
 
-      if (request.path.includes('get-quote-request-details-byrefid')) {
-        expect(payload).toStrictEqual(
-          expect.objectContaining({ crmQuoteRequestId: expect.any(String) }),
-        );
-      } else if (request.path.includes('/api/forms/accounts/')) {
-        expect(payload).toStrictEqual(
-          expect.objectContaining({
-            id: 1,
-            stepValues: expect.objectContaining({
-              status: 'NotStarted',
-            }),
-          }),
-        );
-      } else if (request.path.includes('/api/contact/usercontact')) {
-        expect(payload).toStrictEqual(
-          expect.objectContaining({
-            contact: expect.objectContaining({ email: expect.any(String) }),
-            formStepStatus: 'NotStarted',
-          }),
-        );
-      } else if (request.path === '/api/application') {
-        expect(payload).toStrictEqual(
-          expect.objectContaining({
-            referenceId: expect.any(String),
-            applicationType: JSON.parse(request.body ?? '{}').applicationType,
-          }),
-        );
-      }
+      assertRouteCoveragePayload(request, payload);
     }
   });
 

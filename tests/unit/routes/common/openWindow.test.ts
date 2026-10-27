@@ -1,4 +1,4 @@
-import { describe, afterEach, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   openInternalRouteInNewTab,
   openPdfPageInSecureNewTab,
@@ -8,13 +8,15 @@ import {
 describe('openWindow helpers', () => {
   const originalOpen = globalThis.open;
 
-  afterEach(() => {
+  const resetOpenWindowState = () => {
     globalThis.open = originalOpen;
     vi.restoreAllMocks();
-  });
+  };
 
   it('opens internal routes with noopener,noreferrer and clears opener fallback', () => {
     expect.hasAssertions();
+
+    resetOpenWindowState();
 
     const openedWindow = { opener: {} } as Window;
     const open = vi
@@ -35,6 +37,8 @@ describe('openWindow helpers', () => {
   it('does not open external or protocol-relative routes through internal route helper', () => {
     expect.hasAssertions();
 
+    resetOpenWindowState();
+
     const open = vi.fn<(...args: unknown[]) => unknown>();
     globalThis.open = open as typeof globalThis.open;
 
@@ -47,6 +51,8 @@ describe('openWindow helpers', () => {
 
   it('encodes PDF page fragments before opening the URL', () => {
     expect.hasAssertions();
+
+    resetOpenWindowState();
 
     const open = vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;
@@ -65,6 +71,8 @@ describe('openWindow helpers', () => {
 
   it('opens blob URLs with secure features', () => {
     expect.hasAssertions();
+
+    resetOpenWindowState();
 
     const open = vi.fn<(...args: unknown[]) => unknown>().mockReturnValue(null);
     globalThis.open = open as typeof globalThis.open;

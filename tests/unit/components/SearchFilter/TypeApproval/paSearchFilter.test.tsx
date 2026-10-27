@@ -6,8 +6,8 @@ import type { PatternApprovalDashboardDto } from '@/api/web-api-client';
 import PaSearchFilter from '@/components/SearchFilter/TypeApproval/paSearchFilter';
 
 vi.mock(
-  '@/components/SearchFilter/TypeApproval/paFilterMenu',
-  () =>
+  import('@/components/SearchFilter/TypeApproval/paFilterMenu'),
+  (() =>
     ({
       default: ({
         initialFilters,
@@ -30,10 +30,10 @@ vi.mock(
           Filter applications
         </button>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule53>,
+    }) satisfies __ExactMockModule<__TestMockModule53>) as unknown as __DynamicPartialMockFactory<__TestMockModule53>,
 );
 
-describe(PaSearchFilter, () => {
+describe('pa search filter', () => {
   it('renders the filter menu with default Bootstrap layout classes', () => {
     expect.hasAssertions();
 

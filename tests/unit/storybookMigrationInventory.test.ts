@@ -12,6 +12,19 @@ const read = (...segments: string[]) =>
 const readSource = (...segments: string[]) =>
   read('ClientApp', 'src', ...segments);
 
+const normalizeRoutePaths = (rawPaths: Array<string | undefined>): string[] => {
+  const uniquePaths = [
+    ...new Set(
+      rawPaths.filter(
+        (routePath): routePath is string =>
+          routePath !== undefined && routePath !== '*',
+      ),
+    ),
+  ];
+  if (rawPaths.includes('*')) uniquePaths.push('*');
+  return uniquePaths;
+};
+
 describe('storybook migration inventory', () => {
   const overviewDoc = readSource('storybook', 'MigrationReadiness.docs.mdx');
   const coverageDoc = readSource('storybook', 'CoverageMatrix.docs.mdx');
@@ -64,8 +77,7 @@ describe('storybook migration inventory', () => {
     // Child wildcard routes ('*') are documented as 'parent/*' in the inventory,
     // not as standalone rows. Strip all bare '*' entries then restore the
     // top-level catch-all once.
-    const uniquePaths = [...new Set(rawPaths.filter((p) => p !== '*'))];
-    if (rawPaths.includes('*')) uniquePaths.push('*');
+    const uniquePaths = normalizeRoutePaths(rawPaths);
 
     expect(uniquePaths.length).toBeGreaterThan(20);
 

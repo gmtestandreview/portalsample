@@ -16,7 +16,7 @@ const renderList = (
     />,
   );
 
-describe(ProgressFileList, () => {
+describe('progress file list', () => {
   it('renders byte, kilobyte, and megabyte upload progress rows', () => {
     expect.hasAssertions();
 
@@ -52,7 +52,7 @@ describe(ProgressFileList, () => {
         '2.00 MB',
         '1.00 MB / 2.00 MB',
       ].map((label) => screen.getByText(label).textContent),
-    }).toEqual({
+    }).toStrictEqual({
       percent: '57',
       labels: [
         '512 B / 900 B',

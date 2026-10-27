@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import Actions from '@/components/Actions';
 import BodyText from '@/components/BodyText';
@@ -30,59 +30,59 @@ const msalState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@azure/msal-react',
-  () =>
+  import('@azure/msal-react'),
+  (() =>
     ({
       AuthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
         msalState.authenticated ? children : null,
       UnauthenticatedTemplate: ({ children }: { children: React.ReactNode }) =>
         msalState.authenticated ? null : children,
-    }) satisfies __ExactMockModule<__TestMockModule2>,
+    }) satisfies __ExactMockModule<__TestMockModule2>) as unknown as __DynamicPartialMockFactory<__TestMockModule2>,
 );
 
 vi.mock(
   import('@/analytics/GoogleAnalytics'),
-  () =>
+  (() =>
     ({
       trackGAEvent: vi.fn<typeof trackGAEvent>(),
-    }) satisfies __ExactMockModule<__TestMockModule22>,
+    }) satisfies __ExactMockModule<__TestMockModule22>) as unknown as __DynamicPartialMockFactory<__TestMockModule22>,
 );
 
 vi.mock(
   import('@/authentication/hooks'),
-  () =>
+  (() =>
     ({
       useAccountState: vi.fn<typeof useAccountState>(),
-    }) satisfies __ExactMockModule<__TestMockModule26>,
+    }) satisfies __ExactMockModule<__TestMockModule26>) as unknown as __DynamicPartialMockFactory<__TestMockModule26>,
 );
 
 vi.mock(
   import('@/components/modals/ModalContext'),
-  () =>
+  (() =>
     ({
       useModalDispatch: vi.fn<typeof useModalDispatch>(),
-    }) satisfies __ExactMockModule<__TestMockModule27>,
+    }) satisfies __ExactMockModule<__TestMockModule27>) as unknown as __DynamicPartialMockFactory<__TestMockModule27>,
 );
 
 vi.mock(
   import('@/routes/common/helperFunctions'),
-  () =>
+  (() =>
     ({
       getEnvironment: vi.fn<typeof getEnvironment>(),
-    }) satisfies __ExactMockModule<__TestMockModule9>,
+    }) satisfies __ExactMockModule<__TestMockModule9>) as unknown as __DynamicPartialMockFactory<__TestMockModule9>,
 );
 
 vi.mock(
   import('@/assets/GovCrest.svg'),
-  () =>
+  (() =>
     ({
       default: 'gov-crest.svg',
-    }) satisfies __ExactMockModule<__TestMockModule19>,
+    }) satisfies __ExactMockModule<__TestMockModule19>) as unknown as __DynamicPartialMockFactory<__TestMockModule19>,
 );
 
 vi.mock(
-  '@/components/modals/ContentModal',
-  () =>
+  import('@/components/modals/ContentModal'),
+  (() =>
     ({
       default: ({
         showModal,
@@ -104,7 +104,7 @@ vi.mock(
             </button>
           </dialog>
         ) : null,
-    }) satisfies __ExactMockModule<__TestMockModule28>,
+    }) satisfies __ExactMockModule<__TestMockModule28>) as unknown as __DynamicPartialMockFactory<__TestMockModule28>,
 );
 
 const renderWithRouter = (ui: React.ReactNode) =>
@@ -123,7 +123,7 @@ const accountState = {
 };
 
 describe('header chrome', () => {
-  beforeEach(() => {
+  const resetHeaderState = () => {
     msalState.authenticated = false;
     vi.mocked(getEnvironment).mockReturnValue('');
     vi.mocked(trackGAEvent).mockClear();
@@ -133,10 +133,12 @@ describe('header chrome', () => {
       setShowRFQDeleteModal: vi.fn<ModalDispatch['setShowRFQDeleteModal']>(),
       setShowRFQSelectModal: vi.fn<ModalDispatch['setShowRFQSelectModal']>(),
     });
-  });
+  };
 
   it('renders the public header brand, feedback message, and unauthenticated exit link', () => {
     expect.hasAssertions();
+
+    resetHeaderState();
 
     renderWithRouter(<Header />);
 
@@ -160,7 +162,7 @@ describe('header chrome', () => {
         .getByRole('link', { name: /Exit/i })
         .getAttribute('href'),
       userMenu: screen.queryByTestId('user-menu-dropdown'),
-    }).toEqual({
+    }).toStrictEqual({
       exitHref: 'https://measurement.gov.au',
       userMenu: null,
     });
@@ -168,6 +170,8 @@ describe('header chrome', () => {
 
   it('renders authenticated user menu items and tracks account-management clicks', async () => {
     expect.hasAssertions();
+
+    resetHeaderState();
 
     const user = userEvent.setup();
     const modalDispatch = {
@@ -190,7 +194,7 @@ describe('header chrome', () => {
         .textContent,
       precision: screen.getByText('Precision Labs - Canberra').textContent,
       measurement: screen.getByText('Measurement Pty Ltd').textContent,
-    }).toEqual({
+    }).toStrictEqual({
       environment: 'Environment:TEST',
       user: expect.stringContaining('Alex Citizen'),
       precision: 'Precision Labs - Canberra',
@@ -211,7 +215,7 @@ describe('header chrome', () => {
       logOut: screen
         .getByRole('link', { name: 'Log out' })
         .getAttribute('href'),
-    }).toEqual({
+    }).toStrictEqual({
       manageOrganisation: '/update-organisation/org-123',
       contactDetails: '/update-contact',
       logOut: '/sign-out',
@@ -239,7 +243,7 @@ describe('header chrome', () => {
     expect({
       trackEvents: vi.mocked(trackGAEvent).mock.calls,
       branchSelector: modalDispatch.setShowBranchSelector.mock.calls,
-    }).toEqual({
+    }).toStrictEqual({
       trackEvents: [
         ['Manage organisation'],
         ['Manage branch/location'],
@@ -253,6 +257,8 @@ describe('header chrome', () => {
   it('does not render authenticated menu content until account email is available', () => {
     expect.hasAssertions();
 
+    resetHeaderState();
+
     vi.mocked(useAccountState).mockReturnValue({
       details: { givenName: 'Alex' },
     } as ReturnType<typeof useAccountState>);
@@ -265,6 +271,8 @@ describe('header chrome', () => {
   it('hides the environment label when no environment marker is detected', () => {
     expect.hasAssertions();
 
+    resetHeaderState();
+
     const { container } = render(<NavbarEnvironment />);
 
     expect(container).toBeEmptyDOMElement();
@@ -272,6 +280,8 @@ describe('header chrome', () => {
 
   it('renders the feedback message as a new-tab survey link', () => {
     expect.hasAssertions();
+
+    resetHeaderState();
 
     render(<NavbarMessage />);
 
@@ -349,7 +359,7 @@ describe('footer chrome', () => {
     expect({
       heading: screen.getByRole('heading', { name: '1. General' }).textContent,
       date: screen.getByText('9 July, 2024').textContent,
-    }).toEqual({
+    }).toStrictEqual({
       heading: '1. General',
       date: expect.stringContaining('9 July, 2024'),
     });
@@ -363,7 +373,7 @@ describe('footer chrome', () => {
       privacyHref: screen
         .getByRole('link', { name: 'privacy@industry.gov.au' })
         .getAttribute('href'),
-    }).toEqual({
+    }).toStrictEqual({
       heading: 'Types of personal information collected',
       privacyHref: 'mailto:privacy@industry.gov.au',
     });
@@ -377,7 +387,7 @@ describe('footer chrome', () => {
           name: /Web Content Accessibility Guidelines.*Opens in a new tab/i,
         })
         .getAttribute('target'),
-    }).toEqual({ heading: 'JavaScript', target: '_blank' });
+    }).toStrictEqual({ heading: 'JavaScript', target: '_blank' });
   });
 });
 

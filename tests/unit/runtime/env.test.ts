@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 const envKeys = [
   'VITE_B2C_CLIENTID',
@@ -42,6 +42,7 @@ async function importEnv(
   isDevelopment = true,
   runtimeOverrides: Record<string, string> = {},
 ) {
+  resetEnvironment();
   vi.resetModules();
   envKeys.forEach((key) => {
     vi.stubEnv(key, valueFor(overrides, key) ?? valueFor(validEnv, key));
@@ -52,15 +53,14 @@ async function importEnv(
   return import('../../../ClientApp/src/env');
 }
 
-describe('vite environment contract', () => {
-  afterEach(() => {
-    for (const key of envKeys) {
-      Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
-    }
-    vi.unstubAllEnvs();
-    vi.restoreAllMocks();
-  });
+function resetEnvironment() {
+  for (const key of envKeys) {
+    Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
+  }
+  vi.unstubAllEnvs();
+}
 
+describe('vite environment contract', () => {
   it('exports VITE-prefixed values and validates allowed redirect hosts', async () => {
     expect.hasAssertions();
 
@@ -68,7 +68,7 @@ describe('vite environment contract', () => {
       VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:5173/return',
     });
 
-    expect(module.env).toEqual({
+    expect(module.env).toStrictEqual({
       ...validEnv,
       VITE_EXTERNAL_REDIRECT_URL: 'http://localhost:5173/return',
     });
@@ -133,6 +133,8 @@ describe('vite environment contract', () => {
         );
         expect(valueFor(module.env, key)).toBe('');
       });
+
+    consoleError.mockRestore();
   });
 
   it('keeps quiet about absent telemetry variables in development', async () => {
@@ -153,6 +155,8 @@ describe('vite environment contract', () => {
     expect(consoleError).not.toHaveBeenCalledWith(
       '[env] Missing required environment variable: VITE_GA_TRACKINGID',
     );
+
+    consoleError.mockRestore();
   });
 
   it('reports absent telemetry variables outside development', async () => {
@@ -176,6 +180,8 @@ describe('vite environment contract', () => {
     expect(consoleError).toHaveBeenCalledWith(
       '[env] Missing required environment variable: VITE_GA_TRACKINGID',
     );
+
+    consoleError.mockRestore();
   });
 
   it('falls back to empty-string build-time defaults when Vite env vars are undefined', async () => {
@@ -202,6 +208,8 @@ describe('vite environment contract', () => {
     expect(consoleError).toHaveBeenCalledWith(
       '[env] Missing required environment variable: VITE_B2C_CLIENTID',
     );
+
+    consoleError.mockRestore();
   });
 
   it('rejects malformed or disallowed external redirect hosts', async () => {

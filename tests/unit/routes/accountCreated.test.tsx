@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import type * as AccountHooksModule from '../../../ClientApp/src/authentication/hooks';
 
@@ -51,13 +51,15 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule89>,
 );
 
-describe('account created route', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const resetAccountCreatedMocks = () => {
+  vi.clearAllMocks();
+};
 
+describe('account created route', () => {
   it('renders the account holder name and dashboard action', async () => {
     expect.hasAssertions();
+
+    resetAccountCreatedMocks();
 
     mocks.useAccountState.mockReturnValue({
       details: { givenName: 'Alex' },
@@ -88,6 +90,8 @@ describe('account created route', () => {
 
   it('renders without a name when account details are unavailable', async () => {
     expect.hasAssertions();
+
+    resetAccountCreatedMocks();
 
     mocks.useAccountState.mockReturnValue(
       undefined as unknown as ReturnType<

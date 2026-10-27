@@ -8,7 +8,7 @@ import {
   ReportStatus,
 } from '../../../../ClientApp/src/routes/common/enums';
 
-describe(StatusPill, () => {
+describe('status pill', () => {
   describe('dashboard item status', () => {
     it('renders QuoteAvailable text', async () => {
       expect.hasAssertions();

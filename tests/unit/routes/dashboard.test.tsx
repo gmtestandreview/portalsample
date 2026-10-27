@@ -1,7 +1,7 @@
 import type React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
@@ -504,47 +504,49 @@ function renderDashboard(Dashboard: React.ComponentType) {
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
-describe('dashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // Restore default resolved value after clearAllMocks resets implementations
-    mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
-    mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
-    mockMsalContext.inProgress = 'none';
-    mockGetDrafts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockGetQuotes.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockGetArtefacts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
-    mockSessionGetItem.mockReturnValue(null);
-    mockGetDashboardNotification.mockReturnValue(null);
-    mockGetDashboardInfoNotification.mockReturnValue(null);
-    mockModalState.showBranchSelector = false;
-    mockModalState.showRFQDeleteModal = false;
-    mockModalState.branchSelectionModalMode = undefined;
-    mockAccountDispatchState.value = {
-      setAgree: vi.fn<(...args: unknown[]) => unknown>(),
-      setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
-      setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
-      setDefaultOrganisationId: vi.fn<(...args: unknown[]) => unknown>(),
-      setTargetOrganisation: mockSetTargetOrganisation,
-      setOrganisationAndBranch: vi.fn<(...args: unknown[]) => unknown>(),
-      setUserProfile: mockSetUserProfile,
-    };
-    mockMapToUserProfile.mockImplementation((p: any) => ({
-      filterYearType: p?.filterYearType ?? 'allYears',
-      filterStatusType: p?.filterStatusType ?? 'allStatuses',
-      filterCurrentPage: p?.filterCurrentPage ?? 1,
-      filterActiveTab: p?.filterActiveTab ?? 'drafts',
-      filterSearchText: p?.filterSearchText ?? '',
-      filterSortOrder: p?.filterSortOrder ?? 'descending',
-      filtersChanged: p?.filtersChanged ?? false,
-    }));
-    mockAccountDetails = { ...BASE };
-  });
+const resetDashboardMocks = () => {
+  vi.clearAllMocks();
+  // Restore default resolved value after clearAllMocks resets implementations
+  mockAcquireTokenSilent.mockResolvedValue({ accessToken: 'mock-token' });
+  mockMsalContext.instance.acquireTokenSilent = mockAcquireTokenSilent;
+  mockMsalContext.inProgress = 'none';
+  mockGetDrafts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
+  mockGetQuotes.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
+  mockGetArtefacts.mockResolvedValue({ ...EMPTY_PAGE_RESPONSE });
+  mockSessionGetItem.mockReturnValue(null);
+  mockGetDashboardNotification.mockReturnValue(null);
+  mockGetDashboardInfoNotification.mockReturnValue(null);
+  mockModalState.showBranchSelector = false;
+  mockModalState.showRFQDeleteModal = false;
+  mockModalState.branchSelectionModalMode = undefined;
+  mockAccountDispatchState.value = {
+    setAgree: vi.fn<(...args: unknown[]) => unknown>(),
+    setCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+    setContactCompleted: vi.fn<(...args: unknown[]) => unknown>(),
+    setDefaultOrganisationId: vi.fn<(...args: unknown[]) => unknown>(),
+    setTargetOrganisation: mockSetTargetOrganisation,
+    setOrganisationAndBranch: vi.fn<(...args: unknown[]) => unknown>(),
+    setUserProfile: mockSetUserProfile,
+  };
+  mockMapToUserProfile.mockImplementation((p: any) => ({
+    filterYearType: p?.filterYearType ?? 'allYears',
+    filterStatusType: p?.filterStatusType ?? 'allStatuses',
+    filterCurrentPage: p?.filterCurrentPage ?? 1,
+    filterActiveTab: p?.filterActiveTab ?? 'drafts',
+    filterSearchText: p?.filterSearchText ?? '',
+    filterSortOrder: p?.filterSortOrder ?? 'descending',
+    filtersChanged: p?.filtersChanged ?? false,
+  }));
+  mockAccountDetails = { ...BASE };
+};
 
+describe('dashboard', () => {
   // ── Test 1: Renders without crashing ──────────────────────────────────────
 
   it('1. renders without crashing and shows Welcome component', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -558,6 +560,8 @@ describe('dashboard', () => {
 
   it('2. (SEC-010) passes organisationCRMGuid as first argument to getDashboardDraftsByPortalID', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -574,6 +578,8 @@ describe('dashboard', () => {
 
   it('uses the saved search in the first dashboard request', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
@@ -593,6 +599,8 @@ describe('dashboard', () => {
 
   it('3. sets auth token on the client before making API calls', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -614,6 +622,8 @@ describe('dashboard', () => {
 
   it('4. shows NoRequests component when API returns empty items array', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockGetDrafts.mockResolvedValue({
       items: [],
@@ -650,6 +660,8 @@ describe('dashboard', () => {
   it('5. does not call API when organisationCRMGuid is undefined', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockAccountDetails = { ...BASE, organisationCRMGuid: undefined };
 
     const Dashboard = await importDashboard();
@@ -671,6 +683,8 @@ describe('dashboard', () => {
   it('6. navigates to /server-error route when API rejects with a 500 error', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockGetDrafts.mockRejectedValue({ status: 500, title: 'Server Error' });
 
     const Dashboard = await importDashboard();
@@ -688,6 +702,8 @@ describe('dashboard', () => {
 
   it('7. displays total pages from API response in pagination component', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockGetDrafts.mockResolvedValue({
       items: [],
@@ -711,6 +727,8 @@ describe('dashboard', () => {
 
   it('8. persists paging changes through account dispatch user profile updates', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -739,6 +757,8 @@ describe('dashboard', () => {
     async (_tabName, accessibleName, apiMock, tabValue) => {
       expect.hasAssertions();
 
+      resetDashboardMocks();
+
       const Dashboard = await importDashboard();
       renderDashboard(Dashboard);
 
@@ -758,6 +778,8 @@ describe('dashboard', () => {
 
   it('returns to drafts and records the selection', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -782,6 +804,8 @@ describe('dashboard', () => {
 
   it('normalises a newly accepted quote from session storage', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
     const acceptedItem = {
@@ -808,12 +832,14 @@ describe('dashboard', () => {
     );
 
     expect(acceptedItem.status).toBe('Quote offer is accepted');
-    expect(acceptedItem.quote).toEqual({ artefactName: 'Mass standard' });
+    expect(acceptedItem.quote).toStrictEqual({ artefactName: 'Mass standard' });
     expect(mockSessionRemoveItem).toHaveBeenCalledWith('accepted-quote-id');
   });
 
   it('removes an accepted quote marker when the response has no items', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
     mockGetDrafts.mockResolvedValue({
@@ -835,6 +861,8 @@ describe('dashboard', () => {
 
   it('handles forbidden and third-party access errors without fatal navigation', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockGetDrafts
       .mockRejectedValueOnce({ status: 403, title: 'Forbidden' })
@@ -867,6 +895,8 @@ describe('dashboard', () => {
   it('ignores aborted dashboard requests', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockGetDrafts.mockRejectedValueOnce({ name: 'AbortError' });
     const Dashboard = await importDashboard();
 
@@ -882,6 +912,8 @@ describe('dashboard', () => {
 
   it('opens branch management and records new request and instrument pagination actions', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const scrollIntoView = vi.fn<(...args: unknown[]) => unknown>();
     vi.spyOn(document, 'getElementById').mockImplementation(
@@ -916,6 +948,8 @@ describe('dashboard', () => {
   it('resets profile paging after branch selection', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
     const Dashboard = await importDashboard();
 
@@ -933,6 +967,8 @@ describe('dashboard', () => {
 
   it('falls back to drafts when the saved profile records no active tab', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     // A profile saved before the tab was tracked, on an account with no default organisation
     // yet. Both gaps have to resolve to something usable rather than leaving the dashboard on
@@ -963,6 +999,8 @@ describe('dashboard', () => {
 
   it('renders dashboard notifications and complete organisation labels', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockGetDashboardNotification.mockReturnValue({
       message: 'Saved',
@@ -996,6 +1034,8 @@ describe('dashboard', () => {
   it('navigates to the generic error route when an API error has no status', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockGetDrafts.mockRejectedValueOnce({});
 
     const Dashboard = await importDashboard();
@@ -1008,6 +1048,8 @@ describe('dashboard', () => {
 
   it('leaves an accepted-quote marker item unchanged when its status is not available', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
     const acceptedItem = {
@@ -1036,6 +1078,8 @@ describe('dashboard', () => {
 
   it('passes custom year and status filters and applies missing paging defaults', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const { filterCurrentPage: _filterCurrentPage, ...profileWithoutPaging } =
       BASE_USER_PROFILE;
@@ -1084,6 +1128,8 @@ describe('dashboard', () => {
   it('does not load dashboard data without a saved user profile', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockAccountDetails = { ...BASE, userProfile: undefined };
 
     const Dashboard = await importDashboard();
@@ -1098,6 +1144,8 @@ describe('dashboard', () => {
 
   it('uses mapped profile defaults when active tab and page are absent', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
@@ -1125,6 +1173,8 @@ describe('dashboard', () => {
   it('waits for MSAL to become idle before loading dashboard data', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockMsalContext.inProgress = 'login';
 
     const Dashboard = await importDashboard();
@@ -1139,6 +1189,8 @@ describe('dashboard', () => {
 
   it('handles third-party access errors when account dispatch is unavailable', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockAccountDispatchState.value = undefined;
     mockGetDrafts.mockRejectedValueOnce({
@@ -1162,6 +1214,8 @@ describe('dashboard', () => {
   it('uses empty third-party organisation fallbacks', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockAccountDetails = {
       ...BASE,
       organisation: undefined,
@@ -1182,6 +1236,8 @@ describe('dashboard', () => {
   it('allows tab and page interactions before profile filters are initialised', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockAccountDetails = { ...BASE, userProfile: undefined };
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -1194,6 +1250,8 @@ describe('dashboard', () => {
 
   it('does not replace initial filters when the saved profile changes', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
@@ -1226,6 +1284,8 @@ describe('dashboard', () => {
 
   it('seeds initial filters when the saved profile arrives after mount', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     // Mount with no profile: the lazy useState seed resolves to undefined.
     mockAccountDetails = { ...BASE, userProfile: undefined };
@@ -1272,6 +1332,8 @@ describe('dashboard', () => {
   it('writes the branch reset once even when the saved profile identity changes', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
     const Dashboard = await importDashboard();
     const view = renderDashboard(Dashboard);
@@ -1306,6 +1368,8 @@ describe('dashboard', () => {
   it('uses branch-reset defaults when the mapped profile omits tab and page', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
@@ -1332,6 +1396,8 @@ describe('dashboard', () => {
   it('parses an absent non-default year and defaults an absent request page', async () => {
     expect.hasAssertions();
 
+    resetDashboardMocks();
+
     mockMapToUserProfile.mockReturnValue({
       ...BASE_USER_PROFILE,
       filterYearType: undefined,
@@ -1351,6 +1417,8 @@ describe('dashboard', () => {
 
   it('marks dashboard content inert while an actionable modal is open', async () => {
     expect.hasAssertions();
+
+    resetDashboardMocks();
 
     mockModalState.showBranchSelector = true;
     const Dashboard = await importDashboard();

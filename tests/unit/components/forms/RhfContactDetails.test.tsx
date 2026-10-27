@@ -145,7 +145,7 @@ describe('rhfContactDetails edit mode', () => {
       .getAllByRole('option')
       .map((option) => [option.textContent, option.getAttribute('value')]);
 
-    expect(options[0]).toEqual(['Please select', '']);
+    expect(options[0]).toStrictEqual(['Please select', '']);
     expect(options).toContainEqual([
       'Associate Professor',
       'AssociateProfessor',
@@ -169,7 +169,7 @@ describe('rhfContactDetails edit mode', () => {
     await user.type(screen.getByLabelText('Mobile phone'), '0400000000');
     await user.type(screen.getByLabelText('Email address'), 'a@example.test');
 
-    expect(contactValue()).toEqual({
+    expect(contactValue()).toStrictEqual({
       title: 'Dr',
       titleOther: 'Chief',
       firstName: 'Alex',

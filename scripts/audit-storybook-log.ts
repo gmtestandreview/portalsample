@@ -11,9 +11,9 @@
  *
  * Usage: node scripts/audit-storybook-log.ts <path-to-log>
  */
-import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
+import { readTextFile } from './safe-file-io.mjs';
 
 export type TargetHit = { target: string; count: number };
 
@@ -107,7 +107,7 @@ if (isEntryPoint()) {
     );
     process.exitCode = 2;
   } else {
-    const audit = auditLog(readFileSync(logPath, 'utf8'));
+    const audit = auditLog(readTextFile(logPath));
     process.stdout.write(`${formatReport(audit, logPath)}\n`);
     process.exitCode = audit.verdict === 'clean' ? 0 : 1;
   }

@@ -33,6 +33,14 @@ const files = [
   },
 ];
 
+const getDigestFiles = () => {
+  const [appFile, manifestFile] = files;
+  if (appFile === undefined || manifestFile === undefined) {
+    throw new Error('digest fixture is incomplete');
+  }
+  return { appFile, manifestFile };
+};
+
 const referenceManifest = {
   schemaVersion: 1,
   records: [
@@ -70,7 +78,9 @@ describe('computeInputDigest', () => {
   it('keeps digest ordering independent of the process locale', () => {
     expect.hasAssertions();
 
-    const originalLocaleCompare = String.prototype.localeCompare;
+    const originalLocaleCompare = String.prototype.localeCompare.bind(
+      String.prototype,
+    );
     String.prototype.localeCompare = function localeCompare(
       this: string,
       other: string,
@@ -96,10 +106,7 @@ describe('computeInputDigest', () => {
   it('canonicalizes manifest object-key order and ignores reviewedSourceDigest refreshes', () => {
     expect.hasAssertions();
 
-    const [appFile, manifestFile] = files;
-    if (appFile === undefined || manifestFile === undefined) {
-      throw new Error('digest fixture is incomplete');
-    }
+    const { appFile, manifestFile } = getDigestFiles();
     const reordered = [manifestFile, appFile].map((file) => ({
       ...file,
       content: file.path.endsWith('coverageManifest.json')
@@ -151,7 +158,7 @@ describe('computeInputDigest', () => {
 
     expect(
       moduleUnderTest.validateReferences(referenceManifest, index),
-    ).toEqual({
+    ).toStrictEqual({
       ok: true,
       errors: [],
     });
@@ -215,6 +222,6 @@ describe('computeInputDigest', () => {
     expect.hasAssertions();
     expect(() =>
       moduleUnderTest.computeInputDigest({ files: invalidFiles }),
-    ).toThrow();
+    ).toThrow(/input path/u);
   });
 });

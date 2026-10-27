@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type {
   AccountInfo,
@@ -89,16 +89,19 @@ const renderCreateRoute = () =>
     </MemoryRouter>,
   );
 
-describe(CreateRequestForTypeApproval, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
-    mocks.createApplication.mockResolvedValue({ referenceId: 'PA-100' });
-  });
+const resetCreateRequestForTypeApprovalMocks = () => {
+  vi.clearAllMocks();
+  mocks.accounts = [{ homeAccountId: 'account-1' }] as AccountInfo[];
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token-1' });
+  mocks.createApplication.mockResolvedValue({ referenceId: 'PA-100' });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(CreateRequestForTypeApproval, () => {
   it('creates a pattern approval application and redirects to organisation details', async () => {
     expect.hasAssertions();
+
+    resetCreateRequestForTypeApprovalMocks();
 
     renderCreateRoute();
 
@@ -124,6 +127,8 @@ describe(CreateRequestForTypeApproval, () => {
 
   it('logs a client failure and leaves the user on the loading state', async () => {
     expect.hasAssertions();
+
+    resetCreateRequestForTypeApprovalMocks();
 
     const error = new Error('create failed');
     mocks.createApplication.mockRejectedValue(error);

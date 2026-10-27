@@ -112,7 +112,7 @@ describe('organisation and contact submit validation', () => {
       contact: {},
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('rejects a malformed business website address', async () => {
@@ -138,7 +138,7 @@ describe('organisation and contact save validation', () => {
       contact: contactDetails,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('skips contact validation when the user is the principal contact', async () => {
@@ -149,7 +149,7 @@ describe('organisation and contact save validation', () => {
       contact: {},
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('still rejects a malformed website address on save', async () => {
@@ -173,7 +173,7 @@ describe('supportingDocs validation', () => {
       form: { documents: [{ attachmentCategory: null }] },
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('requires at least one document on submit', async () => {
@@ -208,7 +208,7 @@ describe('supportingDocs validation', () => {
       form: { documents: [{ attachmentCategory: 'Manual' }] },
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('skips the category check when no document array is present', async () => {
@@ -249,7 +249,7 @@ describe('pattern approval organisation and contact submit validation', () => {
       allPrincipal,
     );
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('validates the contact, invoice contact and authorised agent separately', async () => {
@@ -278,7 +278,7 @@ describe('pattern approval organisation and contact save validation', () => {
       allPrincipal,
     );
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('accepts empty nominated parties because save uses the soft schemas', async () => {
@@ -289,7 +289,7 @@ describe('pattern approval organisation and contact save validation', () => {
       allNominated,
     );
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });
 
@@ -334,7 +334,7 @@ describe('application and instrument submit validation', () => {
       summary: 'A valid summary',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('requires a variation sub-option and certificate number for a variation', async () => {
@@ -446,7 +446,7 @@ describe('application and instrument submit validation', () => {
       summary: 'A valid summary',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('accepts a review of approval on its own', async () => {
@@ -458,7 +458,7 @@ describe('application and instrument submit validation', () => {
       summary: 'A valid summary',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('requires a summary once an instrument category is chosen', async () => {
@@ -540,7 +540,7 @@ describe('application and instrument save validation', () => {
       model: null,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('allows an empty certificate number for a variation', async () => {
@@ -551,7 +551,7 @@ describe('application and instrument save validation', () => {
       certificateNumber: null,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('allows an empty certificate number for other approval types', async () => {
@@ -562,7 +562,7 @@ describe('application and instrument save validation', () => {
       certificateNumber: null,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 
   it('still rejects invalid summary characters on save', async () => {
@@ -582,7 +582,7 @@ describe('application and instrument save validation', () => {
       summary: '',
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });
 
@@ -616,7 +616,7 @@ describe('summary and submit validation', () => {
       acceptDeclaration: true,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });
 
@@ -628,6 +628,6 @@ describe('summary and save validation', () => {
       acceptNMIP106: false,
     });
 
-    expect(errors).toEqual([]);
+    expect(errors).toStrictEqual([]);
   });
 });

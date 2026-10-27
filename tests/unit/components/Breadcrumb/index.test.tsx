@@ -9,8 +9,8 @@ const ariaLinkMockState = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  'react-aria-components/Breadcrumbs',
-  () =>
+  import('react-aria-components/Breadcrumbs'),
+  (() =>
     ({
       Breadcrumbs: ({
         children,
@@ -26,12 +26,12 @@ vi.mock(
         children: React.ReactNode;
         className?: string;
       }) => <li className={className}>{children}</li>,
-    }) satisfies __ExactMockModule<__TestMockModule17>,
+    }) satisfies __ExactMockModule<__TestMockModule17>) as unknown as __DynamicPartialMockFactory<__TestMockModule17>,
 );
 
 vi.mock(
-  'react-aria-components/Link',
-  () =>
+  import('react-aria-components/Link'),
+  (() =>
     ({
       Link: ({
         children,
@@ -54,7 +54,7 @@ vi.mock(
         ) : (
           <a href={href ?? '#'}>{children}</a>
         ),
-    }) satisfies __ExactMockModule<__TestMockModule18>,
+    }) satisfies __ExactMockModule<__TestMockModule18>) as unknown as __DynamicPartialMockFactory<__TestMockModule18>,
 );
 
 describe('customBreadcrumb React Aria render fallback', () => {

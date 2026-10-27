@@ -15,8 +15,8 @@ const expectDatePickerOffsetsAfterReopen = (nextDate: Date) => {
 };
 
 vi.mock(
-  '@/components/Inputs/DatePicker/CustomDateInput',
-  () =>
+  import('@/components/Inputs/DatePicker/CustomDateInput'),
+  (() =>
     ({
       default: ({
         calendarOnKeyDown,
@@ -69,10 +69,10 @@ vi.mock(
           {label ? <span>{label}</span> : null}
         </div>
       ),
-    }) satisfies __ExactMockModule<__TestMockModule33>,
+    }) satisfies __ExactMockModule<__TestMockModule33>) as unknown as __DynamicPartialMockFactory<__TestMockModule33>,
 );
 
-vi.mock('react-datepicker', () => {
+vi.mock(import('react-datepicker'), (() => {
   const MockDatePicker = React.forwardRef((props: any, ref: any) => {
     React.useImperativeHandle(ref, () => ({
       state: {
@@ -204,9 +204,9 @@ vi.mock('react-datepicker', () => {
   return {
     default: MockDatePicker,
   } satisfies __ExactMockModule<__TestMockModule34>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule34>);
 
-describe(CustomDatePicker, () => {
+describe('custom date picker', () => {
   it('opens, selects a date, and closes the calendar', async () => {
     expect.hasAssertions();
 

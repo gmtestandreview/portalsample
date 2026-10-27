@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import QuoteStatusPill from '@/components/Pill/QuoteStatusPill';
 import { QuoteStatus } from '@/routes/common/enums';
 
-describe(QuoteStatusPill, () => {
+describe('quote status pill', () => {
   it.each([
     QuoteStatus.ReportInProgress,
     QuoteStatus.ReportIssued,

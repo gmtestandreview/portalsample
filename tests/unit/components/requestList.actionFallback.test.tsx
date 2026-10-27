@@ -1,4 +1,4 @@
-import { describe, beforeEach, expect } from 'vitest';
+import { describe, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
@@ -51,11 +51,11 @@ const renderItem = (item: React.ReactNode) =>
     </MemoryRouter>,
   );
 
-describe('requestList fallback action wiring', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+const resetRequestListMocks = () => {
+  vi.clearAllMocks();
+};
 
+describe('requestList fallback action wiring', () => {
   it.each([
     ['RequestItem', <RequestItem key='request-item' request={request} />],
     [
@@ -66,6 +66,8 @@ describe('requestList fallback action wiring', () => {
     'opens the delete modal from %s when Actions invokes its fallback callback',
     async (_name, item) => {
       expect.hasAssertions();
+
+      resetRequestListMocks();
 
       const user = userEvent.setup();
       renderItem(item);

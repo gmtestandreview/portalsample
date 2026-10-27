@@ -1,11 +1,5 @@
-import { describe, afterEach, it, expect } from 'vitest';
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
 import AutoSuggestContainer from '@/components/Inputs/AutoSuggest/AutoSuggestContainer';
@@ -44,16 +38,8 @@ function Harness({
 }
 
 describe('residual input branches', () => {
-  installUnexpectedConsoleGuard();
-
-  // Registered after the guard so it runs first: Vitest runs `afterEach` in
-  // reverse order, and a guard failure would otherwise skip the global
-  // cleanup and leak the previous test's DOM into the next one.
-  afterEach(cleanup);
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  const consoleGuardRegistration = installUnexpectedConsoleGuard();
+  void consoleGuardRegistration;
 
   it('renders SelectInput horizontal plain help without validation', () => {
     expect.hasAssertions();

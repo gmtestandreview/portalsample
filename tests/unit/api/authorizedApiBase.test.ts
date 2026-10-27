@@ -7,7 +7,7 @@ class TestClient extends AuthorizedApiBase {
   }
 }
 
-describe(AuthorizedApiBase, () => {
+describe('authorized API base', () => {
   const resetSessionStorage = () => {
     globalThis.sessionStorage.clear();
   };

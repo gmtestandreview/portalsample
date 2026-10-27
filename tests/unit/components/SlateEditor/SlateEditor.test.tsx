@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Editor, Transforms } from 'slate';
 import type * as SlateModule from 'slate';
 import SlateEditor from '@/components/SlateEditor/SlateEditor';
@@ -26,7 +26,11 @@ type Submit = () => void;
  */
 const captured = vi.hoisted(() => ({ editors: [] as Editor[] }));
 
-vi.mock('slate', async (importOriginal) => {
+vi.mock(import('slate'), (async (
+  importOriginal: Parameters<
+    __DynamicPartialMockFactory<__TestMockModule55>
+  >[0],
+) => {
   const actual = await importOriginal<typeof SlateModule>();
 
   return {
@@ -37,7 +41,7 @@ vi.mock('slate', async (importOriginal) => {
       return editor;
     },
   } satisfies __ExactMockModule<__TestMockModule55>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule55>);
 
 /** The editor belonging to the most recently rendered SlateEditor. */
 const currentEditor = () => {
@@ -138,7 +142,7 @@ describe('slateEditor helpers', () => {
   });
 });
 
-describe(SlateEditor, () => {
+describe('slate editor', () => {
   it('renders toolbar controls, placeholder label, and the configured character limit', () => {
     expect.hasAssertions();
 
@@ -308,13 +312,14 @@ describe(SlateEditor, () => {
 });
 
 describe('slateEditor document changes', () => {
-  beforeEach(() => {
+  const resetCapturedEditors = () => {
     captured.editors.length = 0;
-  });
+  };
 
   it('pushes edits back to the caller and updates the live character count', async () => {
     expect.hasAssertions();
 
+    resetCapturedEditors();
     const setValue = vi.fn<SetValue>();
 
     render(
@@ -342,6 +347,7 @@ describe('slateEditor document changes', () => {
   it('reports a message that grows past the limit while it is being typed', async () => {
     expect.hasAssertions();
 
+    resetCapturedEditors();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
@@ -366,6 +372,7 @@ describe('slateEditor document changes', () => {
   it('does not stack the length error as typing continues past the limit', async () => {
     expect.hasAssertions();
 
+    resetCapturedEditors();
     render(
       <SlateEditor
         value={paragraph('abcdef')}
@@ -393,6 +400,7 @@ describe('slateEditor document changes', () => {
   it('clears the length error once the message fits again', async () => {
     expect.hasAssertions();
 
+    resetCapturedEditors();
     render(
       <SlateEditor
         value={paragraph('abcdefghijkl')}
@@ -432,6 +440,7 @@ describe('slateEditor document changes', () => {
   it('turns a mark off again when the toolbar button is pressed twice', async () => {
     expect.hasAssertions();
 
+    resetCapturedEditors();
     render(
       <SlateEditor value={paragraph('ready')} setValue={vi.fn<SetValue>()} />,
     );

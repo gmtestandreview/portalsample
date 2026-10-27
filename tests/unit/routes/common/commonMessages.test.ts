@@ -4,7 +4,7 @@ import { errorMessages } from '@/routes/common/commonMessages';
 describe('common error messages', () => {
   it('exposes save failure messages for handled dashboard HTTP error outcomes', () => {
     expect.hasAssertions();
-    expect(errorMessages).toEqual({
+    expect(errorMessages).toStrictEqual({
       conflict:
         'Another person has already saved this page. Your Changes have not been saved',
       forbidden:

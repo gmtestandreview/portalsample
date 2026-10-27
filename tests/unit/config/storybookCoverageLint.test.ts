@@ -12,17 +12,23 @@ const createLinter = () =>
     overrideConfigFile: lintConfigPath,
   });
 
+const requireLintResult = <T>(result: T | undefined): T => {
+  if (!result) throw new Error('ESLint returned no result');
+  return result;
+};
+
 describe('storybook coverage script lint contract', () => {
   it('loads the task-scoped ESM lint configuration for coverage scripts', async () => {
     expect.hasAssertions();
 
     const linter = createLinter();
-    const [result] = await linter.lintText(
-      'const value = 1;\nconsole.error(value);\n',
-      { filePath: 'scripts/storybook-closure.mjs' },
+    const result = requireLintResult(
+      (
+        await linter.lintText('const value = 1;\nconsole.error(value);\n', {
+          filePath: 'scripts/storybook-closure.mjs',
+        })
+      )[0],
     );
-
-    if (!result) throw new Error('ESLint returned no result');
 
     expect(result.messages).toStrictEqual([]);
   });
@@ -31,11 +37,13 @@ describe('storybook coverage script lint contract', () => {
     expect.hasAssertions();
 
     const linter = createLinter();
-    const [result] = await linter.lintText('console.error(unknownValue);', {
-      filePath: 'scripts/storybook-closure.mjs',
-    });
-
-    if (!result) throw new Error('ESLint returned no result');
+    const result = requireLintResult(
+      (
+        await linter.lintText('console.error(unknownValue);', {
+          filePath: 'scripts/storybook-closure.mjs',
+        })
+      )[0],
+    );
 
     expect(result.messages.map(({ ruleId }) => ruleId)).toContain('no-undef');
   });

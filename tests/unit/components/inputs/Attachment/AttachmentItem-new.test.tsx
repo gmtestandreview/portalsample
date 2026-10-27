@@ -80,7 +80,7 @@ const renderItem = (
     </FormikHarness>,
   );
 
-describe(AttachmentItemNew, () => {
+describe('attachment item new behavior', () => {
   it('renders the file link, file size, and invalid category state', () => {
     expect.hasAssertions();
 

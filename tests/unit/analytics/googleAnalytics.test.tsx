@@ -13,7 +13,9 @@ const reactGaMock = vi.hoisted(() => ({
   send: vi.fn<(payload: Record<string, unknown>) => void>(),
 }));
 
-vi.mock('react-ga4', async (importOriginal) => {
+vi.mock(import('react-ga4'), (async (
+  importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule1>>[0],
+) => {
   const actual = await importOriginal<typeof ReactGaModule>();
 
   return {
@@ -26,7 +28,7 @@ vi.mock('react-ga4', async (importOriginal) => {
       },
     },
   } satisfies __ExactMockModule<__TestMockModule1>;
-});
+}) as unknown as __DynamicPartialMockFactory<__TestMockModule1>);
 
 describe('googleAnalytics', () => {
   const resetAnalyticsState = () => {

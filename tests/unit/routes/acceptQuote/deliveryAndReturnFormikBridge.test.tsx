@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
   ReturnAddressTypeValues,
@@ -124,15 +124,18 @@ function Harness({
 const submitted = (onSubmit: ReturnType<typeof vi.fn>) =>
   defined(onSubmit.mock.calls[0], 'submit call')[0];
 
-describe(DeliveryAndReturnFormikBridge, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
-    mocks.search.mockResolvedValue({ matches: [] });
-  });
+const resetDeliveryAndReturnMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'token' });
+  mocks.search.mockResolvedValue({ matches: [] });
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(DeliveryAndReturnFormikBridge, () => {
   it('mirrors a manually entered return address into the submit payload', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -166,6 +169,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
   it('loads Formik values into RHF fields and mirrors subsequent edits back', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -205,6 +210,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
   it('mirrors a selected return address as a whole object', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
 
     mocks.search.mockResolvedValue({
       matches: [
@@ -251,6 +258,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
   it('shows address messages only after a failed submit', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
     render(
@@ -274,6 +283,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
   it('shows messages for fields that were never given a value', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
     render(
@@ -300,6 +311,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
   it('does not dirty the outer form when a failed submit touches an undefined address', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -321,6 +334,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
   it('applies the soft schema once the outer form is saving and exiting', async () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
 
     const user = userEvent.setup();
     const onSubmit = vi.fn<(...args: unknown[]) => unknown>();
@@ -344,6 +359,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
 
   it('follows the hide rules from the form status', () => {
     expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
 
     const { unmount } = render(
       <Harness
@@ -375,6 +392,8 @@ describe(DeliveryAndReturnFormikBridge, () => {
   it('renders a field for every error summary link after a failed submit', async () => {
     expect.hasAssertions();
 
+    resetDeliveryAndReturnMocks();
+
     const user = userEvent.setup();
     render(
       <Harness
@@ -399,8 +418,6 @@ describe(DeliveryAndReturnFormikBridge, () => {
     );
     expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
 
-    keys.forEach((key) =>
-      expect(document.getElementById(key), key).not.toBeNull(),
-    );
+    keys.forEach((key) => expect(document.getElementById(key)).not.toBeNull());
   });
 });

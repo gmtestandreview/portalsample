@@ -1,5 +1,5 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Formik, Form } from 'formik';
 import { MemoryRouter } from 'react-router';
 import type { ReactNode } from 'react';
@@ -27,7 +27,7 @@ const mocks = vi.hoisted(() => {
 // ─── module mocks ─────────────────────────────────────────────────────────────
 
 vi.mock(
-  '@azure/msal-react',
+  import('@azure/msal-react') as unknown as string,
   () =>
     ({
       useMsal: () => ({
@@ -40,7 +40,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/authentication/hooks',
+  import('../../../../ClientApp/src/authentication/hooks') as unknown as string,
   () =>
     ({
       useAccountState: () => ({
@@ -54,7 +54,7 @@ vi.mock(
 // component or its children. Title must be a real-shaped object so that
 // ContactDetailsInput's getTitles() can iterate over it without crashing.
 vi.mock(
-  '../../../../ClientApp/src/api/web-api-client',
+  import('../../../../ClientApp/src/api/web-api-client') as unknown as string,
   () =>
     ({
       AcceptQuoteClient: class {
@@ -88,7 +88,7 @@ vi.mock(
 );
 
 vi.mock(
-  '../../../../ClientApp/src/instrumentation/AppLogger',
+  import('../../../../ClientApp/src/instrumentation/AppLogger') as unknown as string,
   () =>
     ({
       default: {
@@ -157,15 +157,18 @@ const baseApiResponse = {
 
 // ─── tests ────────────────────────────────────────────────────────────────────
 
-describe(DeliveryAndReturn, () => {
-  beforeEach(() => {
-    mocks.getDeliveryAndReturn.mockReset();
-  });
+const resetDeliveryAndReturnMocks = () => {
+  mocks.getDeliveryAndReturn.mockReset();
+};
 
+// eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
+describe(DeliveryAndReturn, () => {
   // 1. receiptAndDispatchNA = true ───────────────────────────────────────────
   describe('receiptAndDispatchNA=true', () => {
     it('shows the no-delivery message inside the info banner in form mode', async () => {
       expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
 
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
@@ -190,6 +193,8 @@ describe(DeliveryAndReturn, () => {
 
     it('shows the no-delivery alert panel in summary mode and hides the delivery section', async () => {
       expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
 
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
@@ -216,6 +221,8 @@ describe(DeliveryAndReturn, () => {
     it('businessAddress renders the street address', async () => {
       expect.hasAssertions();
 
+      resetDeliveryAndReturnMocks();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'BusinessAddress',
@@ -229,6 +236,8 @@ describe(DeliveryAndReturn, () => {
 
     it('postalAddress with postalAddressSameAsStreetAddress=true falls back to street address', async () => {
       expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
 
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
@@ -248,6 +257,8 @@ describe(DeliveryAndReturn, () => {
     it('postalAddress with postalAddressSameAsStreetAddress=false renders the postal address', async () => {
       expect.hasAssertions();
 
+      resetDeliveryAndReturnMocks();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'PostalAddress',
@@ -261,6 +272,8 @@ describe(DeliveryAndReturn, () => {
 
     it('renders no return address block when the address type is unset', async () => {
       expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
 
       mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
       renderComponent({ isSummary: true });
@@ -279,6 +292,8 @@ describe(DeliveryAndReturn, () => {
     it('other renders the custom returnAddress', async () => {
       expect.hasAssertions();
 
+      resetDeliveryAndReturnMocks();
+
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,
         returnAddressType: 'Other',
@@ -295,6 +310,8 @@ describe(DeliveryAndReturn, () => {
   describe('re-fetch on id prop change', () => {
     it('calls the API again when id changes', async () => {
       expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
 
       mocks.getDeliveryAndReturn.mockResolvedValue({
         acceptQuotePreInfo: { receiptAndDispatchNA: true },
@@ -319,6 +336,8 @@ describe(DeliveryAndReturn, () => {
   describe('aPI error', () => {
     it('renders the info banner and does not crash when getDeliveryAndReturn rejects', async () => {
       expect.hasAssertions();
+
+      resetDeliveryAndReturnMocks();
 
       mocks.getDeliveryAndReturn.mockRejectedValue(new Error('Network error'));
       renderComponent();

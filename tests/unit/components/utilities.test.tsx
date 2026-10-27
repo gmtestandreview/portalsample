@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import vm from 'node:vm';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
 import BackToTopButton from '@/components/Utilities/backToTopButton';
 import ContactLink from '@/components/Utilities/ContactLink';
@@ -24,18 +24,16 @@ const DebounceHarness = ({
   return <p>{debouncedValue}</p>;
 };
 
+const resetUtilityTestState = () => {
+  vi.useRealTimers();
+  document.body.className = '';
+};
+
 describe('utility runtime components and hooks', () => {
-  beforeEach(() => {
-    document.body.className = '';
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-    document.body.className = '';
-  });
-
   it('renders contact recovery actions', () => {
     expect.hasAssertions();
+
+    resetUtilityTestState();
 
     render(
       <MemoryRouter>
@@ -56,6 +54,8 @@ describe('utility runtime components and hooks', () => {
 
   it('scrolls and focuses the configured target from the back to top button', async () => {
     expect.hasAssertions();
+
+    resetUtilityTestState();
 
     vi.useFakeTimers();
     const target = document.createElement('div');
@@ -85,6 +85,8 @@ describe('utility runtime components and hooks', () => {
   it('renders the back-to-top landmark as a semantic nav element', () => {
     expect.hasAssertions();
 
+    resetUtilityTestState();
+
     render(<BackToTopButton />);
 
     expect(
@@ -95,6 +97,8 @@ describe('utility runtime components and hooks', () => {
 
   it('renders delivery instructions only when text is supplied', () => {
     expect.hasAssertions();
+
+    resetUtilityTestState();
 
     const { rerender } = render(
       <DeliveryInstructions deliveryInstructions='Use dock 3 on arrival.' />,
@@ -119,6 +123,8 @@ describe('utility runtime components and hooks', () => {
   it('adds and removes a single body class', () => {
     expect.hasAssertions();
 
+    resetUtilityTestState();
+
     const { unmount } = render(<BodyClassHarness className='print-mode' />);
 
     expect(document.body).toHaveClass('print-mode');
@@ -130,6 +136,8 @@ describe('utility runtime components and hooks', () => {
 
   it('adds and removes multiple body classes', () => {
     expect.hasAssertions();
+
+    resetUtilityTestState();
 
     const { unmount } = render(
       <BodyClassHarness className={['wizard', 'compact']} />,
@@ -145,6 +153,8 @@ describe('utility runtime components and hooks', () => {
 
   it('accepts arrays created in another DOM realm', () => {
     expect.hasAssertions();
+
+    resetUtilityTestState();
 
     const foreignClasses = vm.runInNewContext(
       '["wizard", "compact"]',
@@ -162,6 +172,8 @@ describe('utility runtime components and hooks', () => {
 
   it('returns the latest value after the debounce delay and cancels stale timers', () => {
     expect.hasAssertions();
+
+    resetUtilityTestState();
 
     vi.useFakeTimers();
     const { rerender } = render(<DebounceHarness value='first' delay={250} />);

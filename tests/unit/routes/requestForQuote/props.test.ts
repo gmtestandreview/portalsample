@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -84,20 +84,22 @@ const accountDetails = {
 } as AccountDetails;
 const statuses = stepStatuses;
 
-describe('request for quote wizard prop factories', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
-    mocks.getInstrumentAndRequest.mockResolvedValue({ instrument: 'Balance' });
-    mocks.getOrganisationAndContact.mockResolvedValue({
-      isPrincipalContact: YesNo.No,
-    });
-    mocks.getSummary.mockResolvedValue({ referenceId: 'RFQ-1' });
-    mocks.getSubmittedSummary.mockResolvedValue({ referenceId: 'RFQ-2' });
+const resetRequestForQuotePropsMocks = () => {
+  vi.clearAllMocks();
+  mocks.acquireTokenSilent.mockResolvedValue({ accessToken: 'access-token' });
+  mocks.getInstrumentAndRequest.mockResolvedValue({ instrument: 'Balance' });
+  mocks.getOrganisationAndContact.mockResolvedValue({
+    isPrincipalContact: YesNo.No,
   });
+  mocks.getSummary.mockResolvedValue({ referenceId: 'RFQ-1' });
+  mocks.getSubmittedSummary.mockResolvedValue({ referenceId: 'RFQ-2' });
+};
 
+describe('request for quote wizard prop factories', () => {
   it('loads and saves instrument/request values with date normalization and hiding rules', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuotePropsMocks();
 
     const props = instrumentAndRequestProps(
       'APP-1',
@@ -121,7 +123,7 @@ describe('request for quote wizard prop factories', () => {
       ],
       bannerRefTitle: props.bannerRefTitle,
       bannerSubTitle: props.bannerSubTitle,
-    }).toEqual({
+    }).toStrictEqual({
       loaded: { stepValues: { instrument: 'Balance' } },
       setAuthTokenCalls: [['access-token']],
       loadCalls: [['APP-1', abortSignal]],
@@ -141,7 +143,7 @@ describe('request for quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveInstrumentAndRequest.mock.calls[0]).toEqual([
+    expect(mocks.saveInstrumentAndRequest.mock.calls[0]).toStrictEqual([
       'APP-1',
       {
         applicationId: 'APP-1',
@@ -161,7 +163,7 @@ describe('request for quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveInstrumentAndRequest.mock.calls.at(-1)).toEqual([
+    expect(mocks.saveInstrumentAndRequest.mock.calls.at(-1)).toStrictEqual([
       'APP-1',
       {
         applicationId: 'APP-1',
@@ -176,6 +178,8 @@ describe('request for quote wizard prop factories', () => {
     // The date is normalised to the API's calendar form when it can be read. When it cannot,
     // the original value is forwarded rather than silently dropped, so the server decides.
     expect.hasAssertions();
+
+    resetRequestForQuotePropsMocks();
 
     const props = instrumentAndRequestProps(
       'APP-1',
@@ -213,6 +217,8 @@ describe('request for quote wizard prop factories', () => {
   it('loads and saves organisation/contact values and reports not-found redirects', async () => {
     expect.hasAssertions();
 
+    resetRequestForQuotePropsMocks();
+
     const props = organisationAndContactProps(
       'APP-2',
       accounts,
@@ -243,7 +249,7 @@ describe('request for quote wizard prop factories', () => {
         props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
       ],
       redirect: props.getRedirectionLocationOnError?.(500, ErrorType.Load),
-    }).toEqual({
+    }).toStrictEqual({
       loaded: { stepValues: { isPrincipalContact: YesNo.No } },
       loadCalls: [['APP-2', abortSignal]],
       hidden: [false, false, true, false, false, true],
@@ -256,7 +262,7 @@ describe('request for quote wizard prop factories', () => {
       abortSignal,
     );
 
-    expect(mocks.saveOrganisationAndContact.mock.calls.at(-1)).toEqual([
+    expect(mocks.saveOrganisationAndContact.mock.calls.at(-1)).toStrictEqual([
       'APP-2',
       {
         applicationId: 'APP-2',
@@ -269,6 +275,8 @@ describe('request for quote wizard prop factories', () => {
 
   it('loads, submits, and logs request-for-quote summary failures', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuotePropsMocks();
 
     const props = requestForQuoteSummaryProps(
       'APP-3',
@@ -302,7 +310,7 @@ describe('request for quote wizard prop factories', () => {
         ),
       ],
       redirect: props.getRedirectionLocationOnError?.(404, ErrorType.Load),
-    }).toEqual({
+    }).toStrictEqual({
       loaded: { stepValues: { referenceId: 'RFQ-1' } },
       loadCalls: [['APP-3', abortSignal]],
       hidden: [true, false, true],
@@ -311,7 +319,7 @@ describe('request for quote wizard prop factories', () => {
 
     await props.onSaveAndNext?.(summary, true, abortSignal);
 
-    expect(mocks.submit.mock.calls.at(-1)).toEqual([
+    expect(mocks.submit.mock.calls.at(-1)).toStrictEqual([
       'APP-3',
       {
         applicationId: 'APP-3',
@@ -332,7 +340,7 @@ describe('request for quote wizard prop factories', () => {
     expect({
       result: submitFailure,
       loggerCall: mocks.appLoggerError.mock.calls.at(-1),
-    }).toEqual({
+    }).toStrictEqual({
       result: undefined,
       loggerCall: [
         'failoed to submit form',
@@ -350,7 +358,7 @@ describe('request for quote wizard prop factories', () => {
     expect({
       error: loadFailure,
       loggerCall: mocks.appLoggerError.mock.calls.at(-1),
-    }).toEqual({
+    }).toStrictEqual({
       error: expect.objectContaining({
         message: 'There was an error retrieving your details.',
       }),
@@ -364,6 +372,8 @@ describe('request for quote wizard prop factories', () => {
 
   it('loads and submits the submitted summary view', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuotePropsMocks();
 
     const props = viewRequestForQuoteSummaryProps(
       'APP-4',
@@ -395,7 +405,7 @@ describe('request for quote wizard prop factories', () => {
         ),
       ],
       redirect: props.getRedirectionLocationOnError?.(404, ErrorType.Load),
-    }).toEqual({
+    }).toStrictEqual({
       loaded: { stepValues: { referenceId: 'RFQ-2' } },
       loadCalls: [['APP-4', abortSignal]],
       hidden: [false, false],
@@ -404,7 +414,7 @@ describe('request for quote wizard prop factories', () => {
 
     await props.onSaveAndNext?.(summary, false, abortSignal);
 
-    expect(mocks.submit.mock.calls.at(-1)).toEqual([
+    expect(mocks.submit.mock.calls.at(-1)).toStrictEqual([
       'APP-4',
       {
         applicationId: 'APP-4',
@@ -417,6 +427,8 @@ describe('request for quote wizard prop factories', () => {
 
   it('throws load/save errors when no account is available', async () => {
     expect.hasAssertions();
+
+    resetRequestForQuotePropsMocks();
 
     const instrumentProps = instrumentAndRequestProps(
       'APP-5',
@@ -469,7 +481,7 @@ describe('request for quote wizard prop factories', () => {
       ),
     );
 
-    expect(failures.map((error) => (error as Error).message)).toEqual([
+    expect(failures.map((error) => (error as Error).message)).toStrictEqual([
       'There was an error retrieving your details.',
       'error',
       'There was an error retrieving your details.',

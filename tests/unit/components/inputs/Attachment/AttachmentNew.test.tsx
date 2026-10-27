@@ -80,7 +80,7 @@ const baseProps = {
   onDeleteFile: vi.fn<DeleteFile>(async () => {}),
 };
 
-describe(AttachmentNew, () => {
+describe('attachment new behavior', () => {
   it('treats a field holding a single object as empty rather than throwing', () => {
     expect.hasAssertions();
 
