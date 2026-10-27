@@ -4,11 +4,11 @@ import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { msw } from 'msw/vite';
-import { VITE_ENV_FIXTURES, VITE_ENV_KEYS } from './runtime-env-fixtures';
+import { VITE_ENV_FIXTURES, VITE_ENV_KEYS } from './runtime-env-fixtures.ts';
 import {
   APPLICATION_VENDOR_CHUNK_GROUPS,
   SASS_PREPROCESSOR_OPTIONS,
-} from './storybook-vite-policies';
+} from './storybook-vite-policies.ts';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUNTIME_ENVIRONMENT_FILE = path.resolve(dirname, 'ClientApp/env.js');

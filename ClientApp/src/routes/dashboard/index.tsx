@@ -338,6 +338,10 @@ const Dashboard = () => {
     handleNotificationScroll();
   }, []);
 
+  useEffect(() => {
+    clearDashboardInfoNotification();
+  }, []);
+
   const saveUserProfile = (userProfile: UserProfile) => {
     void accountDispatch?.setUserProfile({
       testingCalibrationDashboard: omitUndefined(userProfile),
@@ -348,35 +352,27 @@ const Dashboard = () => {
     setRequests([]);
     setActiveTab(tab);
     setCurrentPage(1);
-    setInitialFilters((prevState) => {
-      if (!prevState) {
-        return prevState;
-      }
-
+    if (initialFilters) {
       const profile = {
-        ...prevState,
+        ...initialFilters,
         filterActiveTab: tab,
         filterCurrentPage: 1,
       };
+      setInitialFilters(profile);
       saveUserProfile(profile);
-      return profile;
-    });
+    }
   };
 
   const changePage = (page: number) => {
     setCurrentPage(page);
-    setInitialFilters((prevState) => {
-      if (!prevState) {
-        return prevState;
-      }
-
+    if (initialFilters) {
       const profile = {
-        ...prevState,
+        ...initialFilters,
         filterCurrentPage: page,
       };
+      setInitialFilters(profile);
       saveUserProfile(profile);
-      return profile;
-    });
+    }
   };
 
   // Set values from the userprofile
@@ -784,8 +780,6 @@ const Dashboard = () => {
   if (errorStatus.hasError) {
     return <Navigate to={getUnexpectedErrorRoute(errorStatus.status)} />;
   }
-
-  clearDashboardInfoNotification();
 
   return (
     <>

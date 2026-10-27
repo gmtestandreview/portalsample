@@ -5,7 +5,7 @@ import PrimaryButton from './index';
 
 const meta = preview.meta({
   component: PrimaryButton,
-  tags: ['ai-generated', 'needs-work', '!autodocs'],
+  tags: ['ai-generated'],
   argTypes: {
     mode: {
       options: ['light', 'dark'],
@@ -56,10 +56,9 @@ export const CssCheck = meta.story({
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: /submit/i });
 
-    // In jsdom, external CSS files don't affect computed styles.
-    // Instead, verify the button has the expected class and content.
-    // In Storybook browser, the CSS loads and applies the primary button styles.
-    await expect(button).toHaveTextContent('Submit');
-    await expect(button).toBeInTheDocument();
+    // _buttons.scss maps .btn-nmi-primary to $nmi-primary (#285576).
+    await expect(getComputedStyle(button).backgroundColor).toBe(
+      'rgb(40, 85, 118)',
+    );
   },
 });

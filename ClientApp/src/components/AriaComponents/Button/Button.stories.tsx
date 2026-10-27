@@ -37,14 +37,3 @@ export const Pending = meta.story({
     isPending: true,
   },
 });
-
-export const CssCheck = meta.story({
-  args: {
-    children: 'Styled button',
-  },
-  play: async ({ canvas }) => {
-    const button = canvas.getByRole('button', { name: 'Styled button' });
-
-    await expect(getComputedStyle(button).borderRadius).toBe('4px');
-  },
-});

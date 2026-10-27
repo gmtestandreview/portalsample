@@ -11,7 +11,7 @@ const expectedPaths = [
   '/dashboard-ta',
   '/create-account/*',
   '/update-organisation/:id/*',
-  '/create-contact',
+  '/create-contact/*',
   '/update-contact/*',
   '/success-creating-account',
   '/add-branch/*',
@@ -60,7 +60,7 @@ const layoutPaths = new Set([
 const headerlessPaths = new Set([
   '/create-account/*',
   '/update-organisation/:id/*',
-  '/create-contact',
+  '/create-contact/*',
   '/update-contact/*',
   '/success-creating-account',
   '/add-branch/*',

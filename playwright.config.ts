@@ -33,8 +33,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 2 : 0,
-  // Default (half the cores) starves the single webpack dev server locally.
-  workers: isCi ? 1 : 4,
+  // The single local Vite dev server is not reliable under parallel app E2E load.
+  workers: 1,
   reporter: [
     ['html', { open: 'never', outputFolder: 'reports/playwright/app' }],
     ['list'],

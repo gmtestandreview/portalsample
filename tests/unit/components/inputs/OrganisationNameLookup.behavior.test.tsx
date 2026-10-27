@@ -153,8 +153,10 @@ describe('organisation name lookup behavior', () => {
     await act(async () => {
       vi.advanceTimersByTime(350);
     });
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    fireEvent.keyDown(input, { key: 'Enter' });
+    await act(async () => {
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      fireEvent.keyDown(input, { key: 'Enter' });
+    });
 
     expect(input).toHaveValue('Labs');
 

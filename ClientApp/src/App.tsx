@@ -6,6 +6,7 @@ import {
   createRoutesFromElements,
 } from 'react-router';
 import AuthenticatedElement from './authentication/AuthenticatedElement';
+import BlockUISpinner from './components/BlockUISpinner';
 import Home from './components/Home';
 import Layout from './components/Layout';
 import ErrorDisplay from './components/ErrorBoundary/ErrorDisplay';
@@ -15,6 +16,12 @@ import PreConditions from './routes/preConditions/PreConditions';
 type RouteModule<Props extends object = Record<string, never>> = {
   default: ComponentType<Props>;
 };
+
+const RouteHydrateFallback = () => (
+  <BlockUISpinner>
+    <p>Loading...</p>
+  </BlockUISpinner>
+);
 
 const lazyRoute = <Props extends object>(
   load: () => Promise<RouteModule<Props>>,
@@ -43,6 +50,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/dashboard'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/dashboard'),
           (Component) => (
@@ -54,6 +62,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/dashboard-ta'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/dashboard/dashboard-ta'),
           (Component) => (
@@ -65,6 +74,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/create-account/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/account/create'),
           (Component) => (
@@ -76,6 +86,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/update-organisation/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/account/update'),
           (Component) => (
@@ -86,7 +97,8 @@ const App = createBrowserRouter(
         )}
       />
       <Route
-        path='/create-contact'
+        path='/create-contact/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/contact/create'),
           (Component) => (
@@ -98,6 +110,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/update-contact/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/contact/update'),
           (Component) => (
@@ -109,6 +122,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/success-creating-account'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/account/created'),
           (Component) => (
@@ -120,6 +134,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/add-branch/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/account/addBranch'),
           (Component) => (
@@ -131,6 +146,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/request-for-quote-create'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/requestForQuote/create'),
           (Component) => (
@@ -142,6 +158,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/ta/type-approval-create-pre'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/ta/preApplication'),
           (Component) => (
@@ -153,6 +170,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/ta/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/ta'),
           (Component) => (
@@ -164,6 +182,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/ta/type-approval-create'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/ta/create'),
           (Component) => (
@@ -175,6 +194,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/ta/type-approval-success/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/ta/created'),
           (Component) => (
@@ -186,6 +206,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/ta/:id/manage'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/ta/manage'),
           (Component) => (
@@ -197,6 +218,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/request-for-quote-copy/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/requestForQuote/copy'),
           (Component) => (
@@ -208,6 +230,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/request-for-quote/:id/view-summary/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/requestForQuote/viewRequestForQuoteSummary'),
           (Component) => (
@@ -219,6 +242,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/request-for-quote/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/requestForQuote'),
           (Component) => (
@@ -230,6 +254,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/request-for-quote-success/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/requestForQuote/created'),
           (Component) => (
@@ -241,6 +266,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/submitted-success/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/acceptQuote/submittedSuccess'),
           (Component) => (
@@ -252,6 +278,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/accept-quote-create/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/acceptQuote/create'),
           (Component) => (
@@ -263,6 +290,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/accept-quote/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/acceptQuote'),
           (Component) => (
@@ -274,6 +302,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/quotation/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/quotation'),
           (Component) => (
@@ -285,6 +314,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/instrument-reports/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/measurementReport/indexList'),
           (Component) => (
@@ -296,6 +326,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/report/:id/*'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/measurementReport'),
           (Component) => (
@@ -307,6 +338,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/services-we-offer'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/services-we-offer'),
           (Component) => (
@@ -318,6 +350,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/sign-in'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/sign-in'),
           (Component) => (
@@ -329,6 +362,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/sign-out'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/sign-out'),
           (Component) => (
@@ -338,6 +372,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/sign-out-helper'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/sign-out-helper'),
           (Component) => (
@@ -349,6 +384,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/help-guide'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/help-guide'),
           (Component) => (
@@ -360,6 +396,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/help-guide/how-to-setup-access'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/help-guide/how-to-setup-access'),
           (Component) => (
@@ -371,6 +408,7 @@ const App = createBrowserRouter(
       />
       <Route
         path='/help-guide/faqs'
+        HydrateFallback={RouteHydrateFallback}
         lazy={lazyRoute(
           () => import('./routes/help-guide/faqs'),
           (Component) => (
@@ -459,7 +497,6 @@ const App = createBrowserRouter(
       v7_relativeSplatPath: true,
       v7_fetcherPersist: true,
       v7_normalizeFormMethod: true,
-      v7_partialHydration: true,
       v7_skipActionErrorRevalidation: true,
     },
   },
