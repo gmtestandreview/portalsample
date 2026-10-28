@@ -57,6 +57,36 @@ export const runCommand = async (
   }
 };
 
+// Splits a command line into argv without a shell: whitespace separates
+// tokens, single or double quotes group one, and backslashes are literal so
+// Windows paths survive. Used for the managed Storybook launch command.
+export const splitCommandLine = (commandLine) => {
+  const tokens = [];
+  let current = '';
+  let quote;
+  let inToken = false;
+  for (const char of commandLine) {
+    if (quote) {
+      if (char === quote) quote = undefined;
+      else current += char;
+    } else if (char === '"' || char === "'") {
+      quote = char;
+      inToken = true;
+    } else if (/\s/u.test(char)) {
+      if (inToken) tokens.push(current);
+      current = '';
+      inToken = false;
+    } else {
+      current += char;
+      inToken = true;
+    }
+  }
+  if (quote) throw new Error(`unterminated quote in command: ${commandLine}`);
+  if (inToken) tokens.push(current);
+  if (tokens.length === 0) throw new Error('command must not be empty');
+  return tokens;
+};
+
 const assertIcaclsAvailable = () => {
   if (process.platform !== 'win32') {
     throw codedError(

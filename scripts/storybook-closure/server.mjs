@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 
-import { execFileAsync } from './commands.mjs';
+import { execFileAsync, splitCommandLine } from './commands.mjs';
 import { isRecord, throwIfAborted } from './contracts.mjs';
 import { producerIdentityDigest } from './identity.mjs';
 import { readOwnedJson } from './owned-fs.mjs';
@@ -80,7 +80,7 @@ export const startOwnedServer = async (
   { checkout, receipts, target, freezeId, signal },
 ) => {
   if (serverState.process) return;
-  const [command, ...args] = target.command.split(' ');
+  const [command, ...args] = splitCommandLine(target.command);
   const startedAt = new Date().toISOString();
   Object.assign(serverState, createServerState());
   const child = spawn(command, args, {

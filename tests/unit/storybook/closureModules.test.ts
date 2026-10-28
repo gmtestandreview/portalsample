@@ -45,6 +45,11 @@ const mcpReceipts = (await import(
   '../../../scripts/storybook-closure/mcp-receipts.mjs'
 )) as { remainingMcpTime(deadline: number, now?: number): number };
 
+const commandsModule = (await import(
+  // @ts-expect-error The maintained launcher modules are JavaScript.
+  '../../../scripts/storybook-closure/commands.mjs'
+)) as { splitCommandLine(commandLine: string): string[] };
+
 const OWNER_ENV = 'STORYBOOK_CLOSURE_OWNED_CHECKOUT';
 
 const exists = async (target: string) =>
@@ -137,6 +142,27 @@ describe('remainingMcpTime', () => {
     expect(() => mcpReceipts.remainingMcpTime(1_000, 1_000)).toThrow(
       'exceeded the configured timeout',
     );
+  });
+});
+
+describe('splitCommandLine', () => {
+  it.each([
+    ['npm run storybook', ['npm', 'run', 'storybook']],
+    ['  npm   run  storybook ', ['npm', 'run', 'storybook']],
+    [
+      '"C:\\Program Files\\nodejs\\node.exe" server.js --port 6007',
+      ['C:\\Program Files\\nodejs\\node.exe', 'server.js', '--port', '6007'],
+    ],
+    ["node -e 'a b' c", ['node', '-e', 'a b', 'c']],
+    ['node ""', ['node', '']],
+  ])('splits %j', (line, expected) => {
+    expect.hasAssertions();
+    expect(commandsModule.splitCommandLine(line)).toStrictEqual(expected);
+  });
+
+  it.each(['', '   ', 'node "unterminated'])('rejects %j', (line) => {
+    expect.hasAssertions();
+    expect(() => commandsModule.splitCommandLine(line)).toThrow();
   });
 });
 
