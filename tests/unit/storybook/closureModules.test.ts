@@ -64,6 +64,20 @@ const freezeManager = (await import(
   // @ts-expect-error The maintained launcher modules are JavaScript.
   '../../../scripts/storybook-closure/freeze-manager.mjs'
 )) as { assertBaselineWritable(target: string): Promise<void> };
+const mcpProtocol = (await import(
+  // @ts-expect-error The maintained launcher modules are JavaScript.
+  '../../../scripts/storybook-closure/mcp-protocol.mjs'
+)) as { parseSseEvents(body: string): string[] };
+const contracts = (await import(
+  // @ts-expect-error The maintained launcher modules are JavaScript.
+  '../../../scripts/storybook-closure/contracts.mjs'
+)) as {
+  assertHandoff(
+    completion: unknown,
+    freeze: { freezeId: string },
+    producer: { producerId: string },
+  ): void;
+};
 const commandsModule = (await import(
   // @ts-expect-error The maintained launcher modules are JavaScript.
   '../../../scripts/storybook-closure/commands.mjs'
@@ -161,6 +175,59 @@ describe('remainingMcpTime', () => {
     expect(() => mcpReceipts.remainingMcpTime(1_000, 1_000)).toThrow(
       'exceeded the configured timeout',
     );
+  });
+});
+
+describe('parseSseEvents', () => {
+  it('joins multi-line data fields into one payload', () => {
+    expect.hasAssertions();
+
+    const body = 'event: message\ndata: {"a":\ndata: 1}\n\n';
+
+    expect(mcpProtocol.parseSseEvents(body)).toStrictEqual(['{"a":\n1}']);
+  });
+
+  it('ignores heartbeats and comments and keeps event order', () => {
+    expect.hasAssertions();
+
+    const body = ': ping\n\ndata: {"id":1}\n\n\ndata:{"id":2}\r\n\r\n';
+
+    expect(mcpProtocol.parseSseEvents(body)).toStrictEqual([
+      '{"id":1}',
+      '{"id":2}',
+    ]);
+  });
+});
+
+describe('assertHandoff', () => {
+  const freeze = { freezeId: 'f' };
+  const producer = { producerId: 'p' };
+  const handoff = (receiptFiles: string[]) => ({
+    freezeId: 'f',
+    producerId: 'p',
+    receiptFiles,
+  });
+
+  it('rejects a duplicated receipt file', () => {
+    expect.hasAssertions();
+    expect(() =>
+      contracts.assertHandoff(
+        handoff(['receipt-mcp-1.json', 'receipt-mcp-1.json']),
+        freeze,
+        producer,
+      ),
+    ).toThrow('missing or stale');
+  });
+
+  it('accepts distinct receipt files', () => {
+    expect.hasAssertions();
+    expect(() =>
+      contracts.assertHandoff(
+        handoff(['receipt-mcp-1.json', 'receipt-mcp-2.json']),
+        freeze,
+        producer,
+      ),
+    ).not.toThrow();
   });
 });
 

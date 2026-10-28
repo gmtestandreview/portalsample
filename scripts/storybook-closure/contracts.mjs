@@ -64,6 +64,7 @@ export const assertHandoff = (completion, freeze, producer) => {
     completion.producerId !== producer.producerId ||
     !Array.isArray(completion.receiptFiles) ||
     completion.receiptFiles.length === 0 ||
+    new Set(completion.receiptFiles).size !== completion.receiptFiles.length ||
     completion.receiptFiles.some(
       (file) =>
         typeof file !== 'string' ||

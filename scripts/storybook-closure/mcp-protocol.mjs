@@ -4,16 +4,28 @@ import { isRecord } from './contracts.mjs';
 
 export const MCP_REQUEST_TIMEOUT_MS = 150_000;
 const MCP_PROTOCOL_VERSION = '2025-03-26';
-const SSE_DATA_PREFIX = 'data: ';
+const SSE_DATA_FIELD = 'data:';
+
+// One SSE event is a block of lines ended by a blank line; its `data:` lines
+// are joined with newlines into a single payload. Comments, `event:` and
+// `id:` lines and empty events (heartbeats) carry no payload.
+export const parseSseEvents = (body) =>
+  body
+    .split(/\r?\n\r?\n/u)
+    .map((block) =>
+      block
+        .split(/\r?\n/u)
+        .filter((line) => line.startsWith(SSE_DATA_FIELD))
+        .map((line) => line.slice(SSE_DATA_FIELD.length).replace(/^ /u, ''))
+        .join('\n'),
+    )
+    .filter((payload) => payload !== '');
 
 const parseEnvelopes = (body, contentType) => {
   try {
     return contentType.includes('application/json')
       ? [parseJsonDocument(body)]
-      : body
-          .split(/\r?\n/u)
-          .filter((line) => line.startsWith(SSE_DATA_PREFIX))
-          .map((line) => parseJsonDocument(line.slice(SSE_DATA_PREFIX.length)));
+      : parseSseEvents(body).map((payload) => parseJsonDocument(payload));
   } catch (error_) {
     throw new Error(
       `MCP response was not valid JSON: ${
