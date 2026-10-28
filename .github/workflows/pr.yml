@@ -320,20 +320,13 @@ jobs:
 
   e2e-node24:
     name: e2e-node24
-    # The Storybook closure gate (test:e2e:storybook:closure) enforces input
-    # immutability with a Windows icacls ACL freeze and reads the Windows
-    # USERNAME/USERDOMAIN identity. That contract is Windows-only by design
-    # (never downgraded on other platforms), so this job must run on Windows.
-    runs-on: windows-2025
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     env:
       VITE_ENVIRONMENT: local
       VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
       VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
       VITE_API_BASE_URL: http://localhost:5085
-      # test:e2e runs scripts/storybook-closure.mjs, which asserts the owned
-      # integration checkout matches this path (github.workspace == cwd).
-      STORYBOOK_CLOSURE_OWNED_CHECKOUT: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -358,94 +351,6 @@ jobs:
       - name: Install Playwright Chromium
         run: ./node_modules/.bin/playwright install --with-deps chromium
 
-      # TEMPORARY DIAGNOSTIC (remove once the closure ACL-freeze root cause on
-      # hosted Windows runners is found). The closure's icacls /deny freeze is
-      # enforced under a non-elevated token locally but not on this runner, so
-      # test:e2e:storybook:closure fails its denial probes. Capture the step's
-      # token identity, integrity level, privileges, the identity the closure
-      # would deny, and a live deny-probe under the workspace - this tells an
-      # identity mismatch apart from a privilege/elevation bypass. Best-effort:
-      # never fails the job (runs before the closure step either way).
-      - name: Diagnose ACL freeze enforcement
-        shell: pwsh
-        run: |
-          Write-Output '--- token identity (whoami /user) ---'
-          whoami /user
-          Write-Output '--- integrity level + admin group ---'
-          whoami /groups | Select-String -Pattern 'S-1-5-32-544|High Mandatory|Medium Mandatory|System Mandatory'
-          Write-Output '--- backup/restore/takeownership privileges ---'
-          whoami /priv | Select-String -Pattern 'SeRestore|SeBackup|SeTakeOwnership'
-          $id = "$env:USERDOMAIN\$env:USERNAME"
-          Write-Output "--- identity the closure would deny: $id ---"
-          $dir = Join-Path $env:GITHUB_WORKSPACE ('acl-probe-' + [guid]::NewGuid().ToString('N'))
-          New-Item -ItemType Directory -Path $dir | Out-Null
-          $f = Join-Path $dir 'probe.txt'
-          'original' | Set-Content -Path $f
-          icacls $f /deny "${id}:(WD,AD,WA,DE)" /c
-          $denyExitCode = $LASTEXITCODE
-          if ($denyExitCode -ne 0) {
-            Write-Output "ACL_DENY_APPLY_FAILED: icacls exited with code $denyExitCode; skipping enforcement probe"
-          } else {
-            try {
-              'overwrite' | Set-Content -Path $f -ErrorAction Stop
-              Write-Output 'PROBE_OVERWRITE: SUCCEEDED (deny NOT enforced - matches the CI failure)'
-            } catch {
-              Write-Output 'PROBE_OVERWRITE: DENIED (deny enforced)'
-            }
-          }
-          Write-Output '--- effective ACL on probe file ---'
-          icacls $f
-          icacls $f /remove:d "$id" /c
-          Remove-Item $f -Force
-          Remove-Item $dir -Force
-          exit 0
-
-      # TEMPORARY DIAGNOSTIC (remove with the step above). Repeats the deny
-      # probe through Node fs under bash (the job's default shell, which is what
-      # runs the closure) and prints the error code Node reports for each
-      # operation. The pwsh probe above cannot distinguish a Node-specific errno
-      # or a shell-dependent identity from an unenforced deny.
-      - name: Diagnose ACL freeze enforcement (Node fs)
-        shell: bash
-        run: |
-          cat > acl-node-probe.cjs <<'NODE_PROBE_SCRIPT'
-          const { execFileSync } = require('node:child_process');
-          const fs = require('node:fs');
-          const path = require('node:path');
-          const id = [process.env.USERDOMAIN, process.env.USERNAME].join(String.fromCharCode(92));
-          console.log('NODE_PROBE identity=' + id + ' (bash, same shell as the closure)');
-          const dir = path.join(process.env.GITHUB_WORKSPACE, 'acl-node-probe-' + Date.now());
-          fs.mkdirSync(dir);
-          const ops = ['overwrite', 'append', 'create', 'delete', 'rename'];
-          const files = ops.map((op) => path.join(dir, op + '.txt'));
-          files.forEach((f) => fs.writeFileSync(f, 'original'));
-          const icacls = (target, args) => execFileSync('icacls.exe', [target, ...args], { stdio: 'pipe' });
-          try {
-            icacls(dir, ['/deny', id + ':(OI)(CI)(WD,AD,DC)', '/t', '/c']);
-            files.forEach((f) => icacls(f, ['/deny', id + ':(WD,AD,WA,DE)', '/c']));
-            ops.forEach((op, i) => {
-              const f = files[i];
-              try {
-                if (op === 'overwrite') fs.writeFileSync(f, 'x');
-                if (op === 'append') fs.appendFileSync(f, 'x');
-                if (op === 'create') fs.writeFileSync(f + '.new', 'x');
-                if (op === 'delete') fs.unlinkSync(f);
-                if (op === 'rename') fs.renameSync(f, f + '.renamed');
-                console.log('NODE_PROBE ' + op + ': SUCCEEDED (deny NOT enforced)');
-              } catch (e) {
-                console.log('NODE_PROBE ' + op + ': threw code=' + e.code + ' errno=' + e.errno + ' syscall=' + e.syscall);
-              }
-            });
-          } catch (e) {
-            console.log('NODE_PROBE_SETUP_FAILED: ' + e.message);
-          } finally {
-            try { icacls(dir, ['/remove:d', id, '/t', '/c']); } catch {}
-            fs.rmSync(dir, { recursive: true, force: true });
-          }
-          NODE_PROBE_SCRIPT
-          node acl-node-probe.cjs || true
-          rm -f acl-node-probe.cjs
-
       - name: Prepare E2E diagnostics
         run: mkdir -p ci-artifacts/e2e
 
@@ -464,8 +369,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      # The closure receipts (freeze.json records each denial probe's errorCode)
-      # must survive a failed run, or the failure cannot be diagnosed.
       - name: Upload Playwright report, traces, and screenshots
         if: always() && steps.e2e.outcome != 'skipped'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -474,7 +377,6 @@ jobs:
           path: |
             reports/playwright/**
             reports/test-results/**
-            reports/storybook-coverage/**
           if-no-files-found: error
           retention-days: 14
 

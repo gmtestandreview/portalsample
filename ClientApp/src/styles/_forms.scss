@@ -225,7 +225,7 @@ legend {
     input:disabled:not(:checked),
     input:checked:disabled {
       + label {
-        color: $nmi-dark-gray;
+        color: $nmi-dark-gray !important;
         cursor: default;
         &:before {
           outline: none;
@@ -315,7 +315,7 @@ legend {
       & + label {
         outline: none;
         border-color: transparent;
-        color: $nmi-dark-gray !important;
+        color: $nmi-dark-gray;
         font-weight: normal;
         cursor: not-allowed !important;
         &:before {

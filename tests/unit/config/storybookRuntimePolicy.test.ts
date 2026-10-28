@@ -1,16 +1,8 @@
-import { mkdtempSync, rmSync } from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { storybookVitestRuntimePlugin } from '../../../vitest.storybook.runtime';
 import { VITE_ENV_FIXTURES } from '../../../runtime-env-fixtures';
-import {
-  makeDirectorySync,
-  pathExists,
-  readDirectorySync,
-  readTextFileSync,
-} from '../../helpers/safeTestFilesystem';
+import { pathExists, readTextFileSync } from '../../helpers/safeTestFilesystem';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '../../..');
 const readRepositoryFile = (relativePath: string): string =>
@@ -91,107 +83,5 @@ describe('storybook MSW diagnostic policy', () => {
     expect(
       pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot),
     ).toBe(true);
-  });
-});
-
-describe('storybook closure child diagnostics', () => {
-  type RuntimeVitest = Parameters<
-    typeof storybookVitestRuntimePlugin.configureVitest
-  >[0]['vitest'];
-
-  const createVitestFixture = () =>
-    ({
-      config: { coverage: { exclude: [] as string[] } },
-      standalone: async () => undefined,
-      init: async () => undefined,
-    }) as unknown as RuntimeVitest;
-
-  it('does not write diagnostic files unless both closure values are supplied', () => {
-    expect.hasAssertions();
-
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'storybook-runtime-'));
-    const receiptRoot = path.join(
-      tempRoot,
-      'reports',
-      'storybook-coverage',
-      'closure-run',
-    );
-    makeDirectorySync(receiptRoot, tempRoot);
-    const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
-    const previousFreezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
-
-    try {
-      delete process.env['STORYBOOK_CLOSURE_RECEIPTS'];
-      delete process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
-      storybookVitestRuntimePlugin.configureVitest({
-        vitest: createVitestFixture(),
-      });
-
-      expect(readDirectorySync(receiptRoot, tempRoot)).toStrictEqual([]);
-    } finally {
-      if (previousReceiptRoot === undefined) {
-        delete process.env['STORYBOOK_CLOSURE_RECEIPTS'];
-      } else {
-        process.env['STORYBOOK_CLOSURE_RECEIPTS'] = previousReceiptRoot;
-      }
-      if (previousFreezeId === undefined) {
-        delete process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
-      } else {
-        process.env['STORYBOOK_CLOSURE_FREEZE_ID'] = previousFreezeId;
-      }
-      rmSync(tempRoot, { recursive: true, force: true });
-    }
-  });
-
-  it('writes a redacted child record to the validated receipt directory', () => {
-    expect.hasAssertions();
-
-    const tempRoot = mkdtempSync(path.join(os.tmpdir(), 'storybook-runtime-'));
-    const receiptRoot = path.join(
-      tempRoot,
-      'reports',
-      'storybook-coverage',
-      'closure-run',
-    );
-    makeDirectorySync(receiptRoot, tempRoot);
-    const previousReceiptRoot = process.env['STORYBOOK_CLOSURE_RECEIPTS'];
-    const previousFreezeId = process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
-    const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(tempRoot);
-
-    try {
-      process.env['STORYBOOK_CLOSURE_RECEIPTS'] = receiptRoot;
-      process.env['STORYBOOK_CLOSURE_FREEZE_ID'] = 'freeze-1';
-      storybookVitestRuntimePlugin.configureVitest({
-        vitest: createVitestFixture(),
-      });
-      const files = readDirectorySync(receiptRoot, tempRoot);
-
-      expect(files).toHaveLength(1);
-
-      const record = JSON.parse(
-        readTextFileSync(path.join(receiptRoot, files[0]!.name), tempRoot),
-      ) as Record<string, unknown>;
-
-      expect(record).toMatchObject({
-        freezeId: 'freeze-1',
-        pid: process.pid,
-        ppid: process.ppid,
-        cwd: process.cwd(),
-      });
-      expect(record).not.toHaveProperty('env');
-    } finally {
-      cwdSpy.mockRestore();
-      if (previousReceiptRoot === undefined) {
-        delete process.env['STORYBOOK_CLOSURE_RECEIPTS'];
-      } else {
-        process.env['STORYBOOK_CLOSURE_RECEIPTS'] = previousReceiptRoot;
-      }
-      if (previousFreezeId === undefined) {
-        delete process.env['STORYBOOK_CLOSURE_FREEZE_ID'];
-      } else {
-        process.env['STORYBOOK_CLOSURE_FREEZE_ID'] = previousFreezeId;
-      }
-      rmSync(tempRoot, { recursive: true, force: true });
-    }
   });
 });

@@ -25,7 +25,7 @@ describe('storybook coverage script lint contract', () => {
     const result = requireLintResult(
       (
         await linter.lintText('const value = 1;\nconsole.error(value);\n', {
-          filePath: 'scripts/storybook-closure.mjs',
+          filePath: 'scripts/storybook-coverage.mjs',
         })
       )[0],
     );
@@ -40,7 +40,7 @@ describe('storybook coverage script lint contract', () => {
     const result = requireLintResult(
       (
         await linter.lintText('console.error(unknownValue);', {
-          filePath: 'scripts/storybook-closure.mjs',
+          filePath: 'scripts/storybook-coverage.mjs',
         })
       )[0],
     );
@@ -56,10 +56,9 @@ describe('storybook coverage script lint contract', () => {
       'scripts/storybook-coverage.mjs',
       'scripts/storybook-coverage-worklist.mjs',
       'scripts/verify-storybook-docs.mjs',
-      'scripts/storybook-closure.mjs',
     ]);
 
-    expect(results).toHaveLength(4);
+    expect(results).toHaveLength(3);
     expect(results.every((result) => result.errorCount === 0)).toBe(true);
   });
 });

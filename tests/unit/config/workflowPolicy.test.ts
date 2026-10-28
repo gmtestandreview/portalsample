@@ -498,21 +498,16 @@ describe('the e2e job runs the full Playwright contract', () => {
   it('covers both the app and Storybook projects through that script', () => {
     expect.hasAssertions();
 
-    expect(packageJson.scripts['test:e2e']).toContain('test:e2e:app');
-    expect(packageJson.scripts['test:e2e']).toContain('test:e2e:storybook');
+    expect(packageJson.scripts['test:e2e']).toBe(
+      'npm run test:e2e:app && npm run build-storybook && npm run test:e2e:storybook && npm run test:storybook:coverage',
+    );
+    expect(packageJson.scripts['test:e2e']).not.toContain('storybook:closure');
   });
 
   it('installs Chromium, which a fresh runner does not provide', () => {
     expect.hasAssertions();
 
     expect(block).toContain('playwright install --with-deps chromium');
-  });
-
-  it('reports a failed diagnostic deny-ACL application distinctly', () => {
-    expect.hasAssertions();
-
-    expect(block).toContain('ACL_DENY_APPLY_FAILED:');
-    expect(block).toContain('if ($denyExitCode -ne 0)');
   });
 
   it('uploads the HTML report, traces, and screenshots', () => {

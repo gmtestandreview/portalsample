@@ -50,9 +50,6 @@ export default defineConfig({
     setupFiles: ['./vitest.storybook.setup.ts'],
     testTimeout: 15000,
     coverage: storybookCoverageConfig,
-    // The addon keeps this project alive for MCP-triggered runs. A single
-    // orchestrator prevents broad runs from exhausting the shared browser
-    // and leaving a ready session whose orchestrator has disconnected.
     maxWorkers: 1,
     browser: {
       enabled: true,
