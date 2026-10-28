@@ -17,6 +17,7 @@ import {
   createProbeRecords,
   currentIdentity,
   describeAcl,
+  performProbeOperation,
   releaseSingleFrozenTarget,
   removeProbeFile,
   runDenialProbe,
@@ -73,6 +74,38 @@ const runTargetProbes = async (target, probes, identity) => {
   return results;
 };
 
+// Proves the target accepts every probed operation before any deny is
+// installed, so a later denial cannot be a permission that was already there
+// (R14). Uses its own disposable probes, separate from the evidence probes.
+export const assertBaselineWritable = async (target) => {
+  const probes = createProbeRecords(target);
+  await Promise.all(
+    probes.map(({ probePath }) => writeProbeFile(target, probePath)),
+  );
+  const failures = [];
+  for (const { operation, probePath } of probes) {
+    try {
+      await performProbeOperation(operation, target, probePath);
+    } catch (error_) {
+      failures.push(`${operation}: ${error_?.code ?? error_?.message}`);
+    }
+  }
+  await Promise.all(
+    probes.map(({ probePath }) =>
+      Promise.all([
+        removeProbeFile(target, probePath),
+        removeProbeFile(target, `${probePath}-new`),
+        removeProbeFile(target, `${probePath}-renamed`),
+      ]),
+    ),
+  );
+  if (failures.length > 0) {
+    throw new Error(
+      `${target} is not writable before the freeze (${failures.join(', ')})`,
+    );
+  }
+};
+
 const freezeTarget = async ({
   freezeState,
   target,
@@ -80,6 +113,7 @@ const freezeTarget = async ({
   backupDirectory,
   identity,
 }) => {
+  await assertBaselineWritable(target);
   const probes = createProbeRecords(target);
   const probePaths = probes.map(({ probePath }) => probePath);
   await Promise.all(

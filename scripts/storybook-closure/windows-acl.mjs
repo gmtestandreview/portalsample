@@ -79,7 +79,7 @@ export const assertFreezeIdentityNotDenied = async (target, identity) => {
   }
 };
 
-const performProbeOperation = async (operation, target, probePath) => {
+export const performProbeOperation = async (operation, target, probePath) => {
   assertProbePath(probePath);
   const owned = await openOwnedRoot(target);
   switch (operation) {

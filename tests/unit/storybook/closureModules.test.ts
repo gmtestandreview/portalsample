@@ -1,4 +1,12 @@
-import { mkdir, mkdtemp, rm, stat, symlink, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readdir,
+  rm,
+  stat,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
@@ -45,6 +53,10 @@ const mcpReceipts = (await import(
   '../../../scripts/storybook-closure/mcp-receipts.mjs'
 )) as { remainingMcpTime(deadline: number, now?: number): number };
 
+const freezeManager = (await import(
+  // @ts-expect-error The maintained launcher modules are JavaScript.
+  '../../../scripts/storybook-closure/freeze-manager.mjs'
+)) as { assertBaselineWritable(target: string): Promise<void> };
 const commandsModule = (await import(
   // @ts-expect-error The maintained launcher modules are JavaScript.
   '../../../scripts/storybook-closure/commands.mjs'
@@ -142,6 +154,35 @@ describe('remainingMcpTime', () => {
     expect(() => mcpReceipts.remainingMcpTime(1_000, 1_000)).toThrow(
       'exceeded the configured timeout',
     );
+  });
+});
+
+describe('assertBaselineWritable', () => {
+  it('passes on a writable directory and leaves no probes behind', async () => {
+    expect.hasAssertions();
+    const sandbox = await mkdtemp(path.join(os.tmpdir(), 'closure-base-'));
+    try {
+      await freezeManager.assertBaselineWritable(sandbox);
+
+      await expect(readdir(sandbox)).resolves.toStrictEqual([]);
+    } finally {
+      await rm(sandbox, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects a target that cannot accept the probe operations', async () => {
+    expect.hasAssertions();
+    const sandbox = await mkdtemp(path.join(os.tmpdir(), 'closure-base-'));
+    try {
+      const notADirectory = path.join(sandbox, 'file.txt');
+      await writeFile(notADirectory, 'x');
+
+      await expect(
+        freezeManager.assertBaselineWritable(notADirectory),
+      ).rejects.toThrow();
+    } finally {
+      await rm(sandbox, { recursive: true, force: true });
+    }
   });
 });
 
