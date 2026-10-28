@@ -36,6 +36,7 @@ const coverageConfig: CoverageOptions = {
     'ClientApp/src/external/**',
     'ClientApp/src/parent/**',
     'ClientApp/src/storybook/**',
+    'ClientApp/src/testing/**',
     'ClientApp/src/components/App/**',
     'ClientApp/src/components/AriaComponents/main.tsx',
     'ClientApp/src/components/reactaria_components/**',

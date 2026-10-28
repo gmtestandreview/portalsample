@@ -693,7 +693,7 @@ describe('rHF supporting documents', () => {
       await resetRhfSupportingDocumentsMocks();
 
       mocks.accountContext.mockReturnValue({
-        details: createAccountDetails({ abn: '', organisation: '' }),
+        details: null,
       });
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()

@@ -221,6 +221,22 @@ const AccountConsumer = () => {
         set fallback org branch
       </button>
       <button
+        onClick={() => {
+          const setOrganisationAndBranch =
+            accountDispatch?.setOrganisationAndBranch;
+          if (setOrganisationAndBranch) {
+            Reflect.apply(setOrganisationAndBranch, null, [
+              'Nullish Org',
+              undefined,
+              undefined,
+            ]);
+          }
+        }}
+        type='button'
+      >
+        set nullish org branch
+      </button>
+      <button
         onClick={() =>
           accountDispatch?.setUserProfile({
             testingCalibrationDashboard: {
@@ -656,6 +672,16 @@ describe('accountProvider dispatch callbacks', () => {
     expect(details).toContain('"organisation":"Fallback Org"');
     expect(details).toContain('"trading":""');
     expect(details).toContain('"branch":""');
+
+    await user.click(
+      screen.getByRole('button', { name: 'set nullish org branch' }),
+    );
+
+    const nullishDetails = screen.getByTestId('details').textContent ?? '';
+
+    expect(nullishDetails).toContain('"organisation":"Nullish Org"');
+    expect(nullishDetails).toContain('"trading":""');
+    expect(nullishDetails).toContain('"branch":""');
   });
 
   it('logs profile-save token failures without removing provider children', async () => {

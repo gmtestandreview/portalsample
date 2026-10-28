@@ -101,6 +101,7 @@ const allowedExclusionCategories = [
   /\/external\/\*\*$/,
   /\/parent\/\*\*$/,
   /\/storybook\/\*\*$/,
+  /\/testing\/\*\*$/,
   /\/components\/App\/\*\*$/,
   /\/components\/AriaComponents\/main\.tsx$/,
   /\/components\/reactaria_components\/\*\*$/,

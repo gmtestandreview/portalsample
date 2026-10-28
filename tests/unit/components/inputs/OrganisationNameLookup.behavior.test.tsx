@@ -3,7 +3,7 @@ import { Profiler } from 'react';
 import type { ProfilerOnRenderCallback } from 'react';
 import { Formik } from 'formik';
 import type { FormikConfig } from 'formik';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
 type LookupValues = {
@@ -54,6 +54,11 @@ const renderLookup = (
   );
 
 describe('organisation name lookup behavior', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
     expect.hasAssertions();
 
@@ -125,7 +130,7 @@ describe('organisation name lookup behavior', () => {
       this: unknown[],
       index: number,
     ) {
-      if (this.length === 2 && this[0] === 'Alpha Labs' && index === 0) {
+      if (this.length > 0 && this[0] === 'Alpha Labs' && index === 0) {
         return undefined;
       }
       return originalAt.call(this, index);
@@ -153,8 +158,11 @@ describe('organisation name lookup behavior', () => {
     await act(async () => {
       vi.advanceTimersByTime(350);
     });
+    expect(screen.getByText('Alpha Labs')).toBeInTheDocument();
     await act(async () => {
       fireEvent.keyDown(input, { key: 'ArrowDown' });
+    });
+    await act(async () => {
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 

@@ -122,6 +122,24 @@ const expectedRouteWrapperContract = (path: string) => {
 };
 
 describe('application route loading', () => {
+  it('renders the loading fallback for lazy routes', () => {
+    expect.hasAssertions();
+
+    const dashboardRoute = App.routes.find(
+      (candidate) => candidate.path === '/dashboard',
+    );
+
+    const fallback = dashboardRoute?.hydrateFallbackElement as ReactElement;
+    const Fallback = fallback.type as () => ReactElement;
+
+    expect(Fallback()).toMatchObject({
+      type: expect.anything(),
+      props: {
+        children: expect.anything(),
+      },
+    });
+  });
+
   it('preserves the complete route path contract', () => {
     expect.hasAssertions();
 

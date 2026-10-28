@@ -686,7 +686,7 @@ describe('supporting documents', () => {
       await resetSupportingDocumentsMocks();
 
       mocks.accountContext.mockReturnValue({
-        details: createAccountDetails({ abn: '', organisation: '' }),
+        details: null,
       });
       const onUploadAttachment = vi
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
