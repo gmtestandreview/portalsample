@@ -647,7 +647,7 @@ describe('accountProvider dispatch callbacks', () => {
     });
   });
 
-  it('falls back to empty trading and branch names when organisation branch dispatch receives nullish values', async () => {
+  it('falls back to empty trading and branch names for explicit empty values', async () => {
     expect.hasAssertions();
 
     resetProviderMocks();
@@ -672,6 +672,24 @@ describe('accountProvider dispatch callbacks', () => {
     expect(details).toContain('"organisation":"Fallback Org"');
     expect(details).toContain('"trading":""');
     expect(details).toContain('"branch":""');
+  });
+
+  it('falls back to empty trading and branch names for nullish values', async () => {
+    expect.hasAssertions();
+
+    resetProviderMocks();
+
+    const user = userEvent.setup();
+
+    render(
+      <AccountProvider>
+        <AccountConsumer />
+      </AccountProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('details')).toHaveTextContent('Test Org'),
+    );
 
     await user.click(
       screen.getByRole('button', { name: 'set nullish org branch' }),

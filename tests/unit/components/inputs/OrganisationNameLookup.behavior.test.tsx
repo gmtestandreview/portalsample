@@ -3,7 +3,7 @@ import { Profiler } from 'react';
 import type { ProfilerOnRenderCallback } from 'react';
 import { Formik } from 'formik';
 import type { FormikConfig } from 'formik';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 
 type LookupValues = {
@@ -54,26 +54,26 @@ const renderLookup = (
   );
 
 describe('organisation name lookup behavior', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-    vi.useRealTimers();
-  });
-
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
-    renderLookup();
+    try {
+      renderLookup();
 
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'ac' } });
+      fireEvent.change(screen.getByRole('combobox'), {
+        target: { value: 'ac' },
+      });
 
-    await act(async () => {
-      vi.advanceTimersByTime(350);
-    });
+      await act(async () => {
+        vi.advanceTimersByTime(350);
+      });
 
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-
-    vi.useRealTimers();
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    } finally {
+      vi.restoreAllMocks();
+      vi.useRealTimers();
+    }
   });
 
   /**
@@ -95,30 +95,33 @@ describe('organisation name lookup behavior', () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
-    const onRender = vi.fn<ProfilerOnRenderCallback>();
-    render(
-      <Profiler id='lookup' onRender={onRender}>
-        <Formik<LookupValues>
-          initialValues={{ orgName: '', orgNameOptions: [], parentField: '' }}
-          onSubmit={vi.fn<SubmitHandler>()}
-        >
-          <OrganisationNameLookup
-            name='orgName'
-            label='Organisation'
-            optionsFieldName='tradingName'
-          />
-        </Formik>
-      </Profiler>,
-    );
-    onRender.mockClear();
+    try {
+      const onRender = vi.fn<ProfilerOnRenderCallback>();
+      render(
+        <Profiler id='lookup' onRender={onRender}>
+          <Formik<LookupValues>
+            initialValues={{ orgName: '', orgNameOptions: [], parentField: '' }}
+            onSubmit={vi.fn<SubmitHandler>()}
+          >
+            <OrganisationNameLookup
+              name='orgName'
+              label='Organisation'
+              optionsFieldName='tradingName'
+            />
+          </Formik>
+        </Profiler>,
+      );
+      onRender.mockClear();
 
-    await act(async () => {
-      vi.advanceTimersByTime(350);
-    });
+      await act(async () => {
+        vi.advanceTimersByTime(350);
+      });
 
-    expect(onRender).not.toHaveBeenCalled();
-
-    vi.useRealTimers();
+      expect(onRender).not.toHaveBeenCalled();
+    } finally {
+      vi.restoreAllMocks();
+      vi.useRealTimers();
+    }
   });
 
   it('falls back to typed input if the active suggestion is unexpectedly absent', async () => {
@@ -126,49 +129,53 @@ describe('organisation name lookup behavior', () => {
 
     vi.useFakeTimers();
     const originalAt = Array.prototype.at;
-    const atSpy = vi.spyOn(Array.prototype, 'at').mockImplementation(function (
-      this: unknown[],
-      index: number,
-    ) {
-      if (this.length > 0 && this[0] === 'Alpha Labs' && index === 0) {
-        return undefined;
-      }
-      return originalAt.call(this, index);
-    });
+    try {
+      vi.spyOn(Array.prototype, 'at').mockImplementation(function (
+        this: unknown[],
+        index: number,
+      ) {
+        if (this.length > 0 && this[0] === 'Alpha Labs' && index === 0) {
+          return undefined;
+        }
+        return originalAt.call(this, index);
+      });
 
-    render(
-      <Formik<LookupValues>
-        initialValues={{
-          orgName: '',
-          orgNameOptions: [{ name: 'Alpha Labs' }, { name: 'Beta Labs' }],
-          parentField: '',
-        }}
-        onSubmit={vi.fn<SubmitHandler>()}
-      >
-        <OrganisationNameLookup
-          name='orgName'
-          label='Organisation'
-          optionsFieldName='name'
-        />
-      </Formik>,
-    );
+      render(
+        <Formik<LookupValues>
+          initialValues={{
+            orgName: '',
+            orgNameOptions: [{ name: 'Alpha Labs' }, { name: 'Beta Labs' }],
+            parentField: '',
+          }}
+          onSubmit={vi.fn<SubmitHandler>()}
+        >
+          <OrganisationNameLookup
+            name='orgName'
+            label='Organisation'
+            optionsFieldName='name'
+          />
+        </Formik>,
+      );
 
-    const input = screen.getByRole('combobox');
-    fireEvent.change(input, { target: { value: 'Labs' } });
-    await act(async () => {
-      vi.advanceTimersByTime(350);
-    });
-    expect(screen.getByText('Alpha Labs')).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
-    });
-    await act(async () => {
-      fireEvent.keyDown(input, { key: 'Enter' });
-    });
+      const input = screen.getByRole('combobox');
+      fireEvent.change(input, { target: { value: 'Labs' } });
+      await act(async () => {
+        vi.advanceTimersByTime(350);
+      });
 
-    expect(input).toHaveValue('Labs');
+      expect(screen.getByText('Alpha Labs')).toBeInTheDocument();
 
-    atSpy.mockRestore();
-    vi.useRealTimers();
+      await act(async () => {
+        fireEvent.keyDown(input, { key: 'ArrowDown' });
+      });
+      await act(async () => {
+        fireEvent.keyDown(input, { key: 'Enter' });
+      });
+
+      expect(input).toHaveValue('Labs');
+    } finally {
+      vi.restoreAllMocks();
+      vi.useRealTimers();
+    }
   });
 });

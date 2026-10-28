@@ -2,7 +2,7 @@ import { parseDate } from '@internationalized/date';
 import { useDragAndDrop } from 'react-aria-components';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Input } from 'react-aria-components/Input';
 import { ResizableTableContainer } from 'react-aria-components/Table';
 import { Button as AriaButton } from '@/components/AriaComponents/AriaButton/Button';
@@ -143,14 +143,7 @@ function DragAndDropCollections() {
   );
 }
 
-describe('React Aria coverage wrappers', () => {
-  afterEach(() => {
-    Object.defineProperty(navigator, 'userAgent', {
-      configurable: true,
-      value: originalUserAgent,
-    });
-  });
-
+describe('react aria coverage wrappers', () => {
   it('renders the wrapper-only controls and their optional content', async () => {
     expect.hasAssertions();
 
@@ -313,6 +306,7 @@ describe('React Aria coverage wrappers', () => {
     await user.click(screen.getByRole('button', { name: 'Single actions' }));
     await user.keyboard('{Escape}');
     await user.click(screen.getByRole('button', { name: 'Actions' }));
+
     expect(screen.getByRole('menu')).toBeInTheDocument();
   });
 
@@ -412,45 +406,63 @@ describe('React Aria coverage wrappers', () => {
 
     const user = userEvent.setup();
     const onOpenChange = vi.fn<(isOpen?: boolean) => void>();
-    Object.defineProperty(navigator, 'userAgent', {
-      configurable: true,
-      value: 'Mozilla/5.0',
-    });
+    let unmount: (() => void) | undefined;
+    let unmountMac: (() => void) | undefined;
 
-    const { unmount } = render(
-      <CommandPalette aria-label='Commands' isOpen onOpenChange={onOpenChange}>
-        <MenuItem id='dashboard'>Dashboard</MenuItem>
-      </CommandPalette>,
-    );
+    try {
+      Object.defineProperty(navigator, 'userAgent', {
+        configurable: true,
+        value: 'Mozilla/5.0',
+      });
 
-    await user.keyboard('{Control>}j{/Control}{Escape}');
+      unmount = render(
+        <CommandPalette
+          aria-label='Commands'
+          isOpen
+          onOpenChange={onOpenChange}
+        >
+          <MenuItem id='dashboard'>Dashboard</MenuItem>
+        </CommandPalette>,
+      ).unmount;
 
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+      await user.keyboard('{Control>}j{/Control}{Escape}');
 
-    expect(onOpenChange).toHaveBeenCalledWith(true);
-    expect(onOpenChange).toHaveBeenCalledWith(false);
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
-    unmount();
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    Object.defineProperty(navigator, 'userAgent', {
-      configurable: true,
-      value: 'Macintosh',
-    });
-    const { unmount: unmountMac } = render(
-      <CommandPalette aria-label='Commands' isOpen onOpenChange={onOpenChange}>
-        <MenuItem id='dashboard'>Dashboard</MenuItem>
-      </CommandPalette>,
-    );
-    document.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'j', metaKey: true }),
-    );
-    expect(onOpenChange).toHaveBeenCalledWith(true);
+      unmount();
+      unmount = undefined;
 
-    unmountMac();
+      Object.defineProperty(navigator, 'userAgent', {
+        configurable: true,
+        value: 'Macintosh',
+      });
+      unmountMac = render(
+        <CommandPalette
+          aria-label='Commands'
+          isOpen
+          onOpenChange={onOpenChange}
+        >
+          <MenuItem id='dashboard'>Dashboard</MenuItem>
+        </CommandPalette>,
+      ).unmount;
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'j', metaKey: true }),
+      );
 
-    Object.defineProperty(navigator, 'userAgent', {
-      configurable: true,
-      value: originalUserAgent,
-    });
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+
+      unmountMac();
+      unmountMac = undefined;
+    } finally {
+      unmount?.();
+      unmountMac?.();
+      Object.defineProperty(navigator, 'userAgent', {
+        configurable: true,
+        value: originalUserAgent,
+      });
+    }
   });
 });
