@@ -401,17 +401,19 @@ jobs:
           exit 0
 
       # TEMPORARY DIAGNOSTIC (remove with the step above). Repeats the deny
-      # probe through Node fs, the same path the closure uses, and prints the
-      # error code Node reports for each operation. The pwsh probe above cannot
-      # distinguish a Node-specific errno from an unenforced deny.
+      # probe through Node fs under bash (the job's default shell, which is what
+      # runs the closure) and prints the error code Node reports for each
+      # operation. The pwsh probe above cannot distinguish a Node-specific errno
+      # or a shell-dependent identity from an unenforced deny.
       - name: Diagnose ACL freeze enforcement (Node fs)
-        shell: pwsh
+        shell: bash
         run: |
-          $script = @'
+          cat > acl-node-probe.cjs <<'NODE_PROBE_SCRIPT'
           const { execFileSync } = require('node:child_process');
           const fs = require('node:fs');
           const path = require('node:path');
           const id = [process.env.USERDOMAIN, process.env.USERNAME].join(String.fromCharCode(92));
+          console.log('NODE_PROBE identity=' + id + ' (bash, same shell as the closure)');
           const dir = path.join(process.env.GITHUB_WORKSPACE, 'acl-node-probe-' + Date.now());
           fs.mkdirSync(dir);
           const ops = ['overwrite', 'append', 'create', 'delete', 'rename'];
@@ -440,9 +442,9 @@ jobs:
             try { icacls(dir, ['/remove:d', id, '/t', '/c']); } catch {}
             fs.rmSync(dir, { recursive: true, force: true });
           }
-          '@
-          node -e $script
-          exit 0
+          NODE_PROBE_SCRIPT
+          node acl-node-probe.cjs || true
+          rm -f acl-node-probe.cjs
 
       - name: Prepare E2E diagnostics
         run: mkdir -p ci-artifacts/e2e

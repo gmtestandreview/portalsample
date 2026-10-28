@@ -725,6 +725,17 @@ const createProductionAdapters = async () => {
       : username;
   };
 
+  // Evidence for an unenforced deny: the ACL as Windows reports it after the
+  // probe ran. Best-effort - a failure here must not mask the probe result.
+  const describeAcl = async (probePath) => {
+    try {
+      const { stdout } = await execFileAsync('icacls.exe', [probePath]);
+      return stdout.trim();
+    } catch (error_) {
+      return `icacls failed: ${error_?.message ?? error_}`;
+    }
+  };
+
   const runDenialProbe = async (operation, target, probePath) => {
     try {
       if (operation === 'overwrite') await writeFile(probePath, 'overwrite');
@@ -1056,12 +1067,19 @@ const createProductionAdapters = async () => {
             ]);
           }
           for (const [operationIndex, operation] of operations.entries()) {
+            const probe = await runDenialProbe(
+              operation,
+              target,
+              probePaths[operationIndex],
+            );
             denialProbes.push(
-              await runDenialProbe(
-                operation,
-                target,
-                probePaths[operationIndex],
-              ),
+              probe.denied
+                ? probe
+                : {
+                    ...probe,
+                    identity,
+                    acl: await describeAcl(probePaths[operationIndex]),
+                  },
             );
           }
         }

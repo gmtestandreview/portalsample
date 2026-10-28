@@ -5,6 +5,8 @@ import { defineConfig } from 'vitest/config';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const UNIT_TEST_TIMEOUT_MS = 30_000;
+
 /**
  * Vitest 4 removed `coverage.all`. The explicit `include` below already brings
  * matching covered and uncovered files into the report, so no all-files sweep is
@@ -115,6 +117,9 @@ export default defineConfig({
       printBasicPrototype: false,
       printFunctionName: false,
     },
+    // Heavy route tests render full Formik/RHF trees under V8 coverage with
+    // two workers; hosted runners exceed Vitest's 5s default on them.
+    testTimeout: UNIT_TEST_TIMEOUT_MS,
     include: ['tests/unit/**/*.test.{ts,tsx}'],
     css: false,
     coverage: coverageConfig,
