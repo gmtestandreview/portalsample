@@ -1,0 +1,134 @@
+import { parseJsonDocument } from '../storybook-coverage.mjs';
+
+import { isRecord } from './contracts.mjs';
+
+export const MCP_REQUEST_TIMEOUT_MS = 150_000;
+const MCP_PROTOCOL_VERSION = '2025-03-26';
+const SSE_DATA_PREFIX = 'data: ';
+
+const parseEnvelopes = (body, contentType) => {
+  try {
+    return contentType.includes('application/json')
+      ? [parseJsonDocument(body)]
+      : body
+          .split(/\r?\n/u)
+          .filter((line) => line.startsWith(SSE_DATA_PREFIX))
+          .map((line) => parseJsonDocument(line.slice(SSE_DATA_PREFIX.length)));
+  } catch (error_) {
+    throw new Error(
+      `MCP response was not valid JSON: ${
+        error_ instanceof Error ? error_.message : String(error_)
+      }`,
+      { cause: error_ },
+    );
+  }
+};
+
+export const parseMcpEnvelope = async (response, expectedId) => {
+  const body = await response.text();
+  const contentType = response.headers.get('content-type') ?? '';
+  const envelopes = parseEnvelopes(body, contentType);
+  const matching = envelopes.filter(
+    (envelope) =>
+      isRecord(envelope) &&
+      envelope.jsonrpc === '2.0' &&
+      (expectedId === undefined || envelope.id === expectedId),
+  );
+  if (matching.length !== 1) {
+    throw new Error(
+      `MCP response did not contain exactly one JSON-RPC response ID ${String(expectedId)}`,
+    );
+  }
+  const envelope = matching[0];
+  const hasResult = Object.hasOwn(envelope, 'result');
+  const hasError = Object.hasOwn(envelope, 'error');
+  if (hasResult === hasError) {
+    throw new Error('MCP response must contain exactly one result or error');
+  }
+  if (hasError) {
+    throw new Error(
+      `MCP response contained an error: ${JSON.stringify(envelope.error)}`,
+    );
+  }
+  if (!isRecord(envelope.result))
+    throw new Error('MCP response result must be an object');
+  return envelope;
+};
+
+// Each HTTP request is bounded by `requestTimeoutMs`, which callers shrink to
+// whatever remains of the overall MCP deadline.
+const createMcpRequester =
+  (mcpURL, signal, requestTimeoutMs) =>
+  async (body, headers = {}, expectedStatus = 200) => {
+    const timeoutSignal = AbortSignal.timeout(requestTimeoutMs);
+    const response = await fetch(mcpURL, {
+      method: 'POST',
+      headers: {
+        accept: 'application/json, text/event-stream',
+        'content-type': 'application/json',
+        ...headers,
+      },
+      body: JSON.stringify(body),
+      signal: signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal,
+    });
+    if (response.status !== expectedStatus) {
+      throw new Error(
+        `MCP ${body.method} returned HTTP ${response.status}, expected ${expectedStatus}`,
+      );
+    }
+    return response;
+  };
+
+const initializeSession = async (request, requestId) => {
+  const initialize = await request({
+    jsonrpc: '2.0',
+    id: requestId,
+    method: 'initialize',
+    params: {
+      protocolVersion: MCP_PROTOCOL_VERSION,
+      capabilities: {},
+      clientInfo: { name: 'storybook-closure', version: '1.0.0' },
+    },
+  });
+  const sessionId = initialize.headers.get('mcp-session-id');
+  if (!sessionId)
+    throw new Error('MCP initialize response did not provide a session ID');
+  await parseMcpEnvelope(initialize, requestId);
+  const sessionHeaders = { 'mcp-session-id': sessionId };
+  await request(
+    { jsonrpc: '2.0', method: 'notifications/initialized' },
+    sessionHeaders,
+    202,
+  );
+  return sessionHeaders;
+};
+
+export const executeMcpTestRun = async ({
+  mcpURL,
+  storyIds,
+  requestId,
+  signal,
+  requestTimeoutMs = MCP_REQUEST_TIMEOUT_MS,
+}) => {
+  const request = createMcpRequester(mcpURL, signal, requestTimeoutMs);
+  const sessionHeaders = await initializeSession(request, requestId);
+  const testRun = await request(
+    {
+      jsonrpc: '2.0',
+      id: requestId + 1,
+      method: 'tools/call',
+      params: {
+        name: 'test-run',
+        arguments: {
+          a11y: true,
+          stories: storyIds.map((storyId) => ({ storyId })),
+        },
+      },
+    },
+    sessionHeaders,
+  );
+  const envelope = await parseMcpEnvelope(testRun, requestId + 1);
+  if (!envelope.result)
+    throw new Error('MCP test-run response is missing a result');
+  return envelope.result;
+};

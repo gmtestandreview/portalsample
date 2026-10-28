@@ -151,6 +151,22 @@ const options = {
 };
 
 describe('runClosure', () => {
+  it('hands the abort signal to MCP receipt production', async () => {
+    expect.hasAssertions();
+
+    const { adapters } = makeAdapters();
+    const controller = new AbortController();
+
+    await moduleUnderTest.runClosure(
+      { ...options, signal: controller.signal },
+      adapters,
+    );
+
+    expect(adapters.produceMcpReceipts).toHaveBeenCalledWith(
+      expect.objectContaining({ signal: controller.signal }),
+    );
+  });
+
   it('runs gates in order, validates the native handoff, and cleans up', async () => {
     expect.hasAssertions();
 

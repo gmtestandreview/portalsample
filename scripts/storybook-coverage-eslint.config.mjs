@@ -13,6 +13,7 @@ export default [
       'scripts/storybook-coverage-worklist.mjs',
       'scripts/verify-storybook-docs.mjs',
       'scripts/storybook-closure.mjs',
+      'scripts/storybook-closure/**/*.mjs',
     ],
     linterOptions: {
       reportUnusedDisableDirectives: 'off',
