@@ -4,7 +4,6 @@ import { Buffer } from 'node:buffer';
 import { TextDecoder } from 'node:util';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
-import { readdirSync, readFileSync } from 'node:fs';
 import * as ts from 'typescript';
 
 export const FAILURE_CODES = Object.freeze({
@@ -2692,10 +2691,45 @@ const runReferencesMode = (args, manifest) => {
 
 const readJsonFile = (filePath) => {
   const resolvedPath = path.resolve(filePath);
-  // Closure mode intentionally reads caller-selected CLI evidence paths; the
-  // path is resolved here to preserve the existing --index/--docs-index contract.
-  // eslint-disable-next-line security/detect-non-literal-fs-filename
-  return parseJsonDocument(readFileSync(resolvedPath, 'utf8'));
+  const content = ts.sys.readFile(resolvedPath);
+  if (content === undefined) {
+    throw new Error(`closure evidence file could not be read: ${filePath}`);
+  }
+  return parseJsonDocument(content);
+};
+
+const readReceiptFiles = (directory) => {
+  const receiptDirectory = path.resolve(directory);
+  if (!ts.sys.directoryExists(receiptDirectory)) {
+    throw new Error(`receipt directory does not exist: ${directory}`);
+  }
+
+  const normalizedReceiptDirectory = path.normalize(receiptDirectory);
+  const realDirectory = path.normalize(
+    ts.sys.realpath?.(receiptDirectory) ?? receiptDirectory,
+  );
+  return ts.sys
+    .readDirectory(
+      receiptDirectory,
+      ['.json'],
+      undefined,
+      ['receipt-*.json'],
+      1,
+    )
+    .filter(
+      (filePath) =>
+        path.dirname(path.normalize(filePath)) === normalizedReceiptDirectory,
+    )
+    .map((filePath) => {
+      const realFilePath = path.normalize(
+        ts.sys.realpath?.(filePath) ?? filePath,
+      );
+      if (path.dirname(realFilePath) !== realDirectory) {
+        throw new Error(`receipt file escapes directory: ${filePath}`);
+      }
+      return filePath;
+    })
+    .toSorted((a, b) => a.localeCompare(b));
 };
 
 const runClosureMode = (args, manifest) => {
@@ -2709,20 +2743,12 @@ const runClosureMode = (args, manifest) => {
   }
   try {
     const receiptDirectory = path.resolve(args.receipts);
-    // The receipt directory is an explicit --receipts CLI destination selected
-    // by the invoking closure job, so this dynamic path is an intentional I/O
-    // boundary rather than an application-controlled filename.
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
-    const receiptFiles = readdirSync(receiptDirectory)
-      .filter((fileName) => /^receipt-.*\.json$/u.test(fileName))
-      .toSorted();
+    const receiptFiles = readReceiptFiles(receiptDirectory);
     const closureResult = validateClosure({
       manifest,
       fullIndex: readJsonFile(args.index),
       docsIndex: readJsonFile(args.docsIndex),
-      receipts: receiptFiles.map((fileName) =>
-        readJsonFile(path.join(receiptDirectory, fileName)),
-      ),
+      receipts: receiptFiles.map(readJsonFile),
       freeze: readJsonFile(path.join(receiptDirectory, 'freeze.json')),
       producer: readJsonFile(path.join(receiptDirectory, 'producer.json')),
     });
