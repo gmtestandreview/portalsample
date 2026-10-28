@@ -58,16 +58,18 @@ function extractAnchors(block) {
   for (const m of hay.matchAll(/'([^'\n]{8,})'|"([^"\n]{8,})"/gu)) {
     anchors.add(m[1] ?? m[2]);
   }
-  for (const m of hay.matchAll(/\b([A-Z][A-Z0-9_]*_[A-Z0-9_]*[A-Z0-9])\b/gu)) {
-    anchors.add(m[1]);
+  // SCREAMING_SNAKE constants: an upper-case word run that contains an underscore
+  // and does not end with one.
+  for (const m of hay.matchAll(/\b([A-Z][A-Z0-9_]*)\b/gu)) {
+    if (m[1].includes('_') && !m[1].endsWith('_')) anchors.add(m[1]);
   }
   for (const m of hay.matchAll(/\b([a-z][a-zA-Z0-9]{7,})\b/gu)) {
     anchors.add(m[1]);
   }
   // PascalCase identifiers are useful anchors, but ordinary title-case prose is not.
   // Require an internal capital so words such as "Australian" are excluded.
-  for (const m of hay.matchAll(/\b([A-Z][a-zA-Z0-9]*[A-Z][a-zA-Z0-9]*)\b/gu)) {
-    anchors.add(m[1]);
+  for (const m of hay.matchAll(/\b([A-Z][a-zA-Z0-9]*)\b/gu)) {
+    if (/[A-Z]/u.test(m[1].slice(1))) anchors.add(m[1]);
   }
   for (const m of hay.matchAll(
     /\b([A-Z][a-zA-Z0-9]{2,}\.[A-Za-z][a-zA-Z0-9]{2,})\b/gu,
@@ -439,8 +441,7 @@ if (FIX) {
     const replaced = updated.replace(CITATION, (full, rawCitation) => {
       const citation = parseCitation(rawCitation);
       if (
-        !citation ||
-        citation.l1 !== r.cited ||
+        citation?.l1 !== r.cited ||
         citation.citedPath.split('/').pop() !== base
       ) {
         return full;

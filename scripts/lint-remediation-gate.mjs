@@ -128,6 +128,21 @@ function normalizeFilePath(file, projectRoot) {
   return normalizedFile;
 }
 
+const compareCodeUnits = (left, right) => {
+  if (left < right) return -1;
+  return left > right ? 1 : 0;
+};
+
+const phaseTargetWarnings = (id, closedRuleIds, report, baseline) => {
+  if (id === 'phase-1') return baseline.warnings;
+  if (id === 'phase-5') return 0;
+  const closedWarnings = (report.diagnostics ?? []).filter(
+    ({ ruleId, severity }) =>
+      severity === 'warning' && closedRuleIds.includes(ruleId),
+  ).length;
+  return baseline.warnings - closedWarnings;
+};
+
 export function buildManifest(report, phaseId = 'phase-1') {
   const closedRuleIds = PHASE_CLOSURES_BY_ID.get(phaseId);
   if (!closedRuleIds) {
@@ -136,7 +151,7 @@ export function buildManifest(report, phaseId = 'phase-1') {
 
   const affectedFiles = Object.keys(report.counts.byFile ?? {})
     .map((file) => normalizeFilePath(file, report.projectRoot))
-    .sort();
+    .sort(compareCodeUnits);
   const phaseDiagnostics = (report.diagnostics ?? []).filter(
     ({ ruleId, severity }) =>
       severity === 'warning' &&
@@ -151,7 +166,7 @@ export function buildManifest(report, phaseId = 'phase-1') {
           )
       ).filter(Boolean),
     ),
-  ].sort();
+  ].sort(compareCodeUnits);
   let expectedWarningsBefore = report.counts.warnings;
   const batches = chunk(phaseFiles, MAX_BATCH_FILES).map((files, index) => {
     const expectedWarningReduction = phaseDiagnostics.filter(({ file }) =>
@@ -183,15 +198,7 @@ export function buildManifest(report, phaseId = 'phase-1') {
   const phaseTargetWarningsById = Object.fromEntries(
     Object.entries(PHASE_CLOSURES).map(([id, closedRuleIds]) => [
       id,
-      id === 'phase-1'
-        ? baseline.warnings
-        : id === 'phase-5'
-          ? 0
-          : baseline.warnings -
-            (report.diagnostics ?? []).filter(
-              ({ ruleId, severity }) =>
-                severity === 'warning' && closedRuleIds.includes(ruleId),
-            ).length,
+      phaseTargetWarnings(id, closedRuleIds, report, baseline),
     ]),
   );
 
@@ -240,16 +247,8 @@ export function buildManifest(report, phaseId = 'phase-1') {
   };
 }
 
-export function validateRemediationGate({
-  report,
-  manifest,
-  phaseId = 'phase-5',
-}) {
+const countFieldErrors = (report) => {
   const errors = [];
-  const phase = manifest.phases?.find(({ id }) => id === phaseId);
-
-  if (!phase) return [`unknown phase: ${phaseId}`];
-
   const missingCountFields = ['total', 'byFile', 'byRuleId'].filter(
     (field) => !(field in report.counts),
   );
@@ -259,30 +258,28 @@ export function validateRemediationGate({
     );
   }
 
-  if (
-    Number.isInteger(report.counts.total) &&
-    report.counts.total !== (report.diagnostics ?? []).length
-  ) {
+  if (!Number.isInteger(report.counts.total)) return errors;
+  const diagnostics = report.diagnostics ?? [];
+  if (report.counts.total !== diagnostics.length) {
     errors.push('report total does not match diagnostics length');
   }
-  if (Number.isInteger(report.counts.total)) {
-    const diagnosticWarnings = (report.diagnostics ?? []).filter(
-      ({ severity }) => severity === 'warning',
-    ).length;
-    const diagnosticErrors = (report.diagnostics ?? []).filter(
-      ({ severity }) => severity === 'error',
-    ).length;
-    if (diagnosticWarnings !== report.counts.warnings) {
-      errors.push('report warning count does not match diagnostics');
-    }
-    if (diagnosticErrors !== report.counts.errors) {
-      errors.push('report error count does not match diagnostics');
-    }
+  const diagnosticWarnings = diagnostics.filter(
+    ({ severity }) => severity === 'warning',
+  ).length;
+  const diagnosticErrors = diagnostics.filter(
+    ({ severity }) => severity === 'error',
+  ).length;
+  if (diagnosticWarnings !== report.counts.warnings) {
+    errors.push('report warning count does not match diagnostics');
   }
+  if (diagnosticErrors !== report.counts.errors) {
+    errors.push('report error count does not match diagnostics');
+  }
+  return errors;
+};
 
-  const diagnosticFiles = (report.diagnostics ?? [])
-    .map(({ file }) => normalizeFilePath(file, report.projectRoot))
-    .filter(Boolean);
+const breakdownErrors = (report, diagnosticFiles) => {
+  const errors = [];
   if (report.counts.byFile) {
     const reportedFiles = Object.fromEntries(
       Object.entries(report.counts.byFile)
@@ -313,7 +310,11 @@ export function validateRemediationGate({
       errors.push('report rule counts do not match diagnostics');
     }
   }
+  return errors;
+};
 
+const phaseCountErrors = (report, phase, phaseId) => {
+  const errors = [];
   if (report.counts.warnings !== phase.warnings) {
     errors.push(
       `${phaseId} expects ${phase.warnings} warnings but report contains ${report.counts.warnings}`,
@@ -324,7 +325,11 @@ export function validateRemediationGate({
       `${phaseId} expects ${phase.errors} errors but report contains ${report.counts.errors}`,
     );
   }
+  return errors;
+};
 
+const batchErrors = (manifest, phaseId) => {
+  const errors = [];
   for (const batch of manifest.batches ?? []) {
     if (batch.phase !== phaseId) {
       errors.push(
@@ -348,10 +353,13 @@ export function validateRemediationGate({
       errors.push(`batch ${batch.id} has no targeted test commands`);
     }
   }
+  return errors;
+};
 
+const unbatchedFileErrors = (report, manifest, phase, phaseId) => {
   const batchedPhaseFiles = new Set(
     (manifest.batches ?? [])
-      .filter(({ phase }) => phase === phaseId)
+      .filter(({ phase: batchPhase }) => batchPhase === phaseId)
       .flatMap(({ files }) => files),
   );
   const unbatchedPhaseFiles = [
@@ -365,19 +373,20 @@ export function validateRemediationGate({
         .map(({ file }) => normalizeFilePath(file, report.projectRoot))
         .filter((file) => file && !batchedPhaseFiles.has(file)),
     ),
-  ].sort();
-  if (unbatchedPhaseFiles.length) {
-    errors.push(
-      `phase ${phaseId} rule files are missing from batches: ${unbatchedPhaseFiles.join(', ')}`,
-    );
-  }
+  ].sort(compareCodeUnits);
+  return unbatchedPhaseFiles.length
+    ? [
+        `phase ${phaseId} rule files are missing from batches: ${unbatchedPhaseFiles.join(', ')}`,
+      ]
+    : [];
+};
 
+const residualErrors = (report, manifest, phase, diagnosticFiles) => {
+  const errors = [];
   const affectedFiles = new Set(manifest.affectedFiles ?? []);
-  const escapingFiles = [
-    ...new Set(
-      diagnosticFiles.filter((file) => file === '..' || file.startsWith('../')),
-    ),
-  ];
+  const escapingFiles = new Set(
+    diagnosticFiles.filter((file) => file === '..' || file.startsWith('../')),
+  );
   for (const file of escapingFiles) {
     errors.push(`diagnostic path escapes project root: ${file}`);
   }
@@ -385,7 +394,7 @@ export function validateRemediationGate({
     ...new Set(
       diagnosticFiles.filter((file) => file && !affectedFiles.has(file)),
     ),
-  ].sort();
+  ].sort(compareCodeUnits);
   if (residualFiles.length) {
     errors.push(`unexpected residual files: ${residualFiles.join(', ')}`);
   }
@@ -397,12 +406,33 @@ export function validateRemediationGate({
         .map(({ ruleId }) => ruleId)
         .filter((ruleId) => ruleId && closedRuleIds.has(ruleId)),
     ),
-  ].sort();
+  ].sort(compareCodeUnits);
   if (residualRules.length) {
     errors.push(`closed rules still present: ${residualRules.join(', ')}`);
   }
-
   return errors;
+};
+
+export function validateRemediationGate({
+  report,
+  manifest,
+  phaseId = 'phase-5',
+}) {
+  const phase = manifest.phases?.find(({ id }) => id === phaseId);
+  if (!phase) return [`unknown phase: ${phaseId}`];
+
+  const diagnosticFiles = (report.diagnostics ?? [])
+    .map(({ file }) => normalizeFilePath(file, report.projectRoot))
+    .filter(Boolean);
+
+  return [
+    ...countFieldErrors(report),
+    ...breakdownErrors(report, diagnosticFiles),
+    ...phaseCountErrors(report, phase, phaseId),
+    ...batchErrors(manifest, phaseId),
+    ...unbatchedFileErrors(report, manifest, phase, phaseId),
+    ...residualErrors(report, manifest, phase, diagnosticFiles),
+  ];
 }
 
 function readReport() {

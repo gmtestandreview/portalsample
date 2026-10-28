@@ -51,7 +51,7 @@ const STORYBOOK_INPUT_ROOTS = [
 
 const STORYBOOK_ROOT_INPUT_PATTERNS = [
   /^[^\\/]*\.config\.[^\\/]+$/u,
-  /^vitest.*\..+$/u,
+  /^vitest[^.]*\..+$/u,
   /^tsconfig.*\.json$/u,
   /^\.prettierrc.*$/u,
   /^\.env(?:\.[^\\/]*)?$/u,
@@ -368,6 +368,47 @@ const collectAndValidateReceipts = async (
   return receipts;
 };
 
+const runCleanup = async ({ options, adapters, freeze, producer, phases }) => {
+  let cleanupError;
+  if (freeze) {
+    try {
+      await adapters.releaseFreeze({
+        checkout: options.checkout,
+        receipts: options.receipts,
+        freeze,
+      });
+    } catch (error_) {
+      cleanupError = error_;
+    }
+    phases.push('release-freeze');
+  }
+  try {
+    await adapters.stopOwnedServer?.({
+      producer,
+      checkout: options.checkout,
+    });
+  } catch (error_) {
+    cleanupError ??= error_;
+  }
+  phases.push('stop-server');
+  return cleanupError;
+};
+
+const applyCleanupError = (outcome, cleanupError, phases) => {
+  if (!cleanupError) return outcome;
+  const cleanupMessage =
+    cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+  if (outcome?.ok) {
+    return failure(FAILURE_CODES.EXECUTION_INCOMPLETE, cleanupMessage, phases);
+  }
+  return {
+    ...outcome,
+    ok: false,
+    code: FAILURE_CODES.EXECUTION_INCOMPLETE,
+    message: `${outcome.message}; cleanup failed: ${cleanupMessage}`,
+  };
+};
+
 export async function runClosure(options, adapters) {
   const phases = [];
   const optionError = assertOptions(options);
@@ -480,48 +521,14 @@ export async function runClosure(options, adapters) {
       phases,
     );
   } finally {
-    let cleanupError;
-    if (freeze) {
-      try {
-        await adapters.releaseFreeze({
-          checkout: options.checkout,
-          receipts: options.receipts,
-          freeze,
-        });
-      } catch (error_) {
-        cleanupError = error_;
-      }
-      phases.push('release-freeze');
-    }
-    try {
-      await adapters.stopOwnedServer?.({
-        producer,
-        checkout: options.checkout,
-      });
-    } catch (error_) {
-      cleanupError ??= error_;
-    }
-    phases.push('stop-server');
-    if (cleanupError) {
-      const cleanupMessage =
-        cleanupError instanceof Error
-          ? cleanupError.message
-          : String(cleanupError);
-      if (outcome?.ok) {
-        outcome = failure(
-          FAILURE_CODES.EXECUTION_INCOMPLETE,
-          cleanupMessage,
-          phases,
-        );
-      } else {
-        outcome = {
-          ...outcome,
-          ok: false,
-          code: FAILURE_CODES.EXECUTION_INCOMPLETE,
-          message: `${outcome.message}; cleanup failed: ${cleanupMessage}`,
-        };
-      }
-    }
+    const cleanupError = await runCleanup({
+      options,
+      adapters,
+      freeze,
+      producer,
+      phases,
+    });
+    outcome = applyCleanupError(outcome, cleanupError, phases);
   }
 
   if (!outcome) {
@@ -1220,7 +1227,12 @@ const createProductionAdapters = async () => {
           process.kill(-server.pid, force ? 'SIGKILL' : 'SIGTERM');
         }
       };
-      if (!server.killed) await stopProcessTree(false);
+      if (!server.killed) {
+        // Windows taskkill without /F cannot end console-less node children
+        // and exits non-zero; the forced attempt below is the real stop, and
+        // it still throws if the tree survives.
+        await stopProcessTree(false).catch(() => undefined);
+      }
       let exitStatus = await waitForOwnedServerExit(
         MANAGED_SERVER_SHUTDOWN_TIMEOUT_MS,
       );

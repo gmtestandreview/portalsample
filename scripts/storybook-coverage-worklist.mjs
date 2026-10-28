@@ -29,6 +29,13 @@ const isExcludedSourcePath = (filePath) =>
 const relativeSourcePath = (root, filePath) =>
   path.relative(root, filePath).replaceAll(path.sep, '/');
 
+const sourcePolicyReason = (filePath) => {
+  if (!isInventorySourcePath(filePath)) return 'outside inventory roots';
+  return isExcludedSourcePath(filePath)
+    ? 'excluded by source policy'
+    : 'accepted by source policy';
+};
+
 const collectCandidateFiles = (root) =>
   ts.sys
     .readDirectory(path.resolve(root), SOURCE_EXTENSIONS)
@@ -37,11 +44,7 @@ const collectCandidateFiles = (root) =>
     .toSorted(compareText)
     .map((filePath) => ({
       path: filePath,
-      reason: isInventorySourcePath(filePath)
-        ? isExcludedSourcePath(filePath)
-          ? 'excluded by source policy'
-          : 'accepted by source policy'
-        : 'outside inventory roots',
+      reason: sourcePolicyReason(filePath),
     }));
 
 const batchForSource = (source) => {

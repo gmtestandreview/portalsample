@@ -135,9 +135,8 @@ const indexHtml = await readDistFile(path.join(dist, 'index.html'));
 const expectedEnvironment =
   process.env.VITE_ENVIRONMENT ??
   loadEnv('production', root, '').VITE_ENVIRONMENT;
-const environmentMeta = indexHtml.match(
-  /<meta[^>]+name="nmi-environment"[^>]+content="([^"]+)"/u,
-);
+const environmentMeta =
+  /<meta[^>]+name="nmi-environment"[^>]+content="([^"]+)"/u.exec(indexHtml);
 assert(
   expectedEnvironment,
   'VITE_ENVIRONMENT was not available to the verifier',
@@ -203,7 +202,7 @@ assert(
   'application JavaScript still contains legacy environment names',
 );
 assert(
-  !/\bprocess\.env(?:\.|\[)/u.test(applicationJavaScript),
+  !/\bprocess\.env[.[]/u.test(applicationJavaScript),
   'application JavaScript still contains custom process.env access',
 );
 assert(

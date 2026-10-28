@@ -122,109 +122,102 @@ const parseJsonString = (text, start) => {
   throw new Error('manifest JSON contains an unterminated string');
 };
 
-const assertUniqueJsonKeys = (text) => {
-  let index = 0;
+const isJsonDigit = (value) => value >= '0' && value <= '9';
 
-  const parseValue = () => {
+const skipJsonDigits = (text, start) => {
+  let index = start;
+  while (isJsonDigit(text.charAt(index))) index += 1;
+  return index;
+};
+
+const skipJsonFraction = (text, start) => {
+  if (text.charAt(start) !== '.') return start;
+  const decimalStart = start + 1;
+  const end = skipJsonDigits(text, decimalStart);
+  return end === decimalStart ? start : end;
+};
+
+const skipJsonExponent = (text, start) => {
+  const marker = text.charAt(start);
+  if (marker !== 'e' && marker !== 'E') return start;
+  let exponentStart = start + 1;
+  if (
+    text.charAt(exponentStart) === '+' ||
+    text.charAt(exponentStart) === '-'
+  ) {
+    exponentStart += 1;
+  }
+  const end = skipJsonDigits(text, exponentStart);
+  return end === exponentStart ? start : end;
+};
+
+const skipJsonNumber = (text, start) => {
+  let index = start;
+  if (text.charAt(index) === '-') index += 1;
+  const firstDigit = text.charAt(index);
+  if (firstDigit === '0') {
+    index += 1;
+  } else if (firstDigit >= '1' && firstDigit <= '9') {
+    index = skipJsonDigits(text, index);
+  } else {
+    throw new Error('manifest JSON value is invalid');
+  }
+  return skipJsonExponent(text, skipJsonFraction(text, index));
+};
+
+function skipJsonObject(text, start) {
+  let index = skipJsonWhitespace(text, start + 1);
+  if (text.charAt(index) === '}') return index + 1;
+  const keys = new Set();
+  while (index < text.length) {
     index = skipJsonWhitespace(text, index);
-    const character = text.charAt(index);
-    if (character === '"') {
-      const parsed = parseJsonString(text, index);
-      index = parsed.next;
-      return;
+    if (text.charAt(index) !== '"')
+      throw new Error('manifest JSON object key is invalid');
+    const key = parseJsonString(text, index);
+    index = skipJsonWhitespace(text, key.next);
+    if (text.charAt(index) !== ':')
+      throw new Error('manifest JSON object is missing a colon');
+    if (keys.has(key.value)) {
+      throw new Error(`duplicate manifest JSON key: ${key.value}`);
     }
-    if (character === '{') {
-      index += 1;
-      index = skipJsonWhitespace(text, index);
-      const keys = new Set();
-      if (text.charAt(index) === '}') {
-        index += 1;
-        return;
-      }
-      while (index < text.length) {
-        index = skipJsonWhitespace(text, index);
-        if (text.charAt(index) !== '"')
-          throw new Error('manifest JSON object key is invalid');
-        const key = parseJsonString(text, index);
-        index = skipJsonWhitespace(text, key.next);
-        if (text.charAt(index) !== ':')
-          throw new Error('manifest JSON object is missing a colon');
-        if (keys.has(key.value)) {
-          throw new Error(`duplicate manifest JSON key: ${key.value}`);
-        }
-        keys.add(key.value);
-        index += 1;
-        parseValue();
-        index = skipJsonWhitespace(text, index);
-        if (text.charAt(index) === '}') {
-          index += 1;
-          return;
-        }
-        if (text.charAt(index) !== ',')
-          throw new Error('manifest JSON object is missing a comma');
-        index += 1;
-      }
-      throw new Error('manifest JSON object is unterminated');
-    }
-    if (character === '[') {
-      index += 1;
-      index = skipJsonWhitespace(text, index);
-      if (text.charAt(index) === ']') {
-        index += 1;
-        return;
-      }
-      while (index < text.length) {
-        parseValue();
-        index = skipJsonWhitespace(text, index);
-        if (text.charAt(index) === ']') {
-          index += 1;
-          return;
-        }
-        if (text.charAt(index) !== ',')
-          throw new Error('manifest JSON array is missing a comma');
-        index += 1;
-      }
-      throw new Error('manifest JSON array is unterminated');
-    }
+    keys.add(key.value);
+    index = skipJsonWhitespace(text, skipJsonValue(text, index + 1));
+    if (text.charAt(index) === '}') return index + 1;
+    if (text.charAt(index) !== ',')
+      throw new Error('manifest JSON object is missing a comma');
+    index += 1;
+  }
+  throw new Error('manifest JSON object is unterminated');
+}
 
-    for (const literal of ['true', 'false', 'null']) {
-      if (text.startsWith(literal, index)) {
-        index += literal.length;
-        return;
-      }
-    }
+function skipJsonArray(text, start) {
+  let index = skipJsonWhitespace(text, start + 1);
+  if (text.charAt(index) === ']') return index + 1;
+  while (index < text.length) {
+    index = skipJsonWhitespace(text, skipJsonValue(text, index));
+    if (text.charAt(index) === ']') return index + 1;
+    if (text.charAt(index) !== ',')
+      throw new Error('manifest JSON array is missing a comma');
+    index += 1;
+  }
+  throw new Error('manifest JSON array is unterminated');
+}
 
-    const isDigit = (value) => value >= '0' && value <= '9';
-    if (text.charAt(index) === '-') index += 1;
-    const firstDigit = text.charAt(index);
-    if (firstDigit === '0') {
-      index += 1;
-    } else if (firstDigit >= '1' && firstDigit <= '9') {
-      while (isDigit(text.charAt(index))) index += 1;
-    } else {
-      throw new Error('manifest JSON value is invalid');
-    }
+function skipJsonValue(text, start) {
+  const index = skipJsonWhitespace(text, start);
+  const character = text.charAt(index);
+  if (character === '"') return parseJsonString(text, index).next;
+  if (character === '{') return skipJsonObject(text, index);
+  if (character === '[') return skipJsonArray(text, index);
+  const literal = ['true', 'false', 'null'].find((candidate) =>
+    text.startsWith(candidate, index),
+  );
+  if (literal) return index + literal.length;
+  return skipJsonNumber(text, index);
+}
 
-    const decimalMarker = index;
-    if (text.charAt(index) === '.') {
-      index += 1;
-      const decimalStart = index;
-      while (isDigit(text.charAt(index))) index += 1;
-      if (index === decimalStart) index = decimalMarker;
-    }
-
-    const exponentMarker = index;
-    if (text.charAt(index) === 'e' || text.charAt(index) === 'E') {
-      index += 1;
-      if (text.charAt(index) === '+' || text.charAt(index) === '-') index += 1;
-      const exponentStart = index;
-      while (isDigit(text.charAt(index))) index += 1;
-      if (index === exponentStart) index = exponentMarker;
-    }
-  };
-
-  parseValue();
-  index = skipJsonWhitespace(text, index);
+const assertUniqueJsonKeys = (text) => {
+  const index = skipJsonWhitespace(text, skipJsonValue(text, 0));
   if (index !== text.length)
     throw new Error('manifest JSON has trailing content');
 };
@@ -237,6 +230,11 @@ export const parseJsonDocument = (text) => {
   return JSON.parse(text);
 };
 
+const compareKeys = (left, right) => {
+  if (left < right) return -1;
+  return left > right ? 1 : 0;
+};
+
 const canonicaliseJson = (value, segments = []) => {
   if (Array.isArray(value)) {
     return value.map((entry, index) =>
@@ -247,9 +245,7 @@ const canonicaliseJson = (value, segments = []) => {
 
   return Object.fromEntries(
     Object.entries(value)
-      .sort(([leftKey], [rightKey]) =>
-        leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0,
-      )
+      .sort(([leftKey], [rightKey]) => compareKeys(leftKey, rightKey))
       .filter(
         ([key]) =>
           !(
@@ -631,19 +627,16 @@ const validChildEpoch = (value) =>
   value.pid > 0 &&
   nonEmptyString(value.createdAt);
 
-export function normalizeMcpReceipt({
-  requestId,
-  requestedStoryIds,
-  response,
+const receiptFieldErrors = ({
   freezeId,
   producerId,
   inputDigest,
   producerIdentityDigest,
-  mcpURL,
   childEpoch,
   expectedInputDigest,
   expectedProducerIdentityDigest,
-}) {
+  requestedStoryIds,
+}) => {
   const errors = [];
   for (const [field, value] of [
     ['freezeId', freezeId],
@@ -698,9 +691,8 @@ export function normalizeMcpReceipt({
       ),
     );
   }
-
-  const requestedIds = new Set(requestedStoryIds ?? []);
-  if (requestedIds.size !== (requestedStoryIds ?? []).length) {
+  const requestedList = requestedStoryIds ?? [];
+  if (new Set(requestedList).size !== requestedList.length) {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
@@ -708,6 +700,69 @@ export function normalizeMcpReceipt({
       ),
     );
   }
+  return errors;
+};
+
+const executionSummaryErrors = (execution, requestedIds) => {
+  const errors = [];
+  const counts = execution?.counts;
+  if (
+    !isRecord(counts) ||
+    counts.requested !== requestedIds.size ||
+    counts.executed !== requestedIds.size ||
+    counts.component !== requestedIds.size ||
+    counts.a11y !== requestedIds.size
+  ) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP result counts do not match the requested story IDs',
+      ),
+    );
+  }
+
+  if (!Array.isArray(execution?.unhandledErrors)) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP result is missing unhandledErrors',
+      ),
+    );
+  } else if (execution.unhandledErrors.length > 0) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'MCP result contains unhandled errors',
+      ),
+    );
+  }
+  return errors;
+};
+
+export function normalizeMcpReceipt({
+  requestId,
+  requestedStoryIds,
+  response,
+  freezeId,
+  producerId,
+  inputDigest,
+  producerIdentityDigest,
+  mcpURL,
+  childEpoch,
+  expectedInputDigest,
+  expectedProducerIdentityDigest,
+}) {
+  const errors = receiptFieldErrors({
+    freezeId,
+    producerId,
+    inputDigest,
+    producerIdentityDigest,
+    childEpoch,
+    expectedInputDigest,
+    expectedProducerIdentityDigest,
+    requestedStoryIds,
+  });
+  const requestedIds = new Set(requestedStoryIds ?? []);
 
   if (!isRecord(response) || response.isError === true || response.error) {
     errors.push(
@@ -754,38 +809,7 @@ export function normalizeMcpReceipt({
     requestedIds,
     errors,
   );
-
-  const counts = execution?.counts;
-  if (
-    !isRecord(counts) ||
-    counts.requested !== requestedIds.size ||
-    counts.executed !== requestedIds.size ||
-    counts.component !== requestedIds.size ||
-    counts.a11y !== requestedIds.size
-  ) {
-    errors.push(
-      error(
-        FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP result counts do not match the requested story IDs',
-      ),
-    );
-  }
-
-  if (!Array.isArray(execution?.unhandledErrors)) {
-    errors.push(
-      error(
-        FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP result is missing unhandledErrors',
-      ),
-    );
-  } else if (execution.unhandledErrors.length > 0) {
-    errors.push(
-      error(
-        FAILURE_CODES.EXECUTION_INCOMPLETE,
-        'MCP result contains unhandled errors',
-      ),
-    );
-  }
+  errors.push(...executionSummaryErrors(execution, requestedIds));
 
   if (errors.length > 0) return { ...result(errors) };
 
@@ -1666,6 +1690,35 @@ export function validateSourceClaims(manifest, discovery) {
   return result(errors);
 }
 
+const recordReferenceErrors = (record, recordPath, entriesById) => {
+  if (!isRenderable(record.classification)) return [];
+  const errors = [];
+  const docsEntry = entriesById.get(record.docsOwnerId);
+  if (docsEntry?.type !== 'docs') {
+    errors.push(
+      error(
+        FAILURE_CODES.REFERENCE_MISSING,
+        `docsOwnerId does not resolve to a generated docs entry: ${record.docsOwnerId}`,
+        recordPath,
+      ),
+    );
+  }
+  for (const state of record.states) {
+    if (state.applicability !== 'required') continue;
+    const storyEntry = entriesById.get(state.storyId);
+    if (storyEntry?.type !== 'story') {
+      errors.push(
+        error(
+          FAILURE_CODES.REFERENCE_MISSING,
+          `required storyId does not resolve to a generated story entry: ${state.storyId}`,
+          recordPath,
+        ),
+      );
+    }
+  }
+  return errors;
+};
+
 export function validateReferences(manifest, index) {
   const manifestResult = validateManifest(manifest);
   if (!manifestResult.ok) return manifestResult;
@@ -1689,32 +1742,9 @@ export function validateReferences(manifest, index) {
   }
 
   for (const [indexValue, record] of manifest.records.entries()) {
-    const recordPath = `records[${indexValue}]`;
-    if (isRenderable(record.classification)) {
-      const docsEntry = entriesById.get(record.docsOwnerId);
-      if (docsEntry?.type !== 'docs') {
-        errors.push(
-          error(
-            FAILURE_CODES.REFERENCE_MISSING,
-            `docsOwnerId does not resolve to a generated docs entry: ${record.docsOwnerId}`,
-            recordPath,
-          ),
-        );
-      }
-      for (const state of record.states) {
-        if (state.applicability !== 'required') continue;
-        const storyEntry = entriesById.get(state.storyId);
-        if (storyEntry?.type !== 'story') {
-          errors.push(
-            error(
-              FAILURE_CODES.REFERENCE_MISSING,
-              `required storyId does not resolve to a generated story entry: ${state.storyId}`,
-              recordPath,
-            ),
-          );
-        }
-      }
-    }
+    errors.push(
+      ...recordReferenceErrors(record, `records[${indexValue}]`, entriesById),
+    );
   }
   return result(errors);
 }
@@ -1728,17 +1758,12 @@ const textForInput = (content) =>
     ? content
     : Buffer.from(bytesForInput(content)).toString('utf8');
 
-const hasExportModifier = (node) =>
-  node.modifiers?.some(
-    (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
-  ) ?? false;
-
 const identifierText = (node) =>
   node && ts.isIdentifier(node) ? node.text : undefined;
 
 const findNamedStoryDeclaration = (sourceFile, exportName) => {
   for (const statement of sourceFile.statements) {
-    if (ts.isVariableStatement(statement) && hasExportModifier(statement)) {
+    if (ts.isVariableStatement(statement) && exported(statement)) {
       const declaration = statement.declarationList.declarations.find(
         (candidate) => identifierText(candidate.name) === exportName,
       );
@@ -1747,7 +1772,7 @@ const findNamedStoryDeclaration = (sourceFile, exportName) => {
     if (
       (ts.isFunctionDeclaration(statement) ||
         ts.isClassDeclaration(statement)) &&
-      hasExportModifier(statement) &&
+      exported(statement) &&
       identifierText(statement.name) === exportName
     ) {
       return statement;
@@ -1849,6 +1874,139 @@ const sourceDigest = (content) =>
 const storyEvidenceError = (message, pathValue) =>
   error(FAILURE_CODES.EVIDENCE_MISSING, message, pathValue);
 
+const storyAssertionErrors = ({ state, storyFile, statePath }) => {
+  const storySource = ts.createSourceFile(
+    state.storyFile,
+    textForInput(storyFile.content),
+    ts.ScriptTarget.Latest,
+    true,
+    state.storyFile.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+  const storyDeclaration = findNamedStoryDeclaration(
+    storySource,
+    state.storyExport,
+  );
+  if (!storyDeclaration) {
+    return [
+      storyEvidenceError(
+        `named story export could not be resolved: ${state.storyExport}`,
+        statePath,
+      ),
+    ];
+  }
+  if (state.assertionExport !== `${state.storyExport}.play`) {
+    return [
+      storyEvidenceError(
+        `assertionExport must be ${state.storyExport}.play`,
+        statePath,
+      ),
+    ];
+  }
+  const playProperty = findPlayProperty(storyDeclaration);
+  if (!playProperty) {
+    return [
+      storyEvidenceError(
+        `story export has no play property: ${state.storyExport}`,
+        statePath,
+      ),
+    ];
+  }
+  if (!hasAssertionMarker(playBody(playProperty), state.assertionMarker)) {
+    return [
+      storyEvidenceError(
+        `assertionMarker is not an exact string literal in ${state.storyExport}.play`,
+        statePath,
+      ),
+    ];
+  }
+  return [];
+};
+
+const requiredStateErrors = ({ state, recordPath, filesByPath }) => {
+  const statePath = `${recordPath}.states`;
+  const errors = [];
+  if (state.storyFile !== state.assertionFile) {
+    errors.push(
+      storyEvidenceError(
+        'storyFile and assertionFile must identify the same story source',
+        statePath,
+      ),
+    );
+  }
+  if (
+    !isStorySourcePath(state.storyFile) ||
+    !isRelativePath(state.storyFile) ||
+    !filesByPath.has(state.storyFile)
+  ) {
+    errors.push(
+      storyEvidenceError(
+        `story source could not be resolved: ${state.storyFile}`,
+        statePath,
+      ),
+    );
+    return errors;
+  }
+  errors.push(
+    ...storyAssertionErrors({
+      state,
+      storyFile: filesByPath.get(state.storyFile),
+      statePath,
+    }),
+  );
+  return errors;
+};
+
+const recordEvidenceErrors = ({
+  record,
+  recordPath,
+  filesByPath,
+  discovery,
+}) => {
+  const sourceFile = filesByPath.get(record.source);
+  if (
+    !isInventorySourcePath(record.source) ||
+    !sourceFile ||
+    !isRelativePath(record.source)
+  ) {
+    return [
+      error(
+        FAILURE_CODES.SOURCE_UNRESOLVED,
+        `source file could not be resolved: ${record.source}`,
+        recordPath,
+      ),
+    ];
+  }
+
+  const errors = [];
+  const discovered = discovery.exports.some(
+    (entry) => entry.source === record.source && entry.export === record.export,
+  );
+  if (!discovered) {
+    errors.push(
+      error(
+        FAILURE_CODES.SOURCE_UNRESOLVED,
+        `named source export could not be resolved: ${record.source}#${record.export}`,
+        recordPath,
+      ),
+    );
+  }
+  if (record.review.reviewedSourceDigest !== sourceDigest(sourceFile.content)) {
+    errors.push(
+      storyEvidenceError(
+        `reviewed source digest is stale for ${record.source}`,
+        recordPath,
+      ),
+    );
+  }
+
+  if (!isRenderable(record.classification)) return errors;
+  for (const state of record.states) {
+    if (state.applicability !== 'required') continue;
+    errors.push(...requiredStateErrors({ state, recordPath, filesByPath }));
+  }
+  return errors;
+};
+
 export function validateStoryEvidence({ manifest, files, index }) {
   const manifestResult = validateManifest(manifest);
   if (!manifestResult.ok) return manifestResult;
@@ -1873,124 +2031,14 @@ export function validateStoryEvidence({ manifest, files, index }) {
   if (!sourceClaims.ok) errors.push(...sourceClaims.errors);
 
   for (const [indexValue, record] of manifest.records.entries()) {
-    const recordPath = `records[${indexValue}]`;
-    const sourceFile = filesByPath.get(record.source);
-    if (
-      !isInventorySourcePath(record.source) ||
-      !sourceFile ||
-      !isRelativePath(record.source)
-    ) {
-      errors.push(
-        error(
-          FAILURE_CODES.SOURCE_UNRESOLVED,
-          `source file could not be resolved: ${record.source}`,
-          recordPath,
-        ),
-      );
-      continue;
-    }
-
-    const discovered = discovery.exports.some(
-      (entry) =>
-        entry.source === record.source && entry.export === record.export,
+    errors.push(
+      ...recordEvidenceErrors({
+        record,
+        recordPath: `records[${indexValue}]`,
+        filesByPath,
+        discovery,
+      }),
     );
-    if (!discovered) {
-      errors.push(
-        error(
-          FAILURE_CODES.SOURCE_UNRESOLVED,
-          `named source export could not be resolved: ${record.source}#${record.export}`,
-          recordPath,
-        ),
-      );
-    }
-
-    if (
-      record.review.reviewedSourceDigest !== sourceDigest(sourceFile.content)
-    ) {
-      errors.push(
-        storyEvidenceError(
-          `reviewed source digest is stale for ${record.source}`,
-          recordPath,
-        ),
-      );
-    }
-
-    if (!isRenderable(record.classification)) continue;
-    for (const state of record.states) {
-      if (state.applicability !== 'required') continue;
-      const statePath = `${recordPath}.states`;
-      if (state.storyFile !== state.assertionFile) {
-        errors.push(
-          storyEvidenceError(
-            'storyFile and assertionFile must identify the same story source',
-            statePath,
-          ),
-        );
-      }
-      if (
-        !isStorySourcePath(state.storyFile) ||
-        !isRelativePath(state.storyFile) ||
-        !filesByPath.has(state.storyFile)
-      ) {
-        errors.push(
-          storyEvidenceError(
-            `story source could not be resolved: ${state.storyFile}`,
-            statePath,
-          ),
-        );
-        continue;
-      }
-
-      const storyFile = filesByPath.get(state.storyFile);
-      const storySource = ts.createSourceFile(
-        state.storyFile,
-        textForInput(storyFile.content),
-        ts.ScriptTarget.Latest,
-        true,
-        state.storyFile.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-      );
-      const storyDeclaration = findNamedStoryDeclaration(
-        storySource,
-        state.storyExport,
-      );
-      if (!storyDeclaration) {
-        errors.push(
-          storyEvidenceError(
-            `named story export could not be resolved: ${state.storyExport}`,
-            statePath,
-          ),
-        );
-        continue;
-      }
-
-      if (state.assertionExport !== `${state.storyExport}.play`) {
-        errors.push(
-          storyEvidenceError(
-            `assertionExport must be ${state.storyExport}.play`,
-            statePath,
-          ),
-        );
-        continue;
-      }
-      const playProperty = findPlayProperty(storyDeclaration);
-      if (!playProperty) {
-        errors.push(
-          storyEvidenceError(
-            `story export has no play property: ${state.storyExport}`,
-            statePath,
-          ),
-        );
-        continue;
-      }
-      if (!hasAssertionMarker(playBody(playProperty), state.assertionMarker)) {
-        errors.push(
-          storyEvidenceError(
-            `assertionMarker is not an exact string literal in ${state.storyExport}.play`,
-            statePath,
-          ),
-        );
-      }
-    }
   }
 
   if (index !== undefined) {
@@ -2033,18 +2081,8 @@ export function deriveExecutableStorySet({ index, requiredStoryIds = [] }) {
   return { storyIds, skipped };
 }
 
-export function validateClosure({
-  manifest,
-  fullIndex,
-  docsIndex,
-  receipts,
-  freeze,
-  producer,
-}) {
+const closureReferenceErrors = (manifest, fullIndex, docsIndex) => {
   const errors = [];
-  const manifestResult = validateManifest(manifest);
-  if (!manifestResult.ok) errors.push(...manifestResult.errors);
-
   for (const [label, index] of [
     ['full', fullIndex],
     ['docs', docsIndex],
@@ -2059,7 +2097,11 @@ export function validateClosure({
       );
     }
   }
+  return errors;
+};
 
+const closureIdentityErrors = (freeze, producer) => {
+  const errors = [];
   if (!isRecord(freeze) || !nonEmptyString(freeze.freezeId)) {
     errors.push(
       error(
@@ -2076,7 +2118,11 @@ export function validateClosure({
       ),
     );
   }
+  return errors;
+};
 
+const closureDigestErrors = (freeze, fullIndex, docsIndex) => {
+  const errors = [];
   for (const [label, index, digest] of [
     ['full', fullIndex, freeze?.fullIndexDigest],
     ['docs', docsIndex, freeze?.docsIndexDigest],
@@ -2090,122 +2136,118 @@ export function validateClosure({
       );
     }
   }
+  return errors;
+};
 
-  const requiredStoryIds = (manifest?.records ?? [])
-    .filter((record) => isRecord(record) && isRenderable(record.classification))
-    .flatMap((record) =>
-      (record.states ?? [])
-        .filter((state) => state.applicability === 'required')
-        .map((state) => state.storyId),
-    );
-  const executable = deriveExecutableStorySet({
-    index: fullIndex,
-    requiredStoryIds,
-  });
-  const requiredSet = new Set(requiredStoryIds);
-  const skippedRequired = executable.skipped.filter((storyId) =>
-    requiredSet.has(storyId),
+const receiptIdentityMatches = (receipt, freeze, producer) =>
+  receipt.freezeId === freeze?.freezeId &&
+  receipt.producerId === producer?.producerId &&
+  receipt.inputDigest === freeze?.inputDigest &&
+  receipt.producerIdentityDigest === producer?.producerIdentityDigest;
+
+const passedStoryIds = (statuses) =>
+  new Set(
+    statuses
+      .filter((entry) => entry?.status === SUCCESS_STATUS)
+      .map((entry) => entry.storyId),
   );
-  for (const storyId of skippedRequired) {
+
+const receiptResultsAreIncomplete = ({
+  requested,
+  executedValues,
+  componentPassed,
+  a11yPassed,
+}) => {
+  const executedStoryIds = new Set(executedValues);
+  return (
+    requested.size === 0 ||
+    executedStoryIds.size !== executedValues.length ||
+    executedStoryIds.size !== requested.size ||
+    [...requested].some((storyId) => !executedStoryIds.has(storyId)) ||
+    [...executedStoryIds].some((storyId) => !requested.has(storyId)) ||
+    requested.size !== componentPassed.size ||
+    requested.size !== a11yPassed.size ||
+    [...requested].some(
+      (storyId) => !componentPassed.has(storyId) || !a11yPassed.has(storyId),
+    )
+  );
+};
+
+const validateClosureReceipt = ({
+  receipt,
+  freeze,
+  producer,
+  executable,
+  errors,
+}) => {
+  if (!isRecord(receipt) || receipt.verdict !== 'passed') {
     errors.push(
       error(
         FAILURE_CODES.EXECUTION_INCOMPLETE,
-        `required story is skipped: ${storyId}`,
+        'closure receipt is not a passing receipt',
+      ),
+    );
+    return new Set();
+  }
+  if (!receiptIdentityMatches(receipt, freeze, producer)) {
+    errors.push(
+      error(
+        FAILURE_CODES.INPUT_STALE,
+        'closure receipt does not match the frozen producer identity',
       ),
     );
   }
-
-  const receiptList = Array.isArray(receipts) ? receipts : [];
-  const executed = new Set();
-  for (const receipt of receiptList) {
-    if (!isRecord(receipt) || receipt.verdict !== 'passed') {
-      errors.push(
-        error(
-          FAILURE_CODES.EXECUTION_INCOMPLETE,
-          'closure receipt is not a passing receipt',
-        ),
-      );
-      continue;
-    }
-    if (
-      receipt.freezeId !== freeze?.freezeId ||
-      receipt.producerId !== producer?.producerId ||
-      receipt.inputDigest !== freeze?.inputDigest ||
-      receipt.producerIdentityDigest !== producer?.producerIdentityDigest
-    ) {
-      errors.push(
-        error(
-          FAILURE_CODES.INPUT_STALE,
-          'closure receipt does not match the frozen producer identity',
-        ),
-      );
-    }
-    const requestedValues = Array.isArray(receipt.requestedStoryIds)
-      ? receipt.requestedStoryIds
-      : [];
-    const requested = new Set(requestedValues);
-    if (
-      requested.size !== requestedValues.length ||
-      [...requested].some(
-        (storyId) =>
-          !nonEmptyString(storyId) || !executable.storyIds.includes(storyId),
-      )
-    ) {
-      errors.push(
-        error(
-          FAILURE_CODES.EXECUTION_INCOMPLETE,
-          'closure receipt requests duplicate, invalid, or non-executable stories',
-        ),
-      );
-    }
-    const executedValues = Array.isArray(receipt.executedStoryIds)
-      ? receipt.executedStoryIds
-      : [];
-    const executedStoryIds = new Set(executedValues);
-    const componentStatuses = statusEntries(
-      receipt.componentTestStatuses,
-      'component test statuses',
-      requested,
-      errors,
+  const requestedValues = Array.isArray(receipt.requestedStoryIds)
+    ? receipt.requestedStoryIds
+    : [];
+  const requested = new Set(requestedValues);
+  if (
+    requested.size !== requestedValues.length ||
+    [...requested].some(
+      (storyId) =>
+        !nonEmptyString(storyId) || !executable.storyIds.includes(storyId),
+    )
+  ) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'closure receipt requests duplicate, invalid, or non-executable stories',
+      ),
     );
-    const a11yStatuses = statusEntries(
-      receipt.a11yStatuses,
-      'a11y statuses',
-      requested,
-      errors,
-    );
-    const componentPassed = new Set(
-      componentStatuses
-        .filter((entry) => entry?.status === SUCCESS_STATUS)
-        .map((entry) => entry.storyId),
-    );
-    const a11yPassed = new Set(
-      a11yStatuses
-        .filter((entry) => entry?.status === SUCCESS_STATUS)
-        .map((entry) => entry.storyId),
-    );
-    if (
-      requested.size === 0 ||
-      executedStoryIds.size !== executedValues.length ||
-      executedStoryIds.size !== requested.size ||
-      [...requested].some((storyId) => !executedStoryIds.has(storyId)) ||
-      [...executedStoryIds].some((storyId) => !requested.has(storyId)) ||
-      requested.size !== componentPassed.size ||
-      requested.size !== a11yPassed.size ||
-      [...requested].some(
-        (storyId) => !componentPassed.has(storyId) || !a11yPassed.has(storyId),
-      )
-    ) {
-      errors.push(
-        error(
-          FAILURE_CODES.EXECUTION_INCOMPLETE,
-          'closure receipt is missing exact component or a11y story results',
-        ),
-      );
-    }
-    for (const storyId of requested) executed.add(storyId);
   }
+  const componentStatuses = statusEntries(
+    receipt.componentTestStatuses,
+    'component test statuses',
+    requested,
+    errors,
+  );
+  const a11yStatuses = statusEntries(
+    receipt.a11yStatuses,
+    'a11y statuses',
+    requested,
+    errors,
+  );
+  const incomplete = receiptResultsAreIncomplete({
+    requested,
+    executedValues: Array.isArray(receipt.executedStoryIds)
+      ? receipt.executedStoryIds
+      : [],
+    componentPassed: passedStoryIds(componentStatuses),
+    a11yPassed: passedStoryIds(a11yStatuses),
+  });
+  if (incomplete) {
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        'closure receipt is missing exact component or a11y story results',
+      ),
+    );
+  }
+  return requested;
+};
 
+const closureCoverageErrors = ({ requiredSet, executable, executed }) => {
+  const errors = [];
   for (const storyId of requiredSet) {
     if (!executed.has(storyId)) {
       errors.push(
@@ -2216,7 +2258,6 @@ export function validateClosure({
       );
     }
   }
-
   const executableSet = new Set(executable.storyIds);
   for (const storyId of executableSet) {
     if (!executed.has(storyId)) {
@@ -2238,6 +2279,60 @@ export function validateClosure({
       );
     }
   }
+  return errors;
+};
+
+export function validateClosure({
+  manifest,
+  fullIndex,
+  docsIndex,
+  receipts,
+  freeze,
+  producer,
+}) {
+  const errors = [];
+  const manifestResult = validateManifest(manifest);
+  if (!manifestResult.ok) errors.push(...manifestResult.errors);
+  errors.push(
+    ...closureReferenceErrors(manifest, fullIndex, docsIndex),
+    ...closureIdentityErrors(freeze, producer),
+    ...closureDigestErrors(freeze, fullIndex, docsIndex),
+  );
+
+  const requiredStoryIds = (manifest?.records ?? [])
+    .filter((record) => isRecord(record) && isRenderable(record.classification))
+    .flatMap((record) =>
+      (record.states ?? [])
+        .filter((state) => state.applicability === 'required')
+        .map((state) => state.storyId),
+    );
+  const executable = deriveExecutableStorySet({
+    index: fullIndex,
+    requiredStoryIds,
+  });
+  const requiredSet = new Set(requiredStoryIds);
+  for (const storyId of executable.skipped) {
+    if (!requiredSet.has(storyId)) continue;
+    errors.push(
+      error(
+        FAILURE_CODES.EXECUTION_INCOMPLETE,
+        `required story is skipped: ${storyId}`,
+      ),
+    );
+  }
+
+  const executed = new Set();
+  for (const receipt of Array.isArray(receipts) ? receipts : []) {
+    const requested = validateClosureReceipt({
+      receipt,
+      freeze,
+      producer,
+      executable,
+      errors,
+    });
+    for (const storyId of requested) executed.add(storyId);
+  }
+  errors.push(...closureCoverageErrors({ requiredSet, executable, executed }));
 
   return errors.length > 0
     ? result(errors)
