@@ -7,81 +7,83 @@ import {
   symlink,
   writeFile,
 } from 'node:fs/promises';
+import http from 'node:http';
+import type { AddressInfo } from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
+
+// The maintained modules are JavaScript without declarations, so each import
+// is typed by a cast at its use site instead of a type-check suppression.
+const loadModule = (name: string): Promise<unknown> =>
+  import(
+    /* @vite-ignore */ pathToFileURL(
+      path.resolve(
+        import.meta.dirname,
+        '../../../scripts/storybook-closure',
+        name,
+      ),
+    ).href
+  );
 
 type Parsed =
   | { ok: true; options: Record<string, unknown> }
   | { ok: false; message: string };
 
-const cli = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/cli.mjs'
-)) as { parseArguments(argv: string[]): Parsed };
-const pathsModule = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/paths.mjs'
-)) as {
+const cli = (await loadModule('cli.mjs')) as {
+  parseArguments(argv: string[]): Parsed;
+};
+const pathsModule = (await loadModule('paths.mjs')) as {
   createOwnedPaths(): { checkout?: string; receipts?: string };
   establishOwnedPaths(
     paths: object,
     args: { checkout: string; receipts: string },
   ): Promise<void>;
 };
-const receiptStore = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/receipt-store.mjs'
-)) as {
+const receiptStore = (await loadModule('receipt-store.mjs')) as {
   assertReceiptFileName(name: unknown): void;
   assertRequestId(id: unknown): void;
 };
-const acl = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/windows-acl.mjs'
-)) as { assertProbePath(probePath: string): void };
+const acl = (await loadModule('windows-acl.mjs')) as {
+  assertProbePath(probePath: string): void;
+};
 
-const inventory = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/input-inventory.mjs'
-)) as {
+const inventory = (await loadModule('input-inventory.mjs')) as {
   STORYBOOK_INPUT_ROOTS: string[];
   collectInputFiles(checkout: string): { path: string }[];
 };
-const mcpReceipts = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/mcp-receipts.mjs'
-)) as {
-  remainingMcpTime(deadline: number, now?: number): number;
-  observeChildEpoch(
-    serverState: object,
-  ): (input: {
-    receipt: { observedChildEpoch?: { pid: number; createdAt: string } };
-  }) => Promise<unknown>;
+type Epoch = { pid: number; createdAt: string };
+const mcpReceipts = (await loadModule('mcp-receipts.mjs')) as {
+  observeChildEpoch(input: {
+    receipt: { observedChildEpoch?: Epoch };
+    producer: { serverPid: number; serverStartedAt: string };
+  }): Promise<unknown>;
 };
 
-const freezeManager = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/freeze-manager.mjs'
-)) as { assertBaselineWritable(target: string): Promise<void> };
-const mcpProtocol = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/mcp-protocol.mjs'
-)) as { parseSseEvents(body: string): string[] };
-const contracts = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/contracts.mjs'
-)) as {
+const freezeManager = (await loadModule('freeze-manager.mjs')) as {
+  assertBaselineWritable(target: string): Promise<void>;
+};
+const mcpProtocol = (await loadModule('mcp-protocol.mjs')) as {
+  parseSseEvents(body: string): string[];
+  remainingMcpTime(deadline: number, now?: number): number;
+  executeMcpTestRun(input: {
+    mcpURL: string;
+    storyIds: string[];
+    requestId: number;
+    deadline?: number;
+  }): Promise<unknown>;
+};
+const contracts = (await loadModule('contracts.mjs')) as {
   assertHandoff(
     completion: unknown,
     freeze: { freezeId: string },
     producer: { producerId: string },
   ): void;
 };
-const commandsModule = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/commands.mjs'
-)) as { splitCommandLine(commandLine: string): string[] };
+const commandsModule = (await loadModule('commands.mjs')) as {
+  splitCommandLine(commandLine: string): string[];
+};
 
 const OWNER_ENV = 'STORYBOOK_CLOSURE_OWNED_CHECKOUT';
 
@@ -162,17 +164,17 @@ describe('collectInputFiles', () => {
 describe('remainingMcpTime', () => {
   it('caps a request at the time left before the deadline', () => {
     expect.hasAssertions();
-    expect(mcpReceipts.remainingMcpTime(1_500, 1_000)).toBe(500);
+    expect(mcpProtocol.remainingMcpTime(1_500, 1_000)).toBe(500);
   });
 
   it('never exceeds the per-request ceiling', () => {
     expect.hasAssertions();
-    expect(mcpReceipts.remainingMcpTime(10_000_000, 0)).toBe(150_000);
+    expect(mcpProtocol.remainingMcpTime(10_000_000, 0)).toBe(150_000);
   });
 
   it('fails once the overall deadline has passed', () => {
     expect.hasAssertions();
-    expect(() => mcpReceipts.remainingMcpTime(1_000, 1_000)).toThrow(
+    expect(() => mcpProtocol.remainingMcpTime(1_000, 1_000)).toThrow(
       'exceeded the configured timeout',
     );
   });
@@ -233,18 +235,16 @@ describe('assertHandoff', () => {
 
 describe('observeChildEpoch', () => {
   const epoch = { pid: 4242, createdAt: '2026-10-28T00:00:00.000Z' };
-  const managed = {
-    process: { pid: 4242 },
-    metadata: { startedAt: epoch.createdAt },
-  };
+  const producer = { serverPid: 4242, serverStartedAt: epoch.createdAt };
 
-  it('accepts a receipt epoch that matches the managed process', async () => {
+  it('accepts a receipt epoch that matches the producer identity', async () => {
     expect.hasAssertions();
 
-    const observe = mcpReceipts.observeChildEpoch(managed);
-
     await expect(
-      observe({ receipt: { observedChildEpoch: epoch } }),
+      mcpReceipts.observeChildEpoch({
+        receipt: { observedChildEpoch: epoch },
+        producer,
+      }),
     ).resolves.toStrictEqual(epoch);
   });
 
@@ -254,21 +254,63 @@ describe('observeChildEpoch', () => {
   ])('rejects a forged %s', async (_label, forged) => {
     expect.hasAssertions();
 
-    const observe = mcpReceipts.observeChildEpoch(managed);
-
     await expect(
-      observe({ receipt: { observedChildEpoch: forged } }),
-    ).rejects.toThrow('does not match the managed Storybook process');
+      mcpReceipts.observeChildEpoch({
+        receipt: { observedChildEpoch: forged },
+        producer,
+      }),
+    ).rejects.toThrow('does not match the producer identity');
   });
 
   it('rejects a receipt with no epoch', async () => {
     expect.hasAssertions();
 
-    const observe = mcpReceipts.observeChildEpoch(managed);
+    await expect(
+      mcpReceipts.observeChildEpoch({ receipt: {}, producer }),
+    ).rejects.toThrow('missing independently observed');
+  });
+});
 
-    await expect(observe({ receipt: {} })).rejects.toThrow(
-      'missing independently observed',
-    );
+describe('executeMcpTestRun deadline', () => {
+  const startStub = async (delayMs: number) => {
+    const server = http.createServer((request, response) => {
+      request.resume();
+      request.on('end', () => {
+        setTimeout(() => {
+          response.writeHead(200, {
+            'content-type': 'application/json',
+            'mcp-session-id': 'session-1',
+          });
+          response.end(
+            JSON.stringify({ jsonrpc: '2.0', id: 1, result: { ok: true } }),
+          );
+        }, delayMs);
+      });
+    });
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    const { port } = server.address() as AddressInfo;
+    return { server, url: `http://127.0.0.1:${port}/mcp` };
+  };
+
+  it('fails the batch when its requests together outlast the deadline', async () => {
+    expect.hasAssertions();
+    const { server, url } = await startStub(200);
+    const started = Date.now();
+    try {
+      await expect(
+        mcpProtocol.executeMcpTestRun({
+          mcpURL: url,
+          storyIds: ['a--b'],
+          requestId: 1,
+          deadline: started + 300,
+        }),
+      ).rejects.toThrow();
+      expect(Date.now() - started).toBeLessThan(2_000);
+    } finally {
+      server.close();
+    }
   });
 });
 
@@ -294,7 +336,7 @@ describe('assertBaselineWritable', () => {
 
       await expect(
         freezeManager.assertBaselineWritable(notADirectory),
-      ).rejects.toThrow();
+      ).rejects.toThrow('is not writable before the freeze');
     } finally {
       await rm(sandbox, { recursive: true, force: true });
     }
@@ -416,10 +458,7 @@ describe('establishOwnedPaths', () => {
   });
 });
 
-const ownedFsModule = (await import(
-  // @ts-expect-error The maintained launcher modules are JavaScript.
-  '../../../scripts/storybook-closure/owned-fs.mjs'
-)) as {
+const ownedFsModule = (await loadModule('owned-fs.mjs')) as {
   openOwnedRoot(root: string): Promise<{
     writeFile(target: string, data: string): Promise<void>;
     mkdir(target: string): Promise<unknown>;

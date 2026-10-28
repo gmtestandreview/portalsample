@@ -1,8 +1,22 @@
 import { parseJsonDocument } from '../storybook-coverage.mjs';
 
-import { isRecord } from './contracts.mjs';
+import { FAILURE_CODES, codedError, isRecord } from './contracts.mjs';
 
 export const MCP_REQUEST_TIMEOUT_MS = 150_000;
+
+// The configured MCP timeout bounds the whole receipt production. Every HTTP
+// request gets at most what is left of it (capped per request), and none
+// starts once it has expired.
+export const remainingMcpTime = (deadline, now = Date.now()) => {
+  const remaining = deadline - now;
+  if (remaining <= 0) {
+    throw codedError(
+      FAILURE_CODES.EXECUTION_INCOMPLETE,
+      'MCP receipt production exceeded the configured timeout',
+    );
+  }
+  return Math.min(remaining, MCP_REQUEST_TIMEOUT_MS);
+};
 const MCP_PROTOCOL_VERSION = '2025-03-26';
 const SSE_DATA_FIELD = 'data:';
 
@@ -67,12 +81,12 @@ export const parseMcpEnvelope = async (response, expectedId) => {
   return envelope;
 };
 
-// Each HTTP request is bounded by `requestTimeoutMs`, which callers shrink to
-// whatever remains of the overall MCP deadline.
+// The time left is recomputed for every request, so the three requests of one
+// batch cannot together outlast the overall deadline.
 const createMcpRequester =
-  (mcpURL, signal, requestTimeoutMs) =>
+  (mcpURL, signal, deadline) =>
   async (body, headers = {}, expectedStatus = 200) => {
-    const timeoutSignal = AbortSignal.timeout(requestTimeoutMs);
+    const timeoutSignal = AbortSignal.timeout(remainingMcpTime(deadline));
     const response = await fetch(mcpURL, {
       method: 'POST',
       headers: {
@@ -120,9 +134,9 @@ export const executeMcpTestRun = async ({
   storyIds,
   requestId,
   signal,
-  requestTimeoutMs = MCP_REQUEST_TIMEOUT_MS,
+  deadline = Number.POSITIVE_INFINITY,
 }) => {
-  const request = createMcpRequester(mcpURL, signal, requestTimeoutMs);
+  const request = createMcpRequester(mcpURL, signal, deadline);
   const sessionHeaders = await initializeSession(request, requestId);
   const testRun = await request(
     {

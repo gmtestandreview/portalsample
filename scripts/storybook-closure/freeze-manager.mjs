@@ -79,26 +79,32 @@ const runTargetProbes = async (target, probes, identity) => {
 // (R14). Uses its own disposable probes, separate from the evidence probes.
 export const assertBaselineWritable = async (target) => {
   const probes = createProbeRecords(target);
-  await Promise.all(
-    probes.map(({ probePath }) => writeProbeFile(target, probePath)),
-  );
   const failures = [];
-  for (const { operation, probePath } of probes) {
+  const exercise = async ({ operation, probePath }) => {
     try {
+      await writeProbeFile(target, probePath);
       await performProbeOperation(operation, target, probePath);
     } catch (error_) {
       failures.push(`${operation}: ${error_?.code ?? error_?.message}`);
     }
-  }
-  await Promise.all(
-    probes.map(({ probePath }) =>
-      Promise.all([
-        removeProbeFile(target, probePath),
-        removeProbeFile(target, `${probePath}-new`),
-        removeProbeFile(target, `${probePath}-renamed`),
-      ]),
-    ),
-  );
+  };
+  // Cleanup runs whether or not an operation failed, and its own failures are
+  // reported rather than replacing the baseline result.
+  const cleanup = async ({ probePath }) => {
+    for (const leftover of [
+      probePath,
+      `${probePath}-new`,
+      `${probePath}-renamed`,
+    ]) {
+      try {
+        await removeProbeFile(target, leftover);
+      } catch (error_) {
+        failures.push(`cleanup: ${error_?.code ?? error_?.message}`);
+      }
+    }
+  };
+  await Promise.all(probes.map(exercise));
+  await Promise.all(probes.map(cleanup));
   if (failures.length > 0) {
     throw new Error(
       `${target} is not writable before the freeze (${failures.join(', ')})`,
@@ -116,12 +122,17 @@ const freezeTarget = async ({
   await assertBaselineWritable(target);
   const probes = createProbeRecords(target);
   const probePaths = probes.map(({ probePath }) => probePath);
+  const backupPath = path.join(backupDirectory, `${index}.acl`);
+  // Registered before anything is created, so a failure part-way through
+  // still lets the rollback remove the probes. `saved` records whether the
+  // original ACL has been captured, i.e. whether there is anything to restore.
+  const frozenTarget = { target, backupPath, probePaths, saved: false };
+  freezeState.targets.push(frozenTarget);
   await Promise.all(
     probePaths.map((probePath) => writeProbeFile(target, probePath)),
   );
-  const backupPath = path.join(backupDirectory, `${index}.acl`);
-  freezeState.targets.push({ target, backupPath, probePaths });
   await runIcacls(target, ['/save', backupPath, '/t', '/c']);
+  frozenTarget.saved = true;
   await denyWrites(target, identity);
   return runTargetProbes(target, probes, identity);
 };
@@ -132,25 +143,39 @@ const rollbackFreeze = async (
   identity,
   backupDirectory,
 ) => {
+  const errors = [];
+  const attempt = async (step) => {
+    try {
+      await step();
+    } catch (error_) {
+      errors.push(error_);
+    }
+  };
   for (const frozenTarget of freezeState.targets.toReversed()) {
-    await runIcacls(frozenTarget.target, [
-      '/remove:d',
-      `${identity}`,
-      '/t',
-      '/c',
-    ]).catch(() => undefined);
-    await runIcacls(frozenTarget.target, [
-      '/restore',
-      frozenTarget.backupPath,
-      '/c',
-    ]).catch(() => undefined);
-    await Promise.all(
-      frozenTarget.probePaths.map((probePath) =>
-        removeProbeFile(frozenTarget.target, probePath).catch(() => undefined),
-      ),
-    );
+    if (frozenTarget.saved) {
+      // The restore below resets the whole ACL, so a failed targeted removal
+      // is not a rollback failure on its own.
+      await runIcacls(frozenTarget.target, [
+        '/remove:d',
+        `${identity}`,
+        '/t',
+        '/c',
+      ]).catch(() => undefined);
+      await attempt(() =>
+        runIcacls(frozenTarget.target, [
+          '/restore',
+          frozenTarget.backupPath,
+          '/c',
+        ]),
+      );
+    }
+    for (const probePath of frozenTarget.probePaths) {
+      await attempt(() => removeProbeFile(frozenTarget.target, probePath));
+    }
   }
-  await removeBackupDirectory(paths, backupDirectory).catch(() => undefined);
+  // The backup is the only way to recover a failed restore: keep it then.
+  if (errors.length === 0) await removeBackupDirectory(paths, backupDirectory);
+  return errors;
 };
 
 export const acquireFreezeTransaction = async ({
@@ -200,7 +225,19 @@ export const acquireFreezeTransaction = async ({
     await writeReceiptJson(paths, 'freeze.json', freeze);
     return freeze;
   } catch (error_) {
-    await rollbackFreeze(freezeState, paths, identity, backupDirectory);
+    const rollbackErrors = await rollbackFreeze(
+      freezeState,
+      paths,
+      identity,
+      backupDirectory,
+    );
+    if (rollbackErrors.length > 0) {
+      throw new AggregateError(
+        [error_, ...rollbackErrors],
+        `freeze failed and its rollback was incomplete; ACL backup kept at ${backupDirectory}`,
+        { cause: error_ },
+      );
+    }
     throw error_;
   }
 };

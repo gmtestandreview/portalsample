@@ -4,8 +4,8 @@ import {
   validateFreezeRecord,
 } from '../storybook-coverage.mjs';
 
-import { FAILURE_CODES, assertResult, codedError } from './contracts.mjs';
-import { MCP_REQUEST_TIMEOUT_MS, executeMcpTestRun } from './mcp-protocol.mjs';
+import { assertResult } from './contracts.mjs';
+import { executeMcpTestRun, remainingMcpTime } from './mcp-protocol.mjs';
 import { readOwnedJson } from './owned-fs.mjs';
 import { writeReceiptJson } from './receipt-store.mjs';
 
@@ -52,19 +52,6 @@ export const collectAndValidateReceipts = async (
   return receipts;
 };
 
-// The configured MCP timeout bounds the whole receipt production: each batch
-// request gets at most what is left of it, and no batch starts after expiry.
-export const remainingMcpTime = (deadline, now = Date.now()) => {
-  const remaining = deadline - now;
-  if (remaining <= 0) {
-    throw codedError(
-      FAILURE_CODES.EXECUTION_INCOMPLETE,
-      'MCP receipt production exceeded the configured timeout',
-    );
-  }
-  return Math.min(remaining, MCP_REQUEST_TIMEOUT_MS);
-};
-
 const produceBatchReceipt = async ({
   paths,
   freeze,
@@ -80,7 +67,7 @@ const produceBatchReceipt = async ({
     storyIds: requestedStoryIds,
     requestId: requestId * REQUEST_ID_STRIDE,
     signal,
-    requestTimeoutMs: remainingMcpTime(deadline),
+    deadline,
   });
   await writeReceiptJson(paths, `mcp-response-${requestId}.json`, response);
   const normalized = normalizeMcpReceipt({
@@ -175,29 +162,23 @@ export const validateFreezeContract = ({ freeze, selectedPaths }) =>
     selectedPaths,
   });
 
-// The epoch a receipt claims must match the managed server this run spawned,
-// taken from in-memory state rather than from the receipt file, so a forged
-// or stale receipt cannot vouch for itself (R04). This is the process this
-// run started, not an OS-level birth-time observation; in external mode there
-// is no owned process, so the receipt's own epoch is all that is available.
-export const observeChildEpoch =
-  (serverState) =>
-  async ({ receipt }) => {
-    const observed = receipt.observedChildEpoch;
-    if (!observed) {
-      throw new Error(
-        'receipt is missing independently observed child provenance',
-      );
-    }
-    const server = serverState.process;
-    if (
-      server &&
-      (observed.pid !== server.pid ||
-        observed.createdAt !== serverState.metadata?.startedAt)
-    ) {
-      throw new Error(
-        'receipt child epoch does not match the managed Storybook process',
-      );
-    }
-    return observed;
-  };
+// The epoch a receipt claims must match the producer identity this run
+// established (the in-memory object, not a file the receipt could rewrite), so
+// a forged or stale receipt cannot vouch for itself (R04). This is not an
+// OS-level birth-time observation: it ties the receipt to the producer the
+// run recorded, in managed and external mode alike.
+export const observeChildEpoch = async ({ receipt, producer }) => {
+  const observed = receipt.observedChildEpoch;
+  if (!observed) {
+    throw new Error(
+      'receipt is missing independently observed child provenance',
+    );
+  }
+  if (
+    observed.pid !== producer.serverPid ||
+    observed.createdAt !== producer.serverStartedAt
+  ) {
+    throw new Error('receipt child epoch does not match the producer identity');
+  }
+  return observed;
+};
