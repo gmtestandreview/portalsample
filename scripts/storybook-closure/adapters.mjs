@@ -63,6 +63,6 @@ export const createProductionAdapters = async () => {
     normalizeReceipt: normalizeFrozenReceipt,
     validateFreezeRecord: validateFreezeContract,
     validateProducerIdentity,
-    observeChildEpoch,
+    observeChildEpoch: observeChildEpoch(serverState),
   };
 };

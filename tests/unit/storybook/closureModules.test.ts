@@ -51,7 +51,14 @@ const inventory = (await import(
 const mcpReceipts = (await import(
   // @ts-expect-error The maintained launcher modules are JavaScript.
   '../../../scripts/storybook-closure/mcp-receipts.mjs'
-)) as { remainingMcpTime(deadline: number, now?: number): number };
+)) as {
+  remainingMcpTime(deadline: number, now?: number): number;
+  observeChildEpoch(
+    serverState: object,
+  ): (input: {
+    receipt: { observedChildEpoch?: { pid: number; createdAt: string } };
+  }) => Promise<unknown>;
+};
 
 const freezeManager = (await import(
   // @ts-expect-error The maintained launcher modules are JavaScript.
@@ -153,6 +160,47 @@ describe('remainingMcpTime', () => {
     expect.hasAssertions();
     expect(() => mcpReceipts.remainingMcpTime(1_000, 1_000)).toThrow(
       'exceeded the configured timeout',
+    );
+  });
+});
+
+describe('observeChildEpoch', () => {
+  const epoch = { pid: 4242, createdAt: '2026-10-28T00:00:00.000Z' };
+  const managed = {
+    process: { pid: 4242 },
+    metadata: { startedAt: epoch.createdAt },
+  };
+
+  it('accepts a receipt epoch that matches the managed process', async () => {
+    expect.hasAssertions();
+
+    const observe = mcpReceipts.observeChildEpoch(managed);
+
+    await expect(
+      observe({ receipt: { observedChildEpoch: epoch } }),
+    ).resolves.toStrictEqual(epoch);
+  });
+
+  it.each([
+    ['pid', { ...epoch, pid: 1 }],
+    ['start time', { ...epoch, createdAt: '2026-01-01T00:00:00.000Z' }],
+  ])('rejects a forged %s', async (_label, forged) => {
+    expect.hasAssertions();
+
+    const observe = mcpReceipts.observeChildEpoch(managed);
+
+    await expect(
+      observe({ receipt: { observedChildEpoch: forged } }),
+    ).rejects.toThrow('does not match the managed Storybook process');
+  });
+
+  it('rejects a receipt with no epoch', async () => {
+    expect.hasAssertions();
+
+    const observe = mcpReceipts.observeChildEpoch(managed);
+
+    await expect(observe({ receipt: {} })).rejects.toThrow(
+      'missing independently observed',
     );
   });
 });

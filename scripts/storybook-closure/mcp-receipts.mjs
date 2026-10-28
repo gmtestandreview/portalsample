@@ -175,11 +175,29 @@ export const validateFreezeContract = ({ freeze, selectedPaths }) =>
     selectedPaths,
   });
 
-export const observeChildEpoch = async ({ receipt }) => {
-  if (!receipt.observedChildEpoch) {
-    throw new Error(
-      'receipt is missing independently observed child provenance',
-    );
-  }
-  return receipt.observedChildEpoch;
-};
+// The epoch a receipt claims must match the managed server this run spawned,
+// taken from in-memory state rather than from the receipt file, so a forged
+// or stale receipt cannot vouch for itself (R04). This is the process this
+// run started, not an OS-level birth-time observation; in external mode there
+// is no owned process, so the receipt's own epoch is all that is available.
+export const observeChildEpoch =
+  (serverState) =>
+  async ({ receipt }) => {
+    const observed = receipt.observedChildEpoch;
+    if (!observed) {
+      throw new Error(
+        'receipt is missing independently observed child provenance',
+      );
+    }
+    const server = serverState.process;
+    if (
+      server &&
+      (observed.pid !== server.pid ||
+        observed.createdAt !== serverState.metadata?.startedAt)
+    ) {
+      throw new Error(
+        'receipt child epoch does not match the managed Storybook process',
+      );
+    }
+    return observed;
+  };
