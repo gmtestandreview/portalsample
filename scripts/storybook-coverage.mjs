@@ -424,15 +424,18 @@ export function validateFreezeRecord({
     ? freeze.denialProbes
     : [];
   for (const operation of requiredOperations) {
-    if (
-      !denialProbes.some(
-        (probe) => probe?.operation === operation && probe.denied === true,
-      )
-    ) {
+    const attempts = denialProbes.filter(
+      (probe) => probe?.operation === operation,
+    );
+    if (!attempts.some((probe) => probe.denied === true)) {
+      const observed = [
+        ...new Set(attempts.map((probe) => probe.errorCode ?? 'succeeded')),
+      ].join(',');
       errors.push(
         error(
           FAILURE_CODES.EXECUTION_INCOMPLETE,
-          `freeze denial probe did not reject ${operation}`,
+          `freeze denial probe did not reject ${operation}` +
+            (observed ? ` (observed: ${observed})` : ' (no probe recorded)'),
         ),
       );
     }
@@ -1390,7 +1393,7 @@ const resolveModule = (fromPath, specifier, filesByPath) => {
   const requested = path.posix.normalize(
     path.posix.join(
       fromDirectory,
-      specifier.replace(/\.(?:[cm]?[jt]sx?)$/u, ''),
+      specifier.replace(/[.](?:[cm]?[jt]sx?)$/u, ''),
     ),
   );
   const candidates = [
@@ -2423,32 +2426,62 @@ export function generateInventory({ manifest }) {
   };
 }
 
+const GENERATED_REGION_MARKERS = [
+  {
+    start: '<!-- storybook-coverage:generated:start -->',
+    end: '<!-- storybook-coverage:generated:end -->',
+  },
+  {
+    start: '{/* storybook-coverage:generated:start */}',
+    end: '{/* storybook-coverage:generated:end */}',
+  },
+];
+
+const findGeneratedRegions = (content, markers) => {
+  const regions = [];
+  let cursor = 0;
+  while (cursor < content.length) {
+    const from = content.indexOf(markers.start, cursor);
+    if (from === -1) break;
+    const endIndex = content.indexOf(markers.end, from + markers.start.length);
+    if (endIndex === -1) break;
+    const to = endIndex + markers.end.length;
+    regions.push({ from, to, markers });
+    cursor = to;
+  }
+  return regions;
+};
+
 const replaceGeneratedRegion = (filePath, generatedRegion) => {
   const content = ts.sys.readFile(filePath);
   if (content === undefined) {
     throw new Error(`inventory document could not be read: ${filePath}`);
   }
-  const markerPattern =
-    /(?:<!-- storybook-coverage:generated:start -->|\{\/\* storybook-coverage:generated:start \*\/\})[\s\S]*?(?:<!-- storybook-coverage:generated:end -->|\{\/\* storybook-coverage:generated:end \*\/\})/gu;
-  const matches = content.match(markerPattern) ?? [];
-  if (matches.length !== 1) {
+  const regions = GENERATED_REGION_MARKERS.flatMap((markers) =>
+    findGeneratedRegions(content, markers),
+  );
+  if (regions.length !== 1) {
     throw new Error(
       `inventory document must contain exactly one generated region: ${filePath}`,
     );
   }
-  const usesJsxComments = matches[0].startsWith('{/*');
-  const replacement = usesJsxComments
-    ? generatedRegion
-        .replace(
-          '<!-- storybook-coverage:generated:start -->',
-          '{/* storybook-coverage:generated:start */}',
-        )
-        .replace(
-          '<!-- storybook-coverage:generated:end -->',
-          '{/* storybook-coverage:generated:end */}',
-        )
-    : generatedRegion;
-  ts.sys.writeFile(filePath, content.replace(markerPattern, replacement));
+  const [{ from, to, markers }] = regions;
+  const replacement =
+    markers === GENERATED_REGION_MARKERS[0]
+      ? generatedRegion
+      : generatedRegion
+          .replace(
+            GENERATED_REGION_MARKERS[0].start,
+            GENERATED_REGION_MARKERS[1].start,
+          )
+          .replace(
+            GENERATED_REGION_MARKERS[0].end,
+            GENERATED_REGION_MARKERS[1].end,
+          );
+  ts.sys.writeFile(
+    filePath,
+    content.slice(0, from) + replacement + content.slice(to),
+  );
 };
 
 export const writeInventoryRegions = ({ inventory, root = process.cwd() }) => {

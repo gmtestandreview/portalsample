@@ -400,6 +400,50 @@ jobs:
           Remove-Item $dir -Force
           exit 0
 
+      # TEMPORARY DIAGNOSTIC (remove with the step above). Repeats the deny
+      # probe through Node fs, the same path the closure uses, and prints the
+      # error code Node reports for each operation. The pwsh probe above cannot
+      # distinguish a Node-specific errno from an unenforced deny.
+      - name: Diagnose ACL freeze enforcement (Node fs)
+        shell: pwsh
+        run: |
+          $script = @'
+          const { execFileSync } = require('node:child_process');
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const id = [process.env.USERDOMAIN, process.env.USERNAME].join(String.fromCharCode(92));
+          const dir = path.join(process.env.GITHUB_WORKSPACE, 'acl-node-probe-' + Date.now());
+          fs.mkdirSync(dir);
+          const ops = ['overwrite', 'append', 'create', 'delete', 'rename'];
+          const files = ops.map((op) => path.join(dir, op + '.txt'));
+          files.forEach((f) => fs.writeFileSync(f, 'original'));
+          const icacls = (target, args) => execFileSync('icacls.exe', [target, ...args], { stdio: 'pipe' });
+          try {
+            icacls(dir, ['/deny', id + ':(OI)(CI)(WD,AD,DC)', '/t', '/c']);
+            files.forEach((f) => icacls(f, ['/deny', id + ':(WD,AD,WA,DE)', '/c']));
+            ops.forEach((op, i) => {
+              const f = files[i];
+              try {
+                if (op === 'overwrite') fs.writeFileSync(f, 'x');
+                if (op === 'append') fs.appendFileSync(f, 'x');
+                if (op === 'create') fs.writeFileSync(f + '.new', 'x');
+                if (op === 'delete') fs.unlinkSync(f);
+                if (op === 'rename') fs.renameSync(f, f + '.renamed');
+                console.log('NODE_PROBE ' + op + ': SUCCEEDED (deny NOT enforced)');
+              } catch (e) {
+                console.log('NODE_PROBE ' + op + ': threw code=' + e.code + ' errno=' + e.errno + ' syscall=' + e.syscall);
+              }
+            });
+          } catch (e) {
+            console.log('NODE_PROBE_SETUP_FAILED: ' + e.message);
+          } finally {
+            try { icacls(dir, ['/remove:d', id, '/t', '/c']); } catch {}
+            fs.rmSync(dir, { recursive: true, force: true });
+          }
+          '@
+          node -e $script
+          exit 0
+
       - name: Prepare E2E diagnostics
         run: mkdir -p ci-artifacts/e2e
 
@@ -418,8 +462,10 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+      # The closure receipts (freeze.json records each denial probe's errorCode)
+      # must survive a failed run, or the failure cannot be diagnosed.
       - name: Upload Playwright report, traces, and screenshots
-        if: always() && steps.e2e.outcome == 'success'
+        if: always() && steps.e2e.outcome != 'skipped'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-node24-${{ github.run_attempt }}
