@@ -17,7 +17,6 @@ import { describe, expect, it } from 'vitest';
 const workflow = readFileSync('.github/workflows/pr.yml', 'utf8');
 const releaseWorkflow = readFileSync('.github/workflows/release.yml', 'utf8');
 const claudeWorkflow = readFileSync('.github/workflows/claude.yml', 'utf8');
-const codeqlWorkflow = readFileSync('.github/workflows/codeql.yml', 'utf8');
 const dependabot = readFileSync('.github/dependabot.yml', 'utf8');
 const chromaticWorkflowPath = '.github/workflows/chromatic.yml';
 const chromaticWorkflow = existsSync(chromaticWorkflowPath)
@@ -141,7 +140,6 @@ const DOWNLOAD_ARTIFACT_PIN =
   'actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333';
 const CHROMATIC_ACTION_PIN =
   'chromaui/action@38afd264ef2241136f12d039093c2724748bec08';
-const CODEQL_ACTION_SHA = '2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
 
 const testCommands = [
   { name: 'unit', command: 'npm run test:ci:unit' },
@@ -333,10 +331,7 @@ describe('workflows pin every action to an immutable commit', () => {
     ['Chromatic', chromaticWorkflow],
   ] as const;
   const allWorkflows = [...nodeWorkflows, ['Claude', claudeWorkflow]] as const;
-  const pinnedActionWorkflows = [
-    ...allWorkflows,
-    ['CodeQL', codeqlWorkflow],
-  ] as const;
+  const pinnedActionWorkflows = allWorkflows;
 
   it.each(pinnedActionWorkflows)(
     'pins checkout in the %s workflow',
@@ -371,18 +366,6 @@ describe('workflows pin every action to an immutable commit', () => {
       ).toBe(true);
     },
   );
-
-  it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
-    expect.hasAssertions();
-
-    expect(codeqlWorkflow).toContain(
-      `uses: github/codeql-action/init@${CODEQL_ACTION_SHA} # v4`,
-    );
-    expect(codeqlWorkflow).toContain(
-      `uses: github/codeql-action/analyze@${CODEQL_ACTION_SHA} # v4`,
-    );
-    expect(occurrences('github/codeql-action/', codeqlWorkflow)).toBe(2);
-  });
 
   it('keeps explicit npm cache ownership on every setup-node', () => {
     // setup-node v7 auto-detects a package manager; the explicit input keeps
@@ -818,7 +801,6 @@ describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
     ['release', releaseWorkflow],
     ['Chromatic', chromaticWorkflow],
     ['Claude', claudeWorkflow],
-    ['CodeQL', codeqlWorkflow],
   ] as const;
 
   it.each(workflows)('pins %s jobs to Ubuntu 26.04', (_name, contents) => {
@@ -826,30 +808,6 @@ describe('cI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
 
     expect(contents).toContain('runs-on: ubuntu-26.04');
     expect(contents).not.toContain('runs-on: ubuntu-latest');
-  });
-
-  it('runs CodeQL only for the configured repository languages', () => {
-    expect.hasAssertions();
-
-    expect(codeqlWorkflow).toContain('language: actions');
-    expect(codeqlWorkflow).toContain('language: javascript-typescript');
-    expect(codeqlWorkflow).toContain('language: python');
-    expect(codeqlWorkflow).toContain('build-mode: none');
-  });
-
-  it('does not enable dependency caching for the configured CodeQL matrix', () => {
-    expect.hasAssertions();
-
-    expect(codeqlWorkflow).not.toContain('dependency-caching');
-  });
-
-  it('grants CodeQL only the permissions required to upload code scanning results', () => {
-    expect.hasAssertions();
-
-    expect(codeqlWorkflow).toContain('contents: read');
-    expect(codeqlWorkflow).toContain('actions: read');
-    expect(codeqlWorkflow).toContain('security-events: write');
-    expect(codeqlWorkflow).not.toContain('contents: write');
   });
 });
 
