@@ -26,10 +26,9 @@ export const Example = meta.story({
   ),
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: 'Save' });
+    // Reset the synthetic pointer so hover always emits a fresh enter event in CI.
+    await userEvent.unhover(button);
     await userEvent.hover(button);
-    // React Aria sets `data-hovered` synchronously on pointer enter, but the
-    // one-shot attribute read can run before that commit is observable under CI
-    // load; waitFor retries the read until the hovered state has landed.
     await waitFor(() => expect(button).toHaveAttribute('data-hovered', 'true'));
   },
 });
