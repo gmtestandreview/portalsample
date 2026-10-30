@@ -93,10 +93,17 @@ const docsIsolationStoryFiles = [
 const docsIsolationStoryBlock =
   /export const \w+\s*=\s*meta\.story\([\s\S]*?(?=\nexport const |$)/g;
 
-const storyBlocksWithRequests = (source: string) =>
-  [...source.matchAll(docsIsolationStoryBlock)].filter(([block]) =>
-    /(?:msw\.use|fetch:)/u.test(block),
+const storyBlocksWithRequests = (source: string) => {
+  const firstStoryIndex = source.indexOf('\nexport const ');
+  const metaSource =
+    firstStoryIndex === -1 ? source : source.slice(0, firstStoryIndex);
+  const metaHasRequestHandler =
+    /beforeEach\([\s\S]*?(?:msw\.use|fetch\s*:)/u.test(metaSource);
+
+  return [...source.matchAll(docsIsolationStoryBlock)].filter(
+    ([block]) => metaHasRequestHandler || /(?:msw\.use|fetch\s*:)/u.test(block),
   );
+};
 
 describe('storybook MSW handlers', () => {
   // eslint-disable-next-line vitest/no-hooks -- MSW server lifecycle spans the suite.
@@ -150,6 +157,29 @@ describe('storybook MSW handlers', () => {
       'storybook:accept-quote:payment-details:postpaid',
     ]);
     expect(new Set(sessionSentinels).size).toBe(sessionSentinels.length);
+  });
+
+  it('includes AcceptQuote stories inheriting the meta request handler', () => {
+    expect.hasAssertions();
+
+    const source = readTextFileSync(
+      'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx',
+      process.cwd(),
+    );
+    const requestStories = storyBlocksWithRequests(source).map(
+      ([block]) => block,
+    );
+
+    expect(
+      requestStories.some((block) =>
+        /export const PaymentDetailsStep\s*=\s*meta\.story/u.test(block),
+      ),
+    ).toBe(true);
+    expect(
+      requestStories.some((block) =>
+        /export const PaymentDetailsPostpaid\s*=\s*meta\.story/u.test(block),
+      ),
+    ).toBe(true);
   });
 
   it('returns the shared services fixture', async () => {

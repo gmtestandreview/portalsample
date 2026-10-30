@@ -70,6 +70,13 @@ type ProviderLifecycleEvent = {
   sentinel: string;
 };
 
+type AccountContextLifecycleEvent = {
+  type: 'storybook-account-context';
+  phase: 'active' | 'cleaned';
+  sentinel: string;
+  targetOrganisationName: string | null;
+};
+
 const docsIsolationResults = new WeakMap<Page, { completed: boolean }>();
 const LATE_UNMOUNT_SIGNAL =
   /(?:can't perform a React state update on an unmounted component|state update on an unmounted component|update(?:d)? after unmount)/i;
@@ -493,6 +500,15 @@ When(
         ).__storybookPortalProviderEvents;
         return events ?? [];
       });
+    const readAccountEvents = () =>
+      page.evaluate(() => {
+        const events = (
+          globalThis as typeof globalThis & {
+            __storybookAccountLifecycleEvents?: AccountContextLifecycleEvent[];
+          }
+        ).__storybookAccountLifecycleEvents;
+        return events ?? [];
+      });
     const readSessionSentinel = (key: string) =>
       page.evaluate(
         (sessionKey) => globalThis.sessionStorage.getItem(sessionKey),
@@ -510,6 +526,17 @@ When(
           const events = await readProviderEvents();
           return events
             .filter((event) => event.phase === 'mounted')
+            .map((event) => event.sentinel)
+            .sort();
+        })
+        .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
+    };
+    const expectActiveAccountPair = async () => {
+      await expect
+        .poll(async () => {
+          const events = await readAccountEvents();
+          return events
+            .filter((event) => event.phase === 'active')
             .map((event) => event.sentinel)
             .sort();
         })
@@ -534,6 +561,13 @@ When(
           },
         };
       }, PAYMENT_DETAILS_ENDPOINT);
+    const readAccountTargetOrganisation = (storyId: string) =>
+      findStoryFrame(storyId).evaluate(
+        () =>
+          globalThis.document.body.dataset[
+            'storybookAccountTargetOrganisation'
+          ] ?? null,
+      );
     const removeFrame = async (selector: string) => {
       await page
         .locator(selector)
@@ -552,8 +586,10 @@ When(
       await page.addInitScript(() => {
         const target = globalThis as typeof globalThis & {
           __storybookPortalProviderEvents?: ProviderLifecycleEvent[];
+          __storybookAccountLifecycleEvents?: AccountContextLifecycleEvent[];
         };
         target.__storybookPortalProviderEvents = [];
+        target.__storybookAccountLifecycleEvents = [];
       });
       expect(
         await readSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY),
@@ -575,6 +611,21 @@ When(
         timeout: STORY_RENDER_TIMEOUT_MS,
       });
       await expectMountedProviderPair();
+      await expectActiveAccountPair();
+      await expect
+        .poll(() =>
+          readAccountTargetOrganisation(
+            'routes-acceptquote--payment-details-step',
+          ),
+        )
+        .toBe('payment-details-prepaid:active');
+      await expect
+        .poll(() =>
+          readAccountTargetOrganisation(
+            'routes-acceptquote--payment-details-postpaid',
+          ),
+        )
+        .toBe('payment-details-postpaid:active');
       await expectSessionSentinel(
         PAYMENT_DETAILS_PREPAID_SESSION_KEY,
         `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
@@ -612,6 +663,23 @@ When(
           },
         ]),
       );
+      await expect.poll(readAccountEvents).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-account-context',
+            phase: 'cleaned',
+            sentinel: 'payment-details-prepaid',
+            targetOrganisationName: 'payment-details-prepaid:active',
+          },
+        ]),
+      );
+      await expect
+        .poll(() =>
+          readAccountTargetOrganisation(
+            'routes-acceptquote--payment-details-postpaid',
+          ),
+        )
+        .toBe('payment-details-postpaid:active');
       await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
       await expectSessionSentinel(
         PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
@@ -649,6 +717,16 @@ When(
           },
         ]),
       );
+      await expect.poll(readAccountEvents).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-account-context',
+            phase: 'cleaned',
+            sentinel: 'payment-details-postpaid',
+            targetOrganisationName: 'payment-details-postpaid:active',
+          },
+        ]),
+      );
       await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
       await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
 
@@ -668,6 +746,7 @@ When(
         timeout: STORY_RENDER_TIMEOUT_MS,
       });
       await expectMountedProviderPair();
+      await expectActiveAccountPair();
       await expectSessionSentinel(
         PAYMENT_DETAILS_PREPAID_SESSION_KEY,
         `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
@@ -704,6 +783,29 @@ When(
           },
         ]),
       );
+      await expect.poll(readAccountEvents).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-account-context',
+            phase: 'cleaned',
+            sentinel: 'payment-details-postpaid',
+            targetOrganisationName: 'payment-details-postpaid:active',
+          },
+          {
+            type: 'storybook-account-context',
+            phase: 'active',
+            sentinel: 'payment-details-prepaid',
+            targetOrganisationName: 'payment-details-prepaid:active',
+          },
+        ]),
+      );
+      await expect
+        .poll(() =>
+          readAccountTargetOrganisation(
+            'routes-acceptquote--payment-details-step',
+          ),
+        )
+        .toBe('payment-details-prepaid:active');
       await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
       await expectSessionSentinel(
         PAYMENT_DETAILS_PREPAID_SESSION_KEY,
@@ -738,6 +840,16 @@ When(
             type: 'storybook-portal-provider',
             phase: 'cleaned',
             sentinel: 'payment-details-prepaid',
+          },
+        ]),
+      );
+      await expect.poll(readAccountEvents).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-account-context',
+            phase: 'cleaned',
+            sentinel: 'payment-details-prepaid',
+            targetOrganisationName: 'payment-details-prepaid:active',
           },
         ]),
       );
@@ -780,6 +892,41 @@ When(
           sentinel: 'payment-details-prepaid',
         },
       ]);
+      const accountEvents = await readAccountEvents();
+      expect(
+        accountEvents
+          .filter((event) => event.phase === 'active')
+          .sort((left, right) => left.sentinel.localeCompare(right.sentinel)),
+      ).toEqual([
+        {
+          type: 'storybook-account-context',
+          phase: 'active',
+          sentinel: 'payment-details-postpaid',
+          targetOrganisationName: 'payment-details-postpaid:active',
+        },
+        {
+          type: 'storybook-account-context',
+          phase: 'active',
+          sentinel: 'payment-details-prepaid',
+          targetOrganisationName: 'payment-details-prepaid:active',
+        },
+      ]);
+      expect(
+        accountEvents.filter((event) => event.phase === 'cleaned'),
+      ).toEqual([
+        {
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: 'payment-details-postpaid',
+          targetOrganisationName: 'payment-details-postpaid:active',
+        },
+        {
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: 'payment-details-prepaid',
+          targetOrganisationName: 'payment-details-prepaid:active',
+        },
+      ]);
       expect(
         await page.evaluate(() =>
           globalThis.sessionStorage.getItem('targetOrganisation'),
@@ -805,6 +952,38 @@ When(
         },
         [PAYMENT_DETAILS_STEP_FRAME, PAYMENT_DETAILS_POSTPAID_FRAME],
       );
+      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(0);
+      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(0);
+      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
+      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
+      await expect
+        .poll(async () => {
+          const events = await readProviderEvents();
+          const mounted = new Set(
+            events
+              .filter((event) => event.phase === 'mounted')
+              .map((event) => event.sentinel),
+          );
+          events
+            .filter((event) => event.phase === 'cleaned')
+            .forEach((event) => mounted.delete(event.sentinel));
+          return [...mounted].sort();
+        })
+        .toEqual([]);
+      await expect
+        .poll(async () => {
+          const events = await readAccountEvents();
+          const active = new Set(
+            events
+              .filter((event) => event.phase === 'active')
+              .map((event) => event.sentinel),
+          );
+          events
+            .filter((event) => event.phase === 'cleaned')
+            .forEach((event) => active.delete(event.sentinel));
+          return [...active].sort();
+        })
+        .toEqual([]);
     }
   },
 );

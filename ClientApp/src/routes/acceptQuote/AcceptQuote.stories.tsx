@@ -202,6 +202,7 @@ export const PaymentDetailsStep = meta.story({
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
       providerLifecycleSentinel: 'payment-details-prepaid',
+      accountContextLifecycleSentinel: 'payment-details-prepaid',
       sessionStorageSentinel: 'storybook:accept-quote:payment-details:prepaid',
       formik: {
         initialValues: {
@@ -253,6 +254,7 @@ export const PaymentDetailsPostpaid = meta.story({
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
       providerLifecycleSentinel: 'payment-details-postpaid',
+      accountContextLifecycleSentinel: 'payment-details-postpaid',
       sessionStorageSentinel: 'storybook:accept-quote:payment-details:postpaid',
       formik: {
         initialValues: {

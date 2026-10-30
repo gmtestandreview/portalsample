@@ -187,6 +187,8 @@ export interface PortalStoryParameters {
   rhf?: PortalRhfConfig;
   /** Emits an opt-in provider lifecycle sentinel for isolation tests. */
   providerLifecycleSentinel?: string;
+  /** Mutates the real AccountContext state for isolation tests. */
+  accountContextLifecycleSentinel?: string;
   /** Owns a per-story sessionStorage key for lifecycle isolation tests. */
   sessionStorageSentinel?: string;
   msalContext?: Partial<IMsalContext>;
@@ -482,6 +484,134 @@ const ProviderLifecycleSentinel = ({
   return children;
 };
 
+const AccountContextLifecycleSentinel = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: ReactNode;
+}) => {
+  const accountState = useContext(AccountStateCtx);
+  const accountDispatch = useContext(AccountDispatchCtx);
+  const targetOrganisationName =
+    accountState?.details?.targetOrganisation?.targetOrganisationName ?? null;
+  const targetOrganisationNameRef = useRef(targetOrganisationName);
+  targetOrganisationNameRef.current = targetOrganisationName;
+
+  useLayoutEffect(() => {
+    accountDispatch?.setTargetOrganisation(name, `${name}:active`);
+  }, [accountDispatch, name]);
+
+  useLayoutEffect(() => {
+    if (targetOrganisationName !== `${name}:active`) {
+      return;
+    }
+
+    globalThis.document.body.dataset['storybookAccountTargetOrganisation'] =
+      targetOrganisationName;
+    if (globalThis.window.parent !== globalThis.window) {
+      const parentWindow = globalThis.window
+        .parent as typeof globalThis.window & {
+        __storybookAccountLifecycleEvents?: Array<{
+          type: 'storybook-account-context';
+          phase: 'active' | 'cleaned';
+          sentinel: string;
+          targetOrganisationName: string | null;
+        }>;
+      };
+      parentWindow.__storybookAccountLifecycleEvents?.push({
+        type: 'storybook-account-context',
+        phase: 'active',
+        sentinel: name,
+        targetOrganisationName,
+      });
+    }
+  }, [name, targetOrganisationName]);
+
+  useLayoutEffect(() => {
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) {
+        return;
+      }
+      cleaned = true;
+      delete globalThis.document.body.dataset[
+        'storybookAccountTargetOrganisation'
+      ];
+      if (globalThis.window.parent !== globalThis.window) {
+        const parentWindow = globalThis.window
+          .parent as typeof globalThis.window & {
+          __storybookAccountLifecycleEvents?: Array<{
+            type: 'storybook-account-context';
+            phase: 'active' | 'cleaned';
+            sentinel: string;
+            targetOrganisationName: string | null;
+          }>;
+        };
+        parentWindow.__storybookAccountLifecycleEvents?.push({
+          type: 'storybook-account-context',
+          phase: 'cleaned',
+          sentinel: name,
+          targetOrganisationName: targetOrganisationNameRef.current,
+        });
+      }
+    };
+
+    globalThis.addEventListener('pagehide', cleanup);
+    return () => {
+      globalThis.removeEventListener('pagehide', cleanup);
+      cleanup();
+    };
+  }, [name]);
+
+  return children;
+};
+
+const AccountContextLifecycleProvider = ({
+  name,
+  initialState,
+  children,
+}: {
+  name: string;
+  initialState: AccountStateContext;
+  children: ReactNode;
+}) => {
+  const [details, setDetails] = useState(initialState.details);
+  const accountDispatch = useMemo<AccountDispatchContext>(
+    () => ({
+      ...defaultAccountDispatch,
+      setTargetOrganisation: (abn, targetOrganisationName) => {
+        setDetails((currentDetails) =>
+          currentDetails
+            ? {
+                ...currentDetails,
+                targetOrganisation: {
+                  targetOrganisationAbn: abn,
+                  targetOrganisationName,
+                },
+              }
+            : currentDetails,
+        );
+      },
+    }),
+    [],
+  );
+  const accountState = useMemo(
+    () => ({ ...initialState, details }),
+    [details, initialState],
+  );
+
+  return (
+    <AccountStateCtx.Provider value={accountState}>
+      <AccountDispatchCtx.Provider value={accountDispatch}>
+        <AccountContextLifecycleSentinel name={name}>
+          {children}
+        </AccountContextLifecycleSentinel>
+      </AccountDispatchCtx.Provider>
+    </AccountStateCtx.Provider>
+  );
+};
+
 const SessionStorageLifecycleSentinel = ({
   name,
   children,
@@ -562,6 +692,16 @@ export const withPortalProviders: Decorator = (Story, context) => {
   ) : (
     providerContent
   );
+  const accountLifecycleContent = portal.accountContextLifecycleSentinel ? (
+    <AccountContextLifecycleProvider
+      name={portal.accountContextLifecycleSentinel}
+      initialState={accountState}
+    >
+      {lifecycleContent}
+    </AccountContextLifecycleProvider>
+  ) : (
+    lifecycleContent
+  );
 
   return (
     <MsalContext.Provider value={msalContext}>
@@ -569,7 +709,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
         <AccountDispatchCtx.Provider value={accountDispatch}>
           <ModalStateCtx.Provider value={modalState}>
             <ModalDispatchCtx.Provider value={modalDispatch}>
-              {lifecycleContent}
+              {accountLifecycleContent}
             </ModalDispatchCtx.Provider>
           </ModalStateCtx.Provider>
         </AccountDispatchCtx.Provider>

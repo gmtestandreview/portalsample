@@ -462,10 +462,13 @@ describe(PortalStoryRouter, () => {
     });
 
     expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(previousValue);
+
     pagehideView.unmount();
+
     expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(previousValue);
 
     const teardownView = render(withPortalProviders(Story, context));
+
     expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(
       `${sessionKey}:active`,
     );
@@ -473,6 +476,7 @@ describe(PortalStoryRouter, () => {
     teardownView.unmount();
 
     expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(previousValue);
+
     globalThis.sessionStorage.removeItem(sessionKey);
   });
 
