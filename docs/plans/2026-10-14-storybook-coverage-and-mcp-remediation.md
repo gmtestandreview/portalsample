@@ -11,8 +11,10 @@ applied on 2026-10-15; the earlier 99/100 review is historical. The scorecard,
 pressure retest and this amendment are planning/evidence records, not runtime
 closure proof.
 
-Overall plan status (2026-10-29): **INCOMPLETE — not closed.** See
-[Status review — 2026-10-29](#status-review--2026-10-29), which supersedes the
+Overall plan status (2026-10-30): **INCOMPLETE — not closed.** T6c and the T7
+shell stories are done; see
+[Status update — 2026-10-30 (evening)](#status-update--2026-10-30-evening). The
+[Status review — 2026-10-29](#status-review--2026-10-29) supersedes the
 2026-10-19 status paragraph below and the 2026-10-19 package table.
 
 Status as of 2026-10-19 (superseded): Gate 3 package-specific approval is
@@ -302,6 +304,98 @@ this plan sets no numeric coverage gate, so they are recorded, not judged.
 Remaining: T5–T7 evidence lanes, T8 closure per the simplified local closure
 decision (one serial run of all gates against a single commit with input hashes
 before and after), and the commit decisions above.
+
+### Status update — 2026-10-30 (evening)
+
+Verdict: still **INCOMPLETE**, but T6c and the T7 shell stories are now done and
+verified. T5, the T6b/T6a harness audit, the T7 forwarding fixtures and T8
+closure remain.
+
+| Package | Status                  | Basis                                                                                                                                                                                                                                                                              |
+| ------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T5      | Not started             | No claim review, no `Indirect evidence isolation` scenario.                                                                                                                                                                                                                        |
+| T6a     | Present, not audited    | `destinationRoutes`/`observeLocation` exist in `storybookHarness.tsx` and `.storybook/preview.tsx`, with `tests/unit/storybook/routeHarness.test.tsx` and `route-harness.feature`. Used by all 15 new story files below; the plan's full T6a test list was not audited.            |
+| T6b     | Not verified            | MSW fail-closed work (`msw-policy.ts`, startup-pressure and Docs-frame isolation tests) not checked in this session.                                                                                                                                                               |
+| T6c     | Stories done (10 of 10) | One story file per entry module, listed below; manifest records re-pointed from the mount-only coverage story. A -> B -> A, args-rerender and unmount cases not written.                                                                                                           |
+| T7      | Shell stories done (5)  | `acceptQuote`, `requestForQuote`, `ta`, `quotation`, `measurementReport`; 8 `Route shell ownership` BDD scenarios pass. Open: `ta/manage` forwarding fixtures in `moduleCoverage.test.ts`; re-verify account/created, RFQ/created, summary subfolders and sign-out/helper stories. |
+| T8      | Pending                 | Simplified local closure decision stands: serial gates 1–8 against one commit with before/after input hashes.                                                                                                                                                                      |
+
+New story files (15, 43 stories), each with a negative control run during
+authoring (a deliberately wrong assertion made the right story fail, then
+reverted):
+
+- T6c: `ta/created/TypeApprovalCreated`, `ta/create/TypeApprovalCreate`,
+  `requestForQuote/create/RequestForQuoteCreate`,
+  `requestForQuote/copy/RequestForQuoteCopy`,
+  `acceptQuote/create/AcceptQuoteCreate`, `account/update/UpdateAccount`,
+  `account/addBranch/AddBranch`, `account/create/CreateAccount`,
+  `contact/create/CreateContact`, `contact/update/UpdateContact`.
+- T7: `acceptQuote/AcceptQuoteShell`, `requestForQuote/RequestForQuoteShell`,
+  `ta/TypeApprovalShell`, `quotation/QuotationShell`,
+  `measurementReport/MeasurementReportShell`.
+
+Fifteen manifest records (the 10 route entry modules and 5 shells) now point at
+these stories instead of `routes-exportcoverage--*`, each with several required
+states and an exact-string assertion marker. The mount-only stories in
+`ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx` for these
+modules are still present.
+
+Coverage characterisations recorded rather than changed: `contact/update` and
+`contact/create` swallow save failures and still navigate; the create/copy
+routes stay on "Loading..." after a failed request without retrying; the TA
+shell has no identifier validation.
+
+Gaps against the T6c/T7 tables: no cancel-confirmation story for
+`account/create`; no failed-save (412/generic) story for `account/addBranch`; no
+form-level Cancel button story for `account/update`; none of the routes has
+args-rerender, unmount or A -> B -> A coverage.
+
+Evidence run 2026-10-30 evening (this session, after the Storybook upgrade):
+
+| Check                                                                | Result                                                              |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Native MCP `test-run`, 43 exact story IDs, a11y on, Storybook 10.6.5 | 43/43 component tests; a11y 43 success, 0 warnings, 0 errors        |
+| `test:e2e:storybook -- --grep 'Route shell ownership' --workers=1`   | 8 passed                                                            |
+| `storybook-coverage.mjs --mode source`                               | exit 0                                                              |
+| `test:unit`                                                          | 261 files, 2,899 tests pass                                         |
+| `storybook:verify:docs`                                              | exit 0; 415 stories and 176 docs entries; internal docs links valid |
+| `lint:mdx`                                                           | exit 0                                                              |
+| `docsOwnerId` resolution                                             | all 141 manifest `docsOwnerId` values resolve to a built docs entry |
+
+Storybook and configuration changes made alongside (user changes and mine):
+
+- **Storybook 10.5/10.6.3 -> 10.6.5** (user).
+  `.storybook/component-docs-guide.mdx` and the version pins in
+  `storybookDocsConfig.test.ts` updated to 10.6.5; the guide's RouteLeavingGuard
+  `docs-show` serializer claim was re-checked on the upgraded server and still
+  reproduces.
+- **`.storybook/preview.ts` -> `preview.tsx`** (user, CSF Next).
+- **Docs mode.** A `docs: { defaultName, docsMode }` object nested in the
+  `@storybook/addon-docs` options forced docs-only mode: the addon preset reads
+  `options.docs` as the `--docs` CLI flag and any object is truthy. The block is
+  back at top level (`docs: { defaultName: 'Documentation', docsMode: false }`)
+  and `storybookDocsConfig.test.ts` fails if `docs` is nested again.
+- **Docs naming.** In 10.6.5 the `Documentation` name also renames MDX docs
+  entries, which broke 20 `/docs/...--docs` links. Decision (user, Option B):
+  keep `Documentation` and rewrite those 20 links to `--documentation`.
+- **Story glob** narrowed to `*.stories.tsx` (user decision; all 150 existing
+  stories are `.tsx`), with a test guard against multi-extension globs.
+- **Docgen** excludes `**/.storybook/**` (removes the "not included in the
+  active TypeScript project" warning for `preview.tsx`).
+- **Dev server** ignores `**/storybook-static/**` in `server.watch`. A running
+  `npm run storybook` otherwise raced the build's static copy on Windows and
+  broke `storybook:verify:docs` with `ENOENT` on `chmod`/`utime`.
+
+Commit state: the route and shell stories and the manifest changes are in
+`f451a60c`, `60bcc1b8` and `8c90c9d2`. The tree was clean at 21:35; later
+uncommitted edits (for example `package.json`, several `docs/` files and a few
+Storybook files) are the user's and are not covered by the evidence above.
+
+Remaining: T5; the T6a/T6b audit and the isolation scenarios (`Route harness`,
+`Indirect evidence isolation`); the `ta/manage` forwarding check in
+`storybook-coverage.mjs` with `moduleCoverage.test.ts` fixtures (needs
+approval); removal or justified retention of the mount-only
+`RouteExportCoverage` stories; and T8 closure.
 
 ### Superseded: open decision (resolved above)
 

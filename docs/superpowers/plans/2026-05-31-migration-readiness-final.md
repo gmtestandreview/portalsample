@@ -174,7 +174,7 @@ that must be fixed before the code is migrated.
     () => ({
       default: { TermsVersion: '2' },
     }),
-    { virtual: true }
+    { virtual: true },
   );
 
   import { useAccountState } from '../../../../ClientApp/src/authentication/hooks';
@@ -198,7 +198,7 @@ that must be fixed before the code is migrated.
       render(<TermsAndConditionModal />);
 
       expect(
-        screen.getByTestId('prompt-termsandcondition-modal')
+        screen.getByTestId('prompt-termsandcondition-modal'),
       ).toBeInTheDocument();
       expect(screen.getByText(/terms of use/i)).toBeInTheDocument();
     });
@@ -215,7 +215,7 @@ that must be fixed before the code is migrated.
       render(<TermsAndConditionModal />);
 
       expect(
-        screen.queryByTestId('prompt-termsandcondition-modal')
+        screen.queryByTestId('prompt-termsandcondition-modal'),
       ).not.toBeInTheDocument();
     });
 
@@ -246,7 +246,7 @@ that must be fixed before the code is migrated.
             acceptTermsAndCondition: vi
               .fn()
               .mockRejectedValue(new Error('Network error')),
-          }) as any
+          }) as any,
       );
 
       vi.mocked(useAccountState).mockReturnValue({
@@ -263,7 +263,7 @@ that must be fixed before the code is migrated.
       await waitFor(() => {
         expect(screen.getByRole('alert')).toBeInTheDocument();
         expect(
-          screen.getByText(/error found trying to save/i)
+          screen.getByText(/error found trying to save/i),
         ).toBeInTheDocument();
       });
     });

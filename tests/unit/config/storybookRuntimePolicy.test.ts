@@ -31,10 +31,10 @@ describe('storybook runtime fixtures', () => {
     expect.hasAssertions();
 
     expect(previewSetup).not.toMatch(
-      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/
+      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
     );
     expect(browserSetup).not.toMatch(
-      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/
+      /REACT_APP_|(?<!VITE_)EXTERNAL_REDIRECT_URL/,
     );
   });
 
@@ -53,7 +53,7 @@ describe('storybook MSW diagnostic policy', () => {
       .join(repositoryRoot, '.storybook/msw-policy.ts')
       .replaceAll('\\', '/');
     const policy = await import(/* @vite-ignore */ policySpecifier).catch(
-      () => ({ isStorybookMswDebugEnabled: undefined })
+      () => ({ isStorybookMswDebugEnabled: undefined }),
     );
 
     expect(policy.isStorybookMswDebugEnabled).toBeTypeOf('function');
@@ -81,7 +81,7 @@ describe('storybook MSW diagnostic policy', () => {
 
     expect(storybookMain).toContain("staticDirs: ['../ClientApp/public']");
     expect(
-      pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot)
+      pathExists('ClientApp/public/mockServiceWorker.js', repositoryRoot),
     ).toBe(true);
   });
 });

@@ -456,7 +456,7 @@ describe('Storybook documentation architecture', () => {
     expect(main).toContain("framework: '@storybook/react-vite'");
     expect(main).not.toContain('@storybook/addon-styling-webpack');
     expect(allDependencies).not.toHaveProperty(
-      '@storybook/addon-styling-webpack'
+      '@storybook/addon-styling-webpack',
     );
   });
 
@@ -464,7 +464,7 @@ describe('Storybook documentation architecture', () => {
     expect(main).toContain("'../.storybook/*.mdx'");
     expect(main).toContain("'../ClientApp/src/**/*.mdx'");
     expect(main).toContain(
-      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'"
+      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'",
     );
 
     expect(main).not.toContain("'../ClientApp/src/**/*.stories.@(ts|tsx)'");
@@ -473,7 +473,7 @@ describe('Storybook documentation architecture', () => {
 
   it('owns generated docs naming and docs mode in main.ts', () => {
     expect(main).toMatch(
-      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/
+      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
     );
     expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/);
   });
@@ -503,21 +503,21 @@ describe('Storybook documentation architecture', () => {
 
   it('does not replace inferred component descriptions globally', () => {
     expect(preview).not.toContain(
-      'Component documentation generated from JSDoc comments and Storybook autodocs.'
+      'Component documentation generated from JSDoc comments and Storybook autodocs.',
     );
   });
 
   it('does not clone Storybook default Autodocs template', () => {
     expect(preview).not.toContain('autoDocsTemplate');
     expect(existsSync(resolve(repoRoot, '.storybook/preview-docs.ts'))).toBe(
-      false
+      false,
     );
   });
 
   it('teaches the correct Autodocs tag and opt-out mechanism', () => {
     expect(componentDocsGuide).not.toMatch(/Adding the ['"]docs['"] Tag/i);
     expect(componentDocsGuide).not.toMatch(
-      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i
+      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i,
     );
 
     expect(componentDocsGuide).toContain('autodocs');
@@ -1590,7 +1590,7 @@ for (const file of requiredFiles) {
 }
 
 const index = JSON.parse(
-  await readFile(resolve(staticDir, 'index.json'), 'utf8')
+  await readFile(resolve(staticDir, 'index.json'), 'utf8'),
 );
 
 const entries = Object.values(index.entries ?? {});
@@ -1611,12 +1611,12 @@ if (storyEntries.length === 0) {
 }
 
 const hasDocumentationSection = docsEntries.some((entry) =>
-  String(entry.title ?? '').startsWith('Documentation/')
+  String(entry.title ?? '').startsWith('Documentation/'),
 );
 
 if (!hasDocumentationSection) {
   throw new Error(
-    'Expected at least one standalone Documentation/* MDX entry.'
+    'Expected at least one standalone Documentation/* MDX entry.',
   );
 }
 
@@ -1629,8 +1629,8 @@ console.log(
       documentationSection: hasDocumentationSection,
     },
     null,
-    2
-  )
+    2,
+  ),
 );
 ```
 

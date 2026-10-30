@@ -170,10 +170,7 @@
     "vitest": "4.1.12"
   },
   "msw": {
-    "workerDirectory": [
-      "ClientApp/public",
-      "storybook-static"
-    ]
+    "workerDirectory": ["ClientApp/public", "storybook-static"]
   },
   "overrides": {
     "@mizchi/lsmcp": {
