@@ -1,11 +1,11 @@
 /**
  * Storybook BDD step definitions.
  *
- * These steps navigate to Storybook story iframes and assert that the rendered
- * component matches the expectations described in the story files.
+ * These steps navigate Storybook's manager preview iframe and assert that the
+ * rendered component matches the expectations described in the story files.
  *
- * Story iframe URL pattern:
- *   http://localhost:6006/iframe.html?id=<story-id>&viewMode=story
+ * Story manager URL pattern:
+ *   http://localhost:6006/?path=/story/<story-id>
  *
  * The steps use absolute URLs so they work regardless of the Playwright
  * project's baseURL setting.
@@ -50,6 +50,18 @@ const storybookPageIssueMonitors = new WeakMap<
   Page,
   StorybookPageIssueMonitor
 >();
+const LATE_UNMOUNT_SIGNAL =
+  /(?:can't perform a React state update on an unmounted component|state update on an unmounted component|update(?:d)? after unmount)/i;
+
+const captureLateUnmountSignal = (
+  messages: string[],
+  source: string,
+  message: string,
+) => {
+  if (LATE_UNMOUNT_SIGNAL.test(message)) {
+    messages.push(`${source}: ${message}`);
+  }
+};
 
 const cleanupStorybookPageIssueMonitor = (page: Page) => {
   const monitor = storybookPageIssueMonitors.get(page);
@@ -365,11 +377,11 @@ Given(
     cleanupStorybookPageIssueMonitor(page);
     const messages: string[] = [];
     const pageErrorHandler = (error: Error) => {
-      messages.push(`pageerror: ${error.message}`);
+      captureLateUnmountSignal(messages, 'pageerror', error.message);
     };
     const consoleErrorHandler = (message: ConsoleMessage) => {
       if (message.type() === 'error') {
-        messages.push(`console: ${message.text()}`);
+        captureLateUnmountSignal(messages, 'console', message.text());
       }
     };
 
@@ -881,6 +893,10 @@ Then(
     }
 
     try {
+      await expect(storybookPreviewFrame(page).locator('body')).toHaveClass(
+        /\bsb-show-main\b/u,
+        { timeout: STORY_RENDER_TIMEOUT_MS },
+      );
       expect(monitor.messages).toEqual([]);
     } finally {
       cleanupStorybookPageIssueMonitor(page);

@@ -215,11 +215,16 @@ export async function loadStoryIframe(page: Page, storyId: string) {
         return false;
       }
 
-      return (
-        iframe.contentWindow?.location.href.includes(
-          `id=${String(expectedStoryId)}`,
-        ) === true
-      );
+      const previewHref = iframe.contentWindow?.location.href;
+      if (previewHref === undefined) {
+        return false;
+      }
+
+      try {
+        return new URL(previewHref).searchParams.get('id') === expectedStoryId;
+      } catch {
+        return false;
+      }
     },
     storyId,
     { timeout: STORY_RENDER_TIMEOUT_MS, polling: 100 },
