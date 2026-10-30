@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -46,6 +47,14 @@ type CoverageModule = {
     errors: ValidationResult['errors'];
   };
   validateManifest(manifest: unknown): ValidationResult;
+  validateForwardingEquivalence(input: {
+    source: string;
+    content: string;
+  }): ValidationResult;
+  validateStoryEvidence(input: {
+    manifest: unknown;
+    files: Array<{ path: string; content: string }>;
+  }): ValidationResult;
   parseJsonDocument(text: string): unknown;
   validateSourceClaims(
     manifest: unknown,
@@ -74,6 +83,11 @@ const discoverSourceExports =
 const generateInventory = coverageModule.generateInventory.bind(coverageModule);
 const main = coverageModule.main.bind(coverageModule);
 const validateManifest = coverageModule.validateManifest.bind(coverageModule);
+const validateForwardingEquivalence: CoverageModule['validateForwardingEquivalence'] =
+  (input) => coverageModule.validateForwardingEquivalence(input);
+const validateStoryEvidence: CoverageModule['validateStoryEvidence'] = (
+  input,
+) => coverageModule.validateStoryEvidence(input);
 const validateSourceClaims =
   coverageModule.validateSourceClaims.bind(coverageModule);
 
@@ -648,5 +662,267 @@ describe('deterministic inventory generation', () => {
       ok: false,
       errors: [expect.objectContaining({ code: 'MANIFEST_SCHEMA_INVALID' })],
     });
+  });
+});
+
+describe('ta/manage forwarding equivalence', () => {
+  const wrapperSource = 'ClientApp/src/routes/ta/manage/index.tsx';
+  const lines = (...parts: string[]) => `${parts.join('\n')}\n`;
+  const importDetails = "import AppDetails from './appDetails';";
+  const checkWrapper = (content: string) =>
+    validateForwardingEquivalence({ source: wrapperSource, content });
+
+  it.each([
+    [
+      'the checked-in wrapper',
+      lines(
+        importDetails,
+        '',
+        'const TAApplicationManage = () => <AppDetails />;',
+        '',
+        'export default TAApplicationManage;',
+      ),
+    ],
+    [
+      'formatting-only changes',
+      lines(
+        'import   AppDetails   from  "./appDetails" ;',
+        'const TAApplicationManage = ( ) =>',
+        '  (',
+        '    <AppDetails',
+        '    />',
+        '  ) ;',
+        '// comment',
+        'export default   TAApplicationManage',
+      ),
+    ],
+    [
+      'an import alias and renamed component',
+      lines(
+        "import Details from './appDetails';",
+        'const Manage = () => <Details />;',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a function declaration with a single return',
+      lines(
+        importDetails,
+        'function Manage() {',
+        '  return <AppDetails />;',
+        '}',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'an inline default export function',
+      lines(
+        importDetails,
+        'export default function Manage() {',
+        '  return <AppDetails></AppDetails>;',
+        '}',
+      ),
+    ],
+  ])('accepts %s', (_name, content) => {
+    expect.hasAssertions();
+    expect(checkWrapper(content)).toStrictEqual({ ok: true, errors: [] });
+  });
+
+  it.each([
+    [
+      'a state hook',
+      lines(
+        "import { useState } from 'react';",
+        importDetails,
+        'const Manage = () => {',
+        '  const [open] = useState(false);',
+        '  return <AppDetails />;',
+        '};',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'an effect hook',
+      lines(
+        "import { useEffect } from 'react';",
+        importDetails,
+        'const Manage = () => {',
+        '  useEffect(() => undefined, []);',
+        '  return <AppDetails />;',
+        '};',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a route params hook',
+      lines(
+        "import { useParams } from 'react-router';",
+        importDetails,
+        'const Manage = () => {',
+        '  useParams();',
+        '  return <AppDetails />;',
+        '};',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'an if condition',
+      lines(
+        importDetails,
+        'const Manage = () => {',
+        '  if (globalThis.location.hash) return null;',
+        '  return <AppDetails />;',
+        '};',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a ternary condition',
+      lines(
+        importDetails,
+        'const Manage = () => (globalThis.ready ? <AppDetails /> : null);',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a logical-and condition',
+      lines(
+        importDetails,
+        'const Manage = () => globalThis.ready && <AppDetails />;',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a console side effect',
+      lines(
+        importDetails,
+        'const Manage = () => {',
+        "  console.log('manage');",
+        '  return <AppDetails />;',
+        '};',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a fetch side effect',
+      lines(
+        importDetails,
+        'const Manage = () => {',
+        "  fetch('/api/ta');",
+        '  return <AppDetails />;',
+        '};',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a module-level side effect',
+      lines(
+        importDetails,
+        "fetch('/api/ta');",
+        'const Manage = () => <AppDetails />;',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'an extra prop',
+      lines(
+        importDetails,
+        'const Manage = () => <AppDetails mode="edit" />;',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a spread prop',
+      lines(
+        importDetails,
+        'const Manage = (props) => <AppDetails {...props} />;',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a wrapped child element',
+      lines(
+        importDetails,
+        'const Manage = () => (',
+        '  <div>',
+        '    <AppDetails />',
+        '  </div>',
+        ');',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'a different target module',
+      lines(
+        "import AppDetails from './appDocuments';",
+        'const Manage = () => <AppDetails />;',
+        'export default Manage;',
+      ),
+    ],
+  ])(
+    'rejects %s until consumer sufficiency is re-reviewed',
+    (_name, content) => {
+      expect.hasAssertions();
+      expect(checkWrapper(content)).toMatchObject({
+        ok: false,
+        errors: [
+          expect.objectContaining({
+            code: 'EVIDENCE_MISSING',
+            path: wrapperSource,
+            message: expect.stringMatching(/consumer sufficiency/u),
+          }),
+        ],
+      });
+    },
+  );
+
+  it('accepts the real ta/manage wrapper and rejects a mutated copy', () => {
+    expect.hasAssertions();
+
+    const real = readFileSync(join(process.cwd(), wrapperSource), 'utf8');
+    const mutated = real.replace(
+      'const TAApplicationManage = () => <AppDetails />;',
+      lines(
+        'const TAApplicationManage = () => {',
+        '  useState(0);',
+        '  return <AppDetails />;',
+        '};',
+      ),
+    );
+
+    expect(mutated).not.toBe(real);
+    expect(checkWrapper(real)).toStrictEqual({ ok: true, errors: [] });
+    expect(checkWrapper(mutated).ok).toBe(false);
+  });
+
+  it('checks the wrapper whenever story evidence validation sees it', () => {
+    expect.hasAssertions();
+
+    const forwardingErrors = (content: string) =>
+      validateStoryEvidence({
+        manifest: validManifest,
+        files: [{ path: wrapperSource, content }],
+      }).errors.filter((entry) =>
+        /consumer sufficiency/u.test(entry.message ?? ''),
+      );
+
+    expect(
+      forwardingErrors(
+        lines(
+          importDetails,
+          'const Manage = () => <AppDetails />;',
+          'export default Manage;',
+        ),
+      ),
+    ).toHaveLength(0);
+    expect(
+      forwardingErrors(
+        lines(
+          importDetails,
+          "const Manage = () => (fetch('/x'), <AppDetails />);",
+          'export default Manage;',
+        ),
+      ),
+    ).toHaveLength(1);
   });
 });

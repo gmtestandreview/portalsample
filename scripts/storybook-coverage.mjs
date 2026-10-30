@@ -2064,6 +2064,166 @@ const recordEvidenceErrors = ({
   return errors;
 };
 
+// A forwarding wrapper is covered by its target's story only while it adds no
+// behavior of its own. Each entry maps a wrapper source to the module it must
+// forward to, so a wrapper that gains behavior invalidates the exemption.
+const FORWARDING_WRAPPER_TARGETS = new Map([
+  ['ClientApp/src/routes/ta/manage/index.tsx', './appDetails'],
+]);
+
+const forwardingRejection = (source, reason) =>
+  error(
+    FAILURE_CODES.EVIDENCE_MISSING,
+    `forwarding equivalence rejected for ${source}: ${reason}; re-review consumer sufficiency before keeping the forwarding exemption`,
+    source,
+  );
+
+const forwardingImportName = (statement, targetModule) => {
+  const clause = statement.importClause;
+  if (
+    clause?.name === undefined ||
+    clause.isTypeOnly ||
+    clause.namedBindings !== undefined ||
+    moduleSpecifierText(statement) !== targetModule
+  ) {
+    return undefined;
+  }
+  return clause.name.text;
+};
+
+const declaredFunction = (statement) => {
+  if (ts.isFunctionDeclaration(statement) && statement.name) {
+    return { name: statement.name.text, fn: statement };
+  }
+  if (!ts.isVariableStatement(statement)) return undefined;
+  const declarations = statement.declarationList.declarations;
+  const [declaration] = declarations;
+  const initializer = declaration?.initializer;
+  if (
+    declarations.length !== 1 ||
+    !ts.isIdentifier(declaration.name) ||
+    !initializer ||
+    !(ts.isArrowFunction(initializer) || ts.isFunctionExpression(initializer))
+  ) {
+    return undefined;
+  }
+  return { name: declaration.name.text, fn: initializer };
+};
+
+const isDefaultExportedFunction = (statement) =>
+  ts.isFunctionDeclaration(statement) &&
+  Boolean(
+    statement.modifiers?.some(
+      (modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword,
+    ),
+  );
+
+const isDefaultExportOf = (statement, name) =>
+  ts.isExportAssignment(statement) &&
+  !statement.isExportEquals &&
+  ts.isIdentifier(statement.expression) &&
+  statement.expression.text === name;
+
+const forwardingComponent = (statements) => {
+  const [first, second, ...rest] = statements;
+  if (!first || rest.length > 0) return undefined;
+  if (isDefaultExportedFunction(first)) return second ? undefined : first;
+  const declared = declaredFunction(first);
+  if (!declared || !second || !isDefaultExportOf(second, declared.name)) {
+    return undefined;
+  }
+  return declared.fn;
+};
+
+const returnedExpression = (fn) => {
+  const isPlain =
+    fn.parameters.length === 0 &&
+    !fn.asteriskToken &&
+    !fn.modifiers?.some(
+      (modifier) => modifier.kind === ts.SyntaxKind.AsyncKeyword,
+    );
+  if (!isPlain || !fn.body) return undefined;
+  if (!ts.isBlock(fn.body)) return fn.body;
+  const [only] = fn.body.statements;
+  return fn.body.statements.length === 1 && ts.isReturnStatement(only)
+    ? only.expression
+    : undefined;
+};
+
+const isBareForwardingElement = (expression, tagName) => {
+  if (!expression) return false;
+  const element = unwrapExpression(expression);
+  let opening;
+  if (ts.isJsxSelfClosingElement(element)) {
+    opening = element;
+  } else if (
+    ts.isJsxElement(element) &&
+    element.children.every(
+      (child) => ts.isJsxText(child) && child.containsOnlyTriviaWhiteSpaces,
+    )
+  ) {
+    opening = element.openingElement;
+  } else {
+    return false;
+  }
+  return (
+    ts.isIdentifier(opening.tagName) &&
+    opening.tagName.text === tagName &&
+    opening.typeArguments === undefined &&
+    opening.attributes.properties.length === 0
+  );
+};
+
+const forwardingWrapperReason = (sourceFile, targetModule) => {
+  const imports = sourceFile.statements.filter(ts.isImportDeclaration);
+  const others = sourceFile.statements.filter(
+    (statement) => !ts.isImportDeclaration(statement),
+  );
+  const tagName =
+    imports.length === 1
+      ? forwardingImportName(imports[0], targetModule)
+      : undefined;
+  if (!tagName) {
+    return `wrapper must only default-import its forwarding target ${targetModule}`;
+  }
+  const component = forwardingComponent(others);
+  if (!component) {
+    return 'wrapper must only declare one component exported as default';
+  }
+  return isBareForwardingElement(returnedExpression(component), tagName)
+    ? undefined
+    : `wrapper must only render <${tagName} /> with no parameters, props, children, hooks, conditions or side effects`;
+};
+
+export function validateForwardingEquivalence({ source, content }) {
+  const targetModule = FORWARDING_WRAPPER_TARGETS.get(source);
+  if (targetModule === undefined) {
+    return result([
+      forwardingRejection(source, 'no forwarding target is declared'),
+    ]);
+  }
+  const sourceFile = ts.createSourceFile(
+    source,
+    textForInput(content),
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const reason = forwardingWrapperReason(sourceFile, targetModule);
+  return result(reason ? [forwardingRejection(source, reason)] : []);
+}
+
+const forwardingWrapperErrors = (filesByPath) =>
+  [...FORWARDING_WRAPPER_TARGETS.keys()].flatMap((wrapperPath) => {
+    const wrapper = filesByPath.get(wrapperPath);
+    return wrapper
+      ? validateForwardingEquivalence({
+          source: wrapperPath,
+          content: wrapper.content,
+        }).errors
+      : [];
+  });
+
 export function validateStoryEvidence({ manifest, files, index }) {
   const manifestResult = validateManifest(manifest);
   if (!manifestResult.ok) return manifestResult;
@@ -2097,6 +2257,8 @@ export function validateStoryEvidence({ manifest, files, index }) {
       }),
     );
   }
+
+  errors.push(...forwardingWrapperErrors(filesByPath));
 
   if (index !== undefined) {
     const referenceResult = validateReferences(manifest, index);
