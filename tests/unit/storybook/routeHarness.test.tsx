@@ -6,6 +6,8 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { Link, useNavigate, useParams } from 'react-router';
+import * as reactRouter from 'react-router';
+import { useEffect, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import {
   PortalStoryRouter,
@@ -90,6 +92,104 @@ describe(PortalStoryRouter, () => {
     );
   });
 
+  it('falls through to the story wildcard for a wrong returned reference', async () => {
+    expect.hasAssertions();
+
+    const observeLocation =
+      vi.fn<(location: PortalLocationObservation) => void>();
+
+    render(
+      <PortalStoryRouter
+        Story={() => (
+          <>
+            <p>Wrong reference remains in story</p>
+            <Link to='/complete/wrong-42'>Return wrong reference</Link>
+          </>
+        )}
+        initialEntries={['/request/start-7']}
+        routePath='*'
+        destinationRoutes={[
+          {
+            path: '/complete/returned-42',
+            element: <Destination />,
+          },
+        ]}
+        observeLocation={observeLocation}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole('link', { name: 'Return wrong reference' }),
+    );
+
+    await expect(
+      screen.findByText('Wrong reference remains in story'),
+    ).resolves.toBeVisible();
+    expect(screen.queryByText('Destination reference: wrong-42')).toBeNull();
+    await waitFor(() =>
+      expect(observeLocation).toHaveBeenCalledWith({
+        pathname: '/complete/wrong-42',
+        params: { '*': 'complete/wrong-42' },
+      }),
+    );
+  });
+
+  it('keeps navigation on the same route while an async response settles', async () => {
+    expect.hasAssertions();
+
+    let settleResponse!: () => void;
+    const pendingResponse = new Promise<void>((resolve) => {
+      settleResponse = resolve;
+    });
+    const observeLocation =
+      vi.fn<(location: PortalLocationObservation) => void>();
+    const AsyncStory = () => {
+      const [settled, setSettled] = useState(false);
+
+      useEffect(() => {
+        void pendingResponse.then(() => setSettled(true));
+      }, []);
+
+      return (
+        <>
+          <p>{settled ? 'Response settled' : 'Waiting for response'}</p>
+          <Link to='/complete/settled-42'>Continue before response</Link>
+        </>
+      );
+    };
+
+    render(
+      <PortalStoryRouter
+        Story={AsyncStory}
+        initialEntries={['/request/start-7']}
+        routePath='*'
+        destinationRoutes={[
+          { path: '/complete/:reference', element: <Destination /> },
+        ]}
+        observeLocation={observeLocation}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole('link', { name: 'Continue before response' }),
+    );
+    await expect(
+      screen.findByText('Destination reference: settled-42'),
+    ).resolves.toBeVisible();
+
+    await act(async () => {
+      settleResponse();
+    });
+
+    expect(screen.queryByText('Response settled')).toBeNull();
+    await waitFor(() =>
+      expect(observeLocation).toHaveBeenCalledWith({
+        pathname: '/complete/settled-42',
+        params: { reference: 'settled-42' },
+      }),
+    );
+  });
+
   it('keeps one router and renders current story args across rerenders', async () => {
     expect.hasAssertions();
 
@@ -133,6 +233,25 @@ describe(PortalStoryRouter, () => {
       pathname: '/request/999',
       params: { requestId: '999' },
     });
+  });
+
+  it('creates one router for a mounted story instead of nesting or replacing it', () => {
+    expect.hasAssertions();
+
+    const createMemoryRouter = vi.spyOn(reactRouter, 'createMemoryRouter');
+    const firstStory = () => <p>Router story first</p>;
+    const secondStory = () => <p>Router story second</p>;
+    const view = render(
+      <PortalStoryRouter Story={firstStory} initialEntries={['/']} />,
+    );
+
+    view.rerender(
+      <PortalStoryRouter Story={secondStory} initialEntries={['/changed']} />,
+    );
+
+    expect(createMemoryRouter).toHaveBeenCalledTimes(1);
+    view.unmount();
+    createMemoryRouter.mockRestore();
   });
 
   it('falls back to the story wildcard when no destination route matches', async () => {
