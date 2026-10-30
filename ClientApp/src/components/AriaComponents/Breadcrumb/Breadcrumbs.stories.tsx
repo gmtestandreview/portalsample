@@ -21,12 +21,15 @@ export const Example = meta.story({
     </Breadcrumbs>
   ),
   play: async ({ canvas }) => {
-    const breadcrumbList = canvas.getByRole('list', { name: 'Breadcrumbs' });
-    const homeLink = canvas.getByRole('link', { name: 'Home' });
     const currentCrumb = canvas.getByText('Breadcrumbs');
 
-    await expect(breadcrumbList).toBeInTheDocument();
-    await expect(homeLink).toHaveAttribute('href', '/');
+    await expect(
+      canvas.getByRole('list', { name: 'Breadcrumbs' }),
+    ).toBeInTheDocument();
+    await expect(canvas.getByRole('link', { name: 'Home' })).toHaveAttribute(
+      'href',
+      '/',
+    );
     await expect(currentCrumb).toBeInTheDocument();
     await expect(currentCrumb).not.toHaveAttribute('href');
   },

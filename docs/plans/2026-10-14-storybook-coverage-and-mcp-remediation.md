@@ -11,18 +11,231 @@ applied on 2026-10-15; the earlier 99/100 review is historical. The scorecard,
 pressure retest and this amendment are planning/evidence records, not runtime
 closure proof.
 
-Current status: Gate 3 package-specific approval is explicitly recorded from the
-user. The HEAD commit contains the T1a endpoint-target slice and T2a
-manifest/recursive-validator slice. The approved T4a contract packet and seven
-T4 story files are present as current worktree changes, and the Sheet internal
-composition fix is present as a current worktree change. The T1b receipt and
-producer-identity validators, T2b freshness/freeze/reference helpers, and T3
-focused verification have now been implemented in the current worktree, but
-T1/T2/T3 package exits remain partial. T1c, T2c/T2d, T5, T6, T7 and T8 remain
-incomplete unless the evidence ledger below says otherwise. This amendment
-supersedes stale statements below that say implementation has not started, while
-preserving the original contracts, stable package IDs and historical review
-narrative.
+Overall plan status (2026-10-29): **INCOMPLETE — not closed.** See
+[Status review — 2026-10-29](#status-review--2026-10-29), which supersedes the
+2026-10-19 status paragraph below and the 2026-10-19 package table.
+
+Status as of 2026-10-19 (superseded): Gate 3 package-specific approval is
+explicitly recorded from the user. The HEAD commit contains the T1a
+endpoint-target slice and T2a manifest/recursive-validator slice. The approved
+T4a contract packet and seven T4 story files are present as current worktree
+changes, and the Sheet internal composition fix is present as a current worktree
+change. The T1b receipt and producer-identity validators, T2b
+freshness/freeze/reference helpers, and T3 focused verification have now been
+implemented in the current worktree, but T1/T2/T3 package exits remain partial.
+T1c, T2c/T2d, T5, T6, T7 and T8 remain incomplete unless the evidence ledger
+below says otherwise. This amendment supersedes stale statements below that say
+implementation has not started, while preserving the original contracts, stable
+package IDs and historical review narrative.
+
+## Status review — 2026-10-29
+
+Verdict: **INCOMPLETE.** The plan's own source gate fails, T8 closure is not
+achievable as specified because its launcher was deliberately removed, and T5–T7
+have no attributable closure evidence. Checkout reviewed: branch
+`feat/storybook-coverage-remediation`, HEAD `199a7350`. This review re-ran only
+the checks listed below; nothing else was re-executed.
+
+### Checks run in this review
+
+| Check                                                                                                                                                                             | Result                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `npm run type-check`                                                                                                                                                              | Pass (exit 0)                                         |
+| `npm run test:unit` for `tests/unit/storybook` plus the vitestTopology, storybookVitestContract, storybookRuntimePolicy, storybookEndpoint and storybookCoverageLint config tests | Pass: 27 files, 216 tests                             |
+| `node scripts/storybook-coverage.mjs --mode source` (T8 gate 4)                                                                                                                   | **Fail (exit 1): 659 `EVIDENCE_MISSING` findings**    |
+| File-existence check of every file the T4, T6, T7 and T8 file tables promise                                                                                                      | T4 complete; T6, T7 and T8 launcher/test files absent |
+
+Not run in this review, so their status is NOT VERIFIED: `npm run lint`,
+`lint:mdx`, `build-storybook`, `verify-storybook-docs.mjs`, native MCP
+`test-run`, Storybook BDD and app BDD.
+
+### Source gate failures (659)
+
+- 325 findings: `reviewed source digest is stale`. Source files changed after
+  their manifest claims were reviewed, so the claims need re-review.
+- 330 findings: `story export has no play property`. The referenced story
+  exports have no `play` function, so the baseline claim has no executable
+  assertion. Many are in route-module records (measurementReport, quotation,
+  requestForQuote, ta, sign-in/sign-out).
+- 4 findings: `discovered export has no reviewed claim` (`FilterMenuProps`,
+  `isBreakTag`, `isEmptyParagraphContent`, `useInstrumentAndRequestLookups`).
+
+The manifest itself exists and parses: schemaVersion 1, 667 records (233 direct,
+93 consumer, 1 forwarding, 340 nonvisual).
+
+The follow-on plan
+[2026-10-20-storybook-coverage-manifest-resolution.md](2026-10-20-storybook-coverage-manifest-resolution.md)
+owns the manifest claim queue. It reported 621 remaining diagnostics on
+2026-10-20; the count is 659 at HEAD `199a7350`, so the queue has grown since
+then rather than shrunk.
+
+### T8 launcher removed by decision
+
+Commit `159b4b04` (2026-10-29, "remove storybook closure references and related
+tests") deleted `scripts/storybook-closure.mjs`, all of
+`scripts/storybook-closure/`, `closureOrchestration.test.ts`,
+`closureModules.test.ts` and the closure diagnostics in
+`vitest.storybook.runtime.ts`, and edited `.github/workflows/pr.yml`. The RT7
+contract in this plan (owned producer identity, ACL write-denial freeze, serial
+eight-gate launcher) is therefore no longer implemented anywhere in the
+repository.
+
+The files under `reports/storybook-coverage/` (receipts, frozen indexes,
+`mcp-complete.json`, dated 2026-10-19 to 2026-10-27) were produced by that
+launcher against earlier source. They predate the current source changes, were
+not re-validated here, and cannot be reproduced. They are not closure evidence.
+
+Decision (2026-10-29, user): T8 becomes a **simplified local closure**. The
+ACL-freeze launcher, owned producer/child identity and write-denial freeze (RT7
+and the `scripts/storybook-closure.mjs` interface) are withdrawn from this plan,
+matching commit `159b4b04`. The remaining T8 contract is: run the serial gates
+1–8 by hand against one commit, hash inputs with `computeInputDigest` before and
+after, call native MCP `test-run` serially with a11y enabled and keep the
+exact-ID receipts, and report planned versus executed results separately.
+Receipts from the removed launcher are discarded. Because the write-denial
+freeze is withdrawn, closure can only claim "no input change between the
+boundary hashes", not immutability during the run. RT7 is superseded; RT1–RT6
+stand.
+
+### Package status
+
+| Package | Status        | Basis                                                                                                                                       |
+| ------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| T1      | Not verified  | Unit tests pass, but native structured MCP execution and cold/warm/repeat receipts are unreproduced; the producer-identity launcher is gone |
+| T2      | Incomplete    | Manifest and validators exist and unit tests pass, but source mode exits 1 with 659 findings                                                |
+| T3      | Not verified  | Not re-checked beyond the unit tests; rendered ownership, Guard table and stable-ID checks were not re-run                                  |
+| T4      | Files present | All seven story files exist; their stories were not re-executed in this review                                                              |
+| T5      | Incomplete    | No attributable evidence; the source gate reports missing play assertions and stale digests                                                 |
+| T6      | Incomplete    | None of the ten proposed route story files exist and the manifest does not justify their absence under the source gate                      |
+| T7      | Incomplete    | None of the five proposed shell story files exist; same source-gate failures                                                                |
+| T8      | Blocked       | Launcher, closure tests and orchestration removed; no fresh eight-gate result                                                               |
+
+### Progress after the review — 2026-10-29
+
+Source mode still exits 1, now with 207 findings (was 659): 58 stale digests and
+149 marker findings.
+
+1. **T8 decision:** recorded above.
+2. **Stale digests (325 → 58 records).** The cause was commit `3e25186c`, a
+   formatting pass. For each stale file I located the git revision whose hash
+   matched the recorded digest and compared its Prettier-normalised content with
+   HEAD. 150 of 172 files were identical, so their 267 records had only
+   `reviewedSourceDigest` refreshed. The other 22 files changed in substance and
+   are still stale: CommandPalette, useWizardStepController, rhfErrors, Meter,
+   SearchField, Slider, ErrorBoundary and ErrorDisplay, CertificateNumberLookup,
+   OrganisationNameLookup and its suggestionUtils, SlateEditor, TextAreaInput,
+   RhfTextAreaInput, BranchSelectorModal, ErrorSummary, WizardRoutedStep,
+   dashboard/index, instrumentAndRequest, services-we-offer/index,
+   supportingDocuments and routes/common/helperFunctions. Each needs a human
+   re-review of the claim against the new source.
+3. **330 play-less findings were a validator gap, not missing assertions.** The
+   stories were migrated to CSF Factories (`meta.story({ ... })`), which
+   `findPlayProperty` did not recognise. It now resolves the config object of a
+   `.story(...)` call. Tests added in `storyEvidence.test.ts` first (RED), then
+   the fix (GREEN); a `meta.story` story with no `play`, or with a play lacking
+   the marker, is still rejected.
+4. **Marker rule relaxed to its intended meaning.** The 2026-10-23 hardening
+   (`0a13927b`) required the marker to be a direct string argument of an
+   assertion call, which rejected `expect(canvas.getByText('marker'))`. The
+   marker may now appear anywhere inside an assertion call's arguments; a
+   literal outside any assertion still fails (tested). This cut 301 marker
+   findings to 149 findings across 64 distinct story/marker pairs.
+5. **Four unclaimed exports:** added as reviewed `nonvisual` records
+   (`FilterMenuProps`, `isBreakTag`, `isEmptyParagraphContent`,
+   `useInstrumentAndRequestLookups`); each has a unit test. Source mode no
+   longer reports any missing claim.
+
+Checks after these changes: `storyEvidence.test.ts` 13/13;
+`tests/unit/storybook` plus `storybookCoverageLint` 23 files, 168 tests;
+Prettier and ESLint (including the dedicated coverage-script config) clean.
+
+### Marker findings cleared — 2026-10-29 (later)
+
+Decision taken: hybrid of options (b) and (c). Source mode now reports 58
+findings, all `reviewed source digest is stale` (the 22 substantively changed
+files); marker findings are 0.
+
+- **Validator:** a marker is also accepted as the argument of a matcher chained
+  from `expect(...)` (for example `toHaveAccessibleName('x')`,
+  `toHaveValue('x')`, `not.toHaveTextContent('x')`), tested in
+  `storyEvidence.test.ts`. A literal passed to a non-assertion call is still
+  rejected. This cleared 19 of the 64 pairs without touching any story.
+- **Stories (28 files):** 31 pairs were fixed by inlining an existing locator
+  into the `expect` that already asserted it, and by removing the `const` that
+  became unused. The remaining 14 pairs got one added assertion each, such as
+  `toHaveAccessibleName('Save changes')` for the AriaButton and Button Primary
+  stories.
+- **Checks:** ESLint with `--max-warnings 0` (the repo applies
+  `vitest.configs.all` to stories and tests) and Prettier pass on every touched
+  file; the 41 Storybook test files that match the changed stories pass (106
+  tests); `tests/unit/storybook` plus `storybookCoverageLint` pass (23 files,
+  171 tests); `npm run type-check` passes. This used the Storybook Vitest
+  project, not native MCP `test-run`; the MCP server was not running.
+
+An earlier cleanup script removed whole story exports from 25 files (it matched
+the outermost variable statement). Those files were restored from HEAD with
+`git restore`, the codemod was re-run with an innermost-declaration guard and an
+export-count check, and the final diff was reviewed.
+
+### Stale digests re-reviewed and gates run — 2026-10-29 (latest)
+
+The 22 substantively changed sources were diffed (Prettier-normalised) against
+the version each record originally reviewed. Most changes are behaviour-
+preserving hardening (`.at()`, `Reflect.get`, `Object.defineProperty`, a `Map`
+in `ErrorDisplay`, a shared `removeSupplementaryPlaneCharacters`). Behaviour-
+touching changes: CommandPalette/SearchField focus via forwarded ref and a
+dialog `aria-label`; Meter no longer maps `label` to `aria-label`;
+CertificateNumberLookup's sort is now `localeCompare`; SlateEditor's character
+count is model-level; Dashboard clears its notification in an effect. The 17
+story files owning those claims pass (41 tests), then all 58 digests were
+refreshed with reviewer and rationale updated.
+
+| Gate                                           | Result                                                                                         |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `--mode source`                                | exit 0                                                                                         |
+| `type-check`, ESLint, `lint:mdx`, `lint:rules` | pass                                                                                           |
+| `test:unit`                                    | 261 files, 2,898 tests pass                                                                    |
+| `test:storybook`                               | 150 files, 372 tests pass                                                                      |
+| `storybook:verify:docs`                        | pass                                                                                           |
+| `format:check`                                 | fails on `CLAUDE.md` only (uncommitted edit outside this work)                                 |
+| `validate:json`                                | fails on `eslint-configs.-policy.json` (invalid at line 3891; identical to HEAD, pre-existing) |
+| Native MCP `test-run`, Storybook/app BDD       | not run (MCP server down; BDD not attempted)                                                   |
+
+### Remaining actions
+
+Native MCP `test-run` (a11y on, exact story IDs) was run later the same day
+against the 17 stories behind the re-reviewed claims: 17/17 component tests
+pass, a11y 15 pass / 2 warnings / 0 errors. The warnings are
+`components-slateeditor--default` (`target-size`, 3 nodes) and
+`routes-typeapproval-supportingdocuments--edit-step` (`color-contrast-enhanced`,
+1 node). Both are visual/design findings and were not changed without user
+approval. A full-suite `test-run` (no story filter) failed to start the runner
+and took the server down; it was not retried.
+
+1. Fix or accept the two pre-existing failures above.
+2. Decide on the two a11y warnings; run the full-suite native `test-run` and the
+   Storybook/app BDD suites; complete T5–T7 evidence lanes and T8 closure.
+
+### Superseded: open decision (resolved above)
+
+The remaining 64 pairs record a marker that only appears in a locator query such
+as `canvas.getByRole('button', { name: 'Save changes' })` which is not itself
+inside `expect(...)`. Locator queries throw when nothing matches, so they are an
+implicit assertion, but the 2026-10-23 hardening deliberately did not count
+them. Choose one: (a) accept `getBy*`/`findBy*` queries in a play function as
+assertions, (b) re-point each claim's marker to a literal that is inside an
+`expect`, or (c) add an explicit `expect` to each story.
+
+1. Decide among (a)–(c) and clear the 64 pairs.
+2. Re-review the 22 substantively changed source files and refresh their
+   digests.
+3. Re-run `--mode source` to exit 0, then lint, `lint:mdx`, docs verification,
+   native MCP `test-run` (serial, a11y on, exact IDs) and Storybook/app BDD, and
+   record the results here. None of these were run for this progress update.
+
+The user-owned uncommitted change to
+`ClientApp/src/components/AriaComponents/ToolTip/Tooltip.stories.tsx` is outside
+this plan and was not touched.
 
 ## Goal and confirmed premise
 
@@ -2665,6 +2878,9 @@ models; per-phase JSON parsing/eight unique task IDs; exactly one terminal
 report; diff whitespace and unchanged application source. All checks must be
 rerun after relevant edits. Runtime/install/permission/maintainer prerequisites
 remain mandatory before implementation closure.
+
+CURRENT VERDICT (2026-10-29): INCOMPLETE. See the status review near the top of
+this document; the paragraphs below are historical.
 
 HISTORICAL VERDICT (2026-10-15): PLANNING RECOMMENDATIONS APPLIED; RETEST
 EVIDENCE AND THEN-CURRENT SCORES ARE IN THE LINKED ARTIFACTS. Sufficient

@@ -28,12 +28,9 @@ export const DashboardStatuses = meta.story({
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Wait for useEffect to flush and badges to become visible
-    const quoteAvailableBadge = await canvas.findByText(
-      'Quote offer is available',
-    );
-
-    await expect(quoteAvailableBadge).toBeVisible();
+    await expect(
+      await canvas.findByText('Quote offer is available'),
+    ).toBeVisible();
 
     const quoteAcceptedBadge = await canvas.findByText(
       'Quote offer is accepted',

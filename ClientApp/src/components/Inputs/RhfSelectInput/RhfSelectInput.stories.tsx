@@ -35,7 +35,9 @@ export const Default = meta.story({
     const canvas = within(canvasElement);
     const select = canvas.getByRole('combobox', { name: 'Category' });
 
-    await expect(select).toHaveValue('');
+    await expect(
+      canvas.getByRole('combobox', { name: 'Category' }),
+    ).toHaveValue('');
 
     await userEvent.selectOptions(select, 'Manuals');
 

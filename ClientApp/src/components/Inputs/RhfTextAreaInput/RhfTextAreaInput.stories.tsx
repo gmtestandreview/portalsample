@@ -30,7 +30,9 @@ export const Default = meta.story({
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Packaging notes (optional)');
 
-    await expect(input).toHaveValue('Fragile');
+    await expect(
+      canvas.getByLabelText('Packaging notes (optional)'),
+    ).toHaveValue('Fragile');
 
     await user.clear(input);
     await user.type(input, 'Keep dry');

@@ -24,6 +24,9 @@ export const Example = meta.story({
     const cells = canvas.getAllByRole('gridcell');
 
     await expect(rangeCalendar).toBeInTheDocument();
+    await expect(rangeCalendar).toHaveAccessibleName(
+      expect.stringContaining('Trip dates'),
+    );
     await expect(cells.length).toBeGreaterThan(0);
   },
 });

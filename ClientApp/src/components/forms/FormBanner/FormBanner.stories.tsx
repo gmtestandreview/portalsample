@@ -80,7 +80,9 @@ export const GoToDashboard = meta.story({
       'form-go-to-dashboard-portal-button',
     );
 
-    await expect(dashboardLink).toBeInTheDocument();
+    await expect(
+      canvas.getByTestId('form-go-to-dashboard-portal-button'),
+    ).toBeInTheDocument();
     await expect(dashboardLink).toHaveTextContent(/go to dashboard/i);
   },
 });

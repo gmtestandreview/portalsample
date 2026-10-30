@@ -48,7 +48,9 @@ export const Disabled = meta.story({
   play: async ({ args, canvas, userEvent }) => {
     const link = canvas.getByRole('link', { name: 'Unavailable resource' });
 
-    await expect(link).toHaveAttribute('aria-disabled', 'true');
+    await expect(
+      canvas.getByRole('link', { name: 'Unavailable resource' }),
+    ).toHaveAttribute('aria-disabled', 'true');
 
     await userEvent.click(link);
 

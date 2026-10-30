@@ -29,6 +29,8 @@ export const Example = meta.story({
       'aria-hidden',
       'true',
     );
-    await expect(panelText).toBeInTheDocument();
+    await expect(
+      canvas.getByText('Details on managing your account'),
+    ).toBeInTheDocument();
   },
 });

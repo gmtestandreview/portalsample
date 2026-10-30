@@ -46,6 +46,11 @@ export const OrganisationDetails = meta.story({
     const tradingName = canvas.getByLabelText(
       'Business or Trading name (optional)',
     );
+
+    await expect(tradingName).toHaveAccessibleName(
+      'Business or Trading name (optional)',
+    );
+
     await userEvent.clear(tradingName);
     await userEvent.type(tradingName, 'Prec');
 

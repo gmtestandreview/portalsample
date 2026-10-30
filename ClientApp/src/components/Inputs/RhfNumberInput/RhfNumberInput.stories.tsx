@@ -33,7 +33,9 @@ export const Phone = meta.story({
 
     await user.type(input, '0291234567');
 
-    await expect(input).toHaveValue('02 9123 4567');
+    await expect(
+      canvas.getByLabelText('Carrier contact phone (optional)'),
+    ).toHaveValue('02 9123 4567');
   },
 });
 

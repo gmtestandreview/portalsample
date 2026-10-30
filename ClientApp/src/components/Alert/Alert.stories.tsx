@@ -59,8 +59,8 @@ export const ErrorDismissible = meta.story({
     canClose: true,
   },
   play: async ({ canvas }) => {
-    const closeButton = canvas.getByRole('button', { name: 'Close alert' });
-
-    await expect(closeButton).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'Close alert' }),
+    ).toBeVisible();
   },
 });

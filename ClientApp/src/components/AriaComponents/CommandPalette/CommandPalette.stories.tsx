@@ -53,7 +53,6 @@ export const Example = meta.story({
     await userEvent.click(trigger);
 
     const body = within(canvasElement.ownerDocument.body);
-    const menu = body.getByRole('menu', { name: 'Suggestions' });
     const menuItem = body.getByRole('menuitem', {
       name: 'Create new file...',
     });
@@ -64,7 +63,9 @@ export const Example = meta.story({
     await expect(menuItem).toBeInTheDocument();
     await expect(searchInput).toHaveFocus();
     await expect(searchInput).not.toHaveAttribute('aria-activedescendant');
-    await expect(menu).toHaveAttribute('tabindex', '0');
+    await expect(
+      body.getByRole('menu', { name: 'Suggestions' }),
+    ).toHaveAttribute('tabindex', '0');
 
     await userEvent.tab();
 

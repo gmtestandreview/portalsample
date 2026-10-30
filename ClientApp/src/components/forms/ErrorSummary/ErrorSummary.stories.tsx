@@ -100,9 +100,8 @@ export const ConflictError = meta.story({
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const alert = canvas.getByTestId('form-error-summary');
 
-    await expect(alert).toBeInTheDocument();
+    await expect(canvas.getByTestId('form-error-summary')).toBeInTheDocument();
     await expect(
       canvas.getByText(/another person has already saved this page/i),
     ).toBeVisible();

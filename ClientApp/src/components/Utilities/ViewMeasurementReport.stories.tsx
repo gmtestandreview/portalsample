@@ -37,6 +37,7 @@ export const Default = meta.story({
     });
 
     await expect(button).toBeVisible();
+    await expect(button).toHaveAccessibleName('View measurement report');
     await expect(
       canvas.getByText(/Requires Acrobat PDF reader - PDF file size 2\.00Kb/),
     ).toBeVisible();

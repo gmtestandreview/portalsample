@@ -31,11 +31,11 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   play: async ({ canvas }) => {
-    const option = await canvas.findByRole('option', {
-      name: 'National Measurement Institute',
-    });
-
-    await expect(option).toBeVisible();
+    await expect(
+      await canvas.findByRole('option', {
+        name: 'National Measurement Institute',
+      }),
+    ).toBeVisible();
   },
 });
 

@@ -37,10 +37,11 @@ const meta = preview.meta({
 
 export const EditStep = meta.story({
   play: async ({ canvas }) => {
-    const organisationType = await canvas.findByText('Organisation type');
     const organisationName = await canvas.findByLabelText(/organisation name/i);
 
-    await expect(organisationType).toBeInTheDocument();
+    await expect(
+      await canvas.findByText('Organisation type'),
+    ).toBeInTheDocument();
     await expect(organisationName).toBeInTheDocument();
   },
 });

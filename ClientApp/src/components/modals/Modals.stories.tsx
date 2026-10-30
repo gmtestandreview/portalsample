@@ -160,6 +160,9 @@ export const ConfirmationClosed = meta.story({
     const openButton = await canvas.findByRole('button', {
       name: 'Open confirmation modal',
     });
+
+    await expect(openButton).toHaveAccessibleName('Open confirmation modal');
+
     await userEvent.click(openButton);
     // Modal renders via React Bootstrap portal into document.body — use screen
     const dialog = await screen.findByRole('dialog', {

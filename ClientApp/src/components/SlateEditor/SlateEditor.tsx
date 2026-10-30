@@ -115,6 +115,9 @@ const renderHtmlBody = (html: string) => {
   return parse(safeHtml);
 };
 
+// WCAG 2.2 target size (minimum): the B/I/U glyphs alone render narrower than 24px.
+const TOOLBAR_BUTTON_MIN_WIDTH_PX = 24;
+
 const ToolbarButton = ({
   format,
   icon,
@@ -129,6 +132,7 @@ const ToolbarButton = ({
   <button
     type='button'
     className='btn btn-light btn-sm me-2'
+    style={{ minWidth: TOOLBAR_BUTTON_MIN_WIDTH_PX }}
     onMouseDown={(event) => {
       event.preventDefault();
       toggleMark(editor, format);

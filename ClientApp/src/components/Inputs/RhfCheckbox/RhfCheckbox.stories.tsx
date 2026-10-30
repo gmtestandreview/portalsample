@@ -32,7 +32,11 @@ export const Default = meta.story({
       'Yes, on behalf of my organisation, I accept the quotation',
     );
 
-    await expect(checkbox).not.toBeChecked();
+    await expect(
+      canvas.getByLabelText(
+        'Yes, on behalf of my organisation, I accept the quotation',
+      ),
+    ).not.toBeChecked();
 
     await user.click(checkbox);
 

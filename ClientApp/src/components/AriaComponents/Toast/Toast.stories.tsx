@@ -134,7 +134,11 @@ function MyToastRegion() {
       await expect(page.getByText(args.description)).toBeVisible();
     }
 
-    await userEvent.click(page.getByRole('button', { name: 'Close' }));
+    const closeButton = page.getByRole('button', { name: 'Close' });
+
+    await expect(closeButton).toHaveAccessibleName('Close');
+
+    await userEvent.click(closeButton);
 
     await waitFor(async () => {
       await expect(page.queryByText(args.title)).not.toBeInTheDocument();

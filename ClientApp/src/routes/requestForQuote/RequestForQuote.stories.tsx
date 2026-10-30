@@ -101,10 +101,13 @@ export const InstrumentAndRequestStep = meta.story({
       canvas.getByRole('option', { name: 'Digital thermometer' }),
     ).toBeInTheDocument();
 
-    const availabilityDate = canvas.getByLabelText(
-      'Preferred Instrument/artefact availability date (optional)',
+    await waitFor(() =>
+      expect(
+        canvas.getByLabelText(
+          'Preferred Instrument/artefact availability date (optional)',
+        ),
+      ).toHaveValue('01/06/2026'),
     );
-    await waitFor(() => expect(availabilityDate).toHaveValue('01/06/2026'));
   },
 });
 

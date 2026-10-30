@@ -1801,14 +1801,33 @@ const unwrapExpression = (expression) => {
   return current;
 };
 
-const findPlayProperty = (storyDeclaration) => {
+// CSF Factories declare a story as `meta.story({ ... })`; the story config is
+// the call's first argument.
+const FACTORY_STORY_METHOD = 'story';
+
+const storyConfigObject = (storyDeclaration) => {
   const initializer =
     ts.isVariableDeclaration(storyDeclaration) && storyDeclaration.initializer
       ? unwrapExpression(storyDeclaration.initializer)
       : undefined;
-  if (!initializer || !ts.isObjectLiteralExpression(initializer)) {
+  if (!initializer) return undefined;
+  if (ts.isObjectLiteralExpression(initializer)) return initializer;
+  if (
+    !ts.isCallExpression(initializer) ||
+    !ts.isPropertyAccessExpression(initializer.expression) ||
+    initializer.expression.name.text !== FACTORY_STORY_METHOD
+  ) {
     return undefined;
   }
+  const config = initializer.arguments[0]
+    ? unwrapExpression(initializer.arguments[0])
+    : undefined;
+  return config && ts.isObjectLiteralExpression(config) ? config : undefined;
+};
+
+const findPlayProperty = (storyDeclaration) => {
+  const initializer = storyConfigObject(storyDeclaration);
+  if (!initializer) return undefined;
   return initializer.properties.find((property) => {
     if (
       !ts.isPropertyAssignment(property) &&
@@ -1846,23 +1865,59 @@ const isAssertionCall = (expression) => {
   );
 };
 
+const containsStringLiteral = (node, expected) => {
+  let found = false;
+  const visit = (candidate) => {
+    if (found) return;
+    if (ts.isStringLiteral(candidate) && candidate.text === expected) {
+      found = true;
+      return;
+    }
+    ts.forEachChild(candidate, visit);
+  };
+  visit(node);
+  return found;
+};
+
+// True when a callee is `expect(...)` itself or a matcher chained from it, such
+// as `expect(x).not.toHaveAttribute`.
+const isAssertionChain = (callee) => {
+  if (isAssertionCall(callee)) return true;
+  let current = callee;
+  while (current) {
+    if (ts.isCallExpression(current)) {
+      if (isAssertionCall(current.expression)) return true;
+      current = current.expression;
+    } else if (ts.isPropertyAccessExpression(current)) {
+      current = current.expression;
+    } else if (ts.isAwaitExpression(current)) {
+      current = current.expression;
+    } else if (ts.isParenthesizedExpression(current)) {
+      current = current.expression;
+    } else {
+      return false;
+    }
+  }
+  return false;
+};
+
+// The marker must appear inside an assertion call's arguments or a chained
+// matcher's arguments, including a nested locator such as
+// `expect(canvas.getByText('marker'))`. A literal outside any assertion does not
+// count.
 const hasAssertionMarker = (node, expected) => {
   let found = false;
   const visit = (candidate) => {
     if (found) return;
     if (
       ts.isCallExpression(candidate) &&
-      isAssertionCall(candidate.expression)
+      isAssertionChain(candidate.expression) &&
+      candidate.arguments.some((argument) =>
+        containsStringLiteral(argument, expected),
+      )
     ) {
-      if (
-        candidate.arguments.some(
-          (argument) =>
-            ts.isStringLiteral(argument) && argument.text === expected,
-        )
-      ) {
-        found = true;
-        return;
-      }
+      found = true;
+      return;
     }
     ts.forEachChild(candidate, visit);
   };

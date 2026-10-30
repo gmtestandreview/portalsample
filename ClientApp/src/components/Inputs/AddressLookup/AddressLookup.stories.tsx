@@ -95,6 +95,9 @@ export const Default = meta.story({
     });
 
     await expect(addressOption).toBeVisible();
+    await expect(addressOption).toHaveAccessibleName(
+      '1 Main Street, Canberra ACT 2600 (1 of 2)',
+    );
 
     await user.click(addressOption);
 

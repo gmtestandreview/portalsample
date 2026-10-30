@@ -25,7 +25,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation identifies CustomAccordion as the accordion container, and the exact generated index entry and passing MCP receipt identify the reviewed story.",
-        "reviewedSourceDigest": "sha256:253109a329e0ebfca2399bdb67a6c592c247ad31247944f5aa689245d6cb5f29"
+        "reviewedSourceDigest": "sha256:882f1d610c40dc7d448cd1892af45a4ce99de747ae2620b7d8c0f786d6037cfe"
       }
     },
     {
@@ -52,7 +52,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation explicitly describes CustomAccordionBody as the item demonstrated by the Accordion stories; the exact generated index entry and passing MCP receipt identify the reviewed story.",
-        "reviewedSourceDigest": "sha256:253109a329e0ebfca2399bdb67a6c592c247ad31247944f5aa689245d6cb5f29"
+        "reviewedSourceDigest": "sha256:882f1d610c40dc7d448cd1892af45a4ce99de747ae2620b7d8c0f786d6037cfe"
       }
     },
     {
@@ -226,7 +226,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation identifies the text and icon variants, and the generated index entries plus passing MCP receipts identify the reviewed stories.",
-        "reviewedSourceDigest": "sha256:627812cdac115b4ed5597180088dbc5a8a1d31fd765eae254cdea218cfd3f4e6"
+        "reviewedSourceDigest": "sha256:656058d95baa1018eb9a6781282d5ee76550f6be4d0c408b233a36ebdafcc2dc"
       }
     },
     {
@@ -240,7 +240,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration is an interface used to type dropdown item data, while MCP documentation demonstrates the data through the Actions component rather than exposing it as a standalone UI export.",
-        "reviewedSourceDigest": "sha256:627812cdac115b4ed5597180088dbc5a8a1d31fd765eae254cdea218cfd3f4e6"
+        "reviewedSourceDigest": "sha256:656058d95baa1018eb9a6781282d5ee76550f6be4d0c408b233a36ebdafcc2dc"
       }
     },
     {
@@ -294,7 +294,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation identifies Breadcrumbs and the Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
-        "reviewedSourceDigest": "sha256:e5f4799f6b14b3bd8fa977438fc0c1f7e0e40c83ae87418552b516676c6375eb"
+        "reviewedSourceDigest": "sha256:e20fc60d0db7500bfb3ad9f08122518b6f40f2868dd80b46e5f8c011c1b5e7d8"
       }
     },
     {
@@ -321,7 +321,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation identifies the Breadcrumb export in the Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
-        "reviewedSourceDigest": "sha256:e5f4799f6b14b3bd8fa977438fc0c1f7e0e40c83ae87418552b516676c6375eb"
+        "reviewedSourceDigest": "sha256:e20fc60d0db7500bfb3ad9f08122518b6f40f2868dd80b46e5f8c011c1b5e7d8"
       }
     },
     {
@@ -457,7 +457,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration is an interface extending the underlying range calendar props and is not emitted as a runtime export; the documented RangeCalendar stories cover the runtime component instead.",
-        "reviewedSourceDigest": "sha256:c51b8d6aefdef25118eb56ddb56a116696148a75d143e225f4f40301c92f153d"
+        "reviewedSourceDigest": "sha256:4256da59542a30771d4a429beed27c5efd698d1ddf38c3f061e454b89e8303d3"
       }
     },
     {
@@ -484,7 +484,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation identifies RangeCalendar and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
-        "reviewedSourceDigest": "sha256:c51b8d6aefdef25118eb56ddb56a116696148a75d143e225f4f40301c92f153d"
+        "reviewedSourceDigest": "sha256:4256da59542a30771d4a429beed27c5efd698d1ddf38c3f061e454b89e8303d3"
       }
     },
     {
@@ -511,7 +511,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export is the CalendarCell used by the documented RangeCalendar story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
-        "reviewedSourceDigest": "sha256:c51b8d6aefdef25118eb56ddb56a116696148a75d143e225f4f40301c92f153d"
+        "reviewedSourceDigest": "sha256:4256da59542a30771d4a429beed27c5efd698d1ddf38c3f061e454b89e8303d3"
       }
     },
     {
@@ -877,7 +877,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "MCP documentation identifies ColorSwatchPicker and its Example story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
-        "reviewedSourceDigest": "sha256:b81cee9203c7b3d30b9b435e292693625a853e073d70fa8d2d7eb1931bd31c9e"
+        "reviewedSourceDigest": "sha256:8f876dde4f2a12155e515e8e8d568d3ae65a4492954911a47e0db31d6d859ac1"
       }
     },
     {
@@ -904,7 +904,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export is the item rendered by the documented ColorSwatchPicker story; the exact generated story ID and passing MCP accessibility run provide the reviewed evidence.",
-        "reviewedSourceDigest": "sha256:b81cee9203c7b3d30b9b435e292693625a853e073d70fa8d2d7eb1931bd31c9e"
+        "reviewedSourceDigest": "sha256:8f876dde4f2a12155e515e8e8d568d3ae65a4492954911a47e0db31d6d859ac1"
       }
     },
     {
@@ -1092,9 +1092,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Storybook documentation identifies the CommandPalette Example story; the browser trace and passing MCP accessibility receipt support the documented disableVirtualFocus focus model without changing the shared Menu or Modal contract.",
-        "reviewedSourceDigest": "sha256:d410b2d321f5177453eaf15cfffd4a37b3c0a9fb53c9e99c9b9215b802274385"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Storybook documentation identifies the CommandPalette Example story; the browser trace and passing MCP accessibility receipt support the documented disableVirtualFocus focus model without changing the shared Menu or Modal contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:2929012bfeac85fbe6ad60c281259cf4f8904bcfd7e934967d11f05ee3f5e513"
       }
     },
     {
@@ -1136,7 +1136,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration is a type alias combining native button attributes with documented styling props; the renderable behavior belongs to the default PrimaryButton export.",
-        "reviewedSourceDigest": "sha256:b099e45e51fa00390b850168d4f66b5c07ac930963f306ee4289a592976fc016"
+        "reviewedSourceDigest": "sha256:686b25aa62fd0f56792b971b7968d6169e9b31ad61ebfabf18e203afe6093113"
       }
     },
     {
@@ -1332,7 +1332,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains Formik values, callbacks, children, banner, discard, and visibility prop types; rendered behavior belongs to the FormikForm implementation.",
-        "reviewedSourceDigest": "sha256:13d278dccb6917513a7cbc86a799b3c233db51144bf22717e1237185edb4f214"
+        "reviewedSourceDigest": "sha256:9463113098a6aeeedff78bf17eaf7b893f4c9f93ab0f37879252d37272215586"
       }
     },
     {
@@ -1360,7 +1360,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only the step-values field type used by wizard data loading; it does not produce runtime UI.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1374,7 +1374,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration combines wizard step, form, and routing prop types; the WizardRoutedStep implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1388,7 +1388,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration defines only the Load and Update error categories consumed by error-handling logic; it does not render UI.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1402,7 +1402,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration enumerates load, redirect, and server-error data shapes; consuming route logic owns any rendered error state.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1416,7 +1416,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains step content, navigation, validation, and banner prop types; the WizardStep implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1430,7 +1430,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only an optional base URL result field; submission consumers own any navigation behavior.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1444,7 +1444,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains form-level children, navigation, confirmation, and error-handler prop types; the WizardForm implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1458,7 +1458,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only step collection, index, title, URL, and class-name types; the control implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1472,7 +1472,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only step collection, index, titles, confirmation, and class-name types; the control implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4bd9ad6f9875f56c79adb9298f3bf3f61bd0d17e43a432d1527b9c9d3af3c9a1"
+        "reviewedSourceDigest": "sha256:d90746a432e28b4f55e0964aaa78a0c4b174998419b6671ac5dc1703e8d15bca"
       }
     },
     {
@@ -1514,7 +1514,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only form context API types; the RhfForm implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4086274f132e9598e921fbddadd9929c9c6b0690f1acb927bcb27042df1f97ef"
+        "reviewedSourceDigest": "sha256:88177ad39bedd1c2f05fd910ab909bcd4f317a04a9385833aa0a0b8e2a73de33"
       }
     },
     {
@@ -1528,7 +1528,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration contains only form prop types; the RhfForm implementation owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:4086274f132e9598e921fbddadd9929c9c6b0690f1acb927bcb27042df1f97ef"
+        "reviewedSourceDigest": "sha256:88177ad39bedd1c2f05fd910ab909bcd4f317a04a9385833aa0a0b8e2a73de33"
       }
     },
     {
@@ -1542,7 +1542,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration is a type-only submission-mode union; resolver logic owns runtime behavior.",
-        "reviewedSourceDigest": "sha256:c652bfd08ae74988a29c78b5cf97d9d19a47bec987f61a61e4323f880301eb6e"
+        "reviewedSourceDigest": "sha256:06dbeaa840a00e33f0d53f9b0a685f36f63ed2da0d9aef2034c003be8241f94c"
       }
     },
     {
@@ -1568,9 +1568,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration is a type-only view-state union used by the step controller; the consuming route owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:b31a996514ddff4f347637696580f71c91fb360123236f4d418353573535351e"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source declaration is a type-only view-state union used by the step controller; the consuming route owns rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:35a5a68855f425d65203fdc48894d2be6ff23bf8705b5b27b05b5c061ca02d6a"
       }
     },
     {
@@ -1582,9 +1582,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration contains only controller state and action types; the hook implementation owns runtime behavior.",
-        "reviewedSourceDigest": "sha256:b31a996514ddff4f347637696580f71c91fb360123236f4d418353573535351e"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source declaration contains only controller state and action types; the hook implementation owns runtime behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:35a5a68855f425d65203fdc48894d2be6ff23bf8705b5b27b05b5c061ca02d6a"
       }
     },
     {
@@ -1596,9 +1596,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export only flattens React Hook Form errors into path/message data; ErrorSummary components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:91a07182ec929ed682acd6751d26234939b6559048a96c648959f46eafadaf9b"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source export only flattens React Hook Form errors into path/message data; ErrorSummary components own rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:9fe32e4ceade514d77e8d2748d9ab470fd4f2fd736c60786c9825b0b09b27166"
       }
     },
     {
@@ -1612,7 +1612,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export maps caught errors to a WizardStepError discriminant; wizard components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:3923a6efc95189714a93c3226e14e8810fad98e4e5839363a34c9b2307ab1d6d"
+        "reviewedSourceDigest": "sha256:eee42ef853745f44f55a70a712f69f73c198c3dedd96d30496c20a585a7b7c90"
       }
     },
     {
@@ -1626,7 +1626,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export is a type-only field-values intersection that adds the wizard save flag; the bridge hook owns runtime behavior.",
-        "reviewedSourceDigest": "sha256:c5545f9b3b79cd664f37f3926780530e317828d1bdfcd0e4445d2230063008f5"
+        "reviewedSourceDigest": "sha256:2d7317dd70cad1cd49d1f283bb874e38e21fbee4af0c36a538951eb17c145ff1"
       }
     },
     {
@@ -1640,7 +1640,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export delegates nested path lookup to Formik and returns data only; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:b42673b80d130ca0b8e03ed0b1b013521f9720d38acb2dcc126f1415c6a3be48"
+        "reviewedSourceDigest": "sha256:d29059ebd91024aa03ef94b00498ba237e7914b78b218fadc3b143010f32693d"
       }
     },
     {
@@ -1654,7 +1654,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export delegates immutable nested updates to Formik and returns data only; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:b42673b80d130ca0b8e03ed0b1b013521f9720d38acb2dcc126f1415c6a3be48"
+        "reviewedSourceDigest": "sha256:d29059ebd91024aa03ef94b00498ba237e7914b78b218fadc3b143010f32693d"
       }
     },
     {
@@ -1668,7 +1668,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export evaluates a hidden-field rule against values and returns a boolean; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:a86fe7b23f73fd5e6d47c2bdd9619d497a36d90c84169acfef2ad8ca59ea6c86"
+        "reviewedSourceDigest": "sha256:11f74588eae11ec63389aa93653454373fd8f0894e0856f32ec7bc4930cb066e"
       }
     },
     {
@@ -1682,7 +1682,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export resolves field, group, and parent hidden rules and returns a boolean; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:a86fe7b23f73fd5e6d47c2bdd9619d497a36d90c84169acfef2ad8ca59ea6c86"
+        "reviewedSourceDigest": "sha256:11f74588eae11ec63389aa93653454373fd8f0894e0856f32ec7bc4930cb066e"
       }
     },
     {
@@ -1696,7 +1696,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export recursively strips hidden fields from form values and returns data only; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:a86fe7b23f73fd5e6d47c2bdd9619d497a36d90c84169acfef2ad8ca59ea6c86"
+        "reviewedSourceDigest": "sha256:11f74588eae11ec63389aa93653454373fd8f0894e0856f32ec7bc4930cb066e"
       }
     },
     {
@@ -1710,7 +1710,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export validates values and maps Yup errors to form-error data; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:a86fe7b23f73fd5e6d47c2bdd9619d497a36d90c84169acfef2ad8ca59ea6c86"
+        "reviewedSourceDigest": "sha256:11f74588eae11ec63389aa93653454373fd8f0894e0856f32ec7bc4930cb066e"
       }
     },
     {
@@ -1724,7 +1724,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export strips hidden fields and empty values from a submit payload; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:a86fe7b23f73fd5e6d47c2bdd9619d497a36d90c84169acfef2ad8ca59ea6c86"
+        "reviewedSourceDigest": "sha256:11f74588eae11ec63389aa93653454373fd8f0894e0856f32ec7bc4930cb066e"
       }
     },
     {
@@ -1738,7 +1738,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export selects save-aware Yup schemas and returns React Hook Form validation results; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:34a873cca4a5ae3648a1627df97d96a9e29ff1235546fcf0e3ac279c880e2156"
+        "reviewedSourceDigest": "sha256:33125c78788e5b5ffdcbc960ff2924d56fa096e601f1026af6ed5466aec30ea0"
       }
     },
     {
@@ -1752,7 +1752,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export selects wizard schemas and converts visible Yup errors to React Hook Form data; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:c652bfd08ae74988a29c78b5cf97d9d19a47bec987f61a61e4323f880301eb6e"
+        "reviewedSourceDigest": "sha256:06dbeaa840a00e33f0d53f9b0a685f36f63ed2da0d9aef2034c003be8241f94c"
       }
     },
     {
@@ -1766,7 +1766,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export coordinates Formik and React Hook Form state and returns form methods; consuming form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:c5545f9b3b79cd664f37f3926780530e317828d1bdfcd0e4445d2230063008f5"
+        "reviewedSourceDigest": "sha256:2d7317dd70cad1cd49d1f283bb874e38e21fbee4af0c36a538951eb17c145ff1"
       }
     },
     {
@@ -1780,7 +1780,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export reads the RhfForm API context and returns submit actions; RhfForm and controls own rendered behavior.",
-        "reviewedSourceDigest": "sha256:4086274f132e9598e921fbddadd9929c9c6b0690f1acb927bcb27042df1f97ef"
+        "reviewedSourceDigest": "sha256:88177ad39bedd1c2f05fd910ab909bcd4f317a04a9385833aa0a0b8e2a73de33"
       }
     },
     {
@@ -1794,7 +1794,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export reports whether the RhfForm API context is present; shell-neutral controls own rendered behavior.",
-        "reviewedSourceDigest": "sha256:4086274f132e9598e921fbddadd9929c9c6b0690f1acb927bcb27042df1f97ef"
+        "reviewedSourceDigest": "sha256:88177ad39bedd1c2f05fd910ab909bcd4f317a04a9385833aa0a0b8e2a73de33"
       }
     },
     {
@@ -1808,7 +1808,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source export tests whether a value is a non-null object and returns a boolean; form components own rendered behavior.",
-        "reviewedSourceDigest": "sha256:b42673b80d130ca0b8e03ed0b1b013521f9720d38acb2dcc126f1415c6a3be48"
+        "reviewedSourceDigest": "sha256:d29059ebd91024aa03ef94b00498ba237e7914b78b218fadc3b143010f32693d"
       }
     },
     {
@@ -1834,9 +1834,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source export coordinates loading, submission, navigation, and error state for a wizard step; WizardStep owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:b31a996514ddff4f347637696580f71c91fb360123236f4d418353573535351e"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source export coordinates loading, submission, navigation, and error state for a wizard step; WizardStep owns rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:35a5a68855f425d65203fdc48894d2be6ff23bf8705b5b27b05b5c061ca02d6a"
       }
     },
     {
@@ -1848,9 +1848,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration only describes the generic command-palette props; CommandPalette owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:d410b2d321f5177453eaf15cfffd4a37b3c0a9fb53c9e99c9b9215b802274385"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source declaration only describes the generic command-palette props; CommandPalette owns rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:2929012bfeac85fbe6ad60c281259cf4f8904bcfd7e934967d11f05ee3f5e513"
       }
     },
     {
@@ -1904,9 +1904,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration only describes Meter props and its optional label; Meter owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:b58cab5f53c5c24f7c0292cb11d60800a35e029569b5fc5c553603a22d7eb3cc"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source declaration only describes Meter props and its optional label; Meter owns rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:e4601c05c6e75bef2f8e955fc1b14fe413bf45a2532dad9b578ea659cf0efe77"
       }
     },
     {
@@ -2002,9 +2002,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration only describes SearchField props, labels, descriptions, placeholders, and validation messaging; SearchField owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:fff015353833e108fe7b0981bb559f0d5f628e5e1bc10c70be6608d3b581e7b6"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source declaration only describes SearchField props, labels, descriptions, placeholders, and validation messaging; SearchField owns rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:b7b547274355d1487bd1da3dcabfbdef88a10569d936766c7a3c957203a0388a"
       }
     },
     {
@@ -2030,9 +2030,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source declaration only describes generic slider values, labels, thumb labels, and fill offset; Slider owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:771d7440e96c0bfb514a83e5879587a820bb647f57cd247caaa5fbb6cca65615"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source declaration only describes generic slider values, labels, thumb labels, and fill offset; Slider owns rendered behavior. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:6b78718dd770b8eb1a37ef4409fd36a7740c562148e53c30507449328472855c"
       }
     },
     {
@@ -2116,7 +2116,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source declaration only describes optional tree-item title and inherited item props; TreeItem owns rendered behavior.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -2158,7 +2158,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:20726295c1ca904a0ca65ac50dc4f120c19263e0c138a87a58ce8f735989f6ce"
+        "reviewedSourceDigest": "sha256:715396ce60c80c8a90b6b64447ad6eb8ca4fcee8c890ba6389933488a0e574a9"
       }
     },
     {
@@ -2172,7 +2172,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:20726295c1ca904a0ca65ac50dc4f120c19263e0c138a87a58ce8f735989f6ce"
+        "reviewedSourceDigest": "sha256:715396ce60c80c8a90b6b64447ad6eb8ca4fcee8c890ba6389933488a0e574a9"
       }
     },
     {
@@ -2184,9 +2184,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:619e77cb570afb5b676f2bfd2a552c00d735c805c75498c4a41669b29528aca8"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:11f03cec2830ded82cf6300ccad73249d212878f12f5c2357792c71555c669e1"
       }
     },
     {
@@ -2338,9 +2338,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:41a8c0a104da242b82480f17357f8a59fcf6a542753e8cc0596d43714fb5f8a1"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:1cc10b5aa191fb03cb53b62d29ec053fd29be432e429d66986d5704be8268bc1"
       }
     },
     {
@@ -2492,9 +2492,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:68fc345a3874ea0477d34c9968ac155f6cd8a57167abdb6f09003031389bbe89"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:4a81fcb1147e7779963b37699b298c0223dedb43f5975d941177159cf64ebcc0"
       }
     },
     {
@@ -2760,7 +2760,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:dc7489bc5112b9908b23b68a30acf25a764b46c13880395a1b41a32b110273b6"
+        "reviewedSourceDigest": "sha256:46367a6bcd7b10d0ef4131a9b2aa4a2c2dd09e0e745401e9b9e60aa2e55af8ca"
       }
     },
     {
@@ -2788,7 +2788,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:ab87eb65a569b6ab8ab2528014d14cd984f0ac92b7abdda4eaf6cd7d685162e9"
+        "reviewedSourceDigest": "sha256:a633fdc46ad9ce8cfdd6967179ef92edbf3bdcd3706a1af143f5f82cc8979624"
       }
     },
     {
@@ -2802,7 +2802,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:ab87eb65a569b6ab8ab2528014d14cd984f0ac92b7abdda4eaf6cd7d685162e9"
+        "reviewedSourceDigest": "sha256:a633fdc46ad9ce8cfdd6967179ef92edbf3bdcd3706a1af143f5f82cc8979624"
       }
     },
     {
@@ -2974,6 +2974,20 @@
       }
     },
     {
+      "source": "ClientApp/src/components/SearchFilter/types.ts",
+      "export": "FilterMenuProps",
+      "classification": "nonvisual",
+      "owner": "FilterMenuProps",
+      "reason": "This export is a type-only alias of SearchFilterProps, re-exported through filterMenuProps.ts for FilterMenu, and has no runtime component or independently renderable Storybook surface.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The alias resolves to the SearchFilterProps interface already classified nonvisual in this file; the FilterMenu component that consumes it carries the rendered-state claim.",
+        "reviewedSourceDigest": "sha256:93935cc2cca6e16fc3124cc1329b3927266e5208cd7624251ae1bd7946e7c901"
+      }
+    },
+    {
       "source": "ClientApp/src/components/SlateEditor/SlateEditor.tsx",
       "export": "CustomElement",
       "classification": "nonvisual",
@@ -2982,9 +2996,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:c2a3f4c1deb82c257542e42698a2e8d96b59f72c78c4afcf81c0715b2d92f006"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:14bdc984d8254c6ace2a276f66b3eb929d03f66c14a3e7fb322451e60189d6bd"
       }
     },
     {
@@ -3152,7 +3166,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:1e14a90a648bc8cc04271be769da65766d3841f7856254ad9dafc7bfa994aa36"
+        "reviewedSourceDigest": "sha256:739b061c254e40d8177bf142ed6ca3fae47e4d83e559726fa1f3ac4bb8e7602a"
       }
     },
     {
@@ -3180,7 +3194,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:1cefb320e1cd06ba6f8e18de8821b223a3406fee947b541e2b10718a2caeb7c5"
+        "reviewedSourceDigest": "sha256:86df9e731a6a80f3268cc67bbfca80009af86f84044f961973e6fcdf6c1beed0"
       }
     },
     {
@@ -3194,7 +3208,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:3c05bba0b64702fe5f33d84803119259496dd686c5400bd69c586d827bbdf092"
+        "reviewedSourceDigest": "sha256:d86cc6e1430924f7f7da22e63ea50876d20e28d11853223cf16dcd043c9de0f6"
       }
     },
     {
@@ -3208,7 +3222,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:66cd8c7d1b1c011e90cf692ff13b8a9eeaac8b79c3955cdc9f0efdcbed485f7b"
+        "reviewedSourceDigest": "sha256:2263abb97ebb34f9e3497b5f3fab10bcfdef5e40aa08f5833b0b9f0b7ebe50dd"
       }
     },
     {
@@ -3418,7 +3432,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:112e5ff1b03fb94500f19c2f8b9eeeae1179ece74184b9780ffa427f4a3df853"
+        "reviewedSourceDigest": "sha256:b739a2445fe705ec917f76201a3165fe05219c8f5a53448e7f3b197445e5e5c9"
       }
     },
     {
@@ -3446,7 +3460,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:14081199d37bbb6559b7ce2102fefc9cc39d085350fce4b96417c54cc7857f9b"
+        "reviewedSourceDigest": "sha256:ac04773331ad674e5b53eed8269998cb24c6ba86da39a6787803e9cc185589d2"
       }
     },
     {
@@ -3460,7 +3474,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:14081199d37bbb6559b7ce2102fefc9cc39d085350fce4b96417c54cc7857f9b"
+        "reviewedSourceDigest": "sha256:ac04773331ad674e5b53eed8269998cb24c6ba86da39a6787803e9cc185589d2"
       }
     },
     {
@@ -3474,7 +3488,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:14081199d37bbb6559b7ce2102fefc9cc39d085350fce4b96417c54cc7857f9b"
+        "reviewedSourceDigest": "sha256:ac04773331ad674e5b53eed8269998cb24c6ba86da39a6787803e9cc185589d2"
       }
     },
     {
@@ -3488,7 +3502,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:865527f2d4797fbee75e6b3697f1b38b34e5d9ec33afd149f31b76c3a4d2102a"
+        "reviewedSourceDigest": "sha256:9153733a2aeafc845271013bad3f732f21d9a75bb6c7e5089d48da29d99234ad"
       }
     },
     {
@@ -3558,7 +3572,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:a21c55d800fa66f3deb8e567804220e4471c71fec05104c75a83a87c240654f4"
+        "reviewedSourceDigest": "sha256:dfa902e5dccba57f0eb8ddbc78aa328fc2687e57ae645dae7f8255d730f377d0"
       }
     },
     {
@@ -3572,7 +3586,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:a21c55d800fa66f3deb8e567804220e4471c71fec05104c75a83a87c240654f4"
+        "reviewedSourceDigest": "sha256:dfa902e5dccba57f0eb8ddbc78aa328fc2687e57ae645dae7f8255d730f377d0"
       }
     },
     {
@@ -3586,7 +3600,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:394a44fedf19c34c8ffd99c7b83d3078a88e5767a3c4b6e949b30f01d776e130"
+        "reviewedSourceDigest": "sha256:60fc5dc9c53de79308a97bc5e9475ef175ae89338ec218d52b8c95e6de1e136c"
       }
     },
     {
@@ -3600,7 +3614,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:74102e537dde1e5438b7fac6a9754cdcf2d35a0fafb8e486e40b4f2b4616c289"
+        "reviewedSourceDigest": "sha256:42cdef2a9976e313f026312655bc49685a95134c6ac36f6ed89ae5ca66390f9c"
       }
     },
     {
@@ -3614,7 +3628,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:74102e537dde1e5438b7fac6a9754cdcf2d35a0fafb8e486e40b4f2b4616c289"
+        "reviewedSourceDigest": "sha256:42cdef2a9976e313f026312655bc49685a95134c6ac36f6ed89ae5ca66390f9c"
       }
     },
     {
@@ -3628,7 +3642,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3642,7 +3656,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3656,7 +3670,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3670,7 +3684,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3684,7 +3698,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3698,7 +3712,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3712,7 +3726,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3726,7 +3740,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3740,7 +3754,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3754,7 +3768,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3768,7 +3782,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The coverage discovery result identifies the declaration as nonvisual rather than a renderable function, class, or variable. It is therefore reviewed as nonvisual and excluded from direct Storybook state coverage.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
     {
@@ -3930,7 +3944,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned evaluation-react-aria-commandpalette--example at distance 1 for this source, and the generated index resolves evaluation-react-aria-commandpalette--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:de918da96fc50dd7d98c3e9a1c57b15b021c814d0f15bacd61d2974b5a5753ee"
+        "reviewedSourceDigest": "sha256:c0741b9b38404c10bee5156eb7d9f64be6f77377326a73ef266aa9029ad823d4"
       }
     },
     {
@@ -3957,7 +3971,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned evaluation-react-aria-commandpalette--example at distance 1 for this source, and the generated index resolves evaluation-react-aria-commandpalette--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:de918da96fc50dd7d98c3e9a1c57b15b021c814d0f15bacd61d2974b5a5753ee"
+        "reviewedSourceDigest": "sha256:c0741b9b38404c10bee5156eb7d9f64be6f77377326a73ef266aa9029ad823d4"
       }
     },
     {
@@ -4281,7 +4295,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-breadcrumb--three-levels at distance 1 for this source, and the generated index resolves components-breadcrumb--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:20726295c1ca904a0ca65ac50dc4f120c19263e0c138a87a58ce8f735989f6ce"
+        "reviewedSourceDigest": "sha256:715396ce60c80c8a90b6b64447ad6eb8ca4fcee8c890ba6389933488a0e574a9"
       }
     },
     {
@@ -4362,7 +4376,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-buttons-breadth--edit-section at distance 1 for this source, and the generated index resolves components-buttons-breadth--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:dfb170d27f306a17967ba44619f712f86eee3641170b3852b07fb17dfbc360d2"
+        "reviewedSourceDigest": "sha256:8e67be7afa7e05291308d3c9261b5d66e543fdcb35c1d4b96261ee969e7e4ab8"
       }
     },
     {
@@ -4389,7 +4403,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-buttons-primarybutton--css-check at distance 1 for this source, and the generated index resolves components-buttons-primarybutton--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:b099e45e51fa00390b850168d4f66b5c07ac930963f306ee4289a592976fc016"
+        "reviewedSourceDigest": "sha256:686b25aa62fd0f56792b971b7968d6169e9b31ad61ebfabf18e203afe6093113"
       }
     },
     {
@@ -4416,7 +4430,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-footer--accessibility-modal-open at distance 1 for this source, and the generated index resolves components-footer--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:f1bb58f1f711a1f4f00e07e3cf294d6051d10d40ee7e0b55ddf30172fac3a4c6"
+        "reviewedSourceDigest": "sha256:0ef4f78737f707df2c5c8576464ded06653f0bd970ec1fb9317f310cf5eb6a5b"
       }
     },
     {
@@ -4524,7 +4538,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-addresslookup--default at distance 1 for this source, and the generated index resolves components-inputs-addresslookup--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:932a00df18c302c1bf21830e9c9120fef62a7f59478668ba6dbc4289052eb7ef"
+        "reviewedSourceDigest": "sha256:409b8b4d2ad98853dfca840e24b67081a60b1eb74063df5122660785942a882a"
       }
     },
     {
@@ -4551,7 +4565,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-attachment-attachmentitemnew--editable at distance 1 for this source, and the generated index resolves components-inputs-attachment-attachmentitemnew--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:26e6c280261f7f2a9ae5e4b7f2caab467ece2ab7c2f5752f238c94070c650f61"
+        "reviewedSourceDigest": "sha256:a44b9a6da9338554807f9cd11b69abc5b10f01073266fd39f444427f872e900f"
       }
     },
     {
@@ -4578,7 +4592,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-attachment-attachmentnew--documents-without-ids at distance 1 for this source, and the generated index resolves components-inputs-attachment-attachmentnew--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:439782088ffe034796f85585a5fc501c063415c75abb7d1c9cd8102e56c3b3a5"
+        "reviewedSourceDigest": "sha256:e2ae8428b92dcbd47b90b66fdc80123b91734a2be65828572c3603cd5955f7e0"
       }
     },
     {
@@ -4605,7 +4619,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-autosuggest--empty-state at distance 1 for this source, and the generated index resolves components-inputs-autosuggest--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:47405ec6d109148d1655e946f893cc4343f88014154c2447f175aabb5eba1933"
+        "reviewedSourceDigest": "sha256:dbaf54b560cc89da62b078eeb271ddb867096d38a02609b97ddc85ec79561b4e"
       }
     },
     {
@@ -4686,7 +4700,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:e789beeeee860ce3c220b4e86d2a3312c827cac9211fea4ef6f6131ed7a1fa8e"
+        "reviewedSourceDigest": "sha256:4c2dfa0b0732d97a2f7c45c6910eb8c335daca8fad5bb32be0099049789ff7c5"
       }
     },
     {
@@ -4713,7 +4727,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-datepicker-customdateinput--default at distance 1 for this source, and the generated index resolves components-inputs-datepicker-customdateinput--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:3e26ad94a022a6fb80b606b5ed1134e4c63a23fd5f86c84c8ff696574a957e9b"
+        "reviewedSourceDigest": "sha256:3460aabb081e5383f9b9acf715d54d27646be6bfebab2e4a586cbd76bc96eb10"
       }
     },
     {
@@ -4740,7 +4754,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs-datepicker-customdatepicker--collapsed at distance 1 for this source, and the generated index resolves components-inputs-datepicker-customdatepicker--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:af916cf0d255f48787909d6dedc65099a400fa5f87db65ee4e77e75bada74861"
+        "reviewedSourceDigest": "sha256:e037fbf31fa30d719d8c525ca7663d88401b94a342fdcc22c748a07aef5bf843"
       }
     },
     {
@@ -4794,7 +4808,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:e5f45aa0cefd720bb18c395de982512840e0b88f7b37a358f213db10bdae4972"
+        "reviewedSourceDigest": "sha256:0697a6a4079c217efc33a5cd626224a9be20303198a7533d042b83bc46d4fe85"
       }
     },
     {
@@ -4821,7 +4835,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:128b774968c041aabab1feeebe6725748cfc3cdd691d711fb8736c08cf554246"
+        "reviewedSourceDigest": "sha256:4073f6d227b9ba020cc57838f286eca13c3d857422acd63b0699fb4d9657600f"
       }
     },
     {
@@ -4846,9 +4860,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:238853e4cba337719cc264400e57c22873a1c0a916c8506aa94633ce88568940"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook reverse-dependency discovery returned components-inputs--common-field-set at distance 1 for this source, and the generated index resolves components-inputs--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:8d6aae28b5db842c5a6e140e87d13fef1d4d7b555117e36e94271f3746db260f"
       }
     },
     {
@@ -4956,7 +4970,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-progress-progressfilelist--cancel-invokes-callback at distance 1 for this source, and the generated index resolves components-progress-progressfilelist--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:1fae75e3a1f814ded642bf47e70d0ce203aedbcbced93c2581143d3ee3ff9a7b"
+        "reviewedSourceDigest": "sha256:9249a4eca0c7bdf80132139958f80c43d23c433eed4e5760c78c10a7f412d906"
       }
     },
     {
@@ -4983,7 +4997,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned dashboard-instrumentitem--details-tab at distance 1 for this source, and the generated index resolves dashboard-instrumentitem--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:7543fe4e7f73a21cf0fea5f661562a6180317a324d75086ca9daa0903c0c4161"
+        "reviewedSourceDigest": "sha256:da71d22409a2c86769ca2708d6fc7d72449e600dc9d6bcdee2e0ba972743ea32"
       }
     },
     {
@@ -5010,7 +5024,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-requestlist-parequestitem--draft-application at distance 1 for this source, and the generated index resolves components-requestlist-parequestitem--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:9daddd15f615797a1ca071766792892d61f93fb4c6d729bae1d8ff3a6a8615b0"
+        "reviewedSourceDigest": "sha256:64790ba87366d887482c85232419fd925332d55c9e400f51bf4fad5ee19ccf02"
       }
     },
     {
@@ -5064,7 +5078,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-searchfilter-searchbox--empty at distance 1 for this source, and the generated index resolves components-searchfilter-searchbox--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:f15c5f8c2d35cf3b7fc750d7bd07d69fccfe021d176060bb03b1c4d6c68cbfbd"
+        "reviewedSourceDigest": "sha256:246d6e90e7a25d4299f156245490dae669d9750ad6992d7d32af0ac6590d2521"
       }
     },
     {
@@ -5089,9 +5103,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-slateeditor--default at distance 1 for this source, and the generated index resolves components-slateeditor--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:c2a3f4c1deb82c257542e42698a2e8d96b59f72c78c4afcf81c0715b2d92f006"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook reverse-dependency discovery returned components-slateeditor--default at distance 1 for this source, and the generated index resolves components-slateeditor--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:14bdc984d8254c6ace2a276f66b3eb929d03f66c14a3e7fb322451e60189d6bd"
       }
     },
     {
@@ -5145,7 +5159,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-summarydisplay--custom-body at distance 1 for this source, and the generated index resolves components-summarydisplay--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:f4f781dc5ad27194829fb98cc03f73d705b74120380df604ece856e3a53abb21"
+        "reviewedSourceDigest": "sha256:0efed2f2eed5e787664a164070925c58a8fcdf09348dfbcc6ecba28708305236"
       }
     },
     {
@@ -5172,7 +5186,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-utilities-routeaccessiblenavigation--live-region at distance 1 for this source, and the generated index resolves components-utilities-routeaccessiblenavigation--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:be1ac9182c94476852fed93e99390deab09e3304ecbd2591686e4afb1dc0cf7d"
+        "reviewedSourceDigest": "sha256:2eab8d15bb42ad95aa814865acf81bd1b2befcf8669b9efd9492bc22c24b9dc6"
       }
     },
     {
@@ -5224,9 +5238,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:ce0d8b7fb71827677a0811eed5116e2432fc82ca7a231b5fe09ada91e6afdad0"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:4f884eef3a2083d4d9d7651d8ee405ed7b51544e45e94c2a03a18238ad32f20e"
       }
     },
     {
@@ -5253,7 +5267,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:dc7489bc5112b9908b23b68a30acf25a764b46c13880395a1b41a32b110273b6"
+        "reviewedSourceDigest": "sha256:46367a6bcd7b10d0ef4131a9b2aa4a2c2dd09e0e745401e9b9e60aa2e55af8ca"
       }
     },
     {
@@ -5307,7 +5321,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:8fe017aaa8a32fc2c7e014950df7233165fa25fac47c9f1acd24ab501252dacb"
+        "reviewedSourceDigest": "sha256:81da2ddf0a6ed65cca8ac535100d188ef6db50612d0370548b8eaf0f2ed27174"
       }
     },
     {
@@ -5469,7 +5483,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-dashboard-dashboardtypeapproval--shell at distance 1 for this source, and the generated index resolves routes-dashboard-dashboardtypeapproval--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:e0cf9c0c7aa0a2eff45f3169e99c9e334dd739420737fe29783331021c5f3962"
+        "reviewedSourceDigest": "sha256:83375d86039a3df633df1874c8cebf531b66e729af36c1a7c56c00ab446a77e7"
       }
     },
     {
@@ -5494,9 +5508,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned routes-dashboard--empty-state at distance 1 for this source, and the generated index resolves routes-dashboard--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:bf6c5d773a90df3430205f883581637360be11a696ec2fb36243ff030d5a2c01"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook reverse-dependency discovery returned routes-dashboard--empty-state at distance 1 for this source, and the generated index resolves routes-dashboard--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:f729703261c8831673f91e2aa5944527d5121e2acb4a2eb5963f1242b0e535a7"
       }
     },
     {
@@ -5523,7 +5537,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-measurementreport-instrumentreports--shell at distance 1 for this source, and the generated index resolves routes-measurementreport-instrumentreports--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:4e0455e459abc33bace3f7c53b6ddd9b26223efa012c99a765f682e7ccae5fbb"
+        "reviewedSourceDigest": "sha256:3ede8b04a99f2238ab8118140f1c0701759b1876e2061679eabb0825c330997f"
       }
     },
     {
@@ -5550,7 +5564,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-measurementreport-reportlist--populated at distance 1 for this source, and the generated index resolves routes-measurementreport-reportlist--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:f9541221ac27f6bfa4960349a8401aefbf61dc36b9d0a550c22370ae71b93b13"
+        "reviewedSourceDigest": "sha256:1c2d71014b33a6d34e3bfe344032ebb5148178fb9b20f0301dc9e5dfa155ba84"
       }
     },
     {
@@ -5577,7 +5591,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-preconditions--renders-protected-content at distance 1 for this source, and the generated index resolves routes-preconditions--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:112e5ff1b03fb94500f19c2f8b9eeeae1179ece74184b9780ffa427f4a3df853"
+        "reviewedSourceDigest": "sha256:b739a2445fe705ec917f76201a3165fe05219c8f5a53448e7f3b197445e5e5c9"
       }
     },
     {
@@ -5602,9 +5616,23 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned routes-requestforquote--instrument-and-request-step at distance 1 for this source, and the generated index resolves routes-requestforquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:5c53f3bde103528b80686bcf07ca59c9b66f2b1b0f5342f9eb26592ed83d6a92"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook reverse-dependency discovery returned routes-requestforquote--instrument-and-request-step at distance 1 for this source, and the generated index resolves routes-requestforquote--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:bebac83f76f387f6a4875e4e2c68d006591081f70cf565c4cfbf4964ee1ec566"
+      }
+    },
+    {
+      "source": "ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx",
+      "export": "useInstrumentAndRequestLookups",
+      "classification": "nonvisual",
+      "owner": "useInstrumentAndRequestLookups",
+      "reason": "This export is a data-loading hook, exported only so unit tests can reach the pre-load fallback path; it renders nothing.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The hook is consumed by the default InstrumentAndRequest export, whose rendered behaviour is the reviewed direct claim; the hook is unit tested in tests/unit/routes/requestForQuote/instrumentAndRequestLookups.test.tsx.",
+        "reviewedSourceDigest": "sha256:bebac83f76f387f6a4875e4e2c68d006591081f70cf565c4cfbf4964ee1ec566"
       }
     },
     {
@@ -5631,7 +5659,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-requestforquote--instrument-and-request-step at distance 1 for this source, and the generated index resolves routes-requestforquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:5e4c4d9f11a17b6f3b23a920eeb89304e19751faf3f048d2a7c98c2c8a61b225"
+        "reviewedSourceDigest": "sha256:49adf8aba377d8607e546826aa8af30a2e71b9b7b8cc4502b6f1e3e6a41faf9a"
       }
     },
     {
@@ -5685,7 +5713,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-requestforquote-viewrequestforquotesummary--loading at distance 1 for this source, and the generated index resolves routes-requestforquote-viewrequestforquotesummary--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:f1cfa08eae6eb7cafa809d125532259a3e26df47533a39429b6ba94cebdc6cde"
+        "reviewedSourceDigest": "sha256:9f65bf62000f6ced6b23a8052307e5438e93eb8135ea52921f7df987807557fe"
       }
     },
     {
@@ -5710,9 +5738,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned routes-servicesweoffer--default at distance 1 for this source, and the generated index resolves routes-servicesweoffer--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:c66796faa6b181575eed2d7034d3e099ad8f9f18dca2f54fd3f4b5950bfba99b"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook reverse-dependency discovery returned routes-servicesweoffer--default at distance 1 for this source, and the generated index resolves routes-servicesweoffer--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:947f76ff227477fc3bcfff1d2eb9d6246e7171d76e41cf55fac29d2e090dd255"
       }
     },
     {
@@ -5739,7 +5767,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-typeapproval-applicationandinstrument--edit-step at distance 1 for this source, and the generated index resolves routes-typeapproval-applicationandinstrument--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:79de3208931fd89bdc467783af8100a428776fc9ea1637e775ccb681cb4b0db3"
+        "reviewedSourceDigest": "sha256:1242c67779ff02d5aef7f2ee0681f153fa44f9cd9b6f24e8acdbf6fa6a5b2153"
       }
     },
     {
@@ -5766,7 +5794,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-typeapproval-manage-applicationdetails--details-tab at distance 1 for this source, and the generated index resolves routes-typeapproval-manage-applicationdetails--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:59c737b5f9b67ce472ff8104c5783c1584bc2bef0529f09293566e4e7c0cf221"
+        "reviewedSourceDigest": "sha256:821badb247fb19b541416833fa8186ed64e03a966b10d4fb7bfbf87a55281e35"
       }
     },
     {
@@ -5793,7 +5821,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-typeapproval-manage-applicationdocuments--documents-tab at distance 1 for this source, and the generated index resolves routes-typeapproval-manage-applicationdocuments--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:273fc4f3f409a0697683428b3123c69052c61691a7c3a23fc5a3cd7fc087496c"
+        "reviewedSourceDigest": "sha256:0235b2b54cc4e0548ba366962f32cdb7d0333788bf9d6209d76332ef27762d53"
       }
     },
     {
@@ -5820,7 +5848,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-typeapproval-manage-applicationmessages--messages-tab at distance 1 for this source, and the generated index resolves routes-typeapproval-manage-applicationmessages--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:152b9fe8dd78dde9669dc06fd0e67da0e2208838be55e5a27b54413af0bae44d"
+        "reviewedSourceDigest": "sha256:8e313c6fca6d83448b2640b8f8e2adaf5d89aaf9af147deb8e6da78e8e11ad04"
       }
     },
     {
@@ -5847,7 +5875,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-typeapproval-organisationandcontact--edit-step at distance 1 for this source, and the generated index resolves routes-typeapproval-organisationandcontact--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:ff8787b93aeb8599ba77895396129af20c7d4da642aeb00f9d4a58ae43965ad6"
+        "reviewedSourceDigest": "sha256:ea79bfc8c0b82e40bba6bba09d6f4f89ac81b87650b3377f616a89544c9ebd6c"
       }
     },
     {
@@ -5928,7 +5956,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-pagination--first-page at distance 1 for this source, and the generated index resolves components-pagination--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:60349691cf82b048cc2ee396c759012d88d52a665ca8ee7a0dd980f327b56416"
+        "reviewedSourceDigest": "sha256:b85a075894e4715ce5c8382853671b277fab836f6a62a9b71cdf4aad6fdc6098"
       }
     },
     {
@@ -5982,7 +6010,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-routeleavingguard--proceed-after-confirm at distance 1 for this source, and the generated index resolves components-routeleavingguard--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:7508bcc456154c057fdf837e078e7b8fd56f829be03a8423f0d12cfc3bc1e6cf"
+        "reviewedSourceDigest": "sha256:955744e9e2f1bd8f7b9e673cd089bf5b9f5963896c328eaf0b53ac96a10cfddc"
       }
     },
     {
@@ -6009,7 +6037,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-searchfilter-typeapproval-pafiltermenu--opened at distance 1 for this source, and the generated index resolves components-searchfilter-typeapproval-pafiltermenu--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:d6661f50f16d5171fcaefe66b11475f58c37a81e6fe413580e722903575c4cdd"
+        "reviewedSourceDigest": "sha256:36fc3bffc319bd6c438bf078a8a881a417fe38a27ad08609138a9b5f2356394c"
       }
     },
     {
@@ -6036,7 +6064,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned components-searchfilter-filtermenu--opened at distance 1 for this source, and the generated index resolves components-searchfilter-filtermenu--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:2f50e85632f2f1f0efab2033fbe92e627791d14ecaa38e7d46c61517e1450f4b"
+        "reviewedSourceDigest": "sha256:1a97c1211af89f2029b3a80e01fcd0485b41dcc1add733e585cd0ab73fd8ff5a"
       }
     },
     {
@@ -6063,7 +6091,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-acceptquote--quotation-summary-step at distance 1 for this source, and the generated index resolves routes-acceptquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:27418cc0655b46fe3fdb4e446e38f720c247fee26b86e052d6429250421a1af6"
+        "reviewedSourceDigest": "sha256:166570b2b31c0bdbfe1b415ee6dd904cba90cb55c29d9ddb4258b66ea7ce8ed7"
       }
     },
     {
@@ -6090,7 +6118,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-acceptquote--quotation-summary-step at distance 1 for this source, and the generated index resolves routes-acceptquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:1032cd7d55c630e6f2af4a4f01e7526b9aed72ce1b1fa86ff0c07bc522d0b0a3"
+        "reviewedSourceDigest": "sha256:75a2f7cdc01aca06396e2c6296e3381ecd6cfe1ef8ae69dccc3ec9ee54e4e824"
       }
     },
     {
@@ -6117,7 +6145,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-acceptquote--quotation-summary-step at distance 1 for this source, and the generated index resolves routes-acceptquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:9482b56f8c3e5293a82b09e09bb62bf38fae1902b25302a5230a095526d680f9"
+        "reviewedSourceDigest": "sha256:eff85cb8b17d8bb269d823f8534f0abc664d64e8d0de3e9c340ca1213113ba56"
       }
     },
     {
@@ -6144,7 +6172,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-acceptquote--quotation-summary-step at distance 1 for this source, and the generated index resolves routes-acceptquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:a57d5d627f0c4a62650bc742cc90afa1c11a91f36f20113e35799dc938823072"
+        "reviewedSourceDigest": "sha256:b184e7b7ee05ffc58b99bd892466513bdcef2c0e4cf90d5b953058fe58e329b1"
       }
     },
     {
@@ -6171,7 +6199,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-acceptquote--quotation-summary-step at distance 1 for this source, and the generated index resolves routes-acceptquote--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:d154f77a468623904ddcbb7d8c71ab4d1e3c626a98be32219c7442b39ea4bf10"
+        "reviewedSourceDigest": "sha256:25e77e71c48085887eef1f5c88f2197aa58b29ed06c3e1f10f5de1619db35717"
       }
     },
     {
@@ -6198,7 +6226,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Live Storybook reverse-dependency discovery returned routes-typeapproval-instrumentinfopanel--with-references at distance 1 for this source, and the generated index resolves routes-typeapproval-instrumentinfopanel--documentation as the matching docs owner.",
-        "reviewedSourceDigest": "sha256:a21c55d800fa66f3deb8e567804220e4471c71fec05104c75a83a87c240654f4"
+        "reviewedSourceDigest": "sha256:dfa902e5dccba57f0eb8ddbc78aa328fc2687e57ae645dae7f8255d730f377d0"
       }
     },
     {
@@ -6412,9 +6440,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook discovery returned evaluation-react-aria-meter--example at distance 1 for this source. The focused MCP test-run reported this story as passing with accessibility checks.",
-        "reviewedSourceDigest": "sha256:b58cab5f53c5c24f7c0292cb11d60800a35e029569b5fc5c553603a22d7eb3cc"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook discovery returned evaluation-react-aria-meter--example at distance 1 for this source. The focused MCP test-run reported this story as passing with accessibility checks. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:e4601c05c6e75bef2f8e955fc1b14fe413bf45a2532dad9b578ea659cf0efe77"
       }
     },
     {
@@ -6466,9 +6494,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook discovery returned evaluation-react-aria-searchfield--example at distance 1 for this source. The focused MCP test-run reported this story as passing with accessibility checks.",
-        "reviewedSourceDigest": "sha256:fff015353833e108fe7b0981bb559f0d5f628e5e1bc10c70be6608d3b581e7b6"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Live Storybook discovery returned evaluation-react-aria-searchfield--example at distance 1 for this source. The focused MCP test-run reported this story as passing with accessibility checks. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:b7b547274355d1487bd1da3dcabfbdef88a10569d936766c7a3c957203a0388a"
       }
     },
     {
@@ -6552,7 +6580,6 @@
         "reviewedSourceDigest": "sha256:d475fcde8201ff56647633fe95f180b7195fb608f130ba950f9dd301ed12c187"
       }
     },
-
     {
       "source": "ClientApp/src/components/Buttons/buttonClassName.ts",
       "export": "getButtonClassName",
@@ -6646,9 +6673,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:2528ceb2b3e3271b828372b584e358ad285776a4d36464508e818dce14b19ce7"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:0532b1459ae5bbdec360174233004a6a1ac4b311f953e38cf2d327acb0453151"
       }
     },
     {
@@ -6676,7 +6703,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7308dbd4ff864486a9c7197d3899a5c42a05f8e174b0ca80ac3d5289cd571dcc"
+        "reviewedSourceDigest": "sha256:5398421e6075764a19bdaebd0b0f2a90ad23a8187f77e79d1252739a4ba056c4"
       }
     },
     {
@@ -6718,7 +6745,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:66cd8c7d1b1c011e90cf692ff13b8a9eeaac8b79c3955cdc9f0efdcbed485f7b"
+        "reviewedSourceDigest": "sha256:2263abb97ebb34f9e3497b5f3fab10bcfdef5e40aa08f5833b0b9f0b7ebe50dd"
       }
     },
     {
@@ -6774,7 +6801,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:85e71ec8396a3ca34fb86fe8cd5bd00f1178cb15dbe922d3d11c42f79e4faf0d"
+        "reviewedSourceDigest": "sha256:677ac68faf492d25e0b8a18f0a5b2b085d4acb45c12535cf9076a08768697142"
       }
     },
     {
@@ -6788,7 +6815,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:85e71ec8396a3ca34fb86fe8cd5bd00f1178cb15dbe922d3d11c42f79e4faf0d"
+        "reviewedSourceDigest": "sha256:677ac68faf492d25e0b8a18f0a5b2b085d4acb45c12535cf9076a08768697142"
       }
     },
     {
@@ -6886,7 +6913,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:ba2599f0567f0ea6de50d663fe2cdd4bfe84d0c761d2c0e2441906d08c953ac7"
+        "reviewedSourceDigest": "sha256:8d108f61bd426e20c47c2a7a027221ec5df47e8ed97dba4c52c7d75fb17bfab8"
       }
     },
     {
@@ -6903,7 +6930,6 @@
         "reviewedSourceDigest": "sha256:6d4a41609f5a32b5b26aa6a9980e54b1d65e32c02b2648c0c2a7ca5f328b2fcf"
       }
     },
-
     {
       "source": "ClientApp/src/routes/acceptQuote/reportRecipientFormikBridge.tsx",
       "export": "default",
@@ -6929,7 +6955,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a7ebc999d6144563aa8a625008ab9eb9266c20515ee4e90b1d3fd00a0bb10709"
+        "reviewedSourceDigest": "sha256:d7eab35801a7ff4c0189fb6114785b7397a60ec08cf8b27abc54784718c630ec"
       }
     },
     {
@@ -6985,7 +7011,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:6576da6a59b67fdbdd9040c2d4341014c21daa5423b19feddbf5ae1b538874a3"
+        "reviewedSourceDigest": "sha256:33fbb8f059eb2e763715e5136e0b70b46498fcbbe1b8817689417fca6eb05dcd"
       }
     },
     {
@@ -6999,7 +7025,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:6576da6a59b67fdbdd9040c2d4341014c21daa5423b19feddbf5ae1b538874a3"
+        "reviewedSourceDigest": "sha256:33fbb8f059eb2e763715e5136e0b70b46498fcbbe1b8817689417fca6eb05dcd"
       }
     },
     {
@@ -7013,7 +7039,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7027,7 +7053,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7041,7 +7067,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7055,7 +7081,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7069,7 +7095,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7083,7 +7109,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7097,7 +7123,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7111,7 +7137,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:1ff3d68b8f1f8baf81fb9d513fa9e6e4ea864f1e3a05729e921ec93e09be5752"
+        "reviewedSourceDigest": "sha256:38dafe85472e22fd3627d766c8354548a75865bfae925ad19d303d808556050a"
       }
     },
     {
@@ -7125,7 +7151,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:d780846798d7058c0493ba4006eb83cb882165ec3b91980a386ab64745c08ec5"
+        "reviewedSourceDigest": "sha256:2b2ecde48410a240249a8dc7de166e7c9142f1a2a4b70eb5ee32d3b9e223682f"
       }
     },
     {
@@ -7139,7 +7165,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:d42126042ab333295d180b1d652aca92d920782e122d9771461719d0321aa091"
+        "reviewedSourceDigest": "sha256:93acf617c34c0d6d13ad4a457f901a1b29fb89b0d28de775614926c66d97c317"
       }
     },
     {
@@ -7153,7 +7179,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:36183b7257615ee6ad493d0239ba2b51c92deae6979527351af7e1de57f58c62"
+        "reviewedSourceDigest": "sha256:6d7d5437227aaa281f7c0cad710d34ca8db00d9f44254a154a73a33af8585273"
       }
     },
     {
@@ -7167,7 +7193,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:366431a64c93e9bd12995cb23db3a4f2338f31e3c8a121bfe896fb0a8d5b99a2"
+        "reviewedSourceDigest": "sha256:f90886af4fcae699bfecfbc4f5d76de00987c2dac1b0b49063088002098d04d5"
       }
     },
     {
@@ -7181,7 +7207,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7e4fbcab1c6214049b9a7f46d603955eb81118ff2db2a733768b648c4678a3ba"
+        "reviewedSourceDigest": "sha256:c98cae5910471ea2065b5352a5846cfbec1a528d1f2e342a08bd4c42327dc89e"
       }
     },
     {
@@ -7195,7 +7221,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:27497111a2e5328215136de1a5fb540bf13063b0beeabe614053a6de046b2969"
+        "reviewedSourceDigest": "sha256:d82aee53a636b2b1dba98e978abd4b1e8cd6793601297aa004cb02635220ce60"
       }
     },
     {
@@ -7254,7 +7280,6 @@
         "reviewedSourceDigest": "sha256:d7a3e370a20f3b0247821c0a62ec98684538e183c8c818996203df96c903f215"
       }
     },
-
     {
       "source": "ClientApp/src/routes/common/dashboardNotifications.ts",
       "export": "DashBoardNotifications",
@@ -7266,7 +7291,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:fc3eb91f3619a286a3a73018e920ba55baea71b453f9e884de2bfc06370a6d26"
+        "reviewedSourceDigest": "sha256:33bec73fc47e1fd156cb3b6b5b9e829e65988fccdb6fd3c7753d422474cb484b"
       }
     },
     {
@@ -7292,9 +7317,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7306,9 +7331,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7320,9 +7345,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7334,9 +7359,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7348,9 +7373,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7362,9 +7387,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7376,9 +7401,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7390,9 +7415,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7404,9 +7429,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7418,9 +7443,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7432,9 +7457,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7446,9 +7471,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7460,9 +7485,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7474,9 +7499,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7488,9 +7513,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7502,9 +7527,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7516,9 +7541,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7530,9 +7555,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7544,9 +7569,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7558,9 +7583,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7572,9 +7597,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7586,9 +7611,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7600,12 +7625,11 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
-
     {
       "source": "ClientApp/src/routes/common/helperFunctions.ts",
       "export": "sanitiseHtml",
@@ -7615,9 +7639,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7629,9 +7653,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7643,9 +7667,9 @@
       "docsOwnerId": null,
       "states": [],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7d4cc37a7eaaff5dd1ab922c7750a96139901cf54430e71a2d48ace38e865a52"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:78b6520e1049807600c7bd79eb31cbe96d89a72b8b6433c91b9213d590dc8442"
       }
     },
     {
@@ -7659,7 +7683,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:9e51ec55147383f86efc3305ec442b7f39d47927812ba1943e952bdaee0961e4"
+        "reviewedSourceDigest": "sha256:78a30a73cd00f9ef3e0bbc0bce8a1e65d93b23dec738842cb09bdcbe59a9f678"
       }
     },
     {
@@ -7673,7 +7697,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:9e51ec55147383f86efc3305ec442b7f39d47927812ba1943e952bdaee0961e4"
+        "reviewedSourceDigest": "sha256:78a30a73cd00f9ef3e0bbc0bce8a1e65d93b23dec738842cb09bdcbe59a9f678"
       }
     },
     {
@@ -7687,7 +7711,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:9e51ec55147383f86efc3305ec442b7f39d47927812ba1943e952bdaee0961e4"
+        "reviewedSourceDigest": "sha256:78a30a73cd00f9ef3e0bbc0bce8a1e65d93b23dec738842cb09bdcbe59a9f678"
       }
     },
     {
@@ -7701,7 +7725,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:9e51ec55147383f86efc3305ec442b7f39d47927812ba1943e952bdaee0961e4"
+        "reviewedSourceDigest": "sha256:78a30a73cd00f9ef3e0bbc0bce8a1e65d93b23dec738842cb09bdcbe59a9f678"
       }
     },
     {
@@ -7715,7 +7739,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:9e51ec55147383f86efc3305ec442b7f39d47927812ba1943e952bdaee0961e4"
+        "reviewedSourceDigest": "sha256:78a30a73cd00f9ef3e0bbc0bce8a1e65d93b23dec738842cb09bdcbe59a9f678"
       }
     },
     {
@@ -7799,7 +7823,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:09e106a381454cfd69de351d7e5baf5513f1fdb660ec422d1bd4e54fea53488d"
+        "reviewedSourceDigest": "sha256:334255d1ca1cce7269adeadf95127282bea7f0b1260c4b93b00237a23baa1936"
       }
     },
     {
@@ -7813,7 +7837,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:09e106a381454cfd69de351d7e5baf5513f1fdb660ec422d1bd4e54fea53488d"
+        "reviewedSourceDigest": "sha256:334255d1ca1cce7269adeadf95127282bea7f0b1260c4b93b00237a23baa1936"
       }
     },
     {
@@ -7827,7 +7851,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:09e106a381454cfd69de351d7e5baf5513f1fdb660ec422d1bd4e54fea53488d"
+        "reviewedSourceDigest": "sha256:334255d1ca1cce7269adeadf95127282bea7f0b1260c4b93b00237a23baa1936"
       }
     },
     {
@@ -7841,7 +7865,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:09e106a381454cfd69de351d7e5baf5513f1fdb660ec422d1bd4e54fea53488d"
+        "reviewedSourceDigest": "sha256:334255d1ca1cce7269adeadf95127282bea7f0b1260c4b93b00237a23baa1936"
       }
     },
     {
@@ -7855,7 +7879,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7dcb66fb919ebd4ed9f2cb5c1846d32f9d78b159dad25290106277f6a85fdc8a"
+        "reviewedSourceDigest": "sha256:e5bad0d47f8ee26a9f97591bb114dfa3105d71ecf445423b56eb53e17fae409e"
       }
     },
     {
@@ -7869,7 +7893,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:7dcb66fb919ebd4ed9f2cb5c1846d32f9d78b159dad25290106277f6a85fdc8a"
+        "reviewedSourceDigest": "sha256:e5bad0d47f8ee26a9f97591bb114dfa3105d71ecf445423b56eb53e17fae409e"
       }
     },
     {
@@ -7883,7 +7907,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:ce2f02354bb4a0407081e543b03c1d96d88168fb0026e04637e5ea1b40006c97"
+        "reviewedSourceDigest": "sha256:fe74f8e3859a213c0811b13030e5ecd8096da2fff52ab11ac23b55e5870e8edc"
       }
     },
     {
@@ -7897,7 +7921,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:38c7c9f74d3ef12d9969d4b73f469798c3922dcee1586b7aac05fb5d3b190084"
+        "reviewedSourceDigest": "sha256:2c93453b286fa131e48612c2fd7d4b6d9c44947b3fbd92b3f1ce6b7ec07c7406"
       }
     },
     {
@@ -7925,7 +7949,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:8b67893fb75f7bf923c75d1986413c61ca3af92cbd2bea18858364794aab5a57"
+        "reviewedSourceDigest": "sha256:7ee4daee7dc9a5066091fdd30aede17047c1e28541995864d3ff78066afc6c87"
       }
     },
     {
@@ -7939,7 +7963,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:8b67893fb75f7bf923c75d1986413c61ca3af92cbd2bea18858364794aab5a57"
+        "reviewedSourceDigest": "sha256:7ee4daee7dc9a5066091fdd30aede17047c1e28541995864d3ff78066afc6c87"
       }
     },
     {
@@ -7953,10 +7977,9 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:8e5fe2faef0c8eff0bbf1a9174e1f380e10e952a30cecabd49b3173b35a5959f"
+        "reviewedSourceDigest": "sha256:e088a618d3b20d53b612048c6db7cc65bec58e369e1cfe92b4143e291695d81b"
       }
     },
-
     {
       "source": "ClientApp/src/routes/requestForQuote/requestForQuoteSummaryProps.ts",
       "export": "default",
@@ -7968,7 +7991,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a90e68e7c9458af871a931c5029ea2f3796355a8aef3513bfec6e1941ec9bd9b"
+        "reviewedSourceDigest": "sha256:653e51aca74ea0eb361722f5755b80219b37dcce98d69dbe95b9f2e468679de8"
       }
     },
     {
@@ -7982,7 +8005,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:14081199d37bbb6559b7ce2102fefc9cc39d085350fce4b96417c54cc7857f9b"
+        "reviewedSourceDigest": "sha256:ac04773331ad674e5b53eed8269998cb24c6ba86da39a6787803e9cc185589d2"
       }
     },
     {
@@ -7996,7 +8019,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:865527f2d4797fbee75e6b3697f1b38b34e5d9ec33afd149f31b76c3a4d2102a"
+        "reviewedSourceDigest": "sha256:9153733a2aeafc845271013bad3f732f21d9a75bb6c7e5089d48da29d99234ad"
       }
     },
     {
@@ -8010,7 +8033,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:71b341b7218ec84748354234083e52ea3d0e4faf5b58ca6a2c4e50f87bdb5416"
+        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
       }
     },
     {
@@ -8024,7 +8047,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:71b341b7218ec84748354234083e52ea3d0e4faf5b58ca6a2c4e50f87bdb5416"
+        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
       }
     },
     {
@@ -8038,7 +8061,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:71b341b7218ec84748354234083e52ea3d0e4faf5b58ca6a2c4e50f87bdb5416"
+        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
       }
     },
     {
@@ -8052,7 +8075,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:71b341b7218ec84748354234083e52ea3d0e4faf5b58ca6a2c4e50f87bdb5416"
+        "reviewedSourceDigest": "sha256:b9317926f1518f99de989eb48517f0176ba7ef2b3bc2d242877487ec93dc193f"
       }
     },
     {
@@ -8066,7 +8089,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:05f71dcf0b66272013e317b86a75cdfffd53ab135b75831c8df132216d8277fa"
+        "reviewedSourceDigest": "sha256:109c69dccb8562e7d739134bf7cde272b2e8fabdd0a0a3c1b45008d48926ef2a"
       }
     },
     {
@@ -8080,7 +8103,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:9bfc3cdb5de6017cf721116e4dd5517dea0984a77b53e8adc691cb51081ccacb"
+        "reviewedSourceDigest": "sha256:9cd574dbaa69996ddad7be07b4815e47244fad233a55f1647e5ff1e208dbc7f2"
       }
     },
     {
@@ -8150,7 +8173,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:e3304749cb156394fbcaf0817e545d79f6b8951c20ecf06c58a7e1bdd92c53be"
+        "reviewedSourceDigest": "sha256:96b441f7e104b4e5af280098ebe096a8f9929a21ba30ef3354cd29b401a3ebda"
       }
     },
     {
@@ -8164,7 +8187,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:e3304749cb156394fbcaf0817e545d79f6b8951c20ecf06c58a7e1bdd92c53be"
+        "reviewedSourceDigest": "sha256:96b441f7e104b4e5af280098ebe096a8f9929a21ba30ef3354cd29b401a3ebda"
       }
     },
     {
@@ -8178,7 +8201,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:92f32e8485ae0deb2f561786229d0425c9701656df4a9843c7bb4dc92b72dbf9"
+        "reviewedSourceDigest": "sha256:6a2f2d172737116c7e688db33e997ca247c3f17398495b0720fc05ce2ab82404"
       }
     },
     {
@@ -8192,7 +8215,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:ea1dd691a7d6c27e8d78e2be10238ea30cba36ed3d76e84d2922d9cb64fe8246"
+        "reviewedSourceDigest": "sha256:c5e85a3440cc4b7337fa35dbebd5e942be5dea89d94f21c050c87f4d3894f96a"
       }
     },
     {
@@ -8206,7 +8229,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:394a44fedf19c34c8ffd99c7b83d3078a88e5767a3c4b6e949b30f01d776e130"
+        "reviewedSourceDigest": "sha256:60fc5dc9c53de79308a97bc5e9475ef175ae89338ec218d52b8c95e6de1e136c"
       }
     },
     {
@@ -8220,7 +8243,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:394a44fedf19c34c8ffd99c7b83d3078a88e5767a3c4b6e949b30f01d776e130"
+        "reviewedSourceDigest": "sha256:60fc5dc9c53de79308a97bc5e9475ef175ae89338ec218d52b8c95e6de1e136c"
       }
     },
     {
@@ -8234,7 +8257,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:74102e537dde1e5438b7fac6a9754cdcf2d35a0fafb8e486e40b4f2b4616c289"
+        "reviewedSourceDigest": "sha256:42cdef2a9976e313f026312655bc49685a95134c6ac36f6ed89ae5ca66390f9c"
       }
     },
     {
@@ -8248,7 +8271,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:62b6908d97d444dc06f397e93a3ae431f3f8e26b3d78098a5c96b29d5ff88181"
+        "reviewedSourceDigest": "sha256:9e07fffe2cf0321270d2d544043dd6264b630d94a80ef863ff659e372cd65aac"
       }
     },
     {
@@ -8262,7 +8285,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:f4059806da3f04ce9872486bb3f2f04b726d34524bea0120874cb746eb07bcaf"
+        "reviewedSourceDigest": "sha256:47fc222f1f6fab6cb4d2f1222bbcdd46b95ceb283f8853b199fee2682351f2ed"
       }
     },
     {
@@ -8276,7 +8299,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:f4059806da3f04ce9872486bb3f2f04b726d34524bea0120874cb746eb07bcaf"
+        "reviewedSourceDigest": "sha256:47fc222f1f6fab6cb4d2f1222bbcdd46b95ceb283f8853b199fee2682351f2ed"
       }
     },
     {
@@ -8290,7 +8313,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:70569bde570d610912aaa41a7ea535bc5f97de534b3d60a6fd135ac548158b70"
+        "reviewedSourceDigest": "sha256:2e33b36dd92f612fc9bb038020a0a54460db1cdd8bca7178263d892907d2ebc4"
       }
     },
     {
@@ -8304,10 +8327,9 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:95272b256841ded3256feb4b7484b59181514f6d97edf7e29a2aa1426c2a66df"
+        "reviewedSourceDigest": "sha256:a2c48c2bb3247eee7b21f9239b912001d98780e3acceaac92ec418168940d149"
       }
     },
-
     {
       "source": "ClientApp/src/routes/ta/validation.ts",
       "export": "applicationAndInstrumentSaveValidation",
@@ -8319,7 +8341,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8333,7 +8355,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8347,7 +8369,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8361,7 +8383,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8375,7 +8397,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8389,7 +8411,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8403,7 +8425,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8417,7 +8439,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8431,7 +8453,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
     {
@@ -8445,10 +8467,9 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "Source-role inspection identifies this export as non-renderable, so no Storybook docs owner or interaction state is claimed.",
-        "reviewedSourceDigest": "sha256:a790128dae6ebab0c8096aba9d0791c9d4d986188afe8275919e8abc0ec2e251"
+        "reviewedSourceDigest": "sha256:2e0c5e4d3c75d08a36c3f2122f2b9c2f54b1c1ff646809848f39ba2a4dc9da7a"
       }
     },
-
     {
       "source": "ClientApp/src/components/AriaComponents/Content/Content.tsx",
       "export": "Heading",
@@ -8662,7 +8683,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:b59e505ff578d2d77abb52b84f6c99980e20d9e35b9997b1c47cbe8fd77db4a4"
+        "reviewedSourceDigest": "sha256:940dee7d45463b7faad917bf9577ebfd4489784e5f9ea3603c6715b7ce25f606"
       }
     },
     {
@@ -8689,7 +8710,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:b59e505ff578d2d77abb52b84f6c99980e20d9e35b9997b1c47cbe8fd77db4a4"
+        "reviewedSourceDigest": "sha256:940dee7d45463b7faad917bf9577ebfd4489784e5f9ea3603c6715b7ce25f606"
       }
     },
     {
@@ -8716,7 +8737,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:b59e505ff578d2d77abb52b84f6c99980e20d9e35b9997b1c47cbe8fd77db4a4"
+        "reviewedSourceDigest": "sha256:940dee7d45463b7faad917bf9577ebfd4489784e5f9ea3603c6715b7ce25f606"
       }
     },
     {
@@ -8743,7 +8764,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:02eb6e7d6a35e1dfde52f53c1cdd01406c403829f2f908fa1ed9ae8f7110ccb0"
+        "reviewedSourceDigest": "sha256:14a3910cfd68600badabb7f02c062bdf15665e6399e5d892fd7b931663db7084"
       }
     },
     {
@@ -8770,7 +8791,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:02eb6e7d6a35e1dfde52f53c1cdd01406c403829f2f908fa1ed9ae8f7110ccb0"
+        "reviewedSourceDigest": "sha256:14a3910cfd68600badabb7f02c062bdf15665e6399e5d892fd7b931663db7084"
       }
     },
     {
@@ -8797,7 +8818,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:02eb6e7d6a35e1dfde52f53c1cdd01406c403829f2f908fa1ed9ae8f7110ccb0"
+        "reviewedSourceDigest": "sha256:14a3910cfd68600badabb7f02c062bdf15665e6399e5d892fd7b931663db7084"
       }
     },
     {
@@ -8824,7 +8845,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:02eb6e7d6a35e1dfde52f53c1cdd01406c403829f2f908fa1ed9ae8f7110ccb0"
+        "reviewedSourceDigest": "sha256:14a3910cfd68600badabb7f02c062bdf15665e6399e5d892fd7b931663db7084"
       }
     },
     {
@@ -8851,7 +8872,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:02eb6e7d6a35e1dfde52f53c1cdd01406c403829f2f908fa1ed9ae8f7110ccb0"
+        "reviewedSourceDigest": "sha256:14a3910cfd68600badabb7f02c062bdf15665e6399e5d892fd7b931663db7084"
       }
     },
     {
@@ -8878,7 +8899,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:02eb6e7d6a35e1dfde52f53c1cdd01406c403829f2f908fa1ed9ae8f7110ccb0"
+        "reviewedSourceDigest": "sha256:14a3910cfd68600badabb7f02c062bdf15665e6399e5d892fd7b931663db7084"
       }
     },
     {
@@ -8905,7 +8926,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:de918da96fc50dd7d98c3e9a1c57b15b021c814d0f15bacd61d2974b5a5753ee"
+        "reviewedSourceDigest": "sha256:c0741b9b38404c10bee5156eb7d9f64be6f77377326a73ef266aa9029ad823d4"
       }
     },
     {
@@ -8932,7 +8953,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:de918da96fc50dd7d98c3e9a1c57b15b021c814d0f15bacd61d2974b5a5753ee"
+        "reviewedSourceDigest": "sha256:c0741b9b38404c10bee5156eb7d9f64be6f77377326a73ef266aa9029ad823d4"
       }
     },
     {
@@ -8959,7 +8980,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:de918da96fc50dd7d98c3e9a1c57b15b021c814d0f15bacd61d2974b5a5753ee"
+        "reviewedSourceDigest": "sha256:c0741b9b38404c10bee5156eb7d9f64be6f77377326a73ef266aa9029ad823d4"
       }
     },
     {
@@ -9124,7 +9145,6 @@
         "reviewedSourceDigest": "sha256:d1a499e35a9a32c1c8cf4fe746d9c2cc460b2dbc4ef2a78b34f3ebec3265b1ef"
       }
     },
-
     {
       "source": "ClientApp/src/components/AriaComponents/NmiIcon.tsx",
       "export": "GripVertical",
@@ -9473,7 +9493,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9500,7 +9520,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9527,7 +9547,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9554,7 +9574,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9581,7 +9601,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9608,7 +9628,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9635,7 +9655,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9662,7 +9682,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c878a9359ff5d0891b308e122304cef851d9091feb74942d3dbdc77e2e5eb71f"
+        "reviewedSourceDigest": "sha256:7aaae6adedab7d65da8475f6f818a65ed758abae150f61c7d12d3e60966946ac"
       }
     },
     {
@@ -9800,7 +9820,6 @@
         "reviewedSourceDigest": "sha256:0a5d28633bc56b63832040be994d3c0f91ec946f3becfb844b4b0ccc27e6b017"
       }
     },
-
     {
       "source": "ClientApp/src/components/AriaComponents/ToggleButton/ToggleButton.tsx",
       "export": "ToggleButton",
@@ -9933,7 +9952,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:1ba4306056de3fe6b64d663b6bbba3bde3613ac695bf3b6f465d5cf308f4c3cd"
+        "reviewedSourceDigest": "sha256:8c4385b0243637480b632a694c67f4ba053e871faed7e9b8db2deb3b7019eaaf"
       }
     },
     {
@@ -9960,7 +9979,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -9987,7 +10006,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -10014,7 +10033,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -10041,7 +10060,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -10068,7 +10087,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -10095,7 +10114,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:9d18f60b6a86ca3437fcbd3d0843e954fe5248a3308f72f98a8a052842ce8f9c"
+        "reviewedSourceDigest": "sha256:bc12f82fb2626922ced342ddc36cee5cae32dc40b1ef5e6a6561f866bc47ba1c"
       }
     },
     {
@@ -10282,9 +10301,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:3c9770f0c3e8f9c22027cbefd24b866cc227a0b48734e87a1bc4f83e4f79a558"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:45fcb87b8010cfd5c291d5a4cafe6b13372a4dc86304a0b7b819c57c04365760"
       }
     },
     {
@@ -10309,9 +10328,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:619e77cb570afb5b676f2bfd2a552c00d735c805c75498c4a41669b29528aca8"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:11f03cec2830ded82cf6300ccad73249d212878f12f5c2357792c71555c669e1"
       }
     },
     {
@@ -10476,7 +10495,6 @@
         "reviewedSourceDigest": "sha256:da40ac5f9eb9b45e2ce5cd6f826e3f09aa6eb7c574e008e6410e119584a20686"
       }
     },
-
     {
       "source": "ClientApp/src/components/Header/NavbarMessage.tsx",
       "export": "default",
@@ -10661,9 +10679,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:41a8c0a104da242b82480f17357f8a59fcf6a542753e8cc0596d43714fb5f8a1"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:1cc10b5aa191fb03cb53b62d29ec053fd29be432e429d66986d5704be8268bc1"
       }
     },
     {
@@ -10690,7 +10708,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:394a42ec563997e46110cc94f2d5950ee08fd260b8d7a7ac44339f6c61125b62"
+        "reviewedSourceDigest": "sha256:958d9a58bec751c3f6997c1e3a473ff42cc5132a7762fe0097d585071a7f7882"
       }
     },
     {
@@ -10715,9 +10733,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:68fc345a3874ea0477d34c9968ac155f6cd8a57167abdb6f09003031389bbe89"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:4a81fcb1147e7779963b37699b298c0223dedb43f5975d941177159cf64ebcc0"
       }
     },
     {
@@ -10744,7 +10762,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:a6d7a5ae71f019d1346299a06f0bedfe8b5718a37227278d48df6a04743a1854"
+        "reviewedSourceDigest": "sha256:d18ba4e470c54f68904ec51ba63b86ebbeeefef84c3aee07e689693f10b41102"
       }
     },
     {
@@ -10798,7 +10816,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:813ef90ca5621cb76b03b877ddc88080230c4c6dbeb87c232b45056fab29ea36"
+        "reviewedSourceDigest": "sha256:e710e3dce4627c6038ac1e6c34c6269028994a2f89043db61f3b88fb7d33ade1"
       }
     },
     {
@@ -10825,7 +10843,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c9c3500cca74f12f1a14007824ebb2b2b4d765a728942b5bb6d19bccf1322b14"
+        "reviewedSourceDigest": "sha256:fc12a41b1300d25e85b4c89af861daf196b79a7dcdeb9266d782e07bff36f954"
       }
     },
     {
@@ -10852,7 +10870,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:13bd298ecde1b9ed5b9e6e63819961a313de6c1a129839c7658c17583164c74b"
+        "reviewedSourceDigest": "sha256:222614cd969c573bf6de475da116ef5105ed5c7ae3e6b45ab02882292cd9d7a8"
       }
     },
     {
@@ -10879,7 +10897,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:671da6e0d40b2e60fcc0d534e2f4c2fac80a1ef7b66f845b880852f01422eece"
+        "reviewedSourceDigest": "sha256:6bc56ccad5279077ca88eef6e0bd09d4f2fd4cfdcd9767a3f3d946498f385c8e"
       }
     },
     {
@@ -10987,7 +11005,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:01f0113a5e40a15bbec36c8a86abe784e0d2280b0af229faa9130a995ddae424"
+        "reviewedSourceDigest": "sha256:64af60ddd5863b876ea5a7472d98267ce0963bbc02cab8278a2a9662059aea50"
       }
     },
     {
@@ -11014,7 +11032,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:6d86fac822d63ecf7b84c24a6512264bbcdae7333e84fe5e0ecabdd2feb7356a"
+        "reviewedSourceDigest": "sha256:ca8d56e20075b6c60114b259bd723014258d97540afcd8a8086a61cc2f3e2669"
       }
     },
     {
@@ -11039,9 +11057,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:fdc58fb734d4e016827dc34a20b61785d3c16742c642fabe6f4fdaea9ef4468a"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:81b9d50fba3c798b46c14c88c4c0989f73c62c48ce97f57c20ed629323768101"
       }
     },
     {
@@ -11152,7 +11170,6 @@
         "reviewedSourceDigest": "sha256:06d90d3f6fae40aea928b642b94536a9998f9fab20fb5356d9104a3a5b54ff56"
       }
     },
-
     {
       "source": "ClientApp/src/components/Pill/StatusPill.tsx",
       "export": "default",
@@ -11231,7 +11248,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:f72a7b59e578caf718b5640dfe263afa06e7f48809c1fac678d09936f0fc4b50"
+        "reviewedSourceDigest": "sha256:a30aec84796115c2b1901210a59111d306d883881157b6da9363aaabc980cf85"
       }
     },
     {
@@ -11283,9 +11300,37 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:c2a3f4c1deb82c257542e42698a2e8d96b59f72c78c4afcf81c0715b2d92f006"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:14bdc984d8254c6ace2a276f66b3eb929d03f66c14a3e7fb322451e60189d6bd"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/SlateEditor/SlateEditor.tsx",
+      "export": "isBreakTag",
+      "classification": "nonvisual",
+      "owner": "isBreakTag",
+      "reason": "This export is a pure string predicate for a br tag used while serialising editor content to HTML; it renders nothing.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The function is exercised by serializeToHtml (a reviewed direct claim in this file) and is unit tested directly in tests/unit/components/SlateEditor/SlateEditor.test.tsx. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:14bdc984d8254c6ace2a276f66b3eb929d03f66c14a3e7fb322451e60189d6bd"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/SlateEditor/SlateEditor.tsx",
+      "export": "isEmptyParagraphContent",
+      "classification": "nonvisual",
+      "owner": "isEmptyParagraphContent",
+      "reason": "This export is a pure string predicate that detects empty paragraph content during HTML serialisation; it renders nothing.",
+      "docsOwnerId": null,
+      "states": [],
+      "review": {
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The function is a serialisation helper behind the reviewed serializeToHtml claim in this file; it has no UI state of its own. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:14bdc984d8254c6ace2a276f66b3eb929d03f66c14a3e7fb322451e60189d6bd"
       }
     },
     {
@@ -11339,7 +11384,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:1e14a90a648bc8cc04271be769da65766d3841f7856254ad9dafc7bfa994aa36"
+        "reviewedSourceDigest": "sha256:739b061c254e40d8177bf142ed6ca3fae47e4d83e559726fa1f3ac4bb8e7602a"
       }
     },
     {
@@ -11393,7 +11438,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:1cefb320e1cd06ba6f8e18de8821b223a3406fee947b541e2b10718a2caeb7c5"
+        "reviewedSourceDigest": "sha256:86df9e731a6a80f3268cc67bbfca80009af86f84044f961973e6fcdf6c1beed0"
       }
     },
     {
@@ -11420,7 +11465,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:3c05bba0b64702fe5f33d84803119259496dd686c5400bd69c586d827bbdf092"
+        "reviewedSourceDigest": "sha256:d86cc6e1430924f7f7da22e63ea50876d20e28d11853223cf16dcd043c9de0f6"
       }
     },
     {
@@ -11528,7 +11573,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:df748f5b8707c3c30faa2cdadfd0da9c5c30aa5d7bd76af172a7e30ae31f1440"
+        "reviewedSourceDigest": "sha256:6bd227572381586425af373fdf98991f9a526d628b9b80b75c789ddf55c4cf8c"
       }
     },
     {
@@ -11582,7 +11627,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:01a28f2f6de21613035876424df932702f7cde740f304f5ee76530debdc00742"
+        "reviewedSourceDigest": "sha256:509854f0e72effd638bfba5a178244f41bf6816d51bd9ba1c306c97998926833"
       }
     },
     {
@@ -11663,7 +11708,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:f9aca89306426e578f13996aefecfdc8dbf349a5b8a39c0d38e968d8ac7948ae"
+        "reviewedSourceDigest": "sha256:570ce52d9b3d7e4c8156de29422afd8065ac5ac84b66ff1fd508d4eafd622d61"
       }
     },
     {
@@ -11717,7 +11762,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:bdc7ecd738ab7377f1e23df5d671817c008a1989eff7ea551fe03f5f51bf9c00"
+        "reviewedSourceDigest": "sha256:efdca6887f05f1dd5ca6530543915d58bd788e74113b9fb61728177a3c6b9092"
       }
     },
     {
@@ -11769,9 +11814,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:bd04dbf2728de3641b515d4f3506edf70a08dfed0ec9f6b1eb5854a4556252e8"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:431976331dd8309b2a48a88bf5bf5747ad9e18d1b155585fffd162cf74a1cfda"
       }
     },
     {
@@ -11828,7 +11873,6 @@
         "reviewedSourceDigest": "sha256:d47458574511dc10fcb52d484fa8df5f197da660d428bfe209939c292df1d887"
       }
     },
-
     {
       "source": "ClientApp/src/components/forms/FormikForm/index.tsx",
       "export": "default",
@@ -11853,7 +11897,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:915dea7ea4b9822a9367a0c1a72856a85242d5264d63b2b5e75adfa3795cc129"
+        "reviewedSourceDigest": "sha256:9f090a41259b5928e89eeddbbdef2799965e549f79f7d1c56191bc575e8b6700"
       }
     },
     {
@@ -11880,7 +11924,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:4657bb866d97468c2de784d3ae3337de9e22317810e186b8340639c6a5e64168"
+        "reviewedSourceDigest": "sha256:d8f65aed562d130fd42086412d728a504e5819b2a52e79e30485d8bb9d14b83b"
       }
     },
     {
@@ -11934,7 +11978,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:4086274f132e9598e921fbddadd9929c9c6b0690f1acb927bcb27042df1f97ef"
+        "reviewedSourceDigest": "sha256:88177ad39bedd1c2f05fd910ab909bcd4f317a04a9385833aa0a0b8e2a73de33"
       }
     },
     {
@@ -11988,7 +12032,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:3943e889d345757abde7505f702a699ab6bf86d320544221fe14f8e825320a09"
+        "reviewedSourceDigest": "sha256:a513161d2952f1bf00ce6e9746d6157c0893df9b306ae2b50dfa28755a3fe542"
       }
     },
     {
@@ -12015,7 +12059,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:e32e7896664257f17902f2e4815d8ba86479a2bd3656234db48f2500b463bc8e"
+        "reviewedSourceDigest": "sha256:f2aa92f3d599c0cea5dfe54a73b0f401a9b54c2da9aa8bef4497681c39b427c5"
       }
     },
     {
@@ -12042,7 +12086,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:71482a7f78d5dd6a41d0140bda1726f02c911193365b978a60b682b6d7a90f9c"
+        "reviewedSourceDigest": "sha256:70eaa1acfead1b2cebcfba912b6d6e4ecce150fbbea4e423baa8073b673d03d2"
       }
     },
     {
@@ -12175,9 +12219,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:f26a10e4507e5ceb2e92cf265298739ed4afd989c3eb39636f6a7f71b1052f07"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:c1a4639a6229deda3c4ba91a9ebf3572180f5851d961a7653f1fc8a41cc2b13b"
       }
     },
     {
@@ -12204,7 +12248,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:d22ad85225f05dae28cdc2aef49c452555ef94de7cbcccf5f96bd0138eaae26f"
+        "reviewedSourceDigest": "sha256:5eb0e3327d7e4a1b4ddb778b7b47412dc00b1c0a8b16c5d00cae7aa12524d3cc"
       }
     },
     {
@@ -12231,7 +12275,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:937caebdb2646929e6c16cb3b9f0758a9d8b189b97b2c424215a653474f68ce5"
+        "reviewedSourceDigest": "sha256:6c57e77d142d6a04e3e3a01b6ad29142986d73f2a3124e168ae49c3550b1e701"
       }
     },
     {
@@ -12285,7 +12329,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:ab87eb65a569b6ab8ab2528014d14cd984f0ac92b7abdda4eaf6cd7d685162e9"
+        "reviewedSourceDigest": "sha256:a633fdc46ad9ce8cfdd6967179ef92edbf3bdcd3706a1af143f5f82cc8979624"
       }
     },
     {
@@ -12312,7 +12356,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:ab87eb65a569b6ab8ab2528014d14cd984f0ac92b7abdda4eaf6cd7d685162e9"
+        "reviewedSourceDigest": "sha256:a633fdc46ad9ce8cfdd6967179ef92edbf3bdcd3706a1af143f5f82cc8979624"
       }
     },
     {
@@ -12339,7 +12383,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:ab87eb65a569b6ab8ab2528014d14cd984f0ac92b7abdda4eaf6cd7d685162e9"
+        "reviewedSourceDigest": "sha256:a633fdc46ad9ce8cfdd6967179ef92edbf3bdcd3706a1af143f5f82cc8979624"
       }
     },
     {
@@ -12366,7 +12410,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:ab87eb65a569b6ab8ab2528014d14cd984f0ac92b7abdda4eaf6cd7d685162e9"
+        "reviewedSourceDigest": "sha256:a633fdc46ad9ce8cfdd6967179ef92edbf3bdcd3706a1af143f5f82cc8979624"
       }
     },
     {
@@ -12393,7 +12437,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:efea409073f23f8f73778aa5fea048abab822d410e2a3fea81afd8d9c17ca2b7"
+        "reviewedSourceDigest": "sha256:c791725d4274bde151d3ca6b37a1ea63b486878c2f4f37b8a0761d8fd7f00101"
       }
     },
     {
@@ -12474,7 +12518,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:a9e59904b1fcc4d916bbfec3d27943011172b9b52372d97ef70621485f36d774"
+        "reviewedSourceDigest": "sha256:49316650e8d88c844a5276d2e3309f3297a547bb7b04a5f564b4a98fd6ed5ce5"
       }
     },
     {
@@ -12501,10 +12545,9 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:73f4b2440775a0bc1aa84a2041642cb5ddd994d74b1fce55698128ee9ec96afb"
+        "reviewedSourceDigest": "sha256:626f6493ae7f671fc0e50c8901a1a2974d1cd8e95d32ad9d6e810b3f09c131c3"
       }
     },
-
     {
       "source": "ClientApp/src/routes/quotation/quoteDetails.tsx",
       "export": "default",
@@ -12529,7 +12572,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:8a516fac624bedef606b3774d41ced957eccf8ea2832ae6d248b90068227ec44"
+        "reviewedSourceDigest": "sha256:4bbf5e7721bdd90307e84edf9efa41bb769c1a64192af97b859b3afaf1e1de5f"
       }
     },
     {
@@ -12556,7 +12599,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:8add4667caf5dd49da6f805ec11075dd1c0984377d9901a92f05cacab9346edc"
+        "reviewedSourceDigest": "sha256:b9f19cd64b858adfb884acaa7429fd498fc3afd89b99ecbd99004cef4be42f23"
       }
     },
     {
@@ -12583,7 +12626,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:8fbb81256e21a96a1de7de2c7c9d495c43be3c9f650fcaf137ce6d6eeba60d41"
+        "reviewedSourceDigest": "sha256:11a8f07d9d7841040bb6605ca3516a2cb45634f13f3d1b000010baaf42259a96"
       }
     },
     {
@@ -12610,7 +12653,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:35f6d28c01cf6050641a14cb4f0109cc9582bf5fda22ada2899eb50c25186791"
+        "reviewedSourceDigest": "sha256:33acf30eae3014fbe0758c26a2523b2804b8bd3c0d3e91b1421d2ae564c1e845"
       }
     },
     {
@@ -12637,7 +12680,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:709882147a51bcd6d527f308596e4384d251354ce7767b589d91573920cd0b48"
+        "reviewedSourceDigest": "sha256:df909eea188b87194bc56dbc87ce057a1b9f46c98f4a93a216a13b17668ad839"
       }
     },
     {
@@ -12664,7 +12707,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:f7d8d260ddeb0fba6a2c4e89912d60f5a6072f0cb7c4ac768486c916dec985c7"
+        "reviewedSourceDigest": "sha256:b24a5f301a3926dbaf2d298a739d77592ecfa60057d35e96afc257c45bf5b5ea"
       }
     },
     {
@@ -12743,12 +12786,11 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:b2f83da6dd06c142685b17dae86a5204885e21b12d17d76aa4bb9b594560673b"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:83962b01728dd68da3ee29a3f0686ac13d5dcdad1c6691d8eef2df382f8cac71"
       }
     },
-
     {
       "source": "ClientApp/src/components/AriaComponents/DatePicker/DatePicker.tsx",
       "export": "DatePicker",
@@ -12825,9 +12867,9 @@
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:771d7440e96c0bfb514a83e5879587a820bb647f57cd247caaa5fbb6cca65615"
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "reviewedSourceDigest": "sha256:6b78718dd770b8eb1a37ef4409fd36a7740c562148e53c30507449328472855c"
       }
     },
     {
@@ -12908,7 +12950,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:0942cb57c96ba09292aa574dcb9c010295e78269678a173f3a331eff95821d47"
+        "reviewedSourceDigest": "sha256:6affe5265ca80d1f55205d05996d7c625cda4942f904cf9d16b4bda236400d60"
       }
     },
     {
@@ -12935,7 +12977,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:29e82f8cb3f90769cb27b9235db8b6b285321ddeecd1383ee3cc32355edd65dd"
+        "reviewedSourceDigest": "sha256:376f3bc7626da8fe420f979d486e368edb0c326114e9be0a2094c89577b9f6c1"
       }
     },
     {
@@ -12962,7 +13004,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:66208cd8ee7ade7ea79f5646f3f5a32d1d7a3420417e3cf3b32df6b60bce9249"
+        "reviewedSourceDigest": "sha256:c7d453c3b7844ef101182fa3042761650ea77e5173f1fdb325e080bfc2ac9a1d"
       }
     },
     {
@@ -12989,7 +13031,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:cb6c9edd0c9ab1af54646da6015d948415881d512df7881eaf1b4dbe36b1f4b2"
+        "reviewedSourceDigest": "sha256:957ad13593805330e4256c33fa881cc148894708e2e0789fd6d73150c9917b9c"
       }
     },
     {
@@ -13070,7 +13112,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:4b3c1bbbe89d36d2d7e2d4af290619deae38a245d366b06875aad3d1cd9a5e15"
+        "reviewedSourceDigest": "sha256:d0844280ad17ee011f538daf0538d329cedbf723ce882adb830d53728a716ca2"
       }
     },
     {
@@ -13124,7 +13166,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:bc2e911a35eacdff91b166097598423229f3d39dda868de3733aa131b39cef5c"
+        "reviewedSourceDigest": "sha256:36a4d9214493dd9ba2a7b9c80a4f59fc8d3766889bb432a56d65258582d84a42"
       }
     },
     {
@@ -13151,7 +13193,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:ccf4b5d378592ca63974f9742ea1edd7ff76ac8718974ed2f0c0070d7027638c"
+        "reviewedSourceDigest": "sha256:4f4f85827adff77b229c27eb4a7df0b8a3e4ff8e72dcce9880bcd75d6a210c16"
       }
     },
     {
@@ -13178,7 +13220,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:dd9eca90e108aa39375c7f25053fcd86065d6a539489e4615ad9b99f66fbb35b"
+        "reviewedSourceDigest": "sha256:1827bb5a88c74bec335c4c735f2df4bde899c8cb071659a3b6648e6961fe7d27"
       }
     },
     {
@@ -13259,7 +13301,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:62d8c0fcefaf2fa3c73d06b041cabf61cb081f4e08bbde5eea9dda05980d48d2"
+        "reviewedSourceDigest": "sha256:c81cb06348b9a20b641dd619226a268e36be0ac6e580ebcdaaaaa2ea306379fd"
       }
     },
     {
@@ -13286,7 +13328,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:e12808dfc92624f0d52b2ddbc0815f35dc4c96edaaa8f36a65c6bb657f6f3f05"
+        "reviewedSourceDigest": "sha256:d732a990be91820cacf5e54ac28e4bfb3134e71d8a4cc0c8123799cad0426ae1"
       }
     },
     {
@@ -13313,7 +13355,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:31b7f9c6fe2f08f6923fb746aad261e50e8797506a51e658f45d91b3909ad388"
+        "reviewedSourceDigest": "sha256:dadeb6200f532f9e40c4abcb7387c8f13ae7aec2f3ad768cfe15d3d2f3b15397"
       }
     },
     {
@@ -13340,7 +13382,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:3fcc05060cfff14f0a01f50513e7020f044b31854a54f90e42aa5ccf1aac24fa"
+        "reviewedSourceDigest": "sha256:7094c739080531e3c5ad5e2c7a5bf9eb46ca416dd0e5669eaa8dc2932ff54c05"
       }
     },
     {
@@ -13367,7 +13409,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:1a9a9e88556273925423e12743e1be2c8ac7a4c1258c95d2ff5640a46e9b025b"
+        "reviewedSourceDigest": "sha256:e0369624b07c4e3f2a48c68b82c7cb5e255543dafc7d981cbfd517b22c80591c"
       }
     },
     {
@@ -13394,7 +13436,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:384a0d77d4cbd914f133f0de13f3b1e1fdd6e849053fb8c0e59e767d93ea9215"
+        "reviewedSourceDigest": "sha256:a96036e2b6f65a6c63d02bfa3ead6581c6739082b37e1688e58e9a2adef0a500"
       }
     },
     {
@@ -13448,7 +13490,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:69432e0331f1ac5988b4d52f9ad69323cc1e7f197377baf6bec2a59def456ac2"
+        "reviewedSourceDigest": "sha256:b5804388236fd20e1a0a92ea0a2a912577e1692ba08664785d529953c05989bb"
       }
     },
     {
@@ -13556,7 +13598,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:e5061c48d1c204215fe4b962f09df34817459b801f41384a6178329d472efaf5"
+        "reviewedSourceDigest": "sha256:8bc56c7ab3eba645ca0902089c8f4e7f862f61b300c088ddcc6a20b542ac4b94"
       }
     },
     {
@@ -13583,7 +13625,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:05a35f3fb1e8d2ebd66c11b16f4aa3cb49f75b4057dc02c6c01dc81e168f3251"
+        "reviewedSourceDigest": "sha256:83688d5c89dd370e204525ccf97ee19dcd65dc6a93958dbef89546c47401e6f0"
       }
     },
     {
@@ -13610,7 +13652,7 @@
       "review": {
         "reviewer": "codex-storybook-coverage-review",
         "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
-        "reviewedSourceDigest": "sha256:5d01efb78e3b5d2d4d930f5bcaef3e5776375569fb58c50b78c6c1cfebef94b1"
+        "reviewedSourceDigest": "sha256:7ada05889a6c610a8dcf1e099bef61698a649329bdc3be08e574b1481a935945"
       }
     },
     {

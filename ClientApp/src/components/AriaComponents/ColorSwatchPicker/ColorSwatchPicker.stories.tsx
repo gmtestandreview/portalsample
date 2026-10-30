@@ -24,10 +24,11 @@ export const Example = meta.story({
     </ColorSwatchPicker>
   ),
   play: async ({ canvas }) => {
-    const picker = canvas.getByRole('listbox', { name: 'Color swatches' });
     const swatches = canvas.getAllByRole('option');
 
-    await expect(picker).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('listbox', { name: 'Color swatches' }),
+    ).toBeInTheDocument();
     await expect(swatches.length).toBeGreaterThan(0);
   },
 });

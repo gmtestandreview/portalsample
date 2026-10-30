@@ -63,10 +63,9 @@ export const FirstPage = meta.story({
 
     await expect(pageText).toBeVisible();
 
-    // First link hidden at page 1
-    const firstLink = canvasElement.querySelector('.firstpage');
-
-    await expect(firstLink).toHaveClass('d-none');
+    await expect(canvasElement.querySelector('.firstpage')).toHaveClass(
+      'd-none',
+    );
   },
 });
 
@@ -99,9 +98,8 @@ export const CustomStyleVariant = meta.story({
   render: () => <PaginationStory totalPages={8} startPage={3} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const pageText = canvas.getByText('Page 3 of 8');
 
-    await expect(pageText).toBeVisible();
+    await expect(canvas.getByText('Page 3 of 8')).toBeVisible();
 
     const user = userEvent.setup();
     const page4Btn = canvas.getByRole('button', { name: /page 4/i });

@@ -83,7 +83,9 @@
 .btn-nmi-secondary {
   border: 2px solid $interactive;
   background: $white;
-  color: $interactive;
+  // $interactive (85% primary on white) is 5.35:1; the full primary is 7.9:1,
+  // which meets the enhanced (AAA) text contrast threshold.
+  color: $nmi-primary;
   @include hoverGlow;
   &:hover {
     color: $white;

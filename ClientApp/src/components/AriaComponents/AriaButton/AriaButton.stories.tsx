@@ -16,6 +16,9 @@ export const Primary = meta.story({
   },
   play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Save changes' });
+
+    await expect(button).toHaveAccessibleName('Save changes');
+
     await userEvent.click(button);
 
     await expect(args.onPress).toHaveBeenCalledOnce();
@@ -48,7 +51,9 @@ export const Disabled = meta.story({
   play: async ({ args, canvas, userEvent }) => {
     const button = canvas.getByRole('button', { name: 'Unavailable' });
 
-    await expect(button).toBeDisabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Unavailable' }),
+    ).toBeDisabled();
 
     await userEvent.click(button);
 

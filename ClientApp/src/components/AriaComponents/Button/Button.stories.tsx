@@ -18,7 +18,11 @@ export const Primary = meta.story({
     children: 'Save changes',
   },
   play: async ({ args, canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Save changes' }));
+    const button = canvas.getByRole('button', { name: 'Save changes' });
+
+    await expect(button).toHaveAccessibleName('Save changes');
+
+    await userEvent.click(button);
 
     await expect(args.onPress).toHaveBeenCalledOnce();
   },

@@ -73,6 +73,9 @@ export const PrivacyModalOpen = meta.story({
 export const AccessibilityModalOpen = meta.story({
   play: async () => {
     const user = userEvent.setup();
+
+    await expect(screen.getByTestId('open-accessibility-button')).toBeVisible();
+
     await user.click(screen.getByTestId('open-accessibility-button'));
     const modalTitle = await screen.findByRole('heading', {
       name: /accessibility/i,

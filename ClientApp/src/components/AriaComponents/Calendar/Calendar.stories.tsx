@@ -15,12 +15,13 @@ export const Default = meta.story({
     'aria-label': 'Appointment date',
   },
   play: async ({ canvas }) => {
-    const calendar = canvas.getByRole('grid', {
-      name: 'Appointment date, April 2024',
-    });
     const cells = canvas.getAllByRole('gridcell');
 
-    await expect(calendar).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('grid', {
+        name: 'Appointment date, April 2024',
+      }),
+    ).toBeInTheDocument();
     await expect(cells.length).toBeGreaterThan(0);
   },
 });

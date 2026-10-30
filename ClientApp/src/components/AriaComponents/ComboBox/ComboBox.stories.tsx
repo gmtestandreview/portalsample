@@ -29,12 +29,13 @@ export const Example = meta.story({
     children: null,
   },
   play: async ({ canvas, canvasElement }) => {
-    const input = canvas.getByRole('combobox', { name: 'Ice cream flavor' });
     const suggestions = canvas.getByRole('button', {
       name: /Show suggestions/,
     });
 
-    await expect(input).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('combobox', { name: 'Ice cream flavor' }),
+    ).toBeInTheDocument();
 
     await userEvent.click(suggestions);
 

@@ -24,6 +24,10 @@ export const Example = meta.story({
 
     await userEvent.click(trigger);
 
-    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(
+      canvas.getByRole('button', {
+        name: 'vibrant red Fill color',
+      }),
+    ).toHaveAttribute('aria-expanded', 'true');
   },
 });

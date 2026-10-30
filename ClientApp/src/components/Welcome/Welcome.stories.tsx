@@ -18,9 +18,8 @@ const meta = preview.meta({
 export const Default = meta.story({
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const banner = canvas.getByTestId('welcome-banner');
 
-    await expect(banner).toBeVisible();
+    await expect(canvas.getByTestId('welcome-banner')).toBeVisible();
 
     // Given name is inside the h1 "Welcome Taylor" — use heading role + regex
     const heading = canvas.getByRole('heading', { name: /welcome/i });

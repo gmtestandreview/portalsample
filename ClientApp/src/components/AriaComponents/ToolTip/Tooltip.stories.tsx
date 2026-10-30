@@ -29,6 +29,11 @@ export const Example = meta.story({
     // Reset the synthetic pointer so hover always emits a fresh enter event in CI.
     await userEvent.unhover(button);
     await userEvent.hover(button);
-    await waitFor(() => expect(button).toHaveAttribute('data-hovered', 'true'));
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Save' })).toHaveAttribute(
+        'data-hovered',
+        'true',
+      ),
+    );
   },
 });

@@ -90,6 +90,9 @@ export const DashboardFilters = meta.story({
     // Typing and submitting updates the displayed filter state
     await user.clear(searchInput);
     await user.type(searchInput, 'Keysight');
+
+    await expect(searchInput).toHaveValue('Keysight');
+
     await user.keyboard('{Enter}');
     // The debug output below the component shows the current search text
     const searchLabel = await canvas.findByText(/Keysight/i);

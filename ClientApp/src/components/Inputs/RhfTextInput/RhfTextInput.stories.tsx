@@ -30,7 +30,9 @@ export const Default = meta.story({
     const user = userEvent.setup();
     const input = canvas.getByLabelText('Organisation name for report');
 
-    await expect(input).toHaveValue('Acme Pty Ltd');
+    await expect(
+      canvas.getByLabelText('Organisation name for report'),
+    ).toHaveValue('Acme Pty Ltd');
 
     await user.clear(input);
     await user.type(input, 'Beta Labs');

@@ -91,6 +91,132 @@ describe('reviewed Storybook source and story evidence', () => {
     ).toStrictEqual({ ok: true, errors: [] });
   });
 
+  describe('markers nested in assertion arguments', () => {
+    const withPlayBody = (body: string) => [
+      { path: sourcePath, content: sourceContent },
+      {
+        path: storyPath,
+        content: `export const Default = { play: async () => { ${body} } };\n`,
+      },
+    ];
+
+    it('accepts a marker inside a locator passed to expect', () => {
+      expect.hasAssertions();
+
+      const files = withPlayBody(
+        "await expect(canvas.getByText('expect-visible-label')).toBeVisible();",
+      );
+
+      expect(
+        moduleUnderTest.validateStoryEvidence({ manifest, files, index }),
+      ).toStrictEqual({ ok: true, errors: [] });
+    });
+
+    it.each([
+      [
+        'a matcher argument',
+        "await expect(canvas.getByRole('link')).toHaveAttribute('expect-visible-label', '/a');",
+      ],
+      [
+        'a negated matcher argument',
+        "await expect(canvas.getByRole('link')).not.toHaveTextContent('expect-visible-label');",
+      ],
+    ])('accepts a marker passed as %s', (_name, body) => {
+      expect.hasAssertions();
+
+      expect(
+        moduleUnderTest.validateStoryEvidence({
+          manifest,
+          files: withPlayBody(body),
+          index,
+        }),
+      ).toStrictEqual({ ok: true, errors: [] });
+    });
+
+    it('rejects a marker passed to a call that is not an assertion chain', () => {
+      expect.hasAssertions();
+
+      const result = moduleUnderTest.validateStoryEvidence({
+        manifest,
+        files: withPlayBody(
+          "await userEvent.type(field, 'expect-visible-label'); expect(true).toBe(true);",
+        ),
+        index,
+      });
+
+      expect(result.errors.map((entry) => entry.code)).toContain(
+        'EVIDENCE_MISSING',
+      );
+    });
+
+    it('rejects a marker used only in a locator outside any assertion', () => {
+      expect.hasAssertions();
+
+      const files = withPlayBody(
+        "await canvas.getByText('expect-visible-label').click(); expect(true).toBe(true);",
+      );
+      const result = moduleUnderTest.validateStoryEvidence({
+        manifest,
+        files,
+        index,
+      });
+
+      expect(result.errors.map((entry) => entry.code)).toContain(
+        'EVIDENCE_MISSING',
+      );
+    });
+  });
+
+  describe('stories declared with the CSF Factories meta.story call', () => {
+    const factoryStory = (body: string) =>
+      [
+        'const meta = preview.meta({});',
+        `export const Default = meta.story({${body}});`,
+        '',
+      ].join('\n');
+    const factoryFiles = (content: string) => [
+      { path: sourcePath, content: sourceContent },
+      { path: storyPath, content },
+    ];
+
+    it('accepts a play function with the reviewed assertion marker', () => {
+      expect.hasAssertions();
+
+      const content = factoryStory(
+        "play: async () => { expect('expect-visible-label').toBeTruthy(); }",
+      );
+
+      expect(
+        moduleUnderTest.validateStoryEvidence({
+          manifest,
+          files: factoryFiles(content),
+          index,
+        }),
+      ).toStrictEqual({ ok: true, errors: [] });
+    });
+
+    it.each([
+      ['no play property', 'render: () => null'],
+      [
+        'a play function without the marker',
+        "play: async () => { expect('different-marker').toBeTruthy(); }",
+      ],
+    ])('rejects %s', (_name, body) => {
+      expect.hasAssertions();
+
+      const result = moduleUnderTest.validateStoryEvidence({
+        manifest,
+        files: factoryFiles(factoryStory(body)),
+        index,
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.errors.map((entry) => entry.code)).toContain(
+        'EVIDENCE_MISSING',
+      );
+    });
+  });
+
   it.each([
     [
       'missing source file',

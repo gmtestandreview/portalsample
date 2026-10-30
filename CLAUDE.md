@@ -1,329 +1,116 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with
-code in this repository.
+## Workspace
 
-## What this workspace is
+This is a source-map capture snapshot of `portal.measurement.gov.au`, the NMI
+customer portal. Work from the repository root; `package.json` contains the
+validation scripts.
 
-This is a **source-map capture snapshot** of `portal.measurement.gov.au` — the
-Australian Government National Measurement Institute (NMI) customer portal. A
-root `package.json` is present with validation and test scripts; run them from
-the workspace root.
+- Node >= 24 is required by `engines` and `devEngines.onFail`.
+- `postinstall` runs `patch-package`; patched dependencies in `patches/` are
+  applied automatically.
 
-**Runtime floor:** Node **≥ 24.0.0** is enforced (`engines` +
-`devEngines.onFail: "error"`); installs and CI fail below it. `postinstall` runs
-`patch-package`, so patched dependencies in `patches/` are applied automatically
-on install — don't be surprised to see them.
+## Validation
 
-**Key validation commands:**
+- Type and lint: `npm run type-check`, `npm run lint`, `npm run lint:rules`.
+- Data and tests: `npm run validate:json`, `npm run test:unit`,
+  `npm run test:storybook`.
+- Full gates: `npm run test:ci`, `npm run migration-check`.
+- BDD: `npm run test:e2e:app` and `npm run test:e2e:storybook`.
 
-- `npm run type-check` — TypeScript type checking (`tsc --noEmit`)
-- `npm run lint` / `npm run lint:fix` — ESLint
-- `npm run lint:rules` — rule-citation verifier (`--fix` variant available)
-- `npm run validate:json` — JSON schema validation
-- `npm run test:unit` / `test:unit:coverage` / `test:unit:watch` — unit tests
-  (Vitest; unit is split from Storybook)
-- `npm run test:storybook` — Storybook interaction tests via Vitest (distinct
-  from the `test:e2e:storybook` BDD suite)
-- `npm run test:ci` — Full CI gate (type-check + unit + storybook +
-  quality/regression)
-- `npm run test:e2e:app` — App Playwright-BDD suite
-- `npm run test:e2e:storybook` — Storybook Playwright-BDD suite
-- `npm run migration-check` — Pre-migration gate (type-check + tests + storybook
-  build)
+Vitest runs use
+`node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs` with
+`--configLoader runner`; the flag avoids a child-process warning. Use the
+appropriate `vitest.unit.config.ts` or `vitest.storybook.config.ts` config for
+targeted tests. The watch script retains the heap setting.
 
-See `package.json` for the full script list.
+BDD configs enable `aiFix.promptAttachment`; for a failing suite, open the HTML
+report under `reports/playwright/app` or `reports/playwright/storybook` and copy
+the AI-fix attachment into the coding assistant.
 
-**Running a single test:** all Vitest runs go through this command:
+## Markdown
 
-```bash
-node --max-old-space-size=8192 \
-  ./node_modules/vitest/vitest.mjs ... --configLoader runner
-```
+`MD013/line-length` is disabled. Wrap only for readability or Prettier. Use real
+Markdown headings; do not use emphasis as headings or weaken
+`MD036/no-emphasis-as-heading`.
 
-The `--configLoader runner` flag matters — `native` emits a child-process
-warning here. For memory-heavy suites prefer the watch form, which carries the 8
-GB heap bump; ad-hoc `npx vitest` runs must include the same flag when invoking
-those memory-heavy suites.
+## Stack
 
-```bash
-# Run one unit test file
-npx vitest run --configLoader runner --config vitest.unit.config.ts ClientApp/src/path/to/File.test.tsx
-
-# Run tests matching a name
-npx vitest run --configLoader runner --config vitest.unit.config.ts -t "renders the submit button"
-
-# Watch a single file while developing (keeps the 8 GB heap bump)
-npm run test:unit:watch -- ClientApp/src/path/to/File.test.tsx
-
-# One Storybook interaction test
-npx vitest run --configLoader runner --config vitest.storybook.config.ts -t "Primary"
-```
-
-**Playwright-BDD Fix with AI:** both BDD configs enable
-`aiFix.promptAttachment`. To generate an AI-fix prompt, run a failing BDD suite
-with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the
-corresponding HTML report in `reports/playwright/app` or
-`reports/playwright/storybook` and copy the AI prompt attachment into Claude,
-Codex, Copilot, or another coding assistant.
-
-## Markdown line length
-
-`MD013/line-length` is disabled. Do not spend effort wrapping Markdown to meet
-an 80-character limit. Wrap text only when it improves readability or when
-Prettier formats it automatically.
-
-## Markdown headings
-
-Respect `MD036/no-emphasis-as-heading`: use Markdown headings (`#`, `##`, etc.)
-for section titles. Do not use standalone bold or italic text as a heading. Keep
-heading levels logical, and do not disable or weaken MD036 to avoid fixing a
-heading.
-
-## Technology stack
-
-| Layer        | Technology                                                   |
-| ------------ | ------------------------------------------------------------ |
-| UI framework | React 18 (functional components, hooks)                      |
-| Language     | TypeScript                                                   |
-| Routing      | React Router v7 (`createBrowserRouter`)                      |
-| Auth         | Azure AD B2C via `@azure/msal-browser` / `@azure/msal-react` |
-| Forms        | Formik + Yup with custom string extensions                   |
-| CSS          | Bootstrap 5 (custom NMI theme) + SCSS partials               |
-| API client   | Auto-generated `web-api-client.ts` (NSwag/OpenAPI)           |
-| Analytics    | Azure Application Insights + Google Analytics                |
-| Bundler      | Vite 8 (`vite.config.mts`)                                   |
-| CSP          | Trusted Types policy via `trustedtypes.ts` + DOMPurify       |
+React 18, TypeScript, React Router v7, Azure AD B2C/MSAL, Formik/Yup, Bootstrap
+5/SCSS, NSwag API client, Application Insights/Google Analytics, Vite 8, Trusted
+Types, and DOMPurify.
 
 ## Storybook
 
-For UI component work in a configured Storybook environment, use the
-`my-storybook-mcp-server` MCP tools to access Storybook's component and
-documentation knowledge before answering or taking any action. If the endpoint
-is unavailable, record that limitation and do not infer undocumented component
-properties.
+For UI work, use the configured `my-storybook-mcp-server` for component and
+documentation knowledge. If unavailable, record that limitation and do not infer
+undocumented properties. Verify every design-system property with `docs-list`
+and `docs-show`; use `get-storybook-story-instructions` and finish with
+`test-run`.
 
-### Storybook async/render hygiene
+Do not suppress React `act(...)` warnings. Formik, lookup, and route stories
+must derive state synchronously or await settled UI with `findBy...`/`waitFor`;
+do not hide derived visibility behind `useEffect` plus `setState`.
 
-Do not suppress React `act(...)` warnings in Storybook stories or setup. Treat
-them as ownership signals. For Formik, lookup-driven, or route stories, make
-component state either synchronously derived from props/context or explicitly
-await the user-visible settled state in the story play function with
-`canvas.findBy...` or `waitFor`. Do not put purely derived visibility/state
-behind `useEffect` + `setState`; it creates post-render updates outside the
-Storybook test interaction boundary.
-
-When a UI task uses Storybook MCP, first ensure `npm run storybook` is running
-and `http://localhost:6006/mcp` responds successfully. Confirm the configured
-`my-storybook-mcp-server` points to that endpoint. If the agent client started
-before Storybook was ready and the tools are absent, restart the client after
-the endpoint is healthy; do not bypass the MCP requirement.
-
-- **CRITICAL: Never hallucinate component properties!** For each property on a
-  design-system component, including common-sounding ones like `shadow`, verify
-  it against the available MCP documentation or example stories before using it.
-  If that evidence is unavailable, do not infer the property.
-- Query `docs-list` to get a list of all components
-- Query `docs-show` for that component to see all available properties and
-  examples
-- Only use properties that are explicitly documented or shown in example stories
-- If a property isn't documented, do not assume properties based on naming
-  conventions or common patterns from other libraries. Check back with the user
-  in these cases.
-- Use the `get-storybook-story-instructions` tool to fetch the latest
-  instructions for creating or updating stories. This will ensure you follow
-  current conventions and recommendations.
-- Check your work by running `test-run`.
-
-Remember: when a story name might not reflect the property name correctly,
-verify the property through documentation or example stories before using it.
+When using Storybook MCP, start `npm run storybook`, verify
+`http://localhost:6006/mcp` and the configured server, and restart the client if
+the tools were unavailable before Storybook became ready. Never guess a prop;
+ask the user when documentation or examples do not establish it.
 
 ## Edit boundaries
 
-**Edit freely:**
+Edit freely: `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, and
+`ClientApp/src/styles/**/*.scss`.
 
-- `ClientApp/src/**/*.ts`
-- `ClientApp/src/**/*.tsx`
-- `ClientApp/src/styles/**/*.scss`
+Do not directly edit generated or vendor files: the NSwag client,
+`ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`,
+`ClientApp/source-map-http-downloads/**`, or `ClientApp/src/external/**`, unless
+the task explicitly requires snapshot repair and the generator/upstream source
+is unavailable. Confirm before editing any other unsafe target.
 
-**Never edit (generated / vendor) directly, except when the task explicitly
-requires snapshot repair and the responsible generator or upstream source is
-unavailable:**
+## Architecture pointers
 
-- `ClientApp/src/api/web-api-client.ts`
-- `ClientApp/src/main.*.js`
-- `ClientApp/css/main.*.css`
-- `ClientApp/source-map-http-downloads/**`
-- `ClientApp/src/external/**`
-
-If a file you are asked to edit falls outside the safe targets, pause and
-confirm with the user before proceeding.
-
-## Architecture
-
-| Concern              | Path                                                                |
-| -------------------- | ------------------------------------------------------------------- |
-| App bootstrap        | `ClientApp/src/index.tsx`                                           |
-| Router               | `ClientApp/src/App.tsx`                                             |
-| Route modules        | `ClientApp/src/routes/**`                                           |
-| Reusable UI          | `ClientApp/src/components/**`                                       |
-| Auth config (MSAL)   | `ClientApp/src/authentication/authConfig.ts`                        |
-| Auth context / hooks | `ClientApp/src/authentication/accountContext.tsx`, `hooks.tsx`      |
-| Auth guard           | `ClientApp/src/authentication/AuthenticatedElement.tsx`             |
-| Runtime env vars     | `ClientApp/src/env.ts`                                              |
-| API client           | `ClientApp/src/api/web-api-client.ts`                               |
-| Shared types         | `ClientApp/src/types.ts`                                            |
-| Validation schemas   | `ClientApp/src/validationSchemas/**`                                |
-| Yup custom methods   | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` |
-| App Insights         | `ClientApp/src/instrumentation/AppInsightsService.ts`               |
-| Session storage      | `ClientApp/src/storage/**`                                          |
-| Utilities            | `ClientApp/src/utils/index.ts`                                      |
+Bootstrap: `ClientApp/src/index.tsx`; router: `ClientApp/src/App.tsx`; routes:
+`ClientApp/src/routes/**`; components: `ClientApp/src/components/**`;
+authentication: `ClientApp/src/authentication/**`; runtime environment:
+`ClientApp/src/env.ts`; API: `ClientApp/src/api/web-api-client.ts`; shared
+types: `ClientApp/src/types.ts`; schemas: `ClientApp/src/validationSchemas/**`;
+instrumentation: `ClientApp/src/instrumentation/AppInsightsService.ts`; storage:
+`ClientApp/src/storage/**`; utilities: `ClientApp/src/utils/index.ts`.
 
 ## Critical patterns
 
-### Environment variables
-
-Config is injected at runtime into `window.*` — **not** `process.env`. For
-handwritten browser-runtime application code, always use the `env` object from
-`ClientApp/src/env.ts`; Node-only tooling and tests may use `process.env` when
-that is their explicit runtime contract:
-
-```ts
-import { env } from '../env';
-env.VITE_B2C_CLIENTID; // correct
-process.env.VITE_B2C_CLIENTID; // wrong — undefined at runtime
-```
-
-### Global object usage
-
-Prefer `globalThis` over `window` in handwritten app code, tests, and mocks.
-This avoids SonarLint `typescript:S7764` findings and keeps shared runtime
-access working across browser-like test environments.
-
-Use `window` only where browser-specific typing or the runtime config contract
-requires it, such as the `window.*` injection consumed by
-`ClientApp/src/env.ts`.
-
-### Authentication guard
-
-Wrap protected routes with `<AuthenticatedElement>`. Multi-step form routes pass
-`displayHeaderAndFooter={false}` to suppress the main chrome:
-
-```tsx
-<AuthenticatedElement displayHeaderAndFooter={false}>
-  <CreateAccount />
-</AuthenticatedElement>
-```
-
-Access authenticated user state via hooks in
-`ClientApp/src/authentication/hooks.tsx`, not by importing `AccountContext`
-directly.
-
-### Yup validation — custom string methods
-
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` adds
-`.allowedFormat()`, `.nameAllowedFormat()`, `.businessName()`, `.maxLength()`,
-`.isRequired()`, `.minEntered()`, `.fixedDigits()`, `.phone()`, `.email()`,
-`.postcode()`, `.numbersOnly()`, `.decimalNumbersOnly()`, `.addressFormat()`,
-`.minValue()`, `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`,
-`.noConsecutivePuncuation()`, `.numberWithinRange()` to `Yup.StringSchema` (19
-methods total).
-
-Any authored schema file that calls one of these methods **must** import the
-side-effect module; generated or vendored schema follows its upstream source:
-
-```ts
-import '../../validationSchemas/yupExtensions';
-```
-
-Omitting this import causes silent runtime failures
-(`schema.method is not a function`) with no build-time error.
-
-### Forms
-
-Forms use Formik. Use `<UnsavedFormPrompt>` (wraps `RouteLeavingGuard` via
-`useFormikContext`) for unsaved-change detection. Do not re-implement navigation
-guards.
-
-### SCSS module system
-
-All new authored SCSS files must use `@use` / `@forward`, not `@import`. The
-`@import` rule is deprecated in Dart Sass and will be removed in Sass 3;
-generated or vendored Sass follows its upstream source and is not edited here.
-
-**Bootstrap shim**: `ClientApp/src/styles/_bootstrap-import.scss` isolates the
-Bootstrap `@import` to a single file. `index.scss` imports the shim
-(`@import './bootstrap-import'`) rather than Bootstrap directly. Do not add
-`@import 'bootstrap/scss/bootstrap'` anywhere else.
-
-**Division**: In authored SCSS, all Sass division must use `math.div()`. Any
-authored file that uses `math.div()` must declare `@use 'sass:math';` as its
-first `@use` statement. Generated or vendored Sass follows its upstream source:
-
-```scss
-@use 'sass:math';
-// ...
-font-size: math.div($h1-font-size, 1.375);
-```
-
-**Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a
-Bootstrap 5 internal function available only via the global `@import` cascade.
-Full `@use`-based module migration for our partials is deferred until Bootstrap
-6 (which supports `@use` natively). Until then,
-`silenceDeprecations: ['import']` in both `vite.config.mts` and
-`.storybook/main.ts` suppresses the remaining `@import` deprecations from our
-own partials, and `quietDeps: true` suppresses Bootstrap's internal
-deprecations.
+- Browser runtime configuration is injected through `window.*`; handwritten
+  browser code must use `env` from `ClientApp/src/env.ts`, not `process.env`.
+- Prefer `globalThis` over `window` except where browser-specific typing or the
+  runtime configuration contract requires `window`.
+- Protect routes with `<AuthenticatedElement>`; multi-step forms pass
+  `displayHeaderAndFooter={false}`. Use authentication hooks, not
+  `AccountContext` directly.
+- Custom Yup methods live in
+  `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts`. Schema
+  files using them must import the side-effect module, for example
+  `import '../../validationSchemas/yupExtensions';`.
+- Forms use Formik and `<UnsavedFormPrompt>` for unsaved-change detection; do
+  not reimplement navigation guards.
+- New authored SCSS uses `@use`/`@forward`; authored Sass division uses
+  `math.div()` with `@use 'sass:math'` first. Do not add Bootstrap imports
+  beyond `ClientApp/src/styles/_bootstrap-import.scss`.
+- Bootstrap 5's `negativify-map()` keeps full `@use` migration deferred. Keep
+  `silenceDeprecations: ['import']` in `vite.config.mts` and
+  `.storybook/main.ts` and `quietDeps: true` for Bootstrap's internal
+  deprecations.
 
 ## Skills
 
-A Team skills live in `skills/**`. Each is mandatory when its trigger applies —
-see `skills/using-a-team/SKILL.md` for the enforced trigger tables. Invoke via
-the `Skill` tool.
-
-| Skill                            | Use when                                                                                                                                                                                                                                                                                            |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `adr`                            | Recording or revisiting a consequential, hard-to-reverse decision — datastore/stack choice, service or module boundary, data-ownership shift, integration pattern, major dependency, or superseding a past ADR.                                                                                     |
-| `api-contract-first`             | Before implementing or changing any externally consumed boundary — REST/OpenAPI, gRPC, GraphQL, webhooks, inter-service. Write and review the contract first.                                                                                                                                       |
-| `architecture-audit`             | Before major work on an unfamiliar or inherited codebase, before a scaling milestone, or as a periodic health check.                                                                                                                                                                                |
-| `architecture-design`            | Producing an architecture or technical design for a new feature, capability, or system from requirements. Follows `brainstorming`; prefers the simplest reversible design.                                                                                                                          |
-| `architecture-review`            | Assessing a design, RFC, proposal, or PR-level structural decision someone brings you, before it is built.                                                                                                                                                                                          |
-| `brainstorming`                  | Before any creative work — new feature, component, or capability. Explore intent and design before code.                                                                                                                                                                                            |
-| `dispatching-parallel-agents`    | Two or more independent tasks with no shared state or sequential dependency.                                                                                                                                                                                                                        |
-| `executing-plans`                | You have a written implementation plan to execute in the current session.                                                                                                                                                                                                                           |
-| `finishing-a-development-branch` | A branch is ready for pre-merge verification, cleanup, and pull-request preparation.                                                                                                                                                                                                                |
-| `five-whys`                      | A bug persists despite surface fixes, or a failure or process keeps recurring — target the root, not the symptom.                                                                                                                                                                                   |
-| `incident-response`              | Production is degraded or down — use immediately.                                                                                                                                                                                                                                                   |
-| `managing-github-actions`        | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`.                                                                                                         |
-| `mcp2cli`                        | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell — especially from Codex or Copilot, which lack native MCP tool-calling — or generating a new skill from an API.                                                                                                                |
-| `performance-audit`              | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features.                                                                                                                                                                   |
-| `qdrant-clients-sdk`             | Vendored (skills.qdrant.tech). Integrating the Qdrant client SDK for the semantic-memory-layer tooling — install commands, REST vs gRPC, curated snippets.                                                                                                                                          |
-| `qdrant-deployment-options`      | Vendored. Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) for the semantic-memory layer; feeds an `adr`, does not replace one.                                                                                                                                                |
-| `qdrant-model-migration`         | Vendored. Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes, zero downtime.                                                                                                                                                 |
-| `qdrant-search-quality`          | Vendored. Qdrant retrieval returns bad/irrelevant/missing results, or choosing embedding model / hybrid search / reranking / recall@k evaluation. Routes to `diagnosis` + `search-strategies` sub-skills. Reviewing a whole RAG pipeline for sign-off is the `rag-pipeline-reviewer` agent instead. |
-| `receiving-code-review`          | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent.                                                                                                                                        |
-| `scalability-review`             | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone.                                                                                                                                                 |
-| `skill-creator`                  | Creating, evaluating, benchmarking, packaging, or fixing activation for an Agent Skill, or running a skill release-readiness review. Complements `writing-skills` (authoring workflow and gates); `skill-creator` owns eval/benchmark/package tooling and Claude Code runtime activation.           |
-| `skill-duplication-audit`        | Two or more skills appear to overlap in scope and need classification.                                                                                                                                                                                                                              |
-| `smart-init`                     | The project's initialization instructions are missing and it needs conversational onboarding.                                                                                                                                                                                                       |
-| `subagent-driven-development`    | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review.                                                                                                                                                                                         |
-| `systematic-debugging`           | Any bug, failing or flaky test, regression, crash, or incorrect output whose cause is not established.                                                                                                                                                                                              |
-| `test-driven-development`        | Implementing or changing observable behavior — new feature, bug fix, or refactor. RED before GREEN.                                                                                                                                                                                                 |
-| `using-a-team`                   | The meta-skill, injected at every session start — defines which skills and agents are mandatory.                                                                                                                                                                                                    |
-| `using-git-worktrees`            | Before a feature, bug fix, or repository change that needs isolation from the current workspace.                                                                                                                                                                                                    |
-| `verification-before-completion` | Before claiming any objectively verifiable work succeeded — edits, fixes, tests, builds, generated artifacts. Evidence before assertions.                                                                                                                                                           |
-| `writing-plans`                  | Turn a chosen or approved engineering direction into a repository-grounded implementation plan before coding.                                                                                                                                                                                       |
-| `writing-skills`                 | Creating, editing, optimizing, testing, validating, or deploying a `SKILL.md`.                                                                                                                                                                                                                      |
+Mandatory A Team triggers and procedures are defined in
+`skills/using-a-team/SKILL.md`; follow them rather than duplicating the table
+here.
 
 ## Instruction files
 
-Additional per-concern guidance lives in `.github/instructions/`:
-
-| Topic                        | File                                                                    |
-| ---------------------------- | ----------------------------------------------------------------------- |
-| Snapshot edit boundaries     | `.github/instructions/snapshot-boundaries.instructions.md`              |
-| Yup extension import guard   | `.github/instructions/yup-extension-guard.instructions.md`              |
-| Route security review        | `.github/instructions/Route-security-review.instructions.md`            |
-| Policy-sensitive files       | `.github/instructions/config-policy.instructions.md`                    |
-| JS/TS change discipline      | `.github/instructions/code-change-discipline.instructions.md`           |
-| Generated/tracked boundaries | `.github/instructions/generated-and-tracked-boundaries.instructions.md` |
+Use the applicable guidance in `.github/instructions/`, especially
+`snapshot-boundaries.instructions.md`, `yup-extension-guard.instructions.md`,
+`Route-security-review.instructions.md`, `config-policy.instructions.md`,
+`code-change-discipline.instructions.md`, and
+`generated-and-tracked-boundaries.instructions.md`.

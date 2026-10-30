@@ -20,13 +20,11 @@ const meta = preview.meta({
 
 export const Default = meta.story({
   play: async ({ canvasElement }) => {
-    // The services lookup is not served here, so the route reaches its settled state
-    // through the effect's finally rather than through rendered data. aria-busy is the
-    // route's own contract for that: true while the lookup is in flight, false once it
-    // resolves either way.
-    const servicesRegion = canvasElement.querySelector('[aria-live="off"]');
     await waitFor(() =>
-      expect(servicesRegion).toHaveAttribute('aria-busy', 'false'),
+      expect(canvasElement.querySelector('[aria-live="off"]')).toHaveAttribute(
+        'aria-busy',
+        'false',
+      ),
     );
   },
 });

@@ -114,6 +114,9 @@ export const EmptyState = meta.story({
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
     await user.type(input, 'xyz');
+
+    await expect(input).toHaveValue('xyz');
+
     const noResult = await canvas.findByText(/no matches found/i);
 
     await expect(noResult).toBeVisible();

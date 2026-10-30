@@ -51,9 +51,15 @@ export const IconButton = meta.story({
     buttonAriaTitle: 'for request RFQ-2024-001234',
   },
   play: async ({ canvas }) => {
-    await canvas
-      .getByRole('button', { name: 'Actions for request RFQ-2024-001234' })
-      .click();
+    const trigger = canvas.getByRole('button', {
+      name: 'Actions for request RFQ-2024-001234',
+    });
+
+    await expect(trigger).toHaveAccessibleName(
+      'Actions for request RFQ-2024-001234',
+    );
+
+    await trigger.click();
 
     await expect(
       canvas.getByRole('menuitem', { name: 'Delete draft' }),

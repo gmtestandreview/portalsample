@@ -56,6 +56,8 @@ export const CssCheck = meta.story({
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: /submit/i });
 
+    await expect(button).toHaveAccessibleName('Submit');
+
     // _buttons.scss maps .btn-nmi-primary to $nmi-primary (#285576).
     await expect(getComputedStyle(button).backgroundColor).toBe(
       'rgb(40, 85, 118)',

@@ -16,12 +16,11 @@ const meta = preview.meta({
 export const Authenticated = meta.story({
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Header renders a banner landmark (role=banner or <header>)
-    const banner =
-      canvasElement.querySelector('header') ??
-      canvasElement.querySelector('[role="banner"]');
 
-    await expect(banner).toBeTruthy();
+    await expect(
+      canvasElement.querySelector('header') ??
+        canvasElement.querySelector('[role="banner"]'),
+    ).toBeTruthy();
 
     // NMI logo link is present and has accessible text
     const logoLink = canvas
@@ -30,12 +29,10 @@ export const Authenticated = meta.story({
 
     await expect(logoLink).toBeTruthy();
 
-    // Navigation is present
-    const nav =
+    await expect(
       canvasElement.querySelector('nav') ??
-      canvasElement.querySelector('[role="navigation"]');
-
-    await expect(nav).toBeTruthy();
+        canvasElement.querySelector('[role="navigation"]'),
+    ).toBeTruthy();
   },
 });
 

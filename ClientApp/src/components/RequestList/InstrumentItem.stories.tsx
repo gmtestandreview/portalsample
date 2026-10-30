@@ -106,6 +106,9 @@ export const DetailsTab = meta.story({
     // Click the Details tab — react-bootstrap Tab.Container may not expose
     // role='tab' in jsdom; find by visible text instead.
     const detailsTab = canvas.getByText('Details');
+
+    await expect(detailsTab).toHaveTextContent('Details');
+
     await user.click(detailsTab);
     // Details tab shows requestForQuote data — manufacturer appears in heading
     // and manufacturer row; take the first match (card heading)

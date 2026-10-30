@@ -17,7 +17,7 @@ export const Example = meta.story({
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: 'Pin' });
 
-    await expect(button).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Pin' })).toBeVisible();
 
     await button.click();
 
