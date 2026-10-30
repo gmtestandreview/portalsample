@@ -2155,12 +2155,17 @@ const isConditionNode = (node) =>
       ts.SyntaxKind.QuestionQuestionToken,
     ].includes(node.operatorToken.kind));
 
+const isAssignmentNode = (node) =>
+  ts.isBinaryExpression(node) &&
+  node.operatorToken.kind === ts.SyntaxKind.EqualsToken;
+
 const isCallNode = (node) =>
   ts.isCallExpression(node) ||
   ts.isNewExpression(node) ||
   ts.isTaggedTemplateExpression(node);
 
 const forwardingBehaviorReason = (node) => {
+  if (isAssignmentNode(node)) return 'wrapper must not perform side effects';
   if (isCallNode(node)) return 'wrapper must not call hooks or functions';
   if (isConditionNode(node)) return 'wrapper must not branch on conditions';
   return ts.forEachChild(node, forwardingBehaviorReason);

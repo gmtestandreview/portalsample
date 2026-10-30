@@ -755,7 +755,7 @@ describe('ta/manage forwarding equivalence', () => {
   const conditionReason = /must not branch on conditions/u;
   const propsReason = /must not pass props/u;
   const signatureReason = /synchronous and take no parameters/u;
-  const returnElementReason = /must return a single forwarding element/u;
+  const sideEffectReason = /must not perform side effects/u;
   const renderOnlyReason = /must render only <AppDetails \/>/u;
   const fragmentReason = /must not render a fragment/u;
   const childrenReason = /must not render children/u;
@@ -887,9 +887,9 @@ describe('ta/manage forwarding equivalence', () => {
     [
       'a property-assignment side effect',
       manage(
-        "const Manage = () => (globalThis.document.title = 'manage', <AppDetails />);",
+        "const Manage = () => <AppDetails data-title={(globalThis.document.title = 'manage')} />;",
       ),
-      returnElementReason,
+      sideEffectReason,
     ],
     [
       'a fetch side effect',
