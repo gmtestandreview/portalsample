@@ -216,6 +216,93 @@ and took the server down; it was not retried.
 2. Decide on the two a11y warnings; run the full-suite native `test-run` and the
    Storybook/app BDD suites; complete T5–T7 evidence lanes and T8 closure.
 
+Items 1–2 above are partly superseded by the 2026-10-30 update below.
+
+### Status update — 2026-10-30
+
+The plan remains **INCOMPLETE**: T5–T7 evidence lanes, the T8 local closure and
+both BDD suites are still outstanding.
+
+- **a11y warnings fixed (2026-10-29).** `SlateEditor` B/I/U toolbar buttons get
+  a 24px minimum width from the named constant `TOOLBAR_BUTTON_MIN_WIDTH_PX`
+  (`target-size`). `.btn-nmi-secondary` text colour in `_buttons.scss` changed
+  from `$interactive` (5.35:1) to `$nmi-primary` (7.9:1)
+  (`color-contrast-enhanced`). The second change affects every secondary button
+  in the app. Both affected stories passed on re-run; the five SlateEditor
+  digests were refreshed.
+- **Conformance target is WCAG AA, not AAA (user decision, 2026-10-30).** The
+  `color-contrast-enhanced` rule is AAA and has been removed from
+  `.storybook/preview.ts` by the user (not re-verified here). The
+  `.btn-nmi-secondary` colour change was made to satisfy that rule, so it was
+  reverted (see "`.btn-nmi-secondary` reverted" below).
+- **`sonar-project.properties` regression resolved.** The 90-line deletion that
+  made `sonarCoverageContract` fail is no longer present: the file has no
+  difference from HEAD and the sonar test files pass (4 files, 25 tests). What
+  restored it was not established.
+- **Gates re-run on 2026-10-30:**
+
+| Gate                                                         | Result                      |
+| ------------------------------------------------------------ | --------------------------- |
+| `type-check`, `lint` (incl. source formatting), `lint:rules` | pass                        |
+| `--mode source`                                              | exit 0                      |
+| `test:unit`                                                  | 261 files, 2,898 tests pass |
+| `test:storybook`                                             | 150 files, 372 tests pass   |
+
+- **Native MCP `test-run` (a11y on, exact story IDs, serial).** The Storybook
+  dev server from the previous session was hung on port 6006 and was stopped by
+  the user; a fresh server then answered. 180 stories were run in four batches
+  (24, 46, 64, 46), covering the button and Slate editor stories, the react-aria
+  evaluation stories, and the other component, form, modal and route stories.
+  Component tests: 180/180 pass. a11y: 179 pass, 1 warning, 0 errors. The
+  warning is `color-contrast-enhanced` (5.27:1, needs 7:1) on
+  `#help-associatedDispute` in `routes-acceptquote--summary-and-accept-step`; it
+  is an AAA-only finding and is out of scope under the AA decision. This was a
+  sample (one to a few stories per component), not every story, and the
+  unfiltered full-suite run was deliberately not retried.
+- **Run by the user later on 2026-10-30 (results as reported by the user, not
+  re-executed here):**
+
+| Gate                                 | Result                                                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `test:e2e:storybook` (Storybook BDD) | 140 passed (3.3m)                                                                                                                                |
+| `lint`, `lint:mdx`                   | pass, no issues                                                                                                                                  |
+| `build-storybook`                    | pass                                                                                                                                             |
+| `build-storybook-docs`               | pass                                                                                                                                             |
+| `test:storybook`                     | 150 files, 372 tests pass                                                                                                                        |
+| `storybook:verify:docs`              | pass: 533 entries (161 docs, 372 stories), 150 components (118 reusable, 32 route/page), internal docs links valid, 9 accepted docgen exceptions |
+| `test:storybook:coverage`            | 59.33% statements, 49.82% branches, 50.55% functions, 59.33% lines (all files)                                                                   |
+| `test:e2e:app` (app BDD)             | 41 passed (2.5m)                                                                                                                                 |
+| `format:check`                       | one issue, in this plan file; fixed by the user                                                                                                  |
+| `validate:json`                      | pass: 218 files, 2 schemas compiled (see below)                                                                                                  |
+
+The coverage figures are below the 80% minimum in `.claude/rules/testing.md`;
+this plan sets no numeric coverage gate, so they are recorded, not judged.
+
+- **`validate:json` fix.** The earlier failure was in
+  `eslint-configs.-policy.json`, which held five concatenated configs. The user
+  converted it into one keyed JSON object, so the file now differs from HEAD (the
+  2026-10-29 table above described it as identical to HEAD).
+- **Not run in this session:** every 2026-10-30 result in the table above except
+  those under "Gates re-run" was run by the user and not re-executed here.
+- **Commit state.** Commit `74d97a6a` (2026-10-30 15:31) contains the 41 story
+  files, `CLAUDE.md`, `SlateEditor.tsx`, the coverage manifest and the earlier
+  `_buttons.scss` change. The user confirmed (2026-10-30) that the `CLAUDE.md`
+  rewrite and the 13 previously unattributed story files are intended and
+  accepted as committed. Uncommitted at the time of writing: this plan,
+  `.storybook/preview.ts`, `eslint-configs.-policy.json` and the
+  `_buttons.scss` revert below.
+- **`.btn-nmi-secondary` reverted (user decision, 2026-10-30).** `color` is back
+  to `$interactive`; `_buttons.scss` is identical to its pre-`74d97a6a` version
+  (`3f827e2c`). Native `test-run` on five secondary-button stories (the two
+  SecondaryButton stories, the react-aria evaluation Button secondary story, the
+  button group edit-section story and the supporting-documents edit step):
+  5/5 component tests and 5/5 a11y pass with the AAA rule removed. This
+  supersedes the 2026-10-29 colour change described above.
+
+Remaining: T5–T7 evidence lanes, T8 closure per the simplified local closure
+decision (one serial run of all gates against a single commit with input hashes
+before and after), and the commit decisions above.
+
 ### Superseded: open decision (resolved above)
 
 The remaining 64 pairs record a marker that only appears in a locator query such

@@ -68,7 +68,7 @@
       box-sizing: border-box;
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
       color: $white;
-      outline: none !important;
+      outline: none;
     }
     &.disabled,
     &:disabled {
@@ -83,9 +83,7 @@
 .btn-nmi-secondary {
   border: 2px solid $interactive;
   background: $white;
-  // $interactive (85% primary on white) is 5.35:1; the full primary is 7.9:1,
-  // which meets the enhanced (AAA) text contrast threshold.
-  color: $nmi-primary;
+  color: $interactive;
   @include hoverGlow;
   &:hover {
     color: $white;
@@ -112,7 +110,7 @@
     color: $btn-disable-color;
     background: $white;
     &:focus {
-      outline: 2px dotted $nmi-primary !important;
+      outline: 2px dotted $nmi-primary;
     }
   }
 }
@@ -254,20 +252,22 @@
   outline-color: $secondary;
 }
 
-.btn-skiplinks,
-.btn-backtotop {
+// Qualified with .btn so these out-rank Bootstrap's .btn state rules by
+// specificity (e.g. .btn:first-child:active) without needing !important.
+.btn.btn-skiplinks,
+.btn.btn-backtotop {
   padding: $btn-padding-y;
-  background-color: rgba($white, 0.65) !important;
+  background-color: rgba($white, 0.65);
   transition:
     opacity 0.5s ease-out,
     transform 0.5s ease-out;
   &:focus,
   &:hover {
     color: $white;
-    background-color: rgba($secondary, 1) !important;
+    background-color: rgba($secondary, 1);
   }
   &:active {
-    color: $white !important;
+    color: $white;
     span {
       text-decoration: underline;
     }
@@ -348,7 +348,7 @@
 .alert {
   .nmi-in-text-link {
     &:visited {
-      color: inherit !important;
+      color: inherit;
     }
   }
 }

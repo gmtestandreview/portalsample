@@ -1,4 +1,5 @@
 {
+  "vitestTopology.test.ts": {
   "settings": {
     "react-x": {
       "version": "detect",
@@ -3887,9 +3888,8 @@
       "WorkerNavigator": false
     }
   }
-}
-=== errorBoundary.test.tsx ===
-{
+  },
+  "errorBoundary.test.tsx": {
   "settings": {
     "react-x": {
       "version": "detect",
@@ -7778,9 +7778,8 @@
       "WorkerNavigator": false
     }
   }
-}
-=== vitest.setup.ts ===
-{
+  },
+  "vitest.setup.ts": {
   "settings": {
     "react-x": {
       "version": "detect",
@@ -11359,9 +11358,8 @@
       "WorkerNavigator": false
     }
   }
-}
-=== vitest.storybook.setup.ts ===
-{
+  },
+  "vitest.storybook.setup.ts": {
   "settings": {
     "react-x": {
       "version": "detect",
@@ -14940,9 +14938,8 @@
       "WorkerNavigator": false
     }
   }
-}
-=== Alert.stories.tsx ===
-{
+  },
+  "Alert.stories.tsx": {
   "settings": {
     "react-x": {
       "version": "detect",
@@ -18549,5 +18546,6 @@
       "WorkerLocation": false,
       "WorkerNavigator": false
     }
+  }
   }
 }
