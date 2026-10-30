@@ -280,17 +280,36 @@ describe('storybook MSW startup boundary', () => {
       transportAttempts: 0,
       liveSends: 0,
     };
-
-    globalThis.fetch = vi.fn<typeof globalThis.fetch>(async () => {
-      counters.transportAttempts += 1;
-      throw new Error('inert network denial');
-    }) as typeof globalThis.fetch;
-
-    onTestFinished(() => {
-      globalThis.fetch = originalFetch;
+    let permitNextLiveSend = false;
+    const liveSend = vi.fn<typeof globalThis.fetch>(async () => {
+      counters.liveSends += 1;
+      throw new Error('live network send disabled by test');
     });
 
-    return counters;
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(async (...args) => {
+        counters.transportAttempts += 1;
+        if (permitNextLiveSend) {
+          permitNextLiveSend = false;
+          return liveSend(...args);
+        }
+
+        throw new Error('inert network denial');
+      });
+
+    onTestFinished(() => {
+      fetchSpy.mockRestore();
+
+      expect(globalThis.fetch).toBe(originalFetch);
+    });
+
+    return {
+      counters,
+      permitNextLiveSend: () => {
+        permitNextLiveSend = true;
+      },
+    };
   };
 
   it('keeps worker creation lazy and starts it once before the story request', async () => {
@@ -309,7 +328,7 @@ describe('storybook MSW startup boundary', () => {
       quiet: true,
       onUnhandledFrame: 'error',
     }));
-    const counters = installInertNetworkDenial();
+    const transport = installInertNetworkDenial();
 
     expect(createWorker).not.toHaveBeenCalled();
 
@@ -322,7 +341,7 @@ describe('storybook MSW startup boundary', () => {
     await Promise.resolve();
 
     expect(start).toHaveBeenCalledTimes(1);
-    expect(counters.transportAttempts).toBe(0);
+    expect(transport.counters.transportAttempts).toBe(0);
 
     resolveStart();
 
@@ -331,8 +350,8 @@ describe('storybook MSW startup boundary', () => {
     expect({
       createdWorkers: createWorker.mock.calls.length,
       starts: start.mock.calls.length,
-      transportAttempts: counters.transportAttempts,
-      liveSends: counters.liveSends,
+      transportAttempts: transport.counters.transportAttempts,
+      liveSends: transport.counters.liveSends,
     }).toStrictEqual({
       createdWorkers: 1,
       starts: 1,
@@ -352,19 +371,23 @@ describe('storybook MSW startup boundary', () => {
       () => ({ start }),
       () => ({ quiet: true, onUnhandledFrame: 'error' }),
     );
-    const counters = installInertNetworkDenial();
+    const transport = installInertNetworkDenial();
     const storyRequest = vi.fn<() => Promise<Response>>(async () =>
       fetch(apiUrl('/api/never-started')),
     );
+    const requestProducingScenario = async () => {
+      await getWorker();
+      await storyRequest();
+    };
 
-    await expect(getWorker()).rejects.toBe(startupError);
-    await expect(getWorker()).rejects.toBe(startupError);
+    await expect(requestProducingScenario()).rejects.toBe(startupError);
+    await expect(requestProducingScenario()).rejects.toBe(startupError);
 
     expect({
       storyRequests: storyRequest.mock.calls.length,
       starts: start.mock.calls.length,
-      transportAttempts: counters.transportAttempts,
-      liveSends: counters.liveSends,
+      transportAttempts: transport.counters.transportAttempts,
+      liveSends: transport.counters.liveSends,
     }).toStrictEqual({
       storyRequests: 0,
       starts: 1,
@@ -376,7 +399,7 @@ describe('storybook MSW startup boundary', () => {
   it('captures an eager request before readiness without allowing a live send', async () => {
     expect.hasAssertions();
 
-    const counters = installInertNetworkDenial();
+    const transport = installInertNetworkDenial();
     const start = vi.fn<StorybookMswWorker['start']>(async () => undefined);
     const getWorker = createStorybookMswWorkerLoader(
       () => ({ start }),
@@ -388,8 +411,8 @@ describe('storybook MSW startup boundary', () => {
     await expect(eagerRequest).rejects.toThrow('inert network denial');
 
     expect({
-      transportAttempts: counters.transportAttempts,
-      liveSends: counters.liveSends,
+      transportAttempts: transport.counters.transportAttempts,
+      liveSends: transport.counters.liveSends,
     }).toStrictEqual({ transportAttempts: 1, liveSends: 0 });
 
     await getWorker();
@@ -400,7 +423,7 @@ describe('storybook MSW startup boundary', () => {
   it('fails closed when the supported no-service-worker setup cannot start', async () => {
     expect.hasAssertions();
 
-    const counters = installInertNetworkDenial();
+    const transport = installInertNetworkDenial();
     const start = vi.fn<StorybookMswWorker['start']>(async () => {
       throw new Error('No service worker available in this test setup');
     });
@@ -418,8 +441,24 @@ describe('storybook MSW startup boundary', () => {
     );
 
     expect({
-      transportAttempts: counters.transportAttempts,
-      liveSends: counters.liveSends,
+      transportAttempts: transport.counters.transportAttempts,
+      liveSends: transport.counters.liveSends,
     }).toStrictEqual({ transportAttempts: 0, liveSends: 0 });
+  });
+
+  it('counts a controlled permitted send at the live transport boundary', async () => {
+    expect.hasAssertions();
+
+    const transport = installInertNetworkDenial();
+    transport.permitNextLiveSend();
+
+    await expect(fetch(apiUrl('/api/controlled-live-send'))).rejects.toThrow(
+      'live network send disabled by test',
+    );
+
+    expect(transport.counters).toStrictEqual({
+      transportAttempts: 1,
+      liveSends: 1,
+    });
   });
 });
