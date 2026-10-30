@@ -71,12 +71,17 @@ const reportRecipientOtherAddressHandler = http.get(
 const paymentDetailsHandler = http.get(
   '/api/accept-quote/:id/payment-details',
   () =>
-    HttpResponse.json({
-      acceptQuotePreInfo: {
-        paymentTerms: 'Prepaid',
-        quotationIdNum: 'Q-2024-000456',
+    HttpResponse.json(
+      {
+        acceptQuotePreInfo: {
+          paymentTerms: 'Prepaid',
+          quotationIdNum: 'Q-2024-000456',
+        },
       },
-    }),
+      {
+        headers: { 'x-storybook-mock': 'payment-details-prepaid' },
+      },
+    ),
 );
 
 const meta = preview.meta({
@@ -196,6 +201,7 @@ export const PaymentDetailsStep = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
+      providerLifecycleSentinel: 'payment-details-prepaid',
       formik: {
         initialValues: {
           purchaseOrderNo: 'PO-4455',
@@ -227,12 +233,17 @@ export const PaymentDetailsPostpaid = meta.story({
   beforeEach({ msw }) {
     msw.use(
       http.get('/api/accept-quote/:id/payment-details', () =>
-        HttpResponse.json({
-          acceptQuotePreInfo: {
-            paymentTerms: 'Invoice',
-            quotationIdNum: 'Q-2024-000456',
+        HttpResponse.json(
+          {
+            acceptQuotePreInfo: {
+              paymentTerms: 'Invoice',
+              quotationIdNum: 'Q-2024-000456',
+            },
           },
-        }),
+          {
+            headers: { 'x-storybook-mock': 'payment-details-postpaid' },
+          },
+        ),
       ),
     );
   },
@@ -240,6 +251,7 @@ export const PaymentDetailsPostpaid = meta.story({
     docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
+      providerLifecycleSentinel: 'payment-details-postpaid',
       formik: {
         initialValues: {
           purchaseOrderNo: '',

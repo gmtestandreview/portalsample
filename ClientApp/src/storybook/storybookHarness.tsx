@@ -185,6 +185,8 @@ export interface PortalStoryParameters {
   formik?: PortalFormikConfig;
   /** Wraps the story in a React Hook Form `FormProvider`. */
   rhf?: PortalRhfConfig;
+  /** Emits an opt-in provider lifecycle sentinel for isolation tests. */
+  providerLifecycleSentinel?: string;
   msalContext?: Partial<IMsalContext>;
   fetch?: typeof globalThis.fetch;
 }
@@ -429,6 +431,55 @@ const withOptionalFetch = (
   return <PatchedFetch fetchImpl={fetchImpl}>{children}</PatchedFetch>;
 };
 
+const ProviderLifecycleSentinel = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: ReactNode;
+}) => {
+  useLayoutEffect(() => {
+    const body = globalThis.document.body;
+    const postLifecycleEvent = (phase: 'mounted' | 'cleaned') => {
+      const event = {
+        type: 'storybook-portal-provider' as const,
+        phase,
+        sentinel: name,
+      };
+      if (globalThis.window.parent !== globalThis.window) {
+        const parentWindow = globalThis.window
+          .parent as typeof globalThis.window & {
+          __storybookPortalProviderEvents?: Array<typeof event>;
+        };
+        parentWindow.__storybookPortalProviderEvents?.push(event);
+      }
+    };
+
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) {
+        return;
+      }
+      cleaned = true;
+      if (body.dataset['storybookProviderSentinel'] === name) {
+        delete body.dataset['storybookProviderSentinel'];
+      }
+      postLifecycleEvent('cleaned');
+    };
+
+    body.dataset['storybookProviderSentinel'] = name;
+    postLifecycleEvent('mounted');
+    globalThis.addEventListener('pagehide', cleanup);
+
+    return () => {
+      globalThis.removeEventListener('pagehide', cleanup);
+      cleanup();
+    };
+  }, [name]);
+
+  return children;
+};
+
 export const withPortalProviders: Decorator = (Story, context) => {
   const portal = getPortalParameters(context);
   const authenticated = portal.authenticated ?? true;
@@ -458,6 +509,13 @@ export const withPortalProviders: Decorator = (Story, context) => {
     withOptionalRhf(withOptionalFormik(<Story />, portal.formik), portal.rhf),
     portal.fetch,
   );
+  const providerContent = portal.providerLifecycleSentinel ? (
+    <ProviderLifecycleSentinel name={portal.providerLifecycleSentinel}>
+      {storyContent}
+    </ProviderLifecycleSentinel>
+  ) : (
+    storyContent
+  );
 
   return (
     <MsalContext.Provider value={msalContext}>
@@ -465,7 +523,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
         <AccountDispatchCtx.Provider value={accountDispatch}>
           <ModalStateCtx.Provider value={modalState}>
             <ModalDispatchCtx.Provider value={modalDispatch}>
-              {storyContent}
+              {providerContent}
             </ModalDispatchCtx.Provider>
           </ModalStateCtx.Provider>
         </AccountDispatchCtx.Provider>

@@ -71,6 +71,7 @@ const requestedLookupTypes = [
 ];
 
 const docsIsolationStoryFiles = [
+  'ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx',
   'ClientApp/src/components/modals/Modals.stories.tsx',
   'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx',
   'ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx',

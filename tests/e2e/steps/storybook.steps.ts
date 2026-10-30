@@ -16,6 +16,7 @@ import {
   type ConsoleMessage,
   type Page,
   type Request,
+  type Response as PlaywrightResponse,
 } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import {
@@ -57,8 +58,16 @@ const storybookPageIssueMonitors = new WeakMap<
 >();
 type DocsIsolationProbe = {
   endpointRequests: string[];
+  mockedResponses: string[];
+  liveSends: string[];
+  unmatchedRequests: string[];
   failedRequests: string[];
-  mswErrors: string[];
+};
+
+type ProviderLifecycleEvent = {
+  type: 'storybook-portal-provider';
+  phase: 'mounted' | 'cleaned';
+  sentinel: string;
 };
 
 const docsIsolationResults = new WeakMap<Page, { completed: boolean }>();
@@ -434,8 +443,10 @@ When(
   async ({ page }) => {
     const probe: DocsIsolationProbe = {
       endpointRequests: [],
+      mockedResponses: [],
+      liveSends: [],
+      unmatchedRequests: [],
       failedRequests: [],
-      mswErrors: [],
     };
     const requestHandler = (request: Request) => {
       // Playwright's request event is observation only; it does not replace or
@@ -449,13 +460,45 @@ When(
         probe.failedRequests.push(request.url());
       }
     };
+    const responseHandler = (response: PlaywrightResponse) => {
+      if (!response.url().includes(PAYMENT_DETAILS_ENDPOINT)) {
+        return;
+      }
+
+      const mockName = response.headers()['x-storybook-mock'];
+      if (mockName === undefined) {
+        probe.liveSends.push(response.url());
+      } else {
+        probe.mockedResponses.push(mockName);
+      }
+    };
     const consoleErrorHandler = (message: ConsoleMessage) => {
       if (
         message.type() === 'error' &&
         MSW_FAILURE_SIGNAL.test(message.text())
       ) {
-        probe.mswErrors.push(message.text());
+        probe.unmatchedRequests.push(message.text());
       }
+    };
+    const readProviderEvents = () =>
+      page.evaluate(() => {
+        const events = (
+          globalThis as typeof globalThis & {
+            __storybookPortalProviderEvents?: ProviderLifecycleEvent[];
+          }
+        ).__storybookPortalProviderEvents;
+        return events ?? [];
+      });
+    const expectMountedProviderPair = async () => {
+      await expect
+        .poll(async () => {
+          const events = await readProviderEvents();
+          return events
+            .filter((event) => event.phase === 'mounted')
+            .map((event) => event.sentinel)
+            .sort();
+        })
+        .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
     };
     const findStoryFrame = (storyId: string) => {
       const frame = page
@@ -486,10 +529,17 @@ When(
 
     page.on('request', requestHandler);
     page.on('requestfailed', requestFailedHandler);
+    page.on('response', responseHandler);
     page.on('console', consoleErrorHandler);
 
     let completed = false;
     try {
+      await page.addInitScript(() => {
+        const target = globalThis as typeof globalThis & {
+          __storybookPortalProviderEvents?: ProviderLifecycleEvent[];
+        };
+        target.__storybookPortalProviderEvents = [];
+      });
       await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
       await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
       await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
@@ -503,12 +553,36 @@ When(
       ).toContainText('Invoices must be paid within 30 days', {
         timeout: STORY_RENDER_TIMEOUT_MS,
       });
+      await expectMountedProviderPair();
       const sessionBefore = await page.evaluate(() =>
         globalThis.sessionStorage.getItem('targetOrganisation'),
       );
       expect(probe.endpointRequests).toHaveLength(2);
 
       await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
+      await expect.poll(readProviderEvents).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-portal-provider',
+            phase: 'cleaned',
+            sentinel: 'payment-details-prepaid',
+          },
+          {
+            type: 'storybook-portal-provider',
+            phase: 'mounted',
+            sentinel: 'payment-details-postpaid',
+          },
+        ]),
+      );
+      expect(await readProviderEvents()).not.toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-portal-provider',
+            phase: 'cleaned',
+            sentinel: 'payment-details-postpaid',
+          },
+        ]),
+      );
       const postpaidAfterStepCleanup = await fetchPaymentDetails(
         'routes-acceptquote--payment-details-postpaid',
       );
@@ -532,6 +606,15 @@ When(
               .length,
         )
         .toBe(0);
+      expect(await readProviderEvents()).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-portal-provider',
+            phase: 'cleaned',
+            sentinel: 'payment-details-postpaid',
+          },
+        ]),
+      );
 
       await page.goto(
         `${STORYBOOK_BASE}/iframe.html?id=${ACCEPT_QUOTE_DOCS_ID}&viewMode=docs`,
@@ -548,11 +631,35 @@ When(
       ).toContainText('Invoices must be paid within 30 days', {
         timeout: STORY_RENDER_TIMEOUT_MS,
       });
+      await expectMountedProviderPair();
       // Two initial requests from the first A/B pair, one explicit B request
       // after A cleanup, then two initial requests from the reversed pair.
       expect(probe.endpointRequests).toHaveLength(5);
 
       await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
+      await expect.poll(readProviderEvents).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-portal-provider',
+            phase: 'cleaned',
+            sentinel: 'payment-details-postpaid',
+          },
+          {
+            type: 'storybook-portal-provider',
+            phase: 'mounted',
+            sentinel: 'payment-details-prepaid',
+          },
+        ]),
+      );
+      expect(await readProviderEvents()).not.toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-portal-provider',
+            phase: 'cleaned',
+            sentinel: 'payment-details-prepaid',
+          },
+        ]),
+      );
       const stepAfterPostpaidCleanup = await fetchPaymentDetails(
         'routes-acceptquote--payment-details-step',
       );
@@ -576,10 +683,52 @@ When(
               .length,
         )
         .toBe(0);
+      expect(await readProviderEvents()).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'storybook-portal-provider',
+            phase: 'cleaned',
+            sentinel: 'payment-details-prepaid',
+          },
+        ]),
+      );
 
       expect(probe.endpointRequests).toHaveLength(6);
+      expect(probe.mockedResponses).toHaveLength(6);
+      expect(
+        probe.mockedResponses.filter(
+          (name) => name === 'payment-details-prepaid',
+        ),
+      ).toHaveLength(3);
+      expect(
+        probe.mockedResponses.filter(
+          (name) => name === 'payment-details-postpaid',
+        ),
+      ).toHaveLength(3);
+      expect(probe.liveSends).toEqual([]);
+      expect(probe.unmatchedRequests).toEqual([]);
       expect(probe.failedRequests).toEqual([]);
-      expect(probe.mswErrors).toEqual([]);
+      const providerEvents = await readProviderEvents();
+      expect(
+        providerEvents
+          .filter((event) => event.phase === 'mounted')
+          .map((event) => event.sentinel)
+          .sort(),
+      ).toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
+      expect(
+        providerEvents.filter((event) => event.phase === 'cleaned'),
+      ).toEqual([
+        {
+          type: 'storybook-portal-provider',
+          phase: 'cleaned',
+          sentinel: 'payment-details-postpaid',
+        },
+        {
+          type: 'storybook-portal-provider',
+          phase: 'cleaned',
+          sentinel: 'payment-details-prepaid',
+        },
+      ]);
       expect(
         await page.evaluate(() =>
           globalThis.sessionStorage.getItem('targetOrganisation'),
@@ -591,6 +740,7 @@ When(
       docsIsolationResults.set(page, { completed });
       page.off('request', requestHandler);
       page.off('requestfailed', requestFailedHandler);
+      page.off('response', responseHandler);
       page.off('console', consoleErrorHandler);
       // Keep any remaining frame cleanup inside the browser page, so the next
       // scenario starts without a provider/session owner from this probe.
@@ -639,6 +789,24 @@ When('I open the AutoSuggest documentation', async ({ page }) => {
 When('I open the AcceptQuote documentation', async ({ page }) => {
   await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
 });
+
+Then(
+  'the generated AcceptQuote Docs page should render independent request frames',
+  async ({ page }) => {
+    await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
+    await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
+    await expect(
+      page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
+    ).toContainText('Prepayment required', {
+      timeout: STORY_RENDER_TIMEOUT_MS,
+    });
+    await expect(
+      page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
+    ).toContainText('Invoices must be paid within 30 days', {
+      timeout: STORY_RENDER_TIMEOUT_MS,
+    });
+  },
+);
 
 When('I open the RouteLeavingGuard documentation', async ({ page }) => {
   await loadDocsIframe(page, ROUTE_LEAVING_GUARD_DOCS_ID);

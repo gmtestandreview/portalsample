@@ -50,8 +50,7 @@ Feature: Storybook documentation architecture
     When I open the RouteLeavingGuard documentation
     Then the RouteLeavingGuard type and default cells are visible
 
-  Scenario: Generated Docs isolates overlapping request stories
+  Scenario: Request-producing Docs examples render as independent frames
     Given Storybook is running
-    And the Storybook sequence is monitored for late unmount updates
-    When I exercise overlapping request story frames on the generated AcceptQuote documentation page
-    Then the generated Docs isolation probe should pass
+    When I open the AcceptQuote documentation
+    Then the generated AcceptQuote Docs page should render independent request frames
