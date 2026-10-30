@@ -5,6 +5,26 @@ import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import * as handlersModule from '../../../.storybook/msw-handlers';
 import { onUnhandledStorybookRequest } from '../../../.storybook/msw-policy';
 
+const LOCAL_BYPASS_SAMPLES = [
+  '/iframe.html',
+  '/index.json',
+  '/mockServiceWorker.js',
+  '/favicon.ico',
+  '/NMI-tile.png',
+  '/fonts/nmi.woff2',
+  '/assets/logo.svg',
+  '/@vite/client',
+  '/@fs/C:/repo/node_modules/x.js',
+  '/@id/virtual:storybook',
+  '/@react-refresh',
+  '/node_modules/.cache/storybook/vite/deps/react.js',
+  '/ClientApp/src/index.tsx',
+  '/.storybook/preview.tsx',
+  '/sb-preview/runtime.js',
+  '/sb-addons/docs/index.js',
+  '/__vitest_browser__/tester.js',
+] as const;
+
 const server = setupServer(...handlersModule.mswHandlers);
 const apiUrl = (path: string): URL => new URL(path, globalThis.location.origin);
 const handlerSource = readFileSync('.storybook/msw-handlers.ts', 'utf8');
@@ -147,23 +167,100 @@ describe('storybook unhandled-request policy', () => {
     expect(defaults.warn).not.toHaveBeenCalled();
   });
 
-  it.each([
-    '/fonts/nmi.woff2',
-    '/assets/logo.svg',
-    'https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js',
-  ])('bypasses non-API request %s', (requestUrl) => {
-    expect.hasAssertions();
-
-    startStorybookMswTest();
-
+  const runPolicy = (
+    requestUrl: string,
+    protocol: 'http' | 'ws' = 'http',
+  ): StorybookDefaults => {
     const defaults = createDefaults();
     const url = new URL(requestUrl, globalThis.location.origin);
 
     onUnhandledStorybookRequest({
       frame: {
-        protocol: 'http',
+        protocol,
         data: { request: new Request(url) },
       } as UnhandledFrameCallbackArgs['frame'],
+      defaults,
+    });
+
+    return defaults;
+  };
+
+  it.each([
+    'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+    'https://dc.services.visualstudio.com/v2/track',
+    'https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js',
+    'https://www.google-analytics.com/g/collect?v=2',
+    'https://www.googletagmanager.com/gtag/js?id=storybook-test-ga-id',
+  ])('fails an unhandled foreign application origin %s', (requestUrl) => {
+    expect.hasAssertions();
+
+    startStorybookMswTest();
+
+    const defaults = runPolicy(requestUrl);
+
+    expect(defaults.error).toHaveBeenCalledExactlyOnceWith();
+    expect(defaults.warn).not.toHaveBeenCalled();
+  });
+
+  it.each(['/unmapped/endpoint', '/dashboard-data.json', '/'])(
+    'fails an unhandled same-origin path outside the local asset allowlist %s',
+    (requestUrl) => {
+      expect.hasAssertions();
+
+      startStorybookMswTest();
+
+      const defaults = runPolicy(requestUrl);
+
+      expect(defaults.error).toHaveBeenCalledExactlyOnceWith();
+    },
+  );
+
+  it.each(LOCAL_BYPASS_SAMPLES)(
+    'bypasses explicit local asset or tooling request %s',
+    (requestUrl) => {
+      expect.hasAssertions();
+
+      startStorybookMswTest();
+
+      const defaults = runPolicy(requestUrl);
+
+      expect(defaults.error).not.toHaveBeenCalled();
+      expect(defaults.warn).not.toHaveBeenCalled();
+    },
+  );
+
+  it('does not let a local asset prefix bypass an /api/ path', () => {
+    expect.hasAssertions();
+
+    startStorybookMswTest();
+
+    const defaults = runPolicy('/api/fonts/leak');
+
+    expect(defaults.error).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  it('does not treat a lookalike foreign host as a local origin', () => {
+    expect.hasAssertions();
+
+    startStorybookMswTest();
+
+    const defaults = runPolicy('https://evil.example/assets/logo.svg');
+
+    expect(defaults.error).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  it('keeps non-http frames on the default behaviour', () => {
+    expect.hasAssertions();
+
+    startStorybookMswTest();
+
+    const defaults = createDefaults();
+
+    onUnhandledStorybookRequest({
+      frame: {
+        protocol: 'ws',
+        data: { client: { url: 'wss://example.test/socket' } },
+      } as unknown as UnhandledFrameCallbackArgs['frame'],
       defaults,
     });
 
