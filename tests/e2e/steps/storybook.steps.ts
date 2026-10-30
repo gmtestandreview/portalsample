@@ -267,7 +267,7 @@ When(
 
 Then(
   'the native MCP report should list exact passing stories without accessibility violations',
-  async () => {
+  () => {
     expect(latestMcpExecution).toMatchObject({ ok: true });
 
     if (latestMcpExecution?.report !== undefined) {

@@ -2175,6 +2175,10 @@ const isBareForwardingElement = (expression, tagName) => {
 };
 
 const forwardingWrapperReason = (sourceFile, targetModule) => {
+  // parseDiagnostics is not in the public typings but is set by createSourceFile.
+  if (sourceFile.parseDiagnostics?.length > 0) {
+    return 'wrapper source has syntax errors';
+  }
   const imports = sourceFile.statements.filter(ts.isImportDeclaration);
   const others = sourceFile.statements.filter(
     (statement) => !ts.isImportDeclaration(statement),
@@ -2216,11 +2220,21 @@ export function validateForwardingEquivalence({ source, content }) {
 const forwardingWrapperErrors = (filesByPath) =>
   [...FORWARDING_WRAPPER_TARGETS.keys()].flatMap((wrapperPath) => {
     const wrapper = filesByPath.get(wrapperPath);
-    return wrapper
-      ? validateForwardingEquivalence({
-          source: wrapperPath,
-          content: wrapper.content,
-        }).errors
+    if (wrapper) {
+      return validateForwardingEquivalence({
+        source: wrapperPath,
+        content: wrapper.content,
+      }).errors;
+    }
+    // Input sets without the forwarding target are not the app tree, so only a
+    // wrapper that vanished beside its target is a moved or renamed guard.
+    const target = resolveModule(
+      wrapperPath,
+      FORWARDING_WRAPPER_TARGETS.get(wrapperPath),
+      filesByPath,
+    );
+    return target.path
+      ? [forwardingRejection(wrapperPath, 'wrapper source is missing')]
       : [];
   });
 

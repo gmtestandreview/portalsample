@@ -667,10 +667,13 @@ describe('deterministic inventory generation', () => {
 
 describe('ta/manage forwarding equivalence', () => {
   const wrapperSource = 'ClientApp/src/routes/ta/manage/index.tsx';
+  const targetSource = 'ClientApp/src/routes/ta/manage/appDetails.tsx';
   const lines = (...parts: string[]) => `${parts.join('\n')}\n`;
   const importDetails = "import AppDetails from './appDetails';";
   const checkWrapper = (content: string) =>
     validateForwardingEquivalence({ source: wrapperSource, content });
+  const manage = (...body: string[]) =>
+    lines(importDetails, ...body, 'export default Manage;');
 
   it.each([
     [
@@ -715,6 +718,24 @@ describe('ta/manage forwarding equivalence', () => {
       ),
     ],
     [
+      'a parenthesised return',
+      lines(
+        importDetails,
+        'function Manage() {',
+        '  return (<AppDetails />);',
+        '}',
+        'export default Manage;',
+      ),
+    ],
+    [
+      'an as wrapper',
+      manage('const Manage = () => (<AppDetails /> as unknown as null);'),
+    ],
+    [
+      'a satisfies wrapper',
+      manage('const Manage = () => <AppDetails /> satisfies unknown;'),
+    ],
+    [
       'an inline default export function',
       lines(
         importDetails,
@@ -728,9 +749,13 @@ describe('ta/manage forwarding equivalence', () => {
     expect(checkWrapper(content)).toStrictEqual({ ok: true, errors: [] });
   });
 
+  const importReason = /only default-import its forwarding target/u;
+  const componentReason = /only declare one component exported as default/u;
+  const elementReason = /only render <\w+ \/> with no parameters, props/u;
+
   it.each([
     [
-      'a state hook',
+      'a state hook import',
       lines(
         "import { useState } from 'react';",
         importDetails,
@@ -740,116 +765,17 @@ describe('ta/manage forwarding equivalence', () => {
         '};',
         'export default Manage;',
       ),
+      importReason,
     ],
     [
-      'an effect hook',
+      'a side-effect import',
       lines(
-        "import { useEffect } from 'react';",
+        "import './x';",
         importDetails,
-        'const Manage = () => {',
-        '  useEffect(() => undefined, []);',
-        '  return <AppDetails />;',
-        '};',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a route params hook',
-      lines(
-        "import { useParams } from 'react-router';",
-        importDetails,
-        'const Manage = () => {',
-        '  useParams();',
-        '  return <AppDetails />;',
-        '};',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'an if condition',
-      lines(
-        importDetails,
-        'const Manage = () => {',
-        '  if (globalThis.location.hash) return null;',
-        '  return <AppDetails />;',
-        '};',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a ternary condition',
-      lines(
-        importDetails,
-        'const Manage = () => (globalThis.ready ? <AppDetails /> : null);',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a logical-and condition',
-      lines(
-        importDetails,
-        'const Manage = () => globalThis.ready && <AppDetails />;',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a console side effect',
-      lines(
-        importDetails,
-        'const Manage = () => {',
-        "  console.log('manage');",
-        '  return <AppDetails />;',
-        '};',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a fetch side effect',
-      lines(
-        importDetails,
-        'const Manage = () => {',
-        "  fetch('/api/ta');",
-        '  return <AppDetails />;',
-        '};',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a module-level side effect',
-      lines(
-        importDetails,
-        "fetch('/api/ta');",
         'const Manage = () => <AppDetails />;',
         'export default Manage;',
       ),
-    ],
-    [
-      'an extra prop',
-      lines(
-        importDetails,
-        'const Manage = () => <AppDetails mode="edit" />;',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a spread prop',
-      lines(
-        importDetails,
-        'const Manage = (props) => <AppDetails {...props} />;',
-        'export default Manage;',
-      ),
-    ],
-    [
-      'a wrapped child element',
-      lines(
-        importDetails,
-        'const Manage = () => (',
-        '  <div>',
-        '    <AppDetails />',
-        '  </div>',
-        ');',
-        'export default Manage;',
-      ),
+      importReason,
     ],
     [
       'a different target module',
@@ -858,23 +784,188 @@ describe('ta/manage forwarding equivalence', () => {
         'const Manage = () => <AppDetails />;',
         'export default Manage;',
       ),
+      importReason,
     ],
-  ])(
-    'rejects %s until consumer sufficiency is re-reviewed',
-    (_name, content) => {
-      expect.hasAssertions();
-      expect(checkWrapper(content)).toMatchObject({
-        ok: false,
-        errors: [
-          expect.objectContaining({
-            code: 'EVIDENCE_MISSING',
-            path: wrapperSource,
-            message: expect.stringMatching(/consumer sufficiency/u),
-          }),
-        ],
-      });
-    },
-  );
+    [
+      'a named import beside the default import',
+      lines(
+        "import AppDetails, { extra } from './appDetails';",
+        'const Manage = () => <AppDetails />;',
+        'export default Manage;',
+      ),
+      importReason,
+    ],
+    [
+      'a module-level side effect',
+      manage("fetch('/api/ta');", 'const Manage = () => <AppDetails />;'),
+      componentReason,
+    ],
+    [
+      'a default export of a different identifier',
+      lines(
+        importDetails,
+        'const Manage = () => <AppDetails />;',
+        'const Other = () => null;',
+        'export default Other;',
+      ),
+      componentReason,
+    ],
+    [
+      'an extra declaration beside the component',
+      manage('const extra = 1;', 'const Manage = () => <AppDetails />;'),
+      componentReason,
+    ],
+    [
+      'a state hook with no extra import',
+      manage(
+        'const Manage = () => {',
+        '  useState(false);',
+        '  return <AppDetails />;',
+        '};',
+      ),
+      elementReason,
+    ],
+    [
+      'an effect hook with no extra import',
+      manage(
+        'const Manage = () => {',
+        '  useEffect(() => undefined, []);',
+        '  return <AppDetails />;',
+        '};',
+      ),
+      elementReason,
+    ],
+    [
+      'a route params hook with no extra import',
+      manage(
+        'const Manage = () => {',
+        '  useParams();',
+        '  return <AppDetails />;',
+        '};',
+      ),
+      elementReason,
+    ],
+    [
+      'an if condition',
+      manage(
+        'const Manage = () => {',
+        '  if (globalThis.location.hash) return null;',
+        '  return <AppDetails />;',
+        '};',
+      ),
+      elementReason,
+    ],
+    [
+      'a ternary condition',
+      manage(
+        'const Manage = () => (globalThis.ready ? <AppDetails /> : null);',
+      ),
+      elementReason,
+    ],
+    [
+      'a logical-and condition',
+      manage('const Manage = () => globalThis.ready && <AppDetails />;'),
+      elementReason,
+    ],
+    [
+      'a console side effect',
+      manage(
+        'const Manage = () => {',
+        "  console.log('manage');",
+        '  return <AppDetails />;',
+        '};',
+      ),
+      elementReason,
+    ],
+    [
+      'a fetch side effect',
+      manage(
+        'const Manage = () => {',
+        "  fetch('/api/ta');",
+        '  return <AppDetails />;',
+        '};',
+      ),
+      elementReason,
+    ],
+    [
+      'an extra prop',
+      manage('const Manage = () => <AppDetails mode="edit" />;'),
+      elementReason,
+    ],
+    [
+      'a key prop',
+      manage('const Manage = () => <AppDetails key="a" />;'),
+      elementReason,
+    ],
+    [
+      'a ref prop',
+      manage('const Manage = () => <AppDetails ref={null} />;'),
+      elementReason,
+    ],
+    [
+      'a spread prop',
+      manage('const Manage = (props) => <AppDetails {...props} />;'),
+      elementReason,
+    ],
+    [
+      'a wrapped child element',
+      manage(
+        'const Manage = () => (',
+        '  <div>',
+        '    <AppDetails />',
+        '  </div>',
+        ');',
+      ),
+      elementReason,
+    ],
+    [
+      'a fragment',
+      manage('const Manage = () => (<><AppDetails /></>);'),
+      elementReason,
+    ],
+    [
+      'an async component',
+      manage('const Manage = async () => <AppDetails />;'),
+      elementReason,
+    ],
+    [
+      'a syntax error',
+      manage('const Manage = () => <AppDetails />;', 'const = ;'),
+      /syntax errors/u,
+    ],
+  ])('rejects %s with its own reason', (_name, content, reason) => {
+    expect.hasAssertions();
+    expect(checkWrapper(content)).toMatchObject({
+      ok: false,
+      errors: [
+        expect.objectContaining({
+          code: 'EVIDENCE_MISSING',
+          path: wrapperSource,
+          message: expect.stringMatching(reason),
+        }),
+      ],
+    });
+    expect(checkWrapper(content).errors[0]?.message).toMatch(
+      /consumer sufficiency/u,
+    );
+  });
+
+  it('rejects a source with no declared forwarding target', () => {
+    expect.hasAssertions();
+    expect(
+      validateForwardingEquivalence({
+        source: 'ClientApp/src/routes/other/index.tsx',
+        content: manage('const Manage = () => <AppDetails />;'),
+      }),
+    ).toMatchObject({
+      ok: false,
+      errors: [
+        expect.objectContaining({
+          message: expect.stringMatching(/no forwarding target is declared/u),
+        }),
+      ],
+    });
+  });
 
   it('accepts the real ta/manage wrapper and rejects a mutated copy', () => {
     expect.hasAssertions();
@@ -895,34 +986,59 @@ describe('ta/manage forwarding equivalence', () => {
     expect(checkWrapper(mutated).ok).toBe(false);
   });
 
-  it('checks the wrapper whenever story evidence validation sees it', () => {
-    expect.hasAssertions();
-
-    const forwardingErrors = (content: string) =>
-      validateStoryEvidence({
-        manifest: validManifest,
-        files: [{ path: wrapperSource, content }],
-      }).errors.filter((entry) =>
-        /consumer sufficiency/u.test(entry.message ?? ''),
+  describe('story evidence wiring', () => {
+    const forwardingErrors = (
+      files: Array<{ path: string; content: string }>,
+    ) =>
+      validateStoryEvidence({ manifest: validManifest, files }).errors.filter(
+        (entry) => /consumer sufficiency/u.test(entry.message ?? ''),
       );
+    const targetFile = {
+      path: targetSource,
+      content: 'export default () => null;\n',
+    };
 
-    expect(
-      forwardingErrors(
-        lines(
-          importDetails,
-          'const Manage = () => <AppDetails />;',
-          'export default Manage;',
-        ),
-      ),
-    ).toHaveLength(0);
-    expect(
-      forwardingErrors(
-        lines(
-          importDetails,
-          "const Manage = () => (fetch('/x'), <AppDetails />);",
-          'export default Manage;',
-        ),
-      ),
-    ).toHaveLength(1);
+    it('accepts a pure wrapper and rejects a behavioral one', () => {
+      expect.hasAssertions();
+
+      expect(
+        forwardingErrors([
+          targetFile,
+          {
+            path: wrapperSource,
+            content: manage('const Manage = () => <AppDetails />;'),
+          },
+        ]),
+      ).toHaveLength(0);
+      expect(
+        forwardingErrors([
+          targetFile,
+          {
+            path: wrapperSource,
+            content: manage(
+              "const Manage = () => (fetch('/x'), <AppDetails />);",
+            ),
+          },
+        ]),
+      ).toHaveLength(1);
+    });
+
+    it('rejects a missing wrapper when its forwarding target is present', () => {
+      expect.hasAssertions();
+
+      expect(forwardingErrors([targetFile])).toStrictEqual([
+        expect.objectContaining({
+          code: 'EVIDENCE_MISSING',
+          path: wrapperSource,
+          message: expect.stringMatching(/wrapper source is missing/u),
+        }),
+      ]);
+    });
+
+    it('ignores input sets that contain neither wrapper nor target', () => {
+      expect.hasAssertions();
+
+      expect(forwardingErrors([])).toHaveLength(0);
+    });
   });
 });

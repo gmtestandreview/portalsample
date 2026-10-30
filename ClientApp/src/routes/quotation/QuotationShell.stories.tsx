@@ -103,7 +103,7 @@ export const NewlyAcceptedQuoteShowsAccepted = meta.story({
   play: async ({ canvas }) => {
     await expect(await canvas.findByText('MY12345678')).toBeVisible();
 
-    await expect(canvas.getByText('Quotation accepted')).toBeVisible();
+    await expect(await canvas.findByText('Quotation accepted')).toBeVisible();
     await expect(canvas.queryByTestId('info-summary')).toBeNull();
 
     await waitFor(() =>

@@ -395,7 +395,8 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies â€
 
 ## Instruction Files
 
-Instruction files are under [.github/instructions/](.github/instructions/). Recall Caveman memory `mem_cea0f1f93d17c278` for the file-to-purpose index.
+Instruction files are under [.github/instructions/](.github/instructions/).
+Recall Caveman memory `mem_cea0f1f93d17c278` for the file-to-purpose index.
 
 <!-- sonar:begin:codex-secrets-on-read -->
 
