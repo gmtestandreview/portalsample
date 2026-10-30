@@ -280,8 +280,8 @@ this plan sets no numeric coverage gate, so they are recorded, not judged.
 
 - **`validate:json` fix.** The earlier failure was in
   `eslint-configs.-policy.json`, which held five concatenated configs. The user
-  converted it into one keyed JSON object, so the file now differs from HEAD (the
-  2026-10-29 table above described it as identical to HEAD).
+  converted it into one keyed JSON object, so the file now differs from HEAD
+  (the 2026-10-29 table above described it as identical to HEAD).
 - **Not run in this session:** every 2026-10-30 result in the table above except
   those under "Gates re-run" was run by the user and not re-executed here.
 - **Commit state.** Commit `74d97a6a` (2026-10-30 15:31) contains the 41 story
@@ -289,15 +289,15 @@ this plan sets no numeric coverage gate, so they are recorded, not judged.
   `_buttons.scss` change. The user confirmed (2026-10-30) that the `CLAUDE.md`
   rewrite and the 13 previously unattributed story files are intended and
   accepted as committed. Uncommitted at the time of writing: this plan,
-  `.storybook/preview.ts`, `eslint-configs.-policy.json` and the
-  `_buttons.scss` revert below.
+  `.storybook/preview.ts`, `eslint-configs.-policy.json` and the `_buttons.scss`
+  revert below.
 - **`.btn-nmi-secondary` reverted (user decision, 2026-10-30).** `color` is back
   to `$interactive`; `_buttons.scss` is identical to its pre-`74d97a6a` version
   (`3f827e2c`). Native `test-run` on five secondary-button stories (the two
   SecondaryButton stories, the react-aria evaluation Button secondary story, the
-  button group edit-section story and the supporting-documents edit step):
-  5/5 component tests and 5/5 a11y pass with the AAA rule removed. This
-  supersedes the 2026-10-29 colour change described above.
+  button group edit-section story and the supporting-documents edit step): 5/5
+  component tests and 5/5 a11y pass with the AAA rule removed. This supersedes
+  the 2026-10-29 colour change described above.
 
 Remaining: T5–T7 evidence lanes, T8 closure per the simplified local closure
 decision (one serial run of all gates against a single commit with input hashes
