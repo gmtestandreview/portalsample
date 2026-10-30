@@ -21,6 +21,7 @@ import '../ClientApp/src/styles/index.scss';
 import './docs-table-styles.css';
 import { mswHandlers } from './msw-handlers';
 import {
+  createStorybookMswWorkerLoader,
   isStorybookMswDebugEnabled,
   onUnhandledStorybookRequest,
 } from './msw-policy';
@@ -31,20 +32,13 @@ import {
 
 import './preview-setup';
 
-let storybookWorkerPromise: Promise<ReturnType<typeof setupWorker>> | undefined;
-
-const getStorybookWorker = async () => {
-  storybookWorkerPromise ??= (async () => {
-    const worker = setupWorker(...mswHandlers);
-    await worker.start({
-      quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
-      onUnhandledFrame: onUnhandledStorybookRequest,
-    });
-    return worker;
-  })();
-
-  return storybookWorkerPromise;
-};
+const getStorybookWorker = createStorybookMswWorkerLoader(
+  () => setupWorker(...mswHandlers),
+  () => ({
+    quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
+    onUnhandledFrame: onUnhandledStorybookRequest,
+  }),
+);
 
 const preview = definePreview({
   addons: [

@@ -3,7 +3,11 @@ import { setupServer } from 'msw/node';
 import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
 import * as handlersModule from '../../../.storybook/msw-handlers';
-import { onUnhandledStorybookRequest } from '../../../.storybook/msw-policy';
+import {
+  createStorybookMswWorkerLoader,
+  onUnhandledStorybookRequest,
+} from '../../../.storybook/msw-policy';
+import type { StorybookMswWorker } from '../../../.storybook/msw-policy';
 
 const LOCAL_BYPASS_SAMPLES = [
   '/iframe.html',
@@ -266,5 +270,156 @@ describe('storybook unhandled-request policy', () => {
 
     expect(defaults.error).not.toHaveBeenCalled();
     expect(defaults.warn).not.toHaveBeenCalled();
+  });
+});
+
+describe('storybook MSW startup boundary', () => {
+  const installInertNetworkDenial = () => {
+    const originalFetch = globalThis.fetch;
+    const counters = {
+      transportAttempts: 0,
+      liveSends: 0,
+    };
+
+    globalThis.fetch = vi.fn<typeof globalThis.fetch>(async () => {
+      counters.transportAttempts += 1;
+      throw new Error('inert network denial');
+    }) as typeof globalThis.fetch;
+
+    onTestFinished(() => {
+      globalThis.fetch = originalFetch;
+    });
+
+    return counters;
+  };
+
+  it('keeps worker creation lazy and starts it once before the story request', async () => {
+    expect.hasAssertions();
+
+    let resolveStart!: () => void;
+    const start = vi.fn<StorybookMswWorker['start']>(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveStart = resolve;
+        }),
+    );
+    const worker = { start };
+    const createWorker = vi.fn<() => typeof worker>(() => worker);
+    const getWorker = createStorybookMswWorkerLoader(createWorker, () => ({
+      quiet: true,
+      onUnhandledFrame: 'error',
+    }));
+    const counters = installInertNetworkDenial();
+
+    expect(createWorker).not.toHaveBeenCalled();
+
+    const storyRequest = async () => {
+      await getWorker();
+      await fetch(apiUrl('/api/startup-after-ready'));
+    };
+    const pendingStoryRequest = storyRequest();
+
+    await Promise.resolve();
+
+    expect(start).toHaveBeenCalledTimes(1);
+    expect(counters.transportAttempts).toBe(0);
+
+    resolveStart();
+
+    await expect(pendingStoryRequest).rejects.toThrow('inert network denial');
+
+    expect({
+      createdWorkers: createWorker.mock.calls.length,
+      starts: start.mock.calls.length,
+      transportAttempts: counters.transportAttempts,
+      liveSends: counters.liveSends,
+    }).toStrictEqual({
+      createdWorkers: 1,
+      starts: 1,
+      transportAttempts: 1,
+      liveSends: 0,
+    });
+  });
+
+  it('does not run request-producing story code when worker startup rejects', async () => {
+    expect.hasAssertions();
+
+    const startupError = new Error('service worker unavailable');
+    const start = vi.fn<StorybookMswWorker['start']>(async () => {
+      throw startupError;
+    });
+    const getWorker = createStorybookMswWorkerLoader(
+      () => ({ start }),
+      () => ({ quiet: true, onUnhandledFrame: 'error' }),
+    );
+    const counters = installInertNetworkDenial();
+    const storyRequest = vi.fn<() => Promise<Response>>(async () =>
+      fetch(apiUrl('/api/never-started')),
+    );
+
+    await expect(getWorker()).rejects.toBe(startupError);
+    await expect(getWorker()).rejects.toBe(startupError);
+
+    expect({
+      storyRequests: storyRequest.mock.calls.length,
+      starts: start.mock.calls.length,
+      transportAttempts: counters.transportAttempts,
+      liveSends: counters.liveSends,
+    }).toStrictEqual({
+      storyRequests: 0,
+      starts: 1,
+      transportAttempts: 0,
+      liveSends: 0,
+    });
+  });
+
+  it('captures an eager request before readiness without allowing a live send', async () => {
+    expect.hasAssertions();
+
+    const counters = installInertNetworkDenial();
+    const start = vi.fn<StorybookMswWorker['start']>(async () => undefined);
+    const getWorker = createStorybookMswWorkerLoader(
+      () => ({ start }),
+      () => ({ quiet: true, onUnhandledFrame: 'error' }),
+    );
+
+    const eagerRequest = fetch(apiUrl('/api/eager-before-ready'));
+
+    await expect(eagerRequest).rejects.toThrow('inert network denial');
+
+    expect({
+      transportAttempts: counters.transportAttempts,
+      liveSends: counters.liveSends,
+    }).toStrictEqual({ transportAttempts: 1, liveSends: 0 });
+
+    await getWorker();
+
+    expect(start).toHaveBeenCalledTimes(1);
+  });
+
+  it('fails closed when the supported no-service-worker setup cannot start', async () => {
+    expect.hasAssertions();
+
+    const counters = installInertNetworkDenial();
+    const start = vi.fn<StorybookMswWorker['start']>(async () => {
+      throw new Error('No service worker available in this test setup');
+    });
+    const getWorker = createStorybookMswWorkerLoader(
+      () => ({ start }),
+      () => ({ quiet: true, onUnhandledFrame: 'error' }),
+    );
+    const requestProducingScenario = async () => {
+      await getWorker();
+      await fetch(apiUrl('/api/no-service-worker-fallback'));
+    };
+
+    await expect(requestProducingScenario()).rejects.toThrow(
+      'No service worker available',
+    );
+
+    expect({
+      transportAttempts: counters.transportAttempts,
+      liveSends: counters.liveSends,
+    }).toStrictEqual({ transportAttempts: 0, liveSends: 0 });
   });
 });

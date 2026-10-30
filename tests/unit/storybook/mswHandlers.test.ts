@@ -236,6 +236,14 @@ describe('storybook MSW handlers', () => {
     await expect(fetch(requestUrl)).rejects.toThrow(/fetch failed|Failed/iu);
   });
 
+  it('blocks a deliberately missing application handler before network fallback', async () => {
+    expect.hasAssertions();
+
+    await expect(fetch(apiUrl('/api/missing-story-handler'))).rejects.toThrow(
+      /Cannot bypass|Failed/iu,
+    );
+  });
+
   it.each(['__proto__', 'constructor', 'toString'])(
     'fails closed with 501 for inherited object member %s',
     async (lookupType) => {

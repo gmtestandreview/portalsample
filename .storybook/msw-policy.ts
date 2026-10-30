@@ -30,6 +30,39 @@ export const STORYBOOK_LOCAL_BYPASS_PATHS = [
   '/NMI-tile.png',
 ] as const;
 
+export type StorybookMswStartOptions = {
+  quiet: boolean;
+  onUnhandledFrame: UnhandledFrameHandle;
+};
+
+export type StorybookMswWorker = {
+  start: (options: StorybookMswStartOptions) => Promise<unknown>;
+};
+
+/**
+ * Keep MSW startup behind the addon loader's async boundary. Creating the
+ * loader must not create a worker or issue a request, and a rejected startup
+ * remains rejected so request-producing story code cannot run without MSW.
+ */
+export const createStorybookMswWorkerLoader = <
+  TWorker extends StorybookMswWorker,
+>(
+  workerFactory: () => TWorker,
+  optionsFactory: () => StorybookMswStartOptions,
+): (() => Promise<TWorker>) => {
+  let workerPromise: Promise<TWorker> | undefined;
+
+  return async () => {
+    workerPromise ??= (async () => {
+      const worker = workerFactory();
+      await worker.start(optionsFactory());
+      return worker;
+    })();
+
+    return workerPromise;
+  };
+};
+
 const isLocalAssetOrToolingRequest = (requestUrl: URL): boolean => {
   if (requestUrl.origin !== globalThis.location.origin) {
     return false;
