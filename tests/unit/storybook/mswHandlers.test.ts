@@ -212,6 +212,30 @@ describe('storybook MSW handlers', () => {
     expect(response.status).toBe(501);
   });
 
+  it('answers the Google tag script request with an empty JavaScript no-op', async () => {
+    expect.hasAssertions();
+
+    const response = await fetch(
+      'https://www.googletagmanager.com/gtag/js?id=storybook-test-ga-id',
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toContain(
+      'application/javascript',
+    );
+    await expect(response.text()).resolves.toBe('');
+  });
+
+  it.each([
+    'https://www.googletagmanager.com/gtag/destination?id=storybook-test-ga-id',
+    'https://www.google-analytics.com/g/collect?v=2',
+    'https://example.com/gtag/js?id=storybook-test-ga-id',
+  ])('does not stub other foreign request %s', async (requestUrl) => {
+    expect.hasAssertions();
+
+    await expect(fetch(requestUrl)).rejects.toThrow(/fetch failed|Failed/iu);
+  });
+
   it.each(['__proto__', 'constructor', 'toString'])(
     'fails closed with 501 for inherited object member %s',
     async (lookupType) => {

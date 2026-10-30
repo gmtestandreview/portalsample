@@ -145,6 +145,15 @@ export const lookupResponsesByType: Partial<
 };
 
 export const mswHandlers = [
+  // react-ga4 injects this script when the Storybook runtime env fixture sets a
+  // GA tracking id. Answer it with an empty no-op so no real Google code or
+  // network is reached while the MSW policy still fails every other foreign
+  // origin closed.
+  http.get('https://www.googletagmanager.com/gtag/js', () =>
+    HttpResponse.text('', {
+      headers: { 'Content-Type': 'application/javascript' },
+    }),
+  ),
   http.get('/api/dashboard', () => HttpResponse.json([])),
   http.get('/api/dashboard/get-filtered-dashboard-quotes', () =>
     HttpResponse.json(dashboardPageResponse),
