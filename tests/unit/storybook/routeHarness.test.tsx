@@ -1,8 +1,15 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { Link, useParams } from 'react-router';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
+import { Link, useNavigate, useParams } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import {
   PortalStoryRouter,
+  withPortalProviders,
   type PortalLocationObservation,
 } from '../../../ClientApp/src/storybook/storybookHarness';
 
@@ -12,8 +19,46 @@ const Destination = () => {
   return <p>Destination reference: {reference}</p>;
 };
 
+const InitialRequest = () => {
+  const { requestId } = useParams();
+
+  return <p>Initial request: {requestId}</p>;
+};
+
 // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(PortalStoryRouter, () => {
+  it('keeps the default story route available without route parameters', () => {
+    expect.hasAssertions();
+
+    render(<PortalStoryRouter Story={() => <p>Default story</p>} />);
+
+    expect(screen.getByText('Default story')).toBeVisible();
+  });
+
+  it('renders the initial story with its real route parameters', async () => {
+    expect.hasAssertions();
+
+    const observeLocation =
+      vi.fn<(location: PortalLocationObservation) => void>();
+
+    render(
+      <PortalStoryRouter
+        Story={InitialRequest}
+        initialEntries={['/request/start-7']}
+        routePath='/request/:requestId'
+        observeLocation={observeLocation}
+      />,
+    );
+
+    expect(screen.getByText('Initial request: start-7')).toBeVisible();
+    await waitFor(() =>
+      expect(observeLocation).toHaveBeenCalledWith({
+        pathname: '/request/start-7',
+        params: { requestId: 'start-7' },
+      }),
+    );
+  });
+
   it('matches an exact destination ahead of the story wildcard and reports destination params', async () => {
     expect.hasAssertions();
 
@@ -123,5 +168,67 @@ describe(PortalStoryRouter, () => {
         params: { '*': 'unmatched/path' },
       }),
     );
+  });
+
+  it('keeps an overlapping story fetch override alive after the first story unmounts', () => {
+    expect.hasAssertions();
+
+    const originalFetch = globalThis.fetch;
+    const firstFetch = vi.fn<typeof globalThis.fetch>();
+    const secondFetch = vi.fn<typeof globalThis.fetch>();
+    const Story = () => <p>Fetch-owned story</p>;
+    const contextFor = (fetchImpl: typeof globalThis.fetch) =>
+      ({
+        parameters: { portal: { fetch: fetchImpl } },
+      }) as unknown as Parameters<typeof withPortalProviders>[1];
+    const firstView = render(
+      withPortalProviders(Story, contextFor(firstFetch)),
+    );
+    const secondView = render(
+      withPortalProviders(Story, contextFor(secondFetch)),
+      { container: document.createElement('div') },
+    );
+
+    expect(globalThis.fetch).toBe(secondFetch);
+
+    firstView.unmount();
+    expect(globalThis.fetch).toBe(secondFetch);
+
+    secondView.unmount();
+    expect(globalThis.fetch).toBe(originalFetch);
+  });
+
+  it('stops observing after the mounted story is removed', async () => {
+    expect.hasAssertions();
+
+    const observeLocation =
+      vi.fn<(location: PortalLocationObservation) => void>();
+    let navigate: ((to: string) => void) | undefined;
+    const Story = () => {
+      navigate = useNavigate();
+      return <p>Observed story</p>;
+    };
+    const view = render(
+      <PortalStoryRouter
+        Story={Story}
+        initialEntries={['/start']}
+        observeLocation={observeLocation}
+      />,
+    );
+
+    await waitFor(() =>
+      expect(observeLocation).toHaveBeenCalledWith({
+        pathname: '/start',
+        params: { '*': 'start' },
+      }),
+    );
+    const observationCount = observeLocation.mock.calls.length;
+
+    view.unmount();
+    await act(async () => {
+      navigate?.('/after-unmount');
+    });
+
+    expect(observeLocation).toHaveBeenCalledTimes(observationCount);
   });
 });

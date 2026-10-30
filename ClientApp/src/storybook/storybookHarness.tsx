@@ -5,9 +5,9 @@ import {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
-  useRef,
   type ComponentType,
   type ReactNode,
 } from 'react';
@@ -335,6 +335,29 @@ const withOptionalRhf = (children: ReactNode, rhf?: PortalRhfConfig) => {
   );
 };
 
+type FetchOverride = {
+  token: symbol;
+  fetchImpl: typeof globalThis.fetch;
+};
+
+const activeFetchOverrides: FetchOverride[] = [];
+let baselineFetch: typeof globalThis.fetch | undefined;
+let baselineWindowFetch: typeof globalThis.window.fetch | undefined;
+
+const applyActiveFetchOverride = () => {
+  const activeOverride = activeFetchOverrides.at(-1);
+  if (activeOverride) {
+    globalThis.fetch = activeOverride.fetchImpl;
+    globalThis.window.fetch = activeOverride.fetchImpl;
+    return;
+  }
+
+  if (baselineFetch && baselineWindowFetch) {
+    globalThis.fetch = baselineFetch;
+    globalThis.window.fetch = baselineWindowFetch;
+  }
+};
+
 const PatchedFetch = ({
   children,
   fetchImpl,
@@ -342,27 +365,31 @@ const PatchedFetch = ({
   children: ReactNode;
   fetchImpl: typeof globalThis.fetch;
 }) => {
-  const restoreRef = useRef<(() => void) | null>(null);
+  useLayoutEffect(() => {
+    if (activeFetchOverrides.length === 0) {
+      baselineFetch = globalThis.fetch;
+      baselineWindowFetch = globalThis.window.fetch;
+    }
 
-  if (!restoreRef.current) {
-    const originalFetch = globalThis.fetch;
-    const originalWindowFetch = globalThis.window.fetch;
+    const token = Symbol('storybook-fetch-override');
+    activeFetchOverrides.push({ token, fetchImpl });
+    applyActiveFetchOverride();
 
-    globalThis.fetch = fetchImpl;
-    globalThis.window.fetch = fetchImpl;
+    return () => {
+      const overrideIndex = activeFetchOverrides.findIndex(
+        (override) => override.token === token,
+      );
+      if (overrideIndex >= 0) {
+        activeFetchOverrides.splice(overrideIndex, 1);
+      }
 
-    restoreRef.current = () => {
-      globalThis.fetch = originalFetch;
-      globalThis.window.fetch = originalWindowFetch;
+      applyActiveFetchOverride();
+      if (activeFetchOverrides.length === 0) {
+        baselineFetch = undefined;
+        baselineWindowFetch = undefined;
+      }
     };
-  }
-
-  useEffect(
-    () => () => {
-      restoreRef.current?.();
-    },
-    [],
-  );
+  }, [fetchImpl]);
 
   return children;
 };
