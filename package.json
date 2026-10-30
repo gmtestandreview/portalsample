@@ -115,7 +115,7 @@
     "@react-aria/test-utils": "^1.0.0-rc.1",
     "@storybook/addon-a11y": "10.6.5",
     "@storybook/addon-docs": "10.6.5",
-    "@storybook/addon-links": "10.6.5",
+    "@storybook/addon-links": "^10.6.5",
     "@storybook/addon-mcp": "10.6.5",
     "@storybook/addon-vitest": "10.6.5",
     "@storybook/react-vite": "10.6.5",
@@ -170,7 +170,10 @@
     "vitest": "4.1.12"
   },
   "msw": {
-    "workerDirectory": ["ClientApp/public", "storybook-static"]
+    "workerDirectory": [
+      "ClientApp/public",
+      "storybook-static"
+    ]
   },
   "overrides": {
     "@mizchi/lsmcp": {

@@ -52,6 +52,7 @@ describe(PortalStoryRouter, () => {
     );
 
     expect(screen.getByText('Initial request: start-7')).toBeVisible();
+
     await waitFor(() =>
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/request/start-7',
@@ -125,6 +126,7 @@ describe(PortalStoryRouter, () => {
       screen.findByText('Wrong reference remains in story'),
     ).resolves.toBeVisible();
     expect(screen.queryByText('Destination reference: wrong-42')).toBeNull();
+
     await waitFor(() =>
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/complete/wrong-42',
@@ -172,6 +174,7 @@ describe(PortalStoryRouter, () => {
     fireEvent.click(
       screen.getByRole('link', { name: 'Continue before response' }),
     );
+
     await expect(
       screen.findByText('Destination reference: settled-42'),
     ).resolves.toBeVisible();
@@ -181,6 +184,7 @@ describe(PortalStoryRouter, () => {
     });
 
     expect(screen.queryByText('Response settled')).toBeNull();
+
     await waitFor(() =>
       expect(observeLocation).toHaveBeenCalledWith({
         pathname: '/complete/settled-42',
@@ -256,6 +260,7 @@ describe(PortalStoryRouter, () => {
     fireEvent.click(
       screen.getByRole('link', { name: 'Navigate to destination' }),
     );
+
     await expect(
       screen.findByText('Destination reference: rerender-42'),
     ).resolves.toBeVisible();
@@ -272,6 +277,7 @@ describe(PortalStoryRouter, () => {
     expect(
       screen.getByText('Destination reference: rerender-42'),
     ).toBeVisible();
+
     view.unmount();
   });
 
@@ -337,14 +343,17 @@ describe(PortalStoryRouter, () => {
     firstView.rerender(
       withPortalProviders(Story, contextFor(updatedFirstFetch)),
     );
+
     expect(globalThis.fetch).toBe(secondFetch);
     expect(globalThis.window.fetch).toBe(secondFetch);
 
     firstView.unmount();
+
     expect(globalThis.fetch).toBe(secondFetch);
     expect(globalThis.window.fetch).toBe(secondFetch);
 
     secondView.unmount();
+
     expect(globalThis.fetch).toBe(originalFetch);
     expect(globalThis.window.fetch).toBe(originalWindowFetch);
   });
