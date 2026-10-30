@@ -438,6 +438,44 @@ describe(PortalStoryRouter, () => {
     expectActiveFetch(originalFetch, originalWindowFetch);
   });
 
+  it('restores a pre-existing session sentinel through pagehide and teardown', () => {
+    expect.hasAssertions();
+
+    const sessionKey = 'storybook:unit:session-sentinel';
+    const previousValue = 'pre-existing-session-value';
+    const Story = () => <p>Session-owned story</p>;
+    const context = {
+      parameters: {
+        portal: { sessionStorageSentinel: sessionKey },
+      },
+    } as unknown as Parameters<typeof withPortalProviders>[1];
+
+    globalThis.sessionStorage.setItem(sessionKey, previousValue);
+    const pagehideView = render(withPortalProviders(Story, context));
+
+    expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(
+      `${sessionKey}:active`,
+    );
+
+    act(() => {
+      globalThis.dispatchEvent(new Event('pagehide'));
+    });
+
+    expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(previousValue);
+    pagehideView.unmount();
+    expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(previousValue);
+
+    const teardownView = render(withPortalProviders(Story, context));
+    expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(
+      `${sessionKey}:active`,
+    );
+
+    teardownView.unmount();
+
+    expect(globalThis.sessionStorage.getItem(sessionKey)).toBe(previousValue);
+    globalThis.sessionStorage.removeItem(sessionKey);
+  });
+
   it('stops observing after the mounted story is removed', async () => {
     expect.hasAssertions();
 
