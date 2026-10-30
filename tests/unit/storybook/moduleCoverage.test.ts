@@ -751,7 +751,13 @@ describe('ta/manage forwarding equivalence', () => {
 
   const importReason = /only default-import its forwarding target/u;
   const componentReason = /only declare one component exported as default/u;
-  const elementReason = /only render <\w+ \/> with no parameters, props/u;
+  const callReason = /must not call hooks or functions/u;
+  const conditionReason = /must not branch on conditions/u;
+  const propsReason = /must not pass props/u;
+  const signatureReason = /synchronous and take no parameters/u;
+  const renderOnlyReason = /must render only <AppDetails \/>/u;
+  const fragmentReason = /must not render a fragment/u;
+  const childrenReason = /must not render children/u;
 
   it.each([
     [
@@ -823,7 +829,7 @@ describe('ta/manage forwarding equivalence', () => {
         '  return <AppDetails />;',
         '};',
       ),
-      elementReason,
+      callReason,
     ],
     [
       'an effect hook with no extra import',
@@ -833,7 +839,7 @@ describe('ta/manage forwarding equivalence', () => {
         '  return <AppDetails />;',
         '};',
       ),
-      elementReason,
+      callReason,
     ],
     [
       'a route params hook with no extra import',
@@ -843,7 +849,7 @@ describe('ta/manage forwarding equivalence', () => {
         '  return <AppDetails />;',
         '};',
       ),
-      elementReason,
+      callReason,
     ],
     [
       'an if condition',
@@ -853,19 +859,19 @@ describe('ta/manage forwarding equivalence', () => {
         '  return <AppDetails />;',
         '};',
       ),
-      elementReason,
+      conditionReason,
     ],
     [
       'a ternary condition',
       manage(
         'const Manage = () => (globalThis.ready ? <AppDetails /> : null);',
       ),
-      elementReason,
+      conditionReason,
     ],
     [
       'a logical-and condition',
       manage('const Manage = () => globalThis.ready && <AppDetails />;'),
-      elementReason,
+      conditionReason,
     ],
     [
       'a console side effect',
@@ -875,7 +881,7 @@ describe('ta/manage forwarding equivalence', () => {
         '  return <AppDetails />;',
         '};',
       ),
-      elementReason,
+      callReason,
     ],
     [
       'a fetch side effect',
@@ -885,27 +891,27 @@ describe('ta/manage forwarding equivalence', () => {
         '  return <AppDetails />;',
         '};',
       ),
-      elementReason,
+      callReason,
     ],
     [
       'an extra prop',
       manage('const Manage = () => <AppDetails mode="edit" />;'),
-      elementReason,
+      propsReason,
     ],
     [
       'a key prop',
       manage('const Manage = () => <AppDetails key="a" />;'),
-      elementReason,
+      propsReason,
     ],
     [
       'a ref prop',
       manage('const Manage = () => <AppDetails ref={null} />;'),
-      elementReason,
+      propsReason,
     ],
     [
       'a spread prop',
       manage('const Manage = (props) => <AppDetails {...props} />;'),
-      elementReason,
+      signatureReason,
     ],
     [
       'a wrapped child element',
@@ -916,17 +922,27 @@ describe('ta/manage forwarding equivalence', () => {
         '  </div>',
         ');',
       ),
-      elementReason,
+      renderOnlyReason,
+    ],
+    [
+      'a spread prop with no parameters',
+      manage('const Manage = () => <AppDetails {...globalThis} />;'),
+      propsReason,
+    ],
+    [
+      'a child inside the forwarded element',
+      manage('const Manage = () => <AppDetails>text</AppDetails>;'),
+      childrenReason,
     ],
     [
       'a fragment',
       manage('const Manage = () => (<><AppDetails /></>);'),
-      elementReason,
+      fragmentReason,
     ],
     [
       'an async component',
       manage('const Manage = async () => <AppDetails />;'),
-      elementReason,
+      signatureReason,
     ],
     [
       'a syntax error',
@@ -1035,10 +1051,37 @@ describe('ta/manage forwarding equivalence', () => {
       ]);
     });
 
-    it('ignores input sets that contain neither wrapper nor target', () => {
+    it('rejects a moved wrapper and target while other routes remain', () => {
+      expect.hasAssertions();
+
+      expect(
+        forwardingErrors([
+          {
+            path: 'ClientApp/src/routes/ta/index.tsx',
+            content: 'export default () => null;\n',
+          },
+        ]),
+      ).toStrictEqual([
+        expect.objectContaining({
+          code: 'EVIDENCE_MISSING',
+          path: wrapperSource,
+          message: expect.stringMatching(/wrapper source is missing/u),
+        }),
+      ]);
+    });
+
+    it('ignores input sets that contain no route files', () => {
       expect.hasAssertions();
 
       expect(forwardingErrors([])).toHaveLength(0);
+      expect(
+        forwardingErrors([
+          {
+            path: 'ClientApp/src/components/Field.tsx',
+            content: 'export const Field = () => null;\n',
+          },
+        ]),
+      ).toHaveLength(0);
     });
   });
 });

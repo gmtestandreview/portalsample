@@ -2136,13 +2136,7 @@ const forwardingComponent = (statements) => {
 };
 
 const returnedExpression = (fn) => {
-  const isPlain =
-    fn.parameters.length === 0 &&
-    !fn.asteriskToken &&
-    !fn.modifiers?.some(
-      (modifier) => modifier.kind === ts.SyntaxKind.AsyncKeyword,
-    );
-  if (!isPlain || !fn.body) return undefined;
+  if (!fn.body) return undefined;
   if (!ts.isBlock(fn.body)) return fn.body;
   const [only] = fn.body.statements;
   return fn.body.statements.length === 1 && ts.isReturnStatement(only)
@@ -2150,35 +2144,78 @@ const returnedExpression = (fn) => {
     : undefined;
 };
 
-const isBareForwardingElement = (expression, tagName) => {
-  if (!expression) return false;
-  const element = unwrapExpression(expression);
-  let opening;
-  if (ts.isJsxSelfClosingElement(element)) {
-    opening = element;
-  } else if (
-    ts.isJsxElement(element) &&
-    element.children.every(
-      (child) => ts.isJsxText(child) && child.containsOnlyTriviaWhiteSpaces,
-    )
+const isConditionNode = (node) =>
+  ts.isIfStatement(node) ||
+  ts.isConditionalExpression(node) ||
+  ts.isSwitchStatement(node) ||
+  (ts.isBinaryExpression(node) &&
+    [
+      ts.SyntaxKind.AmpersandAmpersandToken,
+      ts.SyntaxKind.BarBarToken,
+      ts.SyntaxKind.QuestionQuestionToken,
+    ].includes(node.operatorToken.kind));
+
+const isCallNode = (node) =>
+  ts.isCallExpression(node) ||
+  ts.isNewExpression(node) ||
+  ts.isTaggedTemplateExpression(node);
+
+const forwardingBehaviorReason = (node) => {
+  if (isCallNode(node)) return 'wrapper must not call hooks or functions';
+  if (isConditionNode(node)) return 'wrapper must not branch on conditions';
+  return ts.forEachChild(node, forwardingBehaviorReason);
+};
+
+const hasOnlyWhitespaceChildren = (element) =>
+  element.children.every(
+    (child) => ts.isJsxText(child) && child.containsOnlyTriviaWhiteSpaces,
+  );
+
+const openingElementOf = (element) => {
+  if (element && ts.isJsxSelfClosingElement(element)) return element;
+  if (element && ts.isJsxElement(element)) return element.openingElement;
+  return undefined;
+};
+
+const forwardingElementReason = (expression, tagName) => {
+  const element = expression ? unwrapExpression(expression) : undefined;
+  if (element && ts.isJsxFragment(element)) {
+    return 'wrapper must not render a fragment';
+  }
+  const opening = openingElementOf(element);
+  if (!opening) return 'wrapper must return a single forwarding element';
+  if (!ts.isIdentifier(opening.tagName) || opening.tagName.text !== tagName) {
+    return `wrapper must render only <${tagName} />`;
+  }
+  if (
+    opening.typeArguments !== undefined ||
+    opening.attributes.properties.length > 0
   ) {
-    opening = element.openingElement;
-  } else {
-    return false;
+    return 'wrapper must not pass props';
+  }
+  return ts.isJsxElement(element) && !hasOnlyWhitespaceChildren(element)
+    ? 'wrapper must not render children'
+    : undefined;
+};
+
+const isPlainFunction = (fn) =>
+  fn.parameters.length === 0 &&
+  !fn.asteriskToken &&
+  !fn.modifiers?.some(
+    (modifier) => modifier.kind === ts.SyntaxKind.AsyncKeyword,
+  );
+
+const forwardingComponentReason = (component, tagName) => {
+  if (!isPlainFunction(component)) {
+    return 'wrapper component must be synchronous and take no parameters';
   }
   return (
-    ts.isIdentifier(opening.tagName) &&
-    opening.tagName.text === tagName &&
-    opening.typeArguments === undefined &&
-    opening.attributes.properties.length === 0
+    forwardingBehaviorReason(component) ??
+    forwardingElementReason(returnedExpression(component), tagName)
   );
 };
 
 const forwardingWrapperReason = (sourceFile, targetModule) => {
-  // parseDiagnostics is not in the public typings but is set by createSourceFile.
-  if (sourceFile.parseDiagnostics?.length > 0) {
-    return 'wrapper source has syntax errors';
-  }
   const imports = sourceFile.statements.filter(ts.isImportDeclaration);
   const others = sourceFile.statements.filter(
     (statement) => !ts.isImportDeclaration(statement),
@@ -2194,10 +2231,20 @@ const forwardingWrapperReason = (sourceFile, targetModule) => {
   if (!component) {
     return 'wrapper must only declare one component exported as default';
   }
-  return isBareForwardingElement(returnedExpression(component), tagName)
-    ? undefined
-    : `wrapper must only render <${tagName} /> with no parameters, props, children, hooks, conditions or side effects`;
+  return forwardingComponentReason(component, tagName);
 };
+
+const hasSyntaxErrors = (source, text) =>
+  (
+    ts.transpileModule(text, {
+      fileName: source,
+      reportDiagnostics: true,
+      compilerOptions: {
+        jsx: ts.JsxEmit.Preserve,
+        target: ts.ScriptTarget.Latest,
+      },
+    }).diagnostics ?? []
+  ).length > 0;
 
 export function validateForwardingEquivalence({ source, content }) {
   const targetModule = FORWARDING_WRAPPER_TARGETS.get(source);
@@ -2206,9 +2253,15 @@ export function validateForwardingEquivalence({ source, content }) {
       forwardingRejection(source, 'no forwarding target is declared'),
     ]);
   }
+  const text = textForInput(content);
+  if (hasSyntaxErrors(source, text)) {
+    return result([
+      forwardingRejection(source, 'wrapper source has syntax errors'),
+    ]);
+  }
   const sourceFile = ts.createSourceFile(
     source,
-    textForInput(content),
+    text,
     ts.ScriptTarget.Latest,
     true,
     ts.ScriptKind.TSX,
@@ -2216,6 +2269,8 @@ export function validateForwardingEquivalence({ source, content }) {
   const reason = forwardingWrapperReason(sourceFile, targetModule);
   return result(reason ? [forwardingRejection(source, reason)] : []);
 }
+
+const ROUTE_SOURCE_PREFIX = 'ClientApp/src/routes/';
 
 const forwardingWrapperErrors = (filesByPath) =>
   [...FORWARDING_WRAPPER_TARGETS.keys()].flatMap((wrapperPath) => {
@@ -2226,14 +2281,12 @@ const forwardingWrapperErrors = (filesByPath) =>
         content: wrapper.content,
       }).errors;
     }
-    // Input sets without the forwarding target are not the app tree, so only a
-    // wrapper that vanished beside its target is a moved or renamed guard.
-    const target = resolveModule(
-      wrapperPath,
-      FORWARDING_WRAPPER_TARGETS.get(wrapperPath),
-      filesByPath,
+    // Inputs with no route files are not the app tree. Once any route file is
+    // present, a missing wrapper means it moved and the guard must not lapse.
+    const hasRouteFiles = [...filesByPath.keys()].some((filePath) =>
+      filePath.startsWith(ROUTE_SOURCE_PREFIX),
     );
-    return target.path
+    return hasRouteFiles
       ? [forwardingRejection(wrapperPath, 'wrapper source is missing')]
       : [];
   });
