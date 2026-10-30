@@ -343,11 +343,11 @@ describe('storybook documentation architecture', () => {
     );
   });
 
-  it('records Storybook 10.6.3 provenance and upstream wording ownership', () => {
+  it('records Storybook 10.6.5 provenance and upstream wording ownership', () => {
     expect.hasAssertions();
 
     expect([
-      componentDocsGuide.includes('Storybook 10.6.3'),
+      componentDocsGuide.includes('Storybook 10.6.5'),
       componentDocsGuide.includes('Storybook 9 Essential Changes'),
       componentDocsGuide.includes('upstream'),
       /not a local\s+wording fix/.test(componentDocsGuide),
@@ -392,10 +392,10 @@ describe('storybook documentation architecture', () => {
     ];
 
     for (const packageName of storybookPackages) {
-      expect(declaredVersion(packageName)).toBe('10.6.3');
+      expect(declaredVersion(packageName)).toBe('10.6.5');
     }
 
-    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.3');
+    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.5');
     expect(declaredVersion('@chromatic-com/storybook')).toBe('5.6.0');
     expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
   });
@@ -473,18 +473,20 @@ describe('storybook documentation architecture', () => {
   it('owns generated docs naming and docs mode in main.ts', () => {
     expect.hasAssertions();
 
-    // Docs naming and mode are owned by the @storybook/addon-docs options.
+    // Naming and mode live in the top-level `docs` block. Nesting `docs` in the
+    // addon options is wrong: the addon reads options.docs as the --docs flag,
+    // so any object there is truthy and forces docs-only mode.
     expect([
-      /name:\s*['"]@storybook\/addon-docs['"][\s\S]*?docs:\s*\{[\s\S]*?defaultName:\s*['"]Documentation['"]/.test(
-        main,
-      ),
-      /name:\s*['"]@storybook\/addon-docs['"][\s\S]*?docs:\s*\{[\s\S]*?docsMode:\s*true/.test(
-        main,
-      ),
+      /^ {2}docs:\s*\{[\s\S]*?defaultName:\s*['"]Documentation['"]/m.test(main),
+      /^ {2}docs:\s*\{[\s\S]*?docsMode:\s*false/m.test(main),
       main.match(/defaultName:/g)?.length === 1,
       main.match(/docsMode:/g)?.length === 1,
       !/autodocs:\s*['"]tag['"]/.test(main),
-      !/docsMode:\s*false/.test(main),
+      !(
+        main
+          .split("name: '@storybook/addon-docs'")[1]
+          ?.split('mdxPluginOptions')[0] ?? ''
+      ).includes('docs:'),
     ]).toStrictEqual([true, true, true, true, true, true]);
   });
 

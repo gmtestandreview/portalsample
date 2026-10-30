@@ -50,10 +50,8 @@ export default defineMain({
     {
       name: '@storybook/addon-docs',
       options: {
-        docs: {
-          defaultName: 'Documentation',
-          docsMode: false,
-        },
+        // Do not nest `docs` here: the addon preset reads options.docs as the
+        // --docs CLI flag, and any object is truthy, which forces docs-only mode.
         mdxPluginOptions: {
           mdxCompileOptions: {
             remarkPlugins: [remarkGfm],
@@ -72,6 +70,11 @@ export default defineMain({
       },
     },
   ],
+
+  docs: {
+    defaultName: 'Documentation',
+    docsMode: false,
+  },
 
   // ClientApp/public owns the MSW worker and captured portal assets.
   staticDirs: ['../ClientApp/public'],
