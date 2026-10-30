@@ -415,6 +415,9 @@ Then('the component documentation page is visible', async ({ page }) => {
 Then('the component API documentation is visible', async ({ page }) => {
   const apiTable = page
     .getByRole('table')
+    .filter({
+      has: page.getByRole('columnheader', { name: 'Control', exact: true }),
+    })
     .filter({ hasText: 'Workflow status' });
 
   await expect(apiTable).toBeVisible();
@@ -563,7 +566,12 @@ Then(
 Then(
   'the RouteLeavingGuard type and default cells are visible',
   async ({ page }) => {
-    const apiTable = page.getByRole('table').filter({ hasText: 'when' });
+    const apiTable = page
+      .getByRole('table')
+      .filter({
+        has: page.getByRole('columnheader', { name: 'Control', exact: true }),
+      })
+      .filter({ hasText: 'when' });
 
     await expect(apiTable).toContainText('boolean');
     await expect(apiTable).toContainText('false');

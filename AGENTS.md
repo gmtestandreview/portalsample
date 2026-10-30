@@ -395,22 +395,7 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies â€
 
 ## Instruction Files
 
-- **Markdown rules**:
-  [.github/instructions/markdown.instructions.md](.github/instructions/markdown.instructions.md)
-- **Policy-sensitive files**:
-  [.github/instructions/config-policy.instructions.md](.github/instructions/config-policy.instructions.md)
-- **App code conventions**:
-  [.github/instructions/app-code.instructions.md](.github/instructions/app-code.instructions.md)
-- **JS/TS change discipline**:
-  [.github/instructions/code-change-discipline.instructions.md](.github/instructions/code-change-discipline.instructions.md)
-- **Generated/tracked boundaries**:
-  [.github/instructions/generated-and-tracked-boundaries.instructions.md](.github/instructions/generated-and-tracked-boundaries.instructions.md)
-- **Route security review**:
-  [.github/instructions/Route-security-review.instructions.md](.github/instructions/Route-security-review.instructions.md)
-- **Snapshot edit boundaries**:
-  [.github/instructions/snapshot-boundaries.instructions.md](.github/instructions/snapshot-boundaries.instructions.md)
-- **Yup extension import guard**:
-  [.github/instructions/yup-extension-guard.instructions.md](.github/instructions/yup-extension-guard.instructions.md)
+Instruction files are under [.github/instructions/](.github/instructions/). Recall Caveman memory `mem_cea0f1f93d17c278` for the file-to-purpose index.
 
 <!-- sonar:begin:codex-secrets-on-read -->
 
