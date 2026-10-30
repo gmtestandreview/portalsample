@@ -187,6 +187,8 @@ export interface PortalStoryParameters {
   rhf?: PortalRhfConfig;
   /** Emits an opt-in provider lifecycle sentinel for isolation tests. */
   providerLifecycleSentinel?: string;
+  /** Owns a per-story sessionStorage key for lifecycle isolation tests. */
+  sessionStorageSentinel?: string;
   msalContext?: Partial<IMsalContext>;
   fetch?: typeof globalThis.fetch;
 }
@@ -480,6 +482,43 @@ const ProviderLifecycleSentinel = ({
   return children;
 };
 
+const SessionStorageLifecycleSentinel = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: ReactNode;
+}) => {
+  useLayoutEffect(() => {
+    const storage = globalThis.sessionStorage;
+    const previousValue = storage.getItem(name);
+    const activeValue = `${name}:active`;
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) {
+        return;
+      }
+      cleaned = true;
+      if (previousValue === null) {
+        storage.removeItem(name);
+      } else {
+        storage.setItem(name, previousValue);
+      }
+    };
+
+    storage.setItem(name, `${name}:mounted`);
+    storage.setItem(name, activeValue);
+    globalThis.addEventListener('pagehide', cleanup);
+
+    return () => {
+      globalThis.removeEventListener('pagehide', cleanup);
+      cleanup();
+    };
+  }, [name]);
+
+  return children;
+};
+
 export const withPortalProviders: Decorator = (Story, context) => {
   const portal = getPortalParameters(context);
   const authenticated = portal.authenticated ?? true;
@@ -516,6 +555,13 @@ export const withPortalProviders: Decorator = (Story, context) => {
   ) : (
     storyContent
   );
+  const lifecycleContent = portal.sessionStorageSentinel ? (
+    <SessionStorageLifecycleSentinel name={portal.sessionStorageSentinel}>
+      {providerContent}
+    </SessionStorageLifecycleSentinel>
+  ) : (
+    providerContent
+  );
 
   return (
     <MsalContext.Provider value={msalContext}>
@@ -523,7 +569,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
         <AccountDispatchCtx.Provider value={accountDispatch}>
           <ModalStateCtx.Provider value={modalState}>
             <ModalDispatchCtx.Provider value={modalDispatch}>
-              {providerContent}
+              {lifecycleContent}
             </ModalDispatchCtx.Provider>
           </ModalStateCtx.Provider>
         </AccountDispatchCtx.Provider>

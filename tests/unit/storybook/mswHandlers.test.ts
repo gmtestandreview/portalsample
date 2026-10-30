@@ -134,6 +134,24 @@ describe('storybook MSW handlers', () => {
     },
   );
 
+  it('gives overlapping AcceptQuote Docs stories distinct session sentinels', () => {
+    expect.hasAssertions();
+
+    const source = readTextFileSync(
+      'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx',
+      process.cwd(),
+    );
+    const sessionSentinels = [
+      ...source.matchAll(/sessionStorageSentinel:\s*'([^']+)'/gu),
+    ].map((match) => match[1]);
+
+    expect(sessionSentinels).toStrictEqual([
+      'storybook:accept-quote:payment-details:prepaid',
+      'storybook:accept-quote:payment-details:postpaid',
+    ]);
+    expect(new Set(sessionSentinels).size).toBe(sessionSentinels.length);
+  });
+
   it('returns the shared services fixture', async () => {
     expect.hasAssertions();
 

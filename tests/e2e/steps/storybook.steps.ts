@@ -80,6 +80,10 @@ const PAYMENT_DETAILS_STEP_FRAME =
   '#iframe--routes-acceptquote--payment-details-step';
 const PAYMENT_DETAILS_POSTPAID_FRAME =
   '#iframe--routes-acceptquote--payment-details-postpaid';
+const PAYMENT_DETAILS_PREPAID_SESSION_KEY =
+  'storybook:accept-quote:payment-details:prepaid';
+const PAYMENT_DETAILS_POSTPAID_SESSION_KEY =
+  'storybook:accept-quote:payment-details:postpaid';
 
 const captureLateUnmountSignal = (
   messages: string[],
@@ -489,6 +493,17 @@ When(
         ).__storybookPortalProviderEvents;
         return events ?? [];
       });
+    const readSessionSentinel = (key: string) =>
+      page.evaluate(
+        (sessionKey) => globalThis.sessionStorage.getItem(sessionKey),
+        key,
+      );
+    const expectSessionSentinel = async (
+      key: string,
+      expected: string | null,
+    ) => {
+      await expect.poll(() => readSessionSentinel(key)).toBe(expected);
+    };
     const expectMountedProviderPair = async () => {
       await expect
         .poll(async () => {
@@ -540,6 +555,12 @@ When(
         };
         target.__storybookPortalProviderEvents = [];
       });
+      expect(
+        await readSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY),
+      ).toBeNull();
+      expect(
+        await readSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY),
+      ).toBeNull();
       await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
       await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
       await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
@@ -554,6 +575,14 @@ When(
         timeout: STORY_RENDER_TIMEOUT_MS,
       });
       await expectMountedProviderPair();
+      await expectSessionSentinel(
+        PAYMENT_DETAILS_PREPAID_SESSION_KEY,
+        `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
+      );
+      await expectSessionSentinel(
+        PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
+        `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
+      );
       const sessionBefore = await page.evaluate(() =>
         globalThis.sessionStorage.getItem('targetOrganisation'),
       );
@@ -582,6 +611,11 @@ When(
             sentinel: 'payment-details-postpaid',
           },
         ]),
+      );
+      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
+      await expectSessionSentinel(
+        PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
+        `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
       );
       const postpaidAfterStepCleanup = await fetchPaymentDetails(
         'routes-acceptquote--payment-details-postpaid',
@@ -615,6 +649,8 @@ When(
           },
         ]),
       );
+      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
+      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
 
       await page.goto(
         `${STORYBOOK_BASE}/iframe.html?id=${ACCEPT_QUOTE_DOCS_ID}&viewMode=docs`,
@@ -632,6 +668,14 @@ When(
         timeout: STORY_RENDER_TIMEOUT_MS,
       });
       await expectMountedProviderPair();
+      await expectSessionSentinel(
+        PAYMENT_DETAILS_PREPAID_SESSION_KEY,
+        `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
+      );
+      await expectSessionSentinel(
+        PAYMENT_DETAILS_POSTPAID_SESSION_KEY,
+        `${PAYMENT_DETAILS_POSTPAID_SESSION_KEY}:active`,
+      );
       // Two initial requests from the first A/B pair, one explicit B request
       // after A cleanup, then two initial requests from the reversed pair.
       expect(probe.endpointRequests).toHaveLength(5);
@@ -659,6 +703,11 @@ When(
             sentinel: 'payment-details-prepaid',
           },
         ]),
+      );
+      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
+      await expectSessionSentinel(
+        PAYMENT_DETAILS_PREPAID_SESSION_KEY,
+        `${PAYMENT_DETAILS_PREPAID_SESSION_KEY}:active`,
       );
       const stepAfterPostpaidCleanup = await fetchPaymentDetails(
         'routes-acceptquote--payment-details-step',
@@ -692,6 +741,8 @@ When(
           },
         ]),
       );
+      await expectSessionSentinel(PAYMENT_DETAILS_PREPAID_SESSION_KEY, null);
+      await expectSessionSentinel(PAYMENT_DETAILS_POSTPAID_SESSION_KEY, null);
 
       expect(probe.endpointRequests).toHaveLength(6);
       expect(probe.mockedResponses).toHaveLength(6);
