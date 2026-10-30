@@ -14,7 +14,6 @@ import SecondaryButton from './index';
 
 const meta = preview.meta({
   component: SecondaryButton,
-  tags: ['ai-generated', 'needs-work'],
 });
 
 export const Default = meta.story({

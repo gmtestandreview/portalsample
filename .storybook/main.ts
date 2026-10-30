@@ -19,7 +19,7 @@ export default defineMain({
   stories: [
     '../.storybook/*.mdx',
     '../ClientApp/src/**/*.mdx',
-    '../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../ClientApp/src/**/*.stories.tsx',
   ],
 
   features: {
@@ -32,6 +32,11 @@ export default defineMain({
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
+      // The plugin's transform filter matches dot-directories, but its project
+      // root-file globs do not, so .storybook/preview.tsx warns "not included in
+      // the active TypeScript project". Config is not a documented component.
+      // Passing exclude replaces the plugin default, so keep the stories exclusion.
+      exclude: ['**/*.stories.tsx', '**/.storybook/**'],
       propFilter: (prop) =>
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
     },
@@ -45,6 +50,10 @@ export default defineMain({
     {
       name: '@storybook/addon-docs',
       options: {
+        docs: {
+          defaultName: 'Documentation',
+          docsMode: false,
+        },
         mdxPluginOptions: {
           mdxCompileOptions: {
             remarkPlugins: [remarkGfm],
@@ -64,11 +73,6 @@ export default defineMain({
     },
   ],
 
-  docs: {
-    defaultName: 'Documentation',
-    docsMode: false,
-  },
-
   // ClientApp/public owns the MSW worker and captured portal assets.
   staticDirs: ['../ClientApp/public'],
 
@@ -81,6 +85,15 @@ export default defineMain({
     // preserve Storybook's client directive on each output chunk.
     return mergeConfig(viteConfig, {
       plugins: [clientDirectives()],
+      server: {
+        watch: {
+          // Build output lives inside the project root. A running dev server
+          // otherwise watches storybook-static, and on Windows those watch
+          // handles race the build's staticDirs copy (ENOENT on chmod/utime),
+          // which breaks `storybook:verify:docs` while `npm run storybook` runs.
+          ignored: ['**/storybook-static/**'],
+        },
+      },
       css: {
         preprocessorOptions: {
           scss: {

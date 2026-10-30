@@ -4,7 +4,6 @@ import InTextLink from './index';
 
 const meta = preview.meta({
   component: InTextLink,
-  tags: ['ai-generated'],
 });
 
 export const External = meta.story({

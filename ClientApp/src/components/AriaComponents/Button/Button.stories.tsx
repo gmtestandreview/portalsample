@@ -7,7 +7,6 @@ const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Button',
   component: Button,
-  tags: ['ai-generated'],
   args: {
     onPress: fn(),
   },

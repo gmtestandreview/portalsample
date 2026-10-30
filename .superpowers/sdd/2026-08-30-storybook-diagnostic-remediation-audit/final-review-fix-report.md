@@ -6,7 +6,7 @@ This is the single consolidated final-review fix wave requested after the 97/100
 whole-plan review. Base was `eee6457a0e92c29189200d4a71652db171c1af8f`. The
 post-review Copilot commits `e2660f7` and `eee6457` are preserved. Their files
 (`scripts/clean-storybook-output.mjs`, `scripts/coverage-gap-queue.mjs`,
-`scripts/verify-storybook-docs.mjs`, and `.storybook/preview.ts`) are not
+`scripts/verify-storybook-docs.mjs`, and `.storybook/preview.tsx`) are not
 modified.
 
 ## Root-cause investigation
@@ -163,7 +163,7 @@ manager peak/worker comparison. The atomic status document now labels itself a
 historical checkpoint and links to the final audit.
 
 Self-review confirmed the three protected Copilot script files and
-`.storybook/preview.ts` are absent from the final diff, as are `package.json`,
+`.storybook/preview.tsx` are absent from the final diff, as are `package.json`,
 `package-lock.json`, `vitest.storybook.config.ts`, generated/vendor files, UI
 components, and stories. No dependency, retry, timeout, coverage-scope, or
 source-map-policy change was made.

@@ -107,7 +107,7 @@ npm run test:e2e:storybook
 ## Recent Hardening Notes
 
 - Global Storybook routing now uses a data-router decorator
-  (`createMemoryRouter` + `RouterProvider`) in `.storybook/preview.ts`.
+  (`createMemoryRouter` + `RouterProvider`) in `.storybook/preview.tsx`.
 - `withPortalProviders` in `ClientApp/src/storybook/storybookHarness.tsx` no
   longer wraps stories with `MemoryRouter`.
 - Story-level `MemoryRouter` wrappers were removed from affected stories to

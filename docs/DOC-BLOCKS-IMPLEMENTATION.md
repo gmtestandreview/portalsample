@@ -167,7 +167,7 @@ static/js/
 │           └── index.tsx
 .storybook/
 ├── main.ts                              (Updated with docs pattern)
-├── preview.ts
+├── preview.tsx
 ├── introduction.mdx                     (Getting started guide)
 └── component-docs-guide.mdx             (JSDoc best practices)
 ```
@@ -430,7 +430,7 @@ No additional configuration needed!
 - No additional setup required
 
 ### 4. **Customization via Parameters**
-- Control block behavior in preview.ts
+- Control block behavior in preview.tsx
 - Per-story overrides possible
 - MDX props for block-level customization
 

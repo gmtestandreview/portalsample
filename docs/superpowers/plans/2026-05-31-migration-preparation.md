@@ -207,7 +207,7 @@ Playwright/BDD (25 feature files) · Node ≥ 20
 | `static/js/components/Pill/StatusPill.tsx`                                | Modify              | Fix switch-case logic bug (SB-001, Issue #1)                    |
 | `static/js/routes/dashboard/Dashboard.stories.tsx`                        | Modify              | Fix filter string mismatch (SB-002, Issue #2)                   |
 | `.storybook/msw-handlers.ts`                                              | Modify              | Fix MSW handler shape (SB-004, Issue #3)                        |
-| `.storybook/preview.ts`                                                   | Modify              | Align MSW config; unify MSAL account                            |
+| `.storybook/preview.tsx`                                                  | Modify              | Align MSW config; unify MSAL account                            |
 | `static/js/storybook/storybookHarness.tsx`                                | Modify              | Unify mock account identity (SB-005, Issue #9)                  |
 | `static/js/components/InTextLink/index.tsx`                               | Modify              | Fix target prop override (SB-003, Issue #7)                     |
 | Story files for Issues #4–#15                                             | Create              | Storybook coverage gaps                                         |
@@ -499,11 +499,11 @@ and confirm the fix is present, then complete the remaining DoD items.
   or an object with `handlers` key (`{ handlers: [...] }`), not
   `{ dashboard: [...] }`.
 
-  Read `.storybook/preview.ts` to confirm the handler is consumed correctly.
+  Read `.storybook/preview.tsx` to confirm the handler is consumed correctly.
 
   If NOT fixed:
   - Refactor to flat array or `{ handlers: [...] }`
-  - Update `preview.ts` import if needed
+  - Update `preview.tsx` import if needed
 
   Acceptance:
   - [ ] Shape is compatible with msw-storybook-addon
@@ -511,7 +511,7 @@ and confirm the fix is present, then complete the remaining DoD items.
 
 - [ ] **Issue #9 — MSAL dual identity (SB-005)**
 
-  Read `.storybook/preview.ts` (mock account name/username). Read
+  Read `.storybook/preview.tsx` (mock account name/username). Read
   `static/js/storybook/storybookHarness.tsx` (mock account name/username).
 
   Expected: both files use the same canonical mock account (recommend
@@ -532,7 +532,7 @@ and confirm the fix is present, then complete the remaining DoD items.
           static/js/components/Pill/StatusPill.stories.tsx \
           tests/unit/components/Pill/StatusPill.test.tsx \
           static/js/routes/dashboard/Dashboard.stories.tsx \
-          .storybook/msw-handlers.ts .storybook/preview.ts \
+          .storybook/msw-handlers.ts .storybook/preview.tsx \
           static/js/storybook/storybookHarness.tsx
   git commit -m "fix(storybook): close Sprint 1 Batch B1 — StatusPill, Dashboard filters, MSW shape, MSAL identity"
   ```

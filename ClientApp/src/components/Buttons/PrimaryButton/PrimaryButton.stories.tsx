@@ -5,7 +5,6 @@ import PrimaryButton from './index';
 
 const meta = preview.meta({
   component: PrimaryButton,
-  tags: ['ai-generated'],
   argTypes: {
     mode: {
       options: ['light', 'dark'],

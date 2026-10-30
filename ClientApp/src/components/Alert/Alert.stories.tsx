@@ -16,7 +16,6 @@ import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from './index';
 
 const meta = preview.meta({
   component: AlertInfo,
-  tags: ['ai-generated', 'needs-work', '!autodocs'],
 });
 
 export const Info = meta.story({

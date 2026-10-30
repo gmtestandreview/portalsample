@@ -232,7 +232,7 @@ both BDD suites are still outstanding.
   digests were refreshed.
 - **Conformance target is WCAG AA, not AAA (user decision, 2026-10-30).** The
   `color-contrast-enhanced` rule is AAA and has been removed from
-  `.storybook/preview.ts` by the user (not re-verified here). The
+  `.storybook/preview.tsx` by the user (not re-verified here). The
   `.btn-nmi-secondary` colour change was made to satisfy that rule, so it was
   reverted (see "`.btn-nmi-secondary` reverted" below).
 - **`sonar-project.properties` regression resolved.** The 90-line deletion that
@@ -289,8 +289,8 @@ this plan sets no numeric coverage gate, so they are recorded, not judged.
   `_buttons.scss` change. The user confirmed (2026-10-30) that the `CLAUDE.md`
   rewrite and the 13 previously unattributed story files are intended and
   accepted as committed. Uncommitted at the time of writing: this plan,
-  `.storybook/preview.ts`, `eslint-configs.-policy.json` and the `_buttons.scss`
-  revert below.
+  `.storybook/preview.tsx`, `eslint-configs.-policy.json` and the
+  `_buttons.scss` revert below.
 - **`.btn-nmi-secondary` reverted (user decision, 2026-10-30).** `color` is back
   to `$interactive`; `_buttons.scss` is identical to its pre-`74d97a6a` version
   (`3f827e2c`). Native `test-run` on five secondary-button stories (the two
@@ -376,7 +376,7 @@ submission, navigation, or error behavior.
   discovery. Root cause of the earlier generic startup failure remains unproved;
   the later focused pass is not evidence that the cold-start cause has been
   repaired.
-- `.storybook/main.ts`, `.storybook/preview.ts`, `vitest.storybook.config.ts`,
+- `.storybook/main.ts`, `.storybook/preview.tsx`, `vitest.storybook.config.ts`,
   `vitest.storybook.runtime.ts`, `storybookHarness.tsx`, preview setup, existing
   story metadata, root scripts and local patch mechanism were inspected.
 - Official references:
@@ -1627,7 +1627,7 @@ one commit.
 
 ### T6a — Destination capability
 
-Modify `.storybook/preview.ts`, `ClientApp/src/storybook/storybookHarness.tsx`
+Modify `.storybook/preview.tsx`, `ClientApp/src/storybook/storybookHarness.tsx`
 and `ClientApp/src/storybook/storybookFixtures.ts`; create
 `tests/unit/storybook/routeHarness.test.tsx` and
 `tests/e2e/features/storybook/routes/route-harness.feature` with existing common
@@ -2782,7 +2782,7 @@ accurate docs or complete source classification.
 
 Exact network/fixture ownership paths:
 `tests/unit/config/storybookMswPolicy.test.ts`, `.storybook/preview-setup.ts`,
-`.storybook/preview.ts`, `ClientApp/src/storybook/storybookFixtures.ts` and
+`.storybook/preview.tsx`, `ClientApp/src/storybook/storybookFixtures.ts` and
 `ClientApp/src/storybook/storybookHarness.tsx`. These are conditional edits only
 for their corresponding reproduced isolation/harness gap; the T8 unit gate also
 includes the MSW policy test. The historical 258-TSX scan seeds, but never
@@ -2887,7 +2887,7 @@ implementation obligations, not completed changes.
     `ClientApp/src/routes/requestForQuote/create/CreateRequestForQuote.stories.tsx`,
     `ClientApp/src/routes/ta/create/CreateRequestForTypeApproval.stories.tsx`,
     `ClientApp/src/routes/ta/created/RequestForPatternApprovalCreated.stories.tsx`,
-    `ClientApp/src/storybook/storybookHarness.tsx`, `.storybook/preview.ts`.
+    `ClientApp/src/storybook/storybookHarness.tsx`, `.storybook/preview.tsx`.
 - [ ] T7 (P2, human 1 day / agent 3-5 hours) — Cover shell obligations and
       retain sufficient success/auth/summary examples
   - Phase: eng-review; finding: Five shells lack candidates; forwarding

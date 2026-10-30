@@ -31,7 +31,7 @@ guidance:
    `@storybook/addon-docs` options even though current Storybook documents
    `defaultName` and `docsMode` under the top-level `docs` configuration and
    Autodocs activation through tags.
-3. `preview.ts` duplicates this configuration through `docs.enabled`,
+3. `preview.tsx` duplicates this configuration through `docs.enabled`,
    `docs.autodocs`, and a project-owned `expectedAddonDocsConfig`, none of which
    should be necessary for the documented Autodocs activation model.
 4. A global `parameters.docs.description.component` risks replacing useful
@@ -66,7 +66,7 @@ infrastructure.**
 This assessment covers:
 
 - `.storybook/main.ts`
-- `.storybook/preview.ts`
+- `.storybook/preview.tsx`
 - `.storybook/preview-docs.ts`
 - `component-docs-guide.mdx`
 - `introduction.mdx`
@@ -91,10 +91,10 @@ covering:
 
 Storybook 10.5 describes Autodocs as **tag-driven**. A CSF file receives an
 automatically generated documentation page when at least one effective story has
-the `autodocs` tag. Project-wide activation is normally achieved in `preview.ts`
-with `tags: ['autodocs']`.
+the `autodocs` tag. Project-wide activation is normally achieved in
+`preview.tsx` with `tags: ['autodocs']`.
 
-Your `preview.ts` already does exactly that:
+Your `preview.tsx` already does exactly that:
 
 ```ts
 export default {
@@ -313,7 +313,7 @@ rather than forcing the entire normal Storybook into docs-only mode.\
 
 ---
 
-## 5. Remove duplicate Autodocs state from `preview.ts`
+## 5. Remove duplicate Autodocs state from `preview.tsx`
 
 The following current configuration should be reconsidered:
 
@@ -396,7 +396,7 @@ docs: {
 }
 ```
 
-from `preview.ts`.
+from `preview.tsx`.
 
 Use Storybook's default page.
 
@@ -660,7 +660,7 @@ modules, PostCSS, Sass, Less and Stylus through Vite configuration, whereas
 `@storybook/addon-styling-webpack` is recommended for corresponding Webpack
 scenarios.
 
-Your project already imports the global SCSS directly through `preview.ts`.
+Your project already imports the global SCSS directly through `preview.tsx`.
 
 ### Recommendation
 
@@ -1566,7 +1566,7 @@ config.docs;
 
 ---
 
-## 31. Recommended `preview.ts` Docs configuration
+## 31. Recommended `preview.tsx` Docs configuration
 
 ```ts
 import type { Preview } from '@storybook/react-vite';

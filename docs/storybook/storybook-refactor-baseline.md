@@ -123,10 +123,10 @@ package.json: @storybook/addon-onboarding is declared but unreferenced
 .storybook/main.ts: duplicate story and MDX globs are configured
 .storybook/main.ts: typescript.check is true under React/Vite
 .storybook/main.ts: @storybook/csf-plugin is injected manually
-.storybook/preview.ts: expectedAddonDocsConfig and autoDocsTemplate are imported
-.storybook/preview.ts: docs.enabled and docs.autodocs duplicate tag state
-.storybook/preview.ts: source.type is dynamic and Canvas source is shown
-.storybook/preview.ts: a generic global component description is configured
+.storybook/preview.tsx: expectedAddonDocsConfig and autoDocsTemplate are imported
+.storybook/preview.tsx: docs.enabled and docs.autodocs duplicate tag state
+.storybook/preview.tsx: source.type is dynamic and Canvas source is shown
+.storybook/preview.tsx: a generic global component description is configured
 .storybook/preview-docs.ts: Storybook's default Autodocs template is cloned
 .storybook/component-docs-guide.mdx: developers are told to add the 'docs' tag
 tests/unit/storybook-autodocs.test.ts: hard-coded constants enforce the obsolete architecture

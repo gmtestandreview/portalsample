@@ -12931,25 +12931,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the quote lookup, the create request built from the looked-up CRM identifier, the returned reference consumed by the destination and the lookup-failure characterisation.",
+      "docsOwnerId": "routes-acceptquote-create--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "lookup-then-destination",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "AcceptQuoteCreate",
-          "storyId": "routes-exportcoverage--accept-quote-create",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "AcceptQuoteCreate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route looks up the quote by route reference, creates a quote-accept application from the returned CRM identifier, then navigates to report recipient with the returned reference.",
+          "storyFile": "ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx",
+          "storyExport": "LooksUpQuoteThenReportRecipient",
+          "storyId": "routes-acceptquote-create--looks-up-quote-then-report-recipient",
+          "assertionFile": "ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx",
+          "assertionExport": "LooksUpQuoteThenReportRecipient.play",
+          "assertionMarker": "QuoteAccept",
+          "rationale": "The play function asserts the lookup parameters, the exact create body, the pending state while the response is held, and the destination reference."
+        },
+        {
+          "name": "lookup-failure",
+          "applicability": "required",
+          "outcome": "A failed quote lookup leaves the pending indicator, sends no create request and does not navigate.",
+          "storyFile": "ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx",
+          "storyExport": "QuoteLookupFailureCreatesNothing",
+          "storyId": "routes-acceptquote-create--quote-lookup-failure-creates-nothing",
+          "assertionFile": "ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx",
+          "assertionExport": "QuoteLookupFailureCreatesNothing.play",
+          "assertionMarker": "Loading...",
+          "rationale": "The play function asserts one lookup, zero create requests, the visible pending text and the absence of the destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive controlled lookup and create responses; a wrong CRM identifier in the create request makes the story fail.",
         "reviewedSourceDigest": "sha256:6affe5265ca80d1f55205d05996d7c625cda4942f904cf9d16b4bda236400d60"
       }
     },
@@ -12958,25 +12970,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated shell stories whose play functions assert the step-status and quote-detail lookups, the first step and banner it selects, and not-found redirection for missing statuses, a failed lookup and an unknown application.",
+      "docsOwnerId": "routes-acceptquote-shell--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-first-step",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "AcceptQuoteRoute",
-          "storyId": "routes-exportcoverage--accept-quote-route",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "AcceptQuoteRoute.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The shell requests the step statuses for the route identifier, looks up the quote by the returned CRM identifier and renders the first step under the shell banner.",
+          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "storyExport": "LoadsStatusesThenFirstStep",
+          "storyId": "routes-acceptquote-shell--loads-statuses-then-first-step",
+          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "assertionExport": "LoadsStatusesThenFirstStep.play",
+          "assertionMarker": "Testing and calibration service - Quotation",
+          "rationale": "The play function asserts the first step heading, both request identifiers and the banner title and reference."
+        },
+        {
+          "name": "no-statuses-not-found",
+          "applicability": "required",
+          "outcome": "An empty step-status list redirects to not-found without a quote lookup.",
+          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "storyExport": "NoStepStatusesIsNotFound",
+          "storyId": "routes-acceptquote-shell--no-step-statuses-is-not-found",
+          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "assertionExport": "NoStepStatusesIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination, one status request and zero quote lookups."
+        },
+        {
+          "name": "lookup-failure-not-found",
+          "applicability": "required",
+          "outcome": "A failed quote lookup redirects to not-found.",
+          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "storyExport": "QuoteLookupFailureIsNotFound",
+          "storyId": "routes-acceptquote-shell--quote-lookup-failure-is-not-found",
+          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "assertionExport": "QuoteLookupFailureIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the single lookup with the returned CRM identifier."
+        },
+        {
+          "name": "unknown-application-not-found",
+          "applicability": "required",
+          "outcome": "An unknown application identifier redirects to not-found after one status request.",
+          "storyFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "storyExport": "UnknownApplicationIsNotFound",
+          "storyId": "routes-acceptquote-shell--unknown-application-is-not-found",
+          "assertionFile": "ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx",
+          "assertionExport": "UnknownApplicationIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination, the unknown identifier in the request and zero quote lookups."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned lookups, banner and navigation, with wrong identifiers or destinations making the stories fail. Child step behaviour keeps its existing stories.",
         "reviewedSourceDigest": "sha256:376f3bc7626da8fe420f979d486e368edb0c326114e9be0a2094c89577b9f6c1"
       }
     },
@@ -13012,25 +13060,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the loaded branch form and the confirmation cancel and confirm flow, including the save request, sign-in refresh, branch selector request and completion destination.",
+      "docsOwnerId": "routes-account-addbranch--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-branch-form",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "AccountAddBranch",
-          "storyId": "routes-exportcoverage--account-add-branch",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "AccountAddBranch.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route loads the branch form values and offers the save action.",
+          "storyFile": "ClientApp/src/routes/account/addBranch/AddBranch.stories.tsx",
+          "storyExport": "LoadsBranchForm",
+          "storyId": "routes-account-addbranch--loads-branch-form",
+          "assertionFile": "ClientApp/src/routes/account/addBranch/AddBranch.stories.tsx",
+          "assertionExport": "LoadsBranchForm.play",
+          "assertionMarker": "Melbourne Laboratory",
+          "rationale": "The play function asserts the populated branch name and the enabled save button."
+        },
+        {
+          "name": "confirmation-add",
+          "applicability": "required",
+          "outcome": "Cancelling the confirmation sends no save; confirming sends one branch save, refreshes sign-in, requests the branch selector and navigates to the completion destination.",
+          "storyFile": "ClientApp/src/routes/account/addBranch/AddBranch.stories.tsx",
+          "storyExport": "ConfirmationCancelThenConfirmAdds",
+          "storyId": "routes-account-addbranch--confirmation-cancel-then-confirm-adds",
+          "assertionFile": "ClientApp/src/routes/account/addBranch/AddBranch.stories.tsx",
+          "assertionExport": "ConfirmationCancelThenConfirmAdds.play",
+          "assertionMarker": "Home destination",
+          "rationale": "The play function drives the confirmation dialog through cancel and confirm and asserts the save body, sign-in count, selector request and destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive the real wizard with controlled branch responses; wrong save counts or selector requests make the stories fail.",
         "reviewedSourceDigest": "sha256:957ad13593805330e4256c33fa881cc148894708e2e0789fd6d73150c9917b9c"
       }
     },
@@ -13039,25 +13099,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert that an invalid submit blocks confirmation and that a confirmed create saves the account, updates the account context and reaches the completion destination.",
+      "docsOwnerId": "routes-account-create--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "invalid-submit",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "AccountCreate",
-          "storyId": "routes-exportcoverage--account-create",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "AccountCreate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "Submitting without a street address shows the validation error, opens no confirmation and sends no save.",
+          "storyFile": "ClientApp/src/routes/account/create/CreateAccount.stories.tsx",
+          "storyExport": "InvalidSubmitBlocksConfirmation",
+          "storyId": "routes-account-create--invalid-submit-blocks-confirmation",
+          "assertionFile": "ClientApp/src/routes/account/create/CreateAccount.stories.tsx",
+          "assertionExport": "InvalidSubmitBlocksConfirmation.play",
+          "assertionMarker": "Street address: Street address is required",
+          "rationale": "The play function asserts the visible error, the absence of the dialog and zero save requests."
+        },
+        {
+          "name": "confirmed-create",
+          "applicability": "required",
+          "outcome": "Confirming sends one account save, records the organisation and branch and completion in the account context, and navigates to the completion destination.",
+          "storyFile": "ClientApp/src/routes/account/create/CreateAccount.stories.tsx",
+          "storyExport": "ConfirmCreatesAccount",
+          "storyId": "routes-account-create--confirm-creates-account",
+          "assertionFile": "ClientApp/src/routes/account/create/CreateAccount.stories.tsx",
+          "assertionExport": "ConfirmCreatesAccount.play",
+          "assertionMarker": "Account created destination",
+          "rationale": "The play function asserts the save body, the account context calls and the destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive the real wizard with controlled account responses; wrong context values or save counts make the stories fail.",
         "reviewedSourceDigest": "sha256:fd489f25289fb84f27fd458c3cd00191f5bd5a5bfd36bf0fd1d920f0d20f2897"
       }
     },
@@ -13093,25 +13165,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the loaded organisation values, the confirmation cancel and confirm save flow, and not-found redirection for malformed or non-positive identifiers.",
+      "docsOwnerId": "routes-account-update--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-values",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "AccountUpdate",
-          "storyId": "routes-exportcoverage--account-update",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "AccountUpdate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route loads the organisation for the route-parameter identifier and shows its values for editing.",
+          "storyFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "storyExport": "LoadsOrganisationForEditing",
+          "storyId": "routes-account-update--loads-organisation-for-editing",
+          "assertionFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "assertionExport": "LoadsOrganisationForEditing.play",
+          "assertionMarker": "Calibration Services",
+          "rationale": "The play function asserts the single load request identifier and the populated trading name field."
+        },
+        {
+          "name": "confirmation-save",
+          "applicability": "required",
+          "outcome": "Cancelling the confirmation sends no save; confirming sends one save with the edited identifier and values, then navigates to the completion destination.",
+          "storyFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "storyExport": "ConfirmationCancelThenConfirmSaves",
+          "storyId": "routes-account-update--confirmation-cancel-then-confirm-saves",
+          "assertionFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "assertionExport": "ConfirmationCancelThenConfirmSaves.play",
+          "assertionMarker": "Home destination",
+          "rationale": "The play function drives the confirmation dialog through cancel and confirm and asserts the save request count, body and destination."
+        },
+        {
+          "name": "malformed-id-not-found",
+          "applicability": "required",
+          "outcome": "A non-numeric identifier redirects to not-found without loading an organisation.",
+          "storyFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "storyExport": "MalformedIdIsNotFound",
+          "storyId": "routes-account-update--malformed-id-is-not-found",
+          "assertionFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "assertionExport": "MalformedIdIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and zero load requests."
+        },
+        {
+          "name": "nonpositive-id-not-found",
+          "applicability": "required",
+          "outcome": "A zero identifier redirects to not-found without loading an organisation.",
+          "storyFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "storyExport": "NonPositiveIdIsNotFound",
+          "storyId": "routes-account-update--non-positive-id-is-not-found",
+          "assertionFile": "ClientApp/src/routes/account/update/UpdateAccount.stories.tsx",
+          "assertionExport": "NonPositiveIdIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and zero load requests."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive the real wizard with controlled account responses; wrong identifiers, save counts or destinations make the stories fail.",
         "reviewedSourceDigest": "sha256:d0844280ad17ee011f538daf0538d329cedbf723ce882adb830d53728a716ca2"
       }
     },
@@ -13147,25 +13255,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert that an invalid submit blocks confirmation and that a confirmed create saves the contact, marks contact completion and reaches the current completion destination.",
+      "docsOwnerId": "routes-contact-create--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "invalid-submit",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "ContactCreate",
-          "storyId": "routes-exportcoverage--contact-create",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "ContactCreate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "Submitting without a first name shows the validation error, opens no confirmation and sends no save.",
+          "storyFile": "ClientApp/src/routes/contact/create/CreateContact.stories.tsx",
+          "storyExport": "InvalidSubmitBlocksConfirmation",
+          "storyId": "routes-contact-create--invalid-submit-blocks-confirmation",
+          "assertionFile": "ClientApp/src/routes/contact/create/CreateContact.stories.tsx",
+          "assertionExport": "InvalidSubmitBlocksConfirmation.play",
+          "assertionMarker": "Contact: First name is required",
+          "rationale": "The play function asserts the summary error link, the absence of the dialog and zero save requests."
+        },
+        {
+          "name": "confirmed-create",
+          "applicability": "required",
+          "outcome": "Confirming sends one contact save, marks contact completion in the account context and navigates to the current completion destination.",
+          "storyFile": "ClientApp/src/routes/contact/create/CreateContact.stories.tsx",
+          "storyExport": "ConfirmCreatesContact",
+          "storyId": "routes-contact-create--confirm-creates-contact",
+          "assertionFile": "ClientApp/src/routes/contact/create/CreateContact.stories.tsx",
+          "assertionExport": "ConfirmCreatesContact.play",
+          "assertionMarker": "Contact created destination",
+          "rationale": "The play function asserts the save body, the completion count and the destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive the real wizard with controlled contact responses; wrong contact values or completion counts make the stories fail.",
         "reviewedSourceDigest": "sha256:36a4d9214493dd9ba2a7b9c80a4f59fc8d3766889bb432a56d65258582d84a42"
       }
     },
@@ -13174,25 +13294,49 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the loaded contact, the confirmation cancel and confirm save flow, and the current completion behaviour when the save fails.",
+      "docsOwnerId": "routes-contact-update--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-contact",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "ContactUpdate",
-          "storyId": "routes-exportcoverage--contact-update",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "ContactUpdate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route loads the signed-in user's existing contact and offers the save action.",
+          "storyFile": "ClientApp/src/routes/contact/update/UpdateContact.stories.tsx",
+          "storyExport": "LoadsExistingContact",
+          "storyId": "routes-contact-update--loads-existing-contact",
+          "assertionFile": "ClientApp/src/routes/contact/update/UpdateContact.stories.tsx",
+          "assertionExport": "LoadsExistingContact.play",
+          "assertionMarker": "Rivera",
+          "rationale": "The play function asserts the populated first and last name and the enabled save button."
+        },
+        {
+          "name": "confirmation-save",
+          "applicability": "required",
+          "outcome": "Cancelling the confirmation sends no save; confirming sends one contact save, marks contact completion and navigates to the completion destination.",
+          "storyFile": "ClientApp/src/routes/contact/update/UpdateContact.stories.tsx",
+          "storyExport": "ConfirmationCancelThenConfirmSaves",
+          "storyId": "routes-contact-update--confirmation-cancel-then-confirm-saves",
+          "assertionFile": "ClientApp/src/routes/contact/update/UpdateContact.stories.tsx",
+          "assertionExport": "ConfirmationCancelThenConfirmSaves.play",
+          "assertionMarker": "Home destination",
+          "rationale": "The play function drives the confirmation dialog through cancel and confirm and asserts the save body, completion count and destination."
+        },
+        {
+          "name": "save-failure-characterised",
+          "applicability": "required",
+          "outcome": "A failed save is swallowed by the wrapper: the route still navigates to the completion destination without marking contact completion.",
+          "storyFile": "ClientApp/src/routes/contact/update/UpdateContact.stories.tsx",
+          "storyExport": "SaveFailureStillCompletes",
+          "storyId": "routes-contact-update--save-failure-still-completes",
+          "assertionFile": "ClientApp/src/routes/contact/update/UpdateContact.stories.tsx",
+          "assertionExport": "SaveFailureStillCompletes.play",
+          "assertionMarker": "Home destination",
+          "rationale": "The play function characterises the current behaviour by asserting one save attempt, the destination and zero completion calls."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive the real wizard with controlled contact responses; wrong contact values or completion counts make the stories fail.",
         "reviewedSourceDigest": "sha256:4f4f85827adff77b229c27eb4a7df0b8a3e4ff8e72dcce9880bcd75d6a210c16"
       }
     },
@@ -13282,25 +13426,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated shell stories whose play functions assert the report lookup by route reference, not-found redirection on failure, the back-to-dashboard link and the absence of a lookup without a target organisation.",
+      "docsOwnerId": "routes-measurementreport-shell--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-report",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "MeasurementReportRoute",
-          "storyId": "routes-exportcoverage--measurement-report-route",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "MeasurementReportRoute.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The shell looks up the accepted quote by the route reference and renders the report details under the Report heading.",
+          "storyFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "storyExport": "LoadsReportForReference",
+          "storyId": "routes-measurementreport-shell--loads-report-for-reference",
+          "assertionFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "assertionExport": "LoadsReportForReference.play",
+          "assertionMarker": "QuoteAccept",
+          "rationale": "The play function asserts the single lookup parameters, the loaded instrument serial and the heading."
+        },
+        {
+          "name": "lookup-failure-not-found",
+          "applicability": "required",
+          "outcome": "A failed report lookup redirects to not-found.",
+          "storyFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "storyExport": "LookupFailureIsNotFound",
+          "storyId": "routes-measurementreport-shell--lookup-failure-is-not-found",
+          "assertionFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "assertionExport": "LookupFailureIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the single lookup."
+        },
+        {
+          "name": "back-to-dashboard",
+          "applicability": "required",
+          "outcome": "The back to dashboard link navigates to the dashboard route.",
+          "storyFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "storyExport": "BackToDashboardLink",
+          "storyId": "routes-measurementreport-shell--back-to-dashboard-link",
+          "assertionFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "assertionExport": "BackToDashboardLink.play",
+          "assertionMarker": "Dashboard destination",
+          "rationale": "The play function clicks the link and asserts the dashboard destination."
+        },
+        {
+          "name": "missing-target-organisation",
+          "applicability": "required",
+          "outcome": "Without a target organisation the shell renders but does not request the report.",
+          "storyFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "storyExport": "MissingTargetOrganisationDoesNotLoad",
+          "storyId": "routes-measurementreport-shell--missing-target-organisation-does-not-load",
+          "assertionFile": "ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx",
+          "assertionExport": "MissingTargetOrganisationDoesNotLoad.play",
+          "assertionMarker": "Report",
+          "rationale": "The play function asserts the heading renders and zero lookups are sent."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned lookup, navigation and the target organisation guard, with wrong lookup parameters or destinations making the stories fail. Report detail rendering keeps its existing stories.",
         "reviewedSourceDigest": "sha256:c81cb06348b9a20b641dd619226a268e36be0ac6e580ebcdaaaaa2ea306379fd"
       }
     },
@@ -13363,25 +13543,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated shell stories whose play functions assert the quote lookup by route reference, not-found redirection on failure, and the newly accepted quote status override driven by session storage.",
+      "docsOwnerId": "routes-quotation-shell--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-quotation",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "QuotationRoute",
-          "storyId": "routes-exportcoverage--quotation-route",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "QuotationRoute.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The shell looks up the quote request by the route reference and renders the quotation details under the quotation breadcrumb.",
+          "storyFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "storyExport": "LoadsQuotationForReference",
+          "storyId": "routes-quotation-shell--loads-quotation-for-reference",
+          "assertionFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "assertionExport": "LoadsQuotationForReference.play",
+          "assertionMarker": "Testing and calibration service - Quotation",
+          "rationale": "The play function asserts the single lookup parameters, the loaded instrument serial and the breadcrumb text."
+        },
+        {
+          "name": "lookup-failure-not-found",
+          "applicability": "required",
+          "outcome": "A failed quote lookup redirects to not-found.",
+          "storyFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "storyExport": "LookupFailureIsNotFound",
+          "storyId": "routes-quotation-shell--lookup-failure-is-not-found",
+          "assertionFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "assertionExport": "LookupFailureIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the single lookup."
+        },
+        {
+          "name": "newly-accepted-override",
+          "applicability": "required",
+          "outcome": "When session storage names the viewed quote and the quote is still available, the shell shows it as accepted, hides the available notice and clears the stored identifier.",
+          "storyFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "storyExport": "NewlyAcceptedQuoteShowsAccepted",
+          "storyId": "routes-quotation-shell--newly-accepted-quote-shows-accepted",
+          "assertionFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "assertionExport": "NewlyAcceptedQuoteShowsAccepted.play",
+          "assertionMarker": "Quotation accepted",
+          "rationale": "The play function asserts the accepted pill, the absent available notice and the removed session key."
+        },
+        {
+          "name": "other-quote-keeps-status",
+          "applicability": "required",
+          "outcome": "When session storage names a different quote, the shell keeps the available status and the available notice.",
+          "storyFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "storyExport": "OtherQuoteKeepsAvailableStatus",
+          "storyId": "routes-quotation-shell--other-quote-keeps-available-status",
+          "assertionFile": "ClientApp/src/routes/quotation/QuotationShell.stories.tsx",
+          "assertionExport": "OtherQuoteKeepsAvailableStatus.play",
+          "assertionMarker": "info-summary",
+          "rationale": "The play function asserts the available notice is shown and the accepted pill is absent."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned lookup, status override and navigation, with wrong lookup parameters, statuses or destinations making the stories fail. Quote detail rendering keeps its existing stories.",
         "reviewedSourceDigest": "sha256:7094c739080531e3c5ad5e2c7a5bf9eb46ca416dd0e5669eaa8dc2932ff54c05"
       }
     },
@@ -13390,25 +13606,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the copied source reference, the exact copy request, the returned reference consumed by the destination and the rejection characterisation.",
+      "docsOwnerId": "routes-requestforquote-copy--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "copy-then-destination",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "RequestForQuoteCopy",
-          "storyId": "routes-exportcoverage--request-for-quote-copy",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "RequestForQuoteCopy.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route shows a pending indicator, copies the route-parameter source with a quote-request command and the bearer token, then navigates to organisation and contact with the returned reference.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/copy/RequestForQuoteCopy.stories.tsx",
+          "storyExport": "CopiesSourceThenOrganisationAndContact",
+          "storyId": "routes-requestforquote-copy--copies-source-then-organisation-and-contact",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/copy/RequestForQuoteCopy.stories.tsx",
+          "assertionExport": "CopiesSourceThenOrganisationAndContact.play",
+          "assertionMarker": "QuoteRequest",
+          "rationale": "The play function asserts the source reference, request body and authorization header, holds the response to observe the pending state, then asserts the destination consumed the returned reference."
+        },
+        {
+          "name": "copy-rejection",
+          "applicability": "required",
+          "outcome": "A rejected copy request leaves the pending indicator, does not navigate and does not retry.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/copy/RequestForQuoteCopy.stories.tsx",
+          "storyExport": "CopyRejectionKeepsLoading",
+          "storyId": "routes-requestforquote-copy--copy-rejection-keeps-loading",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/copy/RequestForQuoteCopy.stories.tsx",
+          "assertionExport": "CopyRejectionKeepsLoading.play",
+          "assertionMarker": "Loading...",
+          "rationale": "The play function asserts one request, the visible pending text and the absence of the destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive a controlled copy-application response; a wrong source reference makes the copy story fail.",
         "reviewedSourceDigest": "sha256:e0369624b07c4e3f2a48c68b82c7cb5e255543dafc7d981cbfd517b22c80591c"
       }
     },
@@ -13417,25 +13645,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the pending state, the exact create request, the returned reference consumed by the destination and the failure characterisation.",
+      "docsOwnerId": "routes-requestforquote-create--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "pending-then-destination",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "RequestForQuoteCreate",
-          "storyId": "routes-exportcoverage--request-for-quote-create",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "RequestForQuoteCreate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route shows a pending indicator, sends one quote-request create request with the bearer token, then navigates to organisation and contact with the returned reference.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/create/RequestForQuoteCreate.stories.tsx",
+          "storyExport": "PendingThenOrganisationAndContact",
+          "storyId": "routes-requestforquote-create--pending-then-organisation-and-contact",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/create/RequestForQuoteCreate.stories.tsx",
+          "assertionExport": "PendingThenOrganisationAndContact.play",
+          "assertionMarker": "QuoteRequest",
+          "rationale": "The play function asserts the exact request body and authorization header, holds the response to observe the pending state, then asserts the destination consumed the returned reference."
+        },
+        {
+          "name": "create-failure",
+          "applicability": "required",
+          "outcome": "A rejected create request leaves the pending indicator, does not navigate and does not retry.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/create/RequestForQuoteCreate.stories.tsx",
+          "storyExport": "CreateFailureKeepsLoading",
+          "storyId": "routes-requestforquote-create--create-failure-keeps-loading",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/create/RequestForQuoteCreate.stories.tsx",
+          "assertionExport": "CreateFailureKeepsLoading.play",
+          "assertionMarker": "Loading...",
+          "rationale": "The play function asserts one request, the visible pending text and the absence of the destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive a controlled create-application response; a wrong request payload makes the pending story fail.",
         "reviewedSourceDigest": "sha256:a96036e2b6f65a6c63d02bfa3ead6581c6739082b37e1688e58e9a2adef0a500"
       }
     },
@@ -13471,25 +13711,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated shell stories whose play functions assert the step-status lookup, the banner it selects, and not-found redirection for an invalid identifier, a failed lookup and an unknown application.",
+      "docsOwnerId": "routes-requestforquote-shell--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-first-step",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "RequestForQuoteRoute",
-          "storyId": "routes-exportcoverage--request-for-quote-route",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "RequestForQuoteRoute.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The shell requests the step statuses for the route identifier and renders the first step under the shell banner.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "storyExport": "LoadsStatusesThenFirstStep",
+          "storyId": "routes-requestforquote-shell--loads-statuses-then-first-step",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "assertionExport": "LoadsStatusesThenFirstStep.play",
+          "assertionMarker": "Testing and calibration service - Request for quote",
+          "rationale": "The play function asserts the banner reference, the banner title and the single status request identifier."
+        },
+        {
+          "name": "invalid-id-not-found",
+          "applicability": "required",
+          "outcome": "An identifier that fails validation redirects to not-found without any request.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "storyExport": "InvalidApplicationIdIsNotFound",
+          "storyId": "routes-requestforquote-shell--invalid-application-id-is-not-found",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "assertionExport": "InvalidApplicationIdIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and zero status requests."
+        },
+        {
+          "name": "status-failure-not-found",
+          "applicability": "required",
+          "outcome": "A failed step-status request redirects to not-found.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "storyExport": "StatusLoadFailureIsNotFound",
+          "storyId": "routes-requestforquote-shell--status-load-failure-is-not-found",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "assertionExport": "StatusLoadFailureIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the single status request."
+        },
+        {
+          "name": "unknown-application-not-found",
+          "applicability": "required",
+          "outcome": "An unknown application identifier redirects to not-found after one status request.",
+          "storyFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "storyExport": "UnknownApplicationIsNotFound",
+          "storyId": "routes-requestforquote-shell--unknown-application-is-not-found",
+          "assertionFile": "ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx",
+          "assertionExport": "UnknownApplicationIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the unknown identifier in the request."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned validation, lookup, banner and navigation, with wrong identifiers or destinations making the stories fail. Child step behaviour keeps its existing stories.",
         "reviewedSourceDigest": "sha256:b5804388236fd20e1a0a92ea0a2a912577e1692ba08664785d529953c05989bb"
       }
     },
@@ -13579,25 +13855,37 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the pending state, the exact create request, the returned reference consumed by the destination and the failure characterisation.",
+      "docsOwnerId": "routes-typeapproval-create--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "pending-then-destination",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "TypeApprovalCreate",
-          "storyId": "routes-exportcoverage--type-approval-create",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "TypeApprovalCreate.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route shows a pending indicator, sends one pattern-approval create request with the bearer token, then navigates to organisation details with the returned reference.",
+          "storyFile": "ClientApp/src/routes/ta/create/TypeApprovalCreate.stories.tsx",
+          "storyExport": "PendingThenOrganisationDetails",
+          "storyId": "routes-typeapproval-create--pending-then-organisation-details",
+          "assertionFile": "ClientApp/src/routes/ta/create/TypeApprovalCreate.stories.tsx",
+          "assertionExport": "PendingThenOrganisationDetails.play",
+          "assertionMarker": "PatternApproval",
+          "rationale": "The play function asserts the exact request body and authorization header, holds the response to observe the pending state, then asserts the destination consumed the returned reference."
+        },
+        {
+          "name": "create-failure",
+          "applicability": "required",
+          "outcome": "A rejected create request leaves the pending indicator, does not navigate and does not retry.",
+          "storyFile": "ClientApp/src/routes/ta/create/TypeApprovalCreate.stories.tsx",
+          "storyExport": "CreateFailureKeepsLoading",
+          "storyId": "routes-typeapproval-create--create-failure-keeps-loading",
+          "assertionFile": "ClientApp/src/routes/ta/create/TypeApprovalCreate.stories.tsx",
+          "assertionExport": "CreateFailureKeepsLoading.play",
+          "assertionMarker": "Loading...",
+          "rationale": "The play function asserts one request, the visible pending text and the absence of the destination."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story and drive a controlled create-application response; a wrong request payload makes the pending story fail.",
         "reviewedSourceDigest": "sha256:8bc56c7ab3eba645ca0902089c8f4e7f862f61b300c088ddcc6a20b542ac4b94"
       }
     },
@@ -13606,25 +13894,49 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated route stories whose play functions assert the submitted reference, the dashboard button and link destination, and the dashboard tab selection stored in session.",
+      "docsOwnerId": "routes-typeapproval-created--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "submitted-reference",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "TypeApprovalCreated",
-          "storyId": "routes-exportcoverage--type-approval-created",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "TypeApprovalCreated.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The route shows the submitted application reference from the URL in the heading, success alert and banner.",
+          "storyFile": "ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx",
+          "storyExport": "SubmittedReference",
+          "storyId": "routes-typeapproval-created--submitted-reference",
+          "assertionFile": "ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx",
+          "assertionExport": "SubmittedReference.play",
+          "assertionMarker": "Your application has been submitted",
+          "rationale": "The play function asserts the heading, the reference text and the Ref ID banner for the route parameter."
+        },
+        {
+          "name": "dashboard-button",
+          "applicability": "required",
+          "outcome": "Activating Go to dashboard navigates to the dashboard route and stores the requests tab selection in session storage.",
+          "storyFile": "ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx",
+          "storyExport": "DashboardButton",
+          "storyId": "routes-typeapproval-created--dashboard-button",
+          "assertionFile": "ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx",
+          "assertionExport": "DashboardButton.play",
+          "assertionMarker": "Pattern approval dashboard",
+          "rationale": "The play function clicks the button, asserts the destination stub rendered and reads the stored tab key."
+        },
+        {
+          "name": "dashboard-link",
+          "applicability": "required",
+          "outcome": "Activating the inline dashboard link navigates to the dashboard route and stores the requests tab selection in session storage.",
+          "storyFile": "ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx",
+          "storyExport": "DashboardLink",
+          "storyId": "routes-typeapproval-created--dashboard-link",
+          "assertionFile": "ClientApp/src/routes/ta/created/TypeApprovalCreated.stories.tsx",
+          "assertionExport": "DashboardLink.play",
+          "assertionMarker": "Pattern approval dashboard",
+          "rationale": "The play function clicks the link, asserts the destination stub rendered and reads the stored tab key."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated route stories replace the mount-only coverage story: each state asserts a user-visible consequence of the submitted-application route, and the destination stub is a labelled fixture that makes no production dashboard claim.",
         "reviewedSourceDigest": "sha256:83688d5c89dd370e204525ccf97ee19dcd65dc6a93958dbef89546c47401e6f0"
       }
     },
@@ -13633,25 +13945,49 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts that the render surface mounted under the configured Storybook harness.",
-      "docsOwnerId": "routes-exportcoverage--documentation",
+      "reason": "The export is rendered by dedicated shell stories whose play functions assert the step-status lookup, the banner it selects, and not-found redirection for a failed lookup and an unknown application.",
+      "docsOwnerId": "routes-typeapproval-shell--documentation",
       "states": [
         {
-          "name": "mounted-route-surface",
+          "name": "loaded-first-step",
           "applicability": "required",
-          "outcome": "The route or component surface mounts under the configured Storybook providers.",
-          "storyFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "storyExport": "TypeApprovalRoute",
-          "storyId": "routes-exportcoverage--type-approval-route",
-          "assertionFile": "ClientApp/src/routes/coverage/RouteExportCoverage.stories.tsx",
-          "assertionExport": "TypeApprovalRoute.play",
-          "assertionMarker": "route-wrapper-mounted",
-          "rationale": "The object-literal story play function asserts the mounted canvas after the configured providers render the export."
+          "outcome": "The shell requests the step statuses for the route identifier and renders the first step under the shell banner.",
+          "storyFile": "ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx",
+          "storyExport": "LoadsStatusesThenFirstStep",
+          "storyId": "routes-typeapproval-shell--loads-statuses-then-first-step",
+          "assertionFile": "ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx",
+          "assertionExport": "LoadsStatusesThenFirstStep.play",
+          "assertionMarker": "Pattern/type approval - Application",
+          "rationale": "The play function asserts the banner reference, the banner title and the single status request identifier."
+        },
+        {
+          "name": "status-failure-not-found",
+          "applicability": "required",
+          "outcome": "A failed step-status request redirects to not-found.",
+          "storyFile": "ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx",
+          "storyExport": "StatusLoadFailureIsNotFound",
+          "storyId": "routes-typeapproval-shell--status-load-failure-is-not-found",
+          "assertionFile": "ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx",
+          "assertionExport": "StatusLoadFailureIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the single status request."
+        },
+        {
+          "name": "unknown-application-not-found",
+          "applicability": "required",
+          "outcome": "An unknown application identifier redirects to not-found after one status request.",
+          "storyFile": "ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx",
+          "storyExport": "UnknownApplicationIsNotFound",
+          "storyId": "routes-typeapproval-shell--unknown-application-is-not-found",
+          "assertionFile": "ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx",
+          "assertionExport": "UnknownApplicationIsNotFound.play",
+          "assertionMarker": "Not found destination",
+          "rationale": "The play function asserts the not-found destination and the unknown identifier in the request."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph identifies the direct coverage story; its live MCP result is the required render evidence.",
+        "rationale": "Dedicated shell stories replace the mount-only coverage story; they cover only shell-owned lookup, banner and navigation, with wrong identifiers or destinations making the stories fail. Child step, upload and polling behaviour keep their existing stories and are not claimed here.",
         "reviewedSourceDigest": "sha256:7ada05889a6c610a8dcf1e099bef61698a649329bdc3be08e574b1481a935945"
       }
     },

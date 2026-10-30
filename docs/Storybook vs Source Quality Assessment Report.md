@@ -4,12 +4,12 @@ Scope: 46 .stories.tsx files across ClientApp/src/components/ and
 ClientApp/src/routes/ Method: File-by-file read of every story and its
 corresponding source module(s) Date: 2026-05-20
 
-1. Storybook Infrastructure Assessment .storybook/preview.ts — What Is Wired
+1. Storybook Infrastructure Assessment .storybook/preview.tsx — What Is Wired
    Concern Status Notes React Router ✅ Provided Global decorator wraps every
    story with createMemoryRouter + RouterProvider; reads
    parameters.portal.initialEntries MSW ✅ Provided msw-storybook-addon
    initialized; global handlers in msw-handlers.ts Environment vars ✅ Stubbed
-   All 11 window.* vars assigned in preview.ts App Insights mock ✅ Stubbed
+   All 11 window.* vars assigned in preview.tsx App Insights mock ✅ Stubbed
    mockAppInsights exported; ai.reactPlugin.getAppInsights().trackException safe
    to call MockDate ✅ Frozen All stories run at 2024-04-01T12:00:00Z Session
    storage ✅ Seeded targetOrganisation pre-set in beforeEach a11y addon ⚠️
@@ -18,7 +18,7 @@ corresponding source module(s) Date: 2026-05-20
    msw-handlers.ts exports:
 
 export const mswHandlers = { dashboard: [ http.get('/api/dashboard/*', ...) ] };
-preview.ts consumes it as:
+preview.tsx consumes it as:
 
 msw: { handlers: mswHandlers } mswHandlers is { dashboard: [...] } — an
 object-of-arrays, not an array. The msw-storybook-addon expects either a flat
@@ -29,7 +29,7 @@ Dashboard.EmptyState relies on its own handlers, so it is fine — but any futur
 story that omits MSW config for dashboard endpoints will hit unhandled
 requests).
 
-Dual MSAL Account Inconsistency preview.ts defines mockMsalAccount.name = 'Test
+Dual MSAL Account Inconsistency preview.tsx defines mockMsalAccount.name = 'Test
 User' / username = '<test@example.com>'. storybookHarness.tsx defines
 mockMsalAccount.name = 'Taylor Nguyen' / username =
 '<taylor.nguyen@example.com>'.

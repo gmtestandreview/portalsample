@@ -524,8 +524,8 @@ new test files)
 
 - `tsconfig.json` — IDE configuration corrected
 
-- `.storybook/preview.ts` — font import paths corrected; eliminates 56 asset 404
-  failures in Storybook
+- `.storybook/preview.tsx` — font import paths corrected; eliminates 56 asset
+  404 failures in Storybook
 
 **Outcome:** 173 new tests close Gaps 3–7; SonarLint phase 2 findings resolved
 across 6 source files; Storybook font 404 failures eliminated; SEC-010 backend
@@ -607,7 +607,7 @@ tests/unit/components/Pill/StatusPill.test.tsx) **Files changed:**
 - `ClientApp/src/storybook/storybookHarness.tsx` — Taylor Nguyen canonical
   identity (SB-005)
 
-- `.storybook/preview.ts` — Taylor Nguyen canonical identity (SB-005)
+- `.storybook/preview.tsx` — Taylor Nguyen canonical identity (SB-005)
 
 - `tests/unit/components/Pill/StatusPill.test.tsx` — 20 unit tests (SB-001)
 
@@ -1955,14 +1955,13 @@ Re-measure before planning that item.
 
 ### [Current-Tree Migration Reconciliation] — 2026-06-28 — Type Approval, Storybook, and Test Baseline
 
-**Change ID:** CRD-041  
-**Source:** Current `ClientApp/src`, `tests`, `.storybook`,
-`storybook-static/index.json`, `package.json`, and dated implementation plans.
-The snapshot's `.git` directory is empty, so this entry records verified current
-state rather than claiming a commit-by-commit diff.  
-**Status:** COMPLETE — migration documentation baseline refreshed  
-**Security findings resolved:** None  
-**New migration gates:** `TYPE-APPROVAL-E2E-001`; `COVERAGE-GATE-001`
+**Change ID:** CRD-041 **Source:** Current `ClientApp/src`, `tests`,
+`.storybook`, `storybook-static/index.json`, `package.json`, and dated
+implementation plans. The snapshot's `.git` directory is empty, so this entry
+records verified current state rather than claiming a commit-by-commit diff.
+**Status:** COMPLETE — migration documentation baseline refreshed **Security
+findings resolved:** None **New migration gates:** `TYPE-APPROVAL-E2E-001`;
+`COVERAGE-GATE-001`
 
 **Current application surface:**
 
@@ -2043,7 +2042,7 @@ baseline or passing test counts alone.
 | ID     | Description                                                                                                                                                                                                                                                                                                                                  | Owner                                          | Phase gate                                                            | Status                                                |
 | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------- |
 | OI-001 | Sprint 1 closure — **COMPLETE** — `npm run test:storybook` passed 2026-06-01 (55 files / 165 tests / 0 failures); QA sign-off issued; `done.md` set to CLOSED_SUCCESS; CRD-022 confirms clean Storybook Vitest output with jsdom noise suppressed                                                                                            | Sprint 1 lead                                  | Sprint 1 close                                                        | COMPLETE                                              |
-| OI-002 | Sprint 1 canonical identity rename — **COMPLETE** — Taylor Nguyen identity applied to all 5 fields in `storybookHarness.tsx` and `.storybook/preview.ts` on 2026-05-31 (CRD-016); gate: QA sign-off after live build                                                                                                                         | Sprint 1 lead                                  | Sprint 1 close                                                        | COMPLETE                                              |
+| OI-002 | Sprint 1 canonical identity rename — **COMPLETE** — Taylor Nguyen identity applied to all 5 fields in `storybookHarness.tsx` and `.storybook/preview.tsx` on 2026-05-31 (CRD-016); gate: QA sign-off after live build                                                                                                                        | Sprint 1 lead                                  | Sprint 1 close                                                        | COMPLETE                                              |
 | OI-003 | SEC-010 IDOR backend verification — **COMPLETE** — backend team confirmed finding was identified in pentest prior to go-live and remediated before production deployment; checklist ticked; inline comment updated in `dashboard/index.tsx`; CRD-035                                                                                         | Backend team                                   | Pre-production deploy                                                 | COMPLETE                                              |
 | OI-004 | HTML assessment reconciliation — **COMPLETE** — CRD-024 backfilled still-open modernisation and rebuild-readiness findings into `OPEN-ITEMS-BACKLOG.md` with non-conflicting IDs, owners, gates, and target phases                                                                                                                           | Migration lead                                 | Historical review gate                                                | COMPLETE                                              |
 | OI-005 | Concerns register reconciliation — **COMPLETE** — CRD-025 backfilled remaining `docs/CONCERNS.md` open questions and deferred hardening items into `OPEN-ITEMS-BACKLOG.md` and the HTML backlog report                                                                                                                                       | Migration lead                                 | Historical review gate                                                | COMPLETE                                              |

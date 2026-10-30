@@ -14,7 +14,6 @@ import BodyText from './index';
 
 const meta = preview.meta({
   component: BodyText,
-  tags: ['ai-generated', 'needs-work'],
 });
 
 export const Default = meta.story({

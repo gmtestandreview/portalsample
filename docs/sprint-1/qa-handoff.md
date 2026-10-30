@@ -133,7 +133,7 @@ npm run type-check        # Verify no TS errors
 
 #### Issue #9: MSAL Account Inconsistency
 
-- [ ] Account name/username unified across preview.ts and storybookHarness.tsx
+- [ ] Account name/username unified across preview.tsx and storybookHarness.tsx
 - [ ] Canonical mock account chosen (recommend Taylor Nguyen)
 - [ ] All related stories use consistent account
 - [ ] No hardcoded assertions on old account names/emails

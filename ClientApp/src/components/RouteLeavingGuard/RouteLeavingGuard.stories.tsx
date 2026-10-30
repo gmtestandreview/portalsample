@@ -17,7 +17,7 @@ const GuardHarness = ({
   cancelBtn?: string;
   confirmBtn?: string;
 }) => (
-  // No MemoryRouter here — the global Storybook decorator in preview.ts provides
+  // No MemoryRouter here — the global Storybook decorator in preview.tsx provides
   // a RouterProvider via createMemoryRouter. Routes/Route consume that context.
   <Routes>
     <Route
@@ -129,10 +129,10 @@ export const InterceptedNavigation = meta.story({
     await waitFor(() => expect(dialog).toBeVisible());
 
     await expect(
-      within(dialog).getByRole('button', { name: /^cancel$/i }),
+      within(dialog).getByRole('button', { name: /^cancel$/i })
     ).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /discard changes/i }),
+      within(dialog).getByRole('button', { name: /discard changes/i })
     ).toBeVisible();
   },
 });
@@ -157,10 +157,10 @@ export const CustomCopy = meta.story({
     await waitFor(() => expect(dialog).toBeVisible());
 
     await expect(
-      within(dialog).getByText(/Any changes made will not be saved/),
+      within(dialog).getByText(/Any changes made will not be saved/)
     ).toBeVisible();
     await expect(
-      within(dialog).getByRole('button', { name: /yes, logout/i }),
+      within(dialog).getByRole('button', { name: /yes, logout/i })
     ).toBeVisible();
   },
 });
@@ -181,7 +181,7 @@ export const ProceedAfterConfirm = meta.story({
 
     // After navigation the /other route replaces /form content in canvas
     await expect(
-      canvas.findByText('You left the page.'),
+      canvas.findByText('You left the page.')
     ).resolves.toBeVisible();
   },
 });

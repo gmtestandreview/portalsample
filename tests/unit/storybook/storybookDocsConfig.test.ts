@@ -21,7 +21,7 @@ const requireViteFinal = (
 };
 
 const main = readFileSync('.storybook/main.ts', 'utf8');
-const preview = readFileSync('.storybook/preview.ts', 'utf8');
+const preview = readFileSync('.storybook/preview.tsx', 'utf8');
 const previewHead = readFileSync('.storybook/preview-head.html', 'utf8');
 const componentDocsGuide = readFileSync(
   '.storybook/component-docs-guide.mdx',
@@ -56,7 +56,7 @@ const declaredVersion = (packageName: string) =>
     ?.replace(/^[~^]/, '');
 
 const rawStoryFiles = import.meta.glob(
-  '../../../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+  '../../../ClientApp/src/**/*.stories.tsx',
   { eager: true, import: 'default', query: '?raw' },
 ) as Record<string, string>;
 
@@ -462,24 +462,40 @@ describe('storybook documentation architecture', () => {
     expect(main).toMatch(/["']\.\.\/\.storybook\/\*\.mdx["']/);
     expect(main).toMatch(/["']\.\.\/ClientApp\/src\/\*\*\/\*\.mdx["']/);
     expect(main).toMatch(
-      /["']\.\.\/ClientApp\/src\/\*\*\/\*\.stories\.@\(js\|jsx\|mjs\|ts\|tsx\)["']/,
+      /["']\.\.\/ClientApp\/src\/\*\*\/\*\.stories\.tsx["']/,
     );
+    // Every story in this project is .tsx; keep discovery that narrow.
+    expect(main).not.toMatch(/\*\.stories\.@\(/);
 
-    expect(main).not.toContain("'../ClientApp/src/**/*.stories.@(ts|tsx)'");
     expect(main).not.toContain("'../ClientApp/src/**/*.{docs,Docs}.mdx'");
   });
 
   it('owns generated docs naming and docs mode in main.ts', () => {
     expect.hasAssertions();
 
+    // Docs naming and mode are owned by the @storybook/addon-docs options.
     expect([
-      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/.test(main),
-      /docs:\s*\{[\s\S]*docsMode:\s*false/.test(main),
+      /name:\s*['"]@storybook\/addon-docs['"][\s\S]*?docs:\s*\{[\s\S]*?defaultName:\s*['"]Documentation['"]/.test(
+        main,
+      ),
+      /name:\s*['"]@storybook\/addon-docs['"][\s\S]*?docs:\s*\{[\s\S]*?docsMode:\s*true/.test(
+        main,
+      ),
       main.match(/defaultName:/g)?.length === 1,
       main.match(/docsMode:/g)?.length === 1,
       !/autodocs:\s*['"]tag['"]/.test(main),
-      !/docsMode:\s*true/.test(main),
+      !/docsMode:\s*false/.test(main),
     ]).toStrictEqual([true, true, true, true, true, true]);
+  });
+
+  it('keeps the dev server from watching its own build output', () => {
+    expect.hasAssertions();
+
+    // A watched storybook-static races the build's staticDirs copy on Windows
+    // (ENOENT on chmod/utime) when storybook:verify:docs runs beside the dev server.
+    expect(main).toMatch(
+      /watch:\s*\{[\s\S]*?ignored:\s*\[[^\]]*['"]\*\*\/storybook-static\/\*\*['"]/,
+    );
   });
 
   it('does not use Webpack-only TypeScript checking in React Vite', () => {

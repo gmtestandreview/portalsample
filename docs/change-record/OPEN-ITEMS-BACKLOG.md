@@ -76,7 +76,7 @@ build now pass. No Priority 1 item is currently open.
 >
 > **Note on Issue #9:** **COMPLETE** — Taylor Nguyen canonical identity
 > (`taylor.nguyen@example.com`) applied to both `storybookHarness.tsx` and
-> `.storybook/preview.ts` on 2026-05-31. QA sign-off was issued as part of
+> `.storybook/preview.tsx` on 2026-05-31. QA sign-off was issued as part of
 > Sprint 1 CLOSED_SUCCESS.
 
 | ID  | Title                                                | Severity | Sprint 1 Phase | State          | Owner         | Migration Gate                       |
@@ -260,7 +260,7 @@ failures, clean command output.
 **Issue #9 detail (OI-002 — COMPLETE):** The canonical `Taylor Nguyen` /
 `taylor.nguyen@example.com` identity has been applied to all five fields
 (`name`, `username`, `givenName`, `familyName`, `email`) in both
-`ClientApp/src/storybook/storybookHarness.tsx` and `.storybook/preview.ts` on
+`ClientApp/src/storybook/storybookHarness.tsx` and `.storybook/preview.tsx` on
 2026-05-31 (CRD-016). OI-002 is resolved and included in the 2026-06-01 QA PASS
 verdict.
 

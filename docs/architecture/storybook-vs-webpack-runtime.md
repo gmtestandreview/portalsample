@@ -58,5 +58,5 @@ the production build and runtime verifiers.
 | ---------------------------------------------- | --------------------------------------------------------------------- |
 | `vite.config.mts`                              | Application development, production, Sass, alias, and runtime plugins |
 | `.storybook/main.ts`                           | Storybook Vite adapter and shared build settings                      |
-| `.storybook/preview.ts`                        | Global decorators and asset setup                                     |
+| `.storybook/preview.tsx`                       | Global decorators and asset setup                                     |
 | `ClientApp/src/storybook/storybookHarness.tsx` | MSAL and application-provider test context                            |

@@ -7,7 +7,6 @@ const meta = preview.meta({
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Calendar',
   component: Calendar,
-  tags: ['ai-generated'],
 });
 
 export const Default = meta.story({

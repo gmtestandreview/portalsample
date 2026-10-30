@@ -17,7 +17,6 @@ import CustomBreadcrumb from './index';
 
 const meta = preview.meta({
   component: CustomBreadcrumb,
-  tags: ['ai-generated', 'needs-work'],
 });
 
 export const ThreeLevels = meta.story({

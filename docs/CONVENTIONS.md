@@ -209,7 +209,7 @@
 ## 9) Storybook Test Conventions
 
 - Storybook route-aware stories should use the global data-router decorator from
-  `.storybook/preview.ts`.
+  `.storybook/preview.tsx`.
 - Do not add story-local `MemoryRouter` wrappers where global router context is
   already provided.
 - `withPortalProviders` from `ClientApp/src/storybook/storybookHarness.tsx` must

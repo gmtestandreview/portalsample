@@ -3,7 +3,6 @@ import HeaderIntroText from './index';
 
 const meta = preview.meta({
   component: HeaderIntroText,
-  tags: ['ai-generated', 'needs-work'],
 });
 
 export const Default = meta.story({

@@ -72,7 +72,7 @@ likely in production if using same filter logic).
 ```typescript
 const draftItems = dashboardItems.filter((i) => i.status === 'Quote drafted'); // ← empty!
 const instrumentItems = dashboardItems.filter(
-  (i) => i.status === 'Report issued',
+  (i) => i.status === 'Report issued'
 ); // ← empty!
 ```
 
@@ -95,7 +95,7 @@ const instrumentItems = dashboardItems.filter(
 
 **Title:** MSW global handlers: Wrong shape breaks fallback registration\
 **Severity:** Critical\
-**Files:** `static/js/storybook/msw-handlers.ts` + `.storybook/preview.ts`\
+**Files:** `static/js/storybook/msw-handlers.ts` + `.storybook/preview.tsx`\
 **Description:**
 
 `msw-handlers.ts` exports `{ dashboard: [...] }` (object of arrays).\
@@ -111,7 +111,7 @@ endpoints hit unhandled requests.
 // msw-handlers.ts
 export const mswHandlers = { dashboard: [ http.get(...) ] };
 
-// preview.ts
+// preview.tsx
 msw: { handlers: mswHandlers } // ← wrong shape
 ```
 
@@ -290,13 +290,14 @@ Zero story coverage. No baseline for button styling or navigation behavior.
 
 ### Issue #9: Dual MSAL Account Inconsistency (Test User vs Taylor Nguyen)
 
-**Title:** MSAL mock account mismatch between preview.ts and
+**Title:** MSAL mock account mismatch between preview.tsx and
 storybookHarness.tsx\
 **Severity:** High\
-**Files:** `.storybook/preview.ts` + `static/js/storybook/storybookHarness.tsx`\
+**Files:** `.storybook/preview.tsx` +
+`static/js/storybook/storybookHarness.tsx`\
 **Description:**
 
-preview.ts: `mockMsalAccount.name = 'Test User'` /
+preview.tsx: `mockMsalAccount.name = 'Test User'` /
 `username = '<test@example.com>'`\
 storybookHarness.tsx: `mockMsalAccount.name = 'Taylor Nguyen'` /
 `username = '<taylor.nguyen@example.com>'`

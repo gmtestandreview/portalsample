@@ -12,7 +12,7 @@ Tested against Storybook **10.5.10**.
 ## Activation
 
 Autodocs is enabled **once, at project level**, by the built-in `autodocs` tag
-in `.storybook/preview.ts`:
+in `.storybook/preview.tsx`:
 
 ```ts
 export default {
@@ -47,17 +47,17 @@ const meta = {
 
 Each setting has exactly one home. Nothing below is repeated anywhere else.
 
-| Concern             | Owner                                                | Value                                                                |
-| ------------------- | ---------------------------------------------------- | -------------------------------------------------------------------- |
-| Autodocs activation | `.storybook/preview.ts`                              | `tags: ['autodocs']`                                                 |
-| Generated page name | `.storybook/main.ts` → `docs`                        | `defaultName: 'Documentation'`                                       |
-| Docs-only mode      | `.storybook/main.ts` → `docs`                        | `docsMode: false`                                                    |
-| GFM tables in MDX   | `.storybook/main.ts` → `addon-docs` options          | `remarkPlugins: [remarkGfm]`                                         |
-| Table of contents   | `.storybook/preview.ts` → `parameters.docs`          | `toc: true`                                                          |
-| Code Panel          | `.storybook/preview.ts` → `parameters.docs`          | `codePanel: true`                                                    |
-| Source generation   | `.storybook/preview.ts` → `parameters.docs.source`   | `type: 'auto'`, `excludeDecorators: true`                            |
-| Canvas source       | `.storybook/preview.ts` → `parameters.docs.canvas`   | `sourceState: 'hidden'` (the Code Panel presents source)             |
-| Controls            | `.storybook/preview.ts` → `parameters.docs.controls` | `sort: 'requiredFirst'`, `exclude: ['as', 'bsPrefix', 'ref', 'key']` |
+| Concern             | Owner                                                 | Value                                                                |
+| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| Autodocs activation | `.storybook/preview.tsx`                              | `tags: ['autodocs']`                                                 |
+| Generated page name | `.storybook/main.ts` → `docs`                         | `defaultName: 'Documentation'`                                       |
+| Docs-only mode      | `.storybook/main.ts` → `docs`                         | `docsMode: false`                                                    |
+| GFM tables in MDX   | `.storybook/main.ts` → `addon-docs` options           | `remarkPlugins: [remarkGfm]`                                         |
+| Table of contents   | `.storybook/preview.tsx` → `parameters.docs`          | `toc: true`                                                          |
+| Code Panel          | `.storybook/preview.tsx` → `parameters.docs`          | `codePanel: true`                                                    |
+| Source generation   | `.storybook/preview.tsx` → `parameters.docs.source`   | `type: 'auto'`, `excludeDecorators: true`                            |
+| Canvas source       | `.storybook/preview.tsx` → `parameters.docs.canvas`   | `sourceState: 'hidden'` (the Code Panel presents source)             |
+| Controls            | `.storybook/preview.tsx` → `parameters.docs.controls` | `sort: 'requiredFirst'`, `exclude: ['as', 'bsPrefix', 'ref', 'key']` |
 
 `main.ts`:
 
@@ -79,7 +79,7 @@ docs: {
 },
 ```
 
-`preview.ts`:
+`preview.tsx`:
 
 ```ts
 docs: {

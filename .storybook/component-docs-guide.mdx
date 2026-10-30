@@ -34,7 +34,7 @@ to accommodate it.
 
 ## Autodocs policy
 
-Autodocs is enabled globally by `.storybook/preview.ts`:
+Autodocs is enabled globally by `.storybook/preview.tsx`:
 
 ```ts
 tags: ['autodocs'];
@@ -89,7 +89,7 @@ Keep Storybook behaviour in one predictable layer:
 - `.storybook/main.ts` owns the React/Vite framework, story globs, addons,
   documentation naming, MDX compilation, docgen, static assets, and the minimum
   Vite compatibility configuration.
-- `.storybook/preview.ts` uses `definePreview` and owns project annotations:
+- `.storybook/preview.tsx` uses `definePreview` and owns project annotations:
   global Autodocs activation, decorators, lifecycle hooks, accessibility,
   Controls, Code Panel, Source behaviour, styles, and preview addons. Compose
   `addonDocs()`, `addonA11y()`, and `addonTest()` here so official addon
@@ -181,7 +181,7 @@ Storybook parameters are static metadata used by stories and addons.
 Configuration is inherited from least specific to most specific:
 
 ```text
-project (preview.ts)
+project (preview.tsx)
         ↓
 component (meta)
         ↓
@@ -189,7 +189,7 @@ story
 ```
 
 More specific configuration overrides inherited configuration. Put project-wide
-policy in `preview.ts`; use component or story Parameters only for deliberate
+policy in `preview.tsx`; use component or story Parameters only for deliberate
 exceptions.
 
 ```ts
@@ -224,10 +224,10 @@ addon annotations and addon-owned types to story metadata. Local package
 inspection for Storybook `10.5.10` confirmed that `@storybook/addon-a11y`
 exports preview decorators, parameters, and globals, and that
 `@storybook/addon-vitest` exports a preview addon entrypoint. The project keeps
-both addons in `main.ts` for manager and preset registration and in `preview.ts`
-for CSF Next composition.
+both addons in `main.ts` for manager and preset registration and in
+`preview.tsx` for CSF Next composition.
 
-The project also supplies a custom MSW worker setup in `preview.ts` so shared
+The project also supplies a custom MSW worker setup in `preview.tsx` so shared
 handlers and the same-origin request policy have one owner. Story-specific
 handlers use the story lifecycle instead of deprecated `parameters.msw`:
 
@@ -404,7 +404,7 @@ instead of duplicating story source by hand.
 
 ## Related components
 
-- [SecondaryButton](/docs/components-buttons-secondarybutton--documentation) -
+- [SecondaryButton](/docs/components-buttons-secondarybutton--docs) -
   Why it is related
 ```
 

@@ -1,5 +1,15 @@
 import addonLinks from '@storybook/addon-links';
 import addonDocs from '@storybook/addon-docs';
+import {
+  ArgTypes,
+  Controls,
+  Description,
+  IconGallery,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from '@storybook/addon-docs/blocks';
 import addonA11y from '@storybook/addon-a11y';
 import addonTest from '@storybook/addon-vitest';
 import { definePreview } from '@storybook/react-vite';
@@ -37,7 +47,6 @@ const getStorybookWorker = async () => {
 };
 
 const preview = definePreview({
-  tags: ['autodocs'],
   addons: [
     addonDocs(),
     addonA11y(),
@@ -45,6 +54,7 @@ const preview = definePreview({
     addonMsw(getStorybookWorker),
     addonLinks(),
   ],
+  tags: ['autodocs'],
   decorators: [
     (Story, { parameters }) => {
       const portal = (parameters?.['portal'] ?? {}) as PortalStoryParameters;
@@ -129,6 +139,18 @@ const preview = definePreview({
         excludeDecorators: true,
         type: 'auto',
       },
+      page: () => (
+        <>
+          <Title />
+          <Subtitle />
+          <Description />
+          <Primary />
+          <Controls />
+          <ArgTypes />
+          <Stories />
+          <IconGallery />
+        </>
+      ),
     },
   },
 });

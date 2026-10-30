@@ -41,7 +41,7 @@ close with high confidence.
 2. Confirm whether any changed stories require route context, auth context, or
    modal/portal behavior.
 3. Confirm current shared wrapper behavior:
-   - Global router decorator in `.storybook/preview.ts`
+   - Global router decorator in `.storybook/preview.tsx`
    - Router-agnostic Storybook harness in
      `static/js/storybook/storybookHarness.tsx`
 

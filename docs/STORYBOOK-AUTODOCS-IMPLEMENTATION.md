@@ -11,7 +11,7 @@ complete, accurate API page for it. Tested against Storybook **10.5.10**.
 ## What you get for free
 
 Autodocs is enabled project-wide by `tags: ['autodocs']` in
-`.storybook/preview.ts`. Every component that has a story therefore already has
+`.storybook/preview.tsx`. Every component that has a story therefore already has
 a generated **Documentation** page containing:
 
 - the component title and description, taken from the component's own JSDoc;

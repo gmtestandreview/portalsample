@@ -4,7 +4,6 @@ import { CustomAccordion, CustomAccordionBody } from './index';
 
 const meta = preview.meta({
   component: CustomAccordion,
-  tags: ['ai-generated', 'needs-work', '!autodocs'],
 });
 
 export const SingleSection = meta.story({
