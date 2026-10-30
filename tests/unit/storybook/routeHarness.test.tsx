@@ -6,7 +6,6 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { Link, useNavigate, useParams } from 'react-router';
-import * as reactRouter from 'react-router';
 import { useEffect, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -235,23 +234,45 @@ describe(PortalStoryRouter, () => {
     });
   });
 
-  it('creates one router for a mounted story instead of nesting or replacing it', () => {
+  it('preserves navigation across a story rerender on the mounted router', async () => {
     expect.hasAssertions();
 
-    const createMemoryRouter = vi.spyOn(reactRouter, 'createMemoryRouter');
-    const firstStory = () => <p>Router story first</p>;
-    const secondStory = () => <p>Router story second</p>;
-    const view = render(
-      <PortalStoryRouter Story={firstStory} initialEntries={['/']} />,
+    const firstStory = () => (
+      <Link to='/complete/rerender-42'>Navigate to destination</Link>
     );
+    const secondStory = () => <p>Replacement story</p>;
+    const destinationRoutes = [
+      { path: '/complete/:reference', element: <Destination /> },
+    ];
+    const view = render(
+      <PortalStoryRouter
+        Story={firstStory}
+        initialEntries={['/start']}
+        routePath='*'
+        destinationRoutes={destinationRoutes}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole('link', { name: 'Navigate to destination' }),
+    );
+    await expect(
+      screen.findByText('Destination reference: rerender-42'),
+    ).resolves.toBeVisible();
 
     view.rerender(
-      <PortalStoryRouter Story={secondStory} initialEntries={['/changed']} />,
+      <PortalStoryRouter
+        Story={secondStory}
+        initialEntries={['/changed']}
+        routePath='*'
+        destinationRoutes={destinationRoutes}
+      />,
     );
 
-    expect(createMemoryRouter).toHaveBeenCalledTimes(1);
+    expect(
+      screen.getByText('Destination reference: rerender-42'),
+    ).toBeVisible();
     view.unmount();
-    createMemoryRouter.mockRestore();
   });
 
   it('falls back to the story wildcard when no destination route matches', async () => {
@@ -293,7 +314,9 @@ describe(PortalStoryRouter, () => {
     expect.hasAssertions();
 
     const originalFetch = globalThis.fetch;
+    const originalWindowFetch = globalThis.window.fetch;
     const firstFetch = vi.fn<typeof globalThis.fetch>();
+    const updatedFirstFetch = vi.fn<typeof globalThis.fetch>();
     const secondFetch = vi.fn<typeof globalThis.fetch>();
     const Story = () => <p>Fetch-owned story</p>;
     const contextFor = (fetchImpl: typeof globalThis.fetch) =>
@@ -309,12 +332,21 @@ describe(PortalStoryRouter, () => {
     );
 
     expect(globalThis.fetch).toBe(secondFetch);
+    expect(globalThis.window.fetch).toBe(secondFetch);
+
+    firstView.rerender(
+      withPortalProviders(Story, contextFor(updatedFirstFetch)),
+    );
+    expect(globalThis.fetch).toBe(secondFetch);
+    expect(globalThis.window.fetch).toBe(secondFetch);
 
     firstView.unmount();
     expect(globalThis.fetch).toBe(secondFetch);
+    expect(globalThis.window.fetch).toBe(secondFetch);
 
     secondView.unmount();
     expect(globalThis.fetch).toBe(originalFetch);
+    expect(globalThis.window.fetch).toBe(originalWindowFetch);
   });
 
   it('stops observing after the mounted story is removed', async () => {

@@ -7,6 +7,7 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   type ComponentType,
   type ReactNode,
@@ -365,6 +366,9 @@ const PatchedFetch = ({
   children: ReactNode;
   fetchImpl: typeof globalThis.fetch;
 }) => {
+  const tokenRef = useRef<symbol | null>(null);
+  const initialFetchRef = useRef(fetchImpl);
+
   useLayoutEffect(() => {
     if (activeFetchOverrides.length === 0) {
       baselineFetch = globalThis.fetch;
@@ -372,7 +376,11 @@ const PatchedFetch = ({
     }
 
     const token = Symbol('storybook-fetch-override');
-    activeFetchOverrides.push({ token, fetchImpl });
+    tokenRef.current = token;
+    activeFetchOverrides.push({
+      token,
+      fetchImpl: initialFetchRef.current,
+    });
     applyActiveFetchOverride();
 
     return () => {
@@ -382,6 +390,7 @@ const PatchedFetch = ({
       if (overrideIndex >= 0) {
         activeFetchOverrides.splice(overrideIndex, 1);
       }
+      tokenRef.current = null;
 
       applyActiveFetchOverride();
       if (activeFetchOverrides.length === 0) {
@@ -389,6 +398,21 @@ const PatchedFetch = ({
         baselineWindowFetch = undefined;
       }
     };
+  }, []);
+
+  useLayoutEffect(() => {
+    const token = tokenRef.current;
+    if (token === null) {
+      return;
+    }
+
+    const activeOverride = activeFetchOverrides.find(
+      (override) => override.token === token,
+    );
+    if (activeOverride) {
+      activeOverride.fetchImpl = fetchImpl;
+      applyActiveFetchOverride();
+    }
   }, [fetchImpl]);
 
   return children;
