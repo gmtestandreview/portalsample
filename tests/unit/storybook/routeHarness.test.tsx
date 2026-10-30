@@ -316,11 +316,95 @@ describe(PortalStoryRouter, () => {
     );
   });
 
+  it('cleans up overlapping router observers in either unmount order', async () => {
+    expect.hasAssertions();
+
+    const firstObservations: PortalLocationObservation[] = [];
+    const secondObservations: PortalLocationObservation[] = [];
+    let firstNavigate: ((to: string) => void) | undefined;
+    let secondNavigate: ((to: string) => void) | undefined;
+    const FirstStory = () => {
+      firstNavigate = useNavigate();
+      return <p>First router</p>;
+    };
+    const SecondStory = () => {
+      secondNavigate = useNavigate();
+      return <p>Second router</p>;
+    };
+
+    const view = render(
+      <>
+        <PortalStoryRouter
+          Story={FirstStory}
+          initialEntries={['/first']}
+          observeLocation={(location) => firstObservations.push(location)}
+        />
+        <PortalStoryRouter
+          Story={SecondStory}
+          initialEntries={['/second']}
+          observeLocation={(location) => secondObservations.push(location)}
+        />
+      </>,
+    );
+
+    await waitFor(() => {
+      expect(firstObservations).toContainEqual({
+        pathname: '/first',
+        params: { '*': 'first' },
+      });
+      expect(secondObservations).toContainEqual({
+        pathname: '/second',
+        params: { '*': 'second' },
+      });
+    });
+
+    const secondObservationCount = secondObservations.length;
+    view.rerender(
+      <PortalStoryRouter
+        Story={FirstStory}
+        initialEntries={['/changed']}
+        observeLocation={(location) => firstObservations.push(location)}
+      />,
+    );
+
+    await act(async () => {
+      secondNavigate?.('/after-second-unmount');
+    });
+
+    expect(secondObservations).toHaveLength(secondObservationCount);
+
+    await act(async () => {
+      firstNavigate?.('/after-first-unmount');
+    });
+    await waitFor(() =>
+      expect(firstObservations).toContainEqual({
+        pathname: '/after-first-unmount',
+        params: { '*': 'after-first-unmount' },
+      }),
+    );
+
+    const firstObservationCount = firstObservations.length;
+    view.unmount();
+    await act(async () => {
+      firstNavigate?.('/after-all-unmount');
+    });
+
+    expect(firstObservations).toHaveLength(firstObservationCount);
+  });
+
   it('keeps an overlapping story fetch override alive after the first story unmounts', () => {
     expect.hasAssertions();
 
     const originalFetch = globalThis.fetch;
-    const originalWindowFetch = globalThis.window.fetch;
+    const originalWindowFetch = Reflect.get(globalThis.window, 'fetch') as
+      typeof globalThis.fetch | undefined;
+    const expectActiveFetch = (
+      expectedFetch: typeof globalThis.fetch | undefined,
+      expectedWindowFetch: typeof globalThis.fetch | undefined = expectedFetch,
+    ) => {
+      expect(globalThis.fetch).toBe(expectedFetch);
+      expect(globalThis.window.fetch).toBe(expectedWindowFetch);
+    };
     const firstFetch = vi.fn<typeof globalThis.fetch>();
     const updatedFirstFetch = vi.fn<typeof globalThis.fetch>();
     const secondFetch = vi.fn<typeof globalThis.fetch>();
@@ -337,25 +421,21 @@ describe(PortalStoryRouter, () => {
       { container: document.createElement('div') },
     );
 
-    expect(globalThis.fetch).toBe(secondFetch);
-    expect(globalThis.window.fetch).toBe(secondFetch);
+    expectActiveFetch(secondFetch);
 
     firstView.rerender(
       withPortalProviders(Story, contextFor(updatedFirstFetch)),
     );
 
-    expect(globalThis.fetch).toBe(secondFetch);
-    expect(globalThis.window.fetch).toBe(secondFetch);
+    expectActiveFetch(secondFetch);
 
     firstView.unmount();
 
-    expect(globalThis.fetch).toBe(secondFetch);
-    expect(globalThis.window.fetch).toBe(secondFetch);
+    expectActiveFetch(secondFetch);
 
     secondView.unmount();
 
-    expect(globalThis.fetch).toBe(originalFetch);
-    expect(globalThis.window.fetch).toBe(originalWindowFetch);
+    expectActiveFetch(originalFetch, originalWindowFetch);
   });
 
   it('stops observing after the mounted story is removed', async () => {

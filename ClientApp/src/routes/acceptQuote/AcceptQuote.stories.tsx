@@ -123,6 +123,7 @@ const meta = preview.meta({
 });
 
 export const ReportRecipientStep = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   render: () => <ReportRecipient id='123' />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -154,6 +155,7 @@ export const ReportRecipientSummaryOtherAddress = meta.story({
     msw.use(reportRecipientOtherAddressHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/summary-and-accept'],
       formik: {
@@ -191,6 +193,7 @@ export const ReportRecipientSummaryOtherAddress = meta.story({
 export const PaymentDetailsStep = meta.story({
   render: () => <PaymentDetails id='123' />,
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
       formik: {
@@ -234,6 +237,7 @@ export const PaymentDetailsPostpaid = meta.story({
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/payment-details'],
       formik: {
@@ -298,6 +302,7 @@ export const DeliveryAndReturnStep = meta.story({
     msw.use(deliveryAndReturnHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/delivery-and-return'],
       formik: {
@@ -345,6 +350,7 @@ export const QuotationSummaryStep = meta.story({
     msw.use(quotationSummaryHandler);
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/quotation-summary'],
       formik: {
@@ -408,6 +414,7 @@ export const SummaryAndAcceptStep = meta.story({
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/123/summary-and-accept'],
       formik: {

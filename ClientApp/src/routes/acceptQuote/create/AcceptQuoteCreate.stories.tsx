@@ -68,6 +68,7 @@ const meta = preview.meta({
 });
 
 export const LooksUpQuoteThenReportRecipient = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     const gate = new Promise<void>((resolve) => {
       state.release = resolve;
@@ -111,6 +112,7 @@ export const LooksUpQuoteThenReportRecipient = meta.story({
 });
 
 export const QuoteLookupFailureCreatesNothing = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       lookupHandler(() =>

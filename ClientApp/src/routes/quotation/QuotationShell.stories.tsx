@@ -52,6 +52,7 @@ const meta = preview.meta({
 });
 
 export const LoadsQuotationForReference = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       lookupHandler(() => HttpResponse.json(requestForQuoteDetailsFixture)),
@@ -70,6 +71,7 @@ export const LoadsQuotationForReference = meta.story({
 });
 
 export const LookupFailureIsNotFound = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       lookupHandler(() =>
@@ -86,6 +88,7 @@ export const LookupFailureIsNotFound = meta.story({
 });
 
 export const NewlyAcceptedQuoteShowsAccepted = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     globalThis.sessionStorage.setItem(
       VIEW_QUOTE_KEY,
@@ -113,6 +116,7 @@ export const NewlyAcceptedQuoteShowsAccepted = meta.story({
 });
 
 export const OtherQuoteKeepsAvailableStatus = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     globalThis.sessionStorage.setItem(
       VIEW_QUOTE_KEY,

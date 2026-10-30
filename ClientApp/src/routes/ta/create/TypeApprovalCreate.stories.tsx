@@ -59,6 +59,7 @@ const meta = preview.meta({
 });
 
 export const PendingThenOrganisationDetails = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     const gate = new Promise<void>((resolve) => {
       state.release = resolve;
@@ -96,6 +97,7 @@ export const PendingThenOrganisationDetails = meta.story({
 });
 
 export const CreateFailureKeepsLoading = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       http.post('/api/application', async ({ request }) => {

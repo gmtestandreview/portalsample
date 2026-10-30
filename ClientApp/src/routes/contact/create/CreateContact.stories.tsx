@@ -70,6 +70,7 @@ const meta = preview.meta({
 });
 
 export const InvalidSubmitBlocksConfirmation = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       ...contactHandlers({
@@ -97,6 +98,7 @@ export const InvalidSubmitBlocksConfirmation = meta.story({
 });
 
 export const ConfirmCreatesContact = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...contactHandlers(contactForm));
   },

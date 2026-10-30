@@ -49,6 +49,7 @@ const meta = preview.meta({
 });
 
 export const LoadsReportForReference = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       lookupHandler(() => HttpResponse.json(requestForQuoteDetailsFixture)),
@@ -65,6 +66,7 @@ export const LoadsReportForReference = meta.story({
 });
 
 export const LookupFailureIsNotFound = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       lookupHandler(() =>
@@ -81,6 +83,7 @@ export const LookupFailureIsNotFound = meta.story({
 });
 
 export const BackToDashboardLink = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       lookupHandler(() => HttpResponse.json(requestForQuoteDetailsFixture)),

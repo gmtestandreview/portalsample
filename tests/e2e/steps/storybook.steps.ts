@@ -11,7 +11,12 @@
  * project's baseURL setting.
  */
 
-import { expect, type ConsoleMessage, type Page } from '@playwright/test';
+import {
+  expect,
+  type ConsoleMessage,
+  type Page,
+  type Request,
+} from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import {
   STORYBOOK_BASE,
@@ -50,8 +55,22 @@ const storybookPageIssueMonitors = new WeakMap<
   Page,
   StorybookPageIssueMonitor
 >();
+type DocsIsolationProbe = {
+  endpointRequests: string[];
+  failedRequests: string[];
+  mswErrors: string[];
+};
+
+const docsIsolationResults = new WeakMap<Page, { completed: boolean }>();
 const LATE_UNMOUNT_SIGNAL =
   /(?:can't perform a React state update on an unmounted component|state update on an unmounted component|update(?:d)? after unmount)/i;
+const MSW_FAILURE_SIGNAL =
+  /(?:unhandled request|without a matching request handler|network request failed|cannot bypass)/iu;
+const PAYMENT_DETAILS_ENDPOINT = '/api/accept-quote/123/payment-details';
+const PAYMENT_DETAILS_STEP_FRAME =
+  '#iframe--routes-acceptquote--payment-details-step';
+const PAYMENT_DETAILS_POSTPAID_FRAME =
+  '#iframe--routes-acceptquote--payment-details-postpaid';
 
 const captureLateUnmountSignal = (
   messages: string[],
@@ -409,6 +428,189 @@ When(
     await loadDocsIframe(page, REPRESENTATIVE_DOCS_ID);
   },
 );
+
+When(
+  'I exercise overlapping request story frames on the generated AcceptQuote documentation page',
+  async ({ page }) => {
+    const probe: DocsIsolationProbe = {
+      endpointRequests: [],
+      failedRequests: [],
+      mswErrors: [],
+    };
+    const requestHandler = (request: Request) => {
+      // Playwright's request event is observation only; it does not replace or
+      // bypass the browser transport used by the story's MSW worker.
+      if (request.url().includes(PAYMENT_DETAILS_ENDPOINT)) {
+        probe.endpointRequests.push(request.url());
+      }
+    };
+    const requestFailedHandler = (request: Request) => {
+      if (request.url().includes(PAYMENT_DETAILS_ENDPOINT)) {
+        probe.failedRequests.push(request.url());
+      }
+    };
+    const consoleErrorHandler = (message: ConsoleMessage) => {
+      if (
+        message.type() === 'error' &&
+        MSW_FAILURE_SIGNAL.test(message.text())
+      ) {
+        probe.mswErrors.push(message.text());
+      }
+    };
+    const findStoryFrame = (storyId: string) => {
+      const frame = page
+        .frames()
+        .find((candidate) => candidate.url().includes(`id=${storyId}`));
+      if (!frame) {
+        throw new Error(`Story frame ${storyId} was not found`);
+      }
+      return frame;
+    };
+    const fetchPaymentDetails = async (storyId: string) =>
+      findStoryFrame(storyId).evaluate(async (endpoint) => {
+        const response = await globalThis.fetch(endpoint);
+        return {
+          status: response.status,
+          body: (await response.json()) as {
+            acceptQuotePreInfo?: { paymentTerms?: string };
+          },
+        };
+      }, PAYMENT_DETAILS_ENDPOINT);
+    const removeFrame = async (selector: string) => {
+      await page
+        .locator(selector)
+        .first()
+        .evaluate((element) => element.remove());
+      await expect(page.locator(selector)).toHaveCount(0);
+    };
+
+    page.on('request', requestHandler);
+    page.on('requestfailed', requestFailedHandler);
+    page.on('console', consoleErrorHandler);
+
+    let completed = false;
+    try {
+      await loadDocsIframe(page, ACCEPT_QUOTE_DOCS_ID);
+      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
+      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
+      await expect(
+        page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
+      ).toContainText('Prepayment required', {
+        timeout: STORY_RENDER_TIMEOUT_MS,
+      });
+      await expect(
+        page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
+      ).toContainText('Invoices must be paid within 30 days', {
+        timeout: STORY_RENDER_TIMEOUT_MS,
+      });
+      const sessionBefore = await page.evaluate(() =>
+        globalThis.sessionStorage.getItem('targetOrganisation'),
+      );
+      expect(probe.endpointRequests).toHaveLength(2);
+
+      await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
+      const postpaidAfterStepCleanup = await fetchPaymentDetails(
+        'routes-acceptquote--payment-details-postpaid',
+      );
+      expect(postpaidAfterStepCleanup).toEqual({
+        status: 200,
+        body: {
+          acceptQuotePreInfo: {
+            paymentTerms: 'Invoice',
+            quotationIdNum: 'Q-2024-000456',
+          },
+        },
+      });
+
+      await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
+      await expect
+        .poll(
+          () =>
+            page
+              .frames()
+              .filter((frame) => frame.url().includes('payment-details-'))
+              .length,
+        )
+        .toBe(0);
+
+      await page.goto(
+        `${STORYBOOK_BASE}/iframe.html?id=${ACCEPT_QUOTE_DOCS_ID}&viewMode=docs`,
+      );
+      await expect(page.locator(PAYMENT_DETAILS_STEP_FRAME)).toHaveCount(1);
+      await expect(page.locator(PAYMENT_DETAILS_POSTPAID_FRAME)).toHaveCount(1);
+      await expect(
+        page.frameLocator(PAYMENT_DETAILS_STEP_FRAME).locator('body'),
+      ).toContainText('Prepayment required', {
+        timeout: STORY_RENDER_TIMEOUT_MS,
+      });
+      await expect(
+        page.frameLocator(PAYMENT_DETAILS_POSTPAID_FRAME).locator('body'),
+      ).toContainText('Invoices must be paid within 30 days', {
+        timeout: STORY_RENDER_TIMEOUT_MS,
+      });
+      // Two initial requests from the first A/B pair, one explicit B request
+      // after A cleanup, then two initial requests from the reversed pair.
+      expect(probe.endpointRequests).toHaveLength(5);
+
+      await removeFrame(PAYMENT_DETAILS_POSTPAID_FRAME);
+      const stepAfterPostpaidCleanup = await fetchPaymentDetails(
+        'routes-acceptquote--payment-details-step',
+      );
+      expect(stepAfterPostpaidCleanup).toEqual({
+        status: 200,
+        body: {
+          acceptQuotePreInfo: {
+            paymentTerms: 'Prepaid',
+            quotationIdNum: 'Q-2024-000456',
+          },
+        },
+      });
+
+      await removeFrame(PAYMENT_DETAILS_STEP_FRAME);
+      await expect
+        .poll(
+          () =>
+            page
+              .frames()
+              .filter((frame) => frame.url().includes('payment-details-'))
+              .length,
+        )
+        .toBe(0);
+
+      expect(probe.endpointRequests).toHaveLength(6);
+      expect(probe.failedRequests).toEqual([]);
+      expect(probe.mswErrors).toEqual([]);
+      expect(
+        await page.evaluate(() =>
+          globalThis.sessionStorage.getItem('targetOrganisation'),
+        ),
+      ).toBe(sessionBefore);
+      expect(storybookPageIssueMonitors.get(page)?.messages).toEqual([]);
+      completed = true;
+    } finally {
+      docsIsolationResults.set(page, { completed });
+      page.off('request', requestHandler);
+      page.off('requestfailed', requestFailedHandler);
+      page.off('console', consoleErrorHandler);
+      // Keep any remaining frame cleanup inside the browser page, so the next
+      // scenario starts without a provider/session owner from this probe.
+      await page.evaluate(
+        ([stepSelector, postpaidSelector]) => {
+          for (const frame of document.querySelectorAll(
+            `${stepSelector}, ${postpaidSelector}`,
+          )) {
+            frame.remove();
+          }
+        },
+        [PAYMENT_DETAILS_STEP_FRAME, PAYMENT_DETAILS_POSTPAID_FRAME],
+      );
+    }
+  },
+);
+
+Then('the generated Docs isolation probe should pass', ({ page }) => {
+  expect(docsIsolationResults.get(page)).toEqual({ completed: true });
+});
 
 When('I open a representative component story', async ({ page }) => {
   await page.goto(`${STORYBOOK_BASE}/?path=/story/${REPRESENTATIVE_STORY_ID}`);

@@ -84,6 +84,7 @@ const confirmSave = async (
 };
 
 export const LoadsExistingContact = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...contactHandlers(204));
   },
@@ -98,6 +99,7 @@ export const LoadsExistingContact = meta.story({
 });
 
 export const ConfirmationCancelThenConfirmSaves = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...contactHandlers(204));
   },
@@ -136,6 +138,7 @@ export const ConfirmationCancelThenConfirmSaves = meta.story({
 });
 
 export const SaveFailureStillCompletes = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...contactHandlers(500));
   },

@@ -89,6 +89,7 @@ const meta = preview.meta({
 });
 
 export const LoadsStatusesThenFirstStep = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...loadedHandlers());
   },
@@ -113,6 +114,7 @@ export const LoadsStatusesThenFirstStep = meta.story({
 });
 
 export const NoStepStatusesIsNotFound = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       stepStatusesHandler(() => HttpResponse.json([])),
@@ -129,6 +131,7 @@ export const NoStepStatusesIsNotFound = meta.story({
 });
 
 export const QuoteLookupFailureIsNotFound = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       stepStatusesHandler(() =>
@@ -169,6 +172,7 @@ export const UnknownApplicationIsNotFound = meta.story({
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/accept-quote/QA-UNKNOWN/report-recipient'],
     },

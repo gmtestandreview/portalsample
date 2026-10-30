@@ -54,6 +54,7 @@ const meta = preview.meta({
 });
 
 export const LoadsStatusesThenFirstStep = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       stepStatusesHandler(() =>
@@ -80,6 +81,7 @@ export const LoadsStatusesThenFirstStep = meta.story({
 });
 
 export const StatusLoadFailureIsNotFound = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       stepStatusesHandler(() =>
@@ -106,6 +108,7 @@ export const UnknownApplicationIsNotFound = meta.story({
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/ta/TA-UNKNOWN/organisation-details'],
     },

@@ -66,6 +66,7 @@ const meta = preview.meta({
 });
 
 export const CopiesSourceThenOrganisationAndContact = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     const gate = new Promise<void>((resolve) => {
       state.release = resolve;
@@ -104,6 +105,7 @@ export const CopiesSourceThenOrganisationAndContact = meta.story({
 });
 
 export const CopyRejectionKeepsLoading = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       http.post('/api/application/:id/copy', async ({ request, params }) => {

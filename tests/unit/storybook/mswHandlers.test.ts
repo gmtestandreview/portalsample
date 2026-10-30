@@ -70,6 +70,33 @@ const requestedLookupTypes = [
   ),
 ];
 
+const docsIsolationStoryFiles = [
+  'ClientApp/src/components/modals/Modals.stories.tsx',
+  'ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx',
+  'ClientApp/src/routes/acceptQuote/create/AcceptQuoteCreate.stories.tsx',
+  'ClientApp/src/routes/account/addBranch/AddBranch.stories.tsx',
+  'ClientApp/src/routes/account/create/CreateAccount.stories.tsx',
+  'ClientApp/src/routes/account/update/UpdateAccount.stories.tsx',
+  'ClientApp/src/routes/contact/create/CreateContact.stories.tsx',
+  'ClientApp/src/routes/contact/update/UpdateContact.stories.tsx',
+  'ClientApp/src/routes/requestForQuote/copy/RequestForQuoteCopy.stories.tsx',
+  'ClientApp/src/routes/requestForQuote/create/RequestForQuoteCreate.stories.tsx',
+  'ClientApp/src/routes/ta/create/TypeApprovalCreate.stories.tsx',
+  'ClientApp/src/routes/acceptQuote/AcceptQuoteShell.stories.tsx',
+  'ClientApp/src/routes/requestForQuote/RequestForQuoteShell.stories.tsx',
+  'ClientApp/src/routes/ta/TypeApprovalShell.stories.tsx',
+  'ClientApp/src/routes/quotation/QuotationShell.stories.tsx',
+  'ClientApp/src/routes/measurementReport/MeasurementReportShell.stories.tsx',
+] as const;
+
+const docsIsolationStoryBlock =
+  /export const \w+\s*=\s*meta\.story\([\s\S]*?(?=\nexport const |$)/g;
+
+const storyBlocksWithRequests = (source: string) =>
+  [...source.matchAll(docsIsolationStoryBlock)].filter(([block]) =>
+    /(?:msw\.use|fetch:)/u.test(block),
+  );
+
 describe('storybook MSW handlers', () => {
   // eslint-disable-next-line vitest/no-hooks -- MSW server lifecycle spans the suite.
   beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
@@ -87,6 +114,24 @@ describe('storybook MSW handlers', () => {
     expect(requestedLookupTypes.length).toBeGreaterThanOrEqual(4);
     expect(requestedLookupTypes).toContain('PAPortalCategory');
   });
+
+  it.each(docsIsolationStoryFiles)(
+    'keeps request-producing Docs stories in their own frame: %s',
+    (file) => {
+      expect.hasAssertions();
+
+      const source = readTextFileSync(file, process.cwd());
+      const requestStories = storyBlocksWithRequests(source);
+
+      expect(requestStories).not.toHaveLength(0);
+
+      for (const [storyBlock] of requestStories) {
+        expect(storyBlock).toMatch(
+          /docs:\s*\{\s*story:\s*\{\s*inline:\s*false\s*\}/u,
+        );
+      }
+    },
+  );
 
   it('returns the shared services fixture', async () => {
     expect.hasAssertions();

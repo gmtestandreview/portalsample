@@ -209,6 +209,7 @@ const mockAccountDetails = {
 
 export const BranchSelectorSelectAndEdit = meta.story({
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       accountDetails: mockAccountDetails,
       fetch: createBranchSelectorFetch(),
@@ -265,6 +266,7 @@ export const BranchSelectorSelectAndEdit = meta.story({
 
 export const BranchSelectorRFQMode = meta.story({
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       accountDetails: mockAccountDetails,
       fetch: createBranchSelectorFetch(),

@@ -84,6 +84,7 @@ const meta = preview.meta({
 });
 
 export const LoadsBranchForm = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...branchHandlers());
   },
@@ -99,6 +100,7 @@ export const LoadsBranchForm = meta.story({
 });
 
 export const ConfirmationCancelThenConfirmAdds = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...branchHandlers());
   },

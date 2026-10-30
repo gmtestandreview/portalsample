@@ -53,6 +53,7 @@ const meta = preview.meta({
 });
 
 export const LoadsStatusesThenFirstStep = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       stepStatusesHandler(() =>
@@ -75,6 +76,7 @@ export const LoadsStatusesThenFirstStep = meta.story({
 
 export const InvalidApplicationIdIsNotFound = meta.story({
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: ['/request-for-quote/bad_id!/organisation-and-contact'],
     },
@@ -88,6 +90,7 @@ export const InvalidApplicationIdIsNotFound = meta.story({
 });
 
 export const StatusLoadFailureIsNotFound = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(
       stepStatusesHandler(() =>
@@ -114,6 +117,7 @@ export const UnknownApplicationIsNotFound = meta.story({
     );
   },
   parameters: {
+    docs: { story: { inline: false } },
     portal: {
       initialEntries: [
         '/request-for-quote/RFQ-UNKNOWN/organisation-and-contact',

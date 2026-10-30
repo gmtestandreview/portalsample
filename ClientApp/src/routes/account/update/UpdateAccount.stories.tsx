@@ -81,6 +81,7 @@ const meta = preview.meta({
 });
 
 export const LoadsOrganisationForEditing = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...accountHandlers());
   },
@@ -99,6 +100,7 @@ export const LoadsOrganisationForEditing = meta.story({
 });
 
 export const ConfirmationCancelThenConfirmSaves = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...accountHandlers());
   },

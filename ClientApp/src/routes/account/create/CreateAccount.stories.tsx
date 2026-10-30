@@ -99,6 +99,7 @@ const meta = preview.meta({
 });
 
 export const InvalidSubmitBlocksConfirmation = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...accountHandlers({ ...validStepValues, streetAddress: {} }));
   },
@@ -121,6 +122,7 @@ export const InvalidSubmitBlocksConfirmation = meta.story({
 });
 
 export const ConfirmCreatesAccount = meta.story({
+  parameters: { docs: { story: { inline: false } } },
   beforeEach({ msw }) {
     msw.use(...accountHandlers(validStepValues));
   },
