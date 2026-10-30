@@ -11,7 +11,7 @@
  * project's baseURL setting.
  */
 
-import { expect } from '@playwright/test';
+import { expect, type ConsoleMessage, type Page } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import {
   STORYBOOK_BASE,
@@ -38,6 +38,17 @@ const AUTOSUGGEST_DOCS_ID = 'components-inputs-autosuggest--documentation';
 const ACCEPT_QUOTE_DOCS_ID = 'routes-acceptquote--documentation';
 const ROUTE_LEAVING_GUARD_DOCS_ID =
   'components-routeleavingguard--documentation';
+
+type StorybookPageIssueMonitor = {
+  pageErrorHandler: (error: Error) => void;
+  consoleErrorHandler: (message: ConsoleMessage) => void;
+  messages: string[];
+};
+
+const storybookPageIssueMonitors = new WeakMap<
+  Page,
+  StorybookPageIssueMonitor
+>();
 
 // ---------------------------------------------------------------------------
 // MCP protocol compatibility
@@ -336,6 +347,29 @@ Given('I am viewing Storybook stories for form inputs', async () => {});
 Given('I am viewing Storybook stories for the wizard form', async () => {});
 Given('I am viewing Storybook stories for modals', async () => {});
 
+Given(
+  'the Storybook sequence is monitored for late unmount updates',
+  async ({ page }) => {
+    const messages: string[] = [];
+    const pageErrorHandler = (error: Error) => {
+      messages.push(`pageerror: ${error.message}`);
+    };
+    const consoleErrorHandler = (message: ConsoleMessage) => {
+      if (message.type() === 'error') {
+        messages.push(`console: ${message.text()}`);
+      }
+    };
+
+    page.on('pageerror', pageErrorHandler);
+    page.on('console', consoleErrorHandler);
+    storybookPageIssueMonitors.set(page, {
+      pageErrorHandler,
+      consoleErrorHandler,
+      messages,
+    });
+  },
+);
+
 // ---------------------------------------------------------------------------
 // Navigation
 // ---------------------------------------------------------------------------
@@ -630,6 +664,37 @@ Then(
 );
 
 Then(
+  'the selected Storybook radio should be {string}',
+  async ({ page }, name: string) => {
+    await expect(page.getByRole('radio', { name })).toBeChecked({
+      timeout: 10_000,
+    });
+  },
+);
+
+Then(
+  'the Storybook story should report {int} organisation lookup',
+  async ({ page }, expectedCount: number) => {
+    await expect
+      .poll(
+        () =>
+          page
+            .locator('body')
+            .getAttribute('data-storybook-organisation-lookup-count'),
+        { timeout: 10_000 },
+      )
+      .toBe(String(expectedCount));
+  },
+);
+
+Then(
+  'the Storybook dialog named {string} should not be present',
+  async ({ page }, name: string) => {
+    await expect(page.getByRole('dialog', { name })).toHaveCount(0);
+  },
+);
+
+Then(
   'the story iframe should have a disabled button with accessible name {string}',
   async ({ page }, name: string) => {
     const btn = page.getByRole('button', { name });
@@ -775,3 +840,21 @@ Then('the story should not throw a JavaScript error', async ({ page }) => {
 
   await expect(root).toBeVisible({ timeout: 5_000 });
 });
+
+Then(
+  'the Storybook sequence should have no late unmount updates',
+  async ({ page }) => {
+    const monitor = storybookPageIssueMonitors.get(page);
+    if (monitor === undefined) {
+      throw new Error('Storybook page issue monitor was not initialized');
+    }
+
+    try {
+      expect(monitor.messages).toEqual([]);
+    } finally {
+      page.off('pageerror', monitor.pageErrorHandler);
+      page.off('console', monitor.consoleErrorHandler);
+      storybookPageIssueMonitors.delete(page);
+    }
+  },
+);

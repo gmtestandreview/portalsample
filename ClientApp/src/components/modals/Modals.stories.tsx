@@ -44,6 +44,9 @@ const mockBranches = [
 const meta = preview.meta({
   title: 'Modals',
   decorators: [withPortalProviders],
+  beforeEach() {
+    delete globalThis.document.body.dataset['storybookOrganisationLookupCount'];
+  },
   parameters: {
     layout: 'centered',
   },
@@ -72,6 +75,14 @@ const createBranchSelectorFetch =
     const url = resolveFetchUrl(input);
 
     if (url.includes('/api/organisations/')) {
+      const lookupCount =
+        Number(
+          globalThis.document.body.dataset[
+            'storybookOrganisationLookupCount'
+          ] ?? '0',
+        ) + 1;
+      globalThis.document.body.dataset['storybookOrganisationLookupCount'] =
+        String(lookupCount);
       return jsonResponse(branches);
     }
 
@@ -242,6 +253,12 @@ export const BranchSelectorSelectAndEdit = meta.story({
     await waitFor(() => {
       expect(alternateBranch).toBeChecked();
       expect(selectedBranch).not.toBeChecked();
+    });
+
+    await userEvent.click(selectedBranch);
+    await waitFor(() => {
+      expect(selectedBranch).toBeChecked();
+      expect(alternateBranch).not.toBeChecked();
     });
   },
 });
