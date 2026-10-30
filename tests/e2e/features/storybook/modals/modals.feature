@@ -19,13 +19,16 @@ Feature: Modal components — Storybook acceptance criteria
   Scenario: Indirect evidence isolation
     Given the Storybook sequence is monitored for late unmount updates
     When I load the Storybook story "modals--branch-selector-select-and-edit"
+    Then the Storybook manager should remain mounted
     Then the story iframe should have a dialog with accessible name "Manage your branch or location"
     And the selected Storybook radio should be "ACME Sydney Office"
     And the Storybook story should report 1 organisation lookup
     When I load the Storybook story "modals--rfq-delete-confirmation"
+    Then the Storybook manager should remain mounted
     Then the story iframe should have a dialog with accessible name "Confirm deletion"
     And the Storybook dialog named "Manage your branch or location" should not be present
     When I load the Storybook story "modals--branch-selector-select-and-edit"
+    Then the Storybook manager should remain mounted
     Then the story iframe should have a dialog with accessible name "Manage your branch or location"
     And the selected Storybook radio should be "ACME Sydney Office"
     And the Storybook story should report 1 organisation lookup

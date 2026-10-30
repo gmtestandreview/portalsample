@@ -11,6 +11,7 @@ import {
   expect,
   type APIRequestContext,
   type APIResponse,
+  type FrameLocator,
   type Page,
 } from '@playwright/test';
 import { resolveStorybookTestTarget } from '../../../.storybook/storybook-test-target';
@@ -27,6 +28,7 @@ const storybookTarget = resolveStorybookTestTarget({
 
 export const STORYBOOK_BASE = storybookTarget.baseURL;
 export const STORYBOOK_MCP = storybookTarget.mcpURL;
+const STORYBOOK_PREVIEW_IFRAME_SELECTOR = '#storybook-preview-iframe';
 
 /** Ceiling for waiting on a story bundle to compile and render on first hit. */
 export const STORY_RENDER_TIMEOUT_MS = 15_000;
@@ -180,34 +182,53 @@ export async function readMcpEvent(
   return event;
 }
 
-/** Navigate to a Storybook story iframe and wait for the story to actually render. */
+export function storybookPreviewFrame(page: Page): FrameLocator {
+  return page.frameLocator(STORYBOOK_PREVIEW_IFRAME_SELECTOR);
+}
+
+/** Switch the manager's preview iframe to a story and wait for it to render. */
 export async function loadStoryIframe(page: Page, storyId: string) {
-  await page.goto(`${STORYBOOK_BASE}/iframe.html?id=${storyId}&viewMode=story`);
-  // #storybook-root exists in the iframe shell immediately; the story bundle is
-  // compiled lazily on first hit, so waiting only for 'attached' lets assertions
-  // race a story that has not mounted yet. Storybook toggles body.sb-show-main
-  // once the story has rendered (sb-show-preparing before, sb-show-errordisplay
-  // on failure) — a portal-safe signal, unlike #storybook-root content which
-  // stays empty for modal/toast stories. Best-effort: the step's own assertion
-  // keeps its own timeout and remains the source of truth for a broken story.
-  await page
-    .waitForFunction(
-      () => document.body.classList.contains('sb-show-main'),
-      undefined,
-      {
-        timeout: STORY_RENDER_TIMEOUT_MS,
-        polling: 100,
-      },
-    )
-    .catch(() => {
-      // Slow cold compile — fall through to the assertion's own wait.
-    });
-  // Let late XHRs (MSW handlers, lazy assets) settle; best-effort as before.
-  await page
-    .waitForLoadState('networkidle', { timeout: STORY_RENDER_TIMEOUT_MS })
-    .catch(() => {
-      // networkidle can be flaky with MSW; continue after domcontentloaded
-    });
+  const previewIframe = page.locator(STORYBOOK_PREVIEW_IFRAME_SELECTOR);
+  if ((await previewIframe.count()) === 0) {
+    await page.goto(STORYBOOK_BASE);
+  }
+
+  await expect(page.getByRole('heading', { name: 'Storybook' })).toBeVisible({
+    timeout: STORY_RENDER_TIMEOUT_MS,
+  });
+  await expect(previewIframe).toBeVisible({
+    timeout: STORY_RENDER_TIMEOUT_MS,
+  });
+
+  await page.evaluate((nextStoryId) => {
+    const storybookUrl = new URL(globalThis.location.href);
+    storybookUrl.searchParams.set('path', `/story/${nextStoryId}`);
+    storybookUrl.hash = '';
+    globalThis.history.pushState({}, '', storybookUrl);
+    globalThis.dispatchEvent(new PopStateEvent('popstate'));
+  }, storyId);
+
+  await page.waitForFunction(
+    (expectedStoryId) => {
+      const iframe = document.querySelector('#storybook-preview-iframe');
+      if (!(iframe instanceof HTMLIFrameElement)) {
+        return false;
+      }
+
+      return (
+        iframe.contentWindow?.location.href.includes(
+          `id=${String(expectedStoryId)}`,
+        ) === true
+      );
+    },
+    storyId,
+    { timeout: STORY_RENDER_TIMEOUT_MS, polling: 100 },
+  );
+
+  await expect(storybookPreviewFrame(page).locator('body')).toHaveClass(
+    /\bsb-show-main\b/u,
+    { timeout: STORY_RENDER_TIMEOUT_MS },
+  );
 }
 
 /** Navigate directly to a Storybook docs iframe and wait for Docs to render. */

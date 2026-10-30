@@ -22,6 +22,7 @@ import {
   readMcpEvent,
   loadStoryIframe,
   loadDocsIframe,
+  storybookPreviewFrame,
   visibleSource,
 } from '../support/storybookHelpers';
 import {
@@ -29,7 +30,7 @@ import {
   type StorybookMcpMarkdownReport,
 } from '../support/storybookMcpReport';
 
-const { Given, When, Then } = createBdd();
+const { Given, When, Then, After } = createBdd();
 
 const REPRESENTATIVE_DOCS_ID = 'components-pill--documentation';
 const REPRESENTATIVE_STORY_ID = 'components-pill--dashboard-statuses';
@@ -49,6 +50,17 @@ const storybookPageIssueMonitors = new WeakMap<
   Page,
   StorybookPageIssueMonitor
 >();
+
+const cleanupStorybookPageIssueMonitor = (page: Page) => {
+  const monitor = storybookPageIssueMonitors.get(page);
+  if (monitor === undefined) {
+    return;
+  }
+
+  page.off('pageerror', monitor.pageErrorHandler);
+  page.off('console', monitor.consoleErrorHandler);
+  storybookPageIssueMonitors.delete(page);
+};
 
 // ---------------------------------------------------------------------------
 // MCP protocol compatibility
@@ -350,6 +362,7 @@ Given('I am viewing Storybook stories for modals', async () => {});
 Given(
   'the Storybook sequence is monitored for late unmount updates',
   async ({ page }) => {
+    cleanupStorybookPageIssueMonitor(page);
     const messages: string[] = [];
     const pageErrorHandler = (error: Error) => {
       messages.push(`pageerror: ${error.message}`);
@@ -369,6 +382,10 @@ Given(
     });
   },
 );
+
+After(async ({ page }) => {
+  cleanupStorybookPageIssueMonitor(page);
+});
 
 // ---------------------------------------------------------------------------
 // Navigation
@@ -420,6 +437,12 @@ When(
   },
 );
 
+Then('the Storybook manager should remain mounted', async ({ page }) => {
+  await expect(page.locator('#storybook-preview-iframe')).toBeVisible({
+    timeout: STORY_RENDER_TIMEOUT_MS,
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Assertions — text content
 // ---------------------------------------------------------------------------
@@ -427,7 +450,7 @@ When(
 Then(
   'the story iframe should contain {string}',
   async ({ page }, text: string) => {
-    const root = page.locator('#storybook-root');
+    const root = storybookPreviewFrame(page).locator('#storybook-root');
 
     await expect(root).toContainText(text, { timeout: 10_000 });
   },
@@ -622,7 +645,7 @@ Then(
 Then(
   'the Storybook portal should contain {string}',
   async ({ page }, text: string) => {
-    const portalContent = page.locator(
+    const portalContent = storybookPreviewFrame(page).locator(
       '.modal, [role="dialog"], [role="alert"], [id^="notif-"]',
     );
 
@@ -639,7 +662,7 @@ Then(
 Then(
   'the story iframe should have a button with accessible name {string}',
   async ({ page }, name: string) => {
-    const btn = page.getByRole('button', { name });
+    const btn = storybookPreviewFrame(page).getByRole('button', { name });
 
     await expect(btn.first()).toBeVisible({ timeout: 10_000 });
   },
@@ -648,7 +671,7 @@ Then(
 Then(
   'the story iframe should have a link with accessible name {string}',
   async ({ page }, name: string) => {
-    const link = page.getByRole('link', { name });
+    const link = storybookPreviewFrame(page).getByRole('link', { name });
 
     await expect(link.first()).toBeVisible({ timeout: 10_000 });
   },
@@ -657,7 +680,7 @@ Then(
 Then(
   'the story iframe should have a dialog with accessible name {string}',
   async ({ page }, name: string) => {
-    const dialog = page.getByRole('dialog', { name });
+    const dialog = storybookPreviewFrame(page).getByRole('dialog', { name });
 
     await expect(dialog.first()).toBeVisible({ timeout: 10_000 });
   },
@@ -666,7 +689,9 @@ Then(
 Then(
   'the selected Storybook radio should be {string}',
   async ({ page }, name: string) => {
-    await expect(page.getByRole('radio', { name })).toBeChecked({
+    await expect(
+      storybookPreviewFrame(page).getByRole('radio', { name }),
+    ).toBeChecked({
       timeout: 10_000,
     });
   },
@@ -679,6 +704,7 @@ Then(
       .poll(
         () =>
           page
+            .frameLocator('#storybook-preview-iframe')
             .locator('body')
             .getAttribute('data-storybook-organisation-lookup-count'),
         { timeout: 10_000 },
@@ -690,14 +716,16 @@ Then(
 Then(
   'the Storybook dialog named {string} should not be present',
   async ({ page }, name: string) => {
-    await expect(page.getByRole('dialog', { name })).toHaveCount(0);
+    await expect(
+      storybookPreviewFrame(page).getByRole('dialog', { name }),
+    ).toHaveCount(0);
   },
 );
 
 Then(
   'the story iframe should have a disabled button with accessible name {string}',
   async ({ page }, name: string) => {
-    const btn = page.getByRole('button', { name });
+    const btn = storybookPreviewFrame(page).getByRole('button', { name });
 
     await expect(btn.first()).toBeDisabled({ timeout: 10_000 });
   },
@@ -708,7 +736,7 @@ Then(
 // ---------------------------------------------------------------------------
 
 Then('the story iframe should have a navigation landmark', async ({ page }) => {
-  const nav = page.getByRole('navigation');
+  const nav = storybookPreviewFrame(page).getByRole('navigation');
 
   await expect(nav.first()).toBeVisible({ timeout: 10_000 });
 });
@@ -716,7 +744,7 @@ Then('the story iframe should have a navigation landmark', async ({ page }) => {
 Then(
   'the story iframe should have a contentinfo landmark',
   async ({ page }) => {
-    const footer = page.getByRole('contentinfo');
+    const footer = storybookPreviewFrame(page).getByRole('contentinfo');
 
     await expect(footer.first()).toBeVisible({ timeout: 10_000 });
   },
@@ -725,7 +753,7 @@ Then(
 Then(
   'the story iframe should have a content info landmark',
   async ({ page }) => {
-    const footer = page.getByRole('contentinfo');
+    const footer = storybookPreviewFrame(page).getByRole('contentinfo');
 
     await expect(footer.first()).toBeVisible({ timeout: 10_000 });
   },
@@ -739,7 +767,7 @@ Then(
   'the story iframe should have a text input for searching',
   async ({ page }) => {
     // SearchFilter uses a search input or text input with a placeholder
-    const searchInput = page.locator(
+    const searchInput = storybookPreviewFrame(page).locator(
       'input[type="search"], input[type="text"]',
     );
 
@@ -755,7 +783,7 @@ Then(
   'the story iframe should contain text matching a dashboard status label',
   async ({ page }) => {
     // The pill renders status text; assert at least one span/badge is visible
-    const root = page.locator('#storybook-root');
+    const root = storybookPreviewFrame(page).locator('#storybook-root');
 
     await expect(root).toBeVisible({ timeout: 10_000 });
 
@@ -771,7 +799,7 @@ Then(
 Then(
   'the story iframe should contain text matching a quote status label',
   async ({ page }) => {
-    const root = page.locator('#storybook-root');
+    const root = storybookPreviewFrame(page).locator('#storybook-root');
 
     await expect(root).toBeVisible({ timeout: 10_000 });
 
@@ -791,10 +819,12 @@ Then(
   'the story iframe should not show pagination controls',
   async ({ page }) => {
     await expect(
-      page.getByRole('navigation', { name: /pagination/i }),
+      storybookPreviewFrame(page).getByRole('navigation', {
+        name: /pagination/i,
+      }),
     ).toHaveCount(0);
     await expect(
-      page.getByRole('button', {
+      storybookPreviewFrame(page).getByRole('button', {
         name: /next page|previous page/i,
       }),
     ).toHaveCount(0);
@@ -806,11 +836,12 @@ Then(
 // ---------------------------------------------------------------------------
 
 Then('the story iframe should be visible', async ({ page }) => {
-  await expect(page.locator('#storybook-root')).toBeVisible({
+  const preview = storybookPreviewFrame(page);
+  await expect(preview.locator('#storybook-root')).toBeVisible({
     timeout: 10_000,
   });
   await expect(
-    page.getByText('Something went wrong', { exact: false }),
+    preview.getByText('Something went wrong', { exact: false }),
   ).toHaveCount(0);
 });
 
@@ -821,7 +852,7 @@ Then('the story iframe should be visible', async ({ page }) => {
 When(
   'I click the button with accessible name {string} in the story iframe',
   async ({ page }, name: string) => {
-    const btn = page.getByRole('button', { name });
+    const btn = storybookPreviewFrame(page).getByRole('button', { name });
     await btn.first().click();
   },
 );
@@ -829,14 +860,14 @@ When(
 When(
   'I click the link with accessible name {string} in the story iframe',
   async ({ page }, name: string) => {
-    const link = page.getByRole('link', { name });
+    const link = storybookPreviewFrame(page).getByRole('link', { name });
     await link.first().click();
   },
 );
 
 Then('the story should not throw a JavaScript error', async ({ page }) => {
   // Check that #storybook-root is still present (not replaced by error UI)
-  const root = page.locator('#storybook-root');
+  const root = storybookPreviewFrame(page).locator('#storybook-root');
 
   await expect(root).toBeVisible({ timeout: 5_000 });
 });
@@ -852,9 +883,7 @@ Then(
     try {
       expect(monitor.messages).toEqual([]);
     } finally {
-      page.off('pageerror', monitor.pageErrorHandler);
-      page.off('console', monitor.consoleErrorHandler);
-      storybookPageIssueMonitors.delete(page);
+      cleanupStorybookPageIssueMonitor(page);
     }
   },
 );
