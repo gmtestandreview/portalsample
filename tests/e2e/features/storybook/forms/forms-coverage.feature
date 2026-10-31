@@ -57,3 +57,17 @@ Feature: Form storybook coverage
   Scenario: All inputs showcase story renders the showcase heading
     When I load the Storybook story "forms-inputs--all-inputs-showcase"
     Then the story iframe should contain "Form input primitives"
+
+  Scenario: Indirect evidence isolation
+    Given the Storybook sequence is monitored for late unmount updates
+    When I load the Storybook story "forms-unsavedformprompt--formik-dirty-blocked"
+    Then the Storybook manager should remain mounted
+    Then the story iframe should have a dialog with accessible name "Unsaved changes"
+    When I load the Storybook story "forms-unsavedformprompt--rhf-clean-navigates"
+    Then the Storybook manager should remain mounted
+    Then the story iframe should contain "Destination reached"
+    And the Storybook dialog named "Unsaved changes" should not be present
+    When I load the Storybook story "forms-unsavedformprompt--formik-dirty-blocked"
+    Then the Storybook manager should remain mounted
+    Then the story iframe should have a dialog with accessible name "Unsaved changes"
+    And the Storybook sequence should have no late unmount updates
