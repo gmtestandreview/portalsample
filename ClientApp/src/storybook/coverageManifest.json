@@ -5233,25 +5233,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "Modals",
-      "reason": "The Confirmation Closed story directly imports this export and its play function asserts the exact \"Open confirmation modal\" marker.",
+      "reason": "Branch Selector Save Selection and Cancel Discards Selection render BranchSelectorModal inside a PreConditions-style host and drive the radios, Save and Cancel against recorded requests, account dispatch and router state.",
       "docsOwnerId": "modals--documentation",
       "states": [
         {
           "name": "default-reviewed-baseline",
           "applicability": "required",
-          "outcome": "The Confirmation Closed story exposes the observable \"Open confirmation modal\" state or behavior for Modals.",
+          "outcome": "Selecting another branch and pressing Save sends PUT /api/users/set-default-organisation with defaultOrganisationId 2, updates the account default and organisation/branch, hides the modal and navigates to the dashboard.",
           "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
-          "storyExport": "ConfirmationClosed",
-          "storyId": "modals--confirmation-closed",
+          "storyExport": "BranchSelectorSaveSelection",
+          "storyId": "modals--branch-selector-save-selection",
           "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
-          "assertionExport": "ConfirmationClosed.play",
-          "assertionMarker": "Open confirmation modal",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
+          "assertionExport": "BranchSelectorSaveSelection.play",
+          "assertionMarker": "/api/users/set-default-organisation",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "save-navigates-to-dashboard",
+          "applicability": "required",
+          "outcome": "After a successful save the router lands on the \"Dashboard destination\" route.",
+          "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "storyExport": "BranchSelectorSaveSelection",
+          "storyId": "modals--branch-selector-save-selection",
+          "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "assertionExport": "BranchSelectorSaveSelection.play",
+          "assertionMarker": "Dashboard destination",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "cancel-discards-selection",
+          "applicability": "required",
+          "outcome": "Cancel after choosing another branch sends no write, leaves the account default unchanged, closes the dialog, returns focus to the trigger and a reopened dialog checks \"ACME Sydney Office\" again.",
+          "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "storyExport": "BranchSelectorCancelDiscardsSelection",
+          "storyId": "modals--branch-selector-cancel-discards-selection",
+          "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "assertionExport": "BranchSelectorCancelDiscardsSelection.play",
+          "assertionMarker": "ACME Sydney Office",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "escape-dismiss",
+          "applicability": "not-supported",
+          "outcome": "Escape does not dismiss BranchSelectorModal: keyboard={false} and a static backdrop; only Cancel, the header close button and Save leave the dialog.",
+          "storyFile": null,
+          "storyExport": null,
+          "storyId": null,
+          "assertionFile": null,
+          "assertionExport": null,
+          "assertionMarker": null,
+          "rationale": "The modal sets keyboard={false} and a static backdrop, so dismissal happens only through its own buttons. The play presses Escape and asserts the modal is still open, which is a negative assertion rather than a closing behavior."
         }
       ],
       "review": {
         "reviewer": "claude-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner. Re-reviewed 2026-10-29 after source change: diff read against the previously reviewed version and the owning story tests pass.",
+        "rationale": "Reviewed in T5 slice 2: BranchSelectorModal is now cited by stories that render it (previously ConfirmationClosed). RFQ-mode save is not asserted because it ends in globalThis.location.reload(), which a browser story cannot intercept. Component source unchanged.",
         "reviewedSourceDigest": "sha256:4f884eef3a2083d4d9d7651d8ee405ed7b51544e45e94c2a03a18238ad32f20e"
       }
     },
@@ -5260,25 +5296,49 @@
       "export": "default",
       "classification": "direct",
       "owner": "Modals",
-      "reason": "The Confirmation Closed story directly imports this export and its play function asserts the exact \"Open confirmation modal\" marker.",
+      "reason": "The Confirmation Closed story opens ConfirmationModal from a trigger and drives the cancel and confirm buttons, asserting the reported choice and focus restoration.",
       "docsOwnerId": "modals--documentation",
       "states": [
         {
           "name": "default-reviewed-baseline",
           "applicability": "required",
-          "outcome": "The Confirmation Closed story exposes the observable \"Open confirmation modal\" state or behavior for Modals.",
+          "outcome": "Clicking the confirm button closes the dialog, runs onModalYes (the demo reports \"Saved draft and exited\") and returns focus to the trigger.",
           "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
           "storyExport": "ConfirmationClosed",
           "storyId": "modals--confirmation-closed",
           "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
           "assertionExport": "ConfirmationClosed.play",
-          "assertionMarker": "Open confirmation modal",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
+          "assertionMarker": "Saved draft and exited",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "cancel-restores-focus",
+          "applicability": "required",
+          "outcome": "Clicking the cancel button closes the dialog, runs onModalNo (the demo reports \"Chose to continue editing\") and returns focus to the trigger.",
+          "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "storyExport": "ConfirmationClosed",
+          "storyId": "modals--confirmation-closed",
+          "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "assertionExport": "ConfirmationClosed.play",
+          "assertionMarker": "Chose to continue editing",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "escape-dismiss",
+          "applicability": "not-supported",
+          "outcome": "Escape does not dismiss ConfirmationModal: keyboard={false} and a static backdrop make the two buttons the only exits.",
+          "storyFile": null,
+          "storyExport": null,
+          "storyId": null,
+          "assertionFile": null,
+          "assertionExport": null,
+          "assertionMarker": null,
+          "rationale": "The modal sets keyboard={false} and a static backdrop, so dismissal happens only through its own buttons. The play presses Escape and asserts the modal is still open, which is a negative assertion rather than a closing behavior."
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner.",
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Reviewed in T5 slice 2: the cited story renders ConfirmationModal and asserts cancel/confirm consequences, focus return and non-dismissal on Escape. Component source unchanged.",
         "reviewedSourceDigest": "sha256:46367a6bcd7b10d0ef4131a9b2aa4a2c2dd09e0e745401e9b9e60aa2e55af8ca"
       }
     },
@@ -5314,25 +5374,61 @@
       "export": "default",
       "classification": "direct",
       "owner": "Modals",
-      "reason": "The Confirmation Closed story directly imports this export and its play function asserts the exact \"Open confirmation modal\" marker.",
+      "reason": "RFQ Delete Confirmed and Cancel Restores Focus render RFQDeleteModal from a trigger inside a PreConditions-style host and assert the delete request, notification, navigation, cancel and focus return.",
       "docsOwnerId": "modals--documentation",
       "states": [
         {
           "name": "default-reviewed-baseline",
           "applicability": "required",
-          "outcome": "The Confirmation Closed story exposes the observable \"Open confirmation modal\" state or behavior for Modals.",
+          "outcome": "Pressing Yes, delete sends PUT /api/application/RFQ-2024-001234/delete with the QuoteRequest application type, stores the dashboard success notification and navigates to the dashboard.",
           "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
-          "storyExport": "ConfirmationClosed",
-          "storyId": "modals--confirmation-closed",
+          "storyExport": "RFQDeleteConfirmed",
+          "storyId": "modals--rfq-delete-confirmed",
           "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
-          "assertionExport": "ConfirmationClosed.play",
-          "assertionMarker": "Open confirmation modal",
-          "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
+          "assertionExport": "RFQDeleteConfirmed.play",
+          "assertionMarker": "/api/application/RFQ-2024-001234/delete",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "confirm-notifies",
+          "applicability": "required",
+          "outcome": "A confirmed deletion stores the notification \"The draft request has been successfully deleted\" for the dashboard.",
+          "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "storyExport": "RFQDeleteConfirmed",
+          "storyId": "modals--rfq-delete-confirmed",
+          "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "assertionExport": "RFQDeleteConfirmed.play",
+          "assertionMarker": "The draft request has been successfully deleted",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "cancel-restores-focus",
+          "applicability": "required",
+          "outcome": "Cancel closes the dialog without any delete request and returns focus to the \"Delete draft request\" trigger.",
+          "storyFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "storyExport": "RFQDeleteCancelRestoresFocus",
+          "storyId": "modals--rfq-delete-cancel-restores-focus",
+          "assertionFile": "ClientApp/src/components/modals/Modals.stories.tsx",
+          "assertionExport": "RFQDeleteCancelRestoresFocus.play",
+          "assertionMarker": "Delete draft request",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "escape-dismiss",
+          "applicability": "not-supported",
+          "outcome": "Escape does not dismiss RFQDeleteModal: keyboard={false} and a static backdrop; Cancel, Yes delete and the header close button are the exits.",
+          "storyFile": null,
+          "storyExport": null,
+          "storyId": null,
+          "assertionFile": null,
+          "assertionExport": null,
+          "assertionMarker": null,
+          "rationale": "The modal sets keyboard={false} and a static backdrop, so dismissal happens only through its own buttons. The play presses Escape and asserts the modal is still open, which is a negative assertion rather than a closing behavior."
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned modals--confirmation-closed at distance 1 for this source, and the generated index resolves modals--documentation as the matching docs owner.",
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Reviewed in T5 slice 2: RFQDeleteModal is cited by stories that render it and assert the request, notification, cancel and focus consequences. Component source unchanged.",
         "reviewedSourceDigest": "sha256:81da2ddf0a6ed65cca8ac535100d188ef6db50612d0370548b8eaf0f2ed27174"
       }
     },
@@ -12430,25 +12526,73 @@
       "export": "default",
       "classification": "consumer",
       "owner": "default",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
+      "reason": "PreConditions renders TermsAndConditionModal when the account has not accepted the terms; Terms Of Use Agree and Save Fails drive Agree and continue against a recorded accept-terms request.",
       "docsOwnerId": "routes-preconditions--documentation",
       "states": [
         {
-          "name": "documented-render",
+          "name": "default-reviewed-baseline",
           "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
+          "outcome": "Agree and continue sends PUT /api/users/accept-terms with termsVersion 1 and calls the account setAgree dispatch once.",
           "storyFile": "ClientApp/src/routes/preConditions/PreConditions.stories.tsx",
-          "storyExport": "RendersProtectedContent",
-          "storyId": "routes-preconditions--renders-protected-content",
+          "storyExport": "TermsOfUseAgree",
+          "storyId": "routes-preconditions--terms-of-use-agree",
           "assertionFile": "ClientApp/src/routes/preConditions/PreConditions.stories.tsx",
-          "assertionExport": "RendersProtectedContent.play",
-          "assertionMarker": "protected-content",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
+          "assertionExport": "TermsOfUseAgree.play",
+          "assertionMarker": "/api/users/accept-terms",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "exit-portal-link",
+          "applicability": "required",
+          "outcome": "The Exit portal control is a link to /sign-out; it is asserted by attribute and not activated because that would leave the story page.",
+          "storyFile": "ClientApp/src/routes/preConditions/PreConditions.stories.tsx",
+          "storyExport": "TermsOfUseAgree",
+          "storyId": "routes-preconditions--terms-of-use-agree",
+          "assertionFile": "ClientApp/src/routes/preConditions/PreConditions.stories.tsx",
+          "assertionExport": "TermsOfUseAgree.play",
+          "assertionMarker": "/sign-out",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "save-failure-alert",
+          "applicability": "required",
+          "outcome": "A failed accept-terms request shows the \"Error found trying to save terms and condition\" alert, never calls setAgree and keeps the modal open.",
+          "storyFile": "ClientApp/src/routes/preConditions/PreConditions.stories.tsx",
+          "storyExport": "TermsOfUseSaveFails",
+          "storyId": "routes-preconditions--terms-of-use-save-fails",
+          "assertionFile": "ClientApp/src/routes/preConditions/PreConditions.stories.tsx",
+          "assertionExport": "TermsOfUseSaveFails.play",
+          "assertionMarker": "alert",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "escape-dismiss",
+          "applicability": "not-supported",
+          "outcome": "Escape does not dismiss the terms gate: keyboard={false}, a static backdrop and no onHide handler.",
+          "storyFile": null,
+          "storyExport": null,
+          "storyId": null,
+          "assertionFile": null,
+          "assertionExport": null,
+          "assertionMarker": null,
+          "rationale": "The modal sets keyboard={false} and a static backdrop, so dismissal happens only through its own buttons. The play presses Escape and asserts the modal is still open, which is a negative assertion rather than a closing behavior."
+        },
+        {
+          "name": "focus-return",
+          "applicability": "not-supported",
+          "outcome": "The terms modal is a blocking gate shown by account state without any trigger element, so there is no earlier focused control to restore.",
+          "storyFile": null,
+          "storyExport": null,
+          "storyId": null,
+          "assertionFile": null,
+          "assertionExport": null,
+          "assertionMarker": null,
+          "rationale": "The modal appears on route load rather than from a user action, so there is no opener whose focus could be restored; it only closes when the account state flips to accepted."
         }
       ],
       "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
+        "reviewer": "claude-storybook-coverage-review",
+        "rationale": "Reviewed in T5 slice 2: the previous citation (RendersProtectedContent) never rendered this modal. PreConditions is the real consumer; the new stories supply the unaccepted-terms account state. Component source unchanged.",
         "reviewedSourceDigest": "sha256:c791725d4274bde151d3ca6b37a1ea63b486878c2f4f37b8a0761d8fd7f00101"
       }
     },

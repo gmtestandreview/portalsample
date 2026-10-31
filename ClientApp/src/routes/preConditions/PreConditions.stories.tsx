@@ -1,5 +1,5 @@
 import preview from '../../../../.storybook/preview';
-import { within, expect, waitFor } from 'storybook/test';
+import { within, expect, waitFor, screen, userEvent } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import PreConditions from './PreConditions';
 
@@ -16,10 +16,58 @@ const onboardedAccount = {
   defaultOrganisationId: 'org-1',
 };
 
+interface TermsObservations {
+  requests: Array<{ method: string; url: string; body: unknown }>;
+  agreeCount: number;
+}
+
+const observed: { current: TermsObservations } = {
+  current: { requests: [], agreeCount: 0 },
+};
+
+const createTermsFetch =
+  (status: number): typeof globalThis.fetch =>
+  (input, init) => {
+    const url =
+      typeof input === 'string'
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : input.url;
+    observed.current.requests.push({
+      method: init?.method ?? 'GET',
+      url,
+      body: JSON.parse(String(init?.body ?? 'null')) as unknown,
+    });
+    return Promise.resolve(new Response('', { status }));
+  };
+
+const termsGate = (status: number) => ({
+  initialEntries: ['/dashboard'],
+  accountDetails: {
+    ...onboardedAccount,
+    userAcceptedTermsOfUse: false,
+    givenName: 'Taylor',
+    familyName: 'Nguyen',
+  },
+  accountDispatch: {
+    setAgree: () => {
+      observed.current.agreeCount += 1;
+    },
+  },
+  fetch: createTermsFetch(status),
+});
+
 const meta = preview.meta({
   title: 'Routes/PreConditions',
   component: PreConditions,
   decorators: [withPortalProviders],
+  beforeEach() {
+    observed.current = { requests: [], agreeCount: 0 };
+    return () => {
+      observed.current = { requests: [], agreeCount: 0 };
+    };
+  },
   parameters: {
     layout: 'fullscreen',
     portal: {
@@ -51,5 +99,82 @@ export const RendersProtectedContent = meta.story({
         /^Navigated to .* page\.$/,
       ),
     );
+  },
+});
+
+// The terms modal has no accessible name, and it is the only dialog in the document.
+const findTermsDialog = async () => {
+  const dialog = await screen.findByRole('dialog');
+  await waitFor(() => expect(dialog).toBeVisible());
+
+  await expect(
+    within(dialog).getByTestId('prompt-termsandcondition-modal'),
+  ).toBeInTheDocument();
+
+  return dialog;
+};
+
+const settleRouteAnnouncement = (canvasElement: HTMLElement) =>
+  waitFor(() =>
+    expect(
+      within(canvasElement).getByRole('status', { hidden: true }),
+    ).toHaveTextContent(/^Navigated to .* page\.$/),
+  );
+
+export const TermsOfUseAgree = meta.story({
+  args: { displayHeaderAndFooter: false },
+  parameters: { portal: termsGate(200) },
+  play: async ({ canvasElement }) => {
+    const dialog = await findTermsDialog();
+
+    await expect(
+      within(dialog).getByRole('heading', { name: /welcome, taylor nguyen/i }),
+    ).toBeVisible();
+    await expect(
+      within(dialog)
+        .getByText(/exit portal/i)
+        .closest('a'),
+    ).toHaveAttribute('href', '/sign-out');
+
+    // keyboard={false}: Escape must not dismiss the terms gate
+    await userEvent.keyboard('{Escape}');
+
+    await expect(dialog).toBeVisible();
+    await expect(observed.current.requests).toEqual([]);
+
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: /agree and continue/i }),
+    );
+    await waitFor(() => expect(observed.current.agreeCount).toBe(1));
+
+    await expect(observed.current.requests).toEqual([
+      {
+        method: 'PUT',
+        url: '/api/users/accept-terms',
+        body: { termsVersion: 1 },
+      },
+    ]);
+
+    await settleRouteAnnouncement(canvasElement);
+  },
+});
+
+export const TermsOfUseSaveFails = meta.story({
+  args: { displayHeaderAndFooter: false },
+  parameters: { portal: termsGate(500) },
+  play: async ({ canvasElement }) => {
+    const dialog = await findTermsDialog();
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: /agree and continue/i }),
+    );
+
+    await expect(await within(dialog).findByRole('alert')).toHaveTextContent(
+      /error found trying to save terms and condition/i,
+    );
+    await expect(observed.current.requests).toHaveLength(1);
+    await expect(observed.current.agreeCount).toBe(0);
+    await expect(dialog).toBeVisible();
+
+    await settleRouteAnnouncement(canvasElement);
   },
 });
