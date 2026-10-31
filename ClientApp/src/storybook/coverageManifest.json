@@ -12202,7 +12202,7 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "The shared unsaved-changes rule is rendered through both adapters; its dirty-and-unsubmitted branch is driven by Formik and RHF stories that block, cancel and confirm a navigation. The logout-copy path branch and the server-rejected branch are not exercised, and browser refresh is not intercepted.",
+      "reason": "The shared unsaved-changes rule is rendered through both adapters; its dirty-and-unsubmitted branch is driven by Formik and RHF stories that block, cancel and confirm a navigation. The logout-copy path branch, the dirty-and-submitted-invalid branch and the server-rejected branch are not exercised, and browser refresh is not intercepted.",
       "docsOwnerId": "forms-unsavedformprompt--documentation",
       "states": [
         {
@@ -12325,7 +12325,7 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "Formik stories edit a field, follow a router link and assert the guard dialog blocks the navigation, Cancel keeps the typed value and Discard changes proceeds to the destination, plus a clean form navigating without a dialog. Browser refresh is not intercepted and is recorded as not supported. The logout-copy path variant and the server-rejected branch are not exercised.",
+      "reason": "Formik stories edit a field, follow a router link and assert the guard dialog blocks the navigation, Cancel keeps the typed value and Discard changes proceeds to the destination, plus a clean form navigating without a dialog. Browser refresh is not intercepted and is recorded as not supported. The logout-copy path variant, the dirty-and-submitted-invalid branch and the server-rejected branch are not exercised.",
       "docsOwnerId": "forms-unsavedformprompt--documentation",
       "states": [
         {
@@ -13204,7 +13204,7 @@
       "export": "default",
       "classification": "direct",
       "owner": "default",
-      "reason": "React Hook Form stories edit an RhfTextInput inside the portal FormProvider, follow a router link and assert the guard dialog blocks the navigation, Cancel keeps the typed value and Discard changes proceeds to the destination, plus a clean form navigating without a dialog. Browser refresh is not intercepted and is recorded as not supported. The logout-copy path variant and the server-rejected branch are not exercised.",
+      "reason": "React Hook Form stories edit an RhfTextInput inside the portal FormProvider, follow a router link and assert the guard dialog blocks the navigation, Cancel keeps the typed value and Discard changes proceeds to the destination, plus a clean form navigating without a dialog. Browser refresh is not intercepted and is recorded as not supported. The logout-copy path variant, the dirty-and-submitted-invalid branch and the server-rejected branch are not exercised.",
       "docsOwnerId": "forms-unsavedformprompt--documentation",
       "states": [
         {

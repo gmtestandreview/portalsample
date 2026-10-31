@@ -68,6 +68,13 @@ const locationLogs = (): Record<
 
 const formikLog = locationLogs();
 const rhfLog = locationLogs();
+
+/** Clears every recorded pathname so each play only sees its own navigation. */
+const resetLocationLogs = () => {
+  for (const log of [...Object.values(formikLog), ...Object.values(rhfLog)]) {
+    log.pathnames.length = 0;
+  }
+};
 const portalFor = (
   flavour: 'formik' | 'rhf',
   observeLocation: (location: PortalLocationObservation) => void,
@@ -86,6 +93,7 @@ const meta = preview.meta({
   title: 'Forms/UnsavedFormPrompt',
   component: UnsavedFormPrompt,
   decorators: [withPortalProviders],
+  beforeEach: resetLocationLogs,
   parameters: {
     layout: 'padded',
     docs: {
@@ -158,11 +166,11 @@ export const FormikCancelRetainsValue = meta.story({
   parameters: { portal: portalFor('formik', formikLog.cancel.observeLocation) },
   render: () => <FormikSurface />,
   play: async ({ canvas, userEvent: user }) => {
-    const { dialog, field } = await makeDirtyAndLeave(canvas, user);
+    const { dialog } = await makeDirtyAndLeave(canvas, user);
     await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
     await expectGuardGone();
 
-    await expect(field).toHaveValue('Beta Labs');
+    await expect(canvas.getByLabelText(NAME_LABEL)).toHaveValue('Beta Labs');
     await expect(
       canvas.getByRole('heading', {
         level: 2,
@@ -233,11 +241,11 @@ export const RhfCancelRetainsValue = meta.story({
   parameters: { portal: portalFor('rhf', rhfLog.cancel.observeLocation) },
   render: () => <RhfSurface />,
   play: async ({ canvas, userEvent: user }) => {
-    const { dialog, field } = await makeDirtyAndLeave(canvas, user);
+    const { dialog } = await makeDirtyAndLeave(canvas, user);
     await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
     await expectGuardGone();
 
-    await expect(field).toHaveValue('Beta Labs');
+    await expect(canvas.getByLabelText(NAME_LABEL)).toHaveValue('Beta Labs');
     await expect(
       canvas.getByRole('heading', { level: 2, name: 'RHF organisation form' }),
     ).toBeVisible();
