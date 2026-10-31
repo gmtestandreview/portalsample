@@ -90,6 +90,10 @@ Feature: Broad Storybook component coverage
     Then the story iframe should contain "Cancel"
     And the story iframe should contain "External reference"
 
+  Scenario: Button breadth grouped actions keyboard story navigates to the dashboard destination
+    When I load the Storybook story "components-buttons-breadth--grouped-actions-keyboard-navigation"
+    Then the story iframe should contain "Dashboard destination"
+
   Scenario: Button breadth edit section story navigates to the edit destination
     When I load the Storybook story "components-buttons-breadth--edit-section"
     Then the story iframe should contain "Editing request 123 organisation and contact"
