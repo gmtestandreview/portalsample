@@ -72,6 +72,8 @@ export const Pending = meta.story({
     const progress = canvas.getByRole('progressbar', { name: 'Saving...' });
 
     await expect(progress).toBeInTheDocument();
+    await expect(progress).not.toHaveAttribute('aria-valuenow');
+    await expect(progress).toHaveAccessibleName('Saving...');
     await expect(button).not.toBeDisabled();
 
     await userEvent.tab();

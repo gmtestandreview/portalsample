@@ -38,4 +38,13 @@ export const Invalid = meta.story({
     isInvalid: true,
     errorMessage: 'Choose an available date.',
   },
+  play: async ({ canvas }) => {
+    const message = canvas.getByText('Choose an available date.');
+    const calendar = canvas.getByRole('application');
+
+    await expect(message).toHaveAttribute('slot', 'errorMessage');
+    await expect(message).toHaveAttribute('id');
+    await expect(calendar).toContainElement(message);
+    await expect(calendar).toHaveAttribute('data-invalid', 'true');
+  },
 });

@@ -953,7 +953,7 @@
       "export": "ColorThumb",
       "classification": "forwarding",
       "owner": "ColorThumb",
-      "reason": "The export is a pure forwarding wrapper around react-aria-components ColorThumb with no owned behavior; the reviewed ColorWheel story exercises it through the wheel's accessible Hue control.",
+      "reason": "The export is a pure forwarding wrapper around react-aria-components ColorThumb with no owned behavior; the ColorWheel stories render it as the wheel's thumb and assert its Hue slider semantics, keyboard-driven value and thumb colour. ColorArea also renders it but its story only asserts the group role, so it is not cited.",
       "docsOwnerId": "evaluation-react-aria-colorwheel--documentation",
       "states": [
         {
@@ -967,6 +967,18 @@
           "assertionExport": "Example.play",
           "assertionMarker": "Hue",
           "rationale": "ColorThumb forwards all props without additional behavior; the documented ColorWheel story renders the wrapper and asserts its resulting Hue slider surface."
+        },
+        {
+          "name": "keyboard-adjusts-thumb-value",
+          "applicability": "required",
+          "outcome": "Focusing the thumb slider and pressing ArrowRight moves the value from 30 to 31 (aria-valuetext 31°, orange), updates the thumb background colour, and ArrowLeft restores it.",
+          "storyFile": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.stories.tsx",
+          "storyExport": "KeyboardAdjustsHue",
+          "storyId": "evaluation-react-aria-colorwheel--keyboard-adjusts-hue",
+          "assertionFile": "ClientApp/src/components/AriaComponents/ColorWheel/ColorWheel.stories.tsx",
+          "assertionExport": "KeyboardAdjustsHue.play",
+          "assertionMarker": "31°, orange",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         }
       ],
       "review": {
@@ -8610,20 +8622,20 @@
       "export": "Text",
       "classification": "consumer",
       "owner": "Text",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
+      "reason": "The export is rendered by Calendar Invalid as the slot=errorMessage Text inside the invalid calendar application. The play asserts the slot, a context-assigned id and containment. The error text is NOT referenced by aria-describedby on the grid (observed), so no accessible-description claim is made. Menu and ListBox slot=label Text and Form Description are not exercised.",
       "docsOwnerId": "evaluation-react-aria-calendar--documentation",
       "states": [
         {
-          "name": "documented-render",
+          "name": "invalid-error-message-text",
           "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
+          "outcome": "Calendar Invalid renders the error message as a slot=errorMessage Text with an id inside the application element marked data-invalid=true.",
           "storyFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
-          "storyExport": "Default",
-          "storyId": "evaluation-react-aria-calendar--default",
+          "storyExport": "Invalid",
+          "storyId": "evaluation-react-aria-calendar--invalid",
           "assertionFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
-          "assertionExport": "Default.play",
-          "assertionMarker": "Appointment date, April 2024",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
+          "assertionExport": "Invalid.play",
+          "assertionMarker": "errorMessage",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         }
       ],
       "review": {
@@ -9474,20 +9486,20 @@
       "export": "ProgressCircle",
       "classification": "consumer",
       "owner": "ProgressCircle",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
+      "reason": "The export is rendered by AriaButton Pending (isPending swaps the label for an indeterminate ProgressCircle named Saving...). The play asserts the progressbar role, accessible name and absence of aria-valuenow. Determinate values and the Loading more... consumers (ListBox, GridList, Table, Tree) are not exercised.",
       "docsOwnerId": "components-ariacomponents-ariabutton--documentation",
       "states": [
         {
-          "name": "documented-render",
+          "name": "indeterminate-progressbar",
           "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
+          "outcome": "While pending, the button exposes a progressbar named Saving... with no aria-valuenow, the button stays enabled and focusable, and its label text is replaced.",
           "storyFile": "ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx",
-          "storyExport": "Disabled",
-          "storyId": "components-ariacomponents-ariabutton--disabled",
+          "storyExport": "Pending",
+          "storyId": "components-ariacomponents-ariabutton--pending",
           "assertionFile": "ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx",
-          "assertionExport": "Disabled.play",
-          "assertionMarker": "Unavailable",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
+          "assertionExport": "Pending.play",
+          "assertionMarker": "Saving...",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         }
       ],
       "review": {
@@ -9555,20 +9567,20 @@
       "export": "Separator",
       "classification": "direct",
       "owner": "Separator",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
+      "reason": "The export is rendered twice by Toolbar Example. Toolbar supplies SeparatorContext with the orientation opposite to the toolbar, so in the default horizontal toolbar both separators must expose role=separator with aria-orientation=vertical inside the toolbar. The Toolbar orientation prop is not documented in Storybook MCP docs, so the vertical-toolbar (horizontal separator) flip is not asserted.",
       "docsOwnerId": "evaluation-react-aria-toolbar--documentation",
       "states": [
         {
-          "name": "documented-render",
+          "name": "vertical-separators-in-horizontal-toolbar",
           "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
+          "outcome": "Both separators between the Style, Clipboard and Night Mode groups are role=separator with aria-orientation=vertical and are contained by the Text formatting toolbar.",
           "storyFile": "ClientApp/src/components/AriaComponents/Toolbar/Toolbar.stories.tsx",
           "storyExport": "Example",
           "storyId": "evaluation-react-aria-toolbar--example",
           "assertionFile": "ClientApp/src/components/AriaComponents/Toolbar/Toolbar.stories.tsx",
           "assertionExport": "Example.play",
-          "assertionMarker": "toolbar",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
+          "assertionMarker": "vertical",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         }
       ],
       "review": {

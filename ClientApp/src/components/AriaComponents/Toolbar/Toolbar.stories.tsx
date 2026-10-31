@@ -46,5 +46,15 @@ export const Example = meta.story({
       canvas.getByRole('toolbar', { name: 'Text formatting' }),
     ).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Copy' })).toBeVisible();
+
+    const toolbar = canvas.getByRole('toolbar', { name: 'Text formatting' });
+    const separators = canvas.getAllByRole('separator');
+
+    await expect(separators).toHaveLength(2);
+
+    for (const separator of separators) {
+      await expect(toolbar).toContainElement(separator);
+      await expect(separator).toHaveAttribute('aria-orientation', 'vertical');
+    }
   },
 });
