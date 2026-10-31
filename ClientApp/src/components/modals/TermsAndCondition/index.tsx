@@ -154,7 +154,6 @@ const TermsAndConditionModal = () => {
     <Modal
       size='lg'
       show={!accountState?.details?.userAcceptedTermsOfUse}
-      aria-modal={!accountState?.details?.userAcceptedTermsOfUse}
       enforceFocus={!accountState?.details?.userAcceptedTermsOfUse}
       aria-live='assertive'
       aria-atomic='false'
@@ -162,7 +161,7 @@ const TermsAndConditionModal = () => {
       backdrop='static'
       keyboard={false}
       data-testid='prompt-termsandcondition-modal'
-      // aria-labelledby='modal-prompt-terms'
+      aria-labelledby='modal-prompt-terms'
     >
       <Modal.Header closeButton={false}>
         <SavingTermsAndConditionError

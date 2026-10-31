@@ -12593,7 +12593,7 @@
       "review": {
         "reviewer": "claude-storybook-coverage-review",
         "rationale": "Reviewed in T5 slice 2: the previous citation (RendersProtectedContent) never rendered this modal. PreConditions is the real consumer; the new stories supply the unaccepted-terms account state. Component source unchanged.",
-        "reviewedSourceDigest": "sha256:c791725d4274bde151d3ca6b37a1ea63b486878c2f4f37b8a0761d8fd7f00101"
+        "reviewedSourceDigest": "sha256:182b7d23f3cc1ddef49242844bdf1e7cbd5b084ab64173be02515f51d8c11e28"
       }
     },
     {
