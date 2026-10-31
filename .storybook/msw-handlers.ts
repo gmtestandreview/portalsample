@@ -196,6 +196,23 @@ export const mswHandlers = [
     const command = (await request.json()) as { applicationType?: string };
     return applicationResponse(command.applicationType);
   }),
+  http.get('/api/organisations/byabn', ({ request }) => {
+    const abn = new URL(request.url).searchParams.get('abn');
+
+    return HttpResponse.json([
+      {
+        organisationId: 1,
+        abn: abn ?? accountStepValues.abn,
+        name: accountStepValues.name,
+        businessOrTradingName: accountStepValues.businessOrTradingName,
+        branchOrLocationName: accountStepValues.branchOrLocationName,
+        crmGuid: 'org-crm-guid-001',
+        isCompleted: true,
+        accountCompleted: true,
+        acceptedTermsOfUse: true,
+      },
+    ]);
+  }),
   http.get('/api/lookup/services', () => HttpResponse.json(serviceResponses)),
   // A single handler scoped to one endpoint the application owns. Returning
   // undefined here would fall through to MSW's unhandled-request path - the

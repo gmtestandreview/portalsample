@@ -42,7 +42,7 @@ import type { UserProfile } from '../components/SearchFilter/types';
 import { omitUndefined } from '../utils/omitUndefined';
 
 const noop = () => {};
-const noopAsync = async () => undefined;
+const noopAsync = () => Promise.resolve();
 
 export const defaultUserProfile: UserProfile = {
   filterYearType: '',
@@ -128,14 +128,15 @@ const baseMsalInstance = {
   initialize: noopAsync,
   acquireTokenPopup: noopAsync,
   acquireTokenRedirect: noopAsync,
-  acquireTokenSilent: async () => ({ accessToken: 'mock-access-token' }),
+  acquireTokenSilent: () =>
+    Promise.resolve({ accessToken: 'mock-access-token' }),
   addEventCallback: () => null,
   addPerformanceCallback: () => null,
   clearCache: noopAsync,
   getAllAccounts: () => [mockMsalAccount],
   getAccount: () => mockMsalAccount,
   getActiveAccount: () => mockMsalAccount,
-  handleRedirectPromise: async () => null,
+  handleRedirectPromise: () => Promise.resolve(null),
   loginPopup: noopAsync,
   loginRedirect: noopAsync,
   logout: noopAsync,
@@ -407,13 +408,8 @@ const PatchedFetch = ({
   }, []);
 
   useLayoutEffect(() => {
-    const token = tokenRef.current;
-    if (token === null) {
-      return;
-    }
-
     const activeOverride = activeFetchOverrides.find(
-      (override) => override.token === token,
+      (override) => override.token === tokenRef.current,
     );
     if (activeOverride) {
       activeOverride.fetchImpl = fetchImpl;
