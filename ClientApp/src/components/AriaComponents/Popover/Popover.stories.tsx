@@ -24,7 +24,7 @@ export const Example = meta.story({
         <HelpCircle size={18} />
       </Button>
       <Popover {...args} className='react-aria-Popover popover-padding'>
-        <Heading slot='title'>Help</Heading>
+        <Heading>Help</Heading>
         <p>For help accessing your account, please contact support.</p>
       </Popover>
     </DialogTrigger>

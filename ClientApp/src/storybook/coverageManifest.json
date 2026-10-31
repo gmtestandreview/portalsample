@@ -8595,13 +8595,13 @@
       "export": "Heading",
       "classification": "consumer",
       "owner": "Heading",
-      "reason": "The export is rendered as the dialog title by Dialog Example (h2, labels the dialog) and as the Popover title (h3). Calendar CalendarHeading is a react-aria heading, not this export, so Calendar is not cited. The Popover dialog is named by its trigger (aria-label Help), not by the heading, so the Popover play asserts the heading role, level and text, not naming.",
+      "reason": "Content Heading is a pass-through to react-aria Heading; its contribution is consuming the surrounding HeadingContext. In Dialog Example the Dialog's context supplies slot=title, the h2 level and the id that labels the dialog (aria-labelledby, accessible name Sign up). In Popover Example there is no Dialog context, so the Heading renders with its default h3 level and no slot wiring, and the Popover dialog is named by its trigger (aria-label Help); that play asserts only the heading role, level, text and visibility. Calendar CalendarHeading is a react-aria heading, not this export, so Calendar is not cited.",
       "docsOwnerId": "evaluation-react-aria-dialog--documentation",
       "states": [
         {
           "name": "dialog-title-names-dialog",
           "applicability": "required",
-          "outcome": "After opening the dialog, the Heading slot=title renders as an h2 and the dialog's aria-labelledby points at it, giving the accessible name Sign up.",
+          "outcome": "Inside Dialog, the Heading consumes the Dialog HeadingContext: after opening, it renders as an h2 whose id the dialog references via aria-labelledby, giving the accessible name Sign up.",
           "storyFile": "ClientApp/src/components/AriaComponents/Dialog/Dialog.stories.tsx",
           "storyExport": "Example",
           "storyId": "evaluation-react-aria-dialog--example",
@@ -8611,15 +8611,15 @@
           "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         },
         {
-          "name": "popover-title-heading",
+          "name": "popover-default-heading",
           "applicability": "required",
-          "outcome": "After opening the Help popover, the Heading renders as a visible h3 titled Help inside the popover dialog next to the help text.",
+          "outcome": "Inside Popover (no Dialog context), the Heading renders its default level: after opening, a visible h3 named Help is present in the popover dialog.",
           "storyFile": "ClientApp/src/components/AriaComponents/Popover/Popover.stories.tsx",
           "storyExport": "Example",
           "storyId": "evaluation-react-aria-popover--example",
           "assertionFile": "ClientApp/src/components/AriaComponents/Popover/Popover.stories.tsx",
           "assertionExport": "Example.play",
-          "assertionMarker": "For help accessing your account, please contact support.",
+          "assertionMarker": "Help",
           "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         }
       ],
