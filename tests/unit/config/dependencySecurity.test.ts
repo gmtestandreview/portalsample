@@ -368,15 +368,15 @@ describe('coverage remapping cohort', () => {
   it('keeps the coverage provider aligned with the Vitest cohort', () => {
     expect.hasAssertions();
 
-    expect(installedVersions('@vitest/coverage-v8')).toStrictEqual(['4.1.12']);
+    expect(installedVersions('@vitest/coverage-v8')).toStrictEqual(['5.0.5']);
   });
 
-  it('holds the Storybook test cohort on Vitest 4 pending dedicated Vitest 5 validation', () => {
+  it('holds the Storybook test cohort on the same Vitest 5 release', () => {
     expect.hasAssertions();
 
     const vitestVersion = exactDevDependency('vitest');
 
-    expect(vitestVersion).toMatch(/^4\./);
+    expect(vitestVersion).toMatch(/^5\./);
     expect(exactDevDependency('@vitest/browser')).toBe(vitestVersion);
     expect(exactDevDependency('@vitest/browser-playwright')).toBe(
       vitestVersion,

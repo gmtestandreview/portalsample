@@ -28,12 +28,14 @@ const observed: { current: TermsObservations } = {
 const createTermsFetch =
   (status: number): typeof globalThis.fetch =>
   (input, init) => {
-    const url =
-      typeof input === 'string'
-        ? input
-        : input instanceof URL
-          ? input.toString()
-          : input.url;
+    let url: string;
+    if (typeof input === 'string') {
+      url = input;
+    } else if (input instanceof URL) {
+      url = input.toString();
+    } else {
+      url = input.url;
+    }
     observed.current.requests.push({
       method: init?.method ?? 'GET',
       url,
@@ -102,14 +104,23 @@ export const RendersProtectedContent = meta.story({
   },
 });
 
-// The terms modal has no accessible name, and it is the only dialog in the document.
+// Select the terms modal by its stable test id because the route can also open
+// the branch selector dialog while the terms interaction is settling.
 const findTermsDialog = async () => {
-  const dialog = await screen.findByRole('dialog');
+  const termsModal = await screen.findByTestId(
+    'prompt-termsandcondition-modal',
+  );
+  const dialog = termsModal.closest('[role="dialog"]');
+
+  await expect(dialog).not.toBeNull();
+
+  if (!(dialog instanceof HTMLElement)) {
+    throw new TypeError('Terms and conditions dialog was not rendered');
+  }
+
   await waitFor(() => expect(dialog).toBeVisible());
 
-  await expect(
-    within(dialog).getByTestId('prompt-termsandcondition-modal'),
-  ).toBeInTheDocument();
+  await expect(termsModal).toBeInTheDocument();
 
   return dialog;
 };

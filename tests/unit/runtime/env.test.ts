@@ -55,7 +55,7 @@ async function importEnv(
 
 function resetEnvironment() {
   for (const key of envKeys) {
-    Reflect.deleteProperty(globalThis, key.replace('VITE_', 'REACT_APP_'));
+    Reflect.deleteProperty(globalThis, key);
   }
   vi.unstubAllEnvs();
 }
@@ -80,7 +80,7 @@ describe('vite environment contract', () => {
     const module = await importEnv(
       { VITE_B2C_CLIENTID: 'build-client-id' },
       true,
-      { REACT_APP_B2C_CLIENTID: 'runtime-client-id' },
+      { VITE_B2C_CLIENTID: 'runtime-client-id' },
     );
 
     expect(module.env.VITE_B2C_CLIENTID).toBe('runtime-client-id');

@@ -22,6 +22,7 @@ ClientApp/src/main.*.js.map
 # traversable. Same correction already applied to `quality/`.
 reports/*
 coverage/
+.vitest/
 tmp/
 
 # The Task C1 warning census is hand-authored analysis, and the three logs are

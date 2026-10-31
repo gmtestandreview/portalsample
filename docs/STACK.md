@@ -464,7 +464,7 @@ npm install                     # install deps (runs patch-package on postinstal
 
 # Build & serve
 npm run build                   # Vite production build
-npm run start                   # Vite dev server
+npm run dev                     # Vite dev server
 npm run storybook               # Storybook dev server on :6006 (required for MCP)
 npm run build-storybook         # static Storybook build
 npm run storybook:verify:docs   # docs build + verification script

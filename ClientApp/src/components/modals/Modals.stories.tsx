@@ -107,16 +107,19 @@ const resolveFetchUrl = (input: RequestInfo | URL): string => {
 
 const createBranchSelectorFetch =
   (branches = mockBranches): typeof globalThis.fetch =>
-  async (input, init) => {
+  (input, init) => {
     const url = resolveFetchUrl(input);
 
     if (init?.method === 'PUT') {
       observed.current.requests.push({
         method: init.method,
         url,
-        body: JSON.parse(String(init.body ?? 'null')) as unknown,
+        body:
+          typeof init.body === 'string'
+            ? (JSON.parse(init.body) as unknown)
+            : null,
       });
-      return new Response('', { status: 200 });
+      return Promise.resolve(new Response('', { status: 200 }));
     }
 
     if (url.includes('/api/organisations/')) {
@@ -128,14 +131,14 @@ const createBranchSelectorFetch =
         ) + 1;
       globalThis.document.body.dataset['storybookOrganisationLookupCount'] =
         String(lookupCount);
-      return jsonResponse(branches);
+      return Promise.resolve(jsonResponse(branches));
     }
 
     if (url.includes('/api/users/default-organisation')) {
-      return jsonResponse({});
+      return Promise.resolve(jsonResponse({}));
     }
 
-    return new Response('Not found', { status: 404 });
+    return Promise.resolve(new Response('Not found', { status: 404 }));
   };
 
 // Mirrors PreConditions: owns ModalState, mounts the modal only while it is shown
@@ -383,15 +386,15 @@ export const BranchSelectorSelectAndEdit = meta.story({
     await expect(editLinks).toHaveLength(2);
 
     await userEvent.click(alternateBranch);
-    await waitFor(() => {
-      expect(alternateBranch).toBeChecked();
-      expect(selectedBranch).not.toBeChecked();
+    await waitFor(async () => {
+      await expect(alternateBranch).toBeChecked();
+      await expect(selectedBranch).not.toBeChecked();
     });
 
     await userEvent.click(selectedBranch);
-    await waitFor(() => {
-      expect(selectedBranch).toBeChecked();
-      expect(alternateBranch).not.toBeChecked();
+    await waitFor(async () => {
+      await expect(selectedBranch).toBeChecked();
+      await expect(alternateBranch).not.toBeChecked();
     });
   },
 });
@@ -441,9 +444,9 @@ export const BranchSelectorRFQMode = meta.story({
     ).not.toBeInTheDocument();
 
     await userEvent.click(alternateBranch);
-    await waitFor(() => {
-      expect(alternateBranch).toBeChecked();
-      expect(selectedBranch).not.toBeChecked();
+    await waitFor(async () => {
+      await expect(alternateBranch).toBeChecked();
+      await expect(selectedBranch).not.toBeChecked();
     });
   },
 });

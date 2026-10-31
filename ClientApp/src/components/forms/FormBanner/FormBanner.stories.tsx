@@ -18,7 +18,7 @@ const FormikSubmissionProbe = () => {
   const { values } = useFormikContext<Record<string, unknown>>();
   return (
     <output aria-label='Form submission state'>
-      saveAndExit={String(values['saveAndExit'] ?? false)}
+      saveAndExit={values['saveAndExit'] === true ? 'true' : 'false'}
     </output>
   );
 };
@@ -53,11 +53,14 @@ export const SaveAndExit = meta.story({
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     // The form actions toolbar should render
-    const toolbar = canvas.getByRole('toolbar', { name: /form actions/i });
+    const toolbar = canvas.getByRole('toolbar', {
+      name: 'Form actions',
+      hidden: true,
+    });
 
     await expect(toolbar).toBeInTheDocument();
 
-    canvas.getByRole('button', { name: 'Save and exit' }).click();
+    canvas.getByRole('button', { name: 'Save and exit', hidden: true }).click();
 
     await expect(
       await canvas.findByLabelText('Form submission state'),

@@ -35,7 +35,7 @@
 ```text
 Browser load
   ↓
-window.* env injection  (server-side template sets REACT_APP_B2C_CLIENTID etc.)
+window.* env injection  (server-side template sets VITE_B2C_CLIENTID etc.)
   ↓
 ClientApp/src/index.tsx
   ├─ await createStandardPublicClientApplication(configuration)   ← line 16, top-level await

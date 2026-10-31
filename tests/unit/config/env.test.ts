@@ -10,6 +10,7 @@ const designPath = path.join(
   repositoryRoot,
   'docs/specs/2026-10-20-webpack-to-vite-design.md',
 );
+const runtimeEnvironmentPath = path.join(repositoryRoot, 'ClientApp/env.js');
 
 const sourceExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
 const legacyReferencePattern =
@@ -83,6 +84,34 @@ describe('browser environment contract', () => {
     expect(environmentSource).toContain('export const env');
     expect(environmentSource).toContain('VITE_ENVIRONMENT');
     expect(environmentSource).not.toMatch(/globalThis\.[A-Z_]*REACT_APP_/u);
+  });
+
+  it('uses VITE-prefixed runtime globals without a legacy bridge', async () => {
+    expect.hasAssertions();
+
+    const environmentSource = await readTextFile(
+      environmentSourcePath,
+      repositoryRoot,
+    );
+
+    expect(environmentSource).toContain('Reflect.get(runtimeEnv, key)');
+    expect(environmentSource).not.toContain(
+      "key.replace('VITE_', 'REACT_APP_')",
+    );
+  });
+
+  it('publishes the runtime environment under the VITE namespace', async () => {
+    expect.hasAssertions();
+
+    const runtimeEnvironment = await readTextFile(
+      runtimeEnvironmentPath,
+      repositoryRoot,
+    );
+
+    expect(runtimeEnvironment).toContain('VITE_B2C_CLIENTID');
+    expect(runtimeEnvironment).not.toMatch(/\bREACT_APP_[A-Z0-9_]+\b/u);
+    expect(runtimeEnvironment).toContain('Object.assign(globalThis');
+    expect(runtimeEnvironment).not.toMatch(/^\s*var\s+/mu);
   });
 });
 

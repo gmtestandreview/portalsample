@@ -35,7 +35,7 @@ M tests/unit/runtime/indexBootstrap.test.tsx
 - Storybook E2E: `npm run test:e2e:storybook`
 - Storybook development: `npm run storybook`
 - Storybook build: `npm run build-storybook`
-- Existing docs build alias: `npm run build-storybook-docs`
+- Documentation build: `npm run storybook:build:docs`
 
 ## Existing Storybook test paths
 

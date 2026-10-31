@@ -47,8 +47,8 @@ API base URL and other config is injected at runtime via `window.*`:
 
 ```ts
 import { env } from '../env';
-env.REACT_APP_API_URL; // correct — from window injection
-process.env.REACT_APP_API_URL; // WRONG — undefined at runtime
+env.VITE_API_URL; // correct — from window injection
+process.env.VITE_API_URL; // WRONG — undefined at runtime
 ```
 
 See `ClientApp/src/env.ts` for the full list of runtime variables.

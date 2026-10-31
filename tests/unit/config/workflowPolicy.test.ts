@@ -498,8 +498,11 @@ describe('the e2e job runs the full Playwright contract', () => {
   it('covers both the app and Storybook projects through that script', () => {
     expect.hasAssertions();
 
+    expect(packageJson.scripts['test:e2e:browser']).toBe(
+      'npm run test:e2e:app && npm run build-storybook && npm run test:e2e:storybook',
+    );
     expect(packageJson.scripts['test:e2e']).toBe(
-      'npm run test:e2e:app && npm run build-storybook && npm run test:e2e:storybook && npm run test:storybook:coverage',
+      'npm run test:e2e:browser && npm run test:storybook:coverage',
     );
     expect(packageJson.scripts['test:e2e']).not.toContain('storybook:closure');
   });

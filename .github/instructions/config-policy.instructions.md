@@ -52,11 +52,11 @@ not ordinary implementation files.
 
 Prefer this intent unless the task explicitly requires something else:
 
-- `format` uses repo-wide `prettier --write .`
-- `format:check` uses repo-wide `prettier --check .`
+- `format` uses the repository's scoped formatting contract
+- `format:check` validates the repository's scoped formatting contract
+- `format:all` is reserved for an intentional repo-wide Prettier rewrite
 - `lint` runs app lint first, then formatting check
 - `lint:fix` runs auto-fixable app lint, then formatting
-- `lint:prettier` points to `format:check`
 
 Keep lint-app coverage aligned with the repo's actual code roots instead of
 accidentally narrowing it.

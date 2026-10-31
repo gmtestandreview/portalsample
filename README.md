@@ -54,6 +54,8 @@ npm run storybook           # Storybook dev server on port 6006
 npm run type-check          # TypeScript — tsc --noEmit
 npm run lint                # ESLint across src, tests, and config files
 npm run lint:fix            # ESLint with automatic safe fixes
+npm run check               # Type-check, lint, MDX, rule citations, and JSON validation
+npm run verify:vite         # Production build verification and runtime verification
 ```
 
 ### Testing
@@ -63,8 +65,9 @@ npm run test:unit           # Unit tests (Vitest)
 npm run test:unit:coverage  # Unit tests with coverage report
 npm run test:unit:watch     # Unit tests in watch mode
 npm run test:storybook      # Storybook interaction tests (Vitest)
-npm run test:all            # All Vitest suites
-npm run test:e2e            # Playwright BDD — app + Storybook
+    npm run test:all           # All Vitest projects
+npm run test:e2e:browser    # App and Storybook Playwright BDD, without coverage
+npm run test:e2e            # Full E2E closure, including Storybook coverage
 npm run test:e2e:app        # Playwright BDD — app only
 npm run test:ci             # Full CI gate: type-check + coverage + regression
 ```

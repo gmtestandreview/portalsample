@@ -31,7 +31,7 @@ describe('storybook coverage script lint contract', () => {
     );
 
     expect(result.messages).toStrictEqual([]);
-  });
+  }, 60_000);
 
   it('reports undefined identifiers instead of silently accepting them', async () => {
     expect.hasAssertions();

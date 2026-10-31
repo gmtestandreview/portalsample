@@ -79,7 +79,7 @@
 
   ```ts
   import { env } from '../env';
-  env.REACT_APP_B2C_CLIENTID; // correct
+  env.VITE_B2C_CLIENTID; // correct
   ```
 
 ## 4) Component Conventions

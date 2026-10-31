@@ -463,7 +463,7 @@ describe('form shell behavior slice', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('values')).toHaveTextContent(
+      expect(screen.getByTestId('values').textContent).toMatch(
         /"firstName":"Priya"[\s\S]*"phone":"02 9999 8888"/,
       );
     });

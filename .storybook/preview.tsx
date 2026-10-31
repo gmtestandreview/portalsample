@@ -12,6 +12,7 @@ import {
 } from '@storybook/addon-docs/blocks';
 import addonA11y from '@storybook/addon-a11y';
 import addonTest from '@storybook/addon-vitest';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import { definePreview } from '@storybook/react-vite';
 import MockDate from 'mockdate';
 import { createElement } from 'react';
@@ -29,7 +30,7 @@ import {
   PortalStoryRouter,
   type PortalStoryParameters,
 } from '../ClientApp/src/storybook/storybookHarness';
-
+import { spyOn } from 'storybook/test';
 import './preview-setup';
 
 const getStorybookWorker = createStorybookMswWorkerLoader(
@@ -78,9 +79,14 @@ const preview = definePreview({
       }),
     );
     MockDate.set('2024-04-01T12:00:00Z');
+    spyOn(console, 'log').mockName('console.log');
   },
 
   parameters: {
+    actions: { argTypesRegex: '^on.*' },
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -146,6 +152,9 @@ const preview = definePreview({
         </>
       ),
     },
+  },
+  initialGlobals: {
+    viewport: { value: 'ipad', isRotated: false },
   },
 });
 

@@ -173,7 +173,9 @@ const publicCssFiles = new Set(['fonts/fonts.css', 'fonts/nmi-iconfonts.css']);
 const isMaplessRuntimeFile = (file) => {
   const fileName = path.basename(file);
   return (
+    fileName === 'env.js' ||
     fileName.startsWith('modulepreload-polyfill.') ||
+    fileName.startsWith('preload-helper.') ||
     fileName.startsWith('rolldown-runtime.') ||
     fileName === 'mockServiceWorker.js'
   );

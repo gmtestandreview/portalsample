@@ -171,8 +171,7 @@ describe('storybook leaf is a directly runnable Browser Mode project', () => {
   it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {
     expect.hasAssertions();
 
-    expect(storybook.api).toBeUndefined();
-    expect(storybook.browser?.api).toMatchObject({
+    expect(storybook.api).toMatchObject({
       host: '127.0.0.1',
       port: 47005,
     });

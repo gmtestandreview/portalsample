@@ -31,11 +31,12 @@ export default defineMain({
   typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
+      compilerOptions: {
+        allowSyntheticDefaultImports: false,
+        esModuleInterop: false,
+      },
+      include: ['**/*.tsx'],
       shouldExtractLiteralValuesFromEnum: true,
-      // The plugin's transform filter matches dot-directories, but its project
-      // root-file globs do not, so .storybook/preview.tsx warns "not included in
-      // the active TypeScript project". Config is not a documented component.
-      // Passing exclude replaces the plugin default, so keep the stories exclusion.
       exclude: ['**/*.stories.tsx', '**/.storybook/**'],
       propFilter: (prop) =>
         prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,

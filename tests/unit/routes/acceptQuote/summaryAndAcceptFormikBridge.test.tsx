@@ -184,13 +184,12 @@ describe(SummaryAndAcceptFormikBridge, () => {
       disputeMessage: screen.getByText(
         'Associated dispute is a required field',
       ),
-      acceptance: screen.getByLabelText(ACCEPT_LABEL),
       submitCalls: onSubmit.mock.calls,
     }).toMatchObject({
       disputeMessage: expect.any(HTMLElement),
-      acceptance: expect.objectContaining({ validity: { valid: false } }),
       submitCalls: [],
     });
+    expect(screen.getByLabelText(ACCEPT_LABEL)).toBeInvalid();
   });
 
   it('does not dirty the outer form when a failed submit touches unset fields', async () => {

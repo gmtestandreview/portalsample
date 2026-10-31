@@ -42,6 +42,7 @@ export default defineConfig({
   },
   test: {
     name: 'storybook',
+    api: storybookBrowserApi,
     // Single run unless `--watch` is passed (see `test:storybook:watch`).
     // A resident watch process here accumulates the Vite module graph and
     // v8 coverage data in Browser Mode until it exhausts the Node heap.
@@ -54,7 +55,6 @@ export default defineConfig({
     browser: {
       enabled: true,
       headless: true,
-      api: storybookBrowserApi,
       provider: playwright({}),
       instances: [{ browser: 'chromium' }],
     },

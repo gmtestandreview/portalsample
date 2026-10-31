@@ -23,7 +23,6 @@ Use `npm`. Do not assume `pnpm` for this repository.
 | Storybook static build   | `npm run build-storybook`    |
 | App production build     | `npm run build`              |
 | E2E tests                | `npm run test:e2e`           |
-| BDD tests                | `npm run test:bdd`           |
 
 ## Snapshot Boundaries
 

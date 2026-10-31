@@ -128,8 +128,8 @@ that is their explicit runtime contract:
 
 ```ts
 import { env } from '../env';
-env.REACT_APP_B2C_CLIENTID; // correct
-process.env.REACT_APP_B2C_CLIENTID; // wrong — will be undefined at runtime
+env.VITE_B2C_CLIENTID; // correct
+process.env.VITE_B2C_CLIENTID; // wrong — will be undefined at runtime
 ```
 
 ### Global Object Usage

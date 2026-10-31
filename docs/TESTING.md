@@ -61,19 +61,21 @@ Use the existing scripts in `package.json`:
 | `npm run test:unit:watch`         | Run unit tests in watch mode                                                                                                                                |
 | `npm run test:unit:coverage`      | Run unit tests with coverage reports                                                                                                                        |
 | `npm run test:storybook`          | Run Storybook interaction tests                                                                                                                             |
-| `npm run test:all`                | Run all Vitest projects                                                                                                                                     |
+| `npm run test:all`                | Run the unit and Storybook Vitest projects                                                                                                                  |
 | `npm run test:ci`                 | Run `type-check`, then the unit, Storybook and quality partitions in sequence (`test:ci:unit`, `test:ci:storybook`, `test:ci:quality`), each emitting JUnit |
 | `npm run test:quality:regression` | Run quality regression suite (`BUG-001` to `BUG-008`)                                                                                                       |
-| `npm run test:e2e`                | Run Playwright E2E tests                                                                                                                                    |
+| `npm run test:e2e:browser`        | Run the app and Storybook Playwright BDD projects without coverage                                                                                          |
+| `npm run test:e2e`                | Run the full E2E closure: browser projects followed by Storybook coverage                                                                                   |
 | `npm run migration-check`         | Run type-check, all Vitest projects, and a static Storybook build                                                                                           |
 
 Playwright-BDD project commands:
 
-| Command                      | Scope                                                 |
-| ---------------------------- | ----------------------------------------------------- |
-| `npm run test:e2e:app`       | Real portal workflows using the `app-bdd` project     |
-| `npm run test:e2e:storybook` | Storybook scenarios using the `storybook-bdd` project |
-| `npm run test:e2e`           | Both BDD projects, run sequentially                   |
+| Command                      | Scope                                                              |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `npm run test:e2e:app`       | Real portal workflows using the `app-bdd` project                  |
+| `npm run test:e2e:storybook` | Storybook scenarios using the `storybook-bdd` project              |
+| `npm run test:e2e:browser`   | Both BDD projects, including the Storybook build, run sequentially |
+| `npm run test:e2e`           | Full closure: `test:e2e:browser` followed by Storybook coverage    |
 
 `app-bdd` starts only Vite on port 3000. `storybook-bdd` starts only Storybook
 on port 6006. A passing suite is scenario coverage, not JavaScript statement or

@@ -417,7 +417,7 @@ describe('rhfAddressLookup summary', () => {
     );
 
     expect(screen.getByText('Postal address')).toBeInTheDocument();
-    expect(document.body).toHaveTextContent(
+    expect(document.body.textContent).toMatch(
       /1 National Circuit.*Barton ACT 2600/s,
     );
   });

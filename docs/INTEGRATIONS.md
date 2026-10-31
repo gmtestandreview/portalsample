@@ -66,16 +66,16 @@ immediately.
 
 ### Required env vars
 
-| Var                                      | Purpose                                  |
-| ---------------------------------------- | ---------------------------------------- |
-| `REACT_APP_B2C_CLIENTID`                 | Application (client) ID in Azure AD B2C  |
-| `REACT_APP_B2C_AUTHORITY`                | User flow authority URL                  |
-| `REACT_APP_B2C_KNOWN_AUTHORITIES`        | Trusted authority domain                 |
-| `REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL` | Post-logout landing                      |
-| `REACT_APP_B2C_READ_SCOPE`               | API read scope                           |
-| `REACT_APP_B2C_USER_IMPERSONATION_SCOPE` | API user impersonation scope             |
-| `REACT_APP_B2C_REDIRECT_URL`             | Post-login redirect URI                  |
-| `EXTERNAL_REDIRECT_URL`                  | External portal URL — **host-validated** |
+| Var                                 | Purpose                                  |
+| ----------------------------------- | ---------------------------------------- |
+| `VITE_B2C_CLIENTID`                 | Application (client) ID in Azure AD B2C  |
+| `VITE_B2C_AUTHORITY`                | User flow authority URL                  |
+| `VITE_B2C_KNOWN_AUTHORITIES`        | Trusted authority domain                 |
+| `VITE_B2C_POST_LOGOUT_REDIRECT_URL` | Post-logout landing                      |
+| `VITE_B2C_READ_SCOPE`               | API read scope                           |
+| `VITE_B2C_USER_IMPERSONATION_SCOPE` | API user impersonation scope             |
+| `VITE_B2C_REDIRECT_URL`             | Post-login redirect URI                  |
+| `VITE_EXTERNAL_REDIRECT_URL`        | External portal URL — **host-validated** |
 
 `EXTERNAL_REDIRECT_URL` is checked against an allow-list (`measurement.gov.au`
 and its subdomains, or `localhost`) in `ClientApp/src/env.ts` and **throws at
@@ -133,7 +133,7 @@ const result = await client.getDashboardDraftsByPortalID(
 `@microsoft/applicationinsights-react-js`\
 **Singleton**: `ClientApp/src/instrumentation/AppInsightsService.ts` —
 initialised once at module evaluation\
-**Config**: connection string from `env.REACT_APP_APPINSIGHTS_CONN_STRING`
+**Config**: connection string from `env.VITE_APPINSIGHTS_CONN_STRING`
 
 > **Corrected 2026-09-01.** The previous revision said the service "falls back
 > to `'dummy-key'` if missing". That is inverted. `'dummy-key'` is now a
@@ -157,16 +157,16 @@ initialised once at module evaluation\
 
 ### Required env vars
 
-| Var                                        | Purpose                                                |
-| ------------------------------------------ | ------------------------------------------------------ |
-| `REACT_APP_APPINSIGHTS_CONN_STRING`        | Connection string (preferred over instrumentation key) |
-| `REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY` | Legacy instrumentation key                             |
+| Var                                   | Purpose                                                |
+| ------------------------------------- | ------------------------------------------------------ |
+| `VITE_APPINSIGHTS_CONN_STRING`        | Connection string (preferred over instrumentation key) |
+| `VITE_APPINSIGHTS_INSTRUMENTATIONKEY` | Legacy instrumentation key                             |
 
 ---
 
 ## 4) Google Analytics
 
-**Config**: tracking ID from `env.REACT_APP_GA_TRACKINGID`\
+**Config**: tracking ID from `env.VITE_GA_TRACKINGID`\
 **Files**: `ClientApp/src/analytics/GoogleAnalytics.tsx`
 
 ### Usage

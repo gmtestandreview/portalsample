@@ -68,13 +68,13 @@ npm run storybook
 Preview the documentation-focused Storybook:
 
 ```bash
-npm run storybook-docs
+npm run storybook:docs
 ```
 
 Build publishable documentation:
 
 ```bash
-npm run build-storybook-docs
+npm run storybook:build:docs
 ```
 
 The static documentation build is emitted to `storybook-static/`.
@@ -94,7 +94,7 @@ the documentation:
 npm run test:storybook
 ```
 
-CI validates the generated documentation with `npm run build-storybook-docs` and
+CI validates the generated documentation with `npm run storybook:build:docs` and
 `npm run storybook:verify:docs`.
 
 ## Chromatic review workflow
