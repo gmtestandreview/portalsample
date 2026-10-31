@@ -114,10 +114,7 @@ const makeDirtyAndLeave = async (canvas: PlayCanvas, user: PlayUser) => {
   await user.clear(field);
   await user.type(field, CHANGED_NAME);
   await user.click(canvas.getByRole('link', { name: 'Leave this form' }));
-  return {
-    field,
-    dialog: await screen.findByRole('dialog', { name: GUARD_NAME }),
-  };
+  return { dialog: await screen.findByRole('dialog', { name: GUARD_NAME }) };
 };
 
 const expectGuardGone = () =>
