@@ -5,6 +5,7 @@ import { Button } from '../Button/Button';
 import { Modal } from '../modal/Modal';
 import { TextField } from '../TextField/TextField';
 import { Heading } from '../Content/Content';
+import { expect, screen, waitFor, within } from 'storybook/test';
 import type { StoryFn } from '@storybook/react-vite';
 
 const meta = preview.meta({
@@ -36,4 +37,18 @@ export const Example = meta.story({
       </Modal>
     </DialogTrigger>
   ),
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Sign up…' }));
+
+    const dialog = await screen.findByRole('dialog', { name: 'Sign up' });
+    const title = within(dialog).getByRole('heading', {
+      name: 'Sign up',
+      level: 2,
+    });
+
+    await expect(dialog).toHaveAccessibleName('Sign up');
+    await expect(dialog).toHaveAttribute('aria-labelledby', title.id);
+
+    await waitFor(() => expect(title).toBeVisible());
+  },
 });

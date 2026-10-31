@@ -5,6 +5,7 @@ import { Button } from '../Button/Button';
 import { DialogTrigger } from '../Dialog/Dialog';
 import { Heading } from '../Content/Content';
 import { HelpCircle } from '../NmiIcon';
+import { expect, screen, waitFor, within } from 'storybook/test';
 import '../styles.css';
 
 const meta = preview.meta({
@@ -30,5 +31,20 @@ export const Example = meta.story({
   ),
   args: {
     children: null,
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Help' }));
+
+    const popover = await screen.findByRole('dialog', { name: 'Help' });
+
+    await waitFor(() =>
+      expect(
+        within(popover).getByRole('heading', { name: 'Help', level: 3 }),
+      ).toBeVisible(),
+    );
+
+    await expect(popover).toHaveTextContent(
+      'For help accessing your account, please contact support.',
+    );
   },
 });

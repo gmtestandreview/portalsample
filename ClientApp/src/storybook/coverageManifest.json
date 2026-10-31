@@ -8592,6 +8592,45 @@
     },
     {
       "source": "ClientApp/src/components/AriaComponents/Content/Content.tsx",
+      "export": "Heading",
+      "classification": "consumer",
+      "owner": "Heading",
+      "reason": "The export is rendered as the dialog title by Dialog Example (h2, labels the dialog) and as the Popover title (h3). Calendar CalendarHeading is a react-aria heading, not this export, so Calendar is not cited. The Popover dialog is named by its trigger (aria-label Help), not by the heading, so the Popover play asserts the heading role, level and text, not naming.",
+      "docsOwnerId": "evaluation-react-aria-dialog--documentation",
+      "states": [
+        {
+          "name": "dialog-title-names-dialog",
+          "applicability": "required",
+          "outcome": "After opening the dialog, the Heading slot=title renders as an h2 and the dialog's aria-labelledby points at it, giving the accessible name Sign up.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Dialog/Dialog.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-dialog--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Dialog/Dialog.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "Sign up",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        },
+        {
+          "name": "popover-title-heading",
+          "applicability": "required",
+          "outcome": "After opening the Help popover, the Heading renders as a visible h3 titled Help inside the popover dialog next to the help text.",
+          "storyFile": "ClientApp/src/components/AriaComponents/Popover/Popover.stories.tsx",
+          "storyExport": "Example",
+          "storyId": "evaluation-react-aria-popover--example",
+          "assertionFile": "ClientApp/src/components/AriaComponents/Popover/Popover.stories.tsx",
+          "assertionExport": "Example.play",
+          "assertionMarker": "For help accessing your account, please contact support.",
+          "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
+        }
+      ],
+      "review": {
+        "reviewer": "codex-storybook-coverage-review",
+        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
+        "reviewedSourceDigest": "sha256:fe867247faac458a44e92b2c0b0a5f564ff2aea9d08f9d0dd7792a4d63bdbd2a"
+      }
+    },
+    {
+      "source": "ClientApp/src/components/AriaComponents/Content/Content.tsx",
       "export": "Text",
       "classification": "consumer",
       "owner": "Text",
