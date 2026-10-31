@@ -29,7 +29,6 @@ export const KeyboardAdjustsHue = meta.story({
   },
   play: async ({ canvas, userEvent }) => {
     const hue = canvas.getByRole('slider', { name: 'Hue' });
-
     const thumb = hue.parentElement;
 
     await expect(thumb).toHaveClass('react-aria-ColorThumb');

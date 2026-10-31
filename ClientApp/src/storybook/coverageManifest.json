@@ -953,7 +953,7 @@
       "export": "ColorThumb",
       "classification": "forwarding",
       "owner": "ColorThumb",
-      "reason": "The export is a pure forwarding wrapper around react-aria-components ColorThumb with no owned behavior; the ColorWheel stories render it as the wheel's thumb and assert its Hue slider semantics, keyboard-driven value and thumb colour. ColorArea also renders it but its story only asserts the group role, so it is not cited.",
+      "reason": "The export is a pure forwarding wrapper around react-aria-components ColorThumb with no owned behavior; the ColorWheel stories render it as the wheel's thumb and assert its Hue slider semantics, keyboard-driven value and thumb colour. The 'orange' colour name in aria-valuetext depends on the react-aria colour-name locale/version, so a react-aria upgrade may legitimately change it. ColorArea also renders it but its story only asserts the group role, so it is not cited.",
       "docsOwnerId": "evaluation-react-aria-colorwheel--documentation",
       "states": [
         {
@@ -8592,33 +8592,6 @@
     },
     {
       "source": "ClientApp/src/components/AriaComponents/Content/Content.tsx",
-      "export": "Heading",
-      "classification": "consumer",
-      "owner": "Heading",
-      "reason": "The export is rendered by the documented story and its play function asserts a visible or semantic outcome for the rendered surface.",
-      "docsOwnerId": "evaluation-react-aria-calendar--documentation",
-      "states": [
-        {
-          "name": "documented-render",
-          "applicability": "required",
-          "outcome": "The rendered surface exposes the story assertion outcome.",
-          "storyFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
-          "storyExport": "Default",
-          "storyId": "evaluation-react-aria-calendar--default",
-          "assertionFile": "ClientApp/src/components/AriaComponents/Calendar/Calendar.stories.tsx",
-          "assertionExport": "Default.play",
-          "assertionMarker": "Appointment date, April 2024",
-          "rationale": "The story is an object-literal Storybook story with a play assertion containing the recorded marker."
-        }
-      ],
-      "review": {
-        "reviewer": "codex-storybook-coverage-review",
-        "rationale": "The source-to-story import graph, generated story index entry, and live Storybook story evidence identify the reviewed render contract.",
-        "reviewedSourceDigest": "sha256:fe867247faac458a44e92b2c0b0a5f564ff2aea9d08f9d0dd7792a4d63bdbd2a"
-      }
-    },
-    {
-      "source": "ClientApp/src/components/AriaComponents/Content/Content.tsx",
       "export": "Text",
       "classification": "consumer",
       "owner": "Text",
@@ -9486,19 +9459,19 @@
       "export": "ProgressCircle",
       "classification": "consumer",
       "owner": "ProgressCircle",
-      "reason": "The export is rendered by AriaButton Pending (isPending swaps the label for an indeterminate ProgressCircle named Saving...). The play asserts the progressbar role, accessible name and absence of aria-valuenow. Determinate values and the Loading more... consumers (ListBox, GridList, Table, Tree) are not exercised.",
+      "reason": "The export is rendered by AriaButton Pending (isPending swaps the label for an indeterminate ProgressCircle named Saving...). The play asserts the progressbar role, absence of aria-valuenow (indeterminate), and the helper-owned default size (16px width/height from ProgressCircle) with its two svg circles; the Saving... name is owned by AriaButton, not by this helper. Determinate values and the Loading more... consumers (ListBox, GridList, Table, Tree) are not exercised.",
       "docsOwnerId": "components-ariacomponents-ariabutton--documentation",
       "states": [
         {
           "name": "indeterminate-progressbar",
           "applicability": "required",
-          "outcome": "While pending, the button exposes a progressbar named Saving... with no aria-valuenow, the button stays enabled and focusable, and its label text is replaced.",
+          "outcome": "While pending, the button exposes a progressbar named Saving... with no aria-valuenow, rendered at ProgressCircle's default 16px size with two svg circles (track and arc), the button stays enabled and focusable, and its label text is replaced.",
           "storyFile": "ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx",
           "storyExport": "Pending",
           "storyId": "components-ariacomponents-ariabutton--pending",
           "assertionFile": "ClientApp/src/components/AriaComponents/AriaButton/AriaButton.stories.tsx",
           "assertionExport": "Pending.play",
-          "assertionMarker": "Saving...",
+          "assertionMarker": "16px",
           "rationale": "The marker is an exact string literal in the named story play function; the play asserts the described consequence around it."
         }
       ],

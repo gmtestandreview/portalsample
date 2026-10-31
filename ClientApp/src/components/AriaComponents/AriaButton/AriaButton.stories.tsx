@@ -73,7 +73,8 @@ export const Pending = meta.story({
 
     await expect(progress).toBeInTheDocument();
     await expect(progress).not.toHaveAttribute('aria-valuenow');
-    await expect(progress).toHaveAccessibleName('Saving...');
+    await expect(progress).toHaveStyle({ width: '16px', height: '16px' });
+    await expect(progress.querySelectorAll('circle')).toHaveLength(2);
     await expect(button).not.toBeDisabled();
 
     await userEvent.tab();
