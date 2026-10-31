@@ -4303,25 +4303,25 @@
       "export": "default",
       "classification": "direct",
       "owner": "Breadth",
-      "reason": "The Edit Section story directly imports this export and its play function asserts the exact \"Editing request 123 organisation and contact\" marker.",
+      "reason": "The Grouped Actions story renders ButtonGroup through ButtonGroup, and its play function follows the Cancel link by keyboard Enter to the real /dashboard destination and asserts the exact \"Dashboard destination\" marker.",
       "docsOwnerId": "components-buttons-breadth--documentation",
       "states": [
         {
           "name": "default-reviewed-baseline",
           "applicability": "required",
-          "outcome": "The Edit Section story exposes the observable \"Editing request 123 organisation and contact\" state or behavior for Breadth.",
+          "outcome": "Pressing Enter on the focused Cancel link navigates the story router to /dashboard and renders the \"Dashboard destination\" route; the external reference link keeps its href and target.",
           "storyFile": "ClientApp/src/components/Buttons/ButtonBreadth.stories.tsx",
-          "storyExport": "EditSection",
-          "storyId": "components-buttons-breadth--edit-section",
+          "storyExport": "GroupedActions",
+          "storyId": "components-buttons-breadth--grouped-actions",
           "assertionFile": "ClientApp/src/components/Buttons/ButtonBreadth.stories.tsx",
-          "assertionExport": "EditSection.play",
-          "assertionMarker": "Editing request 123 organisation and contact",
+          "assertionExport": "GroupedActions.play",
+          "assertionMarker": "Dashboard destination",
           "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-buttons-breadth--edit-section at distance 1 for this source, and the generated index resolves components-buttons-breadth--documentation as the matching docs owner.",
+        "rationale": "Reviewed in T5 slice 1: EditSection renders only EditButton, so it cannot evidence ButtonGroup or LinkButton; GroupedActions renders both and the generated index resolves components-buttons-breadth--documentation as the matching docs owner.",
         "reviewedSourceDigest": "sha256:6cdbac2d36078fc7084c0991e60e48adc102cdeb87efeae9367ccd6b04321afc"
       }
     },
@@ -4357,25 +4357,25 @@
       "export": "default",
       "classification": "direct",
       "owner": "Breadth",
-      "reason": "The Edit Section story directly imports this export and its play function asserts the exact \"Editing request 123 organisation and contact\" marker.",
+      "reason": "The Grouped Actions story renders LinkButton through ButtonGroup, and its play function follows the Cancel link by keyboard Enter to the real /dashboard destination and asserts the exact \"Dashboard destination\" marker.",
       "docsOwnerId": "components-buttons-breadth--documentation",
       "states": [
         {
           "name": "default-reviewed-baseline",
           "applicability": "required",
-          "outcome": "The Edit Section story exposes the observable \"Editing request 123 organisation and contact\" state or behavior for Breadth.",
+          "outcome": "Pressing Enter on the focused Cancel link navigates the story router to /dashboard and renders the \"Dashboard destination\" route; the external reference link keeps its href and target.",
           "storyFile": "ClientApp/src/components/Buttons/ButtonBreadth.stories.tsx",
-          "storyExport": "EditSection",
-          "storyId": "components-buttons-breadth--edit-section",
+          "storyExport": "GroupedActions",
+          "storyId": "components-buttons-breadth--grouped-actions",
           "assertionFile": "ClientApp/src/components/Buttons/ButtonBreadth.stories.tsx",
-          "assertionExport": "EditSection.play",
-          "assertionMarker": "Editing request 123 organisation and contact",
+          "assertionExport": "GroupedActions.play",
+          "assertionMarker": "Dashboard destination",
           "rationale": "The marker is an exact string literal in the named story play function and is used as the reviewed observable baseline."
         }
       ],
       "review": {
         "reviewer": "codex-storybook-coverage-review",
-        "rationale": "Live Storybook reverse-dependency discovery returned components-buttons-breadth--edit-section at distance 1 for this source, and the generated index resolves components-buttons-breadth--documentation as the matching docs owner.",
+        "rationale": "Reviewed in T5 slice 1: EditSection renders only EditButton, so it cannot evidence ButtonGroup or LinkButton; GroupedActions renders both and the generated index resolves components-buttons-breadth--documentation as the matching docs owner.",
         "reviewedSourceDigest": "sha256:8e67be7afa7e05291308d3c9261b5d66e543fdcb35c1d4b96261ee969e7e4ab8"
       }
     },
