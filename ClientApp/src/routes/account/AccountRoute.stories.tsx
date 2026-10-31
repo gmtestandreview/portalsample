@@ -13,7 +13,7 @@ const meta = preview.meta({
       formik: {
         initialValues: {
           name: 'Storybook Organisation',
-          abn: '00000000000',
+          abn: '12345678901',
           businessOrTradingName: 'Precision Testing',
           tradingName: ['Precision Testing'],
           branchOrLocationName: 'Sydney Laboratory',
@@ -83,7 +83,7 @@ export const OrganisationDetailsValidation = meta.story({
       formik: {
         initialValues: {
           name: 'Storybook Organisation',
-          abn: '00000000000',
+          abn: '12345678901',
           businessOrTradingName: '',
           tradingName: [],
           branchOrLocationName: '',

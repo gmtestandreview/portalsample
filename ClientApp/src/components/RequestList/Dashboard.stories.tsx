@@ -22,7 +22,7 @@ const mockAccountContext: AccountContextState = {
     givenName: 'Test',
     familyName: 'User',
     email: 'test@example.com',
-    abn: '00000000000',
+    abn: '12345678901',
     userAcceptedTermsOfUse: true,
     accountCreationCompleted: true,
     accountContactCompleted: true,

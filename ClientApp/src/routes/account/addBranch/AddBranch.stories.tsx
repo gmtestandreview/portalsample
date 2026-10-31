@@ -9,7 +9,7 @@ const CONFIRMATION_TITLE = 'Add branch or location confirmation';
 
 const branchStepValues = {
   id: 7,
-  abn: '00000000000',
+  abn: '12345678901',
   name: 'Calibration Services Pty Ltd',
   businessOrTradingName: 'Calibration Services',
   branchOrLocationName: 'Melbourne Laboratory',

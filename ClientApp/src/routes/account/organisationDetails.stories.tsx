@@ -19,7 +19,7 @@ const meta = preview.meta({
       formik: {
         initialValues: {
           name: 'Acme Metrology Pty Ltd',
-          abn: '00000000000',
+          abn: '12345678901',
           businessOrTradingName: 'Acme Metrology',
           branchOrLocationName: '',
           isDefaultOrganisation: false,

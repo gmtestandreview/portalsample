@@ -9,7 +9,7 @@ const CONFIRMATION_TITLE = 'Create account confirmation';
 
 const validStepValues = {
   id: 11,
-  abn: '00000000000',
+  abn: '12345678901',
   name: 'Calibration Services Pty Ltd',
   businessOrTradingName: 'Calibration Services',
   branchOrLocationName: 'Sydney Laboratory',

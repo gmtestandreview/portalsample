@@ -49,7 +49,7 @@ export const PhoneValue = meta.story({
 export const FormattedNumber = meta.story({
   args: {
     label: 'ABN',
-    value: '00000000000',
+    value: '12345678901',
     as: 'number',
     format: '## ### ### ###',
   },

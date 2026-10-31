@@ -10,7 +10,7 @@ const CONFIRMATION_TITLE = 'Update organisation confirmation';
 
 const accountStepValues = {
   id: ORGANISATION_ID,
-  abn: '00000000000',
+  abn: '12345678901',
   name: 'Calibration Services Pty Ltd',
   businessOrTradingName: 'Calibration Services',
   branchOrLocationName: 'Sydney Laboratory',
