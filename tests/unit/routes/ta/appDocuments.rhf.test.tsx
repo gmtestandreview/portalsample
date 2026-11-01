@@ -102,6 +102,18 @@ const appDocuments = (
   },
 });
 
+type CommitAppDocumentsValues = {
+  form: {
+    documents: Array<{
+      documentBytes?: unknown;
+      attachmentName?: string;
+      attachmentCategory?: string;
+    }>;
+    instrumentCategory?: string;
+  };
+};
+type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
+
 const renderRoute = async (
   path = '/ta/manage/APP-1/documents',
   routePath = '/ta/manage/:id/documents',
@@ -126,6 +138,7 @@ const renderLoaded = async (documents: unknown[]) => {
   clients.patternApproval.methods.getAppDocuments.mockResolvedValue(
     appDocuments(documents),
   );
+
   const result = await renderRoute();
   await screen.findByRole('heading', { name: 'Documents' });
   return result;
@@ -166,12 +179,19 @@ describe('application documents with the real RHF form', () => {
       ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
     );
     const [applicationId, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0],
+      clients.patternApproval.methods.commitAppDocuments.mock
+        .calls[0] as unknown as CommitAppDocumentsCall,
     );
 
     expect(applicationId).toBe('APP-1');
-    expect(values.form.documents[0].documentBytes).toBeUndefined();
-    expect(values.form.documents[0].attachmentName).toBe('spec.pdf');
+
+    const firstDocument = defined(
+      values.form.documents[0],
+      'first committed document',
+    );
+
+    expect(firstDocument.documentBytes).toBeUndefined();
+    expect(firstDocument.attachmentName).toBe('spec.pdf');
     expect(values.form.instrumentCategory).toBe('Mass');
   });
 
@@ -222,10 +242,16 @@ describe('application documents with the real RHF form', () => {
       ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
     );
     const [, values] = defined(
-      clients.patternApproval.methods.commitAppDocuments.mock.calls[0],
+      clients.patternApproval.methods.commitAppDocuments.mock
+        .calls[0] as unknown as CommitAppDocumentsCall,
     );
 
-    expect(values.form.documents[0].attachmentCategory).toBe('Certificate');
+    const firstDocument = defined(
+      values.form.documents[0],
+      'first committed document',
+    );
+
+    expect(firstDocument.attachmentCategory).toBe('Certificate');
   });
 
   it('shows the saved documents as rows with their category', async () => {

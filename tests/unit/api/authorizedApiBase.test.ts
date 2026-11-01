@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { AuthorizedApiBase } from '../../../ClientApp/src/api/web-api-client';
 
+type TransformOptions = { headers: Record<string, string> };
+type TransformedOptions = TransformOptions;
+
 class TestClient extends AuthorizedApiBase {
-  public exposeTransformOptions(options: any): Promise<any> {
-    return this.transformOptions(options);
+  public async exposeTransformOptions(
+    options: TransformOptions,
+  ): Promise<TransformedOptions> {
+    return (await this.transformOptions(options)) as TransformedOptions;
   }
 }
 

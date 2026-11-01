@@ -63,10 +63,11 @@ describe('utility runtime components and hooks', () => {
     target.tabIndex = -1;
     document.body.appendChild(target);
     const focus = vi.spyOn(target, 'focus');
+    const scrollIntoView = vi.spyOn(target, 'scrollIntoView');
 
     render(<BackToTopButton to='#summary' className='mt-2' />);
     fireEvent.click(screen.getByRole('link', { name: 'Back to top' }));
-    act(() => vi.runOnlyPendingTimers());
+    await act(() => vi.runOnlyPendingTimers());
 
     expect(screen.getByRole('link', { name: 'Back to top' })).toHaveAttribute(
       'href',
@@ -75,7 +76,7 @@ describe('utility runtime components and hooks', () => {
     expect(screen.getByRole('link', { name: 'Back to top' })).toHaveClass(
       'mt-2',
     );
-    expect(target.scrollIntoView).toHaveBeenCalledWith({
+    expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: undefined,
     });
@@ -170,7 +171,7 @@ describe('utility runtime components and hooks', () => {
     expect(document.body).not.toHaveClass('compact');
   });
 
-  it('returns the latest value after the debounce delay and cancels stale timers', () => {
+  it('returns the latest value after the debounce delay and cancels stale timers', async () => {
     expect.hasAssertions();
 
     resetUtilityTestState();
@@ -181,12 +182,12 @@ describe('utility runtime components and hooks', () => {
     expect(screen.getByText('first')).toBeInTheDocument();
 
     rerender(<DebounceHarness value='second' delay={250} />);
-    act(() => vi.advanceTimersByTime(249));
+    await act(() => vi.advanceTimersByTime(249));
 
     expect(screen.getByText('first')).toBeInTheDocument();
 
     rerender(<DebounceHarness value='third' delay={250} />);
-    act(() => vi.advanceTimersByTime(250));
+    await act(() => vi.advanceTimersByTime(250));
 
     expect(screen.getByText('third')).toBeInTheDocument();
     expect(screen.queryByText('second')).not.toBeInTheDocument();

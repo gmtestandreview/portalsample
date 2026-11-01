@@ -128,15 +128,16 @@ const renderContainer = (
   );
 };
 
-const failingResolver = async () => ({
-  values: {},
-  errors: {
-    suburb: { type: 'validation', message: 'Enter a suburb' },
-  },
-});
+const failingResolver = () =>
+  Promise.resolve({
+    values: {},
+    errors: {
+      suburb: { type: 'validation', message: 'Enter a suburb' },
+    },
+  });
 
 describe('rhf auto suggest container behavior', () => {
-  it('renders options, help, loading state and handles input actions', async () => {
+  it('renders options, help, loading state and handles input actions', () => {
     expect.hasAssertions();
 
     comboState.open.mockClear();
@@ -178,7 +179,7 @@ describe('rhf auto suggest container behavior', () => {
     });
 
     const input = screen.getByRole('textbox', { name: 'Suburb' });
-    await act(async () => {
+    act(() => {
       comboState.onInputChange?.('syd');
     });
 
@@ -188,7 +189,7 @@ describe('rhf auto suggest container behavior', () => {
       searchTermChangeCalls: [['syd']],
     });
 
-    await act(async () => {
+    act(() => {
       comboState.onOpenChange?.(true);
       fireEvent.keyDown(input, { key: 'ArrowDown' });
       fireEvent.keyDown(input, { key: 'Escape' });
@@ -196,14 +197,10 @@ describe('rhf auto suggest container behavior', () => {
 
     expect({
       cancelCalls: onCancel.mock.calls,
-      suggestionSummary: screen.getByText(/2 suggestions displayed/)
-        .textContent,
-    }).toStrictEqual({
-      cancelCalls: [[]],
-      suggestionSummary: expect.stringContaining('2 suggestions displayed'),
-    });
+      suggestionRendered: Boolean(screen.getByText(/2 suggestions displayed/)),
+    }).toStrictEqual({ cancelCalls: [[]], suggestionRendered: true });
 
-    await act(async () => {
+    act(() => {
       comboState.onChange?.(null);
       comboState.onChange?.('sydney');
     });

@@ -7,9 +7,14 @@ import type {
   Hideable,
   ValidationSchema,
 } from './types';
-export const isFieldPathHidden = <TValues>(hidden: any, values: TValues) =>
+export const isFieldPathHidden = <TValues>(
+  hidden: unknown,
+  values: TValues,
+): boolean =>
   hidden !== undefined &&
-  (hidden === true || (typeof hidden === 'function' && hidden(values)));
+  (hidden === true ||
+    (typeof hidden === 'function' &&
+      (hidden as (currentValues: TValues) => boolean)(values)));
 
 const parentPath = (path: string): string =>
   path.replace(/(?:\.[^.[]+|\[[^\]]+\])$/, '');
@@ -19,11 +24,11 @@ export const isHidden = <T, TValues>(
   hidden: Hideable<Partial<T>, Partial<TValues>>,
   values: TValues,
 ): boolean => {
-  const isFieldHidden = getIn(hidden, fieldPath);
+  const isFieldHidden: unknown = getIn(hidden, fieldPath);
   if (isFieldPathHidden(isFieldHidden, values)) {
     return true;
   }
-  const isGroupHidden = getIn(hidden, `${fieldPath}.this`);
+  const isGroupHidden: unknown = getIn(hidden, `${fieldPath}.this`);
   if (isFieldPathHidden(isGroupHidden, values)) {
     return true;
   }
@@ -38,36 +43,39 @@ export const isHidden = <T, TValues>(
 };
 
 export const removeHidden = <T extends FormValues>(
-  fieldValue: any,
+  fieldValue: unknown,
   values: T,
   hide: Hideable<Partial<T>, Partial<T>>,
   path?: string,
-): any =>
-  Object.fromEntries(
-    Object.entries(fieldValue ?? {})
-      .filter(([key, _]) =>
-        path
-          ? !isHidden(`${path}.${key}`, hide, values)
-          : !isHidden(key, hide, values),
-      )
-      .map(([key, value]) => {
-        if (Array.isArray(value)) {
-          const newValues: any[] = [];
-          value.forEach((x) => {
-            if (isObject(x)) {
-              newValues.push(removeHidden(x, values, hide, key));
-            } else {
-              newValues.push(x);
-            }
-          });
-          return [key, newValues];
-        }
-        return [
-          key,
-          isObject(value) ? removeHidden(value, values, hide, key) : value,
-        ];
-      }),
-  );
+): T => {
+  const source = isObject(fieldValue) ? fieldValue : {};
+  const entries = Object.entries(source)
+    .filter(([key]) =>
+      path
+        ? !isHidden(`${path}.${key}`, hide, values)
+        : !isHidden(key, hide, values),
+    )
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        const newValues: unknown[] = [];
+        (value as unknown[]).forEach((item) => {
+          if (isObject(item)) {
+            newValues.push(removeHidden(item, values, hide, key));
+          } else {
+            newValues.push(item);
+          }
+        });
+        return [key, newValues] as const;
+      }
+
+      return [
+        key,
+        isObject(value) ? removeHidden(value, values, hide, key) : value,
+      ] as const;
+    });
+
+  return Object.fromEntries(entries) as T;
+};
 
 const toFormErrors = <T, TValues>(
   yupError: ValidationError,

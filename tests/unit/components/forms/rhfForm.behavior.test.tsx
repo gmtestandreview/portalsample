@@ -48,12 +48,14 @@ interface SetupOptions {
 }
 
 const setup = (options: SetupOptions = {}) => {
-  const onSubmit = vi.fn<RhfFormProps<Values>['onSubmit']>(
-    async (_values) => undefined,
+  const onSubmit = vi.fn<RhfFormProps<Values>['onSubmit']>(() =>
+    Promise.resolve(undefined),
   );
   const onSaveAndExit =
     options.onSaveAndExit ??
-    vi.fn<(values: Values) => Promise<unknown>>(async (_values) => undefined);
+    vi.fn<(values: Values) => Promise<unknown>>(() =>
+      Promise.resolve(undefined),
+    );
   const baseProps = {
     initialValues: options.initialValues ?? { name: '', other: '' },
     validateHard: 'validateHard' in options ? options.validateHard : hard,
@@ -163,10 +165,8 @@ describe('rhfForm shell behavior', () => {
   it('returns to the hard schema after a failed save and exit', async () => {
     expect.hasAssertions();
 
-    const onSaveAndExit = vi.fn<(values: Values) => Promise<unknown>>(
-      async (_values) => {
-        throw new Error('boom');
-      },
+    const onSaveAndExit = vi.fn<(values: Values) => Promise<unknown>>(() =>
+      Promise.reject(new Error('boom')),
     );
     const { user } = setup({ onSaveAndExit });
 
@@ -207,9 +207,7 @@ describe('rhfForm shell behavior', () => {
     rerenderShell({ ...baseProps });
     await settle();
 
-    expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
-      'typed',
-    );
+    expect(screen.getByLabelText<HTMLInputElement>('Name').value).toBe('typed');
     expect(screen.getByText('Other is required')).toBeInTheDocument();
 
     rerenderShell({
@@ -217,7 +215,7 @@ describe('rhfForm shell behavior', () => {
       initialValues: { name: 'from server', other: '' },
     });
     await waitFor(() =>
-      expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
+      expect(screen.getByLabelText<HTMLInputElement>('Name').value).toBe(
         'from server',
       ),
     );

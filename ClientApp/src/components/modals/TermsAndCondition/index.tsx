@@ -9,7 +9,7 @@ import {
   useAccountDispatch,
 } from '../../../authentication/hooks';
 import PrimaryButton from '../../Buttons/PrimaryButton';
-import ButtonGroup from '../../Buttons/ButtonGroup';
+import ButtonGroup, { type ButtonGroupProps } from '../../Buttons/ButtonGroup';
 import TermsOfUse from '../../Footer/termsOfUse';
 import { UsersClient } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
@@ -104,10 +104,7 @@ const AgreeButton = (props: Readonly<AgreeButtonProps>): JSX.Element => {
   );
 };
 
-interface TermAndConditionButtonsProps {
-  left: any;
-  right: any;
-}
+type TermAndConditionButtonsProps = ButtonGroupProps;
 
 const TermAndConditionButtons = (
   props: Readonly<TermAndConditionButtonsProps>,
@@ -147,7 +144,7 @@ const TermsAndConditionModal = () => {
   const anchorLink = () => <AnchorLinkToNmi />;
 
   const agreeButton = () => (
-    <AgreeButton onClick={onContinueTermsAndConditionModal} />
+    <AgreeButton onClick={() => void onContinueTermsAndConditionModal()} />
   );
 
   return (

@@ -16,6 +16,19 @@ export const DashboardStatuses = meta.story({
   args: {
     status: DashboardItemStatus.QuoteAvailable,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `<div className='d-flex gap-3 flex-wrap'>
+  <StatusPill status={DashboardItemStatus.QuoteDrafted} />
+  <StatusPill status={DashboardItemStatus.QuoteAvailable} />
+  <StatusPill status={DashboardItemStatus.QuoteAccepted} />
+  <StatusPill status={DashboardItemStatus.ReportIssued} />
+  <StatusPill status={DashboardItemStatus.QuoteExpired} />
+</div>`,
+      },
+    },
+  },
   render: () => (
     <div className='d-flex gap-3 flex-wrap'>
       <StatusPill status={DashboardItemStatus.QuoteDrafted} />

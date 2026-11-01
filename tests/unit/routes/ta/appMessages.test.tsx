@@ -193,6 +193,8 @@ const messagesResponse = (
   },
 });
 
+type AddMessageCall = [applicationId: string, html: string];
+
 const renderRoute = async (
   path = '/ta/manage/APP-1/messages',
   routePath = '/ta/manage/:id/messages',
@@ -390,7 +392,7 @@ describe('application messages', { timeout: 15_000 }, () => {
       // Pagination is hidden until the load settles.
       expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
 
-      await act(async () => {
+      act(() => {
         release(messagesResponse([messageItem()]));
       });
 
@@ -565,6 +567,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await act(async () => {
         editor.props.onSubmit();
+        await Promise.resolve();
       });
 
       await waitFor(() =>
@@ -573,7 +576,8 @@ describe('application messages', { timeout: 15_000 }, () => {
         ).toHaveBeenCalledWith('APP-1', expect.any(String)),
       );
       const [applicationId, html] = defined(
-        clients.patternApproval.methods.addAppMessage.mock.calls[0],
+        clients.patternApproval.methods.addAppMessage.mock
+          .calls[0] as unknown as AddMessageCall,
         'addAppMessage call',
       );
 
@@ -601,6 +605,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await act(async () => {
         editor.props.onSubmit();
+        await Promise.resolve();
       });
 
       await waitFor(() =>
@@ -626,6 +631,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await act(async () => {
         editor.props.onSubmit();
+        await Promise.resolve();
       });
 
       await waitFor(() =>
@@ -654,6 +660,7 @@ describe('application messages', { timeout: 15_000 }, () => {
 
       await act(async () => {
         editor.props.onSubmit();
+        await Promise.resolve();
       });
 
       expect(

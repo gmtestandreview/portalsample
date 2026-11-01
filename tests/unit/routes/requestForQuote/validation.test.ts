@@ -25,6 +25,9 @@ const validInstrument = {
   ),
 };
 
+const expectedErrors = (messages: string[]): unknown =>
+  expect.arrayContaining<string>(messages);
+
 describe('organisationAndContact validation', () => {
   it('accepts valid submit and save objects', async () => {
     expect.hasAssertions();
@@ -56,7 +59,7 @@ describe('organisationAndContact validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Please select a branch/location name before proceeding.',
         'Title other is required',
         'First name is required',
@@ -133,7 +136,7 @@ describe('instrumentAndRequest validation', () => {
     await expect(
       instrumentAndRequestSubmitValidation.validate({}, { abortEarly: false }),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Does this instrument/artefact have a serial number available? is a required field',
         'Enter a manufacturer.',
         'Model is a required field',
@@ -166,7 +169,7 @@ describe('instrumentAndRequest validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Serial number has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         'Manufacturer cannot be less than 2 characters',
         'Model cannot be less than 2 characters',
@@ -226,7 +229,7 @@ describe('instrumentAndRequest validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Serial number cannot be greater than 100 characters',
         'Manufacturer cannot be greater than 100 characters',
         'Model cannot be greater than 100 characters',
@@ -258,7 +261,7 @@ describe('instrumentAndRequest validation', () => {
         { abortEarly: false },
       ),
     ).rejects.toMatchObject({
-      errors: expect.arrayContaining([
+      errors: expectedErrors([
         'Description has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         'Testing and calibration requirements has invalid characters. Please use only letters, periods, numbers, and keyboard characters.',
         'Number of items cannot be greater than 100',

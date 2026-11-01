@@ -75,7 +75,6 @@
     "postinstall": "node scripts/apply-local-patches.mjs",
     "sbom-report": "npm sbom --sbom-format=spdx --sbom-type=application > sbom.spdx.json && npm sbom --sbom-format=cyclonedx --sbom-type=application > sbom.cdx.json"
   },
-
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",
     "@azure/msal-react": "^5.7.4",

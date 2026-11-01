@@ -99,8 +99,8 @@ function AttachmentHarness({
         maxFiles={3}
         maxSizeInMB={1}
         allowedTypes='.pdf, .jpg'
-        onUploadFiles={async () => [uploadedAttachment]}
-        onDeleteFile={async () => {}}
+        onUploadFiles={() => Promise.resolve([uploadedAttachment])}
+        onDeleteFile={() => Promise.resolve()}
         setErrors={setErrors}
         {...props}
       />
@@ -251,7 +251,7 @@ describe('rhfAttachment', () => {
     expect(screen.queryByText('No details added')).not.toBeInTheDocument();
   });
 
-  it('reports invalid extensions and too many selected files without uploading', async () => {
+  it('reports invalid extensions and too many selected files without uploading', () => {
     expect.hasAssertions();
 
     const onUploadFiles = vi
@@ -466,7 +466,7 @@ describe('rhfAttachment', () => {
     render(
       <AttachmentHarness
         initialAttachmentValue={[]}
-        resolver={async () => ({
+        resolver={() => ({
           values: {},
           errors: {
             attachments: {
@@ -782,7 +782,7 @@ describe('rhfAttachment', () => {
 
     // The post-upload reset of the file input has nothing to write to once the ref detaches.
     unmount();
-    await act(async () => {
+    act(() => {
       finishUpload([uploadedAttachment]);
     });
 
@@ -808,7 +808,7 @@ describe('rhfAttachment', () => {
     await waitFor(() => expect(onDeleteFile).toHaveBeenCalledWith('doc-1'));
 
     unmount();
-    await act(async () => {
+    act(() => {
       finishDelete();
     });
 

@@ -23,5 +23,5 @@ export function setIn<T extends object>(
   path: string,
   value: unknown,
 ): T {
-  return formikSetIn(source, path, value);
+  return formikSetIn(source, path, value) as T;
 }

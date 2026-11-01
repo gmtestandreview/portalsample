@@ -21,6 +21,7 @@ const TITLE_OPTIONS: SelectInputOption<string>[] = Object.keys(Title).map(
 );
 
 type FieldProps = Readonly<Required<Omit<ContactDetailsProps, 'isSummary'>>>;
+type RhfFormValues = Record<string, unknown>;
 
 const ContactDetailsSummary = ({
   name,
@@ -33,7 +34,7 @@ const ContactDetailsSummary = ({
   emailAddressLabel,
 }: FieldProps) => {
   const getName = prefixedPropertyOf<ContactDto>(name);
-  const title = useWatch({ name: getName('title') });
+  const title = useWatch<RhfFormValues>({ name: getName('title') });
 
   return (
     <>
@@ -87,7 +88,7 @@ const ContactDetailsSummary = ({
 };
 
 const ContactDetailsSummaryGate = (props: FieldProps) => {
-  const contact = useWatch({ name: props.name });
+  const contact = useWatch<RhfFormValues>({ name: props.name });
   return contact === '' ? (
     <span>No details added</span>
   ) : (

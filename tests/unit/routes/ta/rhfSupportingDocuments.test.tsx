@@ -4,7 +4,10 @@ import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { UseFormReturn } from 'react-hook-form';
-import { PatternApprovalRequiredValues } from '../../../../ClientApp/src/api/web-api-client';
+import {
+  PatternApprovalRequiredValues,
+  type AttachmentDto,
+} from '../../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import type {
   AccountDetails,
@@ -68,7 +71,7 @@ const clients = vi.hoisted(() => ({
 /** Captures the attachment control's props so its callbacks can be driven directly. */
 const attachmentControl = vi.hoisted(() => ({
   props: undefined as unknown as {
-    onUploadFiles: (files: File[]) => Promise<unknown>;
+    onUploadFiles: (files: File[]) => Promise<AttachmentDto[]>;
     onDeleteFile: (docId: string) => Promise<void>;
     onCategoryUpdate: (docId: string, category: string) => Promise<void>;
     setErrors: (errors: string[]) => void;
@@ -241,8 +244,8 @@ const renderDocs = async ({
   return { ...result, componentProps };
 };
 
-const setFieldError = async (message: unknown) => {
-  await act(async () => {
+const setFieldError = (message: unknown) => {
+  act(() => {
     formMethods?.setError('form.documents', {
       type: 'validation',
       message: message as string,
@@ -295,7 +298,7 @@ describe('rHF supporting documents', () => {
 
       await renderDocs();
 
-      await setFieldError('Documents are invalid');
+      setFieldError('Documents are invalid');
 
       expect(alertItems()).toStrictEqual(['Documents are invalid']);
     });
@@ -307,7 +310,7 @@ describe('rHF supporting documents', () => {
 
       await renderDocs();
 
-      await setFieldError(undefined);
+      setFieldError(undefined);
 
       expect(document.querySelector('#form-error-summary-custom')).toBeNull();
     });
@@ -319,7 +322,7 @@ describe('rHF supporting documents', () => {
 
       await renderDocs();
 
-      await act(async () => {
+      act(() => {
         formMethods?.setError('form.instrumentType', {
           type: 'validation',
           message: 'Unrelated problem',
@@ -338,7 +341,7 @@ describe('rHF supporting documents', () => {
         .fn<TASupportingDocumentsProps['onUploadAttachment']>()
         .mockResolvedValue([]);
       await renderDocs({ props: { onUploadAttachment } });
-      await setFieldError('Documents are invalid');
+      setFieldError('Documents are invalid');
 
       await act(async () => {
         await attachmentControl.props.onUploadFiles([new File(['a'], 'a.pdf')]);
@@ -395,7 +398,7 @@ describe('rHF supporting documents', () => {
 
       await renderDocs({ props: { externalErrors: ['Same problem'] } });
 
-      await setFieldError('Same problem');
+      setFieldError('Same problem');
 
       expect(alertItems()).toStrictEqual(['Same problem']);
     });
@@ -436,7 +439,7 @@ describe('rHF supporting documents', () => {
 
       await renderDocs();
 
-      await act(async () => {
+      act(() => {
         attachmentControl.props.setErrors([ValidationMessages.RequiredTag]);
       });
 
@@ -548,7 +551,7 @@ describe('rHF supporting documents', () => {
         new File(['b'], 'second.pdf', { type: 'application/pdf' }),
       ];
 
-      let uploaded: unknown;
+      let uploaded: AttachmentDto[] | undefined;
       await act(async () => {
         uploaded = await attachmentControl.props.onUploadFiles(files);
       });
@@ -557,7 +560,7 @@ describe('rHF supporting documents', () => {
         expect.objectContaining({
           account: expect.objectContaining({
             homeAccountId: 'test-home-account-id',
-          }),
+          }) as unknown as { homeAccountId: string },
           scopes: ['api://ta/.default'],
         }),
       );
@@ -669,7 +672,7 @@ describe('rHF supporting documents', () => {
       await waitFor(() =>
         expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
           expect.objectContaining({
-            message: expect.stringContaining('Client Org'),
+            message: expect.stringContaining('Client Org') as unknown as string,
             severity: 'Error',
           }),
         ),

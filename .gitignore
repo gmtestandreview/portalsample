@@ -128,3 +128,6 @@ __pycache__/
 
 #Ignore vscode AI rules
 .github\instructions\codacy.instructions.md
+
+# lsmcp cache
+.lsmcp/cache

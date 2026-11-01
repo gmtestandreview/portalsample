@@ -132,7 +132,7 @@ function makeTwoStepRouter(
                       location='/step-1'
                       initialValues={{}}
                       stepStatuses={statuses}
-                      loadStepValues={async () => ({ stepValues: {} })}
+                      loadStepValues={() => ({ stepValues: {} })}
                       onSaveAndNext={step1Save}
                       bannerTitle='Test Wizard'
                     >
@@ -143,7 +143,7 @@ function makeTwoStepRouter(
                       location='/step-2'
                       initialValues={{}}
                       stepStatuses={statuses}
-                      loadStepValues={async () => ({ stepValues: {} })}
+                      loadStepValues={() => ({ stepValues: {} })}
                       onSaveAndNext={step2Save}
                       bannerTitle='Test Wizard'
                     >
@@ -184,7 +184,7 @@ function makeSplitSplatTwoStepRouter(
                       location='/step-1'
                       initialValues={{}}
                       stepStatuses={statuses}
-                      loadStepValues={async () => ({ stepValues: {} })}
+                      loadStepValues={() => ({ stepValues: {} })}
                       onSaveAndNext={step1Save}
                       bannerTitle='Test Wizard'
                     >
@@ -195,7 +195,7 @@ function makeSplitSplatTwoStepRouter(
                       location='/step-2'
                       initialValues={{}}
                       stepStatuses={statuses}
-                      loadStepValues={async () => ({ stepValues: {} })}
+                      loadStepValues={() => ({ stepValues: {} })}
                       onSaveAndNext={vi.fn<SaveStepFn>().mockResolvedValue({})}
                       bannerTitle='Test Wizard'
                     >
@@ -381,7 +381,9 @@ describe('wizardForm — step navigation', () => {
       { status: FormStepStatus.NotStarted },
       { status: FormStepStatus.NotStarted },
     ];
-    const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({});
+    const step1Save = vi
+      .fn<SaveStepFn>()
+      .mockResolvedValue({ baseUrl: '/request-for-quote/abc-123' });
     const router = makeSplitSplatTwoStepRouter(statuses, step1Save);
     render(<RouterProvider router={router} />);
 
@@ -429,7 +431,7 @@ describe('wizardForm — step navigation', () => {
                     location='/step-1'
                     initialValues={{}}
                     stepStatuses={statuses}
-                    loadStepValues={async () => ({ stepValues: {} })}
+                    loadStepValues={() => ({ stepValues: {} })}
                     onSaveAndNext={vi.fn<SaveStepFn>().mockResolvedValue({})}
                   >
                     <div data-testid='root-step-content'>Root step</div>
@@ -449,5 +451,31 @@ describe('wizardForm — step navigation', () => {
     await waitFor(() =>
       expect(screen.getByTestId('root-step-content')).toBeInTheDocument(),
     );
+  });
+
+  it('keeps the current wizard path when the submitted base path is not a string', async () => {
+    expect.hasAssertions();
+
+    resetWizardNavigation();
+
+    const statuses: FormStepStatusDto[] = [
+      { status: FormStepStatus.NotStarted },
+      { status: FormStepStatus.NotStarted },
+    ];
+    const step1Save = vi.fn<SaveStepFn>().mockResolvedValue({ baseUrl: 123 });
+    const router = makeSplitSplatTwoStepRouter(statuses, step1Save);
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId('step-1-content')).toBeInTheDocument(),
+    );
+    await userEvent.click(screen.getByTestId('save-and-next-button'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('step-2-content')).toBeInTheDocument();
+      expect(router.state.location.pathname).toBe(
+        '/request-for-quote/abc-123/step-2',
+      );
+    });
   });
 });

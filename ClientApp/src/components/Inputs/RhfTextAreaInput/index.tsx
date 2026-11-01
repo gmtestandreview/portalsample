@@ -38,6 +38,9 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
     errorMessage,
     describedBy,
   } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
+  const fieldValue: unknown = field.value as unknown;
+  const onChange = field.onChange as (value: unknown) => void;
+  const textValue = typeof fieldValue === 'string' ? fieldValue : '';
 
   if (isSummary) {
     return (
@@ -45,23 +48,23 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
         label={label}
         as='p'
         className='pre-wrap'
-        value={field.value}
+        value={textValue}
         id={controlId}
       />
     );
   }
 
   const handleBlur = () => {
-    const trimmed = (field.value ?? '').trim();
-    if (trimmed !== field.value) {
-      field.onChange(trimmed);
+    const trimmed = typeof fieldValue === 'string' ? fieldValue.trim() : '';
+    if (trimmed !== fieldValue) {
+      onChange(trimmed);
     }
     field.onBlur();
   };
 
   const showCounter = !!maxCharacters && maxCharacters > 0;
   const usedCharacters =
-    typeof field.value === 'string' ? field.value.trim().length : 0;
+    typeof fieldValue === 'string' ? fieldValue.trim().length : 0;
   const counterText = showCounter
     ? `${usedCharacters} of ${maxCharacters} characters used`
     : '';
@@ -91,12 +94,10 @@ const RhfTextAreaInput = (props: Readonly<RhfTextAreaInputProps>) => {
           'aria-invalid': errorMessage ? true : undefined,
           placeholder,
         })}
-        value={field.value ?? ''}
+        value={textValue}
         onBlur={handleBlur}
         onChange={(event) => {
-          field.onChange(
-            removeSupplementaryPlaneCharacters(event.target.value),
-          );
+          onChange(removeSupplementaryPlaneCharacters(event.target.value));
         }}
       />
       {showCounter && (

@@ -22,15 +22,15 @@ const FormikSaveAndExitButton = ({
 
   useEffect(() => {
     if (saveAndExitClickField.value === true) {
-      submitForm();
-      saveAndExitClickHelper.setValue(false);
+      void submitForm();
+      void saveAndExitClickHelper.setValue(false);
     }
   }, [saveAndExitClickField, submitForm, saveAndExitClickHelper]);
 
   const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    saveAndExitClickHelper.setValue(true);
-    saveAndExitHelper.setValue(true);
+    void saveAndExitClickHelper.setValue(true);
+    void saveAndExitHelper.setValue(true);
   };
 
   return (

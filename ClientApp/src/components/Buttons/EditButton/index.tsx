@@ -23,7 +23,7 @@ const EditButton = (props: Readonly<EditButtonProps>) => {
 
   const editClick = () => {
     if (link) {
-      navigate(link);
+      void navigate(link);
     }
   };
 

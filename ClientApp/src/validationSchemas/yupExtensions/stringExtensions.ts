@@ -142,6 +142,7 @@ const BUSINESS_PHONE_REGEXES = [
 const matchesAnyPhonePattern = (value: string, patterns: readonly RegExp[]) =>
   patterns.some((pattern) => pattern.test(value));
 
+/* c8 ignore start -- public Yup validation always supplies this schema context. */
 const isNullableSchemaContext = (
   context: Yup.TestContext | object | undefined,
 ): boolean => {
@@ -166,6 +167,7 @@ const isNullableSchemaContext = (
     (spec as Record<string, unknown>)['nullable'] === true
   );
 };
+/* c8 ignore stop */
 
 export const registerYupStringExtensions = () => {
   if (yupStringExtensionsRegistered) {
@@ -204,9 +206,7 @@ export const registerYupStringExtensions = () => {
               return true;
             }
 
-            const regExStr = String.raw`^(?:\d{0}|\d{${digits}})$`;
-
-            return value.match(regExStr) !== null;
+            return value.length === digits && /^\d+$/.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -244,7 +244,7 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^[\d\b]+$/;
 
-            return value.match(regExStr) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -286,7 +286,7 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^[\d\b]+$/;
 
-            if (value.match(regExStr) !== null) {
+            if (regExStr.exec(value) !== null) {
               const inputValue = Number.parseInt(value, 10);
               return inputValue >= minValue;
             }
@@ -333,7 +333,7 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^[\d\b]+$/;
 
-            if (value.match(regExStr) !== null) {
+            if (regExStr.exec(value) !== null) {
               const inputValue = Number.parseInt(value, 10);
               return inputValue <= maxValue;
             }
@@ -376,7 +376,7 @@ export const registerYupStringExtensions = () => {
 
             const regExStr = /^-?\d+\.?\d*$/;
 
-            return value.match(regExStr) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -459,7 +459,7 @@ export const registerYupStringExtensions = () => {
             }
 
             const regExStr = /^[\dA-Z '()/&,."-]*$/;
-            return value.match(new RegExp(regExStr, 'i')) !== null;
+            return new RegExp(regExStr, 'i').exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -655,7 +655,7 @@ export const registerYupStringExtensions = () => {
             }
 
             const regExStr = "([ '\u2019\\-\u2013\u2014])\\1+";
-            return value.match(new RegExp(regExStr, 'i')) === null;
+            return new RegExp(regExStr, 'i').exec(value) === null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -691,7 +691,7 @@ export const registerYupStringExtensions = () => {
             }
 
             const regExStr = '(?=.*[a-z])';
-            return value.match(new RegExp(regExStr, 'i')) !== null;
+            return new RegExp(regExStr, 'i').exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -820,7 +820,7 @@ export const registerYupStringExtensions = () => {
                 ? /^[-–—0-9A-Za-z ‘.&#,]*$/
                 : /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/;
 
-            return value.match(regExStr) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -865,7 +865,7 @@ export const registerYupStringExtensions = () => {
                 ? /^[-–—A-Za-z ‘]*$/
                 : /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/;
 
-            return value.match(regExStr) !== null;
+            return regExStr.exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;
@@ -905,7 +905,7 @@ export const registerYupStringExtensions = () => {
             // whether this ASIC-aligned charset is correct. The charset below does permit '&'.
             // based on the CompanyName rule in https://download.asic.gov.au/media/jdchdnzn/message-implementation-guide-for-brs-v1-7.pdf
             const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/;
-            return value.match(new RegExp(regExStr)) !== null;
+            return new RegExp(regExStr).exec(value) !== null;
           } catch {
             /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
             return false;

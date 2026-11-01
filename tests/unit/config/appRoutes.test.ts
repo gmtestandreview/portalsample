@@ -78,6 +78,11 @@ type LazyComponent = () => ReactElement<{
   displayHeaderAndFooter?: boolean;
 }>;
 
+type RouteWrapperProps = {
+  children?: ReactElement<{ name?: string }>;
+  displayHeaderAndFooter?: boolean;
+};
+
 const loadComponent = async (path: (typeof lazyFeaturePaths)[number]) => {
   const route = App.routes.find((candidate) => candidate.path === path);
 
@@ -92,7 +97,10 @@ const loadComponent = async (path: (typeof lazyFeaturePaths)[number]) => {
   return module.Component;
 };
 
-const routeWrapperContract = (path: string, element: ReactElement) => {
+const routeWrapperContract = (
+  path: string,
+  element: ReactElement<RouteWrapperProps>,
+) => {
   if (layoutPaths.has(path)) return { type: element.type };
   if (path === '/sign-out') {
     return {
@@ -129,15 +137,16 @@ describe('application route loading', () => {
       (candidate) => candidate.path === '/dashboard',
     );
 
-    const fallback = dashboardRoute?.hydrateFallbackElement as ReactElement;
-    const Fallback = fallback.type as () => ReactElement;
+    const fallback = dashboardRoute?.hydrateFallbackElement as ReactElement<{
+      children?: unknown;
+    }>;
+    const Fallback = fallback.type as () => ReactElement<{
+      children?: unknown;
+    }>;
+    const renderedFallback = Fallback();
 
-    expect(Fallback()).toMatchObject({
-      type: expect.anything(),
-      props: {
-        children: expect.anything(),
-      },
-    });
+    expect(renderedFallback.type).toBeDefined();
+    expect(renderedFallback.props.children).toBeDefined();
   });
 
   it('preserves the complete route path contract', () => {

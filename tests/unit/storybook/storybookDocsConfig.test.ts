@@ -564,12 +564,12 @@ describe('storybook documentation architecture', () => {
     expect(invalidStoryTags).toStrictEqual([]);
   });
 
-  it('enables Code Panel and shares automatic source configuration', () => {
+  it('enables Code Panel and shares static source configuration', () => {
     expect.hasAssertions();
 
     expect(preview).toMatch(/codePanel:\s*true/);
     expect(preview).toMatch(/excludeDecorators:\s*true/);
-    expect(preview).toMatch(/type:\s*['"]auto['"]/);
+    expect(preview).toMatch(/type:\s*['"]code['"]/);
     expect(preview).not.toMatch(/sourceState:\s*['"]shown['"]/);
     expect(preview).not.toContain('hideNoControlsWarning');
   });

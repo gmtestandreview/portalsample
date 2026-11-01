@@ -25,11 +25,13 @@ export const Default = meta.story({
 
     // All footer trigger buttons are accessible — they have visible text or aria-label
     const footerBtns = canvas.getAllByRole('button');
-    for (const btn of footerBtns) {
+    const labelAssertions = footerBtns.map((btn) => {
       const label = btn.getAttribute('aria-label') ?? btn.textContent?.trim();
 
-      await expect(label).toBeTruthy();
-    }
+      return expect(label).toBeTruthy();
+    });
+
+    await Promise.all(labelAssertions);
   },
 });
 

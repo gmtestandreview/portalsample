@@ -30,7 +30,7 @@
     "typescript-mcp": {
       "type": "stdio",
       "command": "cmd",
-      "args": ["/c", "scripts\\lsmcp-typescript-mcp.cmd"]
+      "args": ["/c", "${workspaceFolder}\\scripts\\lsmcp-typescript-mcp.cmd"]
     },
     "github": {
       "type": "stdio",

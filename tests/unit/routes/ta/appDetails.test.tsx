@@ -699,7 +699,7 @@ describe('application details', () => {
       );
 
       // Rewind the url the way a back navigation does, then announce it.
-      await act(async () => {
+      act(() => {
         globalThis.history.pushState({}, '', '/ta/manage/APP-1?tab=details');
         globalThis.dispatchEvent(new PopStateEvent('popstate'));
       });
@@ -778,7 +778,7 @@ describe('application details', () => {
       // inactive panes mounted, so more than one is on the page.
       expect(screen.getAllByText('Loading data...').length).toBeGreaterThan(0);
 
-      await act(async () => {
+      act(() => {
         release(stepValues());
       });
     });
@@ -795,10 +795,10 @@ describe('application details', () => {
         expect(screen.getByText('With the assessor')).toBeInTheDocument(),
       );
 
-      await act(async () => {
+      act(() => {
         captured.selectTab('not-a-tab');
       });
-      await act(async () => {
+      act(() => {
         captured.selectTab(null);
       });
 
@@ -874,7 +874,7 @@ describe('application details', () => {
       );
 
       unmount();
-      await act(async () => {
+      act(() => {
         releaseCount(7);
       });
 

@@ -6,6 +6,8 @@ import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { removeSupplementaryPlaneCharacters } from '../../../utils/removeSupplementaryPlaneCharacters';
 
+type TextAreaFieldValue = string | null | undefined;
+
 const TextAreaInput = ({
   label,
   inlineHelp,
@@ -19,7 +21,7 @@ const TextAreaInput = ({
   className = '', // default props
   isSummary,
 }: Readonly<TextAreaInputProps>) => {
-  const [_field, _meta, _fieldHelper] = useField(name);
+  const [_field, _meta, _fieldHelper] = useField<TextAreaFieldValue>(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 
   if (isSummary) {
@@ -28,7 +30,7 @@ const TextAreaInput = ({
         label={label}
         as='p'
         className='pre-wrap'
-        value={_field.value}
+        value={_field.value ?? undefined}
         id={id || name}
       />
     );
@@ -41,7 +43,7 @@ const TextAreaInput = ({
   };
 
   const handleOnBlur = () => {
-    const newValue = (_meta.value as string | null | undefined)?.trim() ?? '';
+    const newValue = _meta.value?.trim() ?? '';
     void _fieldHelper.setTouched(true);
     void _fieldHelper.setValue(newValue);
   };

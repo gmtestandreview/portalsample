@@ -220,10 +220,10 @@ describe('transitive security dependency floors', () => {
 
 describe('lint cohort', () => {
   const cohort = new Map([
-    ['eslint', '10.13.0'],
+    ['eslint', '10.14.0'],
     ['@eslint/js', '10.0.1'],
-    ['typescript-eslint', '8.72.0'],
-    ['@eslint-react/eslint-plugin', '5.28.5'],
+    ['typescript-eslint', '8.72.1'],
+    ['@eslint-react/eslint-plugin', '5.28.8'],
     ['eslint-plugin-react-hooks', '7.1.1'],
     ['@stylistic/eslint-plugin', '5.10.0'],
     ['globals', '17.13.0'],

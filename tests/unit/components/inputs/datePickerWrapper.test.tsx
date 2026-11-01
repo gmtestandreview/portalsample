@@ -33,26 +33,26 @@ vi.mock(
           {hasError ? <div id={`${name}-error`}>{errorMessage}</div> : null}
           <button
             type='button'
-            onClick={() => dateOnChange(new Date(2026, 5, 12))}
+            onClick={() => void dateOnChange(new Date(2026, 5, 12))}
           >
             Pick date object
           </button>
           <button
             type='button'
-            onClick={() => dateOnChange('2026-07-13T00:00:00+10:00')}
+            onClick={() => void dateOnChange('2026-07-13T00:00:00+10:00')}
           >
             Pick valid string
           </button>
-          <button type='button' onClick={() => dateOnChange('not a date')}>
+          <button type='button' onClick={() => void dateOnChange('not a date')}>
             Pick invalid string
           </button>
           <button
             type='button'
-            onClick={() => dateOnChange(new Date(Number.NaN))}
+            onClick={() => void dateOnChange(new Date(Number.NaN))}
           >
             Pick invalid date object
           </button>
-          <button type='button' onClick={() => dateOnChange(null)}>
+          <button type='button' onClick={() => void dateOnChange(null)}>
             Clear date
           </button>
         </div>

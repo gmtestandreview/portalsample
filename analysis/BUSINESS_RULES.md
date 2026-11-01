@@ -770,7 +770,7 @@ malformed strings **Confidence:** High
 ### RULE-031: Australian Postcode Range
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:369-414`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:389-434`
 **Plain English:** Postcodes must be exactly 4 digits and fall within valid
 Australian ranges. **Specification:**
 
@@ -797,7 +797,7 @@ intentional for postal addresses?
 ### RULE-032: Australian Phone Number Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:454-506`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:472-524`
 **Plain English:** Phone numbers must match a recognised Australian format —
 landline, mobile, 1800/1300 freecall, or 13-series short number.
 **Specification:**
@@ -824,7 +824,7 @@ some `+61`-prefixed variants with spaces?
 ### RULE-033: Email Address Format
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:577-610`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:594-628`
 **Plain English:** Email addresses must match a custom RFC 5321-aligned regex
 and cannot exceed 100 characters. **Specification:**
 
@@ -844,7 +844,7 @@ Max length: 100 chars (common.ts:131)
 ### RULE-034: Name Field Charset (No Accented Characters)
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:822-858`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:833-876`
 **Plain English:** Person name fields (first name, last name, title) only accept
 ASCII letters, hyphen, space, and apostrophe — accented characters are rejected.
 **Specification:**
@@ -870,7 +870,7 @@ normal case — **SME question: Should person names accept diacritical character
 ### RULE-035: Business Name Charset (ASIC-Aligned)
 
 **Category:** Validation **Priority:** P0 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:868-899`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:878-916`
 _(corrected 2026-09-02, CRD-043 — the previously cited 678-707 range is a
 different validator)_ **Plain English:** Business and trading names must conform
 to the character set defined in the ASIC CompanyName Business Rules message
@@ -924,7 +924,7 @@ in source) **Confidence:** High _(raised from Medium 2026-09-02, CRD-043)_
 ### RULE-036: No Consecutive Identical Characters
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:725-760`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:738-786`
 **Plain English:** Fields cannot contain a run of the same letter repeated more
 than the threshold number of times (default: 3 in a row is rejected).
 **Specification:**
@@ -948,7 +948,7 @@ letters, not digits or punctuation **Confidence:** High
 ### RULE-037: No Consecutive Punctuation
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:614-643`
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:630-666`
 **Plain English:** Adjacent apostrophes, hyphens, or spaces (including Unicode
 variants) are rejected in name and text fields. **Specification:**
 

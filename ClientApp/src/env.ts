@@ -66,11 +66,7 @@ const getEnvValue = (key: keyof EnvType): string => {
     return runtimeValue;
   }
 
-  if (typeof buildTimeValue === 'string') {
-    return buildTimeValue;
-  }
-
-  return '';
+  return buildTimeValue;
 };
 
 requiredVars.forEach((key) => {

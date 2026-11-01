@@ -12,7 +12,6 @@ import {
   type AttachmentDto,
   type FileParameter,
   PatternApprovalRequiredValues,
-  type ProblemDetails,
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
@@ -26,6 +25,12 @@ import { NotificationSeverity } from '../../storage/types';
 import RhfAttachment from '../../components/Inputs/RhfAttachment';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 import { getIn } from '../../components/forms/formPath';
+
+type UploadProblemDetails = {
+  status?: number;
+  title?: string;
+  errors?: Record<string, string[]>;
+};
 
 const ALLOWED_FILE_TYPES =
   '.pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .rtf, .odt, .gif, .csv';
@@ -73,11 +78,17 @@ const RhfSupportingDocuments = (
   // Filter out upload errors that are handled by form validation
   const filteredUploadErrors = uploadErrors.filter(
     (err) =>
-      err !== ValidationMessages.RequiredDoc &&
-      err !== ValidationMessages.RequiredTag,
+      err !== String(ValidationMessages.RequiredDoc) &&
+      err !== String(ValidationMessages.RequiredTag),
   );
 
-  const validationMessage: unknown = getIn(formErrors, name)?.message;
+  const fieldError: unknown = getIn(formErrors, name);
+  const validationMessage =
+    typeof fieldError === 'object' &&
+    fieldError !== null &&
+    'message' in fieldError
+      ? fieldError.message
+      : undefined;
   const formFieldErrors =
     typeof validationMessage === 'string' ? [validationMessage] : [];
   const fileErrors = getFailedFileErrors(progress);
@@ -140,15 +151,15 @@ const RhfSupportingDocuments = (
       result = await uploadFunc(tokenResult.accessToken, fileDataArray);
       return result;
     } catch (error: unknown) {
-      const uploadServerError = error as ProblemDetails;
+      const uploadServerError = error as UploadProblemDetails;
       if (
         uploadServerError.status === HttpStatusCode.Forbidden &&
         uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
-      } else if (uploadServerError['errors']) {
+      } else if (uploadServerError.errors) {
         // If server returns error messages, set as upload errors (strings only)
-        const flatErrors = Object.values(uploadServerError['errors']).flat();
+        const flatErrors = Object.values(uploadServerError.errors).flat();
         setUploadErrors(
           flatErrors.filter((e): e is string => typeof e === 'string'),
         );
@@ -243,7 +254,7 @@ const RhfSupportingDocuments = (
                 {errors.map((err, idx) => {
                   // Only show the 'documents' error if submitCount is 0
                   if (
-                    err === ValidationMessages.RequiredTag &&
+                    err === String(ValidationMessages.RequiredTag) &&
                     submitCount === 0
                   ) {
                     return null;

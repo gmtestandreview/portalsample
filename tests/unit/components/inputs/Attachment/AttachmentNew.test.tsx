@@ -91,7 +91,7 @@ describe('attachment new behavior', () => {
       <Harness initialValues={{ files: uploaded }}>
         <AttachmentNew
           {...baseProps}
-          onUploadFiles={vi.fn<UploadFiles>(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
       </Harness>,
     );
@@ -111,7 +111,7 @@ describe('attachment new behavior', () => {
       >
         <AttachmentNew
           {...baseProps}
-          onUploadFiles={vi.fn<UploadFiles>(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
       </Harness>,
     );
@@ -133,7 +133,7 @@ describe('attachment new behavior', () => {
         <AttachmentNew
           {...baseProps}
           inlineHelp='PDF only, 5MB each'
-          onUploadFiles={vi.fn<UploadFiles>(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
       </Harness>,
     );
@@ -170,7 +170,7 @@ describe('attachment new behavior', () => {
     // Navigating away mid-upload detaches the ref, so the post-upload reset of the file input
     // has nothing to write to. It must not throw on the way out.
     unmount();
-    await act(async () => {
+    act(() => {
       finishUpload([uploaded]);
     });
 
@@ -193,7 +193,7 @@ describe('attachment new behavior', () => {
         <AttachmentNew
           {...baseProps}
           onDeleteFile={onDeleteFile}
-          onUploadFiles={vi.fn<UploadFiles>(async () => [uploaded])}
+          onUploadFiles={vi.fn<UploadFiles>(() => Promise.resolve([uploaded]))}
         />
       </Harness>,
     );
@@ -205,7 +205,7 @@ describe('attachment new behavior', () => {
     // Same detached-ref path as the upload case: the delete handler clears the file input once
     // the server confirms, and by then the control may be gone.
     unmount();
-    await act(async () => {
+    act(() => {
       finishDelete();
     });
 

@@ -230,6 +230,7 @@ describe(appDetailsProps, () => {
           newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
         },
       }),
+      oimlMissing: hidingFields.applicationAndInstrument.isApplOIMLHide({}),
     }).toStrictEqual({
       branchEmpty: true,
       branchFilled: false,
@@ -252,6 +253,7 @@ describe(appDetailsProps, () => {
       otherApproval: false,
       otherApprovalForNewType: true,
       oiml: false,
+      oimlMissing: true,
     });
   });
 

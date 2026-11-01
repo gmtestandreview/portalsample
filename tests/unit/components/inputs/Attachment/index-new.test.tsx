@@ -98,7 +98,7 @@ function AttachmentHarness({
         maxFiles={3}
         maxSizeInMB={1}
         allowedTypes='.pdf, .jpg'
-        onUploadFiles={async () => [uploadedAttachment]}
+        onUploadFiles={() => Promise.resolve([uploadedAttachment])}
         onDeleteFile={async () => {}}
         setErrors={setErrors}
         {...props}
@@ -260,7 +260,7 @@ describe('attachment upload behavior', () => {
     expect(screen.queryByText('No details added')).not.toBeInTheDocument();
   });
 
-  it('reports invalid extensions and too many selected files without uploading', async () => {
+  it('reports invalid extensions and too many selected files without uploading', () => {
     expect.hasAssertions();
 
     const onUploadFiles = vi
@@ -489,7 +489,7 @@ describe('attachment upload behavior', () => {
           maxFiles={3}
           maxSizeInMB={1}
           allowedTypes='.pdf, .jpg'
-          onUploadFiles={async () => [uploadedAttachment]}
+          onUploadFiles={() => Promise.resolve([uploadedAttachment])}
           onDeleteFile={async () => {}}
           setErrors={() => {}}
         />
@@ -526,6 +526,23 @@ describe('attachment upload behavior', () => {
     expect(
       screen.getByText('Document could not be stored'),
     ).toBeInTheDocument();
+  });
+
+  it('ignores an upload failure when no server error collection exists', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onUploadFiles = vi.fn<UploadFiles>().mockRejectedValue({});
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() => expect(onUploadFiles).toHaveBeenCalledTimes(1));
+
+    expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
   });
 
   it('renders active upload progress with cancellable file rows', async () => {
@@ -653,6 +670,23 @@ describe('attachment upload behavior', () => {
     expect(screen.getByTestId('values')).toHaveTextContent(
       '"attachmentName":"manual.pdf"',
     );
+  });
+
+  it('renders Error instances from delete failures using their message', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onDeleteFile = vi
+      .fn<DeleteFile>()
+      .mockRejectedValue(new Error('Delete failed with an Error instance'));
+    renderAttachment([uploadedAttachment], { onDeleteFile });
+
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+
+    await expect(
+      screen.findByText('Delete failed with an Error instance'),
+    ).resolves.toBeInTheDocument();
   });
 
   it('keeps a locked attachment in summary mode without delete controls', () => {

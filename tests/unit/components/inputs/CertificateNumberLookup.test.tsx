@@ -104,7 +104,7 @@ describe('certificateNumberLookup debounce', () => {
         { lookupName: 'Alpha Certificate' },
       ]);
 
-      await act(async () => {
+      act(() => {
         fireEvent.change(screen.getByRole('textbox'), {
           target: { value: 'Alpha' },
         });
@@ -128,6 +128,28 @@ describe('certificateNumberLookup debounce', () => {
       renderLookup([{ lookupName: 'Alpha Certificate' }], {}, {}, true);
 
       await act(async () => {
+        fireEvent.change(screen.getByRole('textbox'), {
+          target: { value: 'Alpha' },
+        });
+        vi.advanceTimersByTime(DEBOUNCE_MS);
+      });
+
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('ignores lookup records that do not contain the configured field', () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers();
+    try {
+      renderLookup([{ lookupName: 'Alpha Certificate' }], {
+        optionsFieldName: 'missingField',
+      });
+
+      act(() => {
         fireEvent.change(screen.getByRole('textbox'), {
           target: { value: 'Alpha' },
         });

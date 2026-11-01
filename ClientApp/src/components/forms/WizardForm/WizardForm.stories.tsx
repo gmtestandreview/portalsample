@@ -1,5 +1,5 @@
 import preview from '../../../../../.storybook/preview';
-import { within, expect } from 'storybook/test';
+import { within, expect, fn, waitFor } from 'storybook/test';
 import { Container, Row, Col } from 'react-bootstrap';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import WizardForm from './index';
@@ -229,4 +229,191 @@ export const ThreeStepSummaryPage = meta.story({
       </WizardStep>
     </WizardForm>
   ),
+});
+
+const onSaveAndExit = fn();
+
+const pendingSave = { finish: (): void => undefined };
+
+const startPendingSave = (): Promise<void> =>
+  new Promise<void>((resolve) => {
+    pendingSave.finish = resolve;
+  });
+
+const onSaveAndNext = fn();
+
+const exitDestinations = [
+  { path: '/exited', element: <p>Exited to dashboard</p> },
+  { path: '/dashboard', element: <WizardCompleteDestination /> },
+];
+
+const requireFirstName = (values: { firstName?: string }) =>
+  values.firstName ? {} : { firstName: 'Enter your first name' };
+
+interface SaveWizardProps {
+  readonly onExit?: () => Promise<void>;
+  readonly validateHard?: typeof requireFirstName;
+}
+
+const SaveWizard = ({ onExit, validateHard }: SaveWizardProps) => (
+  <WizardForm
+    locationOnCompletion='/dashboard'
+    locationAfterExit='/exited'
+    nextButtonTitle='Save and next'
+    lastStepNextButtonTitle='Submit'
+    previousButtonTitle='Back'
+    canSaveDraft
+    showSaveAndNextButton
+    showBanner
+  >
+    <WizardStep<{ firstName: string }>
+      title='Contact details'
+      location='/step-1'
+      initialValues={{ firstName: '' }}
+      stepStatuses={twoStepStatuses}
+      loadStepValues={() => ({ stepValues: { firstName: '' } })}
+      bannerTitle='Create account'
+      onSaveAndExit={async (values, isDirty) => {
+        onSaveAndExit(values, isDirty);
+        await onExit?.();
+      }}
+      onSaveAndNext={onSaveAndNext}
+      {...(validateHard ? { validateHard } : {})}
+    >
+      <TextInput name='firstName' label='First name' />
+    </WizardStep>
+    <WizardStep<{ comments: string }>
+      title='Review and submit'
+      location='/step-2'
+      initialValues={{ comments: '' }}
+      isSummaryPage
+      stepStatuses={twoStepStatuses}
+      loadStepValues={() => ({ stepValues: { comments: '' } })}
+      bannerTitle='Create account'
+    >
+      <p>Review your details.</p>
+    </WizardStep>
+  </WizardForm>
+);
+
+/**
+ * SaveAndExitWaitsForSave — Save and exit calls the step's save with the
+ * entered values, stays on the step while the save is in flight, and only
+ * then navigates to the exit location (not the completion location).
+ */
+export const SaveAndExitWaitsForSave = meta.story({
+  parameters: {
+    portal: {
+      initialEntries: ['/wizard/step-1'],
+      routePath: '/wizard/*',
+      destinationRoutes: exitDestinations,
+    },
+  },
+  beforeEach: () => {
+    onSaveAndExit.mockClear();
+  },
+  render: () => <SaveWizard onExit={startPendingSave} />,
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.type(canvas.getByLabelText('First name'), 'Ada');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Save and exit', hidden: true }),
+    );
+
+    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+
+    await expect(onSaveAndExit.mock.calls[0]?.[0]).toMatchObject({
+      firstName: 'Ada',
+    });
+    await expect(canvas.queryByText('Exited to dashboard')).toBeNull();
+    await expect(
+      canvas.getByRole('heading', { level: 1, name: 'Contact details' }),
+    ).toBeVisible();
+
+    pendingSave.finish();
+
+    await expect(await canvas.findByText('Exited to dashboard')).toBeVisible();
+    await expect(canvas.queryByText('Wizard completed')).toBeNull();
+  },
+});
+
+/**
+ * SaveAndExitFailureStaysOnStep — a rejected save keeps the user on the step
+ * with their value and never navigates to the exit location.
+ */
+export const SaveAndExitFailureStaysOnStep = meta.story({
+  parameters: {
+    portal: {
+      initialEntries: ['/wizard/step-1'],
+      routePath: '/wizard/*',
+      destinationRoutes: exitDestinations,
+    },
+  },
+  beforeEach: () => {
+    onSaveAndExit.mockClear();
+  },
+  render: () => (
+    <SaveWizard onExit={() => Promise.reject(new Error('Save failed'))} />
+  ),
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.type(canvas.getByLabelText('First name'), 'Ada');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Save and exit', hidden: true }),
+    );
+
+    await waitFor(() => expect(onSaveAndExit).toHaveBeenCalledTimes(1));
+
+    await expect(
+      canvas.getByRole('heading', { level: 1, name: 'Contact details' }),
+    ).toBeVisible();
+    await expect(canvas.getByLabelText('First name')).toHaveValue('Ada');
+    await expect(canvas.queryByText('Exited to dashboard')).toBeNull();
+  },
+});
+
+/**
+ * InvalidStepBlocksSubmit — Save and next with an invalid step shows the
+ * validation error and does not save; correcting the value then saves it and
+ * advances to the next step.
+ */
+export const InvalidStepBlocksSubmit = meta.story({
+  parameters: {
+    portal: { initialEntries: ['/wizard/step-1'], routePath: '/wizard/*' },
+  },
+  beforeEach: () => {
+    onSaveAndNext.mockClear();
+  },
+  render: () => <SaveWizard validateHard={requireFirstName} />,
+  play: async ({ canvasElement, userEvent }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Save and next' }),
+    );
+
+    await expect(
+      (await canvas.findAllByText('Enter your first name')).length,
+    ).toBeGreaterThan(0);
+    await expect(onSaveAndNext).not.toHaveBeenCalled();
+
+    await userEvent.type(canvas.getByLabelText('First name'), 'Ada');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Save and next' }),
+    );
+
+    await waitFor(() => expect(onSaveAndNext).toHaveBeenCalledTimes(1));
+
+    await expect(onSaveAndNext.mock.calls[0]?.[0]).toMatchObject({
+      firstName: 'Ada',
+    });
+    await expect(
+      await canvas.findByRole('heading', {
+        level: 1,
+        name: 'Review and submit',
+      }),
+    ).toBeVisible();
+  },
 });

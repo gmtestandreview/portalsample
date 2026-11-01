@@ -137,7 +137,7 @@ const preview = definePreview({
       },
       source: {
         excludeDecorators: true,
-        type: 'auto',
+        type: 'code',
       },
       page: () => (
         <>

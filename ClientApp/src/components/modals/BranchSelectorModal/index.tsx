@@ -11,7 +11,6 @@ import {
 import { useModalState, useModalDispatch } from '../ModalContext';
 import BlockUISpinner from '../../BlockUISpinner';
 import PrimaryButton from '../../Buttons/PrimaryButton';
-import ButtonGroup from '../../Buttons/ButtonGroup';
 import { OrganisationsClient, UsersClient } from '../../../api/web-api-client';
 import type { OrganisationDto } from '../../../api/web-api-client';
 import { silentRequestFor } from '../../../authentication/silentRequest';
@@ -100,8 +99,9 @@ const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
 };
 
 interface BranchSelectorButtonsProps {
-  left: any;
-  right: any;
+  showCloseButton: boolean;
+  onClose: () => void;
+  onSave: () => void;
 }
 
 type SortableBranchKey =
@@ -112,9 +112,27 @@ type SortableBranchKey =
   | 'crmGuid'
   | 'name';
 
-const BranchSelectorButtons = (props: Readonly<BranchSelectorButtonsProps>) => {
-  const { left, right } = props;
-  return <ButtonGroup left={left} right={right} />;
+const BranchSelectorButtons = (
+  props: Readonly<BranchSelectorButtonsProps>,
+): JSX.Element => {
+  const { showCloseButton, onClose, onSave } = props;
+  return (
+    <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
+      {showCloseButton && (
+        <Button
+          data-testid='exit-portal-button'
+          onClick={onClose}
+          variant='tertiary'
+          className='me-md-auto order-2 order-md-0'
+        >
+          {/* Fix 10 — S6772: JSX spacing fix for icon followed by text */}
+          <i className='icon-close me-1' aria-hidden='true' />
+          {' Cancel'}
+        </Button>
+      )}
+      <SaveButton onClick={onSave} />
+    </div>
+  );
 };
 
 const hasDefaultOrganisationId = (defaultOrganisationId?: number | null) =>
@@ -347,23 +365,6 @@ const BranchSelectorModal = () => {
     modalDispatch?.setShowBranchSelector(false);
     clearBranchModalNotification();
   };
-
-  const saveButton = () => (
-    <SaveButton onClick={onContinueBranchSelectorModal} />
-  );
-
-  const closeButton = () => (
-    <Button
-      data-testid='exit-portal-button'
-      onClick={handleClose}
-      variant='tertiary'
-      className='me-md-auto order-2 order-md-0'
-    >
-      {/* Fix 10 — S6772: JSX spacing fix for icon followed by text */}
-      <i className='icon-close me-1' aria-hidden='true' />
-      {' Cancel'}
-    </Button>
-  );
 
   const sortData = (key: SortableBranchKey) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -660,8 +661,9 @@ const BranchSelectorModal = () => {
       </Modal.Body>
       <Modal.Footer className='d-inline'>
         <BranchSelectorButtons
-          left={() => defaultOrganisationIdSet && closeButton()}
-          right={() => saveButton()}
+          showCloseButton={defaultOrganisationIdSet}
+          onClose={handleClose}
+          onSave={() => void onContinueBranchSelectorModal()}
         />
       </Modal.Footer>
     </Modal>

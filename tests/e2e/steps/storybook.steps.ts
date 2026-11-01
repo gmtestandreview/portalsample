@@ -132,8 +132,6 @@ Given('the Storybook MCP server is running', async ({ page, request }) => {
   await expect(page.getByRole('heading', { name: 'Storybook' })).toBeVisible({
     timeout: 15_000,
   });
-
-  await loadStoryIframe(page, REPRESENTATIVE_STORY_ID);
 });
 
 Then(
@@ -412,7 +410,7 @@ Given('I am viewing Storybook stories for modals', async () => {});
 
 Given(
   'the Storybook sequence is monitored for late unmount updates',
-  async ({ page }) => {
+  ({ page }) => {
     cleanupStorybookPageIssueMonitor(page);
     const messages: string[] = [];
     const pageErrorHandler = (error: Error) => {
@@ -434,7 +432,7 @@ Given(
   },
 );
 
-After(async ({ page }) => {
+After(({ page }) => {
   cleanupStorybookPageIssueMonitor(page);
 });
 
@@ -527,7 +525,7 @@ When(
           return events
             .filter((event) => event.phase === 'mounted')
             .map((event) => event.sentinel)
-            .sort();
+            .sort((a, b) => a.localeCompare(b));
         })
         .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
     };
@@ -538,7 +536,7 @@ When(
           return events
             .filter((event) => event.phase === 'active')
             .map((event) => event.sentinel)
-            .sort();
+            .sort((a, b) => a.localeCompare(b));
         })
         .toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
     };
@@ -876,7 +874,7 @@ When(
         providerEvents
           .filter((event) => event.phase === 'mounted')
           .map((event) => event.sentinel)
-          .sort(),
+          .sort((a, b) => a.localeCompare(b)),
       ).toEqual(['payment-details-postpaid', 'payment-details-prepaid']);
       expect(
         providerEvents.filter((event) => event.phase === 'cleaned'),
@@ -967,7 +965,7 @@ When(
           events
             .filter((event) => event.phase === 'cleaned')
             .forEach((event) => mounted.delete(event.sentinel));
-          return [...mounted].sort();
+          return [...mounted].sort((a, b) => a.localeCompare(b));
         })
         .toEqual([]);
       await expect
@@ -981,7 +979,7 @@ When(
           events
             .filter((event) => event.phase === 'cleaned')
             .forEach((event) => active.delete(event.sentinel));
-          return [...active].sort();
+          return [...active].sort((a, b) => a.localeCompare(b));
         })
         .toEqual([]);
     }
@@ -1318,7 +1316,12 @@ Then(
           page
             .frameLocator('#storybook-preview-iframe')
             .locator('body')
-            .getAttribute('data-storybook-organisation-lookup-count'),
+            .evaluate(
+              (element) =>
+                (element as HTMLElement).dataset[
+                  'storybookOrganisationLookupCount'
+                ],
+            ),
         { timeout: 10_000 },
       )
       .toBe(String(expectedCount));

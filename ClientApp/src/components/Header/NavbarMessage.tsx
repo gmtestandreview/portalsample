@@ -3,8 +3,7 @@ import { Container } from 'react-bootstrap';
 const SiteLaunchMessage = () => (
   <p className='mb-0 p-2 small text-black'>
     <span className='me-2 badge rounded-pill text-white bg-info'>
-      <span className='visually-hidden'>NMI Services portal </span>
-      Feedback
+      <span className='visually-hidden'>NMI Services portal</span> Feedback
       <span className='visually-hidden'>:</span>
     </span>
     {'Fill in this '}
@@ -15,8 +14,7 @@ const SiteLaunchMessage = () => (
       target='_blank'
       className='small text-black'
     >
-      quick survey
-      <span className='visually-hidden'> Opens in a new tab</span>
+      quick survey <span className='visually-hidden'>Opens in a new tab</span>
     </a>
     {' to give your feedback and help us to improve the NMI Services portal.'}
   </p>

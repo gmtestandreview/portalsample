@@ -207,7 +207,7 @@ describe('error summary', () => {
     render(
       <TestRouter>
         <Formik initialValues={{}} onSubmit={vi.fn<EmptyFormikSubmit>()}>
-          <ErrorSummary serverErrors={{} satisfies ProblemDetails} />
+          <ErrorSummary serverErrors={{ errors: undefined }} />
         </Formik>
       </TestRouter>,
     );

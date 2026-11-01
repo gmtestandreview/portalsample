@@ -73,7 +73,7 @@ describe('wizard yup resolver', () => {
     expect.hasAssertions();
 
     const throwing = {
-      validate: async () => {
+      validate: () => {
         throw new Yup.ValidationError('Bad value', 'v', 'name');
       },
     };
@@ -86,7 +86,7 @@ describe('wizard yup resolver', () => {
     expect.hasAssertions();
 
     const throwing = {
-      validate: async () => {
+      validate: () => {
         throw Object.assign(new Error('Odd error'), {
           name: 'ValidationError',
           path: 'name',
@@ -102,7 +102,7 @@ describe('wizard yup resolver', () => {
     expect.hasAssertions();
 
     const throwing = {
-      validate: async () => {
+      validate: () => {
         throw new Yup.ValidationError('No path');
       },
     };
@@ -128,7 +128,7 @@ describe('wizard yup resolver', () => {
     expect.hasAssertions();
 
     const broken = {
-      validate: async () => {
+      validate: () => {
         throw new TypeError('schema bug');
       },
     };
@@ -178,7 +178,9 @@ describe('rhfForm api', () => {
       expect(spy.mock.calls.every(isExpectedConsoleError)).toBe(true);
       expect(suppressExpectedError).toHaveBeenCalledWith(
         expect.objectContaining({
-          error: expect.objectContaining({ message: expectedError }),
+          error: expect.objectContaining({
+            message: expectedError,
+          }) as unknown as Error,
         }),
       );
       expect(

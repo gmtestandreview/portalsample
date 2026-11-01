@@ -192,6 +192,31 @@ describe('workflow step components', () => {
     ).toBeDisabled();
   }, 30_000);
 
+  it('renders organisation details safely when optional values are absent', async () => {
+    expect.hasAssertions();
+
+    resetWorkflowStepComponentsMocks();
+    delete mocks.formikValues['businessOrTradingName'];
+    delete mocks.formikValues['branchOrLocationName'];
+    delete mocks.formikValues['organisationCount'];
+    delete mocks.formikValues['abn'];
+
+    const OrganisationAndContact = (
+      await import('../../../ClientApp/src/routes/requestForQuote/organisationAndContact')
+    ).default;
+
+    renderRoute(
+      '/request-for-quote/RFQ-1/organisation-and-contact',
+      <OrganisationAndContact />,
+      '/request-for-quote/:id/*',
+    );
+
+    expect(screen.getByText('Organisation details')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('open-manage-branch-division-button'),
+    ).not.toBeInTheDocument();
+  }, 30_000);
+
   it('opens the branch selector with an empty request id when the route id is omitted', async () => {
     expect.hasAssertions();
 

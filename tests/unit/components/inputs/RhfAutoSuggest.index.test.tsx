@@ -152,10 +152,10 @@ describe('rhfAutoSuggest parent state', () => {
     renderAutoSuggest(getOptions, vi.fn(), 'Original');
 
     let searchPromise: Promise<void> | undefined;
-    await act(async () => {
+    act(() => {
       searchPromise = containerState.props?.onSearchTermChange('Sydney');
     });
-    await act(async () => {
+    act(() => {
       containerState.props?.onCancel();
     });
     resolveSearch(options);
@@ -183,10 +183,10 @@ describe('rhfAutoSuggest parent state', () => {
     renderAutoSuggest(getOptions);
 
     let searchPromise: Promise<void> | undefined;
-    await act(async () => {
+    act(() => {
       searchPromise = containerState.props?.onSearchTermChange('Sydney');
     });
-    await act(async () => {
+    act(() => {
       containerState.props?.onCancel();
     });
     rejectSearch(new Error('network unavailable'));
@@ -210,7 +210,7 @@ describe('rhfAutoSuggest parent state', () => {
     const [selectedOption] = options;
 
     let selectionPromise: Promise<void> | undefined;
-    await act(async () => {
+    act(() => {
       selectionPromise = containerState.props?.onSelectedOption(
         selectedOption!,
       );

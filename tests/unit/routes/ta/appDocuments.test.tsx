@@ -16,6 +16,17 @@ import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 import { defined } from '../../helpers/defined';
 
+type CommitAppDocumentsValues = {
+  form: {
+    documents: Array<{
+      documentBytes?: unknown;
+      attachmentName?: string;
+    }>;
+  };
+};
+
+type CommitAppDocumentsCall = [string, CommitAppDocumentsValues];
+
 const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
@@ -315,7 +326,7 @@ describe('application documents', () => {
 
       expect(screen.getByText('Loading...')).toBeInTheDocument();
 
-      await act(async () => {
+      act(() => {
         release(appDocuments([document1()]));
       });
 
@@ -606,7 +617,7 @@ describe('application documents', () => {
       );
 
       unmount();
-      await act(async () => {
+      act(() => {
         failPoll(new Error('aborted'));
       });
 
@@ -696,13 +707,20 @@ describe('application documents', () => {
         ).toHaveBeenCalledWith('APP-1', expect.any(Object)),
       );
       const [applicationId, values] = defined(
-        clients.patternApproval.methods.commitAppDocuments.mock.calls[0],
+        clients.patternApproval.methods.commitAppDocuments.mock
+          .calls[0] as unknown as CommitAppDocumentsCall,
       );
 
       expect(applicationId).toBe('APP-1');
+
+      const committedDocument = defined(
+        values.form.documents[0],
+        'committed document',
+      );
+
       // Bytes are cleared so the commit payload stays small.
-      expect(values.form.documents[0].documentBytes).toBeUndefined();
-      expect(values.form.documents[0].attachmentName).toBe('spec.pdf');
+      expect(committedDocument.documentBytes).toBeUndefined();
+      expect(committedDocument.attachmentName).toBe('spec.pdf');
     });
 
     it('refetches the documents after a successful commit', async () => {

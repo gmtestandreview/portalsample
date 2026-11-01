@@ -12,7 +12,6 @@ import {
   type AttachmentDto,
   type FileParameter,
   PatternApprovalRequiredValues,
-  type ProblemDetails,
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
@@ -27,6 +26,12 @@ import AttachmentNew from '../../components/Inputs/Attachment/index-new';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 
 const isString = (e: unknown): e is string => typeof e === 'string';
+
+type UploadProblemDetails = {
+  status?: number;
+  title?: string;
+  errors?: Record<string, unknown[]>;
+};
 
 /** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
 const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
@@ -80,8 +85,8 @@ const SupportingDocuments = (
   // Filter out upload errors that are handled by Formik
   const filteredUploadErrors = uploadErrors.filter(
     (err) =>
-      err !== ValidationMessages.RequiredDoc &&
-      err !== ValidationMessages.RequiredTag,
+      err !== String(ValidationMessages.RequiredDoc) &&
+      err !== String(ValidationMessages.RequiredTag),
   );
 
   // e.g. 'supportingDocuments.form.documents' => 'documents'
@@ -158,16 +163,16 @@ const SupportingDocuments = (
       // Call uploadFunc ONCE with all files
       result = await uploadFunc(tokenResult.accessToken, fileDataArray);
       return result;
-    } catch (error: any) {
-      const uploadServerError = error as ProblemDetails;
+    } catch (error: unknown) {
+      const uploadServerError = error as UploadProblemDetails;
       if (
         uploadServerError.status === HttpStatusCode.Forbidden &&
         uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
-      } else if (uploadServerError['errors']) {
+      } else if (uploadServerError.errors) {
         // If server returns error messages, set as upload errors (strings only)
-        const flatErrors = Object.values(uploadServerError['errors']).flat();
+        const flatErrors = Object.values(uploadServerError.errors).flat();
         setUploadErrors(
           flatErrors.filter((e): e is string => typeof e === 'string'),
         );
@@ -240,7 +245,7 @@ const SupportingDocuments = (
   const onlyHasCategoryError =
     errors.length === 1 &&
     typeof errors[0] === 'string' &&
-    errors[0] === ValidationMessages.RequiredTag &&
+    errors[0] === String(ValidationMessages.RequiredTag) &&
     context.submitCount === 0;
 
   return (
@@ -265,7 +270,7 @@ const SupportingDocuments = (
                   // Only show the 'documents' error if submitCount is 0
                   if (
                     typeof err === 'string' &&
-                    err === ValidationMessages.RequiredTag &&
+                    err === String(ValidationMessages.RequiredTag) &&
                     context.submitCount === 0
                   ) {
                     return null;

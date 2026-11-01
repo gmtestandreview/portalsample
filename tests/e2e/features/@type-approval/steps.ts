@@ -32,9 +32,14 @@ Given(
 When(
   String.raw`the applicant starts a new pattern\/type approval application`,
   async ({ page }) => {
-    await page
-      .getByRole('link', { name: 'New application', exact: true })
-      .click();
+    const newApplicationLink = page.getByRole('link', {
+      name: 'New application',
+      exact: true,
+    });
+    await Promise.all([
+      page.waitForURL(/\/ta\/type-approval-create-pre$/),
+      newApplicationLink.click(),
+    ]);
   },
 );
 

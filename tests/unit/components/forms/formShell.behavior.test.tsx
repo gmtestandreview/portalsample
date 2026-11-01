@@ -21,6 +21,10 @@ type SubmitResult = ReturnType<FormikFormProps<TestValues>['onSubmit']>;
 type Submit = () => SubmitResult;
 type AsyncSubmit = () => Promise<void>;
 type Validate = (values: TestValues) => Record<string, unknown>;
+type FormikSubmitCall = [
+  TestValues,
+  { setSubmitting: (...args: never[]) => unknown },
+];
 
 vi.mock(
   import('@/components/forms/UnsavedFormPrompt'),
@@ -48,9 +52,8 @@ function ValuesProbe() {
       <pre data-testid='values'>{JSON.stringify(values)}</pre>
       <button
         type='button'
-        onClick={async () => {
-          await setFieldValue('saveAndExit', true);
-          await submitForm();
+        onClick={() => {
+          void setFieldValue('saveAndExit', true).then(() => submitForm());
         }}
       >
         Save draft
@@ -91,7 +94,7 @@ describe('form shell behavior slice', () => {
               <div>{errors.firstName as string}</div>
               <button
                 type='button'
-                onClick={() => setFieldValue('firstName', 'Alex')}
+                onClick={() => void setFieldValue('firstName', 'Alex')}
               >
                 Fill name
               </button>
@@ -112,12 +115,18 @@ describe('form shell behavior slice', () => {
     await user.click(screen.getByRole('button', { name: 'Fill name' }));
     await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-    await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith(
-        { firstName: 'Alex', keep: 'value' },
-        expect.objectContaining({ setSubmitting: expect.any(Function) }),
-      ),
-    );
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+
+    const submitCall = (
+      onSubmit.mock.calls as unknown as FormikSubmitCall[]
+    )[0];
+
+    expect(submitCall?.[0]).toStrictEqual({
+      firstName: 'Alex',
+      keep: 'value',
+    });
+
+    expect(submitCall?.[1]?.setSubmitting).toBeTypeOf('function');
   });
 
   it('formikForm uses soft validation and onSaveAndExit for draft saves', async () => {
@@ -158,11 +167,16 @@ describe('form shell behavior slice', () => {
       expect(validateSoft).toHaveBeenCalledWith(
         expect.objectContaining({ saveAndExit: true }),
       );
-      expect(onSaveAndExit).toHaveBeenCalledWith(
-        { notes: 'draft' },
-        expect.objectContaining({ setSubmitting: expect.any(Function) }),
-      );
+      expect(onSaveAndExit).toHaveBeenCalledTimes(1);
     });
+
+    const saveCall = (
+      onSaveAndExit.mock.calls as unknown as FormikSubmitCall[]
+    )[0];
+
+    expect(saveCall?.[0]).toStrictEqual({ notes: 'draft' });
+
+    expect(saveCall?.[1]?.setSubmitting).toBeTypeOf('function');
 
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -308,9 +322,7 @@ describe('form shell behavior slice', () => {
     const user = userEvent.setup();
     const { rerender } = render(
       <MemoryRouter>
-        <ErrorSummary
-          serverErrors={{ status: HttpStatusCode.Conflict } as any}
-        />
+        <ErrorSummary serverErrors={{ status: HttpStatusCode.Conflict }} />
       </MemoryRouter>,
     );
 

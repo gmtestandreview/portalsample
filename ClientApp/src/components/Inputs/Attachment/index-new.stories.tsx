@@ -44,7 +44,7 @@ const meta = preview.meta({
     maxSizeInMB: 10,
     inlineHelp: 'Accepted formats: PDF, JPG, PNG.',
     setErrors: fn(),
-    onUploadFiles: fn(async () => uploadResult),
+    onUploadFiles: fn(() => Promise.resolve(uploadResult)),
     onDeleteFile: fn(async () => {}),
   },
 });
