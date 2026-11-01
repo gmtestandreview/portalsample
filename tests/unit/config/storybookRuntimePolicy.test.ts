@@ -14,6 +14,10 @@ const preview = readRepositoryFile('.storybook/preview.tsx');
 const storybookMain = readRepositoryFile('.storybook/main.ts');
 const pullRequestWorkflow = readRepositoryFile('.github/workflows/pr.yml');
 
+type StorybookMswPolicy = {
+  isStorybookMswDebugEnabled?: (query: string) => boolean;
+};
+
 describe('storybook runtime fixtures', () => {
   it('uses the shared Storybook fixture in both browser entry paths', () => {
     expect.hasAssertions();
@@ -52,8 +56,11 @@ describe('storybook MSW diagnostic policy', () => {
     const policySpecifier = path
       .join(repositoryRoot, '.storybook/msw-policy.ts')
       .replaceAll('\\', '/');
-    const policy = await import(/* @vite-ignore */ policySpecifier).catch(
-      () => ({ isStorybookMswDebugEnabled: undefined }),
+    const policy: StorybookMswPolicy = await import(
+      /* @vite-ignore */ policySpecifier
+    ).then(
+      (module: unknown) => module as StorybookMswPolicy,
+      (): StorybookMswPolicy => ({}),
     );
 
     expect(policy.isStorybookMswDebugEnabled).toBeTypeOf('function');

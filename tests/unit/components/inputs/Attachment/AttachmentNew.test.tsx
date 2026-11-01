@@ -69,7 +69,7 @@ const uploaded: AttachmentDto = {
   attachmentSize: '2048',
   attachmentCategory: '',
   documentBytes: 'JVBERi0xLjQ=',
-} as AttachmentDto;
+};
 
 const baseProps = {
   name: 'files',

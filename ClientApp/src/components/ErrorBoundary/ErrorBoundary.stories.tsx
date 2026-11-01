@@ -47,7 +47,7 @@ class ResetableErrorBoundaryWrapper extends Component<
         >
           Reset ErrorBoundary
         </Button>
-        <ErrorBoundary key={key} appInsights={ai.reactPlugin as ReactPlugin}>
+        <ErrorBoundary key={key} appInsights={ai.reactPlugin}>
           {children}
         </ErrorBoundary>
       </div>
@@ -79,7 +79,7 @@ export const CaughtError = meta.story({
       throw new Error('Simulated render error from a broken child component.');
     };
     return (
-      <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+      <ErrorBoundary appInsights={ai.reactPlugin}>
         <BrokenApp />
       </ErrorBoundary>
     );
@@ -115,12 +115,12 @@ export const NestedBoundaries = meta.story({
       throw new Error('Inner component error');
     };
     return (
-      <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+      <ErrorBoundary appInsights={ai.reactPlugin}>
         <Alert variant='success' className='mb-3'>
           <strong>Outer content</strong> — this renders fine because the inner
           boundary catches the error below.
         </Alert>
-        <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+        <ErrorBoundary appInsights={ai.reactPlugin}>
           <BrokenChild />
         </ErrorBoundary>
       </ErrorBoundary>

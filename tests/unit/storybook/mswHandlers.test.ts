@@ -12,6 +12,9 @@ import { readTextFileSync } from '../../helpers/safeTestFilesystem';
 const server = setupServer(...mswHandlers);
 
 const apiUrl = (path: string) => new URL(path, globalThis.location.origin);
+const expectAnyString = (): unknown => expect.any(String);
+const expectObjectContaining = (value: Record<string, unknown>): unknown =>
+  expect.objectContaining(value);
 
 type ApiRequest = {
   method: 'GET' | 'POST';
@@ -22,29 +25,33 @@ type ApiRequest = {
 const assertRouteCoveragePayload = (request: ApiRequest, payload: unknown) => {
   if (request.path.includes('get-quote-request-details-byrefid')) {
     expect(payload).toStrictEqual(
-      expect.objectContaining({ crmQuoteRequestId: expect.any(String) }),
+      expectObjectContaining({ crmQuoteRequestId: expectAnyString() }),
     );
   } else if (request.path.includes('/api/forms/accounts/')) {
     expect(payload).toStrictEqual(
-      expect.objectContaining({
+      expectObjectContaining({
         id: 1,
-        stepValues: expect.objectContaining({
+        stepValues: expectObjectContaining({
           status: 'NotStarted',
         }),
       }),
     );
   } else if (request.path.includes('/api/contact/usercontact')) {
     expect(payload).toStrictEqual(
-      expect.objectContaining({
-        contact: expect.objectContaining({ email: expect.any(String) }),
+      expectObjectContaining({
+        contact: expectObjectContaining({ email: expectAnyString() }),
         formStepStatus: 'NotStarted',
       }),
     );
   } else if (request.path === '/api/application') {
+    const applicationPayload = JSON.parse(request.body ?? '{}') as {
+      applicationType?: string;
+    };
+
     expect(payload).toStrictEqual(
-      expect.objectContaining({
-        referenceId: expect.any(String),
-        applicationType: JSON.parse(request.body ?? '{}').applicationType,
+      expectObjectContaining({
+        referenceId: expectAnyString(),
+        applicationType: applicationPayload.applicationType,
       }),
     );
   }
@@ -240,7 +247,7 @@ describe('storybook MSW handlers', () => {
       }
 
       const response = await fetch(apiUrl(request.path), init);
-      const payload = await response.json();
+      const payload = (await response.json()) as unknown;
 
       expect(response.status).toBe(200);
 
@@ -280,10 +287,10 @@ describe('storybook MSW handlers', () => {
       const lookupType =
         CRMLookupTypes[lookupTypeName as keyof typeof CRMLookupTypes];
       const lookupResponse = Object.entries(lookupResponsesByType)
-        .find(([name]) => name === lookupType)
+        .find(([name]) => name === String(lookupType))
         ?.at(1);
       const url = apiUrl('/api/lookup');
-      url.searchParams.set('LookupType', lookupType);
+      url.searchParams.set('LookupType', String(lookupType));
 
       const response = await fetch(url);
 

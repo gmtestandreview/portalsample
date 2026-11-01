@@ -9,6 +9,7 @@ import {
   PatternApprovalRequiredValueOptions,
   PatternApprovalRequiredValues,
   type RequestForPatternApprovalAppDetails,
+  Title,
   YesNo,
 } from '../../../../../ClientApp/src/api/web-api-client';
 
@@ -70,6 +71,47 @@ const resetAppDetailsPropsMocks = () => {
   });
 };
 
+type AppDetailsHidingFields = {
+  organisationAndContact: {
+    branchOrLocationName: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    isManufacturerHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    principalInvoiceContactHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    isCurrentOrganisationHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    contact: {
+      titleOther: (
+        values: Partial<RequestForPatternApprovalAppDetails>,
+      ) => boolean;
+    };
+    invoiceContact: {
+      titleOther: (
+        values: Partial<RequestForPatternApprovalAppDetails>,
+      ) => boolean;
+    };
+  };
+  applicationAndInstrument: {
+    isApplNewHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    isApplVariationHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    isApplOtherHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+    isApplOIMLHide: (
+      values: Partial<RequestForPatternApprovalAppDetails>,
+    ) => boolean;
+  };
+};
+
 // eslint-disable-next-line vitest/valid-title -- function suite titles are required by vitest/prefer-describe-function-title.
 describe(appDetailsProps, () => {
   it('loads app details and exposes summary hiding rules', async () => {
@@ -98,7 +140,10 @@ describe(appDetailsProps, () => {
       isSummaryPage: true,
     });
 
-    const hidingFields = props.hidingFields as any;
+    // WizardStepProps retains a legacy union for hidingFields; this factory
+    // supplies the narrower runtime shape used by this test.
+    const hidingFields =
+      props.hidingFields as unknown as AppDetailsHidingFields;
 
     expect({
       branchEmpty: hidingFields.organisationAndContact.branchOrLocationName({
@@ -138,17 +183,17 @@ describe(appDetailsProps, () => {
           organisationAndContact: { isManufacturer: YesNo.Yes },
         }),
       contactOther: hidingFields.organisationAndContact.contact.titleOther({
-        organisationAndContact: { contact: { title: 'Other' } },
+        organisationAndContact: { contact: { title: Title.Other } },
       }),
       contactDr: hidingFields.organisationAndContact.contact.titleOther({
-        organisationAndContact: { contact: { title: 'Dr' } },
+        organisationAndContact: { contact: { title: Title.Dr } },
       }),
       invoiceOther:
         hidingFields.organisationAndContact.invoiceContact.titleOther({
-          organisationAndContact: { invoiceContact: { title: 'Other' } },
+          organisationAndContact: { invoiceContact: { title: Title.Other } },
         }),
       invoiceDr: hidingFields.organisationAndContact.invoiceContact.titleOther({
-        organisationAndContact: { invoiceContact: { title: 'Dr' } },
+        organisationAndContact: { invoiceContact: { title: Title.Dr } },
       }),
       newCertificate: hidingFields.applicationAndInstrument.isApplNewHide({
         applicationAndInstrument: {

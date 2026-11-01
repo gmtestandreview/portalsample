@@ -24,5 +24,4 @@ export type StorybookTestTargetOptions = {
 
 export const resolveStorybookTestTarget = (
   options: StorybookTestTargetOptions = {},
-): StorybookTestTarget =>
-  resolveStorybookTestTargetImplementation(options) as StorybookTestTarget;
+): StorybookTestTarget => resolveStorybookTestTargetImplementation(options);

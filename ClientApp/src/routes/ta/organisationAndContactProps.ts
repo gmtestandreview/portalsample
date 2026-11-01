@@ -6,6 +6,7 @@ import {
   type FormStepStatusDto,
   type PatternApprovalOrgAndContact,
   RequestForPatternApprovalClient,
+  Title,
   YesNo,
 } from '../../api/web-api-client';
 import { silentRequestFor } from '../../authentication/silentRequest';
@@ -133,19 +134,22 @@ const OrganisationAndContactProps = (
   location: '/organisation-details',
   title: 'Organisation details',
   hidingFields: {
-    isManufacturerHide: (x: any) =>
+    isManufacturerHide: (x: Partial<PatternApprovalOrgAndContact>) =>
       x.isManufacturer === YesNo.Yes || x.isManufacturer === undefined,
-    isCurrentOrganisationHide: (_x: any) => true,
-    principalContactHide: (x: any) =>
+    isCurrentOrganisationHide: (_x: Partial<PatternApprovalOrgAndContact>) =>
+      true,
+    principalContactHide: (x: Partial<PatternApprovalOrgAndContact>) =>
       x.isPrincipalContact === YesNo.Yes || x.isPrincipalContact === undefined,
-    principalInvoiceContactHide: (x: any) =>
+    principalInvoiceContactHide: (x: Partial<PatternApprovalOrgAndContact>) =>
       x.isPrincipalInvoiceContact === YesNo.Yes ||
       x.isPrincipalInvoiceContact === undefined,
     contact: {
-      titleOther: (x: any) => x.contact?.title !== 'Other',
+      titleOther: (x: Partial<PatternApprovalOrgAndContact>) =>
+        x.contact?.title !== Title.Other,
     },
     invoiceContact: {
-      titleOther: (x: any) => x.invoiceContact?.title !== 'Other',
+      titleOther: (x: Partial<PatternApprovalOrgAndContact>) =>
+        x.invoiceContact?.title !== Title.Other,
     },
   },
   validateHard: patternApprovalOrgAndContactSubmitValidation,

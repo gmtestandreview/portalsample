@@ -75,8 +75,17 @@ type CoverageModule = {
 // without adding a declaration file outside the approved T2a write set.
 const untypedCoverageModule =
   // @ts-expect-error TS7016: the test supplies the maintained .mjs contract above
-  await import('../../../scripts/storybook-coverage.mjs');
-const coverageModule = untypedCoverageModule as unknown as CoverageModule;
+  (await import('../../../scripts/storybook-coverage.mjs')) as CoverageModule;
+const coverageModule = untypedCoverageModule;
+
+const expectArrayContaining = (values: unknown[]): unknown =>
+  expect.arrayContaining(values);
+const expectObjectContaining = (value: Record<string, unknown>): unknown =>
+  expect.objectContaining(value);
+const expectStringMatching = (value: string | RegExp): unknown =>
+  expect.stringMatching(value);
+const expectStringContaining = (value: string): unknown =>
+  expect.stringContaining(value);
 
 const discoverSourceExports =
   coverageModule.discoverSourceExports.bind(coverageModule);
@@ -284,7 +293,7 @@ describe('recursive canonical source/export discovery', () => {
 
     expect(result.unresolved).toStrictEqual([]);
     expect(result.exports).toStrictEqual(
-      expect.arrayContaining([
+      expectArrayContaining([
         {
           source: 'ClientApp/src/components/Typed.mts',
           export: 'Renamed',
@@ -318,7 +327,7 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(result.exports).not.toContainEqual(
-      expect.objectContaining({ export: 'Field' }),
+      expectObjectContaining({ export: 'Field' }),
     );
   });
 
@@ -346,7 +355,7 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(result.exports).not.toContainEqual(
-      expect.objectContaining({ export: 'Heading' }),
+      expectObjectContaining({ export: 'Heading' }),
     );
     expect(
       result.exports.filter((entry) => entry.export === 'Text'),
@@ -375,7 +384,7 @@ describe('recursive canonical source/export discovery', () => {
       kind: 'renderable',
     });
     expect(result.exports).not.toContainEqual(
-      expect.objectContaining({ export: 'emailSchema' }),
+      expectObjectContaining({ export: 'emailSchema' }),
     );
   });
 });
@@ -403,7 +412,7 @@ describe('renderable evidence and claim validation', () => {
       ),
     ).toMatchObject({
       ok: false,
-      errors: [expect.objectContaining({ code: 'EVIDENCE_MISSING' })],
+      errors: [expectObjectContaining({ code: 'EVIDENCE_MISSING' })],
     });
   });
 
@@ -445,8 +454,8 @@ describe('renderable evidence and claim validation', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
-        expect.objectContaining({ code: 'EVIDENCE_MISSING' }),
+      errors: expectArrayContaining([
+        expectObjectContaining({ code: 'EVIDENCE_MISSING' }),
       ]),
     });
   });
@@ -469,8 +478,8 @@ describe('renderable evidence and claim validation', () => {
       ),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
-        expect.objectContaining({ code: 'CLAIM_DUPLICATE' }),
+      errors: expectArrayContaining([
+        expectObjectContaining({ code: 'CLAIM_DUPLICATE' }),
       ]),
     });
   });
@@ -496,7 +505,7 @@ describe('renderable evidence and claim validation', () => {
 
     expect(result.ok).toBe(false);
     expect(result.errors).toContainEqual(
-      expect.objectContaining({
+      expectObjectContaining({
         code: 'EVIDENCE_MISSING',
         path: 'ClientApp/src/components/Unclaimed.tsx',
       }),
@@ -519,8 +528,8 @@ describe('renderable evidence and claim validation', () => {
       }),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
-        expect.objectContaining({ code: 'SOURCE_UNRESOLVED' }),
+      errors: expectArrayContaining([
+        expectObjectContaining({ code: 'SOURCE_UNRESOLVED' }),
       ]),
     });
   });
@@ -552,8 +561,8 @@ describe('renderable evidence and claim validation', () => {
       ),
     ).toMatchObject({
       ok: false,
-      errors: expect.arrayContaining([
-        expect.objectContaining({ code: 'SOURCE_UNRESOLVED' }),
+      errors: expectArrayContaining([
+        expectObjectContaining({ code: 'SOURCE_UNRESOLVED' }),
       ]),
     });
   });
@@ -567,7 +576,7 @@ describe('guarded Storybook coverage CLI', () => {
     ).toThrow(/duplicate manifest JSON key: records/u);
   });
 
-  it('does not execute on module import and rejects invalid invocation stably', async () => {
+  it('does not execute on module import and rejects invalid invocation stably', () => {
     expect.hasAssertions();
     expect(process.exitCode).toBeUndefined();
     expect(main(['--mode', 'unknown'])).toMatchObject({
@@ -576,7 +585,7 @@ describe('guarded Storybook coverage CLI', () => {
     });
   });
 
-  it('runs source mode from explicit inputs without importing application modules', async () => {
+  it('runs source mode from explicit inputs without importing application modules', () => {
     expect.hasAssertions();
     expect(
       main([
@@ -640,13 +649,13 @@ describe('deterministic inventory generation', () => {
         componentRegion.indexOf('Zed.tsx#Zed'),
     }).toMatchObject({
       result: { ok: true, errors: [] },
-      component: expect.stringContaining(
+      component: expectStringContaining(
         'ClientApp/src/components/Field.tsx#Field',
       ),
-      route: expect.stringContaining(
+      route: expectStringContaining(
         'ClientApp/src/routes/Example.tsx#ExampleRoute',
       ),
-      matrix: expect.stringContaining('Renderable records: 3'),
+      matrix: expectStringContaining('Renderable records: 3'),
       sorted: true,
     });
     expect(result.regions?.matrix).not.toMatch(
@@ -660,7 +669,7 @@ describe('deterministic inventory generation', () => {
       generateInventory({ manifest: { schemaVersion: 2, records: [] } }),
     ).toMatchObject({
       ok: false,
-      errors: [expect.objectContaining({ code: 'MANIFEST_SCHEMA_INVALID' })],
+      errors: [expectObjectContaining({ code: 'MANIFEST_SCHEMA_INVALID' })],
     });
   });
 });
@@ -962,10 +971,10 @@ describe('ta/manage forwarding equivalence', () => {
     expect(checkWrapper(content)).toMatchObject({
       ok: false,
       errors: [
-        expect.objectContaining({
+        expectObjectContaining({
           code: 'EVIDENCE_MISSING',
           path: wrapperSource,
-          message: expect.stringMatching(reason),
+          message: expectStringMatching(reason),
         }),
       ],
     });
@@ -984,8 +993,8 @@ describe('ta/manage forwarding equivalence', () => {
     ).toMatchObject({
       ok: false,
       errors: [
-        expect.objectContaining({
-          message: expect.stringMatching(/no forwarding target is declared/u),
+        expectObjectContaining({
+          message: expectStringMatching(/no forwarding target is declared/u),
         }),
       ],
     });
@@ -1051,10 +1060,10 @@ describe('ta/manage forwarding equivalence', () => {
       expect.hasAssertions();
 
       expect(forwardingErrors([targetFile])).toStrictEqual([
-        expect.objectContaining({
+        expectObjectContaining({
           code: 'EVIDENCE_MISSING',
           path: wrapperSource,
-          message: expect.stringMatching(/wrapper source is missing/u),
+          message: expectStringMatching(/wrapper source is missing/u),
         }),
       ]);
     });
@@ -1070,10 +1079,10 @@ describe('ta/manage forwarding equivalence', () => {
           },
         ]),
       ).toStrictEqual([
-        expect.objectContaining({
+        expectObjectContaining({
           code: 'EVIDENCE_MISSING',
           path: wrapperSource,
-          message: expect.stringMatching(/wrapper source is missing/u),
+          message: expectStringMatching(/wrapper source is missing/u),
         }),
       ]);
     });

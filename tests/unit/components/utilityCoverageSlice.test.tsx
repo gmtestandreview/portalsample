@@ -25,7 +25,10 @@ import {
   openInNewTab,
   openPdfPageInNewTab,
 } from '../../../ClientApp/src/routes/common/helperFunctions';
-import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
+import type {
+  DashboardClient,
+  RequestForQuoteDetails,
+} from '../../../ClientApp/src/api/web-api-client';
 import type AppLogger from '../../../ClientApp/src/instrumentation/AppLogger';
 import type * as ApiModule from '../../../ClientApp/src/api/web-api-client';
 import type { IMsalContext } from '@azure/msal-react';
@@ -167,7 +170,7 @@ vi.mock(
     }) satisfies __ExactMockModule<__TestMockModule9>,
 );
 
-const quotationData = {
+const quotationData: RequestForQuoteDetails = {
   crmQuoteRequestId: 'crm-quote-1',
   quoteRequestStatus: 'QuoteAccepted',
 };
@@ -211,7 +214,7 @@ describe('utility component coverage slice', () => {
     mocks.getQuoteReportPDFByID.mockResolvedValue({ fileSizeBytes: 2048 });
     vi.mocked(getQuotationFileDetails).mockResolvedValue({
       fileSizeBytes: 4096,
-    } as any);
+    });
   };
 
   it('finds an ancestor by id and returns false for null or missing ancestors', () => {
@@ -231,7 +234,7 @@ describe('utility component coverage slice', () => {
     expect(findElementInTreeById(null, 'wrapper-id')).toBe(false);
   });
 
-  it('scrolls and focuses a hash target without an accordion delay', () => {
+  it('scrolls and focuses a hash target without an accordion delay', async () => {
     expect.hasAssertions();
 
     resetUtilityCoverageState();
@@ -242,6 +245,7 @@ describe('utility component coverage slice', () => {
     target.tabIndex = -1;
     document.body.appendChild(target);
     const focus = vi.spyOn(target, 'focus');
+    const scrollIntoView = vi.spyOn(target, 'scrollIntoView');
 
     render(
       <HashLink to='#target-section' scrollToBlock='center'>
@@ -249,16 +253,16 @@ describe('utility component coverage slice', () => {
       </HashLink>,
     );
     fireEvent.click(screen.getByRole('link', { name: 'Target' }));
-    act(() => vi.runOnlyPendingTimers());
+    await act(() => vi.runOnlyPendingTimers());
 
-    expect(target.scrollIntoView).toHaveBeenCalledWith({
+    expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: 'center',
     });
     expect(focus).toHaveBeenCalledWith();
   });
 
-  it('expands a collapsed accordion before scrolling to a hash target', () => {
+  it('expands a collapsed accordion before scrolling to a hash target', async () => {
     expect.hasAssertions();
 
     resetUtilityCoverageState();
@@ -278,6 +282,7 @@ describe('utility component coverage slice', () => {
     ) as HTMLElement;
     const button = document.querySelector('button') as HTMLButtonElement;
     const buttonClick = vi.spyOn(button, 'click');
+    const scrollIntoView = vi.spyOn(target, 'scrollIntoView');
 
     render(<HashLink to='#inside-accordion'>Inside</HashLink>);
     fireEvent.click(screen.getByRole('link', { name: 'Inside' }));
@@ -287,17 +292,17 @@ describe('utility component coverage slice', () => {
       'accordion-collapse collapse show',
     );
     expect(buttonClick).toHaveBeenCalledWith();
-    expect(target.scrollIntoView).not.toHaveBeenCalled();
+    expect(scrollIntoView).not.toHaveBeenCalled();
 
-    act(() => vi.advanceTimersByTime(300));
+    await act(() => vi.advanceTimersByTime(300));
 
-    expect(target.scrollIntoView).toHaveBeenCalledWith({
+    expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: undefined,
     });
   });
 
-  it('scrolls to the top and focuses page title after route changes', () => {
+  it('scrolls to the top and focuses page title after route changes', async () => {
     expect.hasAssertions();
 
     resetUtilityCoverageState();
@@ -308,13 +313,13 @@ describe('utility component coverage slice', () => {
     const focus = vi.spyOn(title, 'focus');
 
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));
-    act(() => vi.advanceTimersByTime(600));
+    await act(() => vi.advanceTimersByTime(600));
 
     expect(globalThis.scrollTo).toHaveBeenCalledWith(0, 0);
     expect(focus).toHaveBeenCalledWith();
   });
 
-  it('focuses page top when the route has no page title', () => {
+  it('focuses page top when the route has no page title', async () => {
     expect.hasAssertions();
 
     resetUtilityCoverageState();
@@ -325,7 +330,7 @@ describe('utility component coverage slice', () => {
     const focus = vi.spyOn(pageTop, 'focus');
 
     fireEvent.click(screen.getByRole('link', { name: 'Second page' }));
-    act(() => vi.advanceTimersByTime(100));
+    await act(() => vi.advanceTimersByTime(100));
 
     expect(focus).toHaveBeenCalledWith();
   });
@@ -500,7 +505,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewPdfQuote
         text='View quote'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -532,7 +537,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewPdfQuote
         text='View quote'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={vi.fn<BooleanSetter>()}
       />,
@@ -560,7 +565,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewPdfQuote
         text='View quote'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -596,7 +601,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewMeasurementReport
         text='View report'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -637,7 +642,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewMeasurementReport
         text='View report'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -663,7 +668,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewMeasurementReport
         text='View report'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={vi.fn<BooleanSetter>()}
       />,
@@ -687,7 +692,7 @@ describe('utility component coverage slice', () => {
     const { rerender } = render(
       <ViewMeasurementReport
         text='View report'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -730,7 +735,7 @@ describe('utility component coverage slice', () => {
     render(
       <ViewMeasurementReport
         text='View report'
-        quotationData={{ quoteRequestStatus: 'QuoteAccepted' } as any}
+        quotationData={{ quoteRequestStatus: 'QuoteAccepted' }}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -750,12 +755,12 @@ describe('utility component coverage slice', () => {
 
     resetUtilityCoverageState();
 
-    vi.mocked(getQuotationFileDetails).mockResolvedValue({} as any);
+    vi.mocked(getQuotationFileDetails).mockResolvedValue({});
 
     render(
       <ViewPdfQuote
         text='View quote'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={vi.fn<BooleanSetter>()}
         setIsLoading={vi.fn<BooleanSetter>()}
       />,
@@ -784,7 +789,7 @@ describe('utility component coverage slice', () => {
       fileData: 'terms-data',
       mimeType: 'application/pdf',
       filename: 'quote.pdf',
-    } as any);
+    });
     vi.mocked(getQuoteOfferPageNumber).mockReturnValueOnce('3');
     const setIsLoading = vi.fn<BooleanSetter>();
 
@@ -792,9 +797,10 @@ describe('utility component coverage slice', () => {
       <ViewPdfQuoteTerms
         prefixText='Read the '
         suffixText=' before continuing.'
-        quotationData={
-          { ...quotationData, quoteRequestStatus: 'QuoteDeclined' } as any
-        }
+        quotationData={{
+          ...quotationData,
+          quoteRequestStatus: 'QuoteDeclined',
+        }}
         setFileError={vi.fn<BooleanSetter>()}
         setIsLoading={setIsLoading}
       />,
@@ -826,7 +832,7 @@ describe('utility component coverage slice', () => {
       <ViewPdfQuoteTerms
         prefixText='Read the '
         suffixText=' before continuing.'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={setFileError}
         setIsLoading={setIsLoading}
       />,
@@ -844,13 +850,13 @@ describe('utility component coverage slice', () => {
 
     resetUtilityCoverageState();
 
-    vi.mocked(getQuotationFileDetails).mockResolvedValueOnce({} as any);
+    vi.mocked(getQuotationFileDetails).mockResolvedValueOnce({});
 
     render(
       <ViewPdfQuoteTerms
         prefixText='Read the '
         suffixText=' before continuing.'
-        quotationData={quotationData as any}
+        quotationData={quotationData}
         setFileError={vi.fn<BooleanSetter>()}
         setIsLoading={vi.fn<BooleanSetter>()}
       />,

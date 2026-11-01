@@ -23,6 +23,9 @@ type InteractionStatusValue =
   (typeof MsalBrowserModule)['InteractionStatus'][keyof (typeof MsalBrowserModule)['InteractionStatus']];
 
 const providerMocks = vi.hoisted(() => {
+  const statusState: { inProgress: InteractionStatusValue } = {
+    inProgress: 'none',
+  };
   const accounts: AccountInfo[] = [
     {
       homeAccountId: 'test-id',
@@ -47,7 +50,7 @@ const providerMocks = vi.hoisted(() => {
       vi.fn<typeof TargetOrganisationModule.getTargetOrganisation>(),
     handleRedirectPromise:
       vi.fn<IPublicClientApplication['handleRedirectPromise']>(),
-    inProgress: 'none' as InteractionStatusValue,
+    inProgress: statusState.inProgress,
     logoutRedirect: vi.fn<IPublicClientApplication['logoutRedirect']>(),
     setStoredTargetOrganisation:
       vi.fn<typeof TargetOrganisationModule.default>(),
@@ -237,8 +240,8 @@ const AccountConsumer = () => {
         set nullish org branch
       </button>
       <button
-        onClick={() =>
-          accountDispatch?.setUserProfile({
+        onClick={() => {
+          void accountDispatch?.setUserProfile({
             testingCalibrationDashboard: {
               filterActiveTab: '2',
               filterCurrentPage: 3,
@@ -248,14 +251,16 @@ const AccountConsumer = () => {
               filterYearType: '2026',
               filtersChanged: true,
             },
-          })
-        }
+          });
+        }}
         type='button'
       >
         set profile
       </button>
       <button
-        onClick={() => accountDispatch?.setUserProfile(undefined)}
+        onClick={() => {
+          void accountDispatch?.setUserProfile(undefined);
+        }}
         type='button'
       >
         set undefined profile
@@ -446,7 +451,7 @@ describe('accountProvider dispatch callbacks', () => {
     expect(screen.getByTestId('details')).toHaveTextContent('userProfile');
   });
 
-  it('clears account details while MSAL logout is in progress', async () => {
+  it('clears account details while MSAL logout is in progress', () => {
     expect.hasAssertions();
 
     resetProviderMocks();
@@ -476,14 +481,18 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
+    const activeAccountMatcher = expect.objectContaining({
+      homeAccountId: 'active-id',
+    }) as unknown as AccountInfo;
+
     await waitFor(() =>
       expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
-        account: expect.objectContaining({ homeAccountId: 'active-id' }),
+        account: activeAccountMatcher,
       }),
     );
 
     expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
-      account: expect.objectContaining({ homeAccountId: 'active-id' }),
+      account: activeAccountMatcher,
     });
   });
 
@@ -502,9 +511,13 @@ describe('accountProvider dispatch callbacks', () => {
       </AccountProvider>,
     );
 
+    const activeAccountMatcher = expect.objectContaining({
+      homeAccountId: 'active-id',
+    }) as unknown as AccountInfo;
+
     await waitFor(() =>
       expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
-        account: expect.objectContaining({ homeAccountId: 'active-id' }),
+        account: activeAccountMatcher,
       }),
     );
 

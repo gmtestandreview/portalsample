@@ -58,7 +58,7 @@ declare module 'slate' {
 }
 
 const isMarkActive = (editor: Editor, format: keyof CustomText) => {
-  const marks = Editor.marks(editor) as Partial<CustomText> | null;
+  const marks = Editor.marks(editor);
   return marks ? Reflect.get(marks, format) === true : false;
 };
 
@@ -249,13 +249,13 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
             spellCheck
             renderLeaf={({ attributes, children, leaf }) => {
               let rendered = children;
-              if ((leaf as CustomText).bold) {
+              if (leaf.bold) {
                 rendered = <strong>{rendered}</strong>;
               }
-              if ((leaf as CustomText).italic) {
+              if (leaf.italic) {
                 rendered = <em>{rendered}</em>;
               }
-              if ((leaf as CustomText).underline) {
+              if (leaf.underline) {
                 rendered = <u>{rendered}</u>;
               }
               return <span {...attributes}>{rendered}</span>;

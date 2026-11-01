@@ -1,4 +1,10 @@
-# Implementation Plan: ESLint Warning Remediation
+# Superseded Plan: ESLint Warning Remediation
+
+> Superseded on 2026-11-01 by
+> [`docs/plans/2026-11-01-eslint-typed-lint-remediation.md`](2026-11-01-eslint-typed-lint-remediation.md).
+> The current task intentionally preserves
+> `tseslint.configs.recommendedTypeChecked`; use the new plan for the
+> authoritative diagnostics inventory and execution path.
 
 ## Overview
 

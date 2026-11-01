@@ -278,7 +278,7 @@ const renderStep = async ({
     <FormikWrapper
       initialValues={values}
       innerRef={(bag) => {
-        formik = bag as FormikProps<Record<string, unknown>>;
+        formik = bag;
       }}
     >
       <ApplicationAndInstrument name={name} isSummary={isSummary} />

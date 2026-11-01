@@ -2,7 +2,13 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  InvoiceSentToValues,
+  ReturnContactTypeValues,
+  Title,
+  YesNo,
+} from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   SummaryAndAcceptStep,
@@ -83,7 +89,7 @@ const saveStep =
   };
 
 const getRedirectionLocationOnError =
-  (id: string) => (errorCode: number, errorType: ErrorType) => {
+  (id: string) => (errorCode: HttpStatusCode, errorType: ErrorType) => {
     if (
       errorCode === HttpStatusCode.PreconditionFailed &&
       errorType === ErrorType.Load
@@ -107,7 +113,8 @@ const getRedirectionLocationOnError =
   };
 
 export const summaryAndAcceptOwnHidingFields = {
-  associatedDispute: (x: SummaryAndAcceptStep) => x.associatedDisputes === 'No',
+  associatedDispute: (x: SummaryAndAcceptStep) =>
+    x.associatedDisputes === YesNo.No,
 };
 
 const summaryAndAcceptProps = (
@@ -127,40 +134,42 @@ const summaryAndAcceptProps = (
     ...summaryAndAcceptOwnHidingFields,
     reportRecipient: {
       rfqHide: (x: SummaryAndAcceptStep) =>
-        x.reportRecipient?.organisationDifferent !== 'No',
+        x.reportRecipient?.organisationDifferent !== YesNo.No,
       organisationNameHide: (x: SummaryAndAcceptStep) =>
-        x.reportRecipient?.organisationDifferent === 'No',
+        x.reportRecipient?.organisationDifferent === YesNo.No,
       contact: {
         titleOther: (x: SummaryAndAcceptStep) =>
-          x.reportRecipient?.contact?.title !== 'Other',
+          x.reportRecipient?.contact?.title !== Title.Other,
       },
       recipientMailingAddress: (x: SummaryAndAcceptStep) =>
         x.reportRecipient?.isRecipientMailingAddressSame === true,
     },
     deliveryAndReturn: {
       rfqHide: (x: SummaryAndAcceptStep) =>
-        x.deliveryAndReturn?.returnContactType !== 'SamePerson',
+        x.deliveryAndReturn?.returnContactType !==
+        ReturnContactTypeValues.SamePerson,
       contactHide: (x: SummaryAndAcceptStep) =>
-        x.deliveryAndReturn?.returnContactType === 'SamePerson',
+        x.deliveryAndReturn?.returnContactType ===
+        ReturnContactTypeValues.SamePerson,
       contact: {
         titleOther: (x: SummaryAndAcceptStep) =>
-          x.deliveryAndReturn?.contact?.title !== 'Other',
+          x.deliveryAndReturn?.contact?.title !== Title.Other,
       },
     },
     paymentDetails: {
       rfqHide: (x: SummaryAndAcceptStep) =>
-        x.paymentDetails?.invoiceSentTo !== 'SamePerson',
+        x.paymentDetails?.invoiceSentTo !== InvoiceSentToValues.SamePerson,
       contactHide: (x: SummaryAndAcceptStep) =>
-        x.paymentDetails?.invoiceSentTo === 'SamePerson',
+        x.paymentDetails?.invoiceSentTo === InvoiceSentToValues.SamePerson,
       contact: {
         titleOther: (x: SummaryAndAcceptStep) =>
-          x.paymentDetails?.contact?.title !== 'Other',
+          x.paymentDetails?.contact?.title !== Title.Other,
       },
     },
     requestForQuote: {
       contact: {
         titleOther: (x: SummaryAndAcceptStep) =>
-          x.requestForQuote?.contact?.title !== 'Other',
+          x.requestForQuote?.contact?.title !== Title.Other,
       },
     },
   },

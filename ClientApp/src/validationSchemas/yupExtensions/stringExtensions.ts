@@ -142,6 +142,31 @@ const BUSINESS_PHONE_REGEXES = [
 const matchesAnyPhonePattern = (value: string, patterns: readonly RegExp[]) =>
   patterns.some((pattern) => pattern.test(value));
 
+const isNullableSchemaContext = (
+  context: Yup.TestContext | object | undefined,
+): boolean => {
+  if (
+    context === null ||
+    typeof context !== 'object' ||
+    !('schema' in context)
+  ) {
+    return false;
+  }
+
+  const schema = (context as Record<string, unknown>)['schema'];
+  if (schema === null || typeof schema !== 'object' || !('spec' in schema)) {
+    return false;
+  }
+
+  const spec = (schema as Record<string, unknown>)['spec'];
+  return (
+    spec !== null &&
+    typeof spec === 'object' &&
+    'nullable' in spec &&
+    (spec as Record<string, unknown>)['nullable'] === true
+  );
+};
+
 export const registerYupStringExtensions = () => {
   if (yupStringExtensionsRegistered) {
     return;
@@ -168,10 +193,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_FIXEDDIGITS_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -207,10 +231,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_NUMBERSONLY_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -250,10 +273,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_MINVALUE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -298,10 +320,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_MAXVALUE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -342,10 +363,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_DECIMALNUMBERSONLY_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -381,10 +401,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_AUSTPOSTCODE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -428,10 +447,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_ADDRESSFORMAT_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -475,10 +493,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_PHONE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -589,10 +606,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_EMAIL_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -627,10 +643,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_NOCONSECUTIVEPUNCUATION_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -664,10 +679,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_ATLEASTONECHAR_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -703,8 +717,7 @@ export const registerYupStringExtensions = () => {
         errMsg,
         (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               !isNullable &&
               (value === null || value === undefined || value.trim() === '')
@@ -746,10 +759,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_NOCONSECUTIVECHARS_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -792,10 +804,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_ALLOWEDFORMAT_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -838,10 +849,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_NAMEALLOWEDFORMAT_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -879,10 +889,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_BUSINESSNAME_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -924,10 +933,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_MINENTERED_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -965,10 +973,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_NUMBERWITHINRANGE_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||
@@ -1007,10 +1014,9 @@ export const registerYupStringExtensions = () => {
       return this.test(
         YUP_MAXLENGTH_METHOD,
         errMsg,
-        (value: any, context?: Yup.TestContext | object) => {
+        (value: string | undefined, context?: Yup.TestContext | object) => {
           try {
-            const isNullable =
-              context && (context as Yup.TestContext).schema.spec.nullable;
+            const isNullable = isNullableSchemaContext(context);
             if (
               (isNullable && value === null) ||
               value === undefined ||

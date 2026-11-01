@@ -99,7 +99,7 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
   const { reset, handleSubmit } = methods;
 
   useEffect(() => {
-    reset(initialValues as DefaultValues<T>);
+    reset(initialValues);
   }, [initialValues, reset]);
 
   const submit = useCallback(
@@ -109,9 +109,9 @@ const RhfForm = <T extends FormValues>(props: Readonly<RhfFormProps<T>>) => {
         await handleSubmit(async (values) => {
           const payload = normalizeSubmitValues(values, hiddenRef.current);
           if (mode === 'saveAndExit' && onSaveAndExit) {
-            await onSaveAndExit(payload as T);
+            await onSaveAndExit(payload);
           } else {
-            await onSubmit(payload as T);
+            await onSubmit(payload);
           }
         })();
       } catch (error) {

@@ -14,6 +14,7 @@ import type { AccountDetails } from '../../../../ClientApp/src/authentication/ac
 import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
 import {
   InvoiceSentToValues,
+  type DeliveryAndReturnStep,
   ReportAddressTypeValues,
   ReturnAddressTypeValues,
   ReturnContactTypeValues,
@@ -41,6 +42,51 @@ const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
   sessionSetItem: vi.fn<(...args: unknown[]) => unknown>(),
 }));
+
+type HideRule<T> = (values: Partial<T>) => boolean;
+
+type DeliveryAndReturnHidingFields = {
+  contactHide: HideRule<DeliveryAndReturnStep>;
+  contact: { titleOther: HideRule<DeliveryAndReturnStep> };
+  returnAddress: HideRule<DeliveryAndReturnStep>;
+  carrierHide: HideRule<DeliveryAndReturnStep>;
+};
+
+type PaymentDetailsHidingFields = {
+  contactHide: HideRule<PaymentDetailsStep>;
+  contact: { titleOther: HideRule<PaymentDetailsStep> };
+};
+
+type ReportRecipientHidingFields = {
+  contact: { titleOther: HideRule<ReportRecipientStep> };
+  businessStreetAddress: HideRule<ReportRecipientStep>;
+};
+
+type SummaryAndAcceptHidingFields = {
+  associatedDispute: HideRule<SummaryAndAcceptStep>;
+  reportRecipient: {
+    rfqHide: HideRule<SummaryAndAcceptStep>;
+    organisationNameHide: HideRule<SummaryAndAcceptStep>;
+    contact: { titleOther: HideRule<SummaryAndAcceptStep> };
+    recipientMailingAddress: HideRule<SummaryAndAcceptStep>;
+  };
+  deliveryAndReturn: {
+    rfqHide: HideRule<SummaryAndAcceptStep>;
+    contactHide: HideRule<SummaryAndAcceptStep>;
+    contact: { titleOther: HideRule<SummaryAndAcceptStep> };
+  };
+  paymentDetails: {
+    rfqHide: HideRule<SummaryAndAcceptStep>;
+    contactHide: HideRule<SummaryAndAcceptStep>;
+    contact: { titleOther: HideRule<SummaryAndAcceptStep> };
+  };
+  requestForQuote: {
+    contact: { titleOther: HideRule<SummaryAndAcceptStep> };
+  };
+};
+
+const expectStringContaining = (value: string): unknown =>
+  expect.stringContaining(value);
 
 // eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock(
@@ -143,6 +189,8 @@ describe('accept quote wizard prop factories', () => {
       statuses,
       'Accept quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as DeliveryAndReturnHidingFields;
     const abortSignal = new AbortController().signal;
 
     const loaded = await props.loadStepValues?.(abortSignal);
@@ -151,19 +199,19 @@ describe('accept quote wizard prop factories', () => {
       loaded,
       loadCalls: mocks.getDeliveryAndReturn.mock.calls,
       hidden: [
-        props.hidingFields?.contactHide?.({
+        hidingFields.contactHide({
           returnContactType: ReturnContactTypeValues.SamePerson,
         }),
-        props.hidingFields?.contactHide?.({
+        hidingFields.contactHide({
           returnContactType: ReturnContactTypeValues.DifferentPerson,
         }),
-        props.hidingFields?.contact?.titleOther?.({
+        hidingFields.contact.titleOther({
           contact: { title: Title.Other },
         }),
-        props.hidingFields?.returnAddress?.({
+        hidingFields.returnAddress({
           returnAddressType: ReturnAddressTypeValues.Other,
         }),
-        props.hidingFields?.carrierHide?.({
+        hidingFields.carrierHide({
           returnMethod: ReturnMethodValues.ClientWillProvide,
         }),
       ],
@@ -214,7 +262,7 @@ describe('accept quote wizard prop factories', () => {
       notificationCalls: [
         [
           expect.objectContaining({
-            message: expect.stringContaining(
+            message: expectStringContaining(
               'Another person has deleted this request',
             ),
           }),
@@ -236,6 +284,8 @@ describe('accept quote wizard prop factories', () => {
       statuses,
       'Accept quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as PaymentDetailsHidingFields;
     const abortSignal = new AbortController().signal;
 
     const loaded = await props.loadStepValues?.(abortSignal);
@@ -243,13 +293,13 @@ describe('accept quote wizard prop factories', () => {
     expect({
       loaded,
       hidden: [
-        props.hidingFields?.contactHide?.({
+        hidingFields.contactHide({
           invoiceSentTo: InvoiceSentToValues.SamePerson,
         }),
-        props.hidingFields?.contactHide?.({
+        hidingFields.contactHide({
           invoiceSentTo: InvoiceSentToValues.DifferentPerson,
         }),
-        props.hidingFields?.contact?.titleOther?.({
+        hidingFields.contact.titleOther({
           contact: { title: Title.Dr },
         }),
       ],
@@ -345,6 +395,8 @@ describe('accept quote wizard prop factories', () => {
       statuses,
       'Accept quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as ReportRecipientHidingFields;
     const abortSignal = new AbortController().signal;
 
     const loaded = await props.loadStepValues?.(abortSignal);
@@ -352,13 +404,13 @@ describe('accept quote wizard prop factories', () => {
     expect({
       loaded,
       hidden: [
-        props.hidingFields?.contact?.titleOther?.({
+        hidingFields.contact.titleOther({
           contact: { title: Title.Other },
         }),
-        props.hidingFields?.businessStreetAddress?.({
+        hidingFields.businessStreetAddress({
           reportAddressType: ReportAddressTypeValues.Other,
         }),
-        props.hidingFields?.businessStreetAddress?.({
+        hidingFields.businessStreetAddress({
           reportAddressType: ReportAddressTypeValues.BusinessAddress,
         }),
       ],
@@ -441,6 +493,8 @@ describe('accept quote wizard prop factories', () => {
       statuses,
       'Accept quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as SummaryAndAcceptHidingFields;
     const abortSignal = new AbortController().signal;
     const summary = {
       associatedDisputes: YesNo.No,
@@ -468,18 +522,18 @@ describe('accept quote wizard prop factories', () => {
     expect({
       loaded,
       hidden: [
-        props.hidingFields?.associatedDispute?.(summary),
-        props.hidingFields?.reportRecipient?.rfqHide?.(summary),
-        props.hidingFields?.reportRecipient?.organisationNameHide?.(summary),
-        props.hidingFields?.reportRecipient?.contact?.titleOther?.(summary),
-        props.hidingFields?.reportRecipient?.recipientMailingAddress?.(summary),
-        props.hidingFields?.deliveryAndReturn?.rfqHide?.(summary),
-        props.hidingFields?.deliveryAndReturn?.contactHide?.(summary),
-        props.hidingFields?.deliveryAndReturn?.contact?.titleOther?.(summary),
-        props.hidingFields?.paymentDetails?.rfqHide?.(summary),
-        props.hidingFields?.paymentDetails?.contactHide?.(summary),
-        props.hidingFields?.paymentDetails?.contact?.titleOther?.(summary),
-        props.hidingFields?.requestForQuote?.contact?.titleOther?.(summary),
+        hidingFields.associatedDispute(summary),
+        hidingFields.reportRecipient.rfqHide(summary),
+        hidingFields.reportRecipient.organisationNameHide(summary),
+        hidingFields.reportRecipient.contact.titleOther(summary),
+        hidingFields.reportRecipient.recipientMailingAddress(summary),
+        hidingFields.deliveryAndReturn.rfqHide(summary),
+        hidingFields.deliveryAndReturn.contactHide(summary),
+        hidingFields.deliveryAndReturn.contact.titleOther(summary),
+        hidingFields.paymentDetails.rfqHide(summary),
+        hidingFields.paymentDetails.contactHide(summary),
+        hidingFields.paymentDetails.contact.titleOther(summary),
+        hidingFields.requestForQuote.contact.titleOther(summary),
       ],
     }).toStrictEqual({
       loaded: { stepValues: { associatedDisputes: 'No' } },
@@ -538,7 +592,7 @@ describe('accept quote wizard prop factories', () => {
       notificationCalls: [
         [
           expect.objectContaining({
-            message: expect.stringContaining('already been deleted'),
+            message: expectStringContaining('already been deleted'),
           }),
         ],
       ],

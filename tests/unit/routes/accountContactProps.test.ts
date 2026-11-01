@@ -36,6 +36,21 @@ const mocks = vi.hoisted(() => ({
   setBranchModalNotification: vi.fn<(...args: unknown[]) => unknown>(),
 }));
 
+type HideRule<T> = (values: Partial<T>) => boolean;
+
+type AccountHidingFields = {
+  isDefaultOrganisation: HideRule<GetAccountValuesDto>;
+  postalAddress: HideRule<GetAccountValuesDto>;
+  contact: { titleOther: HideRule<GetAccountValuesDto> };
+};
+
+type ContactHidingFields = {
+  contact: { titleOther: HideRule<ContactFormStep> };
+};
+
+const expectStringContaining = (value: string): unknown =>
+  expect.stringContaining(value);
+
 // eslint-disable-next-line vitest/prefer-import-in-mock
 vi.mock('../../../ClientApp/src/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal();
@@ -139,6 +154,7 @@ describe('account and contact wizard prop factories', () => {
       statuses,
       accountContext,
     );
+    const hidingFields = props.hidingFields as unknown as AccountHidingFields;
     const abortSignal = new AbortController().signal;
     const values = {
       name: 'National Measurement Institute',
@@ -154,13 +170,9 @@ describe('account and contact wizard prop factories', () => {
     expect({
       loaded,
       hidden: [
-        props.hidingFields?.isDefaultOrganisation?.(
-          values as GetAccountValuesDto,
-        ),
-        props.hidingFields?.postalAddress?.(values as GetAccountValuesDto),
-        props.hidingFields?.contact?.titleOther?.(
-          values as GetAccountValuesDto,
-        ),
+        hidingFields.isDefaultOrganisation(values as GetAccountValuesDto),
+        hidingFields.postalAddress(values as GetAccountValuesDto),
+        hidingFields.contact.titleOther(values as GetAccountValuesDto),
       ],
       redirects: [
         props.getRedirectionLocationOnError?.(
@@ -206,6 +218,7 @@ describe('account and contact wizard prop factories', () => {
       accountContext,
       42,
     );
+    const hidingFields = props.hidingFields as unknown as AccountHidingFields;
     const abortSignal = new AbortController().signal;
     const values: AccountDto = {
       id: 1,
@@ -221,13 +234,13 @@ describe('account and contact wizard prop factories', () => {
       loaded,
       getCalls: mocks.getAccountDetailsByOrgId.mock.calls,
       hidden: [
-        props.hidingFields?.isDefaultOrganisation?.({
+        hidingFields.isDefaultOrganisation({
           isDefaultOrganisation: true,
         }),
-        props.hidingFields?.postalAddress?.({
+        hidingFields.postalAddress({
           postalAddressSameAsStreetAddress: true,
         }),
-        props.hidingFields?.contact?.titleOther?.(values),
+        hidingFields.contact.titleOther(values),
       ],
       redirects: [
         props.getRedirectionLocationOnError?.(
@@ -282,7 +295,7 @@ describe('account and contact wizard prop factories', () => {
       ],
       [
         expect.objectContaining({
-          message: expect.stringContaining('already exists'),
+          message: expectStringContaining('already exists'),
         }),
       ],
       [
@@ -306,6 +319,7 @@ describe('account and contact wizard prop factories', () => {
       accountContext,
       onShowBranchSelector,
     );
+    const hidingFields = props.hidingFields as unknown as AccountHidingFields;
     const abortSignal = new AbortController().signal;
     const values = {
       name: 'Default org',
@@ -321,13 +335,9 @@ describe('account and contact wizard prop factories', () => {
     expect({
       loaded,
       hidden: [
-        props.hidingFields?.isDefaultOrganisation?.(
-          values as GetAccountValuesDto,
-        ),
-        props.hidingFields?.postalAddress?.(values as GetAccountValuesDto),
-        props.hidingFields?.contact?.titleOther?.(
-          values as GetAccountValuesDto,
-        ),
+        hidingFields.isDefaultOrganisation(values as GetAccountValuesDto),
+        hidingFields.postalAddress(values as GetAccountValuesDto),
+        hidingFields.contact.titleOther(values as GetAccountValuesDto),
       ],
       redirects: [
         props.getRedirectionLocationOnError?.(
@@ -395,7 +405,7 @@ describe('account and contact wizard prop factories', () => {
       ],
       [
         expect.objectContaining({
-          message: expect.stringContaining('already exists'),
+          message: expectStringContaining('already exists'),
         }),
       ],
       [
@@ -425,6 +435,10 @@ describe('account and contact wizard prop factories', () => {
       accountContext,
       2,
     );
+    const createHidingFields =
+      createProps.hidingFields as unknown as ContactHidingFields;
+    const updateHidingFields =
+      updateProps.hidingFields as unknown as ContactHidingFields;
     const abortSignal = new AbortController().signal;
     const values = { contact: { title: 'Dr' } } as ContactFormStep;
 
@@ -435,9 +449,9 @@ describe('account and contact wizard prop factories', () => {
       loaded: [createLoaded, updateLoaded],
       contactCalls: mocks.getUserContact.mock.calls,
       hidden: [
-        createProps.hidingFields?.contact?.titleOther?.(values),
-        updateProps.hidingFields?.contact?.titleOther?.({
-          contact: { title: 'Other' },
+        createHidingFields.contact.titleOther(values),
+        updateHidingFields.contact.titleOther({
+          contact: { title: Title.Other },
         }),
       ],
       redirects: [
@@ -646,7 +660,7 @@ describe('account and contact wizard prop factories', () => {
       vi.fn<(...args: unknown[]) => unknown>(),
     );
 
-    const createResult = await createProps.onSaveAndNext?.(
+    const createResult: unknown = await createProps.onSaveAndNext?.(
       {
         name: 'Organisation',
         businessOrTradingName: undefined,
@@ -654,7 +668,7 @@ describe('account and contact wizard prop factories', () => {
       },
       true,
     );
-    const updateResult = await updateProps.onSaveAndNext?.(
+    const updateResult: unknown = await updateProps.onSaveAndNext?.(
       {
         id: 99,
         name: undefined,
@@ -664,7 +678,7 @@ describe('account and contact wizard prop factories', () => {
 
     expect([createResult, updateResult]).toStrictEqual([undefined, undefined]);
 
-    const nonDefaultBranchResult = await branchProps.onSaveAndNext?.(
+    const nonDefaultBranchResult: unknown = await branchProps.onSaveAndNext?.(
       {
         name: 'Non-default branch',
         isDefaultOrganisation: false,
@@ -685,7 +699,7 @@ describe('account and contact wizard prop factories', () => {
       defaultOrganisationCalls: [],
     });
 
-    const defaultBranchResult = await branchProps.onSaveAndNext?.(
+    const defaultBranchResult: unknown = await branchProps.onSaveAndNext?.(
       {
         name: 'Default branch',
         isDefaultOrganisation: true,

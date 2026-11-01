@@ -113,6 +113,10 @@ class TestIntersectionObserver implements IntersectionObserver {
 
 globalThis.IntersectionObserver ??= TestIntersectionObserver;
 
+const expectAnything = (): unknown => expect.anything();
+const expectStringContaining = (value: string): unknown =>
+  expect.stringContaining(value);
+
 describe('react Aria evaluation wrappers', () => {
   it('renders content, links, separators, and icons through their public wrappers', () => {
     expect.hasAssertions();
@@ -151,8 +155,8 @@ describe('react Aria evaluation wrappers', () => {
       labelledAriaLabel: labelledIcon?.getAttribute('aria-label'),
       labelledHidden: labelledIcon?.getAttribute('aria-hidden'),
     }).toMatchObject({
-      heading: expect.anything(),
-      description: expect.anything(),
+      heading: expectAnything(),
+      description: expectAnything(),
       linkHref: 'https://measurement.gov.au',
       separatorOrientation: 'vertical',
       decorativeHidden: 'true',
@@ -515,9 +519,9 @@ describe('react Aria evaluation wrappers', () => {
       instructionsRows: screen
         .getByRole('textbox', { name: 'Instructions' })
         .getAttribute('rows'),
-      quantityValue: (
-        screen.getByRole('textbox', { name: 'Quantity' }) as HTMLInputElement
-      ).value,
+      quantityValue: screen.getByRole<HTMLInputElement>('textbox', {
+        name: 'Quantity',
+      }).value,
       decreaseVariant: screen
         .getByRole('button', { name: 'Decrease Quantity' })
         .getAttribute('data-variant'),
@@ -538,17 +542,17 @@ describe('react Aria evaluation wrappers', () => {
       decreaseVariant: 'secondary',
       increaseVariant: 'secondary',
       searchPlaceholder: 'Mass',
-      timeText: expect.anything(),
-      group: expect.anything(),
-      switch: expect.anything(),
-      errorMessage: expect.anything(),
+      timeText: expectAnything(),
+      group: expectAnything(),
+      switch: expectAnything(),
+      errorMessage: expectAnything(),
     });
   });
 
-  it('renders toggle and segmented controls with their configured variants', async () => {
+  it('renders toggle and segmented controls with their configured variants', () => {
     expect.hasAssertions();
 
-    await act(async () => {
+    act(() => {
       render(
         <>
           <ToggleButton variant='secondary'>Pin</ToggleButton>
@@ -643,12 +647,12 @@ describe('react Aria evaluation wrappers', () => {
       loadMore: screen.getByTestId('loadMoreSentinel'),
       chevron: document.querySelector('[data-nmi-icon="chevron-up"]'),
     }).toMatchObject({
-      grid: expect.anything(),
-      columnClass: expect.stringContaining('button-base'),
-      rowHeader: expect.anything(),
+      grid: expectAnything(),
+      columnClass: expectStringContaining('button-base'),
+      rowHeader: expectAnything(),
       checkboxCount: 2,
-      loadMore: expect.anything(),
-      chevron: expect.anything(),
+      loadMore: expectAnything(),
+      chevron: expectAnything(),
     });
   });
 

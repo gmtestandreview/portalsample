@@ -31,95 +31,94 @@ const StatusPill = ({ status }: Readonly<StatusPillProps>) => {
   });
   const getPillProps = (itemStatus: string) => {
     switch (itemStatus) {
-      case ReportStatus.Withdrawn:
+      case String(ReportStatus.Withdrawn):
         setPillProps({
           bgColour: 'secondary',
           textColour: 'light',
           text: DashboardItemStatus.ReportWithdrawn,
         });
         break;
-      case DashboardItemStatus.QuoteAccepted:
-      case QuoteStatus.QuoteAccepted:
+      case String(DashboardItemStatus.QuoteAccepted):
+      case String(QuoteStatus.QuoteAccepted):
         setPillProps({
           bgColour: 'success-dark',
           textColour: 'light',
           text: DashboardItemStatus.QuoteAccepted,
         });
         break;
-      case DashboardItemStatus.ReportIssued:
-      case QuoteStatus.ReportIssued:
-      case ReportStatus.Issued:
+      case String(DashboardItemStatus.ReportIssued):
+      case String(QuoteStatus.ReportIssued):
+      case String(ReportStatus.Issued):
         setPillProps({
           bgColour: 'success-dark',
           textColour: 'light',
           text: DashboardItemStatus.ReportIssued,
         });
         break;
-      case DashboardItemStatus.ReportInProgress:
-      case QuoteStatus.ReportInProgress:
+      case String(DashboardItemStatus.ReportInProgress):
+      case String(QuoteStatus.ReportInProgress):
         setPillProps({
           bgColour: 'success-dark',
           textColour: 'light',
           text: DashboardItemStatus.ReportInProgress,
         });
         break;
-      case DashboardItemStatus.ArtifactReceived:
-      case QuoteStatus.ArtifactReceived:
+      case String(DashboardItemStatus.ArtifactReceived):
+      case String(QuoteStatus.ArtifactReceived):
         setPillProps({
           bgColour: 'success-dark',
           textColour: 'light',
           text: DashboardItemStatus.ArtifactReceived,
         });
         break;
-      case DashboardItemStatus.QuoteDrafted:
+      case String(DashboardItemStatus.QuoteDrafted):
         setPillProps({
           bgColour: 'light',
           textColour: 'dark',
           text: DashboardItemStatus.QuoteDrafted,
         });
         break;
-      case DashboardItemStatus.QuoteAvailable:
-      case QuoteStatus.QuoteAvailable:
+      case String(DashboardItemStatus.QuoteAvailable):
+      case String(QuoteStatus.QuoteAvailable):
         setPillProps({
           bgColour: 'info',
           textColour: 'light',
           text: DashboardItemStatus.QuoteAvailable,
         });
         break;
-      case DashboardItemStatus.QuoteDeclined:
-      case QuoteStatus.QuoteDeclined:
+      case String(DashboardItemStatus.QuoteDeclined):
+      case String(QuoteStatus.QuoteDeclined):
         setPillProps({
           bgColour: 'danger',
           textColour: 'light',
           text: DashboardItemStatus.QuoteDeclined,
         });
         break;
-      case DashboardItemStatus.QuoteExpired:
-      case QuoteStatus.QuoteExpired:
+      case String(DashboardItemStatus.QuoteExpired):
+      case String(QuoteStatus.QuoteExpired):
         setPillProps({
           bgColour: 'danger-light',
           textColour: 'dark',
           text: DashboardItemStatus.QuoteExpired,
         });
         break;
-      case DashboardItemStatus.QuoteSubmitted:
-      case QuoteStatus.QuoteSubmitted:
+      case String(DashboardItemStatus.QuoteSubmitted):
+      case String(QuoteStatus.QuoteSubmitted):
         setPillProps({
           bgColour: 'info',
           textColour: 'light',
           text: DashboardItemStatus.QuoteSubmitted,
         });
         break;
-      case DashboardItemStatus.ReportWithdrawn:
-      case QuoteStatus.ReportWithdrawn:
-      case 'Withdrawn':
+      case String(DashboardItemStatus.ReportWithdrawn):
+      case String(QuoteStatus.ReportWithdrawn):
         setPillProps({
           bgColour: 'success-dark',
           textColour: 'light',
           text: DashboardItemStatus.ReportWithdrawn,
         });
         break;
-      case PaDashboardItemStatus.PaDraft:
+      case String(PaDashboardItemStatus.PaDraft):
         setPillProps({
           bgColour: 'light',
           textColour: 'dark',

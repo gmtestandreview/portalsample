@@ -10,7 +10,10 @@ import viewRequestForQuoteSummaryProps from '../../../../ClientApp/src/routes/re
 import { ErrorType } from '../../../../ClientApp/src/components/forms/WizardForm/types';
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
 import {
+  Title,
   YesNo,
+  type InstrumentAndRequestStep,
+  type OrganisationAndContact,
   type RequestForQuoteSummary,
 } from '../../../../ClientApp/src/api/web-api-client';
 import { stepStatuses } from '../testFixtures';
@@ -27,6 +30,30 @@ const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn<(...args: unknown[]) => unknown>(),
   appLoggerError: vi.fn<(...args: unknown[]) => unknown>(),
 }));
+
+type HideRule<T> = (values: Partial<T>) => boolean;
+
+type InstrumentAndRequestHidingFields = {
+  serialNumber: HideRule<InstrumentAndRequestStep>;
+};
+
+type OrganisationAndContactHidingFields = {
+  businessOrTradingName: HideRule<OrganisationAndContact>;
+  branchOrLocationName: HideRule<OrganisationAndContact>;
+  principalContactHide: HideRule<OrganisationAndContact>;
+  contact: { titleOther: HideRule<OrganisationAndContact> };
+};
+
+type RequestForQuoteSummaryHidingFields = {
+  organisationAndContact: {
+    branchOrLocationName: HideRule<RequestForQuoteSummary>;
+    principalContactHide: HideRule<RequestForQuoteSummary>;
+    contact: { titleOther: HideRule<RequestForQuoteSummary> };
+  };
+};
+
+const expectObjectContaining = (value: object): unknown =>
+  expect.objectContaining(value);
 
 vi.mock(import('../../../../ClientApp/src/api/web-api-client'), (async (
   importOriginal: Parameters<__DynamicPartialMockFactory<__TestMockModule4>>[0],
@@ -109,6 +136,8 @@ describe('request for quote wizard prop factories', () => {
       statuses,
       'Request quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as InstrumentAndRequestHidingFields;
     const abortSignal = new AbortController().signal;
 
     const loaded = await props.loadStepValues?.(abortSignal);
@@ -118,8 +147,8 @@ describe('request for quote wizard prop factories', () => {
       setAuthTokenCalls: mocks.setAuthToken.mock.calls,
       loadCalls: mocks.getInstrumentAndRequest.mock.calls,
       serialNumberHidden: [
-        props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.No }),
-        props.hidingFields?.serialNumber?.({ hasSerialNumber: YesNo.Yes }),
+        hidingFields.serialNumber({ hasSerialNumber: YesNo.No }),
+        hidingFields.serialNumber({ hasSerialNumber: YesNo.Yes }),
       ],
       bannerRefTitle: props.bannerRefTitle,
       bannerSubTitle: props.bannerSubTitle,
@@ -147,7 +176,7 @@ describe('request for quote wizard prop factories', () => {
       'APP-1',
       {
         applicationId: 'APP-1',
-        formStep: expect.objectContaining({
+        formStep: expectObjectContaining({
           preferredInstrumentOrArtefactAvailabilityDate: new Date(
             '2026-06-12T00:00:00.000Z',
           ),
@@ -205,7 +234,7 @@ describe('request for quote wizard prop factories', () => {
       'APP-1',
       {
         applicationId: 'APP-1',
-        formStep: expect.objectContaining({
+        formStep: expectObjectContaining({
           preferredInstrumentOrArtefactAvailabilityDate: 'not a date',
         }),
         isCompletingStep: true,
@@ -227,6 +256,8 @@ describe('request for quote wizard prop factories', () => {
       statuses,
       'Request quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as OrganisationAndContactHidingFields;
     const abortSignal = new AbortController().signal;
 
     const loaded = await props.loadStepValues?.(abortSignal);
@@ -235,18 +266,18 @@ describe('request for quote wizard prop factories', () => {
       loaded,
       loadCalls: mocks.getOrganisationAndContact.mock.calls,
       hidden: [
-        props.hidingFields?.businessOrTradingName?.({}),
-        props.hidingFields?.branchOrLocationName?.({}),
-        props.hidingFields?.principalContactHide?.({
+        hidingFields.businessOrTradingName({}),
+        hidingFields.branchOrLocationName({}),
+        hidingFields.principalContactHide({
           isPrincipalContact: YesNo.Yes,
         }),
-        props.hidingFields?.principalContactHide?.({
+        hidingFields.principalContactHide({
           isPrincipalContact: YesNo.No,
         }),
-        props.hidingFields?.contact?.titleOther?.({
-          contact: { title: 'Other' },
+        hidingFields.contact.titleOther({
+          contact: { title: Title.Other },
         }),
-        props.hidingFields?.contact?.titleOther?.({ contact: { title: 'Dr' } }),
+        hidingFields.contact.titleOther({ contact: { title: Title.Dr } }),
       ],
       redirect: props.getRedirectionLocationOnError?.(500, ErrorType.Load),
     }).toStrictEqual({
@@ -286,6 +317,8 @@ describe('request for quote wizard prop factories', () => {
       statuses,
       'Request quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as RequestForQuoteSummaryHidingFields;
     const abortSignal = new AbortController().signal;
     const summary = {
       organisationAndContact: {
@@ -299,15 +332,9 @@ describe('request for quote wizard prop factories', () => {
       loaded,
       loadCalls: mocks.getSummary.mock.calls,
       hidden: [
-        props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
-          summary,
-        ),
-        props.hidingFields?.organisationAndContact?.principalContactHide?.(
-          summary,
-        ),
-        props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
-          summary,
-        ),
+        hidingFields.organisationAndContact.branchOrLocationName(summary),
+        hidingFields.organisationAndContact.principalContactHide(summary),
+        hidingFields.organisationAndContact.contact.titleOther(summary),
       ],
       redirect: props.getRedirectionLocationOnError?.(404, ErrorType.Load),
     }).toStrictEqual({
@@ -331,15 +358,17 @@ describe('request for quote wizard prop factories', () => {
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
 
-    const submitFailure = await props.onSaveAndNext?.(
+    const submitFailure: unknown = await props.onSaveAndNext?.(
       summary,
       true,
       abortSignal,
     );
 
+    const submitLoggerCall: unknown = mocks.appLoggerError.mock.calls.at(-1);
+
     expect({
       result: submitFailure,
-      loggerCall: mocks.appLoggerError.mock.calls.at(-1),
+      loggerCall: submitLoggerCall,
     }).toStrictEqual({
       result: undefined,
       loggerCall: [
@@ -355,11 +384,13 @@ describe('request for quote wizard prop factories', () => {
       props.loadStepValues?.(abortSignal),
     ).catch((error: unknown) => error);
 
+    const loadLoggerCall: unknown = mocks.appLoggerError.mock.calls.at(-1);
+
     expect({
       error: loadFailure,
-      loggerCall: mocks.appLoggerError.mock.calls.at(-1),
+      loggerCall: loadLoggerCall,
     }).toStrictEqual({
-      error: expect.objectContaining({
+      error: expectObjectContaining({
         message: 'There was an error retrieving your details.',
       }),
       loggerCall: [
@@ -383,6 +414,8 @@ describe('request for quote wizard prop factories', () => {
       statuses,
       'Request quote',
     );
+    const hidingFields =
+      props.hidingFields as unknown as RequestForQuoteSummaryHidingFields;
     const abortSignal = new AbortController().signal;
     const summary = {
       organisationAndContact: {
@@ -397,12 +430,8 @@ describe('request for quote wizard prop factories', () => {
       loaded,
       loadCalls: mocks.getSubmittedSummary.mock.calls,
       hidden: [
-        props.hidingFields?.organisationAndContact?.branchOrLocationName?.(
-          summary,
-        ),
-        props.hidingFields?.organisationAndContact?.contact?.titleOther?.(
-          summary,
-        ),
+        hidingFields.organisationAndContact.branchOrLocationName(summary),
+        hidingFields.organisationAndContact.contact.titleOther(summary),
       ],
       redirect: props.getRedirectionLocationOnError?.(404, ErrorType.Load),
     }).toStrictEqual({

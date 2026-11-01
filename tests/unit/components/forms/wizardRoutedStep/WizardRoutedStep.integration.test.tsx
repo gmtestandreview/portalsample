@@ -118,7 +118,7 @@ function makeStepElement() {
       title='Test Step'
       location='/step-1'
       stepStatuses={[{ status: FormStepStatus.NotStarted }]}
-      loadStepValues={async () => ({ stepValues: {} })}
+      loadStepValues={() => Promise.resolve({ stepValues: {} })}
       bannerTitle='Test'
       initialValues={{}}
     />
@@ -131,7 +131,7 @@ function makeStepElementAt(location: string, title: string) {
       title={title}
       location={location}
       stepStatuses={[{ status: FormStepStatus.NotStarted }]}
-      loadStepValues={async () => ({ stepValues: {} })}
+      loadStepValues={() => Promise.resolve({ stepValues: {} })}
       bannerTitle='Test'
       initialValues={{}}
     />
@@ -153,7 +153,7 @@ function makeRouter(
     url: '',
     initialValues: {},
     stepStatuses: defaultStatuses,
-    loadStepValues: async () => ({ stepValues: {} }),
+    loadStepValues: () => Promise.resolve({ stepValues: {} }),
     allSteps: [makeStepElement()],
     currentStepIndex: 0,
     locationOnCompletion: '/done',
@@ -410,7 +410,7 @@ describe('wizardRoutedStep — error navigation', () => {
                     { status: FormStepStatus.NotStarted },
                     { status: FormStepStatus.NotStarted },
                   ]}
-                  loadStepValues={async () => ({ stepValues: {} })}
+                  loadStepValues={() => Promise.resolve({ stepValues: {} })}
                   allSteps={steps}
                   currentStepIndex={1}
                   locationOnCompletion='/done'
@@ -446,7 +446,7 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     const router = makeRouter({
       stepStatuses,
       onSaveAndNext,
-      loadStepValues: async () => ({ stepValues: {} }),
+      loadStepValues: () => Promise.resolve({ stepValues: {} }),
       locationOnCompletion: '/done',
     });
 
@@ -486,7 +486,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     const router = makeRouter(
       {
         initialValues: { name: 'initial' },
-        loadStepValues: async () => ({ stepValues: { name: 'loaded' } }),
+        loadStepValues: () =>
+          Promise.resolve({ stepValues: { name: 'loaded' } }),
         allSteps: steps,
         stepStatuses: [
           { status: FormStepStatus.NotStarted },
@@ -527,7 +528,8 @@ describe('wizardRoutedStep — prop mutation fix', () => {
     const router = makeRouter(
       {
         initialValues: { name: 'initial' },
-        loadStepValues: async () => ({ stepValues: { name: 'loaded' } }),
+        loadStepValues: () =>
+          Promise.resolve({ stepValues: { name: 'loaded' } }),
         onSaveAndExit,
         canSaveDraft: true,
         locationAfterExit: '/after-exit',

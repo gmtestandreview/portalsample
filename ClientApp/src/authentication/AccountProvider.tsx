@@ -19,6 +19,12 @@ interface AccountProviderProps {
   children: ReactNode;
 }
 
+type AccountTokenClaims = {
+  email?: string;
+  family_name?: string;
+  given_name?: string;
+};
+
 const toAccountDetails = (
   account: AccountInfo,
   user: UserDto,
@@ -34,7 +40,10 @@ const toAccountDetails = (
   const accountContactCompleted = !!(
     user.contact && user.contact?.isCompleted === true
   );
-  const tokenClaims = account.idTokenClaims as any;
+  const tokenClaims = account.idTokenClaims as AccountTokenClaims | undefined;
+  const email = tokenClaims?.email;
+  const familyName = tokenClaims?.family_name;
+  const givenName = tokenClaims?.given_name;
   const businessContext = getTargetOrganisation();
 
   return {
@@ -43,9 +52,9 @@ const toAccountDetails = (
     trading: user.organisation?.businessOrTradingName || '',
     branch: user.organisation?.branchOrLocationName || '',
     abn: user.organisation?.abn || user.employerAbn || '',
-    email: tokenClaims?.email,
-    familyName: tokenClaims?.family_name,
-    givenName: tokenClaims?.given_name,
+    ...(email === undefined ? {} : { email }),
+    ...(familyName === undefined ? {} : { familyName }),
+    ...(givenName === undefined ? {} : { givenName }),
     userAcceptedTermsOfUse: acceptedTermsAndCondition,
     accountCreationCompleted,
     accountContactCompleted,

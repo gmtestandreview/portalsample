@@ -309,14 +309,14 @@ const DashboardTA = () => {
         const tabToSet: string | null | undefined =
           SessionStorageCache().getItem('set-tabop-after-save');
         const p = accountDetails.userProfile.patternApprovalDashboard;
-        const tabFromSession = tabToSet ?? p!.filterActiveTab;
+        const tabFromSession = tabToSet ?? p.filterActiveTab;
         const updatedP = {
           ...p,
           filterActiveTab: tabFromSession,
         };
         setActiveTab(tabFromSession as DashboardTab);
         // changePlaceholderForSearchBox(p!.filterActiveTab! as DashboardTab);
-        setCurrentPage(updatedP!.filterCurrentPage!);
+        setCurrentPage(updatedP.filterCurrentPage!);
         SessionStorageCache().removeItem('set-tabop-after-save');
 
         // Only need to do this on first load`

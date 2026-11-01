@@ -198,12 +198,9 @@ const RhfSupportingDocuments = (
   };
 
   const renderInstrumentInfoPanel = () => {
-    const instrumentCategoryId = formData.form?.instrumentCategory as
-      string | undefined;
-    const instrumentTypeId = formData.form?.instrumentType as
-      string | undefined;
-    const patternApprovalType = formData.form?.patternApprovalType as
-      PatternApprovalRequiredValues | undefined;
+    const instrumentCategoryId = formData.form?.instrumentCategory;
+    const instrumentTypeId = formData.form?.instrumentType;
+    const patternApprovalType = formData.form?.patternApprovalType;
     const isVisibilityApplicationType =
       patternApprovalType === PatternApprovalRequiredValues.NewCertificate;
     return (

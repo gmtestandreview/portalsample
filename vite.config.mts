@@ -181,7 +181,7 @@ function msalRedirectCspPlugin(): Plugin {
           const requestPath = req.url?.split(/[?#]/u, 1)[0];
           if (requestPath === '/redirect.html') {
             const originalSetHeader = res.setHeader.bind(res);
-            res.setHeader = ((name, value) => {
+            res.setHeader = (name, value) => {
               if (
                 typeof name === 'string' &&
                 name.toLowerCase() === 'cache-control'
@@ -190,7 +190,7 @@ function msalRedirectCspPlugin(): Plugin {
               }
 
               return originalSetHeader(name, value);
-            }) as typeof res.setHeader;
+            };
             res.setHeader('Cache-Control', 'no-store');
             res.setHeader('Content-Security-Policy', REDIRECT_BRIDGE_CSP);
             res.removeHeader('Cross-Origin-Opener-Policy');

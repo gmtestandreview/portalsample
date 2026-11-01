@@ -47,10 +47,7 @@ describe('validateProducerIdentity', () => {
         receipt,
         expectedMcpURL: 'http://localhost:6007/mcp',
         expectedFreezeId: 'freeze-1',
-        expectedChildEpoch: receipt.childEpoch as {
-          pid: number;
-          createdAt: string;
-        },
+        expectedChildEpoch: receipt.childEpoch,
       }),
     ).toStrictEqual({ ok: true, errors: [] });
   });
@@ -84,9 +81,7 @@ describe('validateProducerIdentity', () => {
         receipt: overrides.receipt ?? receipt,
         expectedMcpURL: overrides.expectedMcpURL ?? 'http://localhost:6007/mcp',
         expectedFreezeId: overrides.expectedFreezeId ?? 'freeze-1',
-        expectedChildEpoch:
-          overrides.expectedChildEpoch ??
-          (receipt.childEpoch as { pid: number; createdAt: string }),
+        expectedChildEpoch: overrides.expectedChildEpoch ?? receipt.childEpoch,
       }),
     ).toMatchObject({ ok: false, errors: expect.any(Array) });
   });

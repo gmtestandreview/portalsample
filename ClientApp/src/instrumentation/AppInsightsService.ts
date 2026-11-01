@@ -24,10 +24,10 @@ const createTelemetryService = () => {
         disableInstrumentationKeyValidation: true,
         disablePageUnloadEvents: ['unload'],
         enableAutoRouteTracking: true,
-        extensions: [reactPlugin as never],
+        extensions: [reactPlugin],
       },
     });
-    appInsights!.loadAppInsights();
+    appInsights.loadAppInsights();
   };
   // Explicit opt-out sentinel. Storybook and local dev set this to disable
   // telemetry deliberately, which is different from forgetting to configure it.

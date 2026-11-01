@@ -320,9 +320,7 @@ describe('form shell behavior slice', () => {
 
     rerender(
       <MemoryRouter>
-        <ErrorSummary
-          serverErrors={{ status: HttpStatusCode.Forbidden } as any}
-        />
+        <ErrorSummary serverErrors={{ status: HttpStatusCode.Forbidden }} />
       </MemoryRouter>,
     );
 
@@ -330,7 +328,7 @@ describe('form shell behavior slice', () => {
 
     rerender(
       <MemoryRouter>
-        <ErrorSummary serverErrors={{ status: 500 } as any} />
+        <ErrorSummary serverErrors={{ status: 500 }} />
       </MemoryRouter>,
     );
 

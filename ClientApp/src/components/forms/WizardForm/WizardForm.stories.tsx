@@ -58,7 +58,7 @@ export const Step1ContactDetails = meta.story({
         location='/step-1'
         initialValues={{ firstName: '', lastName: '', email: '' }}
         stepStatuses={twoStepStatuses}
-        loadStepValues={async () => ({
+        loadStepValues={() => ({
           stepValues: { firstName: '', lastName: '', email: '' },
         })}
         bannerTitle='Create account'
@@ -73,7 +73,7 @@ export const Step1ContactDetails = meta.story({
         initialValues={{ comments: '' }}
         isSummaryPage
         stepStatuses={twoStepStatuses}
-        loadStepValues={async () => ({ stepValues: { comments: '' } })}
+        loadStepValues={() => ({ stepValues: { comments: '' } })}
         bannerTitle='Create account'
       >
         <p>Review your details and submit your account creation request.</p>
@@ -123,7 +123,7 @@ export const Step2WithPreviousCompleted = meta.story({
           { status: FormStepStatus.Completed },
           { status: FormStepStatus.NotStarted },
         ]}
-        loadStepValues={async () => ({
+        loadStepValues={() => ({
           stepValues: { firstName: 'Test', lastName: 'User' },
         })}
         bannerTitle='Instrument details'
@@ -139,10 +139,10 @@ export const Step2WithPreviousCompleted = meta.story({
           { status: FormStepStatus.Completed },
           { status: FormStepStatus.NotStarted },
         ]}
-        loadStepValues={async () => ({
+        loadStepValues={() => ({
           stepValues: { state: '', notes: '' },
         })}
-        onSaveAndNext={async () => undefined}
+        onSaveAndNext={() => undefined}
         bannerTitle='Instrument details'
       >
         <SelectInput<string>
@@ -192,7 +192,7 @@ export const ThreeStepSummaryPage = meta.story({
         location='/step-1'
         initialValues={{ manufacturer: 'Fluke' }}
         stepStatuses={threeStepStatuses}
-        loadStepValues={async () => ({ stepValues: { manufacturer: 'Fluke' } })}
+        loadStepValues={() => ({ stepValues: { manufacturer: 'Fluke' } })}
         bannerTitle='Request for quote'
       >
         <TextInput name='manufacturer' label='Manufacturer' />
@@ -202,7 +202,7 @@ export const ThreeStepSummaryPage = meta.story({
         location='/step-2'
         initialValues={{ deliveryDate: '' }}
         stepStatuses={threeStepStatuses}
-        loadStepValues={async () => ({ stepValues: { deliveryDate: '' } })}
+        loadStepValues={() => ({ stepValues: { deliveryDate: '' } })}
         bannerTitle='Request for quote'
       >
         <TextInput name='deliveryDate' label='Delivery date' type='date' />
@@ -213,7 +213,7 @@ export const ThreeStepSummaryPage = meta.story({
         initialValues={{}}
         isSummaryPage
         stepStatuses={threeStepStatuses}
-        loadStepValues={async () => ({ stepValues: {} })}
+        loadStepValues={() => ({ stepValues: {} })}
         bannerTitle='Request for quote'
       >
         <Container>

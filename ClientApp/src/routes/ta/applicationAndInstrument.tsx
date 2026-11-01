@@ -11,7 +11,9 @@ import type { TAApplicationAndInstrumentProps } from './types';
 import {
   type LookupResponse,
   PatternApprovalRequiredValues,
+  type PatternApprovalRequiredValueOptions,
 } from '../../api/web-api-client';
+import type { ApplicationAndInstrumentStepDto } from '../../api/web-api-client';
 import {
   applicationTypes,
   newCertificateSubOptions,
@@ -42,7 +44,7 @@ const ApplicationAndInstrument = (
   const { isSummary, name } = props;
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;
-  const context = useFormikContext();
+  const context = useFormikContext<ApplicationAndInstrumentStepDto>();
   const { accounts, instance } = useMsal();
   const [isDataLoading, setIsDataLoading] = useState(false);
   const initialKey = context.getFieldMeta('patternApprovalType')
@@ -60,18 +62,18 @@ const ApplicationAndInstrument = (
 
   // Lookup values are loaded in the parent component and passed through Formik context, so we can access them via context.values
   // without needing to make separate API calls here. We just need to transform them into the format needed for the dropdowns.
-  const [_instrumentTypeField, _instrumentTypeMeta] = useField(
-    getName('instrumentType'),
-  );
-  const [_instrumentCatField, _instrumentCatMeta] = useField(
-    getName('instrumentCategory'),
-  );
-  const [_typeLookupField, _typeLookupMeta] = useField(
-    getName('instrumentTypeLookup'),
-  );
-  const [_categoryLookupField, _categoryLookupMeta] = useField(
-    getName('instrumentCategoryLookup'),
-  );
+  const [_instrumentTypeField, _instrumentTypeMeta] = useField<
+    string | undefined
+  >(getName('instrumentType'));
+  const [_instrumentCatField, _instrumentCatMeta] = useField<
+    string | undefined
+  >(getName('instrumentCategory'));
+  const [_typeLookupField, _typeLookupMeta] = useField<
+    LookupResponse[] | undefined
+  >(getName('instrumentTypeLookup'));
+  const [_categoryLookupField, _categoryLookupMeta] = useField<
+    LookupResponse[] | undefined
+  >(getName('instrumentCategoryLookup'));
 
   const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
     useState(false);
@@ -113,7 +115,7 @@ const ApplicationAndInstrument = (
   }, [initialKey, selectedApplication]);
 
   useEffect(() => {
-    const loadInstrumentCategories = async () => {
+    const loadInstrumentCategories = () => {
       try {
         if (!instrumentCategories) {
           const result = _categoryLookupField.value as LookupResponse[];
@@ -179,36 +181,45 @@ const ApplicationAndInstrument = (
   // function getNameForUse(cname: string | keyof ApplicationAndInstrumentStep): string { return getName2(cname, isSummary); }
 
   // TO DO - move this and Radio + CheckboxGroup into a new component
-  const [_field, _meta] = useField(getName('patternApprovalType'));
+  const [_field, _meta] = useField<PatternApprovalRequiredValues | undefined>(
+    getName('patternApprovalType'),
+  );
   // console.log('Selected application type: ', _field.value);
 
-  const [_newField, _newMeta] = useField(getName('newSubOptions'));
+  const [_newField, _newMeta] = useField<
+    PatternApprovalRequiredValueOptions[] | undefined
+  >(getName('newSubOptions'));
   // console.log('Selected application new options: ', _newField.value);
 
-  const [_varField, _varMeta] = useField(getName('varSubOptions'));
+  const [_varField, _varMeta] = useField<
+    PatternApprovalRequiredValueOptions[] | undefined
+  >(getName('varSubOptions'));
   // console.log('Selected application var options: ', _varField.value);
 
-  const [_othField, _othMeta] = useField(getName('othSubOptions'));
+  const [_othField, _othMeta] = useField<
+    PatternApprovalRequiredValueOptions[] | undefined
+  >(getName('othSubOptions'));
   // console.log('Selected application oth options: ', _othField.value);
 
-  const onInstrumentCategoryChange = async (
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
+  const onInstrumentCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIsInstrumentTypeDisabled(false);
-    context.setFieldValue('instrumentType', '');
-    context.setFieldTouched('instrumentType', false);
+    void context.setFieldValue('instrumentType', '');
+    void context.setFieldTouched('instrumentType', false);
     if (event.target.value !== null && instrumentTypes !== undefined) {
       setInstrumentTypesSelected(
         getInstrumentTypes(instrumentTypes, event.target.value),
       );
       if (event.target.value === noInstrumentCategoriestId.current) {
-        context.setFieldValue('instrumentType', noInstrumentTypeId.current);
+        void context.setFieldValue(
+          'instrumentType',
+          noInstrumentTypeId.current,
+        );
         setIsInstrumentTypeDisabled(true);
       }
     }
   };
-  const instrumentCategoryId = _instrumentCatField.value as string | undefined;
-  const instrumentTypeId = _instrumentTypeField.value as string | undefined;
+  const instrumentCategoryId = _instrumentCatField.value;
+  const instrumentTypeId = _instrumentTypeField.value;
 
   // return !instrumentCategories || !instrumentTypesSelected ? (
   //     <BlockUISpinner>

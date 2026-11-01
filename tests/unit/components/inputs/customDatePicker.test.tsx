@@ -6,6 +6,36 @@ import CustomDatePicker from '@/components/Inputs/DatePicker/CustomDatePicker';
 
 const mockDate = new Date('2026-05-18T00:00:00.000Z');
 
+type MockDatePickerKeyboardEvent = Pick<
+  React.KeyboardEvent,
+  'key' | 'preventDefault'
+>;
+
+type MockDatePickerFocusEvent = Pick<React.FocusEvent, 'type'>;
+
+type MockDatePickerProps = {
+  customInput: React.ReactElement;
+  disabled?: boolean;
+  onBlur?: (event: MockDatePickerFocusEvent) => void;
+  onChange: (date: Date | null) => void;
+  onClickOutside: () => void;
+  onKeyDown?: (event: MockDatePickerKeyboardEvent) => void;
+  open?: boolean;
+  openToDate?: Date | null;
+  popperModifiers: Array<{
+    options: {
+      offset: (args: { placement: string }) => [number, number];
+    };
+  }>;
+  readOnly?: boolean;
+  selected?: Date | null;
+  children?: React.ReactNode;
+};
+
+type MockDatePickerRef = {
+  state: { open: boolean };
+};
+
 const expectDatePickerOffsetsAfterReopen = (nextDate: Date) => {
   expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
   expect(screen.getByTestId('top-offset')).toHaveTextContent('-45');
@@ -73,7 +103,10 @@ vi.mock(
 );
 
 vi.mock(import('react-datepicker'), (() => {
-  const MockDatePicker = React.forwardRef((props: any, ref: any) => {
+  const MockDatePicker = React.forwardRef<
+    MockDatePickerRef,
+    MockDatePickerProps
+  >((props, ref) => {
     React.useImperativeHandle(ref, () => ({
       state: {
         open: false,
@@ -91,7 +124,7 @@ vi.mock(import('react-datepicker'), (() => {
         <button
           type='button'
           onClick={() =>
-            props.onKeyDown({
+            props.onKeyDown?.({
               key: 'Enter',
               preventDefault: vi.fn<() => void>(),
             })
@@ -102,7 +135,7 @@ vi.mock(import('react-datepicker'), (() => {
         <button
           type='button'
           onClick={() =>
-            props.onKeyDown({ key: ' ', preventDefault: vi.fn<() => void>() })
+            props.onKeyDown?.({ key: ' ', preventDefault: vi.fn<() => void>() })
           }
         >
           Input Space trigger
@@ -115,7 +148,7 @@ vi.mock(import('react-datepicker'), (() => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({
+                props.onKeyDown?.({
                   key: 'Escape',
                   preventDefault: vi.fn<() => void>(),
                 })
@@ -123,19 +156,19 @@ vi.mock(import('react-datepicker'), (() => {
             >
               Escape
             </button>
-            <button type='button' onClick={() => props.onClickOutside()}>
+            <button type='button' onClick={() => props.onClickOutside?.()}>
               Click outside
             </button>
             <button
               type='button'
-              onClick={() => props.onBlur({ type: 'blur' })}
+              onClick={() => props.onBlur?.({ type: 'blur' })}
             >
               Blur picker
             </button>
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({
+                props.onKeyDown?.({
                   key: 'Enter',
                   preventDefault: vi.fn<() => void>(),
                 })
@@ -146,7 +179,7 @@ vi.mock(import('react-datepicker'), (() => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({
+                props.onKeyDown?.({
                   key: ' ',
                   preventDefault: vi.fn<() => void>(),
                 })
@@ -157,7 +190,7 @@ vi.mock(import('react-datepicker'), (() => {
             <button
               type='button'
               onClick={() =>
-                props.onKeyDown({
+                props.onKeyDown?.({
                   key: 'Other',
                   preventDefault: vi.fn<() => void>(),
                 })
@@ -173,21 +206,21 @@ vi.mock(import('react-datepicker'), (() => {
             </output>
             <output data-testid='bottom-offset'>
               {String(
-                props.popperModifiers[0].options.offset({
+                props.popperModifiers[0]!.options.offset({
                   placement: 'bottom-start',
                 })[1],
               )}
             </output>
             <output data-testid='top-offset'>
               {String(
-                props.popperModifiers[0].options.offset({
+                props.popperModifiers[0]!.options.offset({
                   placement: 'top-start',
                 })[1],
               )}
             </output>
             <output data-testid='side-offset'>
               {String(
-                props.popperModifiers[0].options.offset({
+                props.popperModifiers[0]!.options.offset({
                   placement: 'right-start',
                 })[1],
               )}

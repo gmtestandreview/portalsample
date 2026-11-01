@@ -26,11 +26,15 @@ import ManualAddressInput from '@/components/Inputs/AddressLookup/ManualAddressI
 import NumberInput from '@/components/Inputs/NumberInput';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
+import { State } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
 import { defined } from '../../helpers/defined';
 
 type MockAccount = { homeAccountId: string } | null;
+type AddressSearch = InstanceType<
+  typeof WebApiClientModule.AddressClient
+>['search'];
 
 function AddressClient() {
   return {
@@ -43,7 +47,7 @@ const mocks: {
   acquireTokenSilent: ReturnType<typeof vi.fn>;
   account: MockAccount;
   accounts: Array<{ homeAccountId: string }>;
-  addressSearch: ReturnType<typeof vi.fn>;
+  addressSearch: ReturnType<typeof vi.fn<AddressSearch>>;
   inProgress: string;
   setAuthToken: ReturnType<typeof vi.fn>;
 } = vi.hoisted(() => ({
@@ -52,7 +56,7 @@ const mocks: {
     .mockResolvedValue({ accessToken: 'unit-token' }),
   account: { homeAccountId: 'account-1' },
   accounts: [{ homeAccountId: 'account-1' }],
-  addressSearch: vi.fn<() => void>(),
+  addressSearch: vi.fn<AddressSearch>(),
   inProgress: 'none',
   setAuthToken: vi.fn<() => void>(),
 }));
@@ -183,7 +187,7 @@ describe('complex input behavior slice', () => {
           addressLine3: '',
           suburb: 'Barton',
           postCode: '2600',
-          state: 'ACT',
+          state: State.ACT,
         },
       ],
     });
@@ -373,7 +377,7 @@ describe('complex input behavior slice', () => {
           addressLine3: 'Building A',
           suburb: undefined,
           postCode: undefined,
-          state: 'NSW',
+          state: State.NSW,
         },
       ],
     });
@@ -609,10 +613,12 @@ describe('complex input behavior slice', () => {
     const user = userEvent.setup();
     let firstSignal: AbortSignal | undefined;
     mocks.addressSearch
-      .mockImplementationOnce((_term: string, signal: AbortSignal) => {
-        firstSignal = signal;
-        return new Promise(() => {});
-      })
+      .mockImplementationOnce(
+        (_term: string | null | undefined, signal?: AbortSignal) => {
+          firstSignal = signal;
+          return new Promise<Awaited<ReturnType<AddressSearch>>>(() => {});
+        },
+      )
       .mockResolvedValueOnce({ matches: [] });
 
     render(
@@ -1316,6 +1322,7 @@ describe('complex input behavior slice', () => {
       },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1325,6 +1332,7 @@ describe('complex input behavior slice', () => {
 
     rerender(renderLookup([{ id: 'cert-2', lookupName: '5/6A/92C' }]));
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1372,6 +1380,7 @@ describe('complex input behavior slice', () => {
       },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1417,10 +1426,12 @@ describe('complex input behavior slice', () => {
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 
@@ -1433,12 +1444,15 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '92C' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowUp' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 
@@ -1479,26 +1493,32 @@ describe('complex input behavior slice', () => {
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
     // Down twice then up steps back through the list rather than wrapping to the end, which is
     // the other half of the ArrowUp handler.
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowUp' });
     });
 
     // A key the handler does not act on leaves the highlight where it was.
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'a' });
     });
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Enter' });
     });
 
@@ -1532,6 +1552,7 @@ describe('complex input behavior slice', () => {
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1539,6 +1560,7 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1574,6 +1596,7 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1618,6 +1641,7 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '5/6A' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1625,6 +1649,7 @@ describe('complex input behavior slice', () => {
 
     // A press inside the control must not dismiss the list the way an outside one does.
     await act(async () => {
+      await Promise.resolve();
       fireEvent.mouseDown(
         container.querySelector('.form-field-container') ?? input,
       );
@@ -1634,6 +1659,7 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1727,6 +1753,7 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '5' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1766,6 +1793,7 @@ describe('complex input behavior slice', () => {
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '91B' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1775,6 +1803,7 @@ describe('complex input behavior slice', () => {
     expect(screen.getByText(/1 suggestions displayed/)).toBeInTheDocument();
 
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'ArrowDown' });
     });
 
@@ -1784,6 +1813,7 @@ describe('complex input behavior slice', () => {
     );
 
     await act(async () => {
+      await Promise.resolve();
       fireEvent.keyDown(input, { key: 'Escape' });
     });
 
@@ -1823,6 +1853,7 @@ describe('complex input behavior slice', () => {
     const input = screen.getByRole('textbox', { name: 'Certificate number' });
     fireEvent.change(input, { target: { value: '92C' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
     fireEvent.click(screen.getByRole('option', { name: /5\/6A\/92C/ }));
@@ -1836,6 +1867,7 @@ describe('complex input behavior slice', () => {
 
     fireEvent.change(input, { target: { value: '' } });
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1864,6 +1896,7 @@ describe('complex input behavior slice', () => {
     );
 
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1878,6 +1911,7 @@ describe('complex input behavior slice', () => {
       },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -1990,6 +2024,7 @@ describe('complex input behavior slice', () => {
       },
     );
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 
@@ -2023,6 +2058,7 @@ describe('complex input behavior slice', () => {
     );
 
     await act(async () => {
+      await Promise.resolve();
       vi.advanceTimersByTime(300);
     });
 

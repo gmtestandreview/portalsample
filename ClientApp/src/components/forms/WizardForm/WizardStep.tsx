@@ -1,5 +1,4 @@
 import type { FormikValues } from 'formik';
-import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import type { WizardStepProps } from './types';
 import ErrorBoundary from '../../ErrorBoundary';
 import { ai } from '../../../instrumentation/AppInsightsService';
@@ -11,7 +10,7 @@ const WizardStep = <T extends FormikValues>(
   const { children } = props;
 
   return (
-    <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+    <ErrorBoundary appInsights={ai.reactPlugin}>
       <GoogleAnalytics anonymiseIp={false} testMode={false} sendPageView>
         {children}
       </GoogleAnalytics>

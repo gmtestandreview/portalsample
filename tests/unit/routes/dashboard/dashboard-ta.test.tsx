@@ -13,9 +13,22 @@ import type { AccountDetails } from '../../../../ClientApp/src/authentication/ac
 import type * as NotificationModule from '../../../../ClientApp/src/storage/notification';
 import {
   ServiceType,
+  type PatternApprovalDashboardDetailsDto,
   type ServicesOffered,
 } from '../../../../ClientApp/src/api/web-api-client';
+import type { CustomPaginationProps } from '../../../../ClientApp/src/components/Pagination/types';
+import type { PaSearchFilterProps } from '../../../../ClientApp/src/components/SearchFilter/types';
+import type { DashboardTab } from '../../../../ClientApp/src/components/SearchFilter/types';
 import { defined } from '../../helpers/defined';
+
+type PaRequestItemMockProps = {
+  request: PatternApprovalDashboardDetailsDto;
+  tab: DashboardTab;
+  setDeleteSuccess: (success: boolean) => void;
+};
+
+const expectObjectContaining = (value: Record<string, unknown>): unknown =>
+  expect.objectContaining(value);
 
 const {
   mockAcquireTokenSilent,
@@ -218,7 +231,11 @@ vi.mock(
   import('../../../../ClientApp/src/components/RequestList/paRequestItem'),
   () =>
     ({
-      default: ({ request, setDeleteSuccess, tab }: any) => (
+      default: ({
+        request,
+        setDeleteSuccess,
+        tab,
+      }: Readonly<PaRequestItemMockProps>) => (
         <div data-testid='request-item' data-tab={tab}>
           {request.referenceId}
           <button type='button' onClick={() => setDeleteSuccess(true)}>
@@ -233,7 +250,11 @@ vi.mock(
   import('../../../../ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter'),
   () =>
     ({
-      default: ({ initialFilters, setCurrentPage, setInitialFilters }: any) => (
+      default: ({
+        initialFilters,
+        setCurrentPage,
+        setInitialFilters,
+      }: Readonly<PaSearchFilterProps>) => (
         <div
           data-testid='pa-search-filter'
           data-tab={initialFilters.filterActiveTab}
@@ -265,7 +286,11 @@ vi.mock(
   import('../../../../ClientApp/src/components/Pagination'),
   () =>
     ({
-      default: ({ currentPage, onPageChange, totalPages }: any) => (
+      default: ({
+        currentPage,
+        onPageChange,
+        totalPages,
+      }: CustomPaginationProps) => (
         <button
           data-testid='pagination'
           data-current={currentPage}
@@ -283,7 +308,15 @@ vi.mock(
   import('../../../../ClientApp/src/components/PaginationHeader'),
   () =>
     ({
-      default: ({ currentPage, pageSize, totalCount }: any) => (
+      default: ({
+        currentPage,
+        pageSize,
+        totalCount,
+      }: {
+        currentPage: number;
+        pageSize: number;
+        totalCount: number;
+      }) => (
         <div
           data-testid='pagination-header'
           data-current={currentPage}
@@ -577,7 +610,7 @@ describe('pattern/type approval dashboard', () => {
     await waitFor(
       () =>
         expect(mockSetUserProfile).toHaveBeenCalledWith({
-          patternApprovalDashboard: expect.objectContaining({
+          patternApprovalDashboard: expectObjectContaining({
             filterActiveTab: 'requests',
             filterCurrentPage: 1,
           }),
@@ -648,7 +681,7 @@ describe('pattern/type approval dashboard', () => {
 
     await waitFor(() =>
       expect(mockSetUserProfile).toHaveBeenCalledWith({
-        patternApprovalDashboard: expect.objectContaining({
+        patternApprovalDashboard: expectObjectContaining({
           filterActiveTab: 'drafts',
           filterCurrentPage: 2,
         }),
@@ -685,7 +718,7 @@ describe('pattern/type approval dashboard', () => {
     await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
 
     expect(mockSetUserProfile).toHaveBeenCalledWith({
-      patternApprovalDashboard: expect.objectContaining({
+      patternApprovalDashboard: expectObjectContaining({
         filterCurrentPage: 1,
       }),
     });
@@ -999,7 +1032,7 @@ describe('pattern/type approval dashboard', () => {
 
     fireEvent.click(screen.getByRole('tab', { name: 'Applications' }));
     view.unmount();
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(301);
     });
 

@@ -5,6 +5,9 @@ import { vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
 import type * as HelperFunctionsModule from '../../../ClientApp/src/routes/common/helperFunctions';
+import type { DashboardClient } from '../../../ClientApp/src/api/web-api-client';
+import { DashboardTab } from '../../../ClientApp/src/components/SearchFilter/types';
+import type { CustomPaginationProps } from '../../../ClientApp/src/components/Pagination/types';
 import { defined } from '../helpers/defined';
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
@@ -32,10 +35,10 @@ const {
   mockModalState,
   mockMsalContext,
 } = vi.hoisted(() => ({
-  mockSetAuthToken: vi.fn<(...args: unknown[]) => unknown>(),
-  mockGetDrafts: vi.fn<(...args: unknown[]) => unknown>(),
-  mockGetQuotes: vi.fn<(...args: unknown[]) => unknown>(),
-  mockGetArtefacts: vi.fn<(...args: unknown[]) => unknown>(),
+  mockSetAuthToken: vi.fn<DashboardClient['setAuthToken']>(),
+  mockGetDrafts: vi.fn<DashboardClient['getDashboardDraftsByPortalID']>(),
+  mockGetQuotes: vi.fn<DashboardClient['getDashboardQuotesByPortalID']>(),
+  mockGetArtefacts: vi.fn<DashboardClient['getDashboardArtefactsByPortalID']>(),
   mockAcquireTokenSilent: vi
     .fn<(...args: unknown[]) => unknown>()
     .mockResolvedValue({ accessToken: 'mock-token' }),
@@ -114,7 +117,7 @@ vi.mock(
     ({
       DashboardClient: vi
         .fn<(...args: unknown[]) => unknown>()
-        .mockImplementation(function (this: any) {
+        .mockImplementation(function (this: DashboardClient) {
           this.setAuthToken = mockSetAuthToken;
           this.getDashboardDraftsByPortalID = mockGetDrafts;
           this.getDashboardQuotesByPortalID = mockGetQuotes;
@@ -242,7 +245,7 @@ vi.mock(
   import('../../../ClientApp/src/components/Utilities/useDebounce'),
   () =>
     ({
-      default: (value: any) => value,
+      default: <T,>(value: T): T => value,
     }) satisfies __ExactMockModule<__TestMockModule104>,
 );
 
@@ -291,7 +294,11 @@ vi.mock(
   import('../../../ClientApp/src/components/Pagination'),
   () =>
     ({
-      default: ({ onPageChange, currentPage, totalPages }: any) => (
+      default: ({
+        onPageChange,
+        currentPage,
+        totalPages,
+      }: Readonly<CustomPaginationProps>) => (
         <button
           data-testid='pagination'
           data-current={currentPage}
@@ -450,13 +457,23 @@ const EMPTY_PAGE_RESPONSE = {
   totalCount: 0,
 };
 
+const expectObjectContaining = (value: Record<string, unknown>): unknown =>
+  expect.objectContaining(value);
+
+type DashboardPage = Awaited<
+  ReturnType<DashboardClient['getDashboardDraftsByPortalID']>
+>;
+
+const asDashboardPage = (value: Record<string, unknown>): DashboardPage =>
+  value;
+
 // userProfile must be set so the Dashboard component populates initialFilters,
 // which gates the stableFilters.filterActiveTab guard in the fetch useEffect.
 const BASE_USER_PROFILE = {
   filterYearType: 'allYears',
   filterStatusType: 'allStatuses',
   filterCurrentPage: 1,
-  filterActiveTab: 'drafts' as any,
+  filterActiveTab: DashboardTab.Drafts,
   filterSearchText: '',
   filterSortOrder: 'descending',
   filtersChanged: false,
@@ -528,14 +545,18 @@ const resetDashboardMocks = () => {
     setOrganisationAndBranch: vi.fn<(...args: unknown[]) => unknown>(),
     setUserProfile: mockSetUserProfile,
   };
-  mockMapToUserProfile.mockImplementation((p: any) => ({
-    filterYearType: p?.filterYearType ?? 'allYears',
-    filterStatusType: p?.filterStatusType ?? 'allStatuses',
-    filterCurrentPage: p?.filterCurrentPage ?? 1,
-    filterActiveTab: p?.filterActiveTab ?? 'drafts',
-    filterSearchText: p?.filterSearchText ?? '',
-    filterSortOrder: p?.filterSortOrder ?? 'descending',
-    filtersChanged: p?.filtersChanged ?? false,
+  mockMapToUserProfile.mockImplementation((p) => ({
+    filterYearType: p.testingCalibrationDashboard?.filterYearType ?? 'allYears',
+    filterStatusType:
+      p.testingCalibrationDashboard?.filterStatusType ?? 'allStatuses',
+    filterCurrentPage: p.testingCalibrationDashboard?.filterCurrentPage ?? 1,
+    filterActiveTab:
+      (p.testingCalibrationDashboard?.filterActiveTab as DashboardTab) ??
+      DashboardTab.Drafts,
+    filterSearchText: p.testingCalibrationDashboard?.filterSearchText ?? '',
+    filterSortOrder:
+      p.testingCalibrationDashboard?.filterSortOrder ?? 'descending',
+    filtersChanged: p.testingCalibrationDashboard?.filtersChanged ?? false,
   }));
   mockAccountDetails = { ...BASE };
 };
@@ -741,7 +762,7 @@ describe('dashboard', () => {
 
     await waitFor(() => {
       expect(mockSetUserProfile).toHaveBeenCalledWith({
-        testingCalibrationDashboard: expect.objectContaining({
+        testingCalibrationDashboard: expectObjectContaining({
           filterCurrentPage: 2,
           filterActiveTab: 'drafts',
         }),
@@ -768,7 +789,7 @@ describe('dashboard', () => {
 
       expect(mockTrackGAEvent).toHaveBeenCalledWith(tabValue);
       expect(mockSetUserProfile).toHaveBeenCalledWith({
-        testingCalibrationDashboard: expect.objectContaining({
+        testingCalibrationDashboard: expectObjectContaining({
           filterActiveTab: tabValue,
           filterCurrentPage: 1,
         }),
@@ -795,7 +816,7 @@ describe('dashboard', () => {
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('drafts');
     expect(mockSetUserProfile).toHaveBeenCalledWith({
-      testingCalibrationDashboard: expect.objectContaining({
+      testingCalibrationDashboard: expectObjectContaining({
         filterActiveTab: 'drafts',
         filterCurrentPage: 1,
       }),
@@ -842,12 +863,14 @@ describe('dashboard', () => {
     resetDashboardMocks();
 
     mockSessionGetItem.mockReturnValue('RFQ-accepted');
-    mockGetDrafts.mockResolvedValue({
-      items: undefined,
-      currentPage: 1,
-      totalPages: 1,
-      totalCount: 0,
-    });
+    mockGetDrafts.mockResolvedValue(
+      asDashboardPage({
+        items: undefined,
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+      }),
+    );
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -957,7 +980,7 @@ describe('dashboard', () => {
 
     await waitFor(() =>
       expect(mockSetUserProfile).toHaveBeenCalledWith({
-        testingCalibrationDashboard: expect.objectContaining({
+        testingCalibrationDashboard: expectObjectContaining({
           filterCurrentPage: 1,
           filterActiveTab: 'drafts',
         }),
@@ -990,7 +1013,7 @@ describe('dashboard', () => {
 
     await waitFor(() =>
       expect(mockSetUserProfile).toHaveBeenCalledWith({
-        testingCalibrationDashboard: expect.objectContaining({
+        testingCalibrationDashboard: expectObjectContaining({
           filterCurrentPage: 1,
         }),
       }),
@@ -1089,7 +1112,7 @@ describe('dashboard', () => {
         testingCalibrationDashboard: {
           ...profileWithoutPaging,
           filterYearType: '2025',
-          filterStatusType: 'Open' as any,
+          filterStatusType: 'Open',
         },
       },
     };
@@ -1099,12 +1122,14 @@ describe('dashboard', () => {
       filterStatusType: 'Open',
       filterCurrentPage: undefined,
     });
-    mockGetDrafts.mockResolvedValue({
-      items: undefined,
-      currentPage: undefined,
-      totalPages: undefined,
-      totalCount: undefined,
-    });
+    mockGetDrafts.mockResolvedValue(
+      asDashboardPage({
+        items: undefined,
+        currentPage: undefined,
+        totalPages: undefined,
+        totalCount: undefined,
+      }),
+    );
 
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);
@@ -1402,7 +1427,7 @@ describe('dashboard', () => {
       ...BASE_USER_PROFILE,
       filterYearType: undefined,
       filterCurrentPage: undefined,
-      filterActiveTab: 'drafts' as any,
+      filterActiveTab: DashboardTab.Drafts,
     });
     const Dashboard = await importDashboard();
     renderDashboard(Dashboard);

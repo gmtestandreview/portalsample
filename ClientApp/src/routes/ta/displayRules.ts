@@ -70,7 +70,7 @@ export class DisplayRules {
     return false;
   }
 
-  static isOIMLHidden(x: ApplicationAndInstrumentStep): boolean {
+  static isOIMLHidden(x: Partial<ApplicationAndInstrumentStep>): boolean {
     // Add your display rule logic here
     return (
       x.newSubOptions?.includes(

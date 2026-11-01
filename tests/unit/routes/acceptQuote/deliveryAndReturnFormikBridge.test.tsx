@@ -318,7 +318,7 @@ describe(DeliveryAndReturnFormikBridge, () => {
       <Harness
         values={{
           returnAddressType: ReturnAddressTypeValues.Other,
-          returnAddress: undefined as never,
+          returnAddress: undefined,
         }}
       />,
     );

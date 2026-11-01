@@ -253,7 +253,7 @@ describe('account and contact route wrappers', () => {
     const onShowBranchSelector = defined(
       mocks.addBranchProps.mock.calls[0],
       'addBranchProps call',
-    )[4] as () => void;
+    )[4];
     onShowBranchSelector();
 
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(true);

@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { useField } from 'formik';
 import { Form, ListGroup } from 'react-bootstrap';
 import TextInput from '../TextInput';
-import type {
-  ApplicationAndInstrumentStepDto,
-  LookupResponse,
-} from '../../../api/web-api-client';
+import type { LookupResponse } from '../../../api/web-api-client';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 
@@ -34,7 +31,9 @@ const getLookupFieldValue = (
     return undefined;
   }
 
-  const value = Reflect.get(item, fieldName);
+  const key = Object.keys(item).find((candidate) => candidate === fieldName);
+  const value =
+    key === undefined ? undefined : (Reflect.get(item, key) as unknown);
   return typeof value === 'string' ? value : undefined;
 };
 
@@ -75,11 +74,12 @@ const CertificateNumberLookup = (
     isSummary,
   } = props;
 
-  const [_field, _meta, _fieldHelper] = useField(name);
-  const [_idField, _idMeta, _idFieldHelper] = useField(idName);
-  const [_certNumOptions] =
-    useField<ApplicationAndInstrumentStepDto>('certNameOptions');
-  const [_parentField] = useField(parentName ?? name);
+  const [_field, _meta, _fieldHelper] = useField<string>(name);
+  const [_idField, _idMeta, _idFieldHelper] = useField<string>(idName);
+  const [_certNumOptions] = useField<LookupResponse[] | undefined>(
+    'certNameOptions',
+  );
+  const [_parentField] = useField<string | undefined>(parentName ?? name);
 
   const [inputValue, setInputValue] = useState('');
   const [filteredSuggestions, setFilteredSuggestions] = useState<
@@ -89,7 +89,7 @@ const CertificateNumberLookup = (
   const [activeIndex, setActiveIndex] = useState(-1);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 
   // Debounced filtering
@@ -102,17 +102,18 @@ const CertificateNumberLookup = (
         setFilteredSuggestions((prev) => (prev.length === 0 ? prev : []));
         return;
       }
-      const options = (_certNumOptions.value || []) as LookupResponse[];
+      const options = _certNumOptions.value ?? [];
 
       if (inputValue.length >= 2) {
-        if (parentName !== undefined && _parentField.value !== undefined) {
+        const parentValue = _parentField.value;
+        if (parentName !== undefined && parentValue !== undefined) {
           const filteredParentOptions = [
             ...new Set(
               options
                 .filter((item) =>
                   matchesLookupValue(
                     getLookupFieldValue(item, parentOptionsName),
-                    _parentField.value.toLowerCase(),
+                    parentValue.toLowerCase(),
                     matchType,
                   ),
                 )
@@ -284,7 +285,9 @@ const CertificateNumberLookup = (
             placeholder={placeholder ?? ''}
             inlineHelpTitle={inlineHelpTitle ?? ''}
             inlineHelp={inlineHelp ?? ''}
-            onChange={(e: any) => setInputValue(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setInputValue(e.target.value)
+            }
             onKeyDown={handleKeyDown}
             autoComplete='off'
             aria-autocomplete='both'
@@ -346,7 +349,7 @@ const CertificateNumberLookup = (
                       );
                     }}
                     // onMouseEnter={() => setActiveIndex(index)}
-                    ref={(el: any) => {
+                    ref={(el: HTMLLIElement | null) => {
                       itemRefs.current.splice(index, 1, el);
                     }}
                   >

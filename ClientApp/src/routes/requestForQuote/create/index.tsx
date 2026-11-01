@@ -26,7 +26,7 @@ const CreateRequestForQuote = () => {
         const application = await client.createApplication({
           applicationType: ApplicationType.QuoteRequest,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         isSaving.current = false;
         AppLogger.error('Failed to create application', e as Error);

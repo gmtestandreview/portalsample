@@ -163,7 +163,8 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+      is: (x: PatternApprovalRequiredValues | undefined) =>
+        x === PatternApprovalRequiredValues.NewCertificate,
       then: () =>
         yup
           .array()
@@ -176,7 +177,8 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+      is: (x: PatternApprovalRequiredValues | undefined) =>
+        x === PatternApprovalRequiredValues.Variation,
       then: () =>
         yup
           .array()
@@ -194,7 +196,8 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     .array()
     .of(yup.string())
     .when('patternApprovalType', {
-      is: (x: string) => x === PatternApprovalRequiredValues.OtherApproval,
+      is: (x: PatternApprovalRequiredValues | undefined) =>
+        x === PatternApprovalRequiredValues.OtherApproval,
       then: () =>
         yup
           .array()
@@ -222,27 +225,32 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
           ),
     }),
   instrumentCategory: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument category').required(),
     otherwise: () => yup.string().label('Instrument category').nullable(),
   }),
   instrumentType: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument type').required(),
     otherwise: () => yup.string().label('Instrument type').nullable(),
   }),
   make: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () =>
       yup.string().label('Make').nullable().minEntered(2).maxLength(100),
   }),
   model: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () =>
       yup.string().label('Model').nullable().minEntered(2).maxLength(100),
   }),
   certificateNumber: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.Variation,
     then: () =>
       yup
         .string()
@@ -305,23 +313,28 @@ export const applicationAndInstrumentSaveValidation = yup.object<
   Validation<ApplicationAndInstrumentStep>
 >({
   instrumentCategory: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument category').nullable(),
   }),
   instrumentType: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Instrument Type').nullable(),
   }),
   make: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Make').nullable().maxLength(100),
   }),
   model: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.NewCertificate,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.NewCertificate,
     then: () => yup.string().label('Model').nullable().maxLength(100),
   }),
   certificateNumber: yup.string().when('patternApprovalType', {
-    is: (x: string) => x === PatternApprovalRequiredValues.Variation,
+    is: (x: PatternApprovalRequiredValues | undefined) =>
+      x === PatternApprovalRequiredValues.Variation,
     then: () =>
       yup.string().label('Certificate Number').nullable().maxLength(100),
     otherwise: () =>

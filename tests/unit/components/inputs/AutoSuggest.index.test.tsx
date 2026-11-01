@@ -2,22 +2,48 @@ import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import AutoSuggest from '@/components/Inputs/AutoSuggest';
 import type {
+  AutoSuggestContainerProps,
   AutoSuggestOption,
   AutoSuggestProps,
 } from '@/components/Inputs/AutoSuggest/types';
 
 type SelectedOption = AutoSuggestProps<string>['onSelectedOption'];
+type CapturedContainerProps = {
+  searchTerm: string | null | undefined;
+  loading: boolean | undefined;
+  error: boolean | undefined;
+  noResult: boolean | undefined;
+  optionCount: number;
+  onSearchTermChange: AutoSuggestContainerProps<string>['onSearchTermChange'];
+  onCancel: AutoSuggestContainerProps<string>['onCancel'];
+};
 
 const containerState = vi.hoisted(() => ({
-  props: undefined as any,
+  props: undefined as CapturedContainerProps | undefined,
 }));
+
+const getContainerProps = (): CapturedContainerProps => {
+  if (!containerState.props) {
+    throw new Error('AutoSuggest container props were not captured');
+  }
+
+  return containerState.props;
+};
 
 vi.mock(
   import('@/components/Inputs/AutoSuggest/AutoSuggestContainer'),
   () =>
     ({
-      default: (props: any) => {
-        containerState.props = props;
+      default: <T,>(props: Readonly<AutoSuggestContainerProps<T>>) => {
+        containerState.props = {
+          searchTerm: props.searchTerm,
+          loading: props.loading,
+          error: props.error,
+          noResult: props.noResult,
+          optionCount: props.options.length,
+          onSearchTermChange: props.onSearchTermChange,
+          onCancel: props.onCancel,
+        };
         return (
           <div>
             <span data-testid='search-term'>{props.searchTerm}</span>
@@ -63,7 +89,7 @@ describe('autoSuggest parent state', () => {
     renderAutoSuggest(undefined, onSelectedOption, 'Sydney');
 
     await act(async () => {
-      await containerState.props.onSearchTermChange('');
+      await getContainerProps().onSearchTermChange('');
     });
 
     expect(onSelectedOption).toHaveBeenCalledExactlyOnceWith();
@@ -88,13 +114,13 @@ describe('autoSuggest parent state', () => {
     renderAutoSuggest(getOptions);
 
     await act(async () => {
-      await containerState.props.onSearchTermChange('syd');
+      await getContainerProps().onSearchTermChange('syd');
     });
 
     expect(screen.getByTestId('option-count')).toHaveTextContent('1');
 
     await act(async () => {
-      await containerState.props.onSearchTermChange('sydn');
+      await getContainerProps().onSearchTermChange('sydn');
     });
 
     expect(screen.getByTestId('error')).toHaveTextContent('true');
@@ -119,16 +145,18 @@ describe('autoSuggest parent state', () => {
     renderAutoSuggest(getOptions, vi.fn(), 'Original');
 
     let searchPromise: Promise<void>;
-    await act(async () => {
-      searchPromise = containerState.props.onSearchTermChange('Sydney');
+    act(() => {
+      searchPromise = Promise.resolve(
+        getContainerProps().onSearchTermChange('Sydney'),
+      );
     });
 
     expect({
       loading: screen.getByTestId('loading').textContent,
     }).toStrictEqual({ loading: 'true' });
 
-    await act(async () => {
-      containerState.props.onCancel();
+    act(() => {
+      getContainerProps().onCancel();
     });
 
     expect({
@@ -167,12 +195,14 @@ describe('autoSuggest parent state', () => {
     renderAutoSuggest(getOptions);
 
     let searchPromise: Promise<void>;
-    await act(async () => {
-      searchPromise = containerState.props.onSearchTermChange('Sydney');
+    act(() => {
+      searchPromise = Promise.resolve(
+        getContainerProps().onSearchTermChange('Sydney'),
+      );
     });
 
-    await act(async () => {
-      containerState.props.onCancel();
+    act(() => {
+      getContainerProps().onCancel();
     });
 
     await act(async () => {

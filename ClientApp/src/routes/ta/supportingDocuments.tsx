@@ -217,13 +217,10 @@ const SupportingDocuments = (
   };
 
   const renderInstrumentInfoPanel = () => {
-    const formData = context.values as SupportingDocumentsStep;
-    const instrumentCategoryId = formData.form?.instrumentCategory as
-      string | undefined;
-    const instrumentTypeId = formData.form?.instrumentType as
-      string | undefined;
-    const patternApprovalType = formData.form?.patternApprovalType as
-      PatternApprovalRequiredValues | undefined;
+    const formData = context.values;
+    const instrumentCategoryId = formData.form?.instrumentCategory;
+    const instrumentTypeId = formData.form?.instrumentType;
+    const patternApprovalType = formData.form?.patternApprovalType;
     const isVisibilityApplicationType =
       patternApprovalType === PatternApprovalRequiredValues.NewCertificate;
     return (

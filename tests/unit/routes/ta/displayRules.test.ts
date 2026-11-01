@@ -24,13 +24,12 @@ type DtoOverrides = Omit<
 
 const content = (
   overrides: Partial<InstrumentTypeContent> = {},
-): InstrumentTypeContent =>
-  ({
-    instrumentTypeId: 'type-1',
-    instrumentCategoryId: 'category-1',
-    eligibleForOiml: true,
-    ...overrides,
-  }) as InstrumentTypeContent;
+): InstrumentTypeContent => ({
+  instrumentTypeId: 'type-1',
+  instrumentCategoryId: 'category-1',
+  eligibleForOiml: true,
+  ...overrides,
+});
 
 const dto = (
   overrides: DtoOverrides = {},
@@ -61,8 +60,7 @@ const dto = (
 
 const step = (
   patternApprovalType?: PatternApprovalRequiredValues,
-): ApplicationAndInstrumentStep =>
-  ({ patternApprovalType }) as ApplicationAndInstrumentStep;
+): ApplicationAndInstrumentStep => ({ patternApprovalType });
 
 describe('displayRules.isOIMLHiddenP', () => {
   it('hides the OIML option when the sub-option is not ticked', () => {
@@ -143,7 +141,7 @@ describe('displayRules.isOIMLHidden', () => {
       newSubOptions: [
         PatternApprovalRequiredValueOptions.CertificateofApproval,
       ],
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(true);
   });
@@ -153,7 +151,7 @@ describe('displayRules.isOIMLHidden', () => {
 
     const result = DisplayRules.isOIMLHidden({
       newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(false);
   });
@@ -161,9 +159,7 @@ describe('displayRules.isOIMLHidden', () => {
   it('hides the option when no sub-options have been chosen', () => {
     expect.hasAssertions();
 
-    const result = DisplayRules.isOIMLHidden(
-      {} as ApplicationAndInstrumentStep,
-    );
+    const result = DisplayRules.isOIMLHidden({});
 
     expect(result).toBe(true);
   });
@@ -244,7 +240,7 @@ describe('displayRules.isApplNewInstrumentHiddenP', () => {
 
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(true);
   });
@@ -255,7 +251,7 @@ describe('displayRules.isApplNewInstrumentHiddenP', () => {
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
       instrumentCategory: 'category-1',
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(false);
   });
@@ -266,7 +262,7 @@ describe('displayRules.isApplNewInstrumentHiddenP', () => {
     const result = DisplayRules.isApplNewInstrumentHiddenP({
       patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
       instrumentType: 'type-1',
-    } as ApplicationAndInstrumentStep);
+    });
 
     expect(result).toBe(false);
   });

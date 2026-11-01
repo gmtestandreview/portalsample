@@ -180,4 +180,4 @@ const DIGIT_WORDS: Readonly<Record<number, string>> = {
   10: 'ten',
 };
 export const numberToText = (digits: number): string =>
-  (Reflect.get(DIGIT_WORDS, digits) as string | undefined) ?? `${digits}`;
+  Reflect.get(DIGIT_WORDS, digits) ?? `${digits}`;

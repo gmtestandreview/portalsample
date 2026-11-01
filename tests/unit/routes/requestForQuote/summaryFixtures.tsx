@@ -11,6 +11,7 @@ import type {
 } from '../../../../ClientApp/src/api/web-api-client';
 import requestForQuoteSummaryProps from '../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummaryProps';
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
+import type { RfqSummarySectionProps } from '../../../../ClientApp/src/routes/requestForQuote/summary/types';
 
 /**
  * Shared fixtures for the form-free request-for-quote summary tests. A test file that renders the
@@ -19,7 +20,7 @@ import type { AccountDetails } from '../../../../ClientApp/src/authentication/ac
  */
 
 /** The hiding rules the real summary step ships, not a copy of them. */
-export const summaryHidden =
+export const summaryHidden: RfqSummarySectionProps['hidden'] =
   requestForQuoteSummaryProps(
     'RFQ-1',
     [],
@@ -27,7 +28,7 @@ export const summaryHidden =
     {} as AccountDetails,
     [],
     'Request for quote',
-  ).hidingFields ?? {};
+  ).hidingFields as RfqSummarySectionProps['hidden'];
 
 export const measurementCategoryLookup: LookupResponse[] = [
   { id: 'cat-temp', label: 'Temperature' },

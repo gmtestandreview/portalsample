@@ -172,13 +172,7 @@ describe('error boundary', () => {
     renderWithExpectedError(
       expectedError,
       <MemoryRouter>
-        <ErrorBoundary
-          appInsights={
-            null as unknown as React.ComponentProps<
-              typeof ErrorBoundary
-            >['appInsights']
-          }
-        >
+        <ErrorBoundary appInsights={null}>
           <ThrowingChild />
         </ErrorBoundary>
       </MemoryRouter>,

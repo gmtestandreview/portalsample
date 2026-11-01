@@ -29,6 +29,15 @@ type StepValues = Record<string, any>;
 
 type StepElement = ReactElement<WizardStepProps<StepValues>>;
 
+const getSubmitBaseUrl = (result: unknown): string | undefined => {
+  if (typeof result !== 'object' || result === null || !('baseUrl' in result)) {
+    return undefined;
+  }
+
+  const baseUrl = result.baseUrl;
+  return typeof baseUrl === 'string' ? baseUrl : undefined;
+};
+
 type StepProps = Pick<
   WizardStepProps<StepValues>,
   | 'stepStatuses'
@@ -199,7 +208,7 @@ export const useWizardStepController = (
           });
         }
         if (nextStep) {
-          void goToStep(nextStep, result?.baseUrl);
+          void goToStep(nextStep, getSubmitBaseUrl(result));
         } else {
           void navigate(locationOnCompletion);
         }

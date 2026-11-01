@@ -3,9 +3,24 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+type CoverageCliModule = {
+  computeIndexDigest(index: unknown): string;
+  main(argv: string[]): {
+    exitCode: number;
+    errors: Array<{ code: string; message?: string }>;
+  };
+};
+
 const moduleUnderTest =
   // @ts-expect-error The maintained validator is JavaScript and has no declaration file.
-  await import('../../../scripts/storybook-coverage.mjs');
+  (await import('../../../scripts/storybook-coverage.mjs')) as CoverageCliModule;
+
+const expectArrayContaining = (values: unknown[]): unknown =>
+  expect.arrayContaining(values);
+const expectObjectContaining = (value: Record<string, unknown>): unknown =>
+  expect.objectContaining(value);
+const expectStringContaining = (value: string): unknown =>
+  expect.stringContaining(value);
 
 const fixtureRoot = path.resolve(
   __dirname,
@@ -93,10 +108,10 @@ describe('storybook coverage closure CLI', () => {
 
       expect(result).toMatchObject({
         exitCode: 1,
-        errors: expect.arrayContaining([
-          expect.objectContaining({
+        errors: expectArrayContaining([
+          expectObjectContaining({
             code: 'EXECUTION_INCOMPLETE',
-            message: expect.stringContaining('receipt file escapes directory'),
+            message: expectStringContaining('receipt file escapes directory'),
           }),
         ]),
       });

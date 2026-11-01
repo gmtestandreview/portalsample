@@ -83,7 +83,7 @@ const AttachmentNew = (
     new WeakMap<AttachmentDto, string>(),
   );
 
-  const inputRef = useRef<any>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // console.log('SD: ', value);
   const maxSizeInKb = maxSizeInMB * 1024 * 1024;
 
@@ -92,7 +92,7 @@ const AttachmentNew = (
 
   const clearFileInput = () => {
     if (inputRef.current && inputRef.current.value !== null) {
-      inputRef.current.value = null;
+      inputRef.current.value = '';
       inputRef.current.files = null;
     }
   };
@@ -171,12 +171,15 @@ const AttachmentNew = (
           ),
         );
         if (inputRef.current && inputRef.current.value !== null) {
-          inputRef.current.value = null;
+          inputRef.current.value = '';
           inputRef.current.files = null;
         }
       }
     } catch (error_) {
-      setErrors((newErrors) => [...newErrors, `${error_}`]);
+      setErrors((newErrors) => [
+        ...newErrors,
+        error_ instanceof Error ? error_.message : String(error_),
+      ]);
     }
     setIsDeleting(false);
   };
@@ -290,7 +293,9 @@ const AttachmentNew = (
                   cursor: 'grab',
                   zIndex: 2,
                 }}
-                onChange={onInputFileChange}
+                onChange={(event) => {
+                  void onInputFileChange(event);
+                }}
               />
               <input
                 disabled={disableUpload}
@@ -308,7 +313,7 @@ const AttachmentNew = (
                     : `help-${id ?? name}`
                 }
                 onClick={() => {
-                  inputRef.current.click();
+                  inputRef.current?.click();
                 }}
               />
               {/* </>

@@ -22,20 +22,23 @@ type MsalLoadingComponent = NonNullable<
   MsalAuthenticationProps['loadingComponent']
 >;
 
-const authElementMocks = vi.hoisted(() => ({
-  isRouteErrorResponse: false,
-  msalTemplateMode: 'children' satisfies 'children' | 'loading' | 'error',
-  msalTemplateProps: undefined as
-    | {
-        authenticationRequest: unknown;
-        errorComponent: MsalErrorComponent;
-        interactionType: unknown;
-        loadingComponent: MsalLoadingComponent;
-      }
-    | undefined,
-  routeError: undefined as unknown,
-  setActiveAccount: vi.fn<IPublicClientApplication['setActiveAccount']>(),
-}));
+const authElementMocks = vi.hoisted(() => {
+  const routeError: unknown = undefined;
+  return {
+    isRouteErrorResponse: false,
+    msalTemplateMode: 'children' satisfies 'children' | 'loading' | 'error',
+    msalTemplateProps: undefined as
+      | {
+          authenticationRequest: unknown;
+          errorComponent: MsalErrorComponent;
+          interactionType: unknown;
+          loadingComponent: MsalLoadingComponent;
+        }
+      | undefined,
+    routeError,
+    setActiveAccount: vi.fn<IPublicClientApplication['setActiveAccount']>(),
+  };
+});
 
 const EmptyAuthComponent: ComponentType = () => null;
 
@@ -65,8 +68,14 @@ vi.mock(import('@azure/msal-react'), async (importOriginal) => {
       const ErrorComponent = errorComponent ?? EmptyAuthComponent;
       const LoadingComponent = loadingComponent ?? EmptyAuthComponent;
       const authenticationResult: MsalAuthenticationResult = {
-        login: async () => null,
-        acquireToken: async () => null,
+        login: async () => {
+          await Promise.resolve();
+          return null;
+        },
+        acquireToken: async () => {
+          await Promise.resolve();
+          return null;
+        },
         result: null,
         error: null,
       };
@@ -104,7 +113,9 @@ vi.mock(import('react-router'), async (importOriginal) => {
   // React Router's declaration returns null, while this test double renders a
   // marker so the error-route destination remains observable in assertions.
   const MockNavigate = (({ to }: NavigateProps) => (
-    <span data-testid='navigate'>{String(to)}</span>
+    <span data-testid='navigate'>
+      {typeof to === 'string' ? to : JSON.stringify(to)}
+    </span>
   )) as unknown as typeof actual.Navigate;
   return {
     ...actual,

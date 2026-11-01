@@ -180,17 +180,19 @@ describe('pa request item', () => {
     renderPaRequestItem(baseRequest);
 
     expect({
-      heading: screen.getByRole('heading', {
-        name: 'Pattern approval for flow meter',
-      }),
-      reference: screen.getByText('NMI-PA-2024-001'),
-      date: screen.getByText('15 Mar 2024'),
-      unreadTitle: screen.getByTitle('2 unread messages'),
-    }).toMatchObject({
-      heading: expect.anything(),
-      reference: expect.anything(),
-      date: expect.anything(),
-      unreadTitle: expect.anything(),
+      heading: Boolean(
+        screen.getByRole('heading', {
+          name: 'Pattern approval for flow meter',
+        }),
+      ),
+      reference: Boolean(screen.getByText('NMI-PA-2024-001')),
+      date: Boolean(screen.getByText('15 Mar 2024')),
+      unreadTitle: Boolean(screen.getByTitle('2 unread messages')),
+    }).toStrictEqual({
+      heading: true,
+      reference: true,
+      date: true,
+      unreadTitle: true,
     });
     expect(
       within(screen.getByTitle('2 unread messages')).getByText('2'),
@@ -291,12 +293,11 @@ describe('pa request item', () => {
     );
 
     expect({
-      heading: screen.getByRole('heading', { name: 'Draft request for Quote' }),
+      heading: Boolean(
+        screen.getByRole('heading', { name: 'Draft request for Quote' }),
+      ),
       messagesButton: screen.queryByRole('button', { name: /messages/i }),
-    }).toMatchObject({
-      heading: expect.anything(),
-      messagesButton: null,
-    });
+    }).toStrictEqual({ heading: true, messagesButton: null });
 
     await user.click(
       screen.getByRole('button', { name: 'Resume application' }),
@@ -334,14 +335,16 @@ describe('pa request item', () => {
     await waitFor(() =>
       expect({
         deleteSuccess: setDeleteSuccess.mock.calls.at(-1)?.[0],
-        tokenAccount: mocks.acquireTokenSilent.mock.calls.at(-1)?.[0].account,
+        tokenAccount:
+          mocks.acquireTokenSilent.mock.calls.at(-1)?.[0].account
+            ?.homeAccountId,
         authToken: mocks.setAuthToken.mock.calls.at(-1)?.[0],
         deleteApplication: mocks.deleteApplication.mock.calls.at(-1),
         notification: mocks.setDashboardNotification.mock.calls.at(-1)?.[0],
         deleteEvent: mocks.trackGAEvent.mock.calls.at(-1)?.[0],
       }).toMatchObject({
         deleteSuccess: true,
-        tokenAccount: expect.objectContaining({ homeAccountId: 'account-id' }),
+        tokenAccount: 'account-id',
         authToken: 'access-token',
         deleteApplication: [
           'PA-2024-0001',
@@ -358,11 +361,11 @@ describe('pa request item', () => {
     expect({
       resumeHref: resumeAction.getAttribute('href'),
       editEvent,
-      dialogText: confirmationDialog.textContent,
-    }).toMatchObject({
+      hasReference: confirmationDialog.textContent?.includes('PA-2024-0001'),
+    }).toStrictEqual({
       resumeHref: '/ta/PA-2024-0001',
       editEvent: 'Editapplication',
-      dialogText: expect.stringContaining('PA-2024-0001'),
+      hasReference: true,
     });
   });
 
@@ -460,11 +463,11 @@ describe('pa request item', () => {
 
     expect({
       initialLabel: card?.getAttribute('aria-labelledby'),
-      unreadTitle: screen.getByTitle('0 unread messages'),
+      unreadTitle: Boolean(screen.getByTitle('0 unread messages')),
       unreadStatus: screen.queryByRole('status', { name: '0' }),
-    }).toMatchObject({
+    }).toStrictEqual({
       initialLabel: 'card-summary-PA-2024-0001',
-      unreadTitle: expect.anything(),
+      unreadTitle: true,
       unreadStatus: null,
     });
 

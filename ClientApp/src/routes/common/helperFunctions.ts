@@ -31,7 +31,7 @@ export const getFileDetails = (
   accessToken: string,
   result: RequestForQuoteDetails,
   getFile: boolean,
-  isQuotationTab?: boolean | undefined,
+  isQuotationTab?: boolean,
 ): Promise<DownloadedFileResponse | undefined> => {
   const dashboardClient = new DashboardClient();
   dashboardClient.setAuthToken(accessToken);
@@ -421,7 +421,7 @@ export function sortList<T>(
   }
 
   const getDisplayField = (value: T): string =>
-    Reflect.get(value as object, displayFieldName) as string;
+    Reflect.get(value as object, displayFieldName);
 
   const indexOfItemToRemove = list.findIndex((value) =>
     getDisplayField(value)

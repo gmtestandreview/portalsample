@@ -371,7 +371,7 @@ describe('route common helper functions', () => {
         formatTradingBranchFromStrings('Trading', 'Branch'),
         formatTradingBranchFromStrings('', 'Branch'),
         formatTradingBranchFromStrings('', ''),
-        formatTradingBranchFromStrings(null as unknown as string, 'Branch'),
+        formatTradingBranchFromStrings(null, 'Branch'),
       ],
     }).toStrictEqual({
       banners: [

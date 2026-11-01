@@ -72,8 +72,10 @@
     "test:e2e:debug": "bddgen -c playwright.config.ts && playwright test -c playwright.config.ts --project=app-bdd --debug",
     "test:e2e:report": "playwright show-report reports/playwright/app",
     "migration-check": "tsc --noEmit && node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --configLoader runner && npm run build-storybook",
-    "postinstall": "node scripts/apply-local-patches.mjs"
+    "postinstall": "node scripts/apply-local-patches.mjs",
+    "sbom-report": "npm sbom --sbom-format=spdx --sbom-type=application > sbom.spdx.json && npm sbom --sbom-format=cyclonedx --sbom-type=application > sbom.cdx.json"
   },
+
   "dependencies": {
     "@azure/msal-browser": "^5.27.0",
     "@azure/msal-react": "^5.7.4",

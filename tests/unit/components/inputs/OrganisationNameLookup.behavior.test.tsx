@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import type { FormikConfig } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
+import type { TextInputProps } from '@/components/Inputs/TextInput';
 
 type LookupValues = {
   orgName: string;
@@ -26,7 +27,7 @@ vi.mock(
         inlineHelp: _inlineHelp,
         containerClassName: _containerClassName,
         ...rest
-      }: any) => (
+      }: Readonly<TextInputProps>) => (
         <div>
           <label htmlFor={name}>{label}</label>
           <input
@@ -54,7 +55,7 @@ const renderLookup = (
   );
 
 describe('organisation name lookup behavior', () => {
-  it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
+  it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
@@ -65,7 +66,7 @@ describe('organisation name lookup behavior', () => {
         target: { value: 'ac' },
       });
 
-      await act(async () => {
+      act(() => {
         vi.advanceTimersByTime(350);
       });
 
@@ -91,7 +92,7 @@ describe('organisation name lookup behavior', () => {
    * Profiler counts real commits of the subtree, so this asserts the absence
    * of the render itself rather than the absence of the warning.
    */
-  it('does not re-render when the debounce fires with an empty input', async () => {
+  it('does not re-render when the debounce fires with an empty input', () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
@@ -113,7 +114,7 @@ describe('organisation name lookup behavior', () => {
       );
       onRender.mockClear();
 
-      await act(async () => {
+      act(() => {
         vi.advanceTimersByTime(350);
       });
 
@@ -124,11 +125,10 @@ describe('organisation name lookup behavior', () => {
     }
   });
 
-  it('falls back to typed input if the active suggestion is unexpectedly absent', async () => {
+  it('falls back to typed input if the active suggestion is unexpectedly absent', () => {
     expect.hasAssertions();
 
     vi.useFakeTimers();
-    const originalAt = Array.prototype.at;
     try {
       vi.spyOn(Array.prototype, 'at').mockImplementation(function (
         this: unknown[],
@@ -137,7 +137,7 @@ describe('organisation name lookup behavior', () => {
         if (this.length > 0 && this[0] === 'Alpha Labs' && index === 0) {
           return undefined;
         }
-        return originalAt.call(this, index);
+        return index === 0 ? this[0] : undefined;
       });
 
       render(
@@ -159,16 +159,16 @@ describe('organisation name lookup behavior', () => {
 
       const input = screen.getByRole('combobox');
       fireEvent.change(input, { target: { value: 'Labs' } });
-      await act(async () => {
+      act(() => {
         vi.advanceTimersByTime(350);
       });
 
       expect(screen.getByText('Alpha Labs')).toBeInTheDocument();
 
-      await act(async () => {
+      act(() => {
         fireEvent.keyDown(input, { key: 'ArrowDown' });
       });
-      await act(async () => {
+      act(() => {
         fireEvent.keyDown(input, { key: 'Enter' });
       });
 

@@ -10,6 +10,11 @@ import { summaryFixtures, summaryHidden } from './summaryFixtures';
 
 type Values = RfqSummarySectionProps['values'];
 type Hidden = RfqSummarySectionProps['hidden'];
+const typedSummaryHidden = summaryHidden;
+const hiddenObject = (value: unknown): Record<string, unknown> =>
+  value !== null && typeof value === 'object'
+    ? Object.fromEntries(Object.entries(value))
+    : {};
 
 const populated = (() => {
   const found = summaryFixtures.find(
@@ -21,7 +26,7 @@ const populated = (() => {
 
 const renderOrganisation = (
   values: Values,
-  hidden: Hidden = summaryHidden,
+  hidden: Hidden = typedSummaryHidden,
   currentContact?: RfqCurrentContact,
 ) =>
   render(
@@ -72,9 +77,9 @@ describe(RfqOrganisationSummary, () => {
     expect.hasAssertions();
 
     const container = renderOrganisation(populated, {
-      ...summaryHidden,
+      ...typedSummaryHidden,
       organisationAndContact: {
-        ...summaryHidden.organisationAndContact,
+        ...hiddenObject(typedSummaryHidden.organisationAndContact),
         branchOrLocationName: () => true,
       },
     });
@@ -97,7 +102,7 @@ describe(RfqOrganisationSummary, () => {
 
     const container = renderOrganisation(
       populated,
-      summaryHidden,
+      typedSummaryHidden,
       accountHolder,
     );
 
@@ -119,7 +124,7 @@ describe(RfqOrganisationSummary, () => {
           isPrincipalContact: YesNo.No,
         },
       },
-      summaryHidden,
+      typedSummaryHidden,
       accountHolder,
     );
 
@@ -166,11 +171,15 @@ describe(RfqOrganisationSummary, () => {
         },
       },
       {
-        ...summaryHidden,
+        ...typedSummaryHidden,
         organisationAndContact: {
-          ...summaryHidden.organisationAndContact,
+          ...hiddenObject(typedSummaryHidden.organisationAndContact),
           contact: {
-            ...summaryHidden.organisationAndContact?.contact,
+            ...hiddenObject(
+              hiddenObject(typedSummaryHidden.organisationAndContact)[
+                'contact'
+              ],
+            ),
             titleOther: () => true,
           },
         },

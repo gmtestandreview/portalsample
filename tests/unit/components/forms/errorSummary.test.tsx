@@ -3,6 +3,10 @@ import { Form, Formik, type FormikConfig, type FormikProps } from 'formik';
 import { MemoryRouter } from 'react-router';
 import { vi, describe, it, expect } from 'vitest';
 import ErrorSummary from '@/components/forms/ErrorSummary';
+import type {
+  ProblemDetails,
+  ValidationProblemDetails,
+} from '@/api/web-api-client';
 import { HttpStatusCode } from '@/types';
 
 type EmptyFormikSubmit = FormikConfig<Record<string, never>>['onSubmit'];
@@ -27,7 +31,7 @@ describe('error summary', () => {
               errors: {
                 'formStep.Contact[0].FirstName': ['Required'],
               },
-            } as any
+            } satisfies ValidationProblemDetails
           }
           prefixToRemove='formStep.'
         />
@@ -55,7 +59,7 @@ describe('error summary', () => {
               errors: {
                 'formStep.Contact[0].FirstName': ['Required'],
               },
-            } as any
+            } satisfies ValidationProblemDetails
           }
           prefixToRemove='formStep.'
           disableLinkedError
@@ -96,7 +100,11 @@ describe('error summary', () => {
     render(
       <TestRouter>
         <ErrorSummary
-          serverErrors={{ status: HttpStatusCode.UnprocessableEntity } as any}
+          serverErrors={
+            {
+              status: HttpStatusCode.UnprocessableEntity,
+            } satisfies ProblemDetails
+          }
         />
       </TestRouter>,
     );
@@ -124,7 +132,7 @@ describe('error summary', () => {
                 Contact: [],
                 FirstName: ['Required'],
               },
-            } as any
+            } satisfies ValidationProblemDetails
           }
         />
       </TestRouter>,
@@ -151,7 +159,7 @@ describe('error summary', () => {
                 ContactName: ['Required'],
                 'Phone-number': ['Invalid'],
               },
-            } as any
+            } satisfies ValidationProblemDetails
           }
         />
       </TestRouter>,
@@ -181,7 +189,7 @@ describe('error summary', () => {
                 // stripped, so formatKeyPart returns the empty string unchanged.
                 _: ['Required'],
               },
-            } as any
+            } satisfies ValidationProblemDetails
           }
         />
       </TestRouter>,
@@ -199,7 +207,7 @@ describe('error summary', () => {
     render(
       <TestRouter>
         <Formik initialValues={{}} onSubmit={vi.fn<EmptyFormikSubmit>()}>
-          <ErrorSummary serverErrors={{ errors: undefined } as any} />
+          <ErrorSummary serverErrors={{} satisfies ProblemDetails} />
         </Formik>
       </TestRouter>,
     );
@@ -220,15 +228,19 @@ describe('error summary', () => {
       render(
         <TestRouter>
           <ErrorSummary
-            serverErrors={{ errors: { FirstName: ['Required'] } } as any}
+            serverErrors={
+              {
+                errors: { FirstName: ['Required'] },
+              } satisfies ValidationProblemDetails
+            }
             disableLinkedError
           />
         </TestRouter>,
       );
-
       const summaryEl = document.querySelector(
         '#form-error-summary',
       ) as HTMLElement;
+      const scrollIntoView = vi.spyOn(summaryEl, 'scrollIntoView');
 
       expect(summaryEl).not.toBeNull();
 
@@ -236,7 +248,7 @@ describe('error summary', () => {
         vi.advanceTimersByTime(150);
       });
 
-      expect(summaryEl.scrollIntoView).toHaveBeenCalledWith({
+      expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',
         block: 'start',
       });
@@ -257,7 +269,11 @@ describe('error summary', () => {
       render(
         <TestRouter>
           <ErrorSummary
-            serverErrors={{ errors: { FirstName: ['Required'] } } as any}
+            serverErrors={
+              {
+                errors: { FirstName: ['Required'] },
+              } satisfies ValidationProblemDetails
+            }
           />
         </TestRouter>,
       );
@@ -266,12 +282,13 @@ describe('error summary', () => {
       // scheduled timeout fires, without touching the real DOM tree (which would desync
       // React's fiber tree from the document and break the render's own cleanup).
       querySelectorSpy.mockReturnValue(null);
+      const scrollIntoView = vi.spyOn(HTMLElement.prototype, 'scrollIntoView');
 
       act(() => {
         vi.advanceTimersByTime(150);
       });
 
-      expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+      expect(scrollIntoView).not.toHaveBeenCalled();
     } finally {
       querySelectorSpy.mockRestore();
       vi.useRealTimers();
@@ -340,6 +357,8 @@ describe('error summary', () => {
         </TestRouter>,
       );
 
+      const scrollIntoView = vi.spyOn(HTMLElement.prototype, 'scrollIntoView');
+
       // Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true
       await act(async () => {
         await formikInstance!.submitForm();
@@ -353,7 +372,7 @@ describe('error summary', () => {
         vi.advanceTimersByTime(200);
       });
 
-      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
+      expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',
         block: 'start',
       });

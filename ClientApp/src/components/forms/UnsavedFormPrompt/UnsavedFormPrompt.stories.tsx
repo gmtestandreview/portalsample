@@ -106,7 +106,7 @@ const meta = preview.meta({
   },
 });
 
-type PlayCanvas = ReturnType<typeof within>;
+type PlayCanvas = Pick<typeof screen, 'getByLabelText' | 'getByRole'>;
 type PlayUser = ReturnType<typeof userEvent.setup>;
 
 const makeDirtyAndLeave = async (canvas: PlayCanvas, user: PlayUser) => {

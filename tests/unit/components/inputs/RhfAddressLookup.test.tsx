@@ -21,14 +21,19 @@ function AddressClient() {
   return { setAuthToken: mocks.setAuthToken, search: mocks.addressSearch };
 }
 
-const mocks = vi.hoisted(() => ({
-  acquireTokenSilent: vi.fn<AcquireTokenSilent>(),
-  account: { homeAccountId: 'account-1' } as { homeAccountId: string } | null,
-  accounts: [{ homeAccountId: 'account-1' }] as { homeAccountId: string }[],
-  addressSearch: vi.fn<AddressSearch>(),
-  inProgress: 'none',
-  setAuthToken: vi.fn<SetAuthToken>(),
-}));
+const mocks = vi.hoisted(() => {
+  const accountState: { account: { homeAccountId: string } | null } = {
+    account: { homeAccountId: 'account-1' },
+  };
+  return {
+    acquireTokenSilent: vi.fn<AcquireTokenSilent>(),
+    account: accountState.account,
+    accounts: [{ homeAccountId: 'account-1' }] as { homeAccountId: string }[],
+    addressSearch: vi.fn<AddressSearch>(),
+    inProgress: 'none',
+    setAuthToken: vi.fn<SetAuthToken>(),
+  };
+});
 
 vi.mock(
   import('@azure/msal-react'),

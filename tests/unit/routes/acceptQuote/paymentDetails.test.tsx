@@ -140,7 +140,7 @@ function makePreInfo(
     acceptQuotePreInfo: {
       paymentTerms,
       quotationIdNum,
-    } as AcceptQuotePreInfoDto,
+    },
   };
 }
 

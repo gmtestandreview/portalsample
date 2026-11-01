@@ -14,6 +14,8 @@ import {
   type PortalLocationObservation,
 } from '../../../ClientApp/src/storybook/storybookHarness';
 
+type NavigateFunction = ReturnType<typeof useNavigate>;
+
 const Destination = () => {
   const { reference } = useParams();
 
@@ -179,7 +181,7 @@ describe(PortalStoryRouter, () => {
       screen.findByText('Destination reference: settled-42'),
     ).resolves.toBeVisible();
 
-    await act(async () => {
+    act(() => {
       settleResponse();
     });
 
@@ -321,8 +323,8 @@ describe(PortalStoryRouter, () => {
 
     const firstObservations: PortalLocationObservation[] = [];
     const secondObservations: PortalLocationObservation[] = [];
-    let firstNavigate: ((to: string) => void) | undefined;
-    let secondNavigate: ((to: string) => void) | undefined;
+    let firstNavigate: NavigateFunction | undefined;
+    let secondNavigate: NavigateFunction | undefined;
     const FirstStory = () => {
       firstNavigate = useNavigate();
       return <p>First router</p>;
@@ -368,13 +370,13 @@ describe(PortalStoryRouter, () => {
     );
 
     await act(async () => {
-      secondNavigate?.('/after-second-unmount');
+      await secondNavigate?.('/after-second-unmount');
     });
 
     expect(secondObservations).toHaveLength(secondObservationCount);
 
     await act(async () => {
-      firstNavigate?.('/after-first-unmount');
+      await firstNavigate?.('/after-first-unmount');
     });
     await waitFor(() =>
       expect(firstObservations).toContainEqual({
@@ -386,7 +388,7 @@ describe(PortalStoryRouter, () => {
     const firstObservationCount = firstObservations.length;
     view.unmount();
     await act(async () => {
-      firstNavigate?.('/after-all-unmount');
+      await firstNavigate?.('/after-all-unmount');
     });
 
     expect(firstObservations).toHaveLength(firstObservationCount);
@@ -402,8 +404,11 @@ describe(PortalStoryRouter, () => {
       expectedFetch: typeof globalThis.fetch | undefined,
       expectedWindowFetch: typeof globalThis.fetch | undefined = expectedFetch,
     ) => {
+      const activeWindowFetch = Reflect.get(globalThis.window, 'fetch') as
+        typeof globalThis.fetch | undefined;
+
       expect(globalThis.fetch).toBe(expectedFetch);
-      expect(globalThis.window.fetch).toBe(expectedWindowFetch);
+      expect(activeWindowFetch).toBe(expectedWindowFetch);
     };
     const firstFetch = vi.fn<typeof globalThis.fetch>();
     const updatedFirstFetch = vi.fn<typeof globalThis.fetch>();
@@ -485,7 +490,7 @@ describe(PortalStoryRouter, () => {
 
     const observeLocation =
       vi.fn<(location: PortalLocationObservation) => void>();
-    let navigate: ((to: string) => void) | undefined;
+    let navigate: NavigateFunction | undefined;
     const Story = () => {
       navigate = useNavigate();
       return <p>Observed story</p>;
@@ -508,7 +513,7 @@ describe(PortalStoryRouter, () => {
 
     view.unmount();
     await act(async () => {
-      navigate?.('/after-unmount');
+      await navigate?.('/after-unmount');
     });
 
     expect(observeLocation).toHaveBeenCalledTimes(observationCount);

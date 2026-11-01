@@ -8,6 +8,7 @@ import {
   LookupClient,
   PatternApprovalRequiredValues,
   RequestForPatternApprovalClient,
+  Title,
   type RequestForPatternApprovalSummary,
   YesNo,
 } from '../../api/web-api-client';
@@ -26,6 +27,8 @@ import {
   summaryAndSubmitValidation,
 } from './validation';
 import type { RequestForPatternApprovalSummaryDto } from './types';
+
+type SummaryDisplayValues = Partial<RequestForPatternApprovalSummaryDto>;
 
 const loadSummary =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -148,39 +151,39 @@ const summaryAndSubmitProps = (
   title: 'Summary and submit',
   hidingFields: {
     organisationAndContact: {
-      branchOrLocationName: (x: any) =>
+      branchOrLocationName: (x: SummaryDisplayValues) =>
         !x.organisationAndContact?.branchOrLocationName,
-      isManufacturerHide: (x: any) =>
+      isManufacturerHide: (x: SummaryDisplayValues) =>
         x.organisationAndContact?.isManufacturer === YesNo.Yes ||
         x.organisationAndContact?.isManufacturer === undefined,
-      principalInvoiceContactHide: (x: any) =>
+      principalInvoiceContactHide: (x: SummaryDisplayValues) =>
         x.organisationAndContact?.isPrincipalInvoiceContact === YesNo.Yes ||
         x.organisationAndContact?.isPrincipalInvoiceContact === undefined,
-      isCurrentOrganisationHide: (x: any) =>
+      isCurrentOrganisationHide: (x: SummaryDisplayValues) =>
         x.organisationAndContact?.isManufacturer === YesNo.No,
       contact: {
-        titleOther: (x: any) =>
-          x.organisationAndContact?.contact?.title !== 'Other',
+        titleOther: (x: SummaryDisplayValues) =>
+          x.organisationAndContact?.contact?.title !== Title.Other,
       },
       invoiceContact: {
-        titleOther: (x: any) =>
-          x.organisationAndContact?.invoiceContact?.title !== 'Other',
+        titleOther: (x: SummaryDisplayValues) =>
+          x.organisationAndContact?.invoiceContact?.title !== Title.Other,
       },
     },
     applicationAndInstrument: {
-      isApplNewHide: (x: any) =>
+      isApplNewHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.NewCertificate ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplVariationHide: (x: any) =>
+      isApplVariationHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.Variation ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplOtherHide: (x: any) =>
+      isApplOtherHide: (x: SummaryDisplayValues) =>
         x.applicationAndInstrument?.patternApprovalType !==
           PatternApprovalRequiredValues.OtherApproval ||
         x.applicationAndInstrument?.patternApprovalType === undefined,
-      isApplOIMLHide: (x: any) => DisplayRules.isOIMLHidden(x),
+      isApplOIMLHide: (x: SummaryDisplayValues) => DisplayRules.isOIMLHidden(x),
     },
   },
   validateHard: summaryAndSubmitValidation,

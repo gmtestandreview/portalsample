@@ -21,10 +21,10 @@ const resolve = async (
     getMode: () => options.mode ?? 'next',
     getHidden: () => options.hidden ?? {},
   });
-  return resolver((options.values ?? { name: '' }) as never, undefined, {
+  return resolver(options.values ?? { name: '' }, undefined, {
     fields: {},
     shouldUseNativeValidation: false,
-  } as never);
+  });
 };
 
 const required = Yup.object({

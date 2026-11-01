@@ -27,7 +27,7 @@ const CopyRequestForQuote = () => {
         const application = await client.copyApplication(id!, {
           applicationType: ApplicationType.QuoteRequest,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         isSaving.current = false;
         AppLogger.error('Failed to copy application', e as Error);

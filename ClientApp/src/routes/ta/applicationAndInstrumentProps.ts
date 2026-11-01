@@ -5,6 +5,7 @@ import type {
 import {
   type FormStepStatusDto,
   RequestForPatternApprovalClient,
+  type ApplicationAndInstrumentStep,
   type ApplicationAndInstrumentStepDto,
   CRMLookupTypes,
   LookupClient,
@@ -160,12 +161,16 @@ const applicationAndInstrumentProps = (
   location: '/application-details',
   title: 'Application details',
   hidingFields: {
-    isApplNewHide: (x: any) => DisplayRules.isNewCertificateHiddenP(x),
-    isApplNewInstrumentHide: (x: any) =>
+    isApplNewHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isNewCertificateHiddenP(x),
+    isApplNewInstrumentHide: (x: Partial<ApplicationAndInstrumentStep>) =>
       DisplayRules.isApplNewInstrumentHiddenP(x),
-    isApplVariationHide: (x: any) => DisplayRules.isVariationHiddenP(x),
-    isApplOtherHide: (x: any) => DisplayRules.isApplOtherHiddenP(x),
-    isApplOIMLHide: (x: any) => DisplayRules.isOIMLHiddenP(x),
+    isApplVariationHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isVariationHiddenP(x),
+    isApplOtherHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isApplOtherHiddenP(x),
+    isApplOIMLHide: (x: Partial<ApplicationAndInstrumentStep>) =>
+      DisplayRules.isOIMLHiddenP(x),
   },
   validateHard: applicationAndInstrumentSubmitValidation,
   validateSoft: applicationAndInstrumentSaveValidation,

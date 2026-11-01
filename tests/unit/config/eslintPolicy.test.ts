@@ -24,6 +24,23 @@ const LOAD_TIMEOUT_MS = 60_000;
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
 type Severity = 0 | 1 | 2 | 'absent';
 
+type ResolvedLintConfig = {
+  rules?: Record<string, unknown>;
+  plugins?: Record<string, unknown>;
+};
+
+const calculateConfig = async (
+  filePath: string,
+): Promise<ResolvedLintConfig> => {
+  const eslint = new ESLint();
+  const rawConfig = (await eslint.calculateConfigForFile(filePath)) as unknown;
+  return rawConfig as ResolvedLintConfig;
+};
+
+const isRuleOptions = (
+  value: unknown,
+): value is readonly [unknown, ...unknown[]] => Array.isArray(value);
+
 const severityOf = (
   rules: Record<string, unknown>,
   ruleId: string,
@@ -34,7 +51,7 @@ const severityOf = (
 
   if (entry === undefined) return 'absent';
 
-  const raw = Array.isArray(entry) ? entry[0] : entry;
+  const raw = isRuleOptions(entry) ? entry[0] : entry;
 
   return Number(raw) as 0 | 1 | 2;
 };
@@ -48,7 +65,7 @@ const severityIn = (
 
   if (configured === undefined) return 'absent';
 
-  const raw = Array.isArray(configured) ? configured[0] : configured;
+  const raw = isRuleOptions(configured) ? configured[0] : configured;
 
   return Number(raw) as 0 | 1 | 2;
 };
@@ -65,8 +82,7 @@ const lintTextMessages = async (filePath: string, code: string) => {
 };
 
 const policyReady = (async () => {
-  const eslint = new ESLint();
-  const config = await eslint.calculateConfigForFile(PROBE_FILE);
+  const config = await calculateConfig(PROBE_FILE);
 
   const imported = (await import('@eslint-react/eslint-plugin')) as {
     default?: { rules?: Record<string, unknown> };
@@ -75,7 +91,7 @@ const policyReady = (async () => {
   const plugin = imported.default ?? imported;
 
   return {
-    appRules: (config.rules ?? {}) as Record<string, unknown>,
+    appRules: config.rules ?? {},
     appPluginNames: Object.keys(config.plugins ?? {}),
     pluginRuleNames: Object.keys(plugin.rules ?? {}),
   };
@@ -103,10 +119,7 @@ describe('runner-specific lint boundaries', () => {
   it('keeps Vitest rules out of Playwright E2E files and rejects Vitest imports', async () => {
     expect.assertions(3);
 
-    const eslint = new ESLint();
-    const config = await eslint.calculateConfigForFile(
-      'tests/e2e/steps/account.steps.ts',
-    );
+    const config = await calculateConfig('tests/e2e/steps/account.steps.ts');
 
     expect(
       severityIn(config.rules, 'vitest/prefer-importing-vitest-globals'),
@@ -118,8 +131,7 @@ describe('runner-specific lint boundaries', () => {
   it('rejects Vitest assertion imports from Storybook stories', async () => {
     expect.assertions(2);
 
-    const eslint = new ESLint();
-    const config = await eslint.calculateConfigForFile(
+    const config = await calculateConfig(
       'ClientApp/src/components/Accordion/Accordion.stories.tsx',
     );
 
@@ -226,8 +238,7 @@ describe('vite configuration lint policy', () => {
   it('resolves a non-empty rule set for the Vite TypeScript config', async () => {
     expect.assertions(1);
 
-    const eslint = new ESLint();
-    const config = await eslint.calculateConfigForFile('vite.config.mts');
+    const config = await calculateConfig('vite.config.mts');
 
     expect(Object.keys(config.rules ?? {}).length).toBeGreaterThan(100);
   });

@@ -30,7 +30,7 @@ function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
     });
   }
 
-  return fieldErrors as FieldErrors<TFieldValues>;
+  return fieldErrors;
 }
 
 /**

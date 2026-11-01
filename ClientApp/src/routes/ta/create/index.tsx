@@ -27,7 +27,7 @@ const CreateRequestForTypeApproval = () => {
         const application = await client.createApplication({
           applicationType: ApplicationType.PatternApproval,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         AppLogger.error('Failed to create application', e as Error);
       }

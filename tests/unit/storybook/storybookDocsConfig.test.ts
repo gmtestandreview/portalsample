@@ -55,10 +55,10 @@ const declaredVersion = (packageName: string) =>
     .find(([dependencyName]) => dependencyName === packageName)?.[1]
     ?.replace(/^[~^]/, '');
 
-const rawStoryFiles = import.meta.glob(
+const rawStoryFiles = import.meta.glob<string>(
   '../../../ClientApp/src/**/*.stories.tsx',
   { eager: true, import: 'default', query: '?raw' },
-) as Record<string, string>;
+);
 
 const rawStandingGuidanceDocuments = {
   ...import.meta.glob('../../../docs/**/*.md', {
@@ -443,17 +443,42 @@ describe('storybook documentation architecture', () => {
     expect(viteConfig.build?.rolldownOptions?.output).toMatchObject({
       banner: '"use client";',
       strictExecutionOrder: true,
-      codeSplitting: {
-        groups: expect.arrayContaining([
-          { name: 'react-runtime', test: expect.any(RegExp) },
-          { name: 'auth', test: expect.any(RegExp) },
-          { name: 'forms', test: expect.any(RegExp) },
-          { name: 'ui', test: expect.any(RegExp) },
-          { name: 'utilities', test: expect.any(RegExp) },
-          { name: 'storybook-runtime', test: expect.any(RegExp) },
-        ]),
-      },
     });
+
+    type CodeSplittingGroup = {
+      name?: string;
+      test?: unknown;
+    };
+    type CodeSplittingConfig = {
+      groups?: CodeSplittingGroup[];
+    };
+    const output = viteConfig.build?.rolldownOptions?.output;
+    const codeSplitting =
+      output && !Array.isArray(output)
+        ? ((
+            output as {
+              codeSplitting?: CodeSplittingConfig;
+            }
+          ).codeSplitting ?? {})
+        : {};
+    const codeSplittingGroups = codeSplitting.groups ?? [];
+    const expectedGroupNames = [
+      'react-runtime',
+      'auth',
+      'forms',
+      'ui',
+      'utilities',
+      'storybook-runtime',
+    ];
+
+    expect(
+      codeSplittingGroups
+        .filter(
+          ({ name, test }) =>
+            expectedGroupNames.includes(name ?? '') && test instanceof RegExp,
+        )
+        .map(({ name }) => name),
+    ).toStrictEqual(expect.arrayContaining(expectedGroupNames));
   });
 
   it('uses non-overlapping canonical story and MDX globs', () => {

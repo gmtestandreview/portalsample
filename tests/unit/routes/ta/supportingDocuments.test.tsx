@@ -210,7 +210,7 @@ const renderDocs = async ({
     <FormikWrapper
       initialValues={values}
       innerRef={(bag) => {
-        formik = bag as FormikProps<Record<string, unknown>>;
+        formik = bag;
       }}
     >
       <SupportingDocuments {...(componentProps as any)} />

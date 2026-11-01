@@ -121,7 +121,7 @@ const renderStep = (
     url: '',
     initialValues: { name: '' },
     stepStatuses: [{ status: FormStepStatus.NotStarted }],
-    loadStepValues: async () => ({ stepValues: { name: '' } }),
+    loadStepValues: () => ({ stepValues: { name: '' } }),
     allSteps: [stepElement as never],
     currentStepIndex: 0,
     locationOnCompletion: '/done',
@@ -181,9 +181,9 @@ describe('formik wizard shell characterisation', () => {
     resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
-    vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(
-      () => {},
-    );
+    const scrollIntoView = vi
+      .spyOn(HTMLElement.prototype, 'scrollIntoView')
+      .mockImplementation(() => {});
     renderStep({ onSaveAndNext: vi.fn<SaveHandler>() });
     await screen.findByLabelText('Name');
 
@@ -192,9 +192,7 @@ describe('formik wizard shell characterisation', () => {
     await waitFor(() => expect(document.activeElement).toBe(summary));
 
     await user.click(screen.getByTestId(NEXT));
-    await waitFor(() =>
-      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(2),
-    );
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(2));
 
     expect(document.activeElement).toBe(
       screen.getByTestId('form-error-summary'),
@@ -208,12 +206,12 @@ describe('formik wizard shell characterisation', () => {
 
     const user = userEvent.setup();
     let loads = 0;
-    const loadStepValues = vi.fn<LoadStepHandler>(async () => {
+    const loadStepValues = vi.fn<LoadStepHandler>(() => {
       loads += 1;
       return { stepValues: { name: loads === 1 ? '' : 'from server' } };
     });
-    const onSaveAndNext = vi.fn<SaveHandler>(async () => {
-      throw { status: 409 };
+    const onSaveAndNext = vi.fn<SaveHandler>(() => {
+      throw Object.assign(new Error('Conflict'), { status: 409 });
     });
     renderStep({ loadStepValues, onSaveAndNext, validateHard: undefined });
 
@@ -222,7 +220,7 @@ describe('formik wizard shell characterisation', () => {
 
     await waitFor(() => expect(loadStepValues).toHaveBeenCalledTimes(2));
     await waitFor(() =>
-      expect((screen.getByLabelText('Name') as HTMLInputElement).value).toBe(
+      expect(screen.getByLabelText<HTMLInputElement>('Name').value).toBe(
         'from server',
       ),
     );
@@ -241,7 +239,7 @@ describe('formik wizard shell characterisation', () => {
 
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn<SaveHandler>(
-      async (_values: FormikValues) => undefined,
+      (_values: FormikValues) => undefined,
     );
     renderStep({
       onSaveAndExit,
@@ -286,8 +284,8 @@ describe('formik wizard shell characterisation', () => {
     resetWizardRoutedStepCharacterization();
 
     const user = userEvent.setup();
-    const onSaveAndExit = vi.fn<SaveHandler>(async () => {
-      throw { status: 500 };
+    const onSaveAndExit = vi.fn<SaveHandler>(() => {
+      throw Object.assign(new Error('Server error'), { status: 500 });
     });
     renderStep({
       onSaveAndExit,

@@ -198,7 +198,7 @@ const CustomDatePicker = (
         placeholderText={placeholder ?? ''}
         popperModifiers={[offSetModifier as never]}
         preventOpenOnFocus
-        ref={datePickerRef as any}
+        ref={datePickerRef}
         selected={selectedDate}
         strictParsing
         showPopperArrow={false}

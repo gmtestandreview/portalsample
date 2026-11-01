@@ -36,7 +36,7 @@ const CreateAcceptQuote = () => {
           applicationType: ApplicationType.QuoteAccept,
           referenceId: quoteData.crmQuoteRequestId,
         });
-        setApplicationId(application.referenceId!);
+        setApplicationId(application.referenceId);
       } catch (e) {
         AppLogger.error('Failed to create an application', e as Error, {
           Id: id,

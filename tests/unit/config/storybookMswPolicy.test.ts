@@ -157,7 +157,7 @@ describe('storybook unhandled-request policy', () => {
 
     const defaults = createDefaults();
 
-    onUnhandledStorybookRequest({
+    void onUnhandledStorybookRequest({
       frame: {
         protocol: 'http',
         data: {
@@ -178,7 +178,7 @@ describe('storybook unhandled-request policy', () => {
     const defaults = createDefaults();
     const url = new URL(requestUrl, globalThis.location.origin);
 
-    onUnhandledStorybookRequest({
+    void onUnhandledStorybookRequest({
       frame: {
         protocol,
         data: { request: new Request(url) },
@@ -260,7 +260,7 @@ describe('storybook unhandled-request policy', () => {
 
     const defaults = createDefaults();
 
-    onUnhandledStorybookRequest({
+    void onUnhandledStorybookRequest({
       frame: {
         protocol: 'ws',
         data: { client: { url: 'wss://example.test/socket' } },
@@ -281,9 +281,9 @@ describe('storybook MSW startup boundary', () => {
       liveSends: 0,
     };
     let permitNextLiveSend = false;
-    const liveSend = vi.fn<typeof globalThis.fetch>(async () => {
+    const liveSend = vi.fn<typeof globalThis.fetch>(() => {
       counters.liveSends += 1;
-      throw new Error('live network send disabled by test');
+      return Promise.reject(new Error('live network send disabled by test'));
     });
 
     const fetchSpy = vi
@@ -364,9 +364,9 @@ describe('storybook MSW startup boundary', () => {
     expect.hasAssertions();
 
     const startupError = new Error('service worker unavailable');
-    const start = vi.fn<StorybookMswWorker['start']>(async () => {
-      throw startupError;
-    });
+    const start = vi.fn<StorybookMswWorker['start']>(() =>
+      Promise.reject(startupError),
+    );
     const getWorker = createStorybookMswWorkerLoader(
       () => ({ start }),
       () => ({ quiet: true, onUnhandledFrame: 'error' }),
@@ -400,7 +400,7 @@ describe('storybook MSW startup boundary', () => {
     expect.hasAssertions();
 
     const transport = installInertNetworkDenial();
-    const start = vi.fn<StorybookMswWorker['start']>(async () => undefined);
+    const start = vi.fn<StorybookMswWorker['start']>(() => Promise.resolve());
     const getWorker = createStorybookMswWorkerLoader(
       () => ({ start }),
       () => ({ quiet: true, onUnhandledFrame: 'error' }),
@@ -424,9 +424,11 @@ describe('storybook MSW startup boundary', () => {
     expect.hasAssertions();
 
     const transport = installInertNetworkDenial();
-    const start = vi.fn<StorybookMswWorker['start']>(async () => {
-      throw new Error('No service worker available in this test setup');
-    });
+    const start = vi.fn<StorybookMswWorker['start']>(() =>
+      Promise.reject(
+        new Error('No service worker available in this test setup'),
+      ),
+    );
     const getWorker = createStorybookMswWorkerLoader(
       () => ({ start }),
       () => ({ quiet: true, onUnhandledFrame: 'error' }),

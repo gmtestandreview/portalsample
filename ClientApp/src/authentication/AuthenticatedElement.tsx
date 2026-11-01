@@ -1,7 +1,6 @@
 import { InteractionType } from '@azure/msal-browser';
 import { MsalAuthenticationTemplate, useMsal } from '@azure/msal-react';
 import { isRouteErrorResponse, Navigate, useRouteError } from 'react-router';
-import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { authRequest } from './authConfig';
 import type { AuthenticatedElementProps } from './types';
 import BlockUISpinner from '../components/BlockUISpinner';
@@ -42,9 +41,7 @@ const AuthenticatedElement = ({
       loadingComponent={Loading}
       errorComponent={RedirectToHome}
     >
-      <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
-        {children}
-      </ErrorBoundary>
+      <ErrorBoundary appInsights={ai.reactPlugin}>{children}</ErrorBoundary>
     </MsalAuthenticationTemplate>
   </PreConditions>
 );

@@ -250,7 +250,7 @@ const ApplicationMessages = () => {
             {message &&
               messageCount !== undefined &&
               messageCount > 0 &&
-              message!.requestForPatternApprovalMessageDetails!.items!.map(
+              message.requestForPatternApprovalMessageDetails!.items!.map(
                 (msg) => (
                   <li key={msg.id} id={msg.id}>
                     <Card

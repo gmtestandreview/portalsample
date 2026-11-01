@@ -20,9 +20,9 @@ describe('build regression smoke coverage', () => {
     async (modulePath) => {
       expect.hasAssertions();
 
-      const module = await import(modulePath);
+      const module = (await import(modulePath)) as Record<string, unknown>;
 
-      expect(module.default).toBeDefined();
+      expect(module['default']).toBeDefined();
     },
   );
 
@@ -38,13 +38,19 @@ describe('build regression smoke coverage', () => {
 
       vi.resetModules();
 
-      const module = await import(modulePath);
+      const module = (await import(modulePath)) as Record<string, unknown>;
 
       expect(module).toBeDefined();
-      expect(yup.string().allowedFormat).toBeTypeOf('function');
-      expect(yup.string().fixedDigits).toBeTypeOf('function');
-      expect(yup.string().maxLength).toBeTypeOf('function');
-      expect(yup.string().minEntered).toBeTypeOf('function');
+
+      const schema = yup.string();
+
+      expect(schema.allowedFormat.bind(schema)).toBeTypeOf('function');
+
+      expect(schema.fixedDigits.bind(schema)).toBeTypeOf('function');
+
+      expect(schema.maxLength.bind(schema)).toBeTypeOf('function');
+
+      expect(schema.minEntered.bind(schema)).toBeTypeOf('function');
     },
   );
 });

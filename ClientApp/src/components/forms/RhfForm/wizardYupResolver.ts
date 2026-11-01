@@ -41,7 +41,7 @@ const toFieldErrors = <TFieldValues extends FieldValues>(
       message: error.message,
     });
   }
-  return fieldErrors as FieldErrors<TFieldValues>;
+  return fieldErrors;
 };
 
 /**
