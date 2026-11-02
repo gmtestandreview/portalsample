@@ -21,6 +21,7 @@ type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 interface HarnessProps {
   values?: Values;
   withHiddenRules?: boolean;
+  status?: unknown;
   onSubmit?: (values: SummaryAndAcceptStep) => void;
 }
 
@@ -36,14 +37,18 @@ function Probe() {
 function Harness({
   values = {},
   withHiddenRules = true,
+  status,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
   return (
     <Formik<Values>
       initialValues={values}
-      {...(withHiddenRules
-        ? { initialStatus: { hidden: summaryAndAcceptOwnHidingFields } }
-        : {})}
+      initialStatus={
+        status ??
+        (withHiddenRules
+          ? { hidden: summaryAndAcceptOwnHidingFields }
+          : undefined)
+      }
       validate={(formValues) =>
         validateForm(
           formValues.saveAndExit
@@ -262,6 +267,19 @@ describe(SummaryAndAcceptFormikBridge, () => {
     render(
       <Harness
         withHiddenRules={false}
+        values={{ associatedDisputes: YesNo.No }}
+      />,
+    );
+
+    expect(screen.getByLabelText(DISPUTE_LABEL)).toBeInTheDocument();
+  });
+
+  it('falls back to no hide rules when the status has non-object hidden rules', () => {
+    expect.hasAssertions();
+
+    render(
+      <Harness
+        status={{ hidden: null }}
         values={{ associatedDisputes: YesNo.No }}
       />,
     );

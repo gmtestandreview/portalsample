@@ -72,6 +72,7 @@ type Values = DeliveryAndReturnStep & { saveAndExit?: boolean };
 interface HarnessProps {
   values?: Values;
   withHiddenRules?: boolean;
+  status?: unknown;
   withErrorSummary?: boolean;
   onSubmit?: (values: DeliveryAndReturnStep) => void;
 }
@@ -88,6 +89,7 @@ function Probe() {
 function Harness({
   values = {},
   withHiddenRules = true,
+  status,
   withErrorSummary = false,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
@@ -95,9 +97,9 @@ function Harness({
     <MemoryRouter>
       <Formik<Values>
         initialValues={values}
-        {...(withHiddenRules
-          ? { initialStatus: { hidden: hidingFields } }
-          : {})}
+        initialStatus={
+          status ?? (withHiddenRules ? { hidden: hidingFields } : undefined)
+        }
         validate={(formValues) =>
           validateForm(
             formValues.saveAndExit
@@ -391,6 +393,16 @@ describe(DeliveryAndReturnFormikBridge, () => {
       expect.any(HTMLElement),
       expect.any(HTMLElement),
     ]);
+  });
+
+  it('falls back to no hide rules when the status has non-object hidden rules', () => {
+    expect.hasAssertions();
+
+    resetDeliveryAndReturnMocks();
+
+    render(<Harness status={{ hidden: null }} />);
+
+    expect(screen.getByLabelText('Carrier name')).toBeInTheDocument();
   });
 
   it('renders a field for every error summary link after a failed submit', async () => {

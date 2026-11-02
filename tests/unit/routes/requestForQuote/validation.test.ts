@@ -245,6 +245,13 @@ describe('instrumentAndRequest validation', () => {
     expect.hasAssertions();
     await expect(
       instrumentAndRequestSaveValidation.validate({
+        numberOfItems: null,
+        description: '',
+        testingAndCalibrationRequirements: '',
+      }),
+    ).resolves.toBeDefined();
+    await expect(
+      instrumentAndRequestSaveValidation.validate({
         numberOfItems: Number.NaN,
         description: '',
         testingAndCalibrationRequirements: '',

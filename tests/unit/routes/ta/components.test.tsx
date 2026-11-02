@@ -306,12 +306,15 @@ const renderWithFormik = (children: ReactNode) =>
     </Formik>,
   );
 
-const renderSummary = (isSubmitted = false) =>
+const renderSummary = (
+  isSubmitted = false,
+  initialStatus: unknown = { hidden: {} },
+) =>
   render(
     <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
       <Formik
         initialValues={formValues}
-        initialStatus={{ hidden: {} }}
+        initialStatus={initialStatus}
         onSubmit={() => {}}
       >
         <Form>
@@ -528,6 +531,16 @@ describe(SummaryAndSubmit, () => {
     await expect
       .poll(() => mocks.supportingDocumentsUploadFiles)
       .toHaveBeenCalledWith([]);
+  });
+
+  it('uses empty hiding rules when hidden status is undefined', () => {
+    expect.hasAssertions();
+
+    resetTaComponentsMocks();
+
+    renderSummary(false, { hidden: undefined });
+
+    expect(screen.getByText('Application type')).toBeInTheDocument();
   });
 
   it('renders the submitted summary without edit controls and with a dashboard return link', () => {

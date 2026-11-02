@@ -32,9 +32,12 @@ type MockDatePickerProps = {
   children?: React.ReactNode;
 };
 
-type MockDatePickerRef = {
-  state: { open: boolean };
-};
+type MockDatePickerRef = { state: { open: boolean } } | Record<string, never>;
+type MockDatePickerShape = 'with-open-state' | 'without-open-state';
+
+const mockDatePickerRef = vi.hoisted((): { shape: MockDatePickerShape } => ({
+  shape: 'with-open-state',
+}));
 
 const expectDatePickerOffsetsAfterReopen = (nextDate: Date) => {
   expect(screen.getByTestId('bottom-offset')).toHaveTextContent('-49');
@@ -107,11 +110,15 @@ vi.mock(import('react-datepicker'), (() => {
     MockDatePickerRef,
     MockDatePickerProps
   >((props, ref) => {
-    React.useImperativeHandle(ref, () => ({
-      state: {
-        open: false,
-      },
-    }));
+    React.useImperativeHandle(ref, () =>
+      mockDatePickerRef.shape === 'with-open-state'
+        ? {
+            state: {
+              open: false,
+            },
+          }
+        : {},
+    );
 
     return (
       <div data-testid='mock-datepicker'>
@@ -430,6 +437,33 @@ describe('custom date picker', () => {
     expect(
       screen.getByRole('button', { name: 'Pick date' }),
     ).toBeInTheDocument();
+  });
+
+  it('tolerates a date-picker ref without open state', async () => {
+    expect.hasAssertions();
+
+    mockDatePickerRef.shape = 'without-open-state';
+    const user = userEvent.setup();
+
+    try {
+      render(
+        <CustomDatePicker
+          calendarButtonTitle='Date'
+          dateOnBlur={vi.fn<() => void>()}
+          dateOnChange={vi.fn<() => void>()}
+          name='invalidRefDate'
+        />,
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Open calendar' }));
+      await user.click(screen.getByRole('button', { name: 'Ensure closed' }));
+
+      expect(
+        screen.getByRole('button', { name: 'Pick date' }),
+      ).toBeInTheDocument();
+    } finally {
+      mockDatePickerRef.shape = 'with-open-state';
+    }
   });
 
   it('synchronizes current dates and calculates bottom, top, and neutral offsets', async () => {

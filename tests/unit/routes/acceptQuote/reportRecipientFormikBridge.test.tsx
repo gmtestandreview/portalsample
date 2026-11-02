@@ -65,6 +65,7 @@ const hidingFields = {
 interface HarnessProps {
   values?: ReportRecipientStep;
   withHiddenRules?: boolean;
+  status?: unknown;
   onSubmit?: (values: ReportRecipientStep) => void;
 }
 
@@ -80,12 +81,15 @@ function Probe() {
 function Harness({
   values = {},
   withHiddenRules = true,
+  status,
   onSubmit = vi.fn<(...args: unknown[]) => unknown>(),
 }: Readonly<HarnessProps>) {
   return (
     <Formik<ReportRecipientStep>
       initialValues={values}
-      {...(withHiddenRules ? { initialStatus: { hidden: hidingFields } } : {})}
+      initialStatus={
+        status ?? (withHiddenRules ? { hidden: hidingFields } : undefined)
+      }
       validate={validateForm(reportRecipientSubmitValidation, hidingFields)}
       onSubmit={(submitted) =>
         onSubmit(removeHidden(submitted, submitted, hidingFields))
@@ -331,6 +335,16 @@ describe(ReportRecipientFormikBridge, () => {
     unmount();
 
     render(<Harness withHiddenRules={false} />);
+
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+
+  it('falls back to no hide rules when the status has non-object hidden rules', () => {
+    expect.hasAssertions();
+
+    resetReportRecipientFormikBridgeMocks();
+
+    render(<Harness status={{ hidden: null }} />);
 
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });

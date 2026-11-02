@@ -862,4 +862,16 @@ describe('simple Formik input components', () => {
 
     expectTextReadOnlySummary();
   });
+
+  it('renders an empty value when the Formik value is not a string', () => {
+    expect.hasAssertions();
+
+    render(
+      <FormikHarness initialValues={{ reference: 123 }}>
+        <TextReadOnly name='reference' label='Reference' />
+      </FormikHarness>,
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Reference' })).toHaveValue('');
+  });
 });

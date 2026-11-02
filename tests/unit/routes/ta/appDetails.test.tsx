@@ -416,6 +416,39 @@ describe('application details', () => {
       expect(screen.queryByText('unread')).not.toBeInTheDocument();
     });
 
+    it('polls again after the refresh interval', async () => {
+      expect.hasAssertions();
+
+      vi.useFakeTimers();
+      try {
+        await resetApplicationDetailsState();
+        await renderDetails();
+
+        await act(async () => {
+          await Promise.resolve();
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledTimes(1);
+
+        await act(async () => {
+          vi.advanceTimersByTime(5000);
+          await Promise.resolve();
+          await Promise.resolve();
+          await Promise.resolve();
+        });
+
+        expect(
+          clients.patternApproval.methods.getAppMessageCount,
+        ).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it('treats a missing count as zero', async () => {
       expect.hasAssertions();
 

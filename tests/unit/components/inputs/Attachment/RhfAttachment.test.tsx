@@ -348,6 +348,27 @@ describe('rhfAttachment', () => {
     );
   });
 
+  it('normalizes a single uploaded attachment object into a list', async () => {
+    expect.hasAssertions();
+
+    const user = userEvent.setup();
+    const onUploadFiles = vi
+      .fn<UploadFiles>()
+      .mockResolvedValue(uploadedAttachment);
+    renderAttachment([], { onUploadFiles });
+
+    await user.upload(
+      screen.getByTestId('drag-upload-supporting-documents'),
+      file('manual.pdf', 10),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('values')).toHaveTextContent(
+        '"attachments":[{"id":"doc-1"',
+      ),
+    );
+  });
+
   it('uploads multiple valid files and replaces the attachment list with the server result', async () => {
     expect.hasAssertions();
 
